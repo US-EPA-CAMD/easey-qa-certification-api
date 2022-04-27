@@ -1,13 +1,13 @@
 # QA Ceritification Data Management API
 
-[![License](https://img.shields.io/github/license/US-EPA-CAMD/qa-certification-api)](https://github.com/US-EPA-CAMD/qa-certification-api/blob/develop/LICENSE)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=US-EPA-CAMD_qa-certification-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=US-EPA-CAMD_qa-certification-api)
-[![Develop CI/CD](https://github.com/US-EPA-CAMD/qa-certification-api/workflows/Develop%20Branch%20Workflow/badge.svg)](https://github.com/US-EPA-CAMD/qa-certification-api/actions)
-[![Release CI/CD](https://github.com/US-EPA-CAMD/qa-certification-api/workflows/Release%20Branch%20Workflow/badge.svg)](https://github.com/US-EPA-CAMD/qa-certification-api/actions)
-![Issues](https://img.shields.io/github/issues/US-EPA-CAMD/qa-certification-api)
-![Forks](https://img.shields.io/github/forks/US-EPA-CAMD/qa-certification-api)
-![Stars](https://img.shields.io/github/stars/US-EPA-CAMD/qa-certification-api)
-[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/US-EPA-CAMD/qa-certification-api)
+[![License](https://img.shields.io/github/license/US-EPA-CAMD/easey-qa-certification-api)](https://github.com/US-EPA-CAMD/easey-qa-certification-api/blob/develop/LICENSE)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=US-EPA-CAMD_easey-qa-certification-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=US-EPA-CAMD_easey-qa-certification-api)
+[![Develop CI/CD](https://github.com/US-EPA-CAMD/easey-qa-certification-api/workflows/Develop%20Branch%20Workflow/badge.svg)](https://github.com/US-EPA-CAMD/easey-qa-certification-api/actions)
+[![Release CI/CD](https://github.com/US-EPA-CAMD/easey-qa-certification-api/workflows/Release%20Branch%20Workflow/badge.svg)](https://github.com/US-EPA-CAMD/easey-qa-certification-api/actions)
+![Issues](https://img.shields.io/github/issues/US-EPA-CAMD/easey-qa-certification-api)
+![Forks](https://img.shields.io/github/forks/US-EPA-CAMD/easey-qa-certification-api)
+![Stars](https://img.shields.io/github/stars/US-EPA-CAMD/easey-qa-certification-api)
+[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/US-EPA-CAMD/easey-qa-certification-api)
 
 ## Description
 Manages qa certification data for the EPA CAMD Business Systems.
