@@ -1,0 +1,23 @@
+applications:
+  - name: ((name))
+    memory: ((memory))M
+    disk_quota: ((disk))M
+    instances: ((instances))
+    buildpacks:
+      - nodejs_buildpack
+    env:
+      OPTIMIZE_MEMORY: true
+      EASEY_API_GATEWAY_HOST: ((apiHost))
+      EASEY_QA_CERTIFICATION_API_TITLE: ((title))
+      EASEY_QA_CERTIFICATION_API_HOST: ((host))
+      EASEY_QA_CERTIFICATION_API_PORT: ((port))
+      EASEY_QA_CERTIFICATION_API_PATH: ((path))
+      EASEY_QA_CERTIFICATION_API_ENV: ((environment))
+      EASEY_QA_CERTIFICATION_API_ENABLE_CORS: true
+      EASEY_QA_CERTIFICATION_API_ENABLE_API_KEY: true
+      EASEY_QA_CERTIFICATION_API_ENABLE_AUTH_TOKEN: true
+      EASEY_QA_CERTIFICATION_API_ENABLE_GLOBAL_VALIDATION_PIPE: true
+    routes:
+      - route: ((host))/((path))
+    services:
+      - camd-pg-db
