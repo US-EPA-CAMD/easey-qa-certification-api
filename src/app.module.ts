@@ -10,8 +10,8 @@ import { CorsOptionsModule } from '@us-epa-camd/easey-common/cors-options';
 import routes from './routes';
 import appConfig from './config/app.config';
 import { TypeOrmConfigService } from './config/typeorm.config';
+
 import { EventModule } from './event/event.module';
-//import { TestSummaryModule } from './test-summary/test-summary.module';
 
 @Module({
   imports: [
@@ -26,7 +26,6 @@ import { EventModule } from './event/event.module';
     LoggerModule,
     CorsOptionsModule,
     EventModule,
-    //TestSummaryModule,
   ],
 })
 export class AppModule {}

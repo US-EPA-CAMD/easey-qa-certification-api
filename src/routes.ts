@@ -4,91 +4,157 @@ import { EventModule } from './event/event.module';
 
 const routes: Routes = [
   {
-    path: '/locations/{locId}/systems/{sysId}/components/{compId}/events',
+    path: '/events',
     module: EventModule,
     // children: [
     //   {
-    //     path: ':eventId/supplemental-data',
+    //     path: '/supplemental-data',
     //     module: EventSupplementalDataModule
     //   }
     // ]
   },
   // {
-  //   path: '/locations/{locId}/systems/{sysId}/components/{compId}/supplemental-data',
+  //   path: '/supplemental-data',
   //   module: SupplementalDataModule,
   //   children: [
   //     {
-  //       path: ':suppId/attributes',
+  //       path: '/attributes',
   //       module: SupplementalDataAttributesModule
   //     }
   //   ]
   // },
   // {
-  //   path: '/locations/{locId}/systems/{sysId}/components/{compId}/test-extension-exemption',
+  //   path: '/test-ext-exemptions',
   //   module: TestExtensionExemptionModule,
   // },
   // {
-  //   path: '/locations/{locId}/systems/{sysId}/components/{compId}/test-summary',
+  //   path: '/test-summary',
   //   module: TestSummaryModule,
   //   children: [
   //     {
-  //       path: ':testSumId/ae-correlations',
-  //       module: AECorrelationModule,
+  //       path: '/app-e-correlations',
+  //       module: AppECorrelationTestModule,
+  //       children: [
+  //         {
+  //           path: '/runs',
+  //           module: AppECorrelationTestRunModule,
+  //           children: [
+  //             {
+  //               path: '/gases',
+  //               module: AppEHiGasModule
+  //             },
+  //             {
+  //               path: '/oils',
+  //               module: AppEHiOilModule
+  //             }
+  //           ]
+  //         }
+  //       ]
   //     },
   //     {
-  //       path: ':testSumId/calibration-injections',
+  //       path: '/calibration-injections',
   //       module: CalibrationInjectionModule,
   //     },
   //     {
-  //       path: ':testSumId/cycle-time',
+  //       path: '/cycle-times',
   //       module: CycleTimeModule,
   //       children: [
   //         {
-  //           path: ':cycleTimeId/injections',
+  //           path: '/injections',
   //           module: CycleTimeInjectionModule
   //         }
   //       ]
   //     },
   //     {
-  //       path: ':testSumId/flow-load-checks',
-  //       module: FlowLoadCheckModule,
+  //       path: '/flow-2-load-checks',
+  //       module: Flow2LoadCheckModule,
   //     },
   //     {
-  //       path: ':testSumId/flow-load-refs',
-  //       module: FlowLoadRefModule,
+  //       path: '/flow-2-load-refs',
+  //       module: Flow2LoadRefModule,
   //     },
   //     {
-  //       path: ':testSumId/fuel-flow-load-baselines',
-  //       module: FuelFlowLoadBaselineModule,
+  //       path: '/fuel-flow-2-load-baselines',
+  //       module: FuelFlow2LoadBaselineModule,
   //     },
   //     {
-  //       path: ':testSumId/fuel-flow-load-checks',
-  //       module: FuelFlowLoadCheckModule,
+  //       path: '/fuel-flow-2-load-checks',
+  //       module: FuelFlow2LoadCheckModule,
   //     },
   //     {
-  //       path: ':testSumId/fuel-flow-meter-accuracy',
+  //       path: '/fuel-flow-meter-accuracies',
   //       module: FuelFlowMeterAccuracyModule,
   //     },
   //     {
-  //       path: ':testSumId/hg-test',
+  //       path: '/hg-tests',
   //       module: HGTestSummaryModule,
   //       children: [
   //         {
-  //           path: ':hgId/injections',
+  //           path: '/injections',
   //           module: HGTestInjectionModule
   //         }
   //       ]
   //     },
   //     {
-  //       path: ':testSumId/linearity',
+  //       path: '/linearities',
   //       module: LinearitySummaryModule,
   //       children: [
   //         {
-  //           path: ':linSumId/injections',
+  //           path: '/injections',
   //           module: LinearityInjectionModule
   //         }
   //       ]
-  //     }
+  //     },
+  //     {
+  //       path: '/on-off-cals',
+  //       module: OnOffCalModule,
+  //     },
+  //     {
+  //       path: '/qualifications',
+  //       module: TestQualificationModule,
+  //     },
+  //     {
+  //       path: '/unit-defaults',
+  //       module: UnitDefaultTestModule,
+  //       children: [
+  //         {
+  //           path: '/runs',
+  //           module: UnitDefaultTestRunModule
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       path: '/trans-accuracies',
+  //       module: TransAccuracyModule,
+  //     },
+  //     {
+  //       path: '/ratas',
+  //       module: RataModule,
+  //       children: [
+  //         {
+  //           path: '/summaries',
+  //           module: RataSummaryModule,
+  //           children: [
+  //             {
+  //               path: '/runs',
+  //               module: RataRunModule,
+  //               children: [
+  //                 {
+  //                   path: '/flow-runs',
+  //                   module: FlowRataRunModule,
+  //                   children: [
+  //                     {
+  //                       path: '/traverses',
+  //                       module: RataTraverseModule
+  //                     }
+  //                   ]
+  //                 }
+  //               ]
+  //             }
+  //           ]
+  //         }
+  //       ]
+  //     },
   //   ]
   // },
 ];

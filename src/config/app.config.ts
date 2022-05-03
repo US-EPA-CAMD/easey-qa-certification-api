@@ -2,9 +2,9 @@ require('dotenv').config();
 import { registerAs } from '@nestjs/config';
 import { parseBool } from '@us-epa-camd/easey-common/utilities';
 
-const path = process.env.EASEY_EMISSIONS_API_PATH || 'qa-certification-mgmt';
-const host = process.env.EASEY_EMISSIONS_API_HOST || 'localhost';
-const port = +process.env.EASEY_EMISSIONS_API_PORT || 8070;
+const path = process.env.EASEY_QA_CERTIFICATION_API_PATH || 'qa-certification-mgmt';
+const host = process.env.EASEY_QA_CERTIFICATION_API_HOST || 'localhost';
+const port = +process.env.EASEY_QA_CERTIFICATION_API_PORT || 8070;
 
 let uri = `https://${host}/${path}`;
 
@@ -21,7 +21,10 @@ export default registerAs('app', () => ({
   port,
   uri,
   env: process.env.EASEY_QA_CERTIFICATION_API_ENV || 'local-dev',
-  enableCors: parseBool(process.env.EASEY_QA_CERTIFICATION_API_ENABLE_CORS, true),
+  enableCors: parseBool(
+    process.env.EASEY_QA_CERTIFICATION_API_ENABLE_CORS,
+    true
+  ),
   enableApiKey: parseBool(
     process.env.EASEY_QA_CERTIFICATION_API_ENABLE_API_KEY,
     true,

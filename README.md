@@ -1,4 +1,4 @@
-# QA Ceritification Data Management API
+# QA Certification Data Management API
 
 [![License](https://img.shields.io/github/license/US-EPA-CAMD/easey-qa-certification-api)](https://github.com/US-EPA-CAMD/easey-qa-certification-api/blob/develop/LICENSE)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=US-EPA-CAMD_easey-qa-certification-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=US-EPA-CAMD_easey-qa-certification-api)
