@@ -11,7 +11,8 @@ import routes from './routes';
 import appConfig from './config/app.config';
 import { TypeOrmConfigService } from './config/typeorm.config';
 
-import { EventModule } from './event/event.module';
+import { QACertificationModule } from './qa-certification/qa-certification.module';
+import { TestSummaryModule } from './test-summary/test-summary.module';
 
 @Module({
   imports: [
@@ -25,7 +26,8 @@ import { EventModule } from './event/event.module';
     }),
     LoggerModule,
     CorsOptionsModule,
-    EventModule,
+    QACertificationModule,
+    TestSummaryModule,
   ],
 })
 export class AppModule {}

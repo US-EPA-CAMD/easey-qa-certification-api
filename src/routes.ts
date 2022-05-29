@@ -1,18 +1,23 @@
 import { Routes } from 'nest-router';
 
-import { EventModule } from './event/event.module';
+import { QACertificationModule } from './qa-certification/qa-certification.module';
+import { TestSummaryModule } from './test-summary/test-summary.module';
 
 const routes: Routes = [
   {
-    path: '/events',
-    module: EventModule,
-    // children: [
-    //   {
-    //     path: '/supplemental-data',
-    //     module: EventSupplementalDataModule
-    //   }
-    // ]
+    path: '/',
+    module: QACertificationModule,
   },
+  // {
+  //   path: '/events',
+  //   module: EventsModule,
+  //   children: [
+  //     {
+  //       path: '/supplemental-data',
+  //       module: EventSupplementalDataModule
+  //      }
+  //   ]
+  // },
   // {
   //   path: '/supplemental-data',
   //   module: SupplementalDataModule,
@@ -27,9 +32,9 @@ const routes: Routes = [
   //   path: '/test-ext-exemptions',
   //   module: TestExtensionExemptionModule,
   // },
-  // {
-  //   path: '/test-summary',
-  //   module: TestSummaryModule,
+  {
+    path: '/test-summary',
+    module: TestSummaryModule,
   //   children: [
   //     {
   //       path: '/app-e-correlations',
@@ -50,7 +55,7 @@ const routes: Routes = [
   //           ]
   //         }
   //       ]
-  //     },
+  },
   //     {
   //       path: '/calibration-injections',
   //       module: CalibrationInjectionModule,
