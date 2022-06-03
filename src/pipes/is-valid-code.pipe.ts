@@ -6,12 +6,14 @@ import {
 
 import { getManager } from 'typeorm';
 
-import { TestTypeCode } from "../entities/test-type-code.entity";
-
-export function IsTestTypeCode(validationOptions?: ValidationOptions) {
+// TODO: MOVE TO COMMONE PIPES
+export function IsValidCode(
+  type: any,
+  validationOptions?: ValidationOptions
+) {
   return function (object: Object, propertyName: string) {
     registerDecorator({
-      name: "isTestTypeCode",
+      name: "isValidCode",
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
@@ -19,9 +21,7 @@ export function IsTestTypeCode(validationOptions?: ValidationOptions) {
         async validate(value: any, _args: ValidationArguments) {
           if (value) {
             const manager = getManager();
-            const found = await manager.findOne(TestTypeCode, {
-              testTypeCode: value,
-            });
+            const found = await manager.findOne(type, value);
             return found != null;
           }
           return true;

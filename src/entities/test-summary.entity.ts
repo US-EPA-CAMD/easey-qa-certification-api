@@ -143,8 +143,8 @@ export class TestSummary extends BaseEntity {
   @Column({ name: 'needs_eval_flg' })
   needsEvalFlag: string;
 
-  @Column({ name: 'eval_status_cd' })
-  evalStatusCode: string;
+  //@Column({ name: 'eval_status_cd' })
+  //evalStatusCode: string;
 
   @Column({ name: 'userid' })
   userId: string;

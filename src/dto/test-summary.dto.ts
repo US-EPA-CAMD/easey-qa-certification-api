@@ -2,10 +2,18 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
-import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { RequireOne } from '../pipes/require-one.pipe';
-import { IsTestTypeCode } from '../pipes/is-test-type-code.pipe';
-import { LinearitySummaryImportDTO, LinearitySummaryDTO } from './linearity-summary.dto';
+import { IsValidCode } from '../pipes/is-valid-code.pipe';
+import { TestTypeCode } from './../entities/test-type-code.entity';
+import { SpanScaleCode } from '../entities/span-scale-code.entity';
+import { TestReasonCode } from './../entities/test-reason-code.entity';
+import { TestResultCode } from './../entities/test-result-code.entity';
+import { InjectionProtocolCode } from './../entities/injection-protocol-code.entity';
+
+import {
+  LinearitySummaryImportDTO,
+  LinearitySummaryDTO
+} from './linearity-summary.dto';
 
 export class TestSummaryBaseDTO {
   @ApiProperty({
@@ -24,7 +32,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Test Type Code. ADD TO PROPERTY METADATA',
   })
-  @IsTestTypeCode({
+  @IsValidCode(TestTypeCode, {
     each: true,
     message: 'Invalid Test Type Code',
   })
@@ -43,6 +51,10 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.monitorSpanDTOSpanScaleCode.description,
   })
+  @IsValidCode(SpanScaleCode, {
+    each: true,
+    message: 'Invalid Span Scale Code',
+  })
   spanScaleCode?: string;
 
   @ApiProperty({
@@ -53,6 +65,10 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Test Reason Code. ADD TO PROPERTY METADATA',
   })
+  @IsValidCode(TestReasonCode, {
+    each: true,
+    message: 'Invalid Test Reason Code',
+  })
   testReasonCode?: string;
 
   @ApiProperty({
@@ -62,6 +78,10 @@ export class TestSummaryBaseDTO {
 
   @ApiProperty({
     description: 'Test Result Code. ADD TO PROPERTY METADATA',
+  })
+  @IsValidCode(TestResultCode, {
+    each: true,
+    message: 'Invalid Test Result Code',
   })
   testResultCode?: string;
 
@@ -117,6 +137,10 @@ export class TestSummaryBaseDTO {
 
   @ApiProperty({
     description: 'Injection Protocol Code. ADD TO PROPERTY METADATA',
+  })
+  @IsValidCode(InjectionProtocolCode, {
+    each: true,
+    message: 'Invalid Injection Protocol Code',
   })
   injectionProtocolCode?: string;
 }

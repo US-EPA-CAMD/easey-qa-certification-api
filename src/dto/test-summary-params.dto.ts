@@ -1,15 +1,16 @@
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
+import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { IsTestTypeCode } from '../pipes/is-test-type-code.pipe';
+import { TestTypeCode } from './../entities/test-type-code.entity';
 
 export class TestSummaryParamsDTO {
   @ApiProperty({
     enum: TestTypeCodes,
     description: 'Test Type Code. ADD TO PROPERTY METADATA',
   })
-  @IsTestTypeCode({
+  @IsValidCode(TestTypeCode, {
     each: true,
     message: 'Invalid Test Type Code',
   })
