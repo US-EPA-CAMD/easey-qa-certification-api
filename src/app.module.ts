@@ -12,7 +12,10 @@ import appConfig from './config/app.config';
 import { TypeOrmConfigService } from './config/typeorm.config';
 
 import { QACertificationModule } from './qa-certification/qa-certification.module';
-import { TestSummaryModule } from './test-summary/test-summary.module';
+import { QACertificationWorkspaceModule } from './qa-certification-workspace/qa-certification.module';
+
+import { LocationModule } from './location/location.module';
+import { LocationWorkspaceModule } from './location-workspace/location.module';
 
 @Module({
   imports: [
@@ -27,7 +30,9 @@ import { TestSummaryModule } from './test-summary/test-summary.module';
     LoggerModule,
     CorsOptionsModule,
     QACertificationModule,
-    TestSummaryModule,
+    QACertificationWorkspaceModule,
+    LocationModule,
+    LocationWorkspaceModule,
   ],
 })
 export class AppModule {}

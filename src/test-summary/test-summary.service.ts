@@ -4,36 +4,39 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { TestSummary } from '../entities/test-summary.entity';
 import { TestSummaryDTO } from '../dto/test-summary.dto';
+import { TestSummaryMap } from '../maps/test-summary.map';
 import { TestSummaryParamsDTO } from '../dto/test-summary-params.dto';
 import { TestSummaryRepository } from './test-summary.repository';
 
 @Injectable()
 export class TestSummaryService {
+
   constructor(
     private readonly logger: Logger,
     private readonly configService: ConfigService,
+    private readonly map: TestSummaryMap,
     @InjectRepository(TestSummaryRepository)
     private readonly repository: TestSummaryRepository,
   ) {}
 
-  async getTestSummaries(
+  async getTestSummariesByLocationId(
+    locationId: string,
     params: TestSummaryParamsDTO,
-  ): Promise<TestSummary[]> {
-    // TODO: Currently returning entity bu need to map to DTO
-    return this.repository.getTestSummaries(
-      params.facilityId,
-      params.unitId,
-      params.stackPipeId,
+  ): Promise<TestSummaryDTO[]> {
+    const results = await this.repository.getTestSummariesByLocationId(
+      locationId,
       params.testTypeCode
     );
+
+    return this.map.many(results);
   }
 
-  async getTestSummary(
+  async getTestSummaryById(
+    _locationId: string,
     testSumId: string,
-  ): Promise<TestSummary> {
-    // TODO: Currently returning entity bu need to map to DTO
-    return this.repository.findOne(testSumId);
+  ): Promise<TestSummaryDTO> {
+    const result = await this.repository.getTestSummaryById(testSumId);
+    return this.map.one(result);
   }
 }

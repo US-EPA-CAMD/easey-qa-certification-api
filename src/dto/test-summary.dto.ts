@@ -2,7 +2,10 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { RequireOne } from '../pipes/require-one.pipe';
+import { IsTestTypeCode } from '../pipes/is-test-type-code.pipe';
+import { LinearitySummaryImportDTO, LinearitySummaryDTO } from './linearity-summary.dto';
 
 export class TestSummaryBaseDTO {
   @ApiProperty({
@@ -20,6 +23,10 @@ export class TestSummaryBaseDTO {
 
   @ApiProperty({
     description: 'Test Type Code. ADD TO PROPERTY METADATA',
+  })
+  @IsTestTypeCode({
+    each: true,
+    message: 'Invalid Test Type Code',
   })
   testTypeCode: string;
 
@@ -114,7 +121,7 @@ export class TestSummaryBaseDTO {
   injectionProtocolCode?: string;
 }
 
-export class TestSummaryDTO extends TestSummaryBaseDTO {
+export class TestSummaryRecordDTO extends TestSummaryBaseDTO {
   id: string;
   calculatedGracePeriodIndicator: number;
   calculatedTestResultCode: string;
@@ -124,4 +131,12 @@ export class TestSummaryDTO extends TestSummaryBaseDTO {
   addDate: Date;
   updateDate: Date;
   evalStatusCode: string;
+}
+
+export class TestSummaryImportDTO extends TestSummaryBaseDTO {
+  linearitySummaryData: LinearitySummaryImportDTO[];
+}
+
+export class TestSummaryDTO extends TestSummaryRecordDTO {
+  linearitySummaryData: LinearitySummaryDTO[];
 }

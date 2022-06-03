@@ -3,13 +3,16 @@ import {
   Entity,
   Column,
   PrimaryColumn,
-  OneToOne,
+  OneToMany,
+  ManyToOne,
   JoinColumn,
 } from 'typeorm';
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
+import { Component } from './component.entity';
 import { MonitorLocation } from './monitor-location.entity';
+import { LinearitySummary } from './linearity-summary.entity';
 
 @Entity({ name: 'camdecmps.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -17,6 +20,21 @@ export class TestSummary extends BaseEntity {
     name: 'test_sum_id',
   })
   id: string;
+
+  @Column({
+    name: 'mon_loc_id',
+  })
+  locationId: string;
+
+  @Column({
+    name: 'mon_sys_id',
+  })
+  monitorSystemRecordId: string;
+
+  @Column({
+    name: 'component_id',
+  })
+  componentRecordId: string;
 
   @Column({
     name: 'test_num',
@@ -113,6 +131,20 @@ export class TestSummary extends BaseEntity {
   })
   testComment: string;
 
+  @Column({
+    type: 'date',
+    name: 'last_updated'
+  })
+  lastUpdated: Date;
+
+  @Column({ name: 'updated_status_flg' })
+  updatedStatusFlag: string;
+  
+  @Column({ name: 'needs_eval_flg' })
+  needsEvalFlag: string;
+
+  @Column({ name: 'eval_status_cd' })
+  evalStatusCode: string;
 
   @Column({ name: 'userid' })
   userId: string;
@@ -139,10 +171,24 @@ export class TestSummary extends BaseEntity {
   })
   injectionProtocolCode: string;
 
-  @OneToOne(
+  @ManyToOne(
     () => MonitorLocation,
     ml => ml.testSummaries,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;
+
+  @ManyToOne(
+    () => Component,
+    c => c.testSummaries,
+  )
+  @JoinColumn({ name: 'component_id' })
+  component: Component;
+
+  @OneToMany(
+    () => LinearitySummary,
+    ls => ls.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  linearitySummaries: LinearitySummary[];
 }

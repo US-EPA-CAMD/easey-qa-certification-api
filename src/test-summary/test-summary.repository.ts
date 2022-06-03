@@ -4,27 +4,54 @@ import { TestSummary } from '../entities/test-summary.entity';
 
 @EntityRepository(TestSummary)
 export class TestSummaryRepository extends Repository<TestSummary> {
+
+  private buildTestSummaryBaseQuery() {
+    return this.createQueryBuilder('ts')
+      .innerJoinAndSelect('ts.location', 'ml')
+      .leftJoinAndSelect('ts.component', 'c')
+      .leftJoinAndSelect('ml.unit', 'u')
+      .leftJoinAndSelect('ml.stackPipe', 'sp')
+      .innerJoin('u.plant', 'p', 'p.id = u.facId OR p.id = sp.facId');
+  }
+
+  async getTestSummaryById(
+    testSumId: string,
+  ): Promise<TestSummary> {
+    const query = this.buildTestSummaryBaseQuery()
+      .where('ts.id = :testSumId', { testSumId });
+    return query.getOne();
+  }
+
+  async getTestSummariesByLocationId(
+    locationId: string,
+    testTypeCodes?: string[]
+  ): Promise<TestSummary[]> {
+    const query = this.buildTestSummaryBaseQuery()
+      .where('ts.locationId = :locationId', { locationId });
+
+    if (testTypeCodes) {
+      query.andWhere('ts.testTypeCode IN (:...testTypeCodes)', { testTypeCodes });
+    }
+ 
+    return query.getMany();
+  }
+
   async getTestSummaries(
     facilityId: number,
-    unitIds: string[],
-    stackPipeIds: string[],
-    testTypeCodes: string[],
+    unitIds?: string[],
+    stackPipeIds?: string[],
+    testTypeCodes?: string[],
   ): Promise<TestSummary[]> {
-    const query = this.createQueryBuilder('ts')
-      .innerJoin('ts.location', 'ml')
+    const query = this.buildTestSummaryBaseQuery()
       .where('p.orisCode = :facilityId', { facilityId });
 
     if (unitIds) {
       query
-        .leftJoin('ml.unit', 'u')
-        .innerJoin('u.plant', 'p')        
         .andWhere('u.name IN (:...unitIds)', { unitIds })
     }
 
     if (stackPipeIds) {
       query
-        .leftJoin('ml.stackPipe', 'sp')
-        .innerJoin('sp.plant', 'p')
         .andWhere('sp.name IN (:...stackPipeIds)', { stackPipeIds })
     }
 

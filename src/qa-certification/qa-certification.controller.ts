@@ -8,6 +8,7 @@ import {
   ApiTags,
   ApiOkResponse,
   ApiSecurity,
+  ApiQuery,
 } from '@nestjs/swagger';
 
 import { QACertificationDTO } from '../dto/qa-certification.dto';
@@ -25,8 +26,11 @@ export class QACertificationController {
 
   @Get('export')
   @ApiOkResponse({
+    type: QACertificationDTO,
     description: 'Exports official QA Certification data',
   })
+  @ApiQuery({ style: 'pipeDelimited', name: 'unitId', required: false, explode: false, })
+  @ApiQuery({ style: 'pipeDelimited', name: 'stackPipeId', required: false, explode: false, })
   async export(
     @Query() params: QACertificationParamsDTO,
   ): Promise<QACertificationDTO> {

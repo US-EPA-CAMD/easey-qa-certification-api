@@ -2,7 +2,6 @@ import {
   BaseEntity,
   Entity,
   PrimaryColumn,
-  ManyToOne,
   JoinColumn,
   OneToOne,
   OneToMany,
@@ -12,18 +11,16 @@ import { Unit } from './unit.entity';
 import { StackPipe } from './stack-pipe.entity';
 import { TestSummary } from './test-summary.entity';
 
-@Entity({
-  name: 'camdecmps.monitor_location',
-})
+@Entity({ name: 'camdecmps.monitor_location' })
 export class MonitorLocation extends BaseEntity {
   @PrimaryColumn({
     name: 'mon_loc_id',
   })
   id: string;
 
-  @ManyToOne(
+  @OneToOne(
     () => StackPipe,
-    stackPipe => stackPipe.locations,
+    stackPipe => stackPipe.location,
     { eager: true },
   )
   @JoinColumn({ name: 'stack_pipe_id' })
@@ -41,5 +38,6 @@ export class MonitorLocation extends BaseEntity {
     () => TestSummary,
     ts => ts.location
   )
+  @JoinColumn({ name: 'mon_loc_id' })
   testSummaries: TestSummary[];
 }

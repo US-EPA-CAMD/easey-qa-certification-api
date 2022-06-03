@@ -3,7 +3,7 @@ import {
   Entity,
   Column,
   PrimaryColumn,
-  OneToMany,
+  OneToOne,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
@@ -50,9 +50,10 @@ export class StackPipe extends BaseEntity {
   @JoinColumn({ name: 'fac_id' })
   plant: Plant;
 
-  @OneToMany(
+  @OneToOne(
     () => MonitorLocation,
     location => location.stackPipe,
   )
-  locations: MonitorLocation[];
+  @JoinColumn({ name: 'stack_pipe_id' })
+  location: MonitorLocation;
 }

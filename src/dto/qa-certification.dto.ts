@@ -7,9 +7,9 @@ import {
 
 import { IsOrisCode } from '@us-epa-camd/easey-common/pipes';
 
-import { TestSummaryBaseDTO } from './test-summary.dto';
+import { TestSummaryImportDTO, TestSummaryDTO } from './test-summary.dto';
 
-export class QACertificationDTO {
+export class QACertificationBaseDTO {
 
   @ApiProperty({
     description: propertyMetadata.facilityId.description,
@@ -17,7 +17,13 @@ export class QACertificationDTO {
   @IsOrisCode({
     message: ErrorMessages.UnitCharacteristics(true, 'facilityId'),
   })
-  orisCode: string;
-  
-  testSummaryData: TestSummaryBaseDTO[];
+  orisCode: number;
+}
+
+export class QACertificationImportDTO extends QACertificationBaseDTO {
+  testSummaryData: TestSummaryImportDTO[];
+}
+
+export class QACertificationDTO extends QACertificationBaseDTO {
+  testSummaryData: TestSummaryDTO[];
 }

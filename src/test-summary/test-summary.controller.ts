@@ -9,11 +9,9 @@ import {
   ApiTags,
   ApiOkResponse,
   ApiSecurity,
-  ApiQuery,
 } from '@nestjs/swagger';
 
-import { TestSummary } from '../entities/test-summary.entity';
-import { TestSummaryDTO } from '../dto/test-summary.dto';
+import { TestSummaryRecordDTO } from '../dto/test-summary.dto';
 import { TestSummaryParamsDTO } from '../dto/test-summary-params.dto';
 import { TestSummaryService } from './test-summary.service';
 
@@ -28,23 +26,26 @@ export class TestSummaryController {
 
   @Get()
   @ApiOkResponse({
+    isArray: true,
+    type: TestSummaryRecordDTO,
     description: 'Retrieves official Test Summary records per filter criteria',
   })
-  @ApiQuery({ style: 'pipeDelimited', name: 'unitId', required: false, explode: false, })
-  @ApiQuery({ style: 'pipeDelimited', name: 'stackPipeId', required: false, explode: false, })
   async getTestSummaries(
+    @Param('locId') locationId: string,
     @Query() params: TestSummaryParamsDTO,
-  ): Promise<TestSummary[]> {
-    return this.service.getTestSummaries(params);
+  ): Promise<TestSummaryRecordDTO[]> {
+    return this.service.getTestSummariesByLocationId(locationId, params);
   }
 
   @Get(':id')
   @ApiOkResponse({
-    description: 'Retrieves an official Test Summary record by its id',
+    type: TestSummaryRecordDTO,
+    description: 'Retrieves official Test Summary record by its id',
   })
   async getTestSummary(
+    @Param('locId') locationId: string,
     @Param('id') testSumId: string,
-  ): Promise<TestSummary> {
-    return this.service.getTestSummary(testSumId);
-  }  
+  ): Promise<TestSummaryRecordDTO> {
+    return this.service.getTestSummaryById(locationId, testSumId);
+  }
 }

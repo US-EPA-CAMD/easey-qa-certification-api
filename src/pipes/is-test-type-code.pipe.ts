@@ -17,12 +17,14 @@ export function IsTestTypeCode(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         async validate(value: any, _args: ValidationArguments) {
-          const manager = getManager();
-
-          const found = await manager.findOne(TestTypeCode, {
-            testTypeCode: value,
-          });
-          return found != null;
+          if (value) {
+            const manager = getManager();
+            const found = await manager.findOne(TestTypeCode, {
+              testTypeCode: value,
+            });
+            return found != null;
+          }
+          return true;
         },
       },
     });
