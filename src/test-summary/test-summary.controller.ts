@@ -34,7 +34,10 @@ export class TestSummaryController {
     @Param('locId') locationId: string,
     @Query() params: TestSummaryParamsDTO,
   ): Promise<TestSummaryRecordDTO[]> {
-    return this.service.getTestSummariesByLocationId(locationId, params);
+    return this.service.getTestSummariesByLocationId(
+      locationId,
+      params.testTypeCode
+    );
   }
 
   @Get(':id')
@@ -43,9 +46,11 @@ export class TestSummaryController {
     description: 'Retrieves official Test Summary record by its id',
   })
   async getTestSummary(
-    @Param('locId') locationId: string,
+    @Param('locId') _locationId: string,
     @Param('id') testSumId: string,
   ): Promise<TestSummaryRecordDTO> {
-    return this.service.getTestSummaryById(locationId, testSumId);
+    return this.service.getTestSummaryById(
+      testSumId
+    );
   }
 }

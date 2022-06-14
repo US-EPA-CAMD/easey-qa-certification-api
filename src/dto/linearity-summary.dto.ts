@@ -32,13 +32,14 @@ export class LinearitySummaryBaseDTO {
 
 export class LinearitySummaryRecordDTO extends LinearitySummaryBaseDTO {
   id: string;
+  testSumId: string;
   calculatedMeanReferenceValue: number;
   calculatedMeanMeasuredValue: number;
   calculatedPercentError: number;
   calculatedAPSIndicator: number;
   userId: string;
-  addDate: Date;
-  updateDate: Date;
+  addDate: string;
+  updateDate: string;
 }
 
 export class LinearitySummaryImportDTO extends LinearitySummaryBaseDTO {

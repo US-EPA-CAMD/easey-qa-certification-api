@@ -1,5 +1,6 @@
+import { In } from 'typeorm';
+
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -12,19 +13,35 @@ import { LinearityInjectionRepository } from './linearity-injection.repository';
 export class LinearityInjectionService {
   constructor(
     private readonly logger: Logger,
-    private readonly configService: ConfigService,
     private readonly map: LinearityInjectionMap,
     @InjectRepository(LinearityInjectionRepository)
     private readonly repository: LinearityInjectionRepository,
   ) {}
 
-  async getLinearityInjections(linSumId: string): Promise<LinearityInjectionDTO[]> {
+  async getInjectionById(
+    id: string
+  ): Promise<LinearityInjectionDTO> {
+    const result = await this.repository.findOne(id);
+    return this.map.one(result);
+  }
+
+  async getInjectionsByLinSumId(
+    linSumId: string
+  ): Promise<LinearityInjectionDTO[]> {
     const results = await this.repository.find({ linSumId });
     return this.map.many(results);
   }
 
-  async getLinearityInjection(id: string): Promise<LinearityInjectionDTO> {
-    const result = await this.repository.findOne(id);
-    return this.map.one(result);
+  async getInjectionsByLinSumIds(
+    linSumIds: string[]
+  ): Promise<LinearityInjectionDTO[]> {
+    const results = await this.repository.find({
+      where: { linSumId: In(linSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(linSumIds: string[]): Promise<LinearityInjectionDTO[]> {
+    return this.getInjectionsByLinSumIds(linSumIds);
   }
 }

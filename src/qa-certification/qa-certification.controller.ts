@@ -29,8 +29,8 @@ export class QACertificationController {
     type: QACertificationDTO,
     description: 'Exports official QA Certification data',
   })
-  @ApiQuery({ style: 'pipeDelimited', name: 'unitId', required: false, explode: false, })
-  @ApiQuery({ style: 'pipeDelimited', name: 'stackPipeId', required: false, explode: false, })
+  @ApiQuery({ style: 'pipeDelimited', name: 'unitIds', required: false, explode: false, })
+  @ApiQuery({ style: 'pipeDelimited', name: 'stackPipeIds', required: false, explode: false, })
   async export(
     @Query() params: QACertificationParamsDTO,
   ): Promise<QACertificationDTO> {

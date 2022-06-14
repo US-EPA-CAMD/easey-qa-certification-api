@@ -34,12 +34,6 @@ export class Plant extends BaseEntity {
   @Column()
   state: string;
 
-  @Column({
-    name: 'epa_region',
-    transformer: new NumericColumnTransformer(),
-  })
-  region: number;
-
   @OneToMany(
     () => Unit,
     unit => unit.plant,

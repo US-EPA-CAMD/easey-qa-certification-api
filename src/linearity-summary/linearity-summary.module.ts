@@ -18,13 +18,13 @@ import { LinearitySummaryMap } from '../maps/linearity-summary.map';
     LinearitySummaryController
   ],
   providers: [
-    LinearitySummaryService,
     LinearitySummaryMap,
+    LinearitySummaryService,
   ],
   exports: [
     TypeOrmModule,
-    LinearitySummaryService,
     LinearitySummaryMap,
+    LinearitySummaryService,
   ],
 })
 export class LinearitySummaryModule {}

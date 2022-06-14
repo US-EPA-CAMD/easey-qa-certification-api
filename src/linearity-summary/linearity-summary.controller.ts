@@ -26,25 +26,25 @@ export class LinearitySummaryController {
   @ApiOkResponse({
     isArray: true,
     type: LinearitySummaryRecordDTO,
-    description: 'Retrieves official Linearity Summary records',
+    description: 'Retrieves official Linearity Summary records by Test Summary Id',
   })
   async getLinearitySummaries(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
   ): Promise<LinearitySummaryRecordDTO[]> {
-    return this.service.getLinearitySummariesByTestSumId(testSumId);
+    return this.service.getSummariesByTestSumId(testSumId);
   }
 
   @Get(':id')
   @ApiOkResponse({
     type: LinearitySummaryRecordDTO,
-    description: 'Retrieves official Linearity Summary record by its id',
+    description: 'Retrieves official Linearity Summary record by its Id',
   })
   async getLinearitySummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('id') id: string,
   ): Promise<LinearitySummaryRecordDTO> {
-    return this.service.getLinearitySummaryById(id);
+    return this.service.getSummaryById(id);
   }  
 }

@@ -4,11 +4,12 @@ import {
   Column,
   PrimaryColumn,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
-import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
-
 import { TestSummary } from './test-summary.entity';
+import { MonitorLocation } from './monitor-location.entity';
 
 @Entity({ name: 'camdecmpswks.component' })
 export class Component extends BaseEntity {
@@ -34,58 +35,17 @@ export class Component extends BaseEntity {
   })
   componentTypeCode: string;
 
-  @Column({ type: 'varchar', length: 7, name: 'acq_cd' })
-  sampleAcquisitionMethodCode: string;
-
-  @Column({ type: 'varchar', length: 7, name: 'basis_cd' })
-  basisCode: string;
-
-  @Column({
-    type: 'varchar',
-    length: 25,
-    name: 'manufacturer',
-  })
-  manufacturer: string;
-
-  @Column({
-    type: 'varchar',
-    length: 15,
-    name: 'model_version',
-  })
-  modelVersion: string;
-
-  @Column({
-    type: 'varchar',
-    length: 20,
-    name: 'serial_number',
-  })
-  serialNumber: string;
-
-  @Column({
-    type: 'numeric',
-    precision: 1,
-    scale: 0,
-    name: 'hg_converter_ind',
-    transformer: new NumericColumnTransformer(),
-  })
-  hgConverterIndicator: number;
-
-  @Column({
-    type: 'varchar',
-    length: 8,
-    name: 'userid',
-  })
-  userId: string;
-
-  @Column({ type: 'date', name: 'add_date' })
-  addDate: Date;
-
-  @Column({ type: 'date', name: 'update_date' })
-  updateDate: Date;
+  @ManyToOne(
+    () => MonitorLocation,
+    ml => ml.systems,
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  location: MonitorLocation;
 
   @OneToMany(
     () => TestSummary,
     ts => ts.component,
   )
+  @JoinColumn({ name: 'mon_loc_id' })
   testSummaries: TestSummary[];
 }

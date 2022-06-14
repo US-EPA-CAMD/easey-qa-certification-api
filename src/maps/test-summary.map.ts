@@ -13,12 +13,19 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
   }
 
   public async one(entity: TestSummary): Promise<TestSummaryDTO> {
+    let evalStatusCode = null;
+
     const linearitySummaries = entity.linearitySummaries
       ? await this.linearityMap.many(entity.linearitySummaries)
       : [];
 
-    const dto = {
+    if (entity['evalStatusCode']) {
+      evalStatusCode = entity['evalStatusCode'];
+    }
+
+    return {
       id: entity.id,
+      locationId: entity.location.id,
       stackPipeId: (entity.location && entity.location.stackPipe)
         ? entity.location.stackPipe.name
         : null,
@@ -26,7 +33,9 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
         ? entity.location.unit.name
         : null,
       testTypeCode: entity.testTypeCode,
-      monitoringSystemId: null,
+      monitoringSystemId: entity.system
+        ? entity.system.monitoringSystemId
+        : null,
       componentId: entity.component
         ? entity.component.componentId
         : null,
@@ -44,21 +53,41 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       endMinute: entity.endMinute,
       gracePeriodIndicator: entity.gracePeriodIndicator,
       calculatedGracePeriodIndicator: entity.calculatedGracePeriodIndicator,
-      year: null,
-      quarter: null,
+      year: entity.reportingPeriod
+        ? entity.reportingPeriod.year
+        : null,
+      quarter: entity.reportingPeriod
+        ? entity.reportingPeriod.quarter
+        : null,
       testComment: entity.testComment,
       injectionProtocolCode: entity.injectionProtocolCode,
       calculatedSpanValue: entity.calculatedSpanValue,
-      evalStatusCode: null,
+      evalStatusCode,
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate
+        ? entity.addDate.toLocaleString()
+        : null,
+      updateDate: entity.updateDate
+        ? entity.updateDate.toLocaleString()
+        : null,
       reportPeriodId: entity.reportPeriodId,
+      calibrationInjectionData: [],
       linearitySummaryData: linearitySummaries,
+      rataData: [],
+      flowToLoadReferenceData: [],
+      flowToLoadCheckData: [],
+      cycleTimeSummaryData: [],
+      onlineOfflineCalibrationData: [],
+      fuelFlowmeterAccuracyData: [],
+      transmitterTransducerData: [],
+      fuelFlowToLoadBaselineData: [],
+      fuelFlowToLoadTestData: [],
+      appECorrelationTestSummaryData: [],
+      unitDefaultTestData: [],
+      hgSummaryData: [],
+      testQualificationData: [],
+      protocolGasData: [],
+      airEmissionTestData: [],
     };
-
-    if (dto.linearitySummaryData.length === 0) delete dto.linearitySummaryData;
-
-    return dto;
   }
 }

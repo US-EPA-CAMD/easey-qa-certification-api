@@ -10,14 +10,19 @@ export class LinearityInjectionMap extends BaseMap<LinearityInjection, Linearity
   public async one(entity: LinearityInjection): Promise<LinearityInjectionDTO> {
     return {
       id: entity.id,
+      linSumId: entity.linSumId,
       injectionDate: entity.injectionDate,
       injectionHour: entity.injectionHour,
       injectionMinute: entity.injectionMinute,
       measuredValue: entity.measuredValue,
       referenceValue: entity.referenceValue,
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate
+        ? entity.addDate.toLocaleString()
+        : null,
+      updateDate: entity.updateDate
+        ? entity.updateDate.toLocaleString()
+        : null,
     };
   }
 }

@@ -16,13 +16,13 @@ import { LinearityInjectionMap } from '../maps/linearity-injection.map';
     LinearityInjectionController
   ],
   providers: [
-    LinearityInjectionService,
     LinearityInjectionMap,
+    LinearityInjectionService,
   ],
   exports: [
     TypeOrmModule,
-    LinearityInjectionService,
     LinearityInjectionMap,
+    LinearityInjectionService,
   ],
 })
 export class LinearityInjectionModule {}

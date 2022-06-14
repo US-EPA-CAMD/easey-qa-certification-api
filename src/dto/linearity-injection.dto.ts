@@ -31,9 +31,10 @@ export class LinearityInjectionBaseDTO {
 
 export class LinearityInjectionRecordDTO extends LinearityInjectionBaseDTO {
   id: string;
+  linSumId: string;
   userId: string;
-  addDate: Date;
-  updateDate: Date;
+  addDate: string;
+  updateDate: string;
 }
 
 export class LinearityInjectionImportDTO extends LinearityInjectionBaseDTO {

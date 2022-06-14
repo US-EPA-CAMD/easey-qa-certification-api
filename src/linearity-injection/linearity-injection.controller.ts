@@ -26,27 +26,27 @@ export class LinearityInjectionController {
   @ApiOkResponse({
     isArray: true,
     type: LinearityInjectionRecordDTO,
-    description: 'Retrieves official Linearity Injection records',
+    description: 'Retrieves official Linearity Injection records by Linearity Summary Id',
   })
-  async getLinearityInjections(
+  async getInjections(
     @Param('locId') _locationId: string,
-    @Param('testSumId') testSumId: string,
-    @Param('linSumId') _linSumId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('linSumId') linSumId: string,
   ): Promise<LinearityInjectionRecordDTO[]> {
-    return this.service.getLinearityInjections(testSumId);
+    return this.service.getInjectionsByLinSumId(linSumId);
   }
 
   @Get(':id')
   @ApiOkResponse({
     type: LinearityInjectionRecordDTO,    
-    description: 'Retrieves official Linearity Injection record by its id',
+    description: 'Retrieves official Linearity Injection record by its Id',
   })
-  async getLinearityInjection(
+  async getInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('linSumId') _linSumId: string,
     @Param('id') id: string,
   ): Promise<LinearityInjectionRecordDTO> {
-    return this.service.getLinearityInjection(id);
+    return this.service.getInjectionById(id);
   }  
 }

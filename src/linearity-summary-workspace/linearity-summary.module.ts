@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { TestSummaryWorkspaceModule } from './../test-summary-workspace/test-summary.module';
 import { LinearityInjectionWorkspaceModule } from '../linearity-injection-workspace/linearity-injection.module';
 import { LinearitySummaryWorkspaceController } from './linearity-summary.controller';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
@@ -12,19 +13,20 @@ import { LinearitySummaryMap } from '../maps/linearity-summary.map';
     TypeOrmModule.forFeature([
       LinearitySummaryWorkspaceRepository,
     ]),
-    LinearityInjectionWorkspaceModule,
+    forwardRef(() => TestSummaryWorkspaceModule),
+    forwardRef(() => LinearityInjectionWorkspaceModule),
   ],
   controllers: [
     LinearitySummaryWorkspaceController
   ],
   providers: [
-    LinearitySummaryWorkspaceService,
     LinearitySummaryMap,
+    LinearitySummaryWorkspaceService,
   ],
   exports: [
     TypeOrmModule,
-    LinearitySummaryWorkspaceService,
     LinearitySummaryMap,
+    LinearitySummaryWorkspaceService,
   ],
 })
 export class LinearitySummaryWorkspaceModule {}

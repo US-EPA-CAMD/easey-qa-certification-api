@@ -11,6 +11,8 @@ import {
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
 import { Component } from './component.entity';
+import { MonitorSystem } from './monitor-system.entity';
+import { ReportingPeriod } from './reporting-period.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { LinearitySummary } from './linearity-summary.entity';
 
@@ -143,20 +145,15 @@ export class TestSummary extends BaseEntity {
   @Column({ name: 'needs_eval_flg' })
   needsEvalFlag: string;
 
-  //@Column({ name: 'eval_status_cd' })
-  //evalStatusCode: string;
-
   @Column({ name: 'userid' })
   userId: string;
 
   @Column({
-    type: 'date',
     name: 'add_date'
   })
   addDate: Date;
 
   @Column({
-    type: 'date',
     name: 'update_date'
   })
   updateDate: Date;
@@ -185,10 +182,24 @@ export class TestSummary extends BaseEntity {
   @JoinColumn({ name: 'component_id' })
   component: Component;
 
+  @ManyToOne(
+    () => MonitorSystem,
+    ms => ms.testSummaries,
+  )
+  @JoinColumn({ name: 'mon_sys_id' })
+  system: MonitorSystem;
+
   @OneToMany(
     () => LinearitySummary,
     ls => ls.testSummary,
   )
   @JoinColumn({ name: 'test_sum_id' })
   linearitySummaries: LinearitySummary[];
+
+  @ManyToOne(
+    () => ReportingPeriod,
+    rp => rp.testSummaries,
+  )
+  @JoinColumn({ name: 'rpt_period_id' })
+  reportingPeriod: ReportingPeriod;
 }

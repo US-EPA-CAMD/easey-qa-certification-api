@@ -4,6 +4,7 @@ import {
   Post,
   Query,
   Controller,
+  UseInterceptors,
 } from '@nestjs/common';
 
 import {
@@ -21,6 +22,7 @@ import {
 
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { QACertificationWorkspaceService } from './qa-certification.service';
+import { FormatValidationErrorsInterceptor } from '../interceptors/format-validation-errors.interceptor';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -36,8 +38,8 @@ export class QACertificationWorkspaceController {
     type: QACertificationDTO,
     description: 'Exports worksapce QA Certification data',
   })
-  @ApiQuery({ style: 'pipeDelimited', name: 'unitId', required: false, explode: false, })
-  @ApiQuery({ style: 'pipeDelimited', name: 'stackPipeId', required: false, explode: false, })
+  @ApiQuery({ style: 'pipeDelimited', name: 'unitIds', required: false, explode: false, })
+  @ApiQuery({ style: 'pipeDelimited', name: 'stackPipeIds', required: false, explode: false, })
   async export(
     @Query() params: QACertificationParamsDTO,
   ): Promise<QACertificationDTO> {
@@ -51,9 +53,10 @@ export class QACertificationWorkspaceController {
     type: QACertificationDTO,
     description: 'Imports QA Certification data from JSON file into the workspace',
   })
+  @UseInterceptors(FormatValidationErrorsInterceptor)
   async import(
-    @Body() _payload: QACertificationImportDTO,
+    @Body() payload: QACertificationImportDTO,
   ) {
-    return;
+    return this.service.import(payload);
   }
 }

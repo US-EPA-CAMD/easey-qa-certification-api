@@ -1,8 +1,10 @@
 import {
   Get,
+  Put,
   Post,
   Body,
   Query,
+  Delete,
   Controller,
   Param,
 } from '@nestjs/common';
@@ -10,10 +12,18 @@ import {
 import {
   ApiTags,
   ApiOkResponse,
+  ApiCreatedResponse,
   ApiSecurity,
 } from '@nestjs/swagger';
 
-import { TestSummaryBaseDTO, TestSummaryRecordDTO } from '../dto/test-summary.dto';
+//import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+//import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+
+import {
+  TestSummaryBaseDTO,
+  TestSummaryRecordDTO
+} from '../dto/test-summary.dto';
+
 import { TestSummaryParamsDTO } from '../dto/test-summary-params.dto';
 import { TestSummaryWorkspaceService } from './test-summary.service';
 
@@ -36,7 +46,10 @@ export class TestSummaryWorkspaceController {
     @Param('locId') locationId: string,
     @Query() params: TestSummaryParamsDTO,
   ): Promise<TestSummaryRecordDTO[]> {
-    return this.service.getTestSummariesByLocationId(locationId, params);
+    return this.service.getTestSummariesByLocationId(
+      locationId,
+      params.testTypeCode,
+    );
   }
 
   @Get(':id')
@@ -45,21 +58,55 @@ export class TestSummaryWorkspaceController {
     description: 'Retrieves workspace Test Summary record by its id',
   })
   async getTestSummary(
-    @Param('locId') locationId: string,
-    @Param('id') testSumId: string,
+    @Param('locId') _locationId: string,
+    @Param('id') id: string,
   ): Promise<TestSummaryRecordDTO> {
-    return this.service.getTestSummaryById(locationId, testSumId);
+    return this.service.getTestSummaryById(id);
   }
 
   @Post()
-  @ApiOkResponse({
+//  @ApiBearerAuth('Token')
+//  @UseGuards(AuthGuard)
+  @ApiCreatedResponse({
     type: TestSummaryRecordDTO,
     description: 'Creates a Test Summary record in the workspace',
   })
   async createTestSummary(
     @Param('locId') locationId: string,
     @Body() payload: TestSummaryBaseDTO,
+//    @CurrentUser() userId: string,
   ): Promise<TestSummaryRecordDTO> {
-    return this.service.createTestSummary(locationId, payload);
+    const userId = 'testUser';
+    return this.service.createTestSummary(locationId, payload, userId);
+  }
+
+  @Put(':id')
+//  @ApiBearerAuth('Token')
+//  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: TestSummaryRecordDTO,
+    description: 'Updates a Test Summary record in the workspace',
+  })
+  async updateTestSummary(
+    @Param('locId') locationId: string,
+    @Param('id') id: string,    
+    @Body() payload: TestSummaryBaseDTO,
+//    @CurrentUser() userId: string,
+  ): Promise<TestSummaryRecordDTO> {
+    const userId = 'testUser';
+    return this.service.updateTestSummary(locationId, id, payload, userId);
+  }
+
+  @Delete(':id')
+//  @ApiBearerAuth('Token')
+//  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    description: 'Deletes a Test Summary record from the workspace',
+  })
+  async deleteTestSummary(
+    @Param('locId') _locationId: string,
+    @Param('id') id: string,
+  ): Promise<void> {
+    return this.service.deleteTestSummary(id);
   }
 }

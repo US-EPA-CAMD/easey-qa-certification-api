@@ -1,4 +1,3 @@
-import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
@@ -11,9 +10,7 @@ export class TestSummaryParamsDTO {
     description: 'Test Type Code. ADD TO PROPERTY METADATA',
   })
   @IsValidCode(TestTypeCode, {
-    each: true,
     message: 'Invalid Test Type Code',
   })
-  @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
-  testTypeCode?: string[];
+  testTypeCode?: string;
 }

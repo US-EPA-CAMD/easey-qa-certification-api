@@ -8,10 +8,13 @@ export class TestSummaryRepository extends Repository<TestSummary> {
   private buildTestSummaryBaseQuery() {
     return this.createQueryBuilder('ts')
       .innerJoinAndSelect('ts.location', 'ml')
+      .leftJoinAndSelect('ts.system', 'ms')
       .leftJoinAndSelect('ts.component', 'c')
+      .leftJoinAndSelect('ts.reportingPeriod', 'rp')
       .leftJoinAndSelect('ml.unit', 'u')
+      .leftJoin('u.plant', 'up')
       .leftJoinAndSelect('ml.stackPipe', 'sp')
-      .innerJoin('u.plant', 'p', 'p.id = u.facId OR p.id = sp.facId');
+      .leftJoin('sp.plant', 'spp');
   }
 
   async getTestSummaryById(
@@ -24,13 +27,13 @@ export class TestSummaryRepository extends Repository<TestSummary> {
 
   async getTestSummariesByLocationId(
     locationId: string,
-    testTypeCodes?: string[]
+    testTypeCode?: string
   ): Promise<TestSummary[]> {
     const query = this.buildTestSummaryBaseQuery()
       .where('ts.locationId = :locationId', { locationId });
 
-    if (testTypeCodes) {
-      query.andWhere('ts.testTypeCode IN (:...testTypeCodes)', { testTypeCodes });
+    if (testTypeCode) {
+      query.andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode });
     }
  
     return query.getMany();
@@ -40,25 +43,28 @@ export class TestSummaryRepository extends Repository<TestSummary> {
     facilityId: number,
     unitIds?: string[],
     stackPipeIds?: string[],
-    testTypeCodes?: string[],
+    testTypeCode?: string,
   ): Promise<TestSummary[]> {
+    let unitsWhere = unitIds && unitIds.length > 0
+      ? 'up.orisCode = :facilityId AND u.name IN (:...unitIds)'
+      : '';
+
+    let stacksWhere = stackPipeIds && stackPipeIds.length > 0
+      ? 'spp.orisCode = :facilityId AND sp.name IN (:...stackPipeIds)'
+      : '';
+
+    if (unitIds && unitIds.length > 0 && stackPipeIds && stackPipeIds.length > 0) {
+      unitsWhere = `(${unitsWhere})`;
+      stacksWhere = ` OR (${stacksWhere})`;
+    }
+
     const query = this.buildTestSummaryBaseQuery()
-      .where('p.orisCode = :facilityId', { facilityId });
+      .where(`${unitsWhere}${stacksWhere}`, { facilityId, unitIds, stackPipeIds });
 
-    if (unitIds) {
-      query
-        .andWhere('u.name IN (:...unitIds)', { unitIds })
+    if (testTypeCode) {
+      query.andWhere('ts.testTypeCode = :testTypeCode)', { testTypeCode });
     }
 
-    if (stackPipeIds) {
-      query
-        .andWhere('sp.name IN (:...stackPipeIds)', { stackPipeIds })
-    }
-
-    if (testTypeCodes) {
-      query.andWhere('ts.testTypeCode IN (:...testTypeCodes)', { testTypeCodes });
-    }
- 
     return query.getMany();
   }
 }

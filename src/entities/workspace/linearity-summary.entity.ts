@@ -80,13 +80,11 @@ export class LinearitySummary extends BaseEntity {
   userId: string;
 
   @Column({
-    type: 'date',
     name: 'add_date'
   })
   addDate: Date;
 
   @Column({
-    type: 'date',
     name: 'update_date'
   })
   updateDate: Date;

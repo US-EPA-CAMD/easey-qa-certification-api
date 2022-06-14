@@ -8,8 +8,10 @@ import {
 } from 'typeorm';
 
 import { Unit } from './unit.entity';
+import { Component } from './component.entity';
 import { StackPipe } from './stack-pipe.entity';
 import { TestSummary } from './test-summary.entity';
+import { MonitorSystem } from './monitor-system.entity';
 
 @Entity({ name: 'camdecmps.monitor_location' })
 export class MonitorLocation extends BaseEntity {
@@ -33,6 +35,20 @@ export class MonitorLocation extends BaseEntity {
   )
   @JoinColumn({ name: 'unit_id' })
   unit: Unit;
+
+  @OneToMany(
+    () => Component,
+    c => c.location
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  components: Component[];
+
+  @OneToMany(
+    () => MonitorSystem,
+    ms => ms.location
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  systems: MonitorSystem[];  
 
   @OneToMany(
     () => TestSummary,

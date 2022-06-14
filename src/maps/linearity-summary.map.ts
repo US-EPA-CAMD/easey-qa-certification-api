@@ -19,6 +19,7 @@ export class LinearitySummaryMap extends BaseMap<LinearitySummary, LinearitySumm
 
     return {
       id: entity.id,
+      testSumId: entity.testSumId,
       gasLevelCode: entity.gasLevelCode,
       meanMeasuredValue: entity.meanMeasuredValue,
       calculatedMeanMeasuredValue: entity.calculatedMeanMeasuredValue,
@@ -29,8 +30,12 @@ export class LinearitySummaryMap extends BaseMap<LinearitySummary, LinearitySumm
       apsIndicator: entity.apsIndicator,
       calculatedAPSIndicator: entity.calculatedAPSIndicator,
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate
+        ? entity.addDate.toLocaleString()
+        : null,
+      updateDate: entity.updateDate
+        ? entity.updateDate.toLocaleString()
+        : null,
       linearityInjectionData: injections,
     };
   }
