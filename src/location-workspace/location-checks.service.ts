@@ -1,4 +1,3 @@
-import { getManager } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -8,7 +7,7 @@ import { LocationWorkspaceRepository } from './location.repository';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 
 @Injectable()
-export class LocationWorkspaceService {
+export class LocationChecksService {
   
   constructor(
     private readonly logger: Logger,
@@ -16,14 +15,13 @@ export class LocationWorkspaceService {
     private readonly repository: LocationWorkspaceRepository,
   ) {}
 
-  async importChecks(
+  async runChecks(
     orisCode: number,
     locations: LocationIdentifiers[],
   ): Promise<string[]> {
-    this.logger.info('Running Location related import checks');
+    this.logger.info('Running Unit/Stack Location Checks');
 
     let errorList = [];
-    const mgr = getManager();
     const stackPipePrefixes = ['CS','MS','CP','MP'];
 
     const dbLocations = await this.repository.getLocationsByUnitStackPipeIds(
@@ -43,25 +41,27 @@ export class LocationWorkspaceService {
       if (location.unitId) {
         unitStack = `Unit [${location.unitId}]`;
 
+        // IMPORT-13 All Unit Locations Present in the Production Database
         if (location.unitId.length >= 2 &&
             stackPipePrefixes.includes(location.unitId.substring(0,2))
         ) {
           errorList.push(
-            `[IMPORT-13] The following Stack/Pipe was misidentified as a unit [${location.unitId}]`
+            `The following Stack/Pipe was misidentified as a unit [${location.unitId}]`
           );
         } else if (!dbLocation) {
           errorList.push(
-            `[IMPORT-13] The database does not contain Unit [${location.unitId}] for Facility [${orisCode}]`
+            `The database does not contain Unit [${location.unitId}] for Facility [${orisCode}]`
           );
         }
       }
 
+      // IMPORT-13 All Stack/Pipe Locations Present in the Production Database
       if (location.stackPipeId) {
         unitStack = `Stack/Pipe [${location.stackPipeId}]`;
 
         if (!dbLocation) {
           errorList.push(
-            `[IMPORT-13] The database does not contain Stack/Pipe [${location.stackPipeId}] for Facility [${orisCode}]`
+            `The database does not contain Stack/Pipe [${location.stackPipeId}] for Facility [${orisCode}]`
           );
         }
       }
@@ -70,18 +70,20 @@ export class LocationWorkspaceService {
         const dbSystemIds = dbLocation.systems.map(i => i.monitoringSystemId);
         const dbComponentIds = dbLocation.components.map(i => i.componentId);
 
+        // IMPORT-14 All QA Systems Present in the Production Database
         location.systemIds.forEach(systemId => {
           if (!dbSystemIds.includes(systemId)) {
             errorList.push(
-              `[IMPORT-14] The database does not contain System [${systemId}] for ${unitStack} and Facility [${orisCode}]`
+              `The database does not contain System [${systemId}] for ${unitStack} and Facility [${orisCode}]`
             );
           }
         });
 
+        // IMPORT-15 All QA Components Present in the Production Database
         location.componentIds.forEach(componentId => {
           if (!dbComponentIds.includes(componentId)) {
             errorList.push(
-              `[IMPORT-15] The database does not contain Component [${componentId}] for ${unitStack} and Facility [${orisCode}]`
+              `The database does not contain Component [${componentId}] for ${unitStack} and Facility [${orisCode}]`
             );
           }
         });

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { LocationWorkspaceService } from './location.service';
+import { LocationChecksService } from './location-checks.service';
 import { LocationWorkspaceRepository } from './location.repository';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 
@@ -13,10 +13,10 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
     TestSummaryWorkspaceModule,
   ],
   controllers: [],
-  providers: [LocationWorkspaceService],
+  providers: [LocationChecksService],
   exports: [
     TypeOrmModule,
-    LocationWorkspaceService
+    LocationChecksService,
   ],
 })
 export class LocationWorkspaceModule {}

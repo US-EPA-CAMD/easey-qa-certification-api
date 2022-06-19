@@ -1,17 +1,18 @@
-import { ValidationArguments } from 'class-validator';
+import { ValidateIf, ValidationArguments, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 import {
   IsInRange,
   IsValidDate, 
   IsIsoFormat,
-  IsInDateRange,
 } from '@us-epa-camd/easey-common/pipes';
 
 import {
   ErrorMessages,
   propertyMetadata,
 } from '@us-epa-camd/easey-common/constants';
+
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 import { RataDTO, RataImportDTO } from './rata.dto';
 import { HgSummaryDTO, HgSummaryImportDTO } from './hg-summary.dto';
@@ -33,11 +34,36 @@ import { AppECorrelationTestSummaryDTO, AppECorrelationTestSummaryImportDTO } fr
 
 import { RequireOne } from '../pipes/require-one.pipe';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
+import { IsInDateRange } from '../pipes/is-in-date-range';
 import { TestTypeCode } from '../entities/test-type-code.entity';
 import { SpanScaleCode } from '../entities/span-scale-code.entity';
 import { TestReasonCode } from '../entities/test-reason-code.entity';
 import { TestResultCode } from '../entities/test-result-code.entity';
 import { InjectionProtocolCode } from '../entities/injection-protocol-code.entity';
+
+const MIN_DATE = '1993-01-01';
+const DATE_FORMAT = 'YYYY-MM-DD';
+const BEGIN_DATE_TEST_TYPE_CODES = [
+  TestTypeCodes.APPE,
+  TestTypeCodes.RATA,
+  TestTypeCodes.LINE,
+  TestTypeCodes.CYCLE,
+  TestTypeCodes.ONOFF,
+  TestTypeCodes.FF2LBAS,
+  TestTypeCodes.UNITDEF,
+  TestTypeCodes.SEVENDAY,
+];
+
+const formatTestSummaryValidationError = (
+  args: ValidationArguments,
+  message: string,
+): string => {
+  return `${message} for Test Summary record with Unit/Stack [${
+    (args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']
+  }], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${
+    (args.object)['testNumber']
+  }]`;
+}
 
 export class TestSummaryBaseDTO {
   @ApiProperty({
@@ -57,13 +83,15 @@ export class TestSummaryBaseDTO {
     description: 'Test Type Code. ADD TO PROPERTY METADATA',
   })
   @IsValidCode(TestTypeCode, {
-    message: 'Invalid Test Type Code',
+    message: (args: ValidationArguments) => {
+      return `You reported an invalid Test Type Code of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
+    }
   })
   testTypeCode: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOId.description,
-  })  
+  })
   monitoringSystemId?: string;
 
   @ApiProperty({
@@ -75,7 +103,9 @@ export class TestSummaryBaseDTO {
     description: propertyMetadata.monitorSpanDTOSpanScaleCode.description,
   })
   @IsValidCode(SpanScaleCode, {
-    message: 'Invalid Span Scale Code',
+    message: (args: ValidationArguments) => {
+      return `You reported an invalid Span Scale Code of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
+    }
   })
   spanScaleCode?: string;
 
@@ -88,7 +118,9 @@ export class TestSummaryBaseDTO {
     description: 'Test Reason Code. ADD TO PROPERTY METADATA',
   })
   @IsValidCode(TestReasonCode, {
-    message: 'Invalid Test Reason Code',
+    message: (args: ValidationArguments) => {
+      return `You reported an invalid Test Reason Code of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
+    }
   })
   testReasonCode?: string;
 
@@ -101,39 +133,91 @@ export class TestSummaryBaseDTO {
     description: 'Test Result Code. ADD TO PROPERTY METADATA',
   })
   @IsValidCode(TestResultCode, {
-    message: 'Invalid Test Result Code',
+    message: (args: ValidationArguments) => {
+      return `You reported an invalid Test Result Code of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
+    }
   })
   testResultCode?: string;
 
   @ApiProperty({
     description: propertyMetadata.beginDate.description,
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return formatTestSummaryValidationError(
+        args, 'Begin Date is required'
+      );
+    }
+  })
   @IsValidDate({
-    message: ErrorMessages.DateValidity(),
+    message: (args: ValidationArguments) => {
+      return formatTestSummaryValidationError(
+        args, `Begin Date must be a valid date in the format of ${
+          DATE_FORMAT
+        }. You reported an invalid date of [${
+          args.value
+        }]`
+      );
+    }
   })
   @IsIsoFormat({
-    message: ErrorMessages.SingleFormat('beginDate', 'YYYY-MM-DD format'),
+    message: (args: ValidationArguments) => {
+      return formatTestSummaryValidationError(
+        args, `Begin Date must be a valid date in the format of ${
+          DATE_FORMAT
+        }. You reported an improperly formatted date of [${
+          args.value
+        }]`
+      );
+    }
   })
-  // @IsInDateRange([new Date('1993-01-01'), 'currentDate'], false, true, false, {
-  //   message: (args: ValidationArguments) => {
-  //     return `BeginDate must be greater than or equal to 1993 and less than or equal to current quarter in ${new Date().getFullYear()}. You reported an invalid year of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
-  //   }
-  // })
+  @IsInDateRange('1993-01-01', null, {
+    message: (args: ValidationArguments) => {
+      return formatTestSummaryValidationError(
+        args, `Begin Date must be greater than or equal to ${
+          MIN_DATE
+        } and less than or equal to the current date. You reported an invalid date of [${
+          args.value
+        }]`
+      );
+    }
+  })
+  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginDate?: Date;
 
   @ApiProperty({
     description: 'Begin Hour. ADD TO PROPERTY METADATA',
   })
-  @IsInRange(0, 23, {
-    message: 'beginHour must be a numeric number from 0 to 23'
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return formatTestSummaryValidationError(
+        args, 'Begin Hour is required'
+      );
+    }
   })
+  @IsInRange(0, 23, {
+    message: (args: ValidationArguments) => {
+      return formatTestSummaryValidationError(
+        args, `Begin Hour must be a numeric number from 0 to 23${
+          ''
+        }. You reported an invalid hour of [${args.value}]`
+      );
+    }
+  })
+  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))  
   beginHour?: number;
 
   @ApiProperty({
     description: 'Begin Minute. ADD TO PROPERTY METADATA',
   })
   @IsInRange(0, 59, {
-    message: 'beginMinute must be a numeric number from 0 to 59'
+    message: (args: ValidationArguments) => {
+      return formatTestSummaryValidationError(
+        args, `Begin Minute must be a numeric number from 0 to 59${
+          ''
+        }. You reported an invalid minute of [${args.value}]`
+      );
+    }
   })
   beginMinute?: number;
 
@@ -146,18 +230,20 @@ export class TestSummaryBaseDTO {
   @IsIsoFormat({
     message: ErrorMessages.SingleFormat('endDate', 'YYYY-MM-DD format'),
   })
-  // @IsInDateRange([new Date('1993-01-01'), 'currentDate'], false, true, false, {
-  //   message: (args: ValidationArguments) => {
-  //     return `EndDate must be greater than or equal to 1993 and less than or equal to current quarter in ${new Date().getFullYear()}. You reported an invalid year of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
-  //   }
-  // })
+  @IsInDateRange('1993-01-01', null, {
+    message: (args: ValidationArguments) => {
+      return `End Date must be greater than or equal to 1993-01-01 and less than or equal to the current date. You reported an invalid date of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
+    }
+  })
   endDate?: Date;
 
   @ApiProperty({
     description: 'End Hour. ADD TO PROPERTY METADATA',
   })
   @IsInRange(0, 23, {
-    message: 'endHour must be a numeric number from 0 to 23'
+    message: (args: ValidationArguments) => {
+      return `End Hour must be a numeric number from 0 to 23. You reported an invalid hour of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
+    }
   })
   endHour?: number;
 
@@ -165,7 +251,9 @@ export class TestSummaryBaseDTO {
     description: 'End Minute. ADD TO PROPERTY METADATA',
   })
   @IsInRange(0, 59, {
-    message: 'endMinute must be a numeric number from 0 to 59'
+    message: (args: ValidationArguments) => {
+      return `End Minute must be a numeric number from 0 to 59. You reported an invalid minute of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
+    }
   })
   endMinute?: number;
 
@@ -173,7 +261,9 @@ export class TestSummaryBaseDTO {
     description: 'Grace Period Indicator. ADD TO PROPERTY METADATA',
   })
   @IsInRange(0, 1, {
-    message: 'gracePeriodIndicator must be a numeric number from 0 to 1'
+    message: (args: ValidationArguments) => {
+      return `Grace Period Indicator must be a numeric number from 0 to 1. You reported an invalid value of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
+    }
   })
   gracePeriodIndicator?: number;
 
@@ -191,7 +281,9 @@ export class TestSummaryBaseDTO {
     description: propertyMetadata.quarter.description,
   })
   @IsInRange(1, 4, {
-    message: 'quarter must be a numeric number from 1 to 4'
+    message: (args: ValidationArguments) => {
+      return `Quarter must be a numeric number from 1 to 4. You reported an invalid quarter of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
+    }
   })
   quarter?: number;
 
@@ -204,7 +296,9 @@ export class TestSummaryBaseDTO {
     description: 'Injection Protocol Code. ADD TO PROPERTY METADATA',
   })
   @IsValidCode(InjectionProtocolCode, {
-    message: 'Invalid Injection Protocol Code',
+    message: (args: ValidationArguments) => {
+      return `You reported an invalid Injection Protocol Code of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
+    }
   })
   injectionProtocolCode?: string;
 }

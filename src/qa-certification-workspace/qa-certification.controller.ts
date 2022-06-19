@@ -22,6 +22,7 @@ import {
 
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { QACertificationWorkspaceService } from './qa-certification.service';
+import { QACertificationChecksService } from './qa-certification-checks.service';
 import { FormatValidationErrorsInterceptor } from '../interceptors/format-validation-errors.interceptor';
 
 @Controller()
@@ -30,7 +31,8 @@ import { FormatValidationErrorsInterceptor } from '../interceptors/format-valida
 export class QACertificationWorkspaceController {
   
   constructor(
-    private readonly service: QACertificationWorkspaceService
+    private readonly service: QACertificationWorkspaceService,
+    private readonly checksService: QACertificationChecksService,
   ) {}
 
   @Get('export')
@@ -57,6 +59,7 @@ export class QACertificationWorkspaceController {
   async import(
     @Body() payload: QACertificationImportDTO,
   ) {
+    await this.checksService.runChecks(payload);
     return this.service.import(payload);
   }
 }

@@ -21,7 +21,6 @@ import {
 
 import { currentDateTime } from '../utilities/functions';
 import { TestSummaryMap } from '../maps/test-summary.map';
-import { TestTypeCodes } from './../enums/test-type-code.enum';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { LinearitySummaryWorkspaceService } from '../linearity-summary-workspace/linearity-summary.service';
 import { Component } from './../entities/workspace/component.entity';
@@ -104,7 +103,7 @@ export class TestSummaryWorkspaceService {
     return summaries;
   }
 
-  async import() {
+  async import(payload: TestSummaryImportDTO) {
     const isImport = true;
   }
 
@@ -207,130 +206,6 @@ export class TestSummaryWorkspaceService {
 
       await this.repository.save(entity);
     }
-  }
-
-  async importChecks(summaries: TestSummaryImportDTO[]) {
-    this.logger.info('Running Test Summary related import checks');
-
-    let errorList = [];
-
-    summaries.forEach(summary => {
-      const invalidChildRecords = [];
-
-      if (summary.testTypeCode !== TestTypeCodes.RATA) {
-        if (summary.rataData && summary.rataData.length > 0) {
-          invalidChildRecords.push('RATA');
-        }
-        if (summary.testQualificationData && summary.testQualificationData.length > 0) {
-         invalidChildRecords.push('Test Qualification');
-        }
-      }
-
-      if (summary.testTypeCode !== TestTypeCodes.SEVENDAY) {
-        if (summary.calibrationInjectionData && summary.calibrationInjectionData.length > 0) {
-          invalidChildRecords.push('Calibration Injection');
-        }
-      }
-
-      if (summary.testTypeCode !== TestTypeCodes.LINE) {
-        if (summary.linearitySummaryData && summary.linearitySummaryData.length > 0) {
-          invalidChildRecords.push('Linearity Summary');
-        }
-      }
-
-      if (summary.testTypeCode !== TestTypeCodes.HGLINE && summary.testTypeCode !== TestTypeCodes.HGSI3) {
-        if (summary.hgSummaryData && summary.hgSummaryData.length > 0) {
-          invalidChildRecords.push('Hg Linearity or System Integrity Summary');
-        }
-      }
-
-      if (summary.testTypeCode !== TestTypeCodes.F2LREF) {
-        if (summary.flowToLoadReferenceData && summary.flowToLoadReferenceData.length > 0) {
-          invalidChildRecords.push('Flow to Load Reference');
-        }
-      }
-
-      if (summary.testTypeCode !== TestTypeCodes.F2LCHK) {
-        if (summary.flowToLoadCheckData && summary.flowToLoadCheckData.length > 0) {
-          invalidChildRecords.push('Flow to Load Check');
-        }
-      }
-
-      if (summary.testTypeCode !== TestTypeCodes.CYCLE) {
-        if (summary.cycleTimeSummaryData && summary.cycleTimeSummaryData.length > 0) {
-          invalidChildRecords.push('Cycle Time Summary');
-        }
-      }
-
-      if (summary.testTypeCode !== TestTypeCodes.ONOFF) {
-        if (summary.onlineOfflineCalibrationData && summary.onlineOfflineCalibrationData.length > 0) {
-          invalidChildRecords.push('Online Offline Calibration');
-        }
-      }
-
-      if (summary.testTypeCode !== TestTypeCodes.FFACC) {
-        if (summary.fuelFlowmeterAccuracyData && summary.fuelFlowmeterAccuracyData.length > 0) {
-          invalidChildRecords.push('Fuel Flowmeter Accuracy');
-        }
-      }
-
-      if (summary.testTypeCode !== TestTypeCodes.FFACCTT) {
-        if (summary.transmitterTransducerData && summary.transmitterTransducerData.length > 0) {
-          invalidChildRecords.push('Transmitter Transducer');
-        }
-      }
-
-      if (summary.testTypeCode !== TestTypeCodes.FF2LBAS) {
-        if (summary.fuelFlowToLoadBaselineData && summary.fuelFlowToLoadBaselineData.length > 0) {
-          invalidChildRecords.push('Fuel Flow to Load Baseline');
-        }
-      }
-
-      if (summary.testTypeCode !== TestTypeCodes.FF2LTST) {
-        if (summary.fuelFlowToLoadTestData && summary.fuelFlowToLoadTestData.length > 0) {
-          invalidChildRecords.push('Fuel Flow to Load Test');
-        }
-      }
-
-      if (summary.testTypeCode !== TestTypeCodes.APPE) {
-        if (summary.appECorrelationTestSummaryData && summary.appECorrelationTestSummaryData.length > 0) {
-          invalidChildRecords.push('Appendix E Correlation Test Summary');
-        }
-      }
-
-      if (summary.testTypeCode !== TestTypeCodes.UNITDEF) {
-        if (summary.unitDefaultTestData && summary.unitDefaultTestData.length > 0) {
-          invalidChildRecords.push('Unit Default Test');
-        }
-      }
-
-      if (summary.testTypeCode !== TestTypeCodes.RATA &&
-          summary.testTypeCode !== TestTypeCodes.LINE &&
-          summary.testTypeCode !== TestTypeCodes.APPE &&
-          summary.testTypeCode !== TestTypeCodes.UNITDEF
-      ) {
-        if (summary.protocolGasData && summary.protocolGasData.length > 0) {
-          invalidChildRecords.push('Protocol Gas');
-        }
-      }
-
-      if (summary.testTypeCode !== TestTypeCodes.RATA &&
-        summary.testTypeCode !== TestTypeCodes.APPE &&
-        summary.testTypeCode !== TestTypeCodes.UNITDEF
-      ) {
-        if (summary.airEmissionTestData && summary.airEmissionTestData.length > 0) {
-          invalidChildRecords.push('Air Emission Test');
-        }
-      }
-
-      if (invalidChildRecords.length > 0) {
-        errorList.push(
-          `[IMPORT-16] You have reported [${invalidChildRecords}] records for Test Summary record [${summary.testNumber}] with a Test Type Code of [${summary.testTypeCode}].`
-        );
-      }
-    });
-
-    return errorList;
   }
 
   private async lookupValues(

@@ -4,27 +4,43 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { QACertificationImportDTO } from '../dto/qa-certification.dto';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
-import { LocationWorkspaceService } from '../location-workspace/location.service';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { LocationChecksService } from '../location-workspace/location-checks.service';
+import { TestSummaryChecksService } from '../test-summary-workspace/test-summary-checks.service';
 
 @Injectable()
-export class ImportChecksService {
+export class QACertificationChecksService {
+
   constructor(
     private readonly logger: Logger,
-    private readonly locationService: LocationWorkspaceService,
-    private readonly testSummaryService: TestSummaryWorkspaceService,
+    private readonly locationChecksService: LocationChecksService,
+    private readonly testSummaryChecksService: TestSummaryChecksService,
   ) {}
 
-  private checkIfThrows(errorList: string[]) {
+  private async extractErrors(
+    promises: Promise<string[]>[]
+  ): Promise<string[]> {
+    const errorList: string[] = [];
+    const errors = await Promise.all(promises);
+    errors.forEach(p => {
+      errorList.push(...p);
+    });
+    return errorList;
+  }
+
+  private throwIfErrors(errorList: string[]) {
     if (errorList.length > 0) {
       this.logger.error(BadRequestException, errorList, true);
     }
   }
 
-  public async importChecks(payload: QACertificationImportDTO) {
-    this.logger.info('Running all import checks');
+  async runChecks(
+    payload: QACertificationImportDTO
+  ): Promise<string[]> {
+    this.logger.info('Running QA Certification Checks');
+
+    const errorList: string[] = [];
+    const promises: Promise<string[]>[] = [];    
     const locations: LocationIdentifiers[] = [];
-    let errorList: string[] = [];
 
     const addLocation = (i: any) => {
       const systemIds = [];
@@ -71,30 +87,31 @@ export class ImportChecksService {
 
     if (locations.length === 0) {
       errorList.push(
-        'There are no tests, certifications events, or test extension/exmeption records in the file'
+        'There are no test summary, certifications events, or extension/exmeption records present in the file to be imported'
       );
     }
-    this.checkIfThrows(errorList);
+    this.throwIfErrors(errorList);
 
-    // IMPORT-13 - All Locations Present in the Production Database
-    // IMPORT-14 - All QA Systems Present in the Production Database
-    // IMPORT-15 - All QA Components Present in the Production Database
     errorList.push(...(
-      await this.locationService.importChecks(
+      await this.locationChecksService.runChecks(
         payload.orisCode,
-        locations
+        locations,
       )
     ));
-    this.checkIfThrows(errorList);
+    this.throwIfErrors(errorList);
 
-    //IMPORT-16 - Inappropriate Children Records for Test Summary
-    errorList.push(...(
-      await this.testSummaryService.importChecks(
-        payload.testSummaryData
-      )
-    ));
-    this.checkIfThrows(errorList);
+    payload.testSummaryData.forEach(async (summary) => {
+      promises.push(
+        this.testSummaryChecksService.runChecks(
+          summary,
+          true,
+        )
+      );
+    })
+    this.throwIfErrors(
+      await this.extractErrors(promises)
+    );
 
-    this.logger.info('Import validation checks ran successfully');
+    return errorList;
   }
 }

@@ -7,6 +7,7 @@ import { LinearityInjectionWorkspaceModule } from '../linearity-injection-worksp
 import { TestSummaryWorkspaceController } from './test-summary.controller';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryWorkspaceService } from './test-summary.service';
+import { TestSummaryChecksService } from './test-summary-checks.service';
 import { TestSummaryMap } from '../maps/test-summary.map';
 
 @Module({
@@ -22,11 +23,13 @@ import { TestSummaryMap } from '../maps/test-summary.map';
   ],
   providers: [
     TestSummaryMap,
+    TestSummaryChecksService,
     TestSummaryWorkspaceService,
   ],
   exports: [
     TypeOrmModule,
     TestSummaryMap,
+    TestSummaryChecksService,
     TestSummaryWorkspaceService,
   ],
 })

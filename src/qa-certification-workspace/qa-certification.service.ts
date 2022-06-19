@@ -7,7 +7,6 @@ import {
   QACertificationImportDTO,
 } from '../dto/qa-certification.dto';
 
-import { ImportChecksService } from '../import-checks/import-checks.service';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 
@@ -15,7 +14,6 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 export class QACertificationWorkspaceService {
   constructor(
     private readonly logger: Logger,
-    private readonly importChecksService: ImportChecksService,
     private readonly testSummaryService: TestSummaryWorkspaceService,
   ) {}
 
@@ -47,7 +45,15 @@ export class QACertificationWorkspaceService {
   }
 
   async import(payload: QACertificationImportDTO) {
-    this.logger.info(`Importing QA Certification data for Facility Id (Oris Code) ${payload.orisCode}`);
-    await this.importChecksService.importChecks(payload);
+    this.logger.info(`Importing QA Certification data for Facility Id/Oris Code [${payload.orisCode}]`);
+
+    const promises = [];
+    payload.testSummaryData.forEach(summary => {
+      promises.push(
+        this.testSummaryService.import(summary)
+      );
+    });
+
+    await Promise.all(promises);
   }
 }

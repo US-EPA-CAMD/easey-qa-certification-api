@@ -26,6 +26,7 @@ import {
 
 import { TestSummaryParamsDTO } from '../dto/test-summary-params.dto';
 import { TestSummaryWorkspaceService } from './test-summary.service';
+import { TestSummaryChecksService } from './test-summary-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -33,7 +34,8 @@ import { TestSummaryWorkspaceService } from './test-summary.service';
 export class TestSummaryWorkspaceController {
   
   constructor(
-    private readonly service: TestSummaryWorkspaceService
+    private readonly service: TestSummaryWorkspaceService,
+    private readonly checksService: TestSummaryChecksService
   ) {}
 
   @Get()
@@ -77,6 +79,7 @@ export class TestSummaryWorkspaceController {
 //    @CurrentUser() userId: string,
   ): Promise<TestSummaryRecordDTO> {
     const userId = 'testUser';
+    await this.checksService.runChecks(payload);
     return this.service.createTestSummary(locationId, payload, userId);
   }
 
@@ -94,6 +97,7 @@ export class TestSummaryWorkspaceController {
 //    @CurrentUser() userId: string,
   ): Promise<TestSummaryRecordDTO> {
     const userId = 'testUser';
+    await this.checksService.runChecks(payload);
     return this.service.updateTestSummary(locationId, id, payload, userId);
   }
 
