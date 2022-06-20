@@ -58,8 +58,10 @@ export class QACertificationWorkspaceController {
   @UseInterceptors(FormatValidationErrorsInterceptor)
   async import(
     @Body() payload: QACertificationImportDTO,
+//    @CurrentUser() userId: string,
   ) {
-    await this.checksService.runChecks(payload);
-    return this.service.import(payload);
+    const userId = 'testUser';
+    const locations = await this.checksService.runChecks(payload);
+    return this.service.import(locations, payload, userId);
   }
 }

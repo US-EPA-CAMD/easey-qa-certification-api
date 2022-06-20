@@ -91,14 +91,14 @@ export class LinearitySummary extends BaseEntity {
 
   @ManyToOne(
     () => TestSummary,
-    ts => ts.linearitySummaries,
+    o => o.linearitySummaries,
   )
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
 
   @OneToMany(
     () => LinearityInjection,
-    li => li.linearitySummary,
+    o => o.linearitySummary,
   )
   @JoinColumn({ name: 'lin_sum_id' })
   injections: LinearityInjection[];  

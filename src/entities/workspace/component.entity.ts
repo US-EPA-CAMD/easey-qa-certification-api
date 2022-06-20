@@ -10,6 +10,7 @@ import {
 
 import { TestSummary } from './test-summary.entity';
 import { MonitorLocation } from './monitor-location.entity';
+import { QASuppData } from './qa-supp-data.entity';
 
 @Entity({ name: 'camdecmpswks.component' })
 export class Component extends BaseEntity {
@@ -37,15 +38,22 @@ export class Component extends BaseEntity {
 
   @ManyToOne(
     () => MonitorLocation,
-    ml => ml.systems,
+    o => o.systems,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;
 
   @OneToMany(
     () => TestSummary,
-    ts => ts.component,
+    o => o.component,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   testSummaries: TestSummary[];
+
+  @OneToMany(
+    () => QASuppData,
+    o => o.component,
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  qaSuppData: QASuppData[];
 }

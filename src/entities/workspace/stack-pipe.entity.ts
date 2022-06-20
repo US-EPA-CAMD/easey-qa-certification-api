@@ -45,14 +45,14 @@ export class StackPipe extends BaseEntity {
 
   @ManyToOne(
     () => Plant,
-    plant => plant.stackPipes,
+    o => o.stackPipes,
   )
   @JoinColumn({ name: 'fac_id' })
   plant: Plant;
 
   @OneToOne(
     () => MonitorLocation,
-    location => location.stackPipe,
+    o => o.stackPipe,
   )
   @JoinColumn({ name: 'stack_pipe_id' })
   location: MonitorLocation;

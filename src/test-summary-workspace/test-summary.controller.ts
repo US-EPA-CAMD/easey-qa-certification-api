@@ -79,7 +79,7 @@ export class TestSummaryWorkspaceController {
 //    @CurrentUser() userId: string,
   ): Promise<TestSummaryRecordDTO> {
     const userId = 'testUser';
-    await this.checksService.runChecks(payload);
+    await this.checksService.runChecks(locationId, payload);
     return this.service.createTestSummary(locationId, payload, userId);
   }
 
@@ -97,7 +97,7 @@ export class TestSummaryWorkspaceController {
 //    @CurrentUser() userId: string,
   ): Promise<TestSummaryRecordDTO> {
     const userId = 'testUser';
-    await this.checksService.runChecks(payload);
+    await this.checksService.runChecks(locationId, payload);
     return this.service.updateTestSummary(locationId, id, payload, userId);
   }
 

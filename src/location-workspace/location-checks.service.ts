@@ -18,7 +18,7 @@ export class LocationChecksService {
   async runChecks(
     orisCode: number,
     locations: LocationIdentifiers[],
-  ): Promise<string[]> {
+  ): Promise<[LocationIdentifiers[], string[]]> {
     this.logger.info('Running Unit/Stack Location Checks');
 
     let errorList = [];
@@ -67,6 +67,7 @@ export class LocationChecksService {
       }
 
       if (dbLocation) {
+        location.locationId = dbLocation.id;
         const dbSystemIds = dbLocation.systems.map(i => i.monitoringSystemId);
         const dbComponentIds = dbLocation.components.map(i => i.componentId);
 
@@ -90,6 +91,6 @@ export class LocationChecksService {
       }
     });
 
-    return errorList;
+    return [locations, errorList];
   }
 }

@@ -33,14 +33,14 @@ export class Unit extends BaseEntity {
 
   @ManyToOne(
     () => Plant,
-    plant => plant.units,
+    o => o.units,
   )
   @JoinColumn({ name: 'fac_id' })
   plant: Plant;
 
   @OneToOne(
     () => MonitorLocation,
-    location => location.unit,
+    o => o.unit,
   )
   @JoinColumn({ name: 'unit_id' })
   location: MonitorLocation;

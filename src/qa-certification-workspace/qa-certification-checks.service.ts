@@ -24,7 +24,7 @@ export class QACertificationChecksService {
     errors.forEach(p => {
       errorList.push(...p);
     });
-    return errorList;
+    return [...new Set(errorList)];
   }
 
   private throwIfErrors(errorList: string[]) {
@@ -35,12 +35,14 @@ export class QACertificationChecksService {
 
   async runChecks(
     payload: QACertificationImportDTO
-  ): Promise<string[]> {
+  ): Promise<LocationIdentifiers[]> {
     this.logger.info('Running QA Certification Checks');
 
     const errorList: string[] = [];
     const promises: Promise<string[]>[] = [];    
-    const locations: LocationIdentifiers[] = [];
+
+    let errors: string[] = [];
+    let locations: LocationIdentifiers[] = [];
 
     const addLocation = (i: any) => {
       const systemIds = [];
@@ -66,6 +68,7 @@ export class QACertificationChecksService {
 
         locations.push({
           unitId: i.unitId,
+          locationId: null,
           stackPipeId: i.stackPipeId,
           systemIds,
           componentIds,
@@ -92,26 +95,36 @@ export class QACertificationChecksService {
     }
     this.throwIfErrors(errorList);
 
-    errorList.push(...(
-      await this.locationChecksService.runChecks(
-        payload.orisCode,
-        locations,
-      )
-    ));
+    [locations, errors] = await this.locationChecksService.runChecks(
+      payload.orisCode,
+      locations,
+    );
+    errorList.push(...errors);
     this.throwIfErrors(errorList);
 
     payload.testSummaryData.forEach(async (summary) => {
       promises.push(
-        this.testSummaryChecksService.runChecks(
-          summary,
-          true,
-        )
+        new Promise(async (resolve, _reject) => {
+          const locationId = locations.find(i => {
+            return i.unitId === summary.unitId &&
+              i.stackPipeId === summary.stackPipeId
+          }).locationId;
+
+          const results = this.testSummaryChecksService.runChecks(
+            locationId,
+            summary,
+            payload.testSummaryData,
+            true,
+          );
+
+          resolve(results);
+        }),
       );
     })
     this.throwIfErrors(
       await this.extractErrors(promises)
     );
 
-    return errorList;
+    return locations;
   }
 }

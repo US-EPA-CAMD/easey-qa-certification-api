@@ -16,10 +16,10 @@ import { ReportingPeriod } from './reporting-period.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { LinearitySummary } from './linearity-summary.entity';
 
-@Entity({ name: 'camdecmpswks.test_summary' })
-export class TestSummary extends BaseEntity {
+@Entity({ name: 'camdecmpswks.qa_supp_data' })
+export class QASuppData extends BaseEntity {
   @PrimaryColumn({
-    name: 'test_sum_id',
+    name: 'qa_supp_data_id',
   })
   id: string;
 
@@ -39,26 +39,14 @@ export class TestSummary extends BaseEntity {
   componentRecordId: string;
 
   @Column({
-    name: 'test_num',
-  })
-  testNumber: string;
-
-  @Column({
-    name: 'gp_ind',
-    transformer: new NumericColumnTransformer()
-  })
-  gracePeriodIndicator: number;
-
-  @Column({
-    name: 'calc_gp_ind',
-    transformer: new NumericColumnTransformer()
-  })
-  calculatedGracePeriodIndicator: number;
-
-  @Column({
     name: 'test_type_cd',
   })
   testTypeCode: string;
+
+  @Column({
+    name: 'test_sum_id',
+  })
+  testSumId: string;
 
   @Column({
     name: 'test_reason_cd',
@@ -66,25 +54,14 @@ export class TestSummary extends BaseEntity {
   testReasonCode: string;
 
   @Column({
-    name: 'test_result_cd',
+    name: 'test_num',
   })
-  testResultCode: string;
+  testNumber: string;
 
   @Column({
-    name: 'calc_test_result_cd',
+    name: 'span_scale',
   })
-  calculatedTestResultCode: string;
-
-  @Column({
-    name: 'rpt_period_id',
-    transformer: new NumericColumnTransformer()
-  })
-  reportPeriodId: number;
-
-  @Column({
-    name: 'test_description',
-  })
-  testDescription: string;
+  spanScaleCode: string;
 
   @Column({
     type: 'date',
@@ -123,85 +100,79 @@ export class TestSummary extends BaseEntity {
   endMinute: number;
 
   @Column({
-    name: 'calc_span_value',
+    name: 'rpt_period_id',
     transformer: new NumericColumnTransformer()
   })
-  calculatedSpanValue: number;
+  reportPeriodId: number;
 
   @Column({
-    name: 'test_comment',
+    name: 'test_result_cd',
   })
-  testComment: string;
+  testResultCode: string;
+
+  @Column({
+    name: 'gp_ind',
+    transformer: new NumericColumnTransformer()
+  })
+  gracePeriodIndicator: number;
 
   @Column({
     type: 'date',
-    name: 'last_updated'
+    name: 'reinstallation_date'
   })
-  lastUpdated: Date;
-
-  @Column({ name: 'updated_status_flg' })
-  updatedStatusFlag: string;
-  
-  @Column({ name: 'needs_eval_flg' })
-  needsEvalFlag: string;
-
-  @Column({ name: 'eval_status_cd' })
-  evalStatusCode: string;
-
-  @Column({ name: 'userid' })
-  userId: string;
+  reinstallationDate: Date;
 
   @Column({
-    name: 'add_date'
+    name: 'reinstallation_hour',
+    transformer: new NumericColumnTransformer()
   })
-  addDate: Date;
+  reinstallationHour: number;
 
   @Column({
-    name: 'update_date'
+    type: 'date',
+    name: 'test_expire_date'
   })
-  updateDate: Date;
+  testExpireDate: Date;
 
   @Column({
-    name: 'span_scale_cd',
+    name: 'test_expire_hour',
+    transformer: new NumericColumnTransformer()
   })
-  spanScaleCode: string;
+  testExpireHour: number;
 
-  @Column({
-    name: 'injection_protocol_cd',
-  })
-  injectionProtocolCode: string;
+  @Column({ name: 'op_level_cd' })
+  opLevelCode: string;
+
+  @Column({ name: 'operating_condition_cd' })
+  operatingConditionCode: string;
+
+  @Column({ name: 'fuel_cd' })
+  fuelCode: string;  
 
   @ManyToOne(
     () => MonitorLocation,
-    o => o.testSummaries,
+    o => o.qaSuppData,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;
 
   @ManyToOne(
     () => Component,
-    o => o.testSummaries,
+    o => o.qaSuppData,
   )
   @JoinColumn({ name: 'component_id' })
   component: Component;
 
   @ManyToOne(
     () => MonitorSystem,
-    o => o.testSummaries,
+    o => o.qaSuppData,
   )
   @JoinColumn({ name: 'mon_sys_id' })
   system: MonitorSystem;
 
-  @OneToMany(
-    () => LinearitySummary,
-    o => o.testSummary,
-  )
-  @JoinColumn({ name: 'test_sum_id' })
-  linearitySummaries: LinearitySummary[];
-
   @ManyToOne(
     () => ReportingPeriod,
-    o => o.testSummaries,
+    o => o.qaSuppData,
   )
   @JoinColumn({ name: 'rpt_period_id' })
   reportingPeriod: ReportingPeriod;

@@ -7,6 +7,7 @@ import {
   QACertificationImportDTO,
 } from '../dto/qa-certification.dto';
 
+import { LocationIdentifiers } from './../interfaces/location-identifiers.interface';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 
@@ -44,13 +45,26 @@ export class QACertificationWorkspaceService {
     };
   }
 
-  async import(payload: QACertificationImportDTO) {
+  async import(
+    locations: LocationIdentifiers[],
+    payload: QACertificationImportDTO,
+    userId: string,
+  ): Promise<void> {
     this.logger.info(`Importing QA Certification data for Facility Id/Oris Code [${payload.orisCode}]`);
 
     const promises = [];
     payload.testSummaryData.forEach(summary => {
       promises.push(
-        this.testSummaryService.import(summary)
+        new Promise(async (resolve, _reject) => {
+          const locationId = locations.find(i => {
+            return i.unitId === summary.unitId &&
+              i.stackPipeId === summary.stackPipeId
+          }).locationId;
+
+          const results = this.testSummaryService.import(locationId, summary, userId)
+
+          resolve(results);
+        }),
       );
     });
 

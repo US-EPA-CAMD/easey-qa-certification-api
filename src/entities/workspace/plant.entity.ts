@@ -36,14 +36,14 @@ export class Plant extends BaseEntity {
 
   @OneToMany(
     () => Unit,
-    unit => unit.plant,
+    o => o.plant,
   )
   @JoinColumn({ name: 'unit_id' })
   units: Unit[];
 
   @OneToMany(
     () => StackPipe,
-    stackPipe => stackPipe.plant,
+    o => o.plant,
   )
   @JoinColumn({ name: 'stack_pipe_id' })
   stackPipes: StackPipe[];

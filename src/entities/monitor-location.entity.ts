@@ -1,5 +1,6 @@
 import {
   BaseEntity,
+  Column,
   Entity,
   PrimaryColumn,
   JoinColumn,
@@ -19,6 +20,17 @@ export class MonitorLocation extends BaseEntity {
     name: 'mon_loc_id',
   })
   id: string;
+
+  @Column({
+    name: 'unit_id',
+  })
+  unitId: string;
+  
+  @Column({
+    name: 'stack_pipe_id',
+  })
+  stackPipeId: string;
+
 
   @OneToOne(
     () => StackPipe,

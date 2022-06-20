@@ -2,6 +2,7 @@ import { v4 as uuid } from 'uuid';
 import { getManager } from 'typeorm';
 
 import {
+  BadRequestException,
   forwardRef,
   Inject,
   Injectable,
@@ -23,8 +24,12 @@ import { currentDateTime } from '../utilities/functions';
 import { TestSummaryMap } from '../maps/test-summary.map';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { LinearitySummaryWorkspaceService } from '../linearity-summary-workspace/linearity-summary.service';
+
+import { Unit } from './../entities/workspace/unit.entity';
 import { Component } from './../entities/workspace/component.entity';
+import { StackPipe } from './../entities/workspace/stack-pipe.entity';
 import { MonitorSystem } from './../entities/workspace/monitor-system.entity';
+import { MonitorLocation } from './../entities/workspace/monitor-location.entity';
 import { ReportingPeriod } from './../entities/workspace/reporting-period.entity';
 
 @Injectable()
@@ -66,7 +71,7 @@ export class TestSummaryWorkspaceService {
     stackPipeIds?: string[],
     testTypeCode?: string,
   ): Promise<TestSummaryDTO[]> {
-    const results = await this.repository.getTestSummaries(
+    const results = await this.repository.getTestSummariesByUnitStack(
       facilityId,
       unitIds,
       stackPipeIds,
@@ -103,17 +108,47 @@ export class TestSummaryWorkspaceService {
     return summaries;
   }
 
-  async import(payload: TestSummaryImportDTO) {
-    const isImport = true;
+  async import(
+    locationId: string,
+    payload: TestSummaryImportDTO,
+    userId: string,
+  ) {
+    const summary = await this.repository.getTestSummaryByLocationId(
+      locationId,
+      payload.testTypeCode,
+      payload.testNumber,
+    );
+
+    if (summary) {
+      this.deleteTestSummary(summary.id);
+    }
+
+    this.createTestSummary(locationId, payload, userId);
   }
 
   async createTestSummary(
     locationId: string,
     payload: TestSummaryBaseDTO,
-    userId: string,    
+    userId: string,
   ): Promise<TestSummaryRecordDTO> {
+    const mgr = getManager();
     const timestamp = currentDateTime();
     const [reportPeriodId, componentRecordId, monitorSystemRecordId] = await this.lookupValues(locationId, payload);
+    const location = await mgr.findOne(MonitorLocation, locationId);
+
+    let unit: Unit;
+    let stackPipe: StackPipe;
+
+    if (location.unitId) {
+      unit = await mgr.findOne(Unit, location.unitId);
+    } else {
+      stackPipe = await mgr.findOne(StackPipe, location.stackPipeId);
+    }
+
+    if (unit && payload.unitId !== unit.name ||
+        stackPipe && payload.stackPipeId !== stackPipe.name) {
+      this.logger.error(BadRequestException, `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${payload.unitId ? payload.unitId : payload.stackPipeId}]`, true);
+    }
     
     let entity = this.repository.create({
       ...payload,
@@ -134,7 +169,25 @@ export class TestSummaryWorkspaceService {
     await this.repository.save(entity);
     entity = await this.repository.getTestSummaryById(entity.id);
     const dto = await this.map.one(entity);
+
+    delete dto.calibrationInjectionData;
     delete dto.linearitySummaryData;
+    delete dto.rataData;
+    delete dto.flowToLoadReferenceData;
+    delete dto.flowToLoadCheckData;
+    delete dto.cycleTimeSummaryData;
+    delete dto.onlineOfflineCalibrationData;
+    delete dto.fuelFlowmeterAccuracyData;
+    delete dto.transmitterTransducerData;
+    delete dto.fuelFlowToLoadBaselineData;
+    delete dto.fuelFlowToLoadTestData;
+    delete dto.appECorrelationTestSummaryData;
+    delete dto.unitDefaultTestData;
+    delete dto.hgSummaryData;
+    delete dto.testQualificationData;
+    delete dto.protocolGasData;
+    delete dto.airEmissionTestData;
+
     return dto;
   }
 

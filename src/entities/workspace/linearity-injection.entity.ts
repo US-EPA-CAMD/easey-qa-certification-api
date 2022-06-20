@@ -68,7 +68,7 @@ export class LinearityInjection extends BaseEntity {
 
   @ManyToOne(
     () => LinearitySummary,
-    ls => ls.injections,
+    o => o.injections,
   )
   @JoinColumn({ name: 'lin_sum_id' })
   linearitySummary: LinearitySummary;

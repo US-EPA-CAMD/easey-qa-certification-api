@@ -10,6 +10,7 @@ import {
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
 import { TestSummary } from './test-summary.entity';
+import { QASuppData } from './qa-supp-data.entity';
 
 @Entity({ name: 'camdecmpsmd.reporting_period' })
 export class ReportingPeriod extends BaseEntity {
@@ -33,8 +34,15 @@ export class ReportingPeriod extends BaseEntity {
 
   @OneToMany(
     () => TestSummary,
-    ts => ts.reportingPeriod,
+    o => o.reportingPeriod,
   )
   @JoinColumn({ name: 'rpt_period_id' })
   testSummaries: TestSummary[];
+
+  @OneToMany(
+    () => QASuppData,
+    o => o.reportingPeriod,
+  )
+  @JoinColumn({ name: 'rpt_period_id' })
+  qaSuppData: QASuppData[];
 }

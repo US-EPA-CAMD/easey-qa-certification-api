@@ -1,5 +1,6 @@
 import {
   BaseEntity,
+  Column,
   Entity,
   PrimaryColumn,
   JoinColumn,
@@ -12,6 +13,7 @@ import { Component } from './component.entity';
 import { StackPipe } from './stack-pipe.entity';
 import { TestSummary } from './test-summary.entity';
 import { MonitorSystem } from './monitor-system.entity';
+import { QASuppData } from './qa-supp-data.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_location' })
 export class MonitorLocation extends BaseEntity {
@@ -20,9 +22,19 @@ export class MonitorLocation extends BaseEntity {
   })
   id: string;
 
+  @Column({
+    name: 'unit_id',
+  })
+  unitId: string;
+  
+  @Column({
+    name: 'stack_pipe_id',
+  })
+  stackPipeId: string;
+
   @OneToOne(
     () => StackPipe,
-    stackPipe => stackPipe.location,
+    o => o.location,
     { eager: true },
   )
   @JoinColumn({ name: 'stack_pipe_id' })
@@ -30,7 +42,7 @@ export class MonitorLocation extends BaseEntity {
 
   @OneToOne(
     () => Unit,
-    unit => unit.location,
+    o => o.location,
     { eager: true },
   )
   @JoinColumn({ name: 'unit_id' })
@@ -38,22 +50,29 @@ export class MonitorLocation extends BaseEntity {
 
   @OneToMany(
     () => Component,
-    c => c.location
+    o => o.location
   )
   @JoinColumn({ name: 'mon_loc_id' })
   components: Component[];
 
   @OneToMany(
     () => MonitorSystem,
-    ms => ms.location
+    o => o.location
   )
   @JoinColumn({ name: 'mon_loc_id' })
   systems: MonitorSystem[];  
 
   @OneToMany(
     () => TestSummary,
-    ts => ts.location
+    o => o.location
   )
   @JoinColumn({ name: 'mon_loc_id' })
   testSummaries: TestSummary[];
+
+  @OneToMany(
+    () => QASuppData,
+    o => o.location
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  qaSuppData: QASuppData[];
 }
