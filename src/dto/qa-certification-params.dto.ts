@@ -9,6 +9,9 @@ import {
 import { IsOrisCode } from '@us-epa-camd/easey-common/pipes';
 
 import { OneOrMore } from '../pipes/one-or-more.pipe';
+import { IsValidCode } from '../pipes/is-valid-code.pipe';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { TestTypeCode } from '../entities/test-type-code.entity';
 
 export class QACertificationParamsDTO {
   @ApiProperty({
@@ -35,4 +38,18 @@ export class QACertificationParamsDTO {
   })
   @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
   stackPipeIds?: string[];
+
+  @ApiProperty({
+    enum: TestTypeCodes,
+    description: 'Test Type Code. ADD TO PROPERTY METADATA',
+  })
+  @IsValidCode(TestTypeCode, {
+    message: 'Invalid Test Type Code',
+  })
+  testTypeCode?: string;
+
+  @ApiProperty({
+    description: 'Test Number. ADD TO PROPERTY METADATA',
+  })
+  testNumber?: string;
 }

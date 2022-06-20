@@ -58,7 +58,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
 
     if (testNumber) {
       query.andWhere('ts.testNumber = :testNumber', { testNumber });
-    }    
+    }
  
     return query.getMany();
   }
@@ -68,7 +68,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
     unitIds?: string[],
     stackPipeIds?: string[],
     testTypeCode?: string,
-    testNumber?: string,    
+    testNumber?: string,
   ): Promise<TestSummary[]> {
     let unitsWhere = unitIds && unitIds.length > 0
       ? 'up.orisCode = :facilityId AND u.name IN (:...unitIds)'
@@ -84,7 +84,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
     }
 
     const query = this.buildBaseQuery()
-      .where(`${unitsWhere}${stacksWhere}`, { facilityId, unitIds, stackPipeIds });
+      .where(`(${unitsWhere}${stacksWhere})`, { facilityId, unitIds, stackPipeIds });
 
     if (testTypeCode) {
       query.andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode });

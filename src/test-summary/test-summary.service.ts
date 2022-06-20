@@ -31,10 +31,12 @@ export class TestSummaryService {
   async getTestSummariesByLocationId(
     locationId: string,
     testTypeCode: string,
+    testNumber?: string,
   ): Promise<TestSummaryDTO[]> {
     const results = await this.repository.getTestSummariesByLocationId(
       locationId,
       testTypeCode,
+      testNumber,
     );
 
     return this.map.many(results);
@@ -45,12 +47,14 @@ export class TestSummaryService {
     unitIds?: string[],
     stackPipeIds?: string[],
     testTypeCode?: string,
+    testNumber?: string,
   ): Promise<TestSummaryDTO[]> {
-    const results = await this.repository.getTestSummaries(
+    const results = await this.repository.getTestSummariesByUnitStack(
       facilityId,
       unitIds,
       stackPipeIds,
       testTypeCode,
+      testNumber,
     )
 
     return this.map.many(results);
@@ -60,6 +64,8 @@ export class TestSummaryService {
     facilityId: number,
     unitIds?: string[],
     stackPipeIds?: string[],
+    testTypeCode?: string,
+    testNumber?: string,
   ): Promise<TestSummaryDTO[]> {
     const promises = [];
 
@@ -67,6 +73,8 @@ export class TestSummaryService {
       facilityId,
       unitIds,
       stackPipeIds,
+      testTypeCode,
+      testNumber,
     );
 
     promises.push(

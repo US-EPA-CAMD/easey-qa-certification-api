@@ -36,7 +36,7 @@ export class TestSummaryController {
   ): Promise<TestSummaryRecordDTO[]> {
     return this.service.getTestSummariesByLocationId(
       locationId,
-      params.testTypeCode
+      params.testTypeCode,
     );
   }
 

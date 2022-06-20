@@ -24,6 +24,8 @@ export class QACertificationService {
         params.facilityId,
         params.unitIds,
         params.stackPipeIds,
+        params.testTypeCode,
+        params.testNumber,
       )
     );
 

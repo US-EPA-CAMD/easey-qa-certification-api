@@ -5,7 +5,7 @@ import { TestSummary } from '../entities/test-summary.entity';
 @EntityRepository(TestSummary)
 export class TestSummaryRepository extends Repository<TestSummary> {
 
-  private buildTestSummaryBaseQuery() {
+  private buildBaseQuery() {
     return this.createQueryBuilder('ts')
       .innerJoinAndSelect('ts.location', 'ml')
       .leftJoinAndSelect('ts.system', 'ms')
@@ -20,30 +20,36 @@ export class TestSummaryRepository extends Repository<TestSummary> {
   async getTestSummaryById(
     testSumId: string,
   ): Promise<TestSummary> {
-    const query = this.buildTestSummaryBaseQuery()
+    const query = this.buildBaseQuery()
       .where('ts.id = :testSumId', { testSumId });
     return query.getOne();
   }
 
   async getTestSummariesByLocationId(
     locationId: string,
-    testTypeCode?: string
+    testTypeCode?: string,
+    testNumber?: string,
   ): Promise<TestSummary[]> {
-    const query = this.buildTestSummaryBaseQuery()
+    const query = this.buildBaseQuery()
       .where('ts.locationId = :locationId', { locationId });
 
     if (testTypeCode) {
       query.andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode });
     }
+
+    if (testNumber) {
+      query.andWhere('ts.testNumber = :testNumber', { testNumber });
+    }
  
     return query.getMany();
   }
 
-  async getTestSummaries(
+  async getTestSummariesByUnitStack(
     facilityId: number,
     unitIds?: string[],
     stackPipeIds?: string[],
     testTypeCode?: string,
+    testNumber?: string,
   ): Promise<TestSummary[]> {
     let unitsWhere = unitIds && unitIds.length > 0
       ? 'up.orisCode = :facilityId AND u.name IN (:...unitIds)'
@@ -58,12 +64,18 @@ export class TestSummaryRepository extends Repository<TestSummary> {
       stacksWhere = ` OR (${stacksWhere})`;
     }
 
-    const query = this.buildTestSummaryBaseQuery()
-      .where(`${unitsWhere}${stacksWhere}`, { facilityId, unitIds, stackPipeIds });
+    const query = this.buildBaseQuery()
+      .where(`(${unitsWhere}${stacksWhere})`, { facilityId, unitIds, stackPipeIds });
 
     if (testTypeCode) {
-      query.andWhere('ts.testTypeCode = :testTypeCode)', { testTypeCode });
+      query.andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode });
     }
+
+    if (testNumber) {
+      query.andWhere('ts.testNumber = :testNumber', { testNumber });
+    }
+
+    console.log(query.getQueryAndParameters());
 
     return query.getMany();
   }
