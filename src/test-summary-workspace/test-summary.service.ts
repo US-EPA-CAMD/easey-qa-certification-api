@@ -55,13 +55,15 @@ export class TestSummaryWorkspaceService {
 
   async getTestSummariesByLocationId(
     locationId: string,
-    testTypeCode: string,
-    testNumber?: string,
+    testTypeCode?: string,
+    beginDate?: Date,
+    endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
     const results = await this.repository.getTestSummariesByLocationId(
       locationId,
       testTypeCode,
-      testNumber,
+      beginDate,
+      endDate,
     );
 
     return this.map.many(results);
@@ -72,14 +74,16 @@ export class TestSummaryWorkspaceService {
     unitIds?: string[],
     stackPipeIds?: string[],
     testTypeCode?: string,
-    testNumber?: string,
+    beginDate?: Date,
+    endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
     const results = await this.repository.getTestSummariesByUnitStack(
       facilityId,
       unitIds,
       stackPipeIds,
       testTypeCode,
-      testNumber,
+      beginDate,
+      endDate,
     )
 
     return this.map.many(results);
@@ -90,7 +94,8 @@ export class TestSummaryWorkspaceService {
     unitIds?: string[],
     stackPipeIds?: string[],
     testTypeCode?: string,
-    testNumber?: string,
+    beginDate?: Date,
+    endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
     const promises = [];
 
@@ -99,7 +104,8 @@ export class TestSummaryWorkspaceService {
       unitIds,
       stackPipeIds,
       testTypeCode,
-      testNumber,
+      beginDate,
+      endDate,
     );
 
     promises.push(

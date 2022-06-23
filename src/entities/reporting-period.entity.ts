@@ -31,6 +31,18 @@ export class ReportingPeriod extends BaseEntity {
   })
   quarter: number;
 
+  @Column({
+    type: 'date',
+    name: 'begin_date',
+  })
+  beginDate: Date;
+
+  @Column({
+    type: 'date',
+    name: 'end_date',
+  })
+  endDate: Date;
+
   @OneToMany(
     () => TestSummary,
     ts => ts.reportingPeriod,

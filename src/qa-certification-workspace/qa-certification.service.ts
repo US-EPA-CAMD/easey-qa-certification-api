@@ -30,7 +30,8 @@ export class QACertificationWorkspaceService {
         params.unitIds,
         params.stackPipeIds,
         params.testTypeCode,
-        params.testNumber,
+        params.beginDate,
+        params.endDate,
       )
     );
 

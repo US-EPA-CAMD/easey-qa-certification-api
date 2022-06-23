@@ -1,20 +1,24 @@
-import { Repository, EntityRepository } from 'typeorm';
+import {
+  Repository,
+  EntityRepository,
+  SelectQueryBuilder,
+} from 'typeorm';
+
+import {
+  addJoins,
+  addTestTypeWhere,
+  addTestNumberWhere,
+  addBeginAndEndDateWhere,
+} from '../utilities/test-summary.querybuilder'
 
 import { TestSummary } from '../entities/test-summary.entity';
 
 @EntityRepository(TestSummary)
 export class TestSummaryRepository extends Repository<TestSummary> {
 
-  private buildBaseQuery() {
-    return this.createQueryBuilder('ts')
-      .innerJoinAndSelect('ts.location', 'ml')
-      .leftJoinAndSelect('ts.system', 'ms')
-      .leftJoinAndSelect('ts.component', 'c')
-      .leftJoinAndSelect('ts.reportingPeriod', 'rp')
-      .leftJoinAndSelect('ml.unit', 'u')
-      .leftJoin('u.plant', 'up')
-      .leftJoinAndSelect('ml.stackPipe', 'sp')
-      .leftJoin('sp.plant', 'spp');
+  private buildBaseQuery(): SelectQueryBuilder<TestSummary> {
+    const query = this.createQueryBuilder('ts');
+    return addJoins(query) as SelectQueryBuilder<TestSummary>;
   }
 
   async getTestSummaryById(
@@ -25,22 +29,32 @@ export class TestSummaryRepository extends Repository<TestSummary> {
     return query.getOne();
   }
 
-  async getTestSummariesByLocationId(
+  async getTestSummaryByLocationId(
     locationId: string,
     testTypeCode?: string,
     testNumber?: string,
-  ): Promise<TestSummary[]> {
-    const query = this.buildBaseQuery()
+  ): Promise<TestSummary> {
+    let query = this.buildBaseQuery()
       .where('ts.locationId = :locationId', { locationId });
 
-    if (testTypeCode) {
-      query.andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode });
-    }
-
-    if (testNumber) {
-      query.andWhere('ts.testNumber = :testNumber', { testNumber });
-    }
+    query = addTestTypeWhere(query, testTypeCode) as SelectQueryBuilder<TestSummary>;
+    query = addTestNumberWhere(query, testNumber) as SelectQueryBuilder<TestSummary>;
  
+    return query.getOne();
+  }
+
+  async getTestSummariesByLocationId(
+    locationId: string,
+    testTypeCode?: string,
+    beginDate?: Date,
+    endDate?: Date,
+  ): Promise<TestSummary[]> {
+    let query = this.buildBaseQuery()
+      .where('ts.locationId = :locationId', { locationId });
+
+    query = addTestTypeWhere(query, testTypeCode) as SelectQueryBuilder<TestSummary>;
+    query = addBeginAndEndDateWhere(query, beginDate, endDate) as SelectQueryBuilder<TestSummary>;
+
     return query.getMany();
   }
 
@@ -49,7 +63,8 @@ export class TestSummaryRepository extends Repository<TestSummary> {
     unitIds?: string[],
     stackPipeIds?: string[],
     testTypeCode?: string,
-    testNumber?: string,
+    beginDate?: Date,
+    endDate?: Date,
   ): Promise<TestSummary[]> {
     let unitsWhere = unitIds && unitIds.length > 0
       ? 'up.orisCode = :facilityId AND u.name IN (:...unitIds)'
@@ -64,18 +79,11 @@ export class TestSummaryRepository extends Repository<TestSummary> {
       stacksWhere = ` OR (${stacksWhere})`;
     }
 
-    const query = this.buildBaseQuery()
+    let query = this.buildBaseQuery()
       .where(`(${unitsWhere}${stacksWhere})`, { facilityId, unitIds, stackPipeIds });
 
-    if (testTypeCode) {
-      query.andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode });
-    }
-
-    if (testNumber) {
-      query.andWhere('ts.testNumber = :testNumber', { testNumber });
-    }
-
-    console.log(query.getQueryAndParameters());
+    query = addTestTypeWhere(query, testTypeCode) as SelectQueryBuilder<TestSummary>;
+    query = addBeginAndEndDateWhere(query, beginDate, endDate) as SelectQueryBuilder<TestSummary>;
 
     return query.getMany();
   }
