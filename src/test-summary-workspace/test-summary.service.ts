@@ -6,7 +6,8 @@ import {
   forwardRef,
   Inject,
   Injectable,
-  InternalServerErrorException
+  InternalServerErrorException,
+  NotFoundException
 } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -44,12 +45,23 @@ export class TestSummaryWorkspaceService {
     private readonly repository: TestSummaryWorkspaceRepository,
   ) {}
 
+  returnManager(){
+    return getManager();
+  }
+
   async getTestSummaryById(
     testSumId: string,
   ): Promise<TestSummaryDTO> {
     const result = await this.repository.getTestSummaryById(
       testSumId,
     );
+
+    if (!result) {
+      this.logger.error(NotFoundException, 'Test summary not found.', true, {
+        testSumId: testSumId,
+      });
+    }
+    
     return this.map.one(result);
   }
 
@@ -134,7 +146,7 @@ export class TestSummaryWorkspaceService {
     );
 
     if (summary) {
-      this.deleteTestSummary(summary.id);
+      await this.deleteTestSummary(summary.id);
     }
 
     this.createTestSummary(locationId, payload, userId);
@@ -145,7 +157,7 @@ export class TestSummaryWorkspaceService {
     payload: TestSummaryBaseDTO,
     userId: string,
   ): Promise<TestSummaryRecordDTO> {
-    const mgr = getManager();
+    const mgr = this.returnManager();
     const timestamp = currentDateTime();
     const [reportPeriodId, componentRecordId, monitorSystemRecordId] = await this.lookupValues(locationId, payload);
     const location = await mgr.findOne(MonitorLocation, locationId);
@@ -247,6 +259,7 @@ export class TestSummaryWorkspaceService {
   async deleteTestSummary(
     id: string,
   ): Promise<void> {
+    console.log(id)
     try {
       await this.repository.delete(id);
     }
@@ -279,7 +292,9 @@ export class TestSummaryWorkspaceService {
     locationId: string,
     payload: TestSummaryBaseDTO,
   ) {
-    const mgr = getManager();
+    //const mgr = getManager();
+
+    const mgr = this.returnManager();
 
     let reportPeriodId = null;
     let componentRecordId = null;

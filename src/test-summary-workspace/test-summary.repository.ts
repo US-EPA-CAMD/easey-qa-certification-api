@@ -12,7 +12,6 @@ import {
 } from '../utilities/test-summary.querybuilder'
 
 import { TestSummary } from '../entities/workspace/test-summary.entity';
-
 @EntityRepository(TestSummary)
 export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
 
