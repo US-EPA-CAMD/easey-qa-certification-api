@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { EntityManager, getManager } from 'typeorm';
+import { getManager } from 'typeorm';
 
 import {
   BadRequestException,
