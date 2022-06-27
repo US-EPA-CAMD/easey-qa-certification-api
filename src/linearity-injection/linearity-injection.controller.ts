@@ -1,14 +1,6 @@
-import {
-  Get,
-  Controller,
-  Param,
-} from '@nestjs/common';
+import { Get, Controller, Param } from '@nestjs/common';
 
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiSecurity,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { LinearityInjectionRecordDTO } from '../dto/linearity-injection.dto';
 import { LinearityInjectionService } from './linearity-injection.service';
@@ -17,16 +9,14 @@ import { LinearityInjectionService } from './linearity-injection.service';
 @ApiSecurity('APIKey')
 @ApiTags('Linearity Injection')
 export class LinearityInjectionController {
-  
-  constructor(
-    private readonly service: LinearityInjectionService
-  ) {}
+  constructor(private readonly service: LinearityInjectionService) {}
 
   @Get()
   @ApiOkResponse({
     isArray: true,
     type: LinearityInjectionRecordDTO,
-    description: 'Retrieves official Linearity Injection records by Linearity Summary Id',
+    description:
+      'Retrieves official Linearity Injection records by Linearity Summary Id',
   })
   async getInjections(
     @Param('locId') _locationId: string,
@@ -38,7 +28,7 @@ export class LinearityInjectionController {
 
   @Get(':id')
   @ApiOkResponse({
-    type: LinearityInjectionRecordDTO,    
+    type: LinearityInjectionRecordDTO,
     description: 'Retrieves official Linearity Injection record by its Id',
   })
   async getInjection(
@@ -48,5 +38,5 @@ export class LinearityInjectionController {
     @Param('id') id: string,
   ): Promise<LinearityInjectionRecordDTO> {
     return this.service.getInjectionById(id);
-  }  
+  }
 }

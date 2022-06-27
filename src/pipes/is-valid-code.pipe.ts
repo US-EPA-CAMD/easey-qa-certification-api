@@ -2,18 +2,15 @@ import {
   registerDecorator,
   ValidationOptions,
   ValidationArguments,
-} from "class-validator";
+} from 'class-validator';
 
 import { getManager } from 'typeorm';
 
 // TODO: MOVE TO COMMONE PIPES
-export function IsValidCode(
-  type: any,
-  validationOptions?: ValidationOptions
-) {
-  return function (object: Object, propertyName: string) {
+export function IsValidCode(type: any, validationOptions?: ValidationOptions) {
+  return function(object: Object, propertyName: string) {
     registerDecorator({
-      name: "isValidCode",
+      name: 'isValidCode',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,

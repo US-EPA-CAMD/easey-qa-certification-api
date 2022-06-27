@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { getManager } from 'typeorm';
+import { EntityManager, getManager } from 'typeorm';
 
 import {
   BadRequestException,
@@ -7,7 +7,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException
+  NotFoundException,
 } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -33,9 +33,10 @@ import { MonitorSystem } from './../entities/workspace/monitor-system.entity';
 import { MonitorLocation } from './../entities/workspace/monitor-location.entity';
 import { ReportingPeriod } from './../entities/workspace/reporting-period.entity';
 
+import { getEntityManager } from '../utilities/utils';
+
 @Injectable()
 export class TestSummaryWorkspaceService {
-
   constructor(
     private readonly logger: Logger,
     private readonly map: TestSummaryMap,
@@ -45,23 +46,15 @@ export class TestSummaryWorkspaceService {
     private readonly repository: TestSummaryWorkspaceRepository,
   ) {}
 
-  returnManager(){
-    return getManager();
-  }
-
-  async getTestSummaryById(
-    testSumId: string,
-  ): Promise<TestSummaryDTO> {
-    const result = await this.repository.getTestSummaryById(
-      testSumId,
-    );
+  async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
+    const result = await this.repository.getTestSummaryById(testSumId);
 
     if (!result) {
       this.logger.error(NotFoundException, 'Test summary not found.', true, {
         testSumId: testSumId,
       });
     }
-    
+
     return this.map.one(result);
   }
 
@@ -96,7 +89,7 @@ export class TestSummaryWorkspaceService {
       testTypeCode,
       beginDate,
       endDate,
-    )
+    );
 
     return this.map.many(results);
   }
@@ -124,7 +117,7 @@ export class TestSummaryWorkspaceService {
       new Promise(async (resolve, _reject) => {
         const testSumIds = summaries
           .filter(i => i.testTypeCode === 'LINE')
-          .map(i => i.id );
+          .map(i => i.id);
         const linearities = this.linearityService.export(testSumIds);
         resolve(linearities);
       }),
@@ -157,9 +150,13 @@ export class TestSummaryWorkspaceService {
     payload: TestSummaryBaseDTO,
     userId: string,
   ): Promise<TestSummaryRecordDTO> {
-    const mgr = this.returnManager();
+    const mgr = getEntityManager();
     const timestamp = currentDateTime();
-    const [reportPeriodId, componentRecordId, monitorSystemRecordId] = await this.lookupValues(locationId, payload);
+    const [
+      reportPeriodId,
+      componentRecordId,
+      monitorSystemRecordId,
+    ] = await this.lookupValues(locationId, payload);
     const location = await mgr.findOne(MonitorLocation, locationId);
 
     let unit: Unit;
@@ -171,11 +168,19 @@ export class TestSummaryWorkspaceService {
       stackPipe = await mgr.findOne(StackPipe, location.stackPipeId);
     }
 
-    if (unit && payload.unitId !== unit.name ||
-        stackPipe && payload.stackPipeId !== stackPipe.name) {
-      this.logger.error(BadRequestException, `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${payload.unitId ? payload.unitId : payload.stackPipeId}]`, true);
+    if (
+      (unit && payload.unitId !== unit.name) ||
+      (stackPipe && payload.stackPipeId !== stackPipe.name)
+    ) {
+      this.logger.error(
+        BadRequestException,
+        `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${
+          payload.unitId ? payload.unitId : payload.stackPipeId
+        }]`,
+        true,
+      );
     }
-    
+
     let entity = this.repository.create({
       ...payload,
       id: uuid(),
@@ -188,7 +193,7 @@ export class TestSummaryWorkspaceService {
       updateDate: timestamp,
       lastUpdated: timestamp,
       needsEvalFlag: 'Y',
-      updatedStatusFlag: 'Y',    
+      updatedStatusFlag: 'Y',
       evalStatusCode: 'EVAL',
     });
 
@@ -225,7 +230,11 @@ export class TestSummaryWorkspaceService {
   ): Promise<TestSummaryRecordDTO> {
     const timestamp = currentDateTime();
     const entity = await this.repository.findOne(id);
-    const [reportPeriodId, componentRecordId, monitorSystemRecordId] = await this.lookupValues(locationId, payload);
+    const [
+      reportPeriodId,
+      componentRecordId,
+      monitorSystemRecordId,
+    ] = await this.lookupValues(locationId, payload);
 
     entity.beginDate = payload.beginDate;
     entity.beginHour = payload.beginHour;
@@ -256,15 +265,15 @@ export class TestSummaryWorkspaceService {
     return this.map.one(entity);
   }
 
-  async deleteTestSummary(
-    id: string,
-  ): Promise<void> {
-    console.log(id)
+  async deleteTestSummary(id: string): Promise<void> {
+    console.log(id);
     try {
       await this.repository.delete(id);
-    }
-    catch(e) {
-      throw new InternalServerErrorException(`Error deleting Test Summary record Id [${id}]`, e.message);
+    } catch (e) {
+      throw new InternalServerErrorException(
+        `Error deleting Test Summary record Id [${id}]`,
+        e.message,
+      );
     }
   }
 
@@ -281,20 +290,15 @@ export class TestSummaryWorkspaceService {
       entity.updateDate = timestamp;
       entity.lastUpdated = timestamp;
       entity.needsEvalFlag = 'Y';
-      entity.updatedStatusFlag = 'Y';    
+      entity.updatedStatusFlag = 'Y';
       entity.evalStatusCode = 'EVAL';
 
       await this.repository.save(entity);
     }
   }
 
-  private async lookupValues(
-    locationId: string,
-    payload: TestSummaryBaseDTO,
-  ) {
-    //const mgr = getManager();
-
-    const mgr = this.returnManager();
+  private async lookupValues(locationId: string, payload: TestSummaryBaseDTO) {
+    const mgr = getManager();
 
     let reportPeriodId = null;
     let componentRecordId = null;
@@ -305,7 +309,7 @@ export class TestSummaryWorkspaceService {
         where: {
           year: payload.year,
           quarter: payload.quarter,
-        }
+        },
       });
 
       reportPeriodId = rptPeriod ? rptPeriod.id : null;
@@ -316,7 +320,7 @@ export class TestSummaryWorkspaceService {
         where: {
           locationId: locationId,
           componentId: payload.componentId,
-        }
+        },
       });
 
       componentRecordId = component ? component.id : null;
@@ -327,16 +331,12 @@ export class TestSummaryWorkspaceService {
         where: {
           locationId,
           monitoringSystemId: payload.monitoringSystemId,
-        }
+        },
       });
 
       monitorSystemRecordId = monitorSystem ? monitorSystem.id : null;
-    }    
+    }
 
-    return [
-      reportPeriodId,
-      componentRecordId,
-      monitorSystemRecordId,
-    ];
+    return [reportPeriodId, componentRecordId, monitorSystemRecordId];
   }
 }

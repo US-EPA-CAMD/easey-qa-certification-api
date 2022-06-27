@@ -13,9 +13,7 @@ export class QACertificationService {
     private readonly testSummaryService: TestSummaryService,
   ) {}
 
-  async export(
-    params: QACertificationParamsDTO,
-  ): Promise<QACertificationDTO> {
+  async export(params: QACertificationParamsDTO): Promise<QACertificationDTO> {
     const promises = [];
 
     const SUMMARIES = 0;
@@ -27,7 +25,7 @@ export class QACertificationService {
         params.testTypeCode,
         params.beginDate,
         params.endDate,
-      )
+      ),
     );
 
     const EVENTS = SUMMARIES + 1;

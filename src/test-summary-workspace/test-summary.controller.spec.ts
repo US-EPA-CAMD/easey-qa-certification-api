@@ -3,24 +3,28 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
-import { TestSummaryBaseDTO, TestSummaryDTO, TestSummaryRecordDTO } from '../dto/test-summary.dto';
+import {
+  TestSummaryBaseDTO,
+  TestSummaryDTO,
+  TestSummaryRecordDTO,
+} from '../dto/test-summary.dto';
 import { TestSummaryChecksService } from './test-summary-checks.service';
 
 import { TestSummaryWorkspaceController } from './test-summary.controller';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryWorkspaceService } from './test-summary.service';
 
-const testSummaryDto = new TestSummaryDTO()
-const testSummary = new TestSummaryRecordDTO()
+const testSummaryDto = new TestSummaryDTO();
+const testSummary = new TestSummaryRecordDTO();
 
-const payload = new TestSummaryBaseDTO()
+const payload = new TestSummaryBaseDTO();
 
 const mockTestSummaryWorkspaceService = () => ({
   getTestSummaryById: jest.fn().mockResolvedValue(testSummaryDto),
   getTestSummariesByLocationId: jest.fn().mockResolvedValue([testSummaryDto]),
   createTestSummary: jest.fn().mockResolvedValue(testSummary),
   updateTestSummary: jest.fn().mockResolvedValue(testSummary),
-  deleteTestSummary: jest.fn().mockResolvedValue('')
+  deleteTestSummary: jest.fn().mockResolvedValue(''),
 });
 
 const mockTestSummaryChecksService = () => ({
@@ -43,10 +47,10 @@ describe('Test Summary Controller', () => {
         },
         {
           provide: TestSummaryChecksService,
-          useFactory: mockTestSummaryChecksService
+          useFactory: mockTestSummaryChecksService,
         },
         TestSummaryWorkspaceRepository,
-        QASuppDataWorkspaceRepository
+        QASuppDataWorkspaceRepository,
       ],
     }).compile();
 
@@ -57,8 +61,8 @@ describe('Test Summary Controller', () => {
 
   describe('getTestSummary', () => {
     it('should call the TestSummaryWorkspaceService.getTestSummaryById', async () => {
-      const spyService = jest.spyOn(service, 'getTestSummaryById')
-      const result = await controller.getTestSummary('1', '1')
+      const spyService = jest.spyOn(service, 'getTestSummaryById');
+      const result = await controller.getTestSummary('1', '1');
       expect(result).toEqual(testSummaryDto);
       expect(spyService).toHaveBeenCalled();
     });
@@ -66,8 +70,8 @@ describe('Test Summary Controller', () => {
 
   describe('getTestSummaries', () => {
     it('should call the TestSummaryWorkspaceService.getTestSummariesByLocationId', async () => {
-      const spyService = jest.spyOn(service, 'getTestSummariesByLocationId')
-      const result = await controller.getTestSummaries('1', {})
+      const spyService = jest.spyOn(service, 'getTestSummariesByLocationId');
+      const result = await controller.getTestSummaries('1', {});
       expect(result).toEqual([testSummaryDto]);
       expect(spyService).toHaveBeenCalled();
     });
@@ -75,9 +79,9 @@ describe('Test Summary Controller', () => {
 
   describe('createTestSummary', () => {
     it('should create test summary record', async () => {
-      const spyCheckService = jest.spyOn(checkService, 'runChecks')
-      const spyService = jest.spyOn(service, 'createTestSummary')
-      const result = await controller.createTestSummary('1', payload)
+      const spyCheckService = jest.spyOn(checkService, 'runChecks');
+      const spyService = jest.spyOn(service, 'createTestSummary');
+      const result = await controller.createTestSummary('1', payload);
       expect(result).toEqual(testSummary);
       expect(spyCheckService).toHaveBeenCalled();
       expect(spyService).toHaveBeenCalled();
@@ -86,9 +90,9 @@ describe('Test Summary Controller', () => {
 
   describe('updateTestSummary', () => {
     it('should update test summary record', async () => {
-      const spyCheckService = jest.spyOn(checkService, 'runChecks')
-      const spyService = jest.spyOn(service, 'updateTestSummary')
-      const result = await controller.updateTestSummary('1', '1', payload)
+      const spyCheckService = jest.spyOn(checkService, 'runChecks');
+      const spyService = jest.spyOn(service, 'updateTestSummary');
+      const result = await controller.updateTestSummary('1', '1', payload);
       expect(result).toEqual(testSummary);
       expect(spyCheckService).toHaveBeenCalled();
       expect(spyService).toHaveBeenCalled();
@@ -97,11 +101,10 @@ describe('Test Summary Controller', () => {
 
   describe('deleteTestSummary', () => {
     it('should delete test summary record', async () => {
-      const spyService = jest.spyOn(service, 'deleteTestSummary')
-      const result = await controller.deleteTestSummary('1', '1')
+      const spyService = jest.spyOn(service, 'deleteTestSummary');
+      const result = await controller.deleteTestSummary('1', '1');
       expect(result).toEqual('');
       expect(spyService).toHaveBeenCalled();
     });
   });
-
 });

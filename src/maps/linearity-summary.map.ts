@@ -7,7 +7,10 @@ import { LinearitySummary } from '../entities/linearity-summary.entity';
 import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
 
 @Injectable()
-export class LinearitySummaryMap extends BaseMap<LinearitySummary, LinearitySummaryDTO> {
+export class LinearitySummaryMap extends BaseMap<
+  LinearitySummary,
+  LinearitySummaryDTO
+> {
   constructor(private readonly injectionMap: LinearityInjectionMap) {
     super();
   }
@@ -30,12 +33,8 @@ export class LinearitySummaryMap extends BaseMap<LinearitySummary, LinearitySumm
       apsIndicator: entity.apsIndicator,
       calculatedAPSIndicator: entity.calculatedAPSIndicator,
       userId: entity.userId,
-      addDate: entity.addDate
-        ? entity.addDate.toLocaleString()
-        : null,
-      updateDate: entity.updateDate
-        ? entity.updateDate.toLocaleString()
-        : null,
+      addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
+      updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
       linearityInjectionData: injections,
     };
   }

@@ -1,11 +1,7 @@
-export class RataBaseDTO {
-}
+export class RataBaseDTO {}
 
-export class RataRecordDTO extends RataBaseDTO {
-}
+export class RataRecordDTO extends RataBaseDTO {}
 
-export class RataImportDTO extends RataBaseDTO {
-}
+export class RataImportDTO extends RataBaseDTO {}
 
-export class RataDTO extends RataRecordDTO {
-}
+export class RataDTO extends RataRecordDTO {}

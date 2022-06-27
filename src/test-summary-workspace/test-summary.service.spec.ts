@@ -7,9 +7,8 @@ import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryWorkspaceService } from './test-summary.service';
 import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { MonitorLocation } from 'src/entities/workspace/monitor-location.entity';
-import { Connection } from 'typeorm/connection/Connection';
-
+import * as utils from '../utilities/utils';
+import { MonitorLocation } from '../entities/monitor-location.entity';
 
 const locationId = '121';
 const facilityId = 1;
@@ -17,14 +16,14 @@ const unitId = '121';
 const testSumId = '1';
 const userId = 'testuser';
 
-const testSummary = new TestSummary()
-const testSummaryDto = new TestSummaryDTO()
-const lineSumDto = new LinearitySummaryDTO()
-lineSumDto.testSumId = testSumId
+const testSummary = new TestSummary();
+const testSummaryDto = new TestSummaryDTO();
+const lineSumDto = new LinearitySummaryDTO();
+lineSumDto.testSumId = testSumId;
 
-const payload = new TestSummaryImportDTO()
-payload.testTypeCode = 'code'
-payload.testNumber = '1'
+const payload = new TestSummaryImportDTO();
+payload.testTypeCode = 'code';
+payload.testNumber = '1';
 
 const mockRepository = () => ({
   getTestSummaryById: jest.fn().mockResolvedValue(testSummary),
@@ -34,7 +33,6 @@ const mockRepository = () => ({
   delete: jest.fn().mockResolvedValue(null),
   create: jest.fn().mockResolvedValue(testSummary),
   save: jest.fn().mockResolvedValue(testSummary),
-
 });
 
 const mockLinearitySummaryService = () => ({
@@ -75,7 +73,6 @@ describe('TestSummaryWorkspaceService', () => {
   });
 
   describe('getTestSummaryById', () => {
-
     it('calls the repository.getTestSummaryById() and get test summary by id', async () => {
       const result = await service.getTestSummaryById(testSumId);
       expect(result).toEqual(testSummaryDto);
@@ -83,96 +80,69 @@ describe('TestSummaryWorkspaceService', () => {
 
     it('should throw error when test summary not found', async () => {
       jest.spyOn(repository, 'getTestSummaryById').mockResolvedValue(null);
-  
+
       let errored = false;
-  
+
       try {
         await service.getTestSummaryById(testSumId);
       } catch (err) {
         errored = true;
       }
-  
+
       expect(errored).toBe(true);
     });
-
   });
 
   describe('getTestSummariesByLocationId', () => {
-    
     it('calls the repository.getTestSummariesByLocationId() and get test summaries by locationId', async () => {
       const result = await service.getTestSummariesByLocationId(locationId);
       expect(result).toEqual([testSummaryDto]);
     });
-
   });
 
   describe('getTestSummaries', () => {
-    
     it('calls the repository.getTestSummariesByUnitStack() and get test summaries by locationId', async () => {
       const result = await service.getTestSummaries(facilityId, [unitId]);
       expect(result).toEqual([testSummaryDto]);
     });
-
   });
 
   describe('export', () => {
-    
     it('calls the service.getTestSummaries() and get test summaries by locationId and unitId then export', async () => {
-      const returnedSummary = testSummaryDto
-      returnedSummary.testTypeCode = 'LINE'
-      returnedSummary.id = testSumId
-      
-      const spySummaries = jest.spyOn(service, 'getTestSummaries').mockResolvedValue([returnedSummary])
-      
+      const returnedSummary = testSummaryDto;
+      returnedSummary.testTypeCode = 'LINE';
+      returnedSummary.id = testSumId;
+
+      const spySummaries = jest
+        .spyOn(service, 'getTestSummaries')
+        .mockResolvedValue([returnedSummary]);
+
       const result = await service.export(facilityId, [unitId]);
 
       expect(spySummaries).toHaveBeenCalled();
       expect(result).toEqual([testSummaryDto]);
     });
-
   });
 
-  /* describe('import', () => {
-    
-    it('calls the repository.getTestSummaryByLocationId() and get test summaries by locationId, testTypeCode and testNumber', async () => {
-      const returnedSummary = testSummary
-      returnedSummary.id = testSumId
-      
-      const spySummaries = jest.spyOn(repository, 'getTestSummaryByLocationId').mockResolvedValue(undefined)
-      jest.spyOn(repository, 'getTestSummaryById').mockResolvedValue(testSummary)
-      
-      const spyDelete = jest.spyOn(service, 'deleteTestSummary').mockResolvedValue(null)
-      const spycreate = jest.spyOn(service, 'createTestSummary')
-      
-      const result = await service.import(locationId, payload, userId);
-
-      expect(spySummaries).toHaveBeenCalled();
-      expect(spyDelete).toHaveBeenCalled();
-      expect(spycreate).toHaveBeenCalled();
-      // expect(result).toEqual([testSummaryDto]);
-    });
-
-  }); */
-
   describe('createTestSummary', () => {
-    
-    it('should call the createTestSummary and create test summarie', async () => {
-      
-      jest.spyOn(service, 'returnManager').mockReturnValue({
-        findOne: (entity, id) => {
-          if(typeof(entity) === MonitorLocation){
-            return new MonitorLocation();
-          }
-        },
-        connection: new Connection()
-      });
+    it('should call the createTestSummary and create test summariy', async () => {
+      const mockManager = {
+        findOne: jest.fn().mockResolvedValue(new MonitorLocation()),
+      };
 
-      jest.spyOn(repository, 'getTestSummaryById').mockResolvedValue(testSummary)
-      
-      const result = await service.createTestSummary(locationId, payload, userId);
+      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+
+      jest
+        .spyOn(repository, 'getTestSummaryById')
+        .mockResolvedValue(testSummary);
+
+      const result = await service.createTestSummary(
+        locationId,
+        payload,
+        userId,
+      );
 
       expect(result).toEqual(testSummaryDto);
     });
-
   });
-})
+});

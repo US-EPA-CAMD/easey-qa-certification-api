@@ -50,7 +50,12 @@ export class TestSummaryChecksService {
     error = this.import17Check(summary);
     if (error) errorList.push(error);
 
-    error = await this.duplicateTestCheck(locationId, summary, summaries, isImport);
+    error = await this.duplicateTestCheck(
+      locationId,
+      summary,
+      summaries,
+      isImport,
+    );
     if (error) errorList.push(error);
 
     this.throwIfErrors(errorList, isImport);
@@ -399,7 +404,7 @@ export class TestSummaryChecksService {
       }], Test Type Code [${summary.testTypeCode}], and Test Number [${
         summary.testNumber
       }]`;
-    }    
+    }
 
     duplicate = await this.repository.getTestSummaryByLocationId(
       locationId,
@@ -418,14 +423,13 @@ export class TestSummaryChecksService {
           summary.testNumber
         }]. You must assign a different test number.`;
       }
-    }
-    else {
+    } else {
       duplicate = await this.qaSuppDataRepository.getQASuppDataByLocationId(
         locationId,
         summary.testTypeCode,
         summary.testNumber,
       );
-      
+
       if (duplicate) {
         if (isImport) {
           fields = this.compareFields(duplicate, summary);
@@ -458,14 +462,18 @@ export class TestSummaryChecksService {
   ): string[] {
     const fields: string[] = [];
 
-    if ((duplicate.system === null && summary.monitoringSystemId) ||
-        (duplicate.system && duplicate.system.monitoringSystemId !== summary.monitoringSystemId)
+    if (
+      (duplicate.system === null && summary.monitoringSystemId) ||
+      (duplicate.system &&
+        duplicate.system.monitoringSystemId !== summary.monitoringSystemId)
     ) {
       fields.push('Monitoring System Id');
     }
 
-    if ((duplicate.component === null && summary.componentId) ||
-        (duplicate.component && duplicate.component.componentId !== summary.componentId)
+    if (
+      (duplicate.component === null && summary.componentId) ||
+      (duplicate.component &&
+        duplicate.component.componentId !== summary.componentId)
     ) {
       fields.push('Component Id');
     }
@@ -482,21 +490,26 @@ export class TestSummaryChecksService {
       fields.push('End Hour');
     }
 
-    if ((duplicate.reportingPeriod === null && summary.year) ||
-        (duplicate.reportingPeriod && duplicate.reportingPeriod.year !== summary.year)
+    if (
+      (duplicate.reportingPeriod === null && summary.year) ||
+      (duplicate.reportingPeriod &&
+        duplicate.reportingPeriod.year !== summary.year)
     ) {
       fields.push('Year');
     }
-    if ((duplicate.reportingPeriod === null && summary.quarter) ||
-        (duplicate.reportingPeriod && duplicate.reportingPeriod.quarter !== summary.quarter)
+    if (
+      (duplicate.reportingPeriod === null && summary.quarter) ||
+      (duplicate.reportingPeriod &&
+        duplicate.reportingPeriod.quarter !== summary.quarter)
     ) {
       fields.push('Quarter');
     }
 
     if (fields.length === 0) {
-      if (summary.endMinute &&
-          duplicate.endMinute &&
-          duplicate.endMinute !== summary.endMinute
+      if (
+        summary.endMinute &&
+        duplicate.endMinute &&
+        duplicate.endMinute !== summary.endMinute
       ) {
         fields.push('End Minute');
       }

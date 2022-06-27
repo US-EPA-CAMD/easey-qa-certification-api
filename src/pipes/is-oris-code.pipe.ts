@@ -3,12 +3,12 @@ import {
   ValidationOptions,
   ValidationArguments,
   isNumberString,
-} from "class-validator";
+} from 'class-validator';
 
 export function IsOrisCode(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+  return function(object: Object, propertyName: string) {
     registerDecorator({
-      name: "isOrisCode",
+      name: 'isOrisCode',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
@@ -16,8 +16,8 @@ export function IsOrisCode(validationOptions?: ValidationOptions) {
         validate(value: any, args: ValidationArguments) {
           return (
             isNumberString(value, { no_symbols: true }) &&
-              value.length <= 6 &&
-              (value as number) != 0
+            value.length <= 6 &&
+            (value as number) != 0
           );
         },
       },

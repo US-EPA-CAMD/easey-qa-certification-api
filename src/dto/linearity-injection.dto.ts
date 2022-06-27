@@ -37,8 +37,6 @@ export class LinearityInjectionRecordDTO extends LinearityInjectionBaseDTO {
   updateDate: string;
 }
 
-export class LinearityInjectionImportDTO extends LinearityInjectionBaseDTO {
-}
+export class LinearityInjectionImportDTO extends LinearityInjectionBaseDTO {}
 
-export class LinearityInjectionDTO extends LinearityInjectionRecordDTO {
-}
+export class LinearityInjectionDTO extends LinearityInjectionRecordDTO {}

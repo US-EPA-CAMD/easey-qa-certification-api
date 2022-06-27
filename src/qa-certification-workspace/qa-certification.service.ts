@@ -18,9 +18,7 @@ export class QACertificationWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
   ) {}
 
-  async export(
-    params: QACertificationParamsDTO,
-  ): Promise<QACertificationDTO> {
+  async export(params: QACertificationParamsDTO): Promise<QACertificationDTO> {
     const promises = [];
 
     const SUMMARIES = 0;
@@ -32,7 +30,7 @@ export class QACertificationWorkspaceService {
         params.testTypeCode,
         params.beginDate,
         params.endDate,
-      )
+      ),
     );
 
     const EVENTS = SUMMARIES + 1;
@@ -53,18 +51,26 @@ export class QACertificationWorkspaceService {
     payload: QACertificationImportDTO,
     userId: string,
   ): Promise<void> {
-    this.logger.info(`Importing QA Certification data for Facility Id/Oris Code [${payload.orisCode}]`);
+    this.logger.info(
+      `Importing QA Certification data for Facility Id/Oris Code [${payload.orisCode}]`,
+    );
 
     const promises = [];
     payload.testSummaryData.forEach(summary => {
       promises.push(
         new Promise(async (resolve, _reject) => {
           const locationId = locations.find(i => {
-            return i.unitId === summary.unitId &&
+            return (
+              i.unitId === summary.unitId &&
               i.stackPipeId === summary.stackPipeId
+            );
           }).locationId;
 
-          const results = this.testSummaryService.import(locationId, summary, userId)
+          const results = this.testSummaryService.import(
+            locationId,
+            summary,
+            userId,
+          );
 
           resolve(results);
         }),

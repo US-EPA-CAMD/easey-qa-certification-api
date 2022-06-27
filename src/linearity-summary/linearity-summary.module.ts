@@ -9,22 +9,11 @@ import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      LinearitySummaryRepository,
-    ]),
+    TypeOrmModule.forFeature([LinearitySummaryRepository]),
     LinearityInjectionModule,
   ],
-  controllers: [
-    LinearitySummaryController
-  ],
-  providers: [
-    LinearitySummaryMap,
-    LinearitySummaryService,
-  ],
-  exports: [
-    TypeOrmModule,
-    LinearitySummaryMap,
-    LinearitySummaryService,
-  ],
+  controllers: [LinearitySummaryController],
+  providers: [LinearitySummaryMap, LinearitySummaryService],
+  exports: [TypeOrmModule, LinearitySummaryMap, LinearitySummaryService],
 })
 export class LinearitySummaryModule {}

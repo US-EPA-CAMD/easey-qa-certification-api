@@ -1,11 +1,7 @@
-export class OnlineOfflineCalibrationBaseDTO {
-}
+export class OnlineOfflineCalibrationBaseDTO {}
 
-export class OnlineOfflineCalibrationRecordDTO extends OnlineOfflineCalibrationBaseDTO {
-}
+export class OnlineOfflineCalibrationRecordDTO extends OnlineOfflineCalibrationBaseDTO {}
 
-export class OnlineOfflineCalibrationImportDTO extends OnlineOfflineCalibrationBaseDTO {
-}
+export class OnlineOfflineCalibrationImportDTO extends OnlineOfflineCalibrationBaseDTO {}
 
-export class OnlineOfflineCalibrationDTO extends OnlineOfflineCalibrationRecordDTO {
-}
+export class OnlineOfflineCalibrationDTO extends OnlineOfflineCalibrationRecordDTO {}

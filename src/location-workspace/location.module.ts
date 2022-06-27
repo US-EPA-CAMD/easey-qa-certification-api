@@ -7,16 +7,11 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      LocationWorkspaceRepository,
-    ]),
+    TypeOrmModule.forFeature([LocationWorkspaceRepository]),
     TestSummaryWorkspaceModule,
   ],
   controllers: [],
   providers: [LocationChecksService],
-  exports: [
-    TypeOrmModule,
-    LocationChecksService,
-  ],
+  exports: [TypeOrmModule, LocationChecksService],
 })
 export class LocationWorkspaceModule {}

@@ -12,10 +12,7 @@ describe('Event Controller', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       controllers: [QACertificationController],
-      providers: [
-        QACertificationService,
-        ConfigService,
-      ],
+      providers: [QACertificationService, ConfigService],
     }).compile();
 
     controller = module.get(QACertificationController);

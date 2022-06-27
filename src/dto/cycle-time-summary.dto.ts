@@ -1,11 +1,7 @@
-export class CycleTimeSummaryBaseDTO {
-}
+export class CycleTimeSummaryBaseDTO {}
 
-export class CycleTimeSummaryRecordDTO extends CycleTimeSummaryBaseDTO {
-}
+export class CycleTimeSummaryRecordDTO extends CycleTimeSummaryBaseDTO {}
 
-export class CycleTimeSummaryImportDTO extends CycleTimeSummaryBaseDTO {
-}
+export class CycleTimeSummaryImportDTO extends CycleTimeSummaryBaseDTO {}
 
-export class CycleTimeSummaryDTO extends CycleTimeSummaryRecordDTO {
-}
+export class CycleTimeSummaryDTO extends CycleTimeSummaryRecordDTO {}

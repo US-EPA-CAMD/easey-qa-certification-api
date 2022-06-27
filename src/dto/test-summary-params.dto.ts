@@ -1,10 +1,7 @@
 import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-import {
-  IsValidDate, 
-  IsIsoFormat,
-} from '@us-epa-camd/easey-common/pipes';
+import { IsValidDate, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
@@ -30,16 +27,16 @@ export class TestSummaryParamsDTO {
     description: propertyMetadata.beginDate.description,
   })
   @IsNotEmpty({
-    message: 'Begin Date is required'
+    message: 'Begin Date is required',
   })
   @IsValidDate({
-    message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`
+    message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`,
   })
   @IsIsoFormat({
-    message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`
+    message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`,
   })
   @IsInDateRange('1993-01-01', null, {
-    message: `Begin Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`
+    message: `Begin Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,
   })
   beginDate?: Date;
 
@@ -47,16 +44,16 @@ export class TestSummaryParamsDTO {
     description: propertyMetadata.beginDate.description,
   })
   @IsNotEmpty({
-    message: 'End Date is required'
+    message: 'End Date is required',
   })
   @IsValidDate({
-    message: `End Date must be a valid date in the format of ${DATE_FORMAT}.`
+    message: `End Date must be a valid date in the format of ${DATE_FORMAT}.`,
   })
   @IsIsoFormat({
-    message: `End Date must be a valid date in the format of ${DATE_FORMAT}.`
+    message: `End Date must be a valid date in the format of ${DATE_FORMAT}.`,
   })
   @IsInDateRange('1993-01-01', null, {
-    message: `End Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`
+    message: `End Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,
   })
   endDate?: Date;
 }

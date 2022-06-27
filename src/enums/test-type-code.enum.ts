@@ -28,5 +28,5 @@ export enum TestTypeCodes {
   QGA = 'QGA',
   RATA = 'RATA',
   TSCAL = 'TSCAL',
-  UNITDEF = 'UNITDEF'
+  UNITDEF = 'UNITDEF',
 }

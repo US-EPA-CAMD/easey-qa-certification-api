@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import {
   IsInRange,
-  IsValidDate, 
+  IsValidDate,
   IsIsoFormat,
 } from '@us-epa-camd/easey-common/pipes';
 
@@ -17,20 +17,62 @@ import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { RataDTO, RataImportDTO } from './rata.dto';
 import { HgSummaryDTO, HgSummaryImportDTO } from './hg-summary.dto';
 import { ProtocolGasDTO, ProtocolGasImportDTO } from './protocol-gas.dto';
-import { AirEmissionTestDTO, AirEmissionTestImportDTO } from './air-emission-test.dto';
-import { UnitDefaultTestDTO, UnitDefaultTestImportDTO } from './unit-default-test.dto';
-import { LinearitySummaryDTO, LinearitySummaryImportDTO } from './linearity-summary.dto';
-import { FlowToLoadCheckDTO, FlowToLoadCheckImportDTO  } from './flow-to-load-check.dto';
-import { CycleTimeSummaryDTO, CycleTimeSummaryImportDTO } from './cycle-time-summary.dto';
-import { TestQualificationDTO, TestQualificationImportDTO } from './test-qualification.dto';
-import { FuelFlowToLoadTestDTO, FuelFlowToLoadTestImportDTO } from './fuel-flow-to-load-test.dto';
-import { FlowToLoadReferenceDTO, FlowToLoadReferenceImportDTO } from './flow-to-load-reference.dto';
-import { CalibrationInjectionDTO, CalibrationInjectionImportDTO } from './calibration-injection.dto';
-import { TransmitterTransducerDTO, TransmitterTransducerImportDTO } from './transmitter-transducer.dto';
-import { FuelFlowmeterAccuracyDTO, FuelFlowmeterAccuracyImportDTO } from './fuel-flowmeter-accuracy.dto';
-import { FuelFlowToLoadBaselineDTO, FuelFlowToLoadBaselineImportDTO } from './fuel-flow-to-load-baseline.dto';
-import { OnlineOfflineCalibrationDTO, OnlineOfflineCalibrationImportDTO } from './online-offline-calibration.dto';
-import { AppECorrelationTestSummaryDTO, AppECorrelationTestSummaryImportDTO } from './app-e-correlation-test-summary.dto';
+import {
+  AirEmissionTestDTO,
+  AirEmissionTestImportDTO,
+} from './air-emission-test.dto';
+import {
+  UnitDefaultTestDTO,
+  UnitDefaultTestImportDTO,
+} from './unit-default-test.dto';
+import {
+  LinearitySummaryDTO,
+  LinearitySummaryImportDTO,
+} from './linearity-summary.dto';
+import {
+  FlowToLoadCheckDTO,
+  FlowToLoadCheckImportDTO,
+} from './flow-to-load-check.dto';
+import {
+  CycleTimeSummaryDTO,
+  CycleTimeSummaryImportDTO,
+} from './cycle-time-summary.dto';
+import {
+  TestQualificationDTO,
+  TestQualificationImportDTO,
+} from './test-qualification.dto';
+import {
+  FuelFlowToLoadTestDTO,
+  FuelFlowToLoadTestImportDTO,
+} from './fuel-flow-to-load-test.dto';
+import {
+  FlowToLoadReferenceDTO,
+  FlowToLoadReferenceImportDTO,
+} from './flow-to-load-reference.dto';
+import {
+  CalibrationInjectionDTO,
+  CalibrationInjectionImportDTO,
+} from './calibration-injection.dto';
+import {
+  TransmitterTransducerDTO,
+  TransmitterTransducerImportDTO,
+} from './transmitter-transducer.dto';
+import {
+  FuelFlowmeterAccuracyDTO,
+  FuelFlowmeterAccuracyImportDTO,
+} from './fuel-flowmeter-accuracy.dto';
+import {
+  FuelFlowToLoadBaselineDTO,
+  FuelFlowToLoadBaselineImportDTO,
+} from './fuel-flow-to-load-baseline.dto';
+import {
+  OnlineOfflineCalibrationDTO,
+  OnlineOfflineCalibrationImportDTO,
+} from './online-offline-calibration.dto';
+import {
+  AppECorrelationTestSummaryDTO,
+  AppECorrelationTestSummaryImportDTO,
+} from './app-e-correlation-test-summary.dto';
 
 import { RequireOne } from '../pipes/require-one.pipe';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
@@ -59,18 +101,19 @@ const formatTestSummaryValidationError = (
   message: string,
 ): string => {
   return `${message} for Test Summary record with Unit/Stack [${
-    (args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']
-  }], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${
-    (args.object)['testNumber']
+    args.object['unitId'] ? args.object['unitId'] : args.object['stackPipeId']
+  }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+    args.object['testNumber']
   }]`;
-}
+};
 
 export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Stack Pipe Identifier. ADD TO PROPERTY METADATA',
   })
   @RequireOne('unitId', {
-    message: 'A Unit or Stack Pipe identifier (NOT both) must be provided for each Test Summary.'
+    message:
+      'A Unit or Stack Pipe identifier (NOT both) must be provided for each Test Summary.',
   })
   stackPipeId?: string;
 
@@ -84,8 +127,16 @@ export class TestSummaryBaseDTO {
   })
   @IsValidCode(TestTypeCode, {
     message: (args: ValidationArguments) => {
-      return `You reported an invalid Test Type Code of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
-    }
+      return `You reported an invalid Test Type Code of [${
+        args.value
+      }] in Test Summary record for Unit/Stack [${
+        args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId']
+      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+        args.object['testNumber']
+      }]`;
+    },
   })
   testTypeCode: string;
 
@@ -104,8 +155,16 @@ export class TestSummaryBaseDTO {
   })
   @IsValidCode(SpanScaleCode, {
     message: (args: ValidationArguments) => {
-      return `You reported an invalid Span Scale Code of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
-    }
+      return `You reported an invalid Span Scale Code of [${
+        args.value
+      }] in Test Summary record for Unit/Stack [${
+        args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId']
+      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+        args.object['testNumber']
+      }]`;
+    },
   })
   spanScaleCode?: string;
 
@@ -119,8 +178,16 @@ export class TestSummaryBaseDTO {
   })
   @IsValidCode(TestReasonCode, {
     message: (args: ValidationArguments) => {
-      return `You reported an invalid Test Reason Code of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
-    }
+      return `You reported an invalid Test Reason Code of [${
+        args.value
+      }] in Test Summary record for Unit/Stack [${
+        args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId']
+      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+        args.object['testNumber']
+      }]`;
+    },
   })
   testReasonCode?: string;
 
@@ -134,8 +201,16 @@ export class TestSummaryBaseDTO {
   })
   @IsValidCode(TestResultCode, {
     message: (args: ValidationArguments) => {
-      return `You reported an invalid Test Result Code of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
-    }
+      return `You reported an invalid Test Result Code of [${
+        args.value
+      }] in Test Summary record for Unit/Stack [${
+        args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId']
+      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+        args.object['testNumber']
+      }]`;
+    },
   })
   testResultCode?: string;
 
@@ -144,43 +219,32 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return formatTestSummaryValidationError(
-        args, 'Begin Date is required'
-      );
-    }
+      return formatTestSummaryValidationError(args, 'Begin Date is required');
+    },
   })
   @IsValidDate({
     message: (args: ValidationArguments) => {
       return formatTestSummaryValidationError(
-        args, `Begin Date must be a valid date in the format of ${
-          DATE_FORMAT
-        }. You reported an invalid date of [${
-          args.value
-        }]`
+        args,
+        `Begin Date must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
       );
-    }
+    },
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return formatTestSummaryValidationError(
-        args, `Begin Date must be a valid date in the format of ${
-          DATE_FORMAT
-        }. You reported an improperly formatted date of [${
-          args.value
-        }]`
+        args,
+        `Begin Date must be a valid date in the format of ${DATE_FORMAT}. You reported an improperly formatted date of [${args.value}]`,
       );
-    }
+    },
   })
   @IsInDateRange('1993-01-01', null, {
     message: (args: ValidationArguments) => {
       return formatTestSummaryValidationError(
-        args, `Begin Date must be greater than or equal to ${
-          MIN_DATE
-        } and less than or equal to the current date. You reported an invalid date of [${
-          args.value
-        }]`
+        args,
+        `Begin Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date. You reported an invalid date of [${args.value}]`,
       );
-    }
+    },
   })
   @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginDate?: Date;
@@ -190,21 +254,20 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return formatTestSummaryValidationError(
-        args, 'Begin Hour is required'
-      );
-    }
+      return formatTestSummaryValidationError(args, 'Begin Hour is required');
+    },
   })
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
       return formatTestSummaryValidationError(
-        args, `Begin Hour must be a numeric number from 0 to 23${
-          ''
-        }. You reported an invalid hour of [${args.value}]`
+        args,
+        `Begin Hour must be a numeric number from 0 to 23${''}. You reported an invalid hour of [${
+          args.value
+        }]`,
       );
-    }
+    },
   })
-  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))  
+  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginHour?: number;
 
   @ApiProperty({
@@ -213,11 +276,12 @@ export class TestSummaryBaseDTO {
   @IsInRange(0, 59, {
     message: (args: ValidationArguments) => {
       return formatTestSummaryValidationError(
-        args, `Begin Minute must be a numeric number from 0 to 59${
-          ''
-        }. You reported an invalid minute of [${args.value}]`
+        args,
+        `Begin Minute must be a numeric number from 0 to 59${''}. You reported an invalid minute of [${
+          args.value
+        }]`,
       );
-    }
+    },
   })
   beginMinute?: number;
 
@@ -232,8 +296,16 @@ export class TestSummaryBaseDTO {
   })
   @IsInDateRange('1993-01-01', null, {
     message: (args: ValidationArguments) => {
-      return `End Date must be greater than or equal to 1993-01-01 and less than or equal to the current date. You reported an invalid date of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
-    }
+      return `End Date must be greater than or equal to 1993-01-01 and less than or equal to the current date. You reported an invalid date of [${
+        args.value
+      }] in Test Summary record for Unit/Stack [${
+        args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId']
+      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+        args.object['testNumber']
+      }]`;
+    },
   })
   endDate?: Date;
 
@@ -242,8 +314,16 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(0, 23, {
     message: (args: ValidationArguments) => {
-      return `End Hour must be a numeric number from 0 to 23. You reported an invalid hour of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
-    }
+      return `End Hour must be a numeric number from 0 to 23. You reported an invalid hour of [${
+        args.value
+      }] in Test Summary record for Unit/Stack [${
+        args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId']
+      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+        args.object['testNumber']
+      }]`;
+    },
   })
   endHour?: number;
 
@@ -252,8 +332,16 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(0, 59, {
     message: (args: ValidationArguments) => {
-      return `End Minute must be a numeric number from 0 to 59. You reported an invalid minute of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
-    }
+      return `End Minute must be a numeric number from 0 to 59. You reported an invalid minute of [${
+        args.value
+      }] in Test Summary record for Unit/Stack [${
+        args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId']
+      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+        args.object['testNumber']
+      }]`;
+    },
   })
   endMinute?: number;
 
@@ -262,8 +350,16 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `Grace Period Indicator must be a numeric number from 0 to 1. You reported an invalid value of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
-    }
+      return `Grace Period Indicator must be a numeric number from 0 to 1. You reported an invalid value of [${
+        args.value
+      }] in Test Summary record for Unit/Stack [${
+        args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId']
+      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+        args.object['testNumber']
+      }]`;
+    },
   })
   gracePeriodIndicator?: number;
 
@@ -272,8 +368,16 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(1993, new Date().getFullYear(), {
     message: (args: ValidationArguments) => {
-      return `Year must be greater than or equal to 1993 and less than or equal to ${new Date().getFullYear()}. You reported an invalid year of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
-    }
+      return `Year must be greater than or equal to 1993 and less than or equal to ${new Date().getFullYear()}. You reported an invalid year of [${
+        args.value
+      }] in Test Summary record for Unit/Stack [${
+        args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId']
+      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+        args.object['testNumber']
+      }]`;
+    },
   })
   year?: number;
 
@@ -282,8 +386,16 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(1, 4, {
     message: (args: ValidationArguments) => {
-      return `Quarter must be a numeric number from 1 to 4. You reported an invalid quarter of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
-    }
+      return `Quarter must be a numeric number from 1 to 4. You reported an invalid quarter of [${
+        args.value
+      }] in Test Summary record for Unit/Stack [${
+        args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId']
+      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+        args.object['testNumber']
+      }]`;
+    },
   })
   quarter?: number;
 
@@ -297,8 +409,16 @@ export class TestSummaryBaseDTO {
   })
   @IsValidCode(InjectionProtocolCode, {
     message: (args: ValidationArguments) => {
-      return `You reported an invalid Injection Protocol Code of [${args.value}] in Test Summary record for Unit/Stack [${(args.object)['unitId'] ? (args.object)['unitId'] : (args.object)['stackPipeId']}], Test Type Code [${(args.object)['testTypeCode']}], and Test Number [${(args.object)['testNumber']}]`;
-    }
+      return `You reported an invalid Injection Protocol Code of [${
+        args.value
+      }] in Test Summary record for Unit/Stack [${
+        args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId']
+      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+        args.object['testNumber']
+      }]`;
+    },
   })
   injectionProtocolCode?: string;
 }

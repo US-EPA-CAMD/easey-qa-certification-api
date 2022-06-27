@@ -45,13 +45,13 @@ export class TestSummary extends BaseEntity {
 
   @Column({
     name: 'gp_ind',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   gracePeriodIndicator: number;
 
   @Column({
     name: 'calc_gp_ind',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   calculatedGracePeriodIndicator: number;
 
@@ -77,7 +77,7 @@ export class TestSummary extends BaseEntity {
 
   @Column({
     name: 'rpt_period_id',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   reportPeriodId: number;
 
@@ -88,43 +88,43 @@ export class TestSummary extends BaseEntity {
 
   @Column({
     type: 'date',
-    name: 'begin_date'
+    name: 'begin_date',
   })
   beginDate: Date;
 
   @Column({
     name: 'begin_hour',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   beginHour: number;
 
   @Column({
     name: 'begin_min',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   beginMinute: number;
 
   @Column({
     type: 'date',
-    name: 'end_date'
+    name: 'end_date',
   })
   endDate: Date;
 
   @Column({
     name: 'end_hour',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   endHour: number;
 
   @Column({
     name: 'end_min',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   endMinute: number;
 
   @Column({
     name: 'calc_span_value',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   calculatedSpanValue: number;
 
@@ -135,13 +135,13 @@ export class TestSummary extends BaseEntity {
 
   @Column({
     type: 'date',
-    name: 'last_updated'
+    name: 'last_updated',
   })
   lastUpdated: Date;
 
   @Column({ name: 'updated_status_flg' })
   updatedStatusFlag: string;
-  
+
   @Column({ name: 'needs_eval_flg' })
   needsEvalFlag: string;
 
@@ -149,12 +149,12 @@ export class TestSummary extends BaseEntity {
   userId: string;
 
   @Column({
-    name: 'add_date'
+    name: 'add_date',
   })
   addDate: Date;
 
   @Column({
-    name: 'update_date'
+    name: 'update_date',
   })
   updateDate: Date;
 

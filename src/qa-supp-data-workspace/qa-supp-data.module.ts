@@ -4,11 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { QASuppDataWorkspaceRepository } from './qa-supp-data.repository';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      QASuppDataWorkspaceRepository
-    ])
-  ],
+  imports: [TypeOrmModule.forFeature([QASuppDataWorkspaceRepository])],
   controllers: [],
   providers: [],
   exports: [TypeOrmModule],

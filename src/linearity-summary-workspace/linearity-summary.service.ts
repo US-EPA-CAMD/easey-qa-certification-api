@@ -30,16 +30,14 @@ export class LinearitySummaryWorkspaceService {
     private readonly logger: Logger,
     private readonly map: LinearitySummaryMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
-    private readonly testSummaryService: TestSummaryWorkspaceService,    
+    private readonly testSummaryService: TestSummaryWorkspaceService,
     @Inject(forwardRef(() => LinearityInjectionWorkspaceService))
     private readonly injectionService: LinearityInjectionWorkspaceService,
     @InjectRepository(LinearitySummaryWorkspaceRepository)
     private readonly repository: LinearitySummaryWorkspaceRepository,
   ) {}
 
-  async getSummaryById(
-    id: string
-  ): Promise<LinearitySummaryDTO> {
+  async getSummaryById(id: string): Promise<LinearitySummaryDTO> {
     const result = await this.repository.findOne(id);
     return this.map.one(result);
   }
@@ -60,19 +58,15 @@ export class LinearitySummaryWorkspaceService {
     return this.map.many(results);
   }
 
-  async export(
-    testSumIds: string[],
-  ): Promise<LinearitySummaryDTO[]> {
-    const summaries = await this.getSummariesByTestSumIds(
-      testSumIds
-    );
+  async export(testSumIds: string[]): Promise<LinearitySummaryDTO[]> {
+    const summaries = await this.getSummariesByTestSumIds(testSumIds);
 
     const injections = await this.injectionService.export(
-      summaries.map(i => i.id)
+      summaries.map(i => i.id),
     );
 
     summaries.forEach(s => {
-      s.linearityInjectionData = injections.filter(i => i.linSumId === s.id)
+      s.linearityInjectionData = injections.filter(i => i.linSumId === s.id);
     });
 
     return summaries;
@@ -89,7 +83,7 @@ export class LinearitySummaryWorkspaceService {
     isImport: boolean = false,
   ): Promise<LinearitySummaryRecordDTO> {
     const timestamp = currentDateTime();
-    
+
     let entity = this.repository.create({
       ...payload,
       id: uuid(),
@@ -101,7 +95,11 @@ export class LinearitySummaryWorkspaceService {
 
     await this.repository.save(entity);
     entity = await this.repository.findOne(entity.id);
-    await this.testSummaryService.resetToNeedsEvaluation(testSumId, userId, isImport);
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
     const dto = await this.map.one(entity);
     delete dto.linearityInjectionData;
     return dto;
@@ -126,7 +124,11 @@ export class LinearitySummaryWorkspaceService {
     entity.updateDate = timestamp;
 
     await this.repository.save(entity);
-    await this.testSummaryService.resetToNeedsEvaluation(testSumId, userId, isImport);
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
     return this.map.one(entity);
   }
 
@@ -138,11 +140,17 @@ export class LinearitySummaryWorkspaceService {
   ): Promise<void> {
     try {
       await this.repository.delete(id);
-    }
-    catch(e) {
-      throw new InternalServerErrorException(`Error deleting Linearity Summary record Id [${id}]`, e.message);
+    } catch (e) {
+      throw new InternalServerErrorException(
+        `Error deleting Linearity Summary record Id [${id}]`,
+        e.message,
+      );
     }
 
-    await this.testSummaryService.resetToNeedsEvaluation(testSumId, userId, isImport);
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
   }
 }

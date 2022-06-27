@@ -7,22 +7,9 @@ import { LinearityInjectionService } from './linearity-injection.service';
 import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      LinearityInjectionRepository,
-    ])
-  ],
-  controllers: [
-    LinearityInjectionController
-  ],
-  providers: [
-    LinearityInjectionMap,
-    LinearityInjectionService,
-  ],
-  exports: [
-    TypeOrmModule,
-    LinearityInjectionMap,
-    LinearityInjectionService,
-  ],
+  imports: [TypeOrmModule.forFeature([LinearityInjectionRepository])],
+  controllers: [LinearityInjectionController],
+  providers: [LinearityInjectionMap, LinearityInjectionService],
+  exports: [TypeOrmModule, LinearityInjectionMap, LinearityInjectionService],
 })
 export class LinearityInjectionModule {}

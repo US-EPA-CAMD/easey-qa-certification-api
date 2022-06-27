@@ -38,13 +38,13 @@ const routes: Routes = [
             children: [
               {
                 path: ':linSumId/injections',
-                module: LinearityInjectionModule
-              }
-            ]            
-          }
-        ]
+                module: LinearityInjectionModule,
+              },
+            ],
+          },
+        ],
       },
-    ]
+    ],
   },
   {
     path: 'workspace/locations',
@@ -60,14 +60,14 @@ const routes: Routes = [
             children: [
               {
                 path: ':linSumId/injections',
-                module: LinearityInjectionWorkspaceModule
-              }
-            ]            
-          }
-        ]
+                module: LinearityInjectionWorkspaceModule,
+              },
+            ],
+          },
+        ],
       },
-    ]
-  },  
+    ],
+  },
 ];
 
 export default routes;

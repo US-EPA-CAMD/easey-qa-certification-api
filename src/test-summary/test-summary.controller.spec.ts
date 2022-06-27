@@ -6,7 +6,7 @@ import { TestSummaryDTO } from '../dto/test-summary.dto';
 import { TestSummaryController } from './test-summary.controller';
 import { TestSummaryService } from './test-summary.service';
 
-const testSummaryDto = new TestSummaryDTO()
+const testSummaryDto = new TestSummaryDTO();
 
 const mockTestSummaryService = () => ({
   getTestSummariesByLocationId: jest.fn().mockResolvedValue([testSummaryDto]),
@@ -25,7 +25,7 @@ describe('Test Summary Controller', () => {
         {
           provide: TestSummaryService,
           useFactory: mockTestSummaryService,
-        }
+        },
       ],
     }).compile();
 
@@ -35,8 +35,8 @@ describe('Test Summary Controller', () => {
 
   describe('getTestSummaries', () => {
     it('should call the TestSummaryService.getTestSummariesByLocationId', async () => {
-      const spyService = jest.spyOn(service, 'getTestSummariesByLocationId')
-      const result = await controller.getTestSummaries('1', {})
+      const spyService = jest.spyOn(service, 'getTestSummariesByLocationId');
+      const result = await controller.getTestSummaries('1', {});
       expect(result).toEqual([testSummaryDto]);
       expect(spyService).toHaveBeenCalled();
     });
@@ -44,8 +44,8 @@ describe('Test Summary Controller', () => {
 
   describe('getTestSummary', () => {
     it('should call the TestSummaryService.getTestSummaryById', async () => {
-      const spyService = jest.spyOn(service, 'getTestSummaryById')
-      const result = await controller.getTestSummary('1', '1')
+      const spyService = jest.spyOn(service, 'getTestSummaryById');
+      const result = await controller.getTestSummary('1', '1');
       expect(result).toEqual(testSummaryDto);
       expect(spyService).toHaveBeenCalled();
     });

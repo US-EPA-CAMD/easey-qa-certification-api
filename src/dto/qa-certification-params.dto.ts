@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import {
   IsOrisCode,
-  IsValidDate, 
+  IsValidDate,
   IsIsoFormat,
 } from '@us-epa-camd/easey-common/pipes';
 
@@ -40,10 +40,11 @@ export class QACertificationParamsDTO {
 
   @ApiProperty({
     isArray: true,
-    description: 'Unique identifier for each stack/pipe at a facility. ADD TO PROPERTY METADATA',
+    description:
+      'Unique identifier for each stack/pipe at a facility. ADD TO PROPERTY METADATA',
   })
   @OneOrMore('unitIds', {
-    message: 'At least one Unit or Stack Pipe identifier is required'
+    message: 'At least one Unit or Stack Pipe identifier is required',
   })
   @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
   stackPipeIds?: string[];
@@ -61,16 +62,16 @@ export class QACertificationParamsDTO {
     description: propertyMetadata.beginDate.description,
   })
   @IsNotEmpty({
-    message: 'Begin Date is required'
+    message: 'Begin Date is required',
   })
   @IsValidDate({
-    message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`
+    message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`,
   })
   @IsIsoFormat({
-    message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`
+    message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`,
   })
   @IsInDateRange('1993-01-01', null, {
-    message: `Begin Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`
+    message: `Begin Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,
   })
   beginDate?: Date;
 
@@ -78,16 +79,16 @@ export class QACertificationParamsDTO {
     description: propertyMetadata.beginDate.description,
   })
   @IsNotEmpty({
-    message: 'End Date is required'
+    message: 'End Date is required',
   })
   @IsValidDate({
-    message: `End Date must be a valid date in the format of ${DATE_FORMAT}.`
+    message: `End Date must be a valid date in the format of ${DATE_FORMAT}.`,
   })
   @IsIsoFormat({
-    message: `End Date must be a valid date in the format of ${DATE_FORMAT}.`
+    message: `End Date must be a valid date in the format of ${DATE_FORMAT}.`,
   })
   @IsInDateRange('1993-01-01', null, {
-    message: `End Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`
+    message: `End Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,
   })
   endDate?: Date;
 }
