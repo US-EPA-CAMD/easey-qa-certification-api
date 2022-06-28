@@ -297,7 +297,7 @@ export class TestSummaryWorkspaceService {
     }
   }
 
-  private async lookupValues(locationId: string, payload: TestSummaryBaseDTO) {
+  async lookupValues(locationId: string, payload: TestSummaryBaseDTO) {
     const mgr = getManager();
 
     let reportPeriodId = null;

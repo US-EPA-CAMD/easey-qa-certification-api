@@ -130,6 +130,8 @@ describe('TestSummaryWorkspaceService', () => {
         findOne: jest.fn().mockResolvedValue(new MonitorLocation()),
       };
 
+      jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
+
       jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
 
       jest
