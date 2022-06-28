@@ -20,7 +20,7 @@ import {
 
 import {
   LinearitySummaryBaseDTO,
-  LinearitySummaryRecordDTO
+  LinearitySummaryRecordDTO,
 } from '../dto/linearity-summary.dto';
 
 import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
@@ -29,16 +29,14 @@ import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
 @ApiSecurity('APIKey')
 @ApiTags('Linearity Summary')
 export class LinearitySummaryWorkspaceController {
-  
-  constructor(
-    private readonly service: LinearitySummaryWorkspaceService
-  ) {}
+  constructor(private readonly service: LinearitySummaryWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
     isArray: true,
     type: LinearitySummaryRecordDTO,
-    description: 'Retrieves workspace Linearity Summary records by Test Summary Id',
+    description:
+      'Retrieves workspace Linearity Summary records by Test Summary Id',
   })
   async getLinearitySummaries(
     @Param('locId') _locationId: string,
@@ -61,8 +59,8 @@ export class LinearitySummaryWorkspaceController {
   }
 
   @Post()
-//  @ApiBearerAuth('Token')
-//  @UseGuards(AuthGuard)
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
   @ApiCreatedResponse({
     type: LinearitySummaryRecordDTO,
     description: 'Creates a Linearity Summary record in the workspace',
@@ -71,15 +69,15 @@ export class LinearitySummaryWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: LinearitySummaryBaseDTO,
-//    @CurrentUser() userId: string,
+    //    @CurrentUser() userId: string,
   ): Promise<LinearitySummaryRecordDTO> {
     const userId = 'testUser';
     return this.service.createSummary(testSumId, payload, userId);
   }
 
   @Put(':id')
-//  @ApiBearerAuth('Token')
-//  @UseGuards(AuthGuard)
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: LinearitySummaryRecordDTO,
     description: 'Updates a Linearity Summary record in the workspace',
@@ -89,15 +87,15 @@ export class LinearitySummaryWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
     @Body() payload: LinearitySummaryBaseDTO,
-//    @CurrentUser() userId: string,
+    //    @CurrentUser() userId: string,
   ): Promise<LinearitySummaryRecordDTO> {
     const userId = 'testUser';
     return this.service.updateSummary(testSumId, id, payload, userId);
   }
 
   @Delete(':id')
-//  @ApiBearerAuth('Token')
-//  @UseGuards(AuthGuard)
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
   @ApiOkResponse({
     description: 'Deletes a Linearity Summary record from the workspace',
   })
@@ -105,7 +103,7 @@ export class LinearitySummaryWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
-//    @CurrentUser() userId: string,
+    //    @CurrentUser() userId: string,
   ): Promise<void> {
     const userId = 'testUser';
     return this.service.deleteSummary(testSumId, id, userId);

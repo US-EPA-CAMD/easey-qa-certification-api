@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -10,7 +10,6 @@ import { LinearitySummaryService } from '../linearity-summary/linearity-summary.
 
 @Injectable()
 export class TestSummaryService {
-
   constructor(
     private readonly logger: Logger,
     private readonly map: TestSummaryMap,
@@ -19,12 +18,15 @@ export class TestSummaryService {
     private readonly repository: TestSummaryRepository,
   ) {}
 
-  async getTestSummaryById(
-    testSumId: string,
-  ): Promise<TestSummaryDTO> {
-    const result = await this.repository.getTestSummaryById(
-      testSumId,
-    );
+  async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
+    const result = await this.repository.getTestSummaryById(testSumId);
+
+    if (!result) {
+      this.logger.error(NotFoundException, 'Test summary not found.', true, {
+        testSumId: testSumId,
+      });
+    }
+
     return this.map.one(result);
   }
 
@@ -59,7 +61,7 @@ export class TestSummaryService {
       testTypeCode,
       beginDate,
       endDate,
-    )
+    );
 
     return this.map.many(results);
   }
@@ -88,12 +90,14 @@ export class TestSummaryService {
         let linearities = null;
         const testSumIds = summaries
           .filter(i => i.testTypeCode === 'LINE')
-          .map(i => i.id );
+          .map(i => i.id);
 
         if (testSumIds) {
           linearities = await this.linearityService.export(testSumIds);
           summaries.forEach(s => {
-            s.linearitySummaryData = linearities.filter(i => i.testSumId === s.id)
+            s.linearitySummaryData = linearities.filter(
+              i => i.testSumId === s.id,
+            );
           });
         }
 

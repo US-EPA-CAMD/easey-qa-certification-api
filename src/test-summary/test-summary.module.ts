@@ -11,23 +11,12 @@ import { TestSummaryMap } from '../maps/test-summary.map';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      TestSummaryRepository,
-    ]),
+    TypeOrmModule.forFeature([TestSummaryRepository]),
     LinearitySummaryModule,
     LinearityInjectionModule,
   ],
-  controllers: [
-    TestSummaryController
-  ],
-  providers: [
-    TestSummaryMap,
-    TestSummaryService,
-  ],
-  exports: [
-    TypeOrmModule,
-    TestSummaryMap,    
-    TestSummaryService,
-  ],
+  controllers: [TestSummaryController],
+  providers: [TestSummaryMap, TestSummaryService],
+  exports: [TypeOrmModule, TestSummaryMap, TestSummaryService],
 })
 export class TestSummaryModule {}

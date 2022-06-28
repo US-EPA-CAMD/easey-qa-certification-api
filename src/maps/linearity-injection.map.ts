@@ -6,7 +6,10 @@ import { LinearityInjection } from '../entities/linearity-injection.entity';
 import { LinearityInjectionDTO } from '../dto/linearity-injection.dto';
 
 @Injectable()
-export class LinearityInjectionMap extends BaseMap<LinearityInjection, LinearityInjectionDTO> {
+export class LinearityInjectionMap extends BaseMap<
+  LinearityInjection,
+  LinearityInjectionDTO
+> {
   public async one(entity: LinearityInjection): Promise<LinearityInjectionDTO> {
     return {
       id: entity.id,
@@ -17,12 +20,8 @@ export class LinearityInjectionMap extends BaseMap<LinearityInjection, Linearity
       measuredValue: entity.measuredValue,
       referenceValue: entity.referenceValue,
       userId: entity.userId,
-      addDate: entity.addDate
-        ? entity.addDate.toLocaleString()
-        : null,
-      updateDate: entity.updateDate
-        ? entity.updateDate.toLocaleString()
-        : null,
+      addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
+      updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
     };
   }
 }

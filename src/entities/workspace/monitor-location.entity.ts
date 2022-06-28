@@ -26,7 +26,7 @@ export class MonitorLocation extends BaseEntity {
     name: 'unit_id',
   })
   unitId: string;
-  
+
   @Column({
     name: 'stack_pipe_id',
   })
@@ -50,28 +50,28 @@ export class MonitorLocation extends BaseEntity {
 
   @OneToMany(
     () => Component,
-    o => o.location
+    o => o.location,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   components: Component[];
 
   @OneToMany(
     () => MonitorSystem,
-    o => o.location
+    o => o.location,
   )
   @JoinColumn({ name: 'mon_loc_id' })
-  systems: MonitorSystem[];  
+  systems: MonitorSystem[];
 
   @OneToMany(
     () => TestSummary,
-    o => o.location
+    o => o.location,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   testSummaries: TestSummary[];
 
   @OneToMany(
     () => QASuppData,
-    o => o.location
+    o => o.location,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   qaSuppData: QASuppData[];

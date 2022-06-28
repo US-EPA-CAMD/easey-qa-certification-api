@@ -9,18 +9,11 @@ import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      LinearityInjectionWorkspaceRepository,
-    ]),
+    TypeOrmModule.forFeature([LinearityInjectionWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
   ],
-  controllers: [
-    LinearityInjectionWorkspaceController
-  ],
-  providers: [
-    LinearityInjectionMap,
-    LinearityInjectionWorkspaceService,
-  ],
+  controllers: [LinearityInjectionWorkspaceController],
+  providers: [LinearityInjectionMap, LinearityInjectionWorkspaceService],
   exports: [
     TypeOrmModule,
     LinearityInjectionMap,

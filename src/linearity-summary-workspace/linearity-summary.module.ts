@@ -10,19 +10,12 @@ import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      LinearitySummaryWorkspaceRepository,
-    ]),
+    TypeOrmModule.forFeature([LinearitySummaryWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),
   ],
-  controllers: [
-    LinearitySummaryWorkspaceController
-  ],
-  providers: [
-    LinearitySummaryMap,
-    LinearitySummaryWorkspaceService,
-  ],
+  controllers: [LinearitySummaryWorkspaceController],
+  providers: [LinearitySummaryMap, LinearitySummaryWorkspaceService],
   exports: [
     TypeOrmModule,
     LinearitySummaryMap,

@@ -65,43 +65,43 @@ export class QASuppData extends BaseEntity {
 
   @Column({
     type: 'date',
-    name: 'begin_date'
+    name: 'begin_date',
   })
   beginDate: Date;
 
   @Column({
     name: 'begin_hour',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   beginHour: number;
 
   @Column({
     name: 'begin_min',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   beginMinute: number;
 
   @Column({
     type: 'date',
-    name: 'end_date'
+    name: 'end_date',
   })
   endDate: Date;
 
   @Column({
     name: 'end_hour',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   endHour: number;
 
   @Column({
     name: 'end_min',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   endMinute: number;
 
   @Column({
     name: 'rpt_period_id',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   reportPeriodId: number;
 
@@ -112,31 +112,31 @@ export class QASuppData extends BaseEntity {
 
   @Column({
     name: 'gp_ind',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   gracePeriodIndicator: number;
 
   @Column({
     type: 'date',
-    name: 'reinstallation_date'
+    name: 'reinstallation_date',
   })
   reinstallationDate: Date;
 
   @Column({
     name: 'reinstallation_hour',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   reinstallationHour: number;
 
   @Column({
     type: 'date',
-    name: 'test_expire_date'
+    name: 'test_expire_date',
   })
   testExpireDate: Date;
 
   @Column({
     name: 'test_expire_hour',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   testExpireHour: number;
 
@@ -147,7 +147,7 @@ export class QASuppData extends BaseEntity {
   operatingConditionCode: string;
 
   @Column({ name: 'fuel_cd' })
-  fuelCode: string;  
+  fuelCode: string;
 
   @ManyToOne(
     () => MonitorLocation,

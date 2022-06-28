@@ -56,10 +56,10 @@ export class QACertificationWorkspaceService {
     );
 
     const promises = [];
-    payload.testSummaryData.forEach((summary) => {
+    payload.testSummaryData.forEach(summary => {
       promises.push(
         new Promise(async (resolve, _reject) => {
-          const locationId = locations.find((i) => {
+          const locationId = locations.find(i => {
             return (
               i.unitId === summary.unitId &&
               i.stackPipeId === summary.stackPipeId

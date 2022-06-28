@@ -6,14 +6,8 @@ import { QACertificationController } from './qa-certification.controller';
 import { QACertificationService } from './qa-certification.service';
 
 @Module({
-  imports: [
-    TestSummaryModule,
-  ],
-  controllers: [
-    QACertificationController
-  ],
-  providers: [
-    QACertificationService,
-  ],
+  imports: [TestSummaryModule],
+  controllers: [QACertificationController],
+  providers: [QACertificationService],
 })
 export class QACertificationModule {}

@@ -4,7 +4,6 @@ import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 
 @EntityRepository(QASuppData)
 export class QASuppDataWorkspaceRepository extends Repository<QASuppData> {
-
   private buildBaseQuery() {
     return this.createQueryBuilder('ts')
       .innerJoinAndSelect('ts.location', 'ml')
@@ -22,8 +21,9 @@ export class QASuppDataWorkspaceRepository extends Repository<QASuppData> {
     testTypeCode?: string,
     testNumber?: string,
   ): Promise<QASuppData> {
-    const query = this.buildBaseQuery()
-      .where('ts.locationId = :locationId', { locationId });
+    const query = this.buildBaseQuery().where('ts.locationId = :locationId', {
+      locationId,
+    });
 
     if (testTypeCode) {
       query.andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode });
@@ -32,7 +32,7 @@ export class QASuppDataWorkspaceRepository extends Repository<QASuppData> {
     if (testNumber) {
       query.andWhere('ts.testNumber = :testNumber', { testNumber });
     }
- 
+
     return query.getOne();
   }
 }

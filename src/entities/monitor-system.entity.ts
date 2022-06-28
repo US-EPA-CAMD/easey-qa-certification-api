@@ -31,7 +31,7 @@ export class MonitorSystem extends BaseEntity {
     () => MonitorLocation,
     ml => ml.systems,
   )
-  @JoinColumn({ name: 'mon_loc_id' })  
+  @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;
 
   @OneToMany(

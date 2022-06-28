@@ -20,9 +20,7 @@ import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp
     forwardRef(() => LinearitySummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),
   ],
-  controllers: [
-    TestSummaryWorkspaceController
-  ],
+  controllers: [TestSummaryWorkspaceController],
   providers: [
     TestSummaryMap,
     TestSummaryChecksService,

@@ -34,22 +34,20 @@ export class LinearityInjectionWorkspaceService {
     private readonly repository: LinearityInjectionWorkspaceRepository,
   ) {}
 
-  async getInjectionById(
-    id: string
-  ): Promise<LinearityInjectionDTO> {
+  async getInjectionById(id: string): Promise<LinearityInjectionDTO> {
     const result = await this.repository.findOne(id);
     return this.map.one(result);
   }
 
   async getInjectionsByLinSumId(
-    linSumId: string
+    linSumId: string,
   ): Promise<LinearityInjectionDTO[]> {
     const results = await this.repository.find({ linSumId });
     return this.map.many(results);
   }
 
   async getInjectionsByLinSumIds(
-    linSumIds: string[]
+    linSumIds: string[],
   ): Promise<LinearityInjectionDTO[]> {
     const results = await this.repository.find({
       where: { linSumId: In(linSumIds) },
@@ -73,7 +71,7 @@ export class LinearityInjectionWorkspaceService {
     isImport: boolean = false,
   ): Promise<LinearityInjectionRecordDTO> {
     const timestamp = currentDateTime();
-    
+
     let entity = this.repository.create({
       ...payload,
       id: uuid(),
@@ -85,7 +83,11 @@ export class LinearityInjectionWorkspaceService {
 
     await this.repository.save(entity);
     entity = await this.repository.findOne(entity.id);
-    await this.testSummaryService.resetToNeedsEvaluation(testSumId, userId, isImport);
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
     return this.map.one(entity);
   }
 
@@ -108,23 +110,33 @@ export class LinearityInjectionWorkspaceService {
     entity.updateDate = timestamp;
 
     await this.repository.save(entity);
-    await this.testSummaryService.resetToNeedsEvaluation(testSumId, userId, isImport);
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
     return this.map.one(entity);
   }
 
   async deleteInjection(
-    testSumId: string,    
+    testSumId: string,
     id: string,
     userId: string,
     isImport: boolean = false,
   ): Promise<void> {
     try {
       await this.repository.delete(id);
-    }
-    catch(e) {
-      throw new InternalServerErrorException(`Error deleting Linearity Injection record Id [${id}]`, e.message);
+    } catch (e) {
+      throw new InternalServerErrorException(
+        `Error deleting Linearity Injection record Id [${id}]`,
+        e.message,
+      );
     }
 
-    await this.testSummaryService.resetToNeedsEvaluation(testSumId, userId, isImport);
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
   }
 }

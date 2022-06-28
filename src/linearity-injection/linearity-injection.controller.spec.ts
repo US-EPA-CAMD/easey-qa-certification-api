@@ -14,10 +14,7 @@ describe('Event Controller', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       controllers: [LinearityInjectionController],
-      providers: [
-        LinearityInjectionService,
-        ConfigService,
-      ],
+      providers: [LinearityInjectionService, ConfigService],
     }).compile();
 
     controller = module.get(LinearityInjectionController);

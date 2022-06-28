@@ -27,49 +27,49 @@ export class LinearitySummary extends BaseEntity {
 
   @Column({
     name: 'mean_ref_value',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   meanReferenceValue: number;
 
   @Column({
     name: 'calc_mean_ref_value',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   calculatedMeanReferenceValue: number;
 
   @Column({
     name: 'mean_measured_value',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   meanMeasuredValue: number;
 
   @Column({
     name: 'calc_mean_measured_value',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   calculatedMeanMeasuredValue: number;
 
   @Column({
     name: 'percent_error',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   percentError: number;
 
   @Column({
     name: 'calc_percent_error',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   calculatedPercentError: number;
 
   @Column({
     name: 'aps_ind',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   apsIndicator: number;
 
   @Column({
     name: 'calc_aps_ind',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   calculatedAPSIndicator: number;
 
@@ -80,12 +80,12 @@ export class LinearitySummary extends BaseEntity {
   userId: string;
 
   @Column({
-    name: 'add_date'
+    name: 'add_date',
   })
   addDate: Date;
 
   @Column({
-    name: 'update_date'
+    name: 'update_date',
   })
   updateDate: Date;
 
@@ -101,5 +101,5 @@ export class LinearitySummary extends BaseEntity {
     o => o.linearitySummary,
   )
   @JoinColumn({ name: 'lin_sum_id' })
-  injections: LinearityInjection[];  
+  injections: LinearityInjection[];
 }

@@ -21,7 +21,7 @@ import {
 
 import {
   TestSummaryBaseDTO,
-  TestSummaryRecordDTO
+  TestSummaryRecordDTO,
 } from '../dto/test-summary.dto';
 
 import { TestSummaryParamsDTO } from '../dto/test-summary-params.dto';
@@ -32,10 +32,9 @@ import { TestSummaryChecksService } from './test-summary-checks.service';
 @ApiSecurity('APIKey')
 @ApiTags('Test Summary')
 export class TestSummaryWorkspaceController {
-  
   constructor(
     private readonly service: TestSummaryWorkspaceService,
-    private readonly checksService: TestSummaryChecksService
+    private readonly checksService: TestSummaryChecksService,
   ) {}
 
   @Get()
@@ -69,8 +68,8 @@ export class TestSummaryWorkspaceController {
   }
 
   @Post()
-//  @ApiBearerAuth('Token')
-//  @UseGuards(AuthGuard)
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
   @ApiCreatedResponse({
     type: TestSummaryRecordDTO,
     description: 'Creates a Test Summary record in the workspace',
@@ -78,7 +77,7 @@ export class TestSummaryWorkspaceController {
   async createTestSummary(
     @Param('locId') locationId: string,
     @Body() payload: TestSummaryBaseDTO,
-//    @CurrentUser() userId: string,
+    //    @CurrentUser() userId: string,
   ): Promise<TestSummaryRecordDTO> {
     const userId = 'testUser';
     await this.checksService.runChecks(locationId, payload);
@@ -86,17 +85,17 @@ export class TestSummaryWorkspaceController {
   }
 
   @Put(':id')
-//  @ApiBearerAuth('Token')
-//  @UseGuards(AuthGuard)
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: TestSummaryRecordDTO,
     description: 'Updates a Test Summary record in the workspace',
   })
   async updateTestSummary(
     @Param('locId') locationId: string,
-    @Param('id') id: string,    
+    @Param('id') id: string,
     @Body() payload: TestSummaryBaseDTO,
-//    @CurrentUser() userId: string,
+    //    @CurrentUser() userId: string,
   ): Promise<TestSummaryRecordDTO> {
     const userId = 'testUser';
     await this.checksService.runChecks(locationId, payload);
@@ -104,8 +103,8 @@ export class TestSummaryWorkspaceController {
   }
 
   @Delete(':id')
-//  @ApiBearerAuth('Token')
-//  @UseGuards(AuthGuard)
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
   @ApiOkResponse({
     description: 'Deletes a Test Summary record from the workspace',
   })

@@ -1,15 +1,6 @@
-import {
-  Get,
-  Query,
-  Controller,
-  Param,
-} from '@nestjs/common';
+import { Get, Query, Controller, Param } from '@nestjs/common';
 
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiSecurity,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { TestSummaryRecordDTO } from '../dto/test-summary.dto';
 import { TestSummaryParamsDTO } from '../dto/test-summary-params.dto';
@@ -19,10 +10,7 @@ import { TestSummaryService } from './test-summary.service';
 @ApiSecurity('APIKey')
 @ApiTags('Test Summary')
 export class TestSummaryController {
-  
-  constructor(
-    private readonly service: TestSummaryService
-  ) {}
+  constructor(private readonly service: TestSummaryService) {}
 
   @Get()
   @ApiOkResponse({
@@ -51,8 +39,6 @@ export class TestSummaryController {
     @Param('locId') _locationId: string,
     @Param('id') testSumId: string,
   ): Promise<TestSummaryRecordDTO> {
-    return this.service.getTestSummaryById(
-      testSumId
-    );
+    return this.service.getTestSummaryById(testSumId);
   }
 }

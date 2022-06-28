@@ -1,14 +1,6 @@
-import {
-  Get,
-  Controller,
-  Param,
-} from '@nestjs/common';
+import { Get, Controller, Param } from '@nestjs/common';
 
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiSecurity,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { LinearitySummaryRecordDTO } from '../dto/linearity-summary.dto';
 import { LinearitySummaryService } from './linearity-summary.service';
@@ -17,16 +9,14 @@ import { LinearitySummaryService } from './linearity-summary.service';
 @ApiSecurity('APIKey')
 @ApiTags('Linearity Summary')
 export class LinearitySummaryController {
-  
-  constructor(
-    private readonly service: LinearitySummaryService
-  ) {}
+  constructor(private readonly service: LinearitySummaryService) {}
 
   @Get()
   @ApiOkResponse({
     isArray: true,
     type: LinearitySummaryRecordDTO,
-    description: 'Retrieves official Linearity Summary records by Test Summary Id',
+    description:
+      'Retrieves official Linearity Summary records by Test Summary Id',
   })
   async getLinearitySummaries(
     @Param('locId') _locationId: string,
@@ -46,5 +36,5 @@ export class LinearitySummaryController {
     @Param('id') id: string,
   ): Promise<LinearitySummaryRecordDTO> {
     return this.service.getSummaryById(id);
-  }  
+  }
 }

@@ -2,22 +2,19 @@ import {
   registerDecorator,
   ValidationOptions,
   ValidationArguments,
-} from "class-validator";
+} from 'class-validator';
 
-import {
-  getManager,
-  FindOneOptions,
-} from 'typeorm';
+import { getManager, FindOneOptions } from 'typeorm';
 
 // TODO: MOVE TO COMMONE PIPES
 export function DbLookup(
   type: any,
-  findOption: ((validationArguments: ValidationArguments) => FindOneOptions),
-  validationOptions?: ValidationOptions
+  findOption: (validationArguments: ValidationArguments) => FindOneOptions,
+  validationOptions?: ValidationOptions,
 ) {
-  return function (object: Object, propertyName: string) {
+  return function(object: Object, propertyName: string) {
     registerDecorator({
-      name: "dbLookup",
+      name: 'dbLookup',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,

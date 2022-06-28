@@ -26,19 +26,19 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
     return {
       id: entity.id,
       locationId: entity.location.id,
-      stackPipeId: (entity.location && entity.location.stackPipe)
-        ? entity.location.stackPipe.name
-        : null,
-      unitId: (entity.location && entity.location.unit)
-        ? entity.location.unit.name
-        : null,
+      stackPipeId:
+        entity.location && entity.location.stackPipe
+          ? entity.location.stackPipe.name
+          : null,
+      unitId:
+        entity.location && entity.location.unit
+          ? entity.location.unit.name
+          : null,
       testTypeCode: entity.testTypeCode,
       monitoringSystemId: entity.system
         ? entity.system.monitoringSystemId
         : null,
-      componentId: entity.component
-        ? entity.component.componentId
-        : null,
+      componentId: entity.component ? entity.component.componentId : null,
       spanScaleCode: entity.spanScaleCode,
       testNumber: entity.testNumber,
       testReasonCode: entity.testReasonCode,
@@ -47,29 +47,21 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       calculatedTestResultCode: entity.calculatedTestResultCode,
       beginDate: entity.beginDate,
       beginHour: entity.beginHour,
-      beginMinute: entity.beginMinute,      
+      beginMinute: entity.beginMinute,
       endDate: entity.endDate,
       endHour: entity.endHour,
       endMinute: entity.endMinute,
       gracePeriodIndicator: entity.gracePeriodIndicator,
       calculatedGracePeriodIndicator: entity.calculatedGracePeriodIndicator,
-      year: entity.reportingPeriod
-        ? entity.reportingPeriod.year
-        : null,
-      quarter: entity.reportingPeriod
-        ? entity.reportingPeriod.quarter
-        : null,
+      year: entity.reportingPeriod ? entity.reportingPeriod.year : null,
+      quarter: entity.reportingPeriod ? entity.reportingPeriod.quarter : null,
       testComment: entity.testComment,
       injectionProtocolCode: entity.injectionProtocolCode,
       calculatedSpanValue: entity.calculatedSpanValue,
       evalStatusCode,
       userId: entity.userId,
-      addDate: entity.addDate
-        ? entity.addDate.toLocaleString()
-        : null,
-      updateDate: entity.updateDate
-        ? entity.updateDate.toLocaleString()
-        : null,
+      addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
+      updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
       reportPeriodId: entity.reportPeriodId,
       calibrationInjectionData: [],
       linearitySummaryData: linearitySummaries,

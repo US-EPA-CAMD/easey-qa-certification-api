@@ -1,7 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 //import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { LinearityInjectionImportDTO, LinearityInjectionDTO } from './linearity-injection.dto';
+import {
+  LinearityInjectionImportDTO,
+  LinearityInjectionDTO,
+} from './linearity-injection.dto';
 
 export class LinearitySummaryBaseDTO {
   @ApiProperty({
@@ -43,9 +46,9 @@ export class LinearitySummaryRecordDTO extends LinearitySummaryBaseDTO {
 }
 
 export class LinearitySummaryImportDTO extends LinearitySummaryBaseDTO {
-  linearityInjectionData: LinearityInjectionImportDTO[];  
+  linearityInjectionData: LinearityInjectionImportDTO[];
 }
 
 export class LinearitySummaryDTO extends LinearitySummaryRecordDTO {
-  linearityInjectionData: LinearityInjectionDTO[];  
+  linearityInjectionData: LinearityInjectionDTO[];
 }

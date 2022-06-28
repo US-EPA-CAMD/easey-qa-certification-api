@@ -20,9 +20,7 @@ export class LinearitySummaryService {
     private readonly repository: LinearitySummaryRepository,
   ) {}
 
-  async getSummaryById(
-    id: string
-  ): Promise<LinearitySummaryDTO> {
+  async getSummaryById(id: string): Promise<LinearitySummaryDTO> {
     const result = await this.repository.findOne(id);
     return this.map.one(result);
   }
@@ -41,21 +39,17 @@ export class LinearitySummaryService {
       where: { testSumId: In(testSumIds) },
     });
     return this.map.many(results);
-  }  
+  }
 
-  async export(
-    testSumIds: string[],
-  ): Promise<LinearitySummaryDTO[]> {
-    const summaries = await this.getSummariesByTestSumIds(
-      testSumIds
-    );
+  async export(testSumIds: string[]): Promise<LinearitySummaryDTO[]> {
+    const summaries = await this.getSummariesByTestSumIds(testSumIds);
 
     const injections = await this.injectionService.export(
-      summaries.map(i => i.id)
+      summaries.map(i => i.id),
     );
 
     summaries.forEach(s => {
-      s.linearityInjectionData = injections.filter(i => i.linSumId === s.id)
+      s.linearityInjectionData = injections.filter(i => i.linSumId === s.id);
     });
 
     return summaries;

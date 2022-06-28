@@ -9,7 +9,6 @@ import { TestSummaryChecksService } from '../test-summary-workspace/test-summary
 
 @Injectable()
 export class QACertificationChecksService {
-
   constructor(
     private readonly logger: Logger,
     private readonly locationChecksService: LocationChecksService,
@@ -17,7 +16,7 @@ export class QACertificationChecksService {
   ) {}
 
   private async extractErrors(
-    promises: Promise<string[]>[]
+    promises: Promise<string[]>[],
   ): Promise<string[]> {
     const errorList: string[] = [];
     const errors = await Promise.all(promises);
@@ -34,12 +33,12 @@ export class QACertificationChecksService {
   }
 
   async runChecks(
-    payload: QACertificationImportDTO
+    payload: QACertificationImportDTO,
   ): Promise<LocationIdentifiers[]> {
     this.logger.info('Running QA Certification Checks');
 
     const errorList: string[] = [];
-    const promises: Promise<string[]>[] = [];    
+    const promises: Promise<string[]>[] = [];
 
     let errors: string[] = [];
     let locations: LocationIdentifiers[] = [];
@@ -49,20 +48,24 @@ export class QACertificationChecksService {
       const componentIds = [];
 
       const location = locations.find(l => {
-        if ((l.unitId && l.unitId === i.unitId) ||
-            (l.stackPipeId && l.stackPipeId === i.stackPipeId))
+        if (
+          (l.unitId && l.unitId === i.unitId) ||
+          (l.stackPipeId && l.stackPipeId === i.stackPipeId)
+        )
           return l;
       });
 
       if (location) {
-        if (i.monitoringSystemId && !location.systemIds.includes(i.monitoringSystemId)) {
+        if (
+          i.monitoringSystemId &&
+          !location.systemIds.includes(i.monitoringSystemId)
+        ) {
           location.systemIds.push(i.monitoringSystemId);
         }
         if (i.componentId && !location.componentIds.includes(i.componentId)) {
           location.componentIds.push(i.componentId);
         }
-      }
-      else {
+      } else {
         if (i.monitoringSystemId) systemIds.push(i.monitoringSystemId);
         if (i.componentId) componentIds.push(i.componentId);
 
@@ -83,14 +86,14 @@ export class QACertificationChecksService {
     if (payload.certificationEventData) {
       payload.certificationEventData.forEach(i => addLocation(i));
     }
-    
+
     if (payload.testExtensionExemptionData) {
       payload.testExtensionExemptionData.forEach(i => addLocation(i));
     }
 
     if (locations.length === 0) {
       errorList.push(
-        'There are no test summary, certifications events, or extension/exmeption records present in the file to be imported'
+        'There are no test summary, certifications events, or extension/exmeption records present in the file to be imported',
       );
     }
     this.throwIfErrors(errorList);
@@ -102,12 +105,14 @@ export class QACertificationChecksService {
     errorList.push(...errors);
     this.throwIfErrors(errorList);
 
-    payload.testSummaryData.forEach(async (summary) => {
+    payload.testSummaryData.forEach(async summary => {
       promises.push(
         new Promise(async (resolve, _reject) => {
           const locationId = locations.find(i => {
-            return i.unitId === summary.unitId &&
+            return (
+              i.unitId === summary.unitId &&
               i.stackPipeId === summary.stackPipeId
+            );
           }).locationId;
 
           const results = this.testSummaryChecksService.runChecks(
@@ -120,10 +125,8 @@ export class QACertificationChecksService {
           resolve(results);
         }),
       );
-    })
-    this.throwIfErrors(
-      await this.extractErrors(promises)
-    );
+    });
+    this.throwIfErrors(await this.extractErrors(promises));
 
     return locations;
   }

@@ -32,14 +32,12 @@ export class TestSummaryRepository extends Repository<TestSummary> {
       locationId,
     });
 
-    query = addTestTypeWhere(
-      query,
-      testTypeCode,
-    ) as SelectQueryBuilder<TestSummary>;
-    query = addTestNumberWhere(
-      query,
-      testNumber,
-    ) as SelectQueryBuilder<TestSummary>;
+    query = addTestTypeWhere(query, testTypeCode) as SelectQueryBuilder<
+      TestSummary
+    >;
+    query = addTestNumberWhere(query, testNumber) as SelectQueryBuilder<
+      TestSummary
+    >;
 
     return query.getOne();
   }
@@ -54,10 +52,9 @@ export class TestSummaryRepository extends Repository<TestSummary> {
       locationId,
     });
 
-    query = addTestTypeWhere(
-      query,
-      testTypeCode,
-    ) as SelectQueryBuilder<TestSummary>;
+    query = addTestTypeWhere(query, testTypeCode) as SelectQueryBuilder<
+      TestSummary
+    >;
     query = addBeginAndEndDateWhere(
       query,
       beginDate,
@@ -101,10 +98,9 @@ export class TestSummaryRepository extends Repository<TestSummary> {
       stackPipeIds,
     });
 
-    query = addTestTypeWhere(
-      query,
-      testTypeCode,
-    ) as SelectQueryBuilder<TestSummary>;
+    query = addTestTypeWhere(query, testTypeCode) as SelectQueryBuilder<
+      TestSummary
+    >;
     query = addBeginAndEndDateWhere(
       query,
       beginDate,

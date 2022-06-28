@@ -8,10 +8,7 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { DbLookup } from '../pipes/db-lookup.pipe';
 import { Plant } from '../entities/plant.entity';
 
-import {
-  TestSummaryDTO,
-  TestSummaryImportDTO,
-} from './test-summary.dto';
+import { TestSummaryDTO, TestSummaryImportDTO } from './test-summary.dto';
 
 import {
   CertificationEventDTO,
@@ -24,17 +21,20 @@ import {
 } from './test-extension-exemption.dto';
 
 export class QACertificationBaseDTO {
-
   @ApiProperty({
     description: propertyMetadata.facilityId.description,
   })
-  @DbLookup(Plant, (args: ValidationArguments): FindOneOptions<Plant> => {
+  @DbLookup(
+    Plant,
+    (args: ValidationArguments): FindOneOptions<Plant> => {
       return { where: { orisCode: args.value } };
-    }, {
-    message: (args: ValidationArguments) => {
-      return `The database does not contain any Facility with Oris Code ${args.value}`;
-    }
-  })
+    },
+    {
+      message: (args: ValidationArguments) => {
+        return `The database does not contain any Facility with Oris Code ${args.value}`;
+      },
+    },
+  )
   orisCode: number;
 }
 

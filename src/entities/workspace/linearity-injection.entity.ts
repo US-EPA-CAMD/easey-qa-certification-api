@@ -31,25 +31,25 @@ export class LinearityInjection extends BaseEntity {
 
   @Column({
     name: 'injection_hour',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   injectionHour: number;
 
   @Column({
     name: 'injection_min',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   injectionMinute: number;
 
   @Column({
     name: 'measured_value',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   measuredValue: number;
 
   @Column({
     name: 'ref_value',
-    transformer: new NumericColumnTransformer()
+    transformer: new NumericColumnTransformer(),
   })
   referenceValue: number;
 
@@ -57,12 +57,12 @@ export class LinearityInjection extends BaseEntity {
   userId: string;
 
   @Column({
-    name: 'add_date'
+    name: 'add_date',
   })
   addDate: Date;
 
   @Column({
-    name: 'update_date'
+    name: 'update_date',
   })
   updateDate: Date;
 

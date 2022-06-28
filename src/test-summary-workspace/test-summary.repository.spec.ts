@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
-import { TestSummary } from '../entities/test-summary.entity';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { SelectQueryBuilder } from 'typeorm';
-import { TestSummaryRepository } from './test-summary.repository';
+import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 
 import * as testSummaryQueryBuilder from '../utilities/test-summary.querybuilder';
 
@@ -16,19 +16,19 @@ const mockQueryBuilder = () => ({
   leftJoin: jest.fn(),
 });
 
-describe('TestSummaryRepository', () => {
+describe('TestSummaryWorkspaceRepository', () => {
   let repository;
   let queryBuilder;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
-        TestSummaryRepository,
+        TestSummaryWorkspaceRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],
     }).compile();
 
-    repository = module.get(TestSummaryRepository);
+    repository = module.get(TestSummaryWorkspaceRepository);
     queryBuilder = module.get<SelectQueryBuilder<TestSummary>>(
       SelectQueryBuilder,
     );
