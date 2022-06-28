@@ -142,7 +142,12 @@ export class TestSummaryWorkspaceService {
       await this.deleteTestSummary(summary.id);
     }
 
-    this.createTestSummary(locationId, payload, userId);
+    const result = await this.createTestSummary(locationId, payload, userId);
+
+    this.logger.info(`Test Summary Successfully Imported.`);
+    return {
+      message: `Test Summary Successfully Imported with Record Id "${result.id}"`,
+    };
   }
 
   async createTestSummary(
@@ -229,7 +234,7 @@ export class TestSummaryWorkspaceService {
     userId: string,
   ): Promise<TestSummaryRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.getTestSummaryById(id);
     const [
       reportPeriodId,
       componentRecordId,
@@ -266,7 +271,6 @@ export class TestSummaryWorkspaceService {
   }
 
   async deleteTestSummary(id: string): Promise<void> {
-    console.log(id);
     try {
       await this.repository.delete(id);
     } catch (e) {

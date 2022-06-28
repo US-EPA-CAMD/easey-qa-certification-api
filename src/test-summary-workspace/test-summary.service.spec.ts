@@ -9,7 +9,9 @@ import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import * as utils from '../utilities/utils';
 import { MonitorLocation } from '../entities/monitor-location.entity';
-import { months } from 'moment';
+import { StackPipe } from '../entities/workspace/stack-pipe.entity';
+import { Unit } from '../entities/workspace/unit.entity';
+import { InternalServerErrorException } from '@nestjs/common';
 
 const locationId = '121';
 const facilityId = 1;
@@ -25,6 +27,8 @@ lineSumDto.testSumId = testSumId;
 const payload = new TestSummaryImportDTO();
 payload.testTypeCode = 'code';
 payload.testNumber = '1';
+payload.unitId = '1';
+payload.stackPipeId = '1';
 
 const mockRepository = () => ({
   getTestSummaryById: jest.fn().mockResolvedValue(testSummary),
@@ -125,23 +129,36 @@ describe('TestSummaryWorkspaceService', () => {
     });
   });
 
+  describe('import', () => {
+    it('Should create test summary ', async () => {
+      const returnedSummary = testSummaryDto;
+      returnedSummary.id = testSumId;
+
+      jest
+        .spyOn(service, 'createTestSummary')
+        .mockResolvedValue(returnedSummary);
+
+      const result = await service.import(locationId, payload, userId);
+
+      expect(result).toEqual({
+        message: `Test Summary Successfully Imported with Record Id "${testSumId}"`,
+      });
+    });
+  });
+
   describe('createTestSummary', () => {
     it('should call the createTestSummary and create test summariy', async () => {
-    
-      /*
-      const mockManager = {
-        findOne: jest.fn().mockResolvedValue(new MonitorLocation()),
-      };
-      */
-
       const mockManager = {
         findOne: jest.fn().mockImplementation((entityType, params) => {
-          console.log(entityType.name);
           if (entityType.name == 'StackPipe') {
+            const pipe = new StackPipe();
+            pipe.name = '1';
+            return pipe;
+          } else if (entityType.name == 'Unit') {
+            return new Unit();
+          } else if (entityType.name == 'MonitorLocation') {
             return new MonitorLocation();
           }
-
-          return new MonitorLocation();
         }),
       };
 
@@ -160,6 +177,83 @@ describe('TestSummaryWorkspaceService', () => {
       );
 
       expect(result).toEqual(testSummaryDto);
+    });
+
+    it('should call the createTestSummary and throw error if Unit does not match', async () => {
+      const mockManager = {
+        findOne: jest.fn().mockImplementation((entityType, params) => {
+          if (entityType.name == 'StackPipe') {
+            const pipe = new StackPipe();
+            pipe.name = '101';
+            return pipe;
+          } else if (entityType.name == 'Unit') {
+            const unit = new Unit();
+            unit.name = '101';
+            return unit;
+          } else if (entityType.name == 'MonitorLocation') {
+            const loc = new MonitorLocation();
+            loc.unitId = '11';
+            return loc;
+          }
+        }),
+      };
+
+      jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
+
+      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+
+      let errored = false;
+
+      try {
+        await service.createTestSummary(locationId, payload, userId);
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
+    });
+  });
+
+  describe('updateTestSummary', () => {
+    it('should call the updateTestSummary and update test summariy', async () => {
+      jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
+
+      jest
+        .spyOn(repository, 'getTestSummaryById')
+        .mockResolvedValue(testSummary);
+
+      const result = await service.updateTestSummary(
+        locationId,
+        testSumId,
+        payload,
+        userId,
+      );
+
+      expect(result).toEqual(testSummaryDto);
+    });
+  });
+
+  describe('deleteTestSummary', () => {
+    it('should call the deleteTestSummary and delete test summariy', async () => {
+      const result = await service.deleteTestSummary(testSumId);
+
+      expect(result).toEqual(undefined);
+    });
+
+    it('should call the deleteTestSummary and throw error while deleting test summariy', async () => {
+      jest
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException());
+
+      let errored = false;
+
+      try {
+        await service.deleteTestSummary(testSumId);
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
     });
   });
 });
