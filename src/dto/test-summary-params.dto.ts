@@ -1,4 +1,3 @@
-import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 import { IsValidDate, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
