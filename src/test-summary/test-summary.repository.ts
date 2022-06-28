@@ -110,10 +110,7 @@ export class TestSummaryRepository extends Repository<TestSummary> {
       beginDate,
       endDate,
     ) as SelectQueryBuilder<TestSummary>;
-    let [sql, params] = query.getQueryAndParameters();
 
-    console.log(sql);
-    console.log('params: ' + params);
     return query.getMany();
   }
 }
