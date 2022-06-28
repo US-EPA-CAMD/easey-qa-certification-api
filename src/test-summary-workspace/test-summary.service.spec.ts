@@ -9,6 +9,7 @@ import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import * as utils from '../utilities/utils';
 import { MonitorLocation } from '../entities/monitor-location.entity';
+import { months } from 'moment';
 
 const locationId = '121';
 const facilityId = 1;
@@ -126,8 +127,22 @@ describe('TestSummaryWorkspaceService', () => {
 
   describe('createTestSummary', () => {
     it('should call the createTestSummary and create test summariy', async () => {
+    
+      /*
       const mockManager = {
         findOne: jest.fn().mockResolvedValue(new MonitorLocation()),
+      };
+      */
+
+      const mockManager = {
+        findOne: jest.fn().mockImplementation((entityType, params) => {
+          console.log(entityType.name);
+          if (entityType.name == 'StackPipe') {
+            return new MonitorLocation();
+          }
+
+          return new MonitorLocation();
+        }),
       };
 
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
