@@ -19,12 +19,32 @@ import { LocationChecksService } from '../location-workspace/location-checks.ser
 import { TestSummaryChecksService } from '../test-summary-workspace/test-summary-checks.service';
 import { LocationWorkspaceRepository } from '../location-workspace/location.repository';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
-import { QACertificationDTO } from '../dto/qa-certification.dto';
+import {
+  QACertificationDTO,
+  QACertificationImportDTO,
+} from '../dto/qa-certification.dto';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
+
+const qaCertDto = new QACertificationDTO();
+const qaParamsDto = new QACertificationParamsDTO();
+const payload = new QACertificationImportDTO();
+
+const location = {
+  unitId: 'string',
+  locationId: 'string',
+  stackPipeId: 'string',
+  systemIds: ['string'],
+  componentIds: ['string'],
+};
+
+const mockCheckService = () => ({
+  runChecks: jest.fn().mockResolvedValue(''),
+});
 
 describe('QA Certification Workspace Controller Test', () => {
   let controller: QACertificationWorkspaceController;
   let service: QACertificationWorkspaceService;
+  let checkService: QACertificationChecksService;
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -32,7 +52,10 @@ describe('QA Certification Workspace Controller Test', () => {
       controllers: [QACertificationWorkspaceController],
       providers: [
         QACertificationWorkspaceService,
-        QACertificationChecksService,
+        {
+          provide: QACertificationChecksService,
+          useFactory: mockCheckService,
+        },
         ConfigService,
         TestSummaryWorkspaceService,
         TestSummaryMap,
@@ -52,16 +75,21 @@ describe('QA Certification Workspace Controller Test', () => {
 
     controller = module.get(QACertificationWorkspaceController);
     service = module.get(QACertificationWorkspaceService);
+    checkService = module.get(QACertificationChecksService);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  describe('export', () => {
+    it('should export QA & Cert Data', async () => {
+      jest.spyOn(service, 'export').mockResolvedValue(qaCertDto);
+      expect(await controller.export(qaParamsDto)).toBe(qaCertDto);
+    });
   });
 
-  it('should return', async () => {
-    const expectedResult = new QACertificationDTO();
-    const paramsDto = new QACertificationParamsDTO();
-    jest.spyOn(service, 'export').mockResolvedValue(expectedResult);
-    expect(await controller.export(paramsDto)).toBe(expectedResult);
+  describe('import', () => {
+    it('should import QA & Cert Data', async () => {
+      jest.spyOn(checkService, 'runChecks').mockResolvedValue([location]);
+      jest.spyOn(service, 'import').mockResolvedValue(undefined);
+      expect(await controller.import(payload)).toBe(undefined);
+    });
   });
 });
