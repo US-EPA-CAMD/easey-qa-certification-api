@@ -1,4 +1,3 @@
-import { IsNotEmpty } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -41,7 +40,7 @@ export class QACertificationParamsDTO {
   @ApiProperty({
     isArray: true,
     description:
-      'Unique identifier for each stack/pipe at a facility. ADD TO PROPERTY METADATA',
+      'Unique identifier for each stack/pipe at a facility. Required if no unitId provided. ADD TO PROPERTY METADATA',
   })
   @OneOrMore('unitIds', {
     message: 'At least one Unit or Stack Pipe identifier is required',
@@ -61,9 +60,6 @@ export class QACertificationParamsDTO {
   @ApiProperty({
     description: propertyMetadata.beginDate.description,
   })
-  @IsNotEmpty({
-    message: 'Begin Date is required',
-  })
   @IsValidDate({
     message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`,
   })
@@ -77,9 +73,6 @@ export class QACertificationParamsDTO {
 
   @ApiProperty({
     description: propertyMetadata.beginDate.description,
-  })
-  @IsNotEmpty({
-    message: 'End Date is required',
   })
   @IsValidDate({
     message: `End Date must be a valid date in the format of ${DATE_FORMAT}.`,

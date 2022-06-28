@@ -1,4 +1,3 @@
-import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 import { IsValidDate, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
@@ -26,9 +25,6 @@ export class TestSummaryParamsDTO {
   @ApiProperty({
     description: propertyMetadata.beginDate.description,
   })
-  @IsNotEmpty({
-    message: 'Begin Date is required',
-  })
   @IsValidDate({
     message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`,
   })
@@ -42,9 +38,6 @@ export class TestSummaryParamsDTO {
 
   @ApiProperty({
     description: propertyMetadata.beginDate.description,
-  })
-  @IsNotEmpty({
-    message: 'End Date is required',
   })
   @IsValidDate({
     message: `End Date must be a valid date in the format of ${DATE_FORMAT}.`,

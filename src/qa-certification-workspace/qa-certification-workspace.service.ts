@@ -7,7 +7,7 @@ import {
   QACertificationImportDTO,
 } from '../dto/qa-certification.dto';
 
-import { LocationIdentifiers } from './../interfaces/location-identifiers.interface';
+import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 
