@@ -1,5 +1,4 @@
 import { v4 as uuid } from 'uuid';
-import { getManager } from 'typeorm';
 
 import {
   BadRequestException,
@@ -142,12 +141,9 @@ export class TestSummaryWorkspaceService {
       await this.deleteTestSummary(summary.id);
     }
 
-    const result = await this.createTestSummary(locationId, payload, userId);
+    this.createTestSummary(locationId, payload, userId);
 
     this.logger.info(`Test Summary Successfully Imported.`);
-    return {
-      message: `Test Summary Successfully Imported with Record Id "${result.id}"`,
-    };
   }
 
   async createTestSummary(
@@ -302,7 +298,7 @@ export class TestSummaryWorkspaceService {
   }
 
   async lookupValues(locationId: string, payload: TestSummaryBaseDTO) {
-    const mgr = getManager();
+    const mgr = getEntityManager();
 
     let reportPeriodId = null;
     let componentRecordId = null;

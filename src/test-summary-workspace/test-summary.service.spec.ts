@@ -134,15 +134,14 @@ describe('TestSummaryWorkspaceService', () => {
       const returnedSummary = testSummaryDto;
       returnedSummary.id = testSumId;
 
-      jest
+      const creste = jest
         .spyOn(service, 'createTestSummary')
         .mockResolvedValue(returnedSummary);
 
       const result = await service.import(locationId, payload, userId);
 
-      expect(result).toEqual({
-        message: `Test Summary Successfully Imported with Record Id "${testSumId}"`,
-      });
+      expect(creste).toHaveBeenCalled();
+      expect(result).toEqual(undefined);
     });
   });
 
