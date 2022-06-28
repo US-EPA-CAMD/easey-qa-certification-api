@@ -17,11 +17,11 @@ import {
 
 import {
   QACertificationImportDTO,
-  QACertificationDTO
+  QACertificationDTO,
 } from '../dto/qa-certification.dto';
 
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
-import { QACertificationWorkspaceService } from './qa-certification.service';
+import { QACertificationWorkspaceService } from './qa-certification-workspace.service';
 import { QACertificationChecksService } from './qa-certification-checks.service';
 import { FormatValidationErrorsInterceptor } from '../interceptors/format-validation-errors.interceptor';
 
@@ -29,7 +29,6 @@ import { FormatValidationErrorsInterceptor } from '../interceptors/format-valida
 @ApiSecurity('APIKey')
 @ApiTags('QA Certification')
 export class QACertificationWorkspaceController {
-  
   constructor(
     private readonly service: QACertificationWorkspaceService,
     private readonly checksService: QACertificationChecksService,
@@ -40,8 +39,18 @@ export class QACertificationWorkspaceController {
     type: QACertificationDTO,
     description: 'Exports worksapce QA Certification data',
   })
-  @ApiQuery({ style: 'pipeDelimited', name: 'unitIds', required: false, explode: false, })
-  @ApiQuery({ style: 'pipeDelimited', name: 'stackPipeIds', required: false, explode: false, })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'unitIds',
+    required: false,
+    explode: false,
+  })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'stackPipeIds',
+    required: false,
+    explode: false,
+  })
   async export(
     @Query() params: QACertificationParamsDTO,
   ): Promise<QACertificationDTO> {
@@ -53,12 +62,13 @@ export class QACertificationWorkspaceController {
   //@UseGuards(AuthGuard)
   @ApiOkResponse({
     type: QACertificationDTO,
-    description: 'Imports QA Certification data from JSON file into the workspace',
+    description:
+      'Imports QA Certification data from JSON file into the workspace',
   })
   @UseInterceptors(FormatValidationErrorsInterceptor)
   async import(
     @Body() payload: QACertificationImportDTO,
-//    @CurrentUser() userId: string,
+    //    @CurrentUser() userId: string,
   ) {
     const userId = 'testUser';
     const locations = await this.checksService.runChecks(payload);
