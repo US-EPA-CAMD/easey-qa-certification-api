@@ -117,7 +117,13 @@ export class TestSummaryWorkspaceService {
         const testSumIds = summaries
           .filter(i => i.testTypeCode === 'LINE')
           .map(i => i.id);
-        const linearities = this.linearityService.export(testSumIds);
+        const linearities = await this.linearityService.export(testSumIds);
+        summaries.forEach(s => {
+          s.linearitySummaryData = linearities.filter(
+            i => i.testSumId === s.id,
+          );
+        });
+
         resolve(linearities);
       }),
     );
