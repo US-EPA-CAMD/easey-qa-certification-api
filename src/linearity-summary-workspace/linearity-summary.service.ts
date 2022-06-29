@@ -92,10 +92,7 @@ export class LinearitySummaryWorkspaceService {
       `Linear Summary Successfully Imported. Record Id: ${createdLineSummary.id}`,
     );
 
-    if (
-      payload.linearityInjectionData &&
-      payload.linearityInjectionData.length > 0
-    ) {
+    if (payload.linearityInjectionData?.length > 0) {
       for (const injection of payload.linearityInjectionData) {
         promises.push(
           new Promise(async (resolve, _reject) => {

@@ -153,10 +153,7 @@ export class TestSummaryWorkspaceService {
       `Test Summary Successfully Imported. Record Id: ${createdTestSummary.id}`,
     );
 
-    if (
-      payload.linearitySummaryData &&
-      payload.linearitySummaryData.length > 0
-    ) {
+    if (payload.linearitySummaryData?.length > 0) {
       for (const linearitySummary of payload.linearitySummaryData) {
         promises.push(
           new Promise(async (resolve, _reject) => {
