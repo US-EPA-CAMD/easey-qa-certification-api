@@ -137,6 +137,8 @@ export class TestSummaryWorkspaceService {
     payload: TestSummaryImportDTO,
     userId: string,
   ) {
+    const promises = [];
+
     const summary = await this.repository.getTestSummaryByLocationId(
       locationId,
       payload.testTypeCode,
@@ -147,9 +149,38 @@ export class TestSummaryWorkspaceService {
       await this.deleteTestSummary(summary.id);
     }
 
-    this.createTestSummary(locationId, payload, userId);
+    const createdTestSummary = await this.createTestSummary(
+      locationId,
+      payload,
+      userId,
+    );
 
-    this.logger.info(`Test Summary Successfully Imported.`);
+    this.logger.info(
+      `Test Summary Successfully Imported. Record Id: ${createdTestSummary.id}`,
+    );
+
+    if (payload.linearitySummaryData?.length > 0) {
+      for (const linearitySummary of payload.linearitySummaryData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.linearityService.import(
+                createdTestSummary.id,
+                linearitySummary,
+                userId,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    await Promise.all(promises);
+
+    return null;
   }
 
   async createTestSummary(
@@ -188,7 +219,7 @@ export class TestSummaryWorkspaceService {
       );
     }
 
-    let entity = this.repository.create({
+    const entity = this.repository.create({
       ...payload,
       id: uuid(),
       locationId,
@@ -205,8 +236,9 @@ export class TestSummaryWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.getTestSummaryById(entity.id);
-    const dto = await this.map.one(entity);
+    const result = await this.repository.getTestSummaryById(entity.id);
+
+    const dto = await this.map.one(result);
 
     delete dto.calibrationInjectionData;
     delete dto.linearitySummaryData;

@@ -5,7 +5,10 @@ import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummaryMap } from '../maps/test-summary.map';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryWorkspaceService } from './test-summary.service';
-import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
+import {
+  LinearitySummaryDTO,
+  LinearitySummaryImportDTO,
+} from '../dto/linearity-summary.dto';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import * as utils from '../utilities/utils';
 import { MonitorLocation } from '../entities/monitor-location.entity';
@@ -22,6 +25,7 @@ const userId = 'testuser';
 const testSummary = new TestSummary();
 const testSummaryDto = new TestSummaryDTO();
 const lineSumDto = new LinearitySummaryDTO();
+const lineSumImportDto = new LinearitySummaryImportDTO();
 lineSumDto.testSumId = testSumId;
 
 const payload = new TestSummaryImportDTO();
@@ -29,6 +33,7 @@ payload.testTypeCode = 'code';
 payload.testNumber = '1';
 payload.unitId = '1';
 payload.stackPipeId = '1';
+payload.linearitySummaryData = [lineSumImportDto];
 
 const mockRepository = () => ({
   getTestSummaryById: jest.fn().mockResolvedValue(testSummary),
@@ -42,6 +47,7 @@ const mockRepository = () => ({
 
 const mockLinearitySummaryService = () => ({
   export: jest.fn().mockResolvedValue([lineSumDto]),
+  import: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
@@ -141,7 +147,7 @@ describe('TestSummaryWorkspaceService', () => {
       const result = await service.import(locationId, payload, userId);
 
       expect(creste).toHaveBeenCalled();
-      expect(result).toEqual(undefined);
+      expect(result).toEqual(null);
     });
   });
 

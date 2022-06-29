@@ -16,6 +16,7 @@ import {
   LinearityInjectionDTO,
   LinearityInjectionBaseDTO,
   LinearityInjectionRecordDTO,
+  LinearityInjectionImportDTO,
 } from '../dto/linearity-injection.dto';
 
 import { currentDateTime } from '../utilities/functions';
@@ -59,8 +60,25 @@ export class LinearityInjectionWorkspaceService {
     return this.getInjectionsByLinSumIds(linSumIds);
   }
 
-  async import() {
+  async import(
+    testSumId: string,
+    linSumId: string,
+    payload: LinearityInjectionImportDTO,
+    userId: string,
+  ) {
     const isImport = true;
+    const result = await this.createInjection(
+      testSumId,
+      linSumId,
+      payload,
+      userId,
+      isImport,
+    );
+
+    this.logger.info(
+      `Linearity Injection Successfully Imported. Record Id: ${result.id}`,
+    );
+    return null;
   }
 
   async createInjection(
