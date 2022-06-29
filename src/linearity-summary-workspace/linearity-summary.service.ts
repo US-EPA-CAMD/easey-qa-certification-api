@@ -16,6 +16,7 @@ import {
   LinearitySummaryDTO,
   LinearitySummaryBaseDTO,
   LinearitySummaryRecordDTO,
+  LinearitySummaryImportDTO,
 } from '../dto/linearity-summary.dto';
 
 import { currentDateTime } from '../utilities/functions';
@@ -72,8 +73,50 @@ export class LinearitySummaryWorkspaceService {
     return summaries;
   }
 
-  async import() {
+  async import(
+    testSumId: string,
+    payload: LinearitySummaryImportDTO,
+    userId: string,
+  ) {
     const isImport = true;
+    const promises = [];
+
+    const createdLineSummary = await this.createSummary(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+    );
+
+    if (
+      payload.linearityInjectionData &&
+      payload.linearityInjectionData.length > 0
+    ) {
+      for (const injection of payload.linearityInjectionData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.injectionService.import(
+                testSumId,
+                createdLineSummary.id,
+                injection,
+                userId,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    await Promise.all(promises);
+
+    this.logger.info(
+      `Linear Summary Successfully Imported. Record Id: ${createdLineSummary.id}`,
+    );
+    return null;
   }
 
   async createSummary(

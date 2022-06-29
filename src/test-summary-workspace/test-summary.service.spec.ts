@@ -141,7 +141,7 @@ describe('TestSummaryWorkspaceService', () => {
       const result = await service.import(locationId, payload, userId);
 
       expect(creste).toHaveBeenCalled();
-      expect(result).toEqual(undefined);
+      expect(result).toEqual(null);
     });
   });
 
