@@ -88,6 +88,10 @@ export class LinearitySummaryWorkspaceService {
       isImport,
     );
 
+    this.logger.info(
+      `Linear Summary Successfully Imported. Record Id: ${createdLineSummary.id}`,
+    );
+
     if (
       payload.linearityInjectionData &&
       payload.linearityInjectionData.length > 0
@@ -113,9 +117,6 @@ export class LinearitySummaryWorkspaceService {
 
     await Promise.all(promises);
 
-    this.logger.info(
-      `Linear Summary Successfully Imported. Record Id: ${createdLineSummary.id}`,
-    );
     return null;
   }
 

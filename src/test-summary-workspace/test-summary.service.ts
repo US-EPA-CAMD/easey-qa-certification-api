@@ -149,6 +149,10 @@ export class TestSummaryWorkspaceService {
       userId,
     );
 
+    this.logger.info(
+      `Test Summary Successfully Imported. Record Id: ${createdTestSummary.id}`,
+    );
+
     if (
       payload.linearitySummaryData &&
       payload.linearitySummaryData.length > 0
@@ -173,9 +177,6 @@ export class TestSummaryWorkspaceService {
 
     await Promise.all(promises);
 
-    this.logger.info(
-      `Test Summary Successfully Imported. Record Id: ${createdTestSummary.id}`,
-    );
     return null;
   }
 
@@ -215,7 +216,7 @@ export class TestSummaryWorkspaceService {
       );
     }
 
-    let entity = this.repository.create({
+    const entity = this.repository.create({
       ...payload,
       id: uuid(),
       locationId,
@@ -232,7 +233,6 @@ export class TestSummaryWorkspaceService {
     });
 
     await this.repository.save(entity);
-    console.log('Created Test Summary:', entity.id);
     const result = await this.repository.getTestSummaryById(entity.id);
 
     const dto = await this.map.one(result);
