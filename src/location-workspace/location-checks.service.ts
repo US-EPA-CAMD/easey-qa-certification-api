@@ -70,12 +70,12 @@ export class LocationChecksService {
 
       if (dbLocation) {
         location.locationId = dbLocation.id;
-        const dbSystemIds = dbLocation.systems.map(i => i.monitoringSystemId);
-        const dbComponentIds = dbLocation.components.map(i => i.componentId);
+        const dbSystemIDs = dbLocation.systems.map(i => i.monitoringSystemID);
+        const dbComponentIDs = dbLocation.components.map(i => i.componentID);
 
         // IMPORT-14 All QA Systems Present in the Production Database
-        location.systemIds.forEach(systemId => {
-          if (!dbSystemIds.includes(systemId)) {
+        location.systemIDs.forEach(systemId => {
+          if (!dbSystemIDs.includes(systemId)) {
             errorList.push(
               `The database does not contain System [${systemId}] for ${unitStack} and Facility [${orisCode}]`,
             );
@@ -83,10 +83,10 @@ export class LocationChecksService {
         });
 
         // IMPORT-15 All QA Components Present in the Production Database
-        location.componentIds.forEach(componentId => {
-          if (!dbComponentIds.includes(componentId)) {
+        location.componentIDs.forEach(componentID => {
+          if (!dbComponentIDs.includes(componentID)) {
             errorList.push(
-              `The database does not contain Component [${componentId}] for ${unitStack} and Facility [${orisCode}]`,
+              `The database does not contain Component [${componentID}] for ${unitStack} and Facility [${orisCode}]`,
             );
           }
         });

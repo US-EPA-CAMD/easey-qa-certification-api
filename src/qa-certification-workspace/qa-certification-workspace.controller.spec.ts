@@ -33,8 +33,8 @@ const location = {
   unitId: 'string',
   locationId: 'string',
   stackPipeId: 'string',
-  systemIds: ['string'],
-  componentIds: ['string'],
+  systemIDs: ['string'],
+  componentIDs: ['string'],
 };
 
 const mockCheckService = () => ({

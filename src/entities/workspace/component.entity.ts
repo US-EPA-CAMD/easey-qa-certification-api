@@ -26,7 +26,7 @@ export class Component extends BaseEntity {
     nullable: false,
     name: 'component_identifier',
   })
-  componentId: string;
+  componentID: string;
 
   @Column({
     type: 'varchar',

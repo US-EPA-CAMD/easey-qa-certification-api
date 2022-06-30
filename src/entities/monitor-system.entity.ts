@@ -25,7 +25,7 @@ export class MonitorSystem extends BaseEntity {
     nullable: true,
     name: 'system_identifier',
   })
-  monitoringSystemId: string;
+  monitoringSystemID: string;
 
   @ManyToOne(
     () => MonitorLocation,
