@@ -353,22 +353,22 @@ export class TestSummaryWorkspaceService {
       reportPeriodId = rptPeriod ? rptPeriod.id : null;
     }
 
-    if (payload.componentId) {
+    if (payload.componentID) {
       const component = await mgr.findOne(Component, {
         where: {
           locationId: locationId,
-          componentId: payload.componentId,
+          componentID: payload.componentID,
         },
       });
 
       componentRecordId = component ? component.id : null;
     }
 
-    if (payload.monitoringSystemId) {
+    if (payload.monitoringSystemID) {
       const monitorSystem = await mgr.findOne(MonitorSystem, {
         where: {
           locationId,
-          monitoringSystemId: payload.monitoringSystemId,
+          monitoringSystemID: payload.monitoringSystemID,
         },
       });
 

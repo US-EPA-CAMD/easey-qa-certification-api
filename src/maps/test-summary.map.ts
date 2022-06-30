@@ -35,10 +35,10 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
           ? entity.location.unit.name
           : null,
       testTypeCode: entity.testTypeCode,
-      monitoringSystemId: entity.system
-        ? entity.system.monitoringSystemId
+      monitoringSystemID: entity.system
+        ? entity.system.monitoringSystemID
         : null,
-      componentId: entity.component ? entity.component.componentId : null,
+      componentID: entity.component ? entity.component.componentID : null,
       spanScaleCode: entity.spanScaleCode,
       testNumber: entity.testNumber,
       testReasonCode: entity.testReasonCode,
