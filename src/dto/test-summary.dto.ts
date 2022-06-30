@@ -84,6 +84,8 @@ import { TestResultCode } from '../entities/test-result-code.entity';
 import { InjectionProtocolCode } from '../entities/injection-protocol-code.entity';
 
 const MIN_DATE = '1993-01-01';
+const MIN_HOUR = 0;
+const MAX_HOUR = 23;
 const KEY = 'General Test'
 const DATE_FORMAT = 'YYYY-MM-DD';
 const BEGIN_DATE_TEST_TYPE_CODES = [
@@ -237,7 +239,7 @@ export class TestSummaryBaseDTO {
       );
     },
   })
-  @IsInDateRange('1993-01-01', null, {
+  @IsInDateRange(MIN_DATE, null, {
     message: (args: ValidationArguments) => `You reported a [beginDate] of [${args.value}] which is outside the range of acceptable values for this date for [${KEY}]`,
   })
   @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
@@ -247,19 +249,10 @@ export class TestSummaryBaseDTO {
     description: 'Begin Hour. ADD TO PROPERTY METADATA',
   })
   @IsNotEmpty({
-    message: (args: ValidationArguments) => {
-      return formatTestSummaryValidationError(args, 'Begin Hour is required');
-    },
+    message: `You did not provide [beginHour], which is required for [${KEY}]`,
   })
-  @IsInRange(0, 23, {
-    message: (args: ValidationArguments) => {
-      return formatTestSummaryValidationError(
-        args,
-        `Begin Hour must be a numeric number from 0 to 23${''}. You reported an invalid hour of [${
-          args.value
-        }]`,
-      );
-    },
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => `The value [${args.value}] in the field [beginHour] for [${KEY}] is not within the range of valid values from [${MIN_HOUR}] to [${MAX_HOUR}]`
   })
   @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginHour?: number;
@@ -288,9 +281,9 @@ export class TestSummaryBaseDTO {
   @IsIsoFormat({
     message: ErrorMessages.SingleFormat('endDate', 'YYYY-MM-DD format'),
   })
-  @IsInDateRange('1993-01-01', null, {
+  @IsInDateRange(MIN_DATE, null, {
     message: (args: ValidationArguments) => {
-      return `End Date must be greater than or equal to 1993-01-01 and less than or equal to the current date. You reported an invalid date of [${
+      return `End Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date. You reported an invalid date of [${
         args.value
       }] in Test Summary record for Unit/Stack [${
         args.object['unitId']
