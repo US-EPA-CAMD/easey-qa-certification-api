@@ -174,6 +174,9 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Test Number. ADD TO PROPERTY METADATA',
   })
+  @IsNotEmpty({
+    message: `You did not provide [testNumber], which is required for [${KEY}].`
+  })
   testNumber: string;
 
   @ApiProperty({
