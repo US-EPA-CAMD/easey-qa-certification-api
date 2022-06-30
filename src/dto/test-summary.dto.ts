@@ -84,6 +84,7 @@ import { TestResultCode } from '../entities/test-result-code.entity';
 import { InjectionProtocolCode } from '../entities/injection-protocol-code.entity';
 
 const MIN_DATE = '1993-01-01';
+const KEY = 'General Test'
 const DATE_FORMAT = 'YYYY-MM-DD';
 const BEGIN_DATE_TEST_TYPE_CODES = [
   TestTypeCodes.APPE,
@@ -218,9 +219,7 @@ export class TestSummaryBaseDTO {
     description: propertyMetadata.beginDate.description,
   })
   @IsNotEmpty({
-    message: (args: ValidationArguments) => {
-      return formatTestSummaryValidationError(args, 'Begin Date is required');
-    },
+    message: `You did not provide [beginDate], which is required for [${KEY}]`,
   })
   @IsValidDate({
     message: (args: ValidationArguments) => {
@@ -239,12 +238,7 @@ export class TestSummaryBaseDTO {
     },
   })
   @IsInDateRange('1993-01-01', null, {
-    message: (args: ValidationArguments) => {
-      return formatTestSummaryValidationError(
-        args,
-        `Begin Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date. You reported an invalid date of [${args.value}]`,
-      );
-    },
+    message: (args: ValidationArguments) => `You reported a [beginDate] of [${args.value}] which is outside the range of acceptable values for this date for [${KEY}]`,
   })
   @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginDate?: Date;
