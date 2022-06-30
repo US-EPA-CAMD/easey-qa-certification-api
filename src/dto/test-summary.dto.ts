@@ -282,17 +282,10 @@ export class TestSummaryBaseDTO {
     message: ErrorMessages.SingleFormat('endDate', 'YYYY-MM-DD format'),
   })
   @IsInDateRange(MIN_DATE, null, {
-    message: (args: ValidationArguments) => {
-      return `End Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date. You reported an invalid date of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
-    },
+    message: (args: ValidationArguments) => `You reported an [endDate] of [${args.value}], which is outside the range of acceptable values for this date for [${KEY}]`,
+  })
+  @IsNotEmpty({
+    message: `You did not provide [endDate], which is required for [${KEY}]`,
   })
   endDate?: Date;
 
