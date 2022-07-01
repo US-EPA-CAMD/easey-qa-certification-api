@@ -88,7 +88,7 @@ const MIN_HOUR = 0;
 const MAX_HOUR = 23;
 const MIN_MINUTE = 0;
 const MAX_MINUTE = 59;
-const KEY = 'General Test';
+const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';
 const BEGIN_DATE_TEST_TYPE_CODES = [
   TestTypeCodes.APPE,

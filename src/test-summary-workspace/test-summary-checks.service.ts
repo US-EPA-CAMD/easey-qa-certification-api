@@ -463,7 +463,7 @@ export class TestSummaryChecksService {
 
   // TEST-7 Test Dates Consistent
   test7Check(summary: TestSummaryBaseDTO): string {
-    const errorResponse = `You reported endDate, endHour, and endMinute which is prior to or equal to beginDate, beginHour, and beginMinute for [General Test].`;
+    const errorResponse = `You reported endDate, endHour, and endMinute which is prior to or equal to beginDate, beginHour, and beginMinute for [Test Summary].`;
     const testTypeCode = summary.testTypeCode.toUpperCase();
 
     // cannot call getFullYear and other functions unless we do new Date
