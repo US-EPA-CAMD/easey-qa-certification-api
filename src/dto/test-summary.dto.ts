@@ -84,6 +84,11 @@ import { TestResultCode } from '../entities/test-result-code.entity';
 import { InjectionProtocolCode } from '../entities/injection-protocol-code.entity';
 
 const MIN_DATE = '1993-01-01';
+const MIN_HOUR = 0;
+const MAX_HOUR = 23;
+const MIN_MINUTE = 0;
+const MAX_MINUTE = 59;
+const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';
 const BEGIN_DATE_TEST_TYPE_CODES = [
   TestTypeCodes.APPE,
@@ -171,6 +176,9 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Test Number. ADD TO PROPERTY METADATA',
   })
+  @IsNotEmpty({
+    message: `You did not provide [testNumber], which is required for [${KEY}].`,
+  })
   testNumber: string;
 
   @ApiProperty({
@@ -218,9 +226,7 @@ export class TestSummaryBaseDTO {
     description: propertyMetadata.beginDate.description,
   })
   @IsNotEmpty({
-    message: (args: ValidationArguments) => {
-      return formatTestSummaryValidationError(args, 'Begin Date is required');
-    },
+    message: `You did not provide [beginDate], which is required for [${KEY}].`,
   })
   @IsValidDate({
     message: (args: ValidationArguments) => {
@@ -238,13 +244,9 @@ export class TestSummaryBaseDTO {
       );
     },
   })
-  @IsInDateRange('1993-01-01', null, {
-    message: (args: ValidationArguments) => {
-      return formatTestSummaryValidationError(
-        args,
-        `Begin Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date. You reported an invalid date of [${args.value}]`,
-      );
-    },
+  @IsInDateRange(MIN_DATE, null, {
+    message: (args: ValidationArguments) =>
+      `You reported a [beginDate] of [${args.value}] which is outside the range of acceptable values for this date for [${KEY}].`,
   })
   @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginDate?: Date;
@@ -253,19 +255,11 @@ export class TestSummaryBaseDTO {
     description: 'Begin Hour. ADD TO PROPERTY METADATA',
   })
   @IsNotEmpty({
-    message: (args: ValidationArguments) => {
-      return formatTestSummaryValidationError(args, 'Begin Hour is required');
-    },
+    message: `You did not provide [beginHour], which is required for [${KEY}].`,
   })
-  @IsInRange(0, 23, {
-    message: (args: ValidationArguments) => {
-      return formatTestSummaryValidationError(
-        args,
-        `Begin Hour must be a numeric number from 0 to 23${''}. You reported an invalid hour of [${
-          args.value
-        }]`,
-      );
-    },
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) =>
+      `The value [${args.value}] in the field [beginHour] for [${KEY}] is not within the range of valid values from [${MIN_HOUR}] to [${MAX_HOUR}].`,
   })
   @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginHour?: number;
@@ -273,15 +267,9 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Begin Minute. ADD TO PROPERTY METADATA',
   })
-  @IsInRange(0, 59, {
-    message: (args: ValidationArguments) => {
-      return formatTestSummaryValidationError(
-        args,
-        `Begin Minute must be a numeric number from 0 to 59${''}. You reported an invalid minute of [${
-          args.value
-        }]`,
-      );
-    },
+  @IsInRange(MIN_MINUTE, MAX_MINUTE, {
+    message: (args: ValidationArguments) =>
+      `The value [${args.value}] in the field [beginMinute] for [${KEY}] is not within the range of valid values from [${MIN_MINUTE}] to [${MAX_MINUTE}].`,
   })
   beginMinute?: number;
 
@@ -294,55 +282,37 @@ export class TestSummaryBaseDTO {
   @IsIsoFormat({
     message: ErrorMessages.SingleFormat('endDate', 'YYYY-MM-DD format'),
   })
-  @IsInDateRange('1993-01-01', null, {
-    message: (args: ValidationArguments) => {
-      return `End Date must be greater than or equal to 1993-01-01 and less than or equal to the current date. You reported an invalid date of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
-    },
+  @IsInDateRange(MIN_DATE, null, {
+    message: (args: ValidationArguments) =>
+      `You reported an [endDate] of [${args.value}], which is outside the range of acceptable values for this date for [${KEY}].`,
+  })
+  @IsNotEmpty({
+    message: `You did not provide [endDate], which is required for [${KEY}].`,
   })
   endDate?: Date;
 
   @ApiProperty({
     description: 'End Hour. ADD TO PROPERTY METADATA',
   })
-  @IsInRange(0, 23, {
-    message: (args: ValidationArguments) => {
-      return `End Hour must be a numeric number from 0 to 23. You reported an invalid hour of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
-    },
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) =>
+      `The value [${args.value}] in the field [endHour] for [${KEY}] is not within the range of valid values from [${MIN_HOUR}] to [${MAX_HOUR}].`,
+  })
+  @IsNotEmpty({
+    message: `You did not provide [endHour], which is required for [${KEY}].`,
   })
   endHour?: number;
 
   @ApiProperty({
     description: 'End Minute. ADD TO PROPERTY METADATA',
   })
-  @IsInRange(0, 59, {
-    message: (args: ValidationArguments) => {
-      return `End Minute must be a numeric number from 0 to 59. You reported an invalid minute of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
-    },
+  @IsInRange(MIN_MINUTE, MAX_MINUTE, {
+    message: (args: ValidationArguments) =>
+      `The value [${args.value}] in the field [endMinute] for [${KEY}] is not within the range of valid values from [${MIN_MINUTE}] to [${MAX_MINUTE}].`,
   })
+  @ValidateIf(
+    o => o.testTypeCode.toUpperCase() !== TestTypeCodes.ONOFF.toString(),
+  )
   endMinute?: number;
 
   @ApiProperty({

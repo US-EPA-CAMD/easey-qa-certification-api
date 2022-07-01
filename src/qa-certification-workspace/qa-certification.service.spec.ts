@@ -6,7 +6,7 @@ import {
 } from '../dto/qa-certification.dto';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { QACertificationWorkspaceService } from './qa-certification-workspace.service';
+import { QACertificationWorkspaceService } from './qa-certification.service';
 import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
 
 const testSummary = new TestSummaryDTO();

@@ -50,6 +50,11 @@ export class TestSummaryChecksService {
     error = this.import17Check(summary);
     if (error) errorList.push(error);
 
+    // TEST-7 Test Dates Consistent
+    // NOTE: beginMinute and endMinute validity tests need to run before this test
+    error = this.test7Check(summary);
+    if (error) errorList.push(error);
+
     error = await this.duplicateTestCheck(
       locationId,
       summary,
@@ -454,6 +459,58 @@ export class TestSummaryChecksService {
     }
 
     return error;
+  }
+
+  // TEST-7 Test Dates Consistent
+  test7Check(summary: TestSummaryBaseDTO): string {
+    const errorResponse = `You reported endDate, endHour, and endMinute which is prior to or equal to beginDate, beginHour, and beginMinute for [Test Summary].`;
+    const testTypeCode = summary.testTypeCode.toUpperCase();
+
+    // cannot call getFullYear and other functions unless we do new Date
+    const summaryBeginDate = new Date(summary.beginDate);
+
+    const summaryEndDate = new Date(summary.endDate);
+    // need to add a 0 in front if the hour is a single digit or else new Date() will through error
+    const beginHour =
+      summary.beginHour > 9 ? summary.beginHour : `0${summary.beginHour}`;
+    const endHour =
+      summary.endHour > 9 ? summary.endHour : `0${summary.endHour}`;
+    const beginMinute =
+      summary.beginMinute > 9 ? summary.beginMinute : `0${summary.beginMinute}`;
+    const endMinute =
+      summary.endMinute > 9 ? summary.endMinute : `0${summary.endMinute}`;
+
+    // creates a date string in format yyyy-mm-dd
+    const beginDate = `${summaryBeginDate.getFullYear()}-${
+      summaryBeginDate.getMonth() < 10 ? '0' : ''
+    }${summaryBeginDate.getMonth()}-${
+      summaryBeginDate.getDay() < 10 ? '0' : ''
+    }${summaryBeginDate.getDay()}`;
+    const endDate = `${summaryEndDate.getFullYear()}-${
+      summaryEndDate.getMonth() < 10 ? '0' : ''
+    }${summaryEndDate.getMonth()}-${
+      summaryEndDate.getDay() < 10 ? '0' : ''
+    }${summaryEndDate.getDay()}`;
+
+    if (
+      testTypeCode === TestTypeCodes.ONOFF.toString() ||
+      testTypeCode === TestTypeCodes.FF2LBAS.toString()
+    ) {
+      // then create a datetime string in format yyyy-mm-dd:hh:mm
+      const beginDateHour = new Date(`${beginDate}T${beginHour}:00`);
+      const endDateHour = new Date(`${endDate}T${endHour}:00`);
+
+      if (beginDateHour >= endDateHour) return errorResponse;
+    } else {
+      const beginDateHourMinute = new Date(
+        `${beginDate}T${beginHour}:${beginMinute}`,
+      );
+      const endDateHourMinute = new Date(`${endDate}T${endHour}:${endMinute}`);
+
+      if (beginDateHourMinute >= endDateHourMinute) return errorResponse;
+    }
+
+    return null;
   }
 
   private compareFields(

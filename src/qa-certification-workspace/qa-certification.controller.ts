@@ -21,7 +21,7 @@ import {
 } from '../dto/qa-certification.dto';
 
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
-import { QACertificationWorkspaceService } from './qa-certification-workspace.service';
+import { QACertificationWorkspaceService } from './qa-certification.service';
 import { QACertificationChecksService } from './qa-certification-checks.service';
 import { FormatValidationErrorsInterceptor } from '../interceptors/format-validation-errors.interceptor';
 
