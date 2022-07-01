@@ -12,8 +12,8 @@ import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { TestSummaryMap } from '../maps/test-summary.map';
 
-import { QACertificationWorkspaceController } from './qa-certification-workspace.controller';
-import { QACertificationWorkspaceService } from './qa-certification-workspace.service';
+import { QACertificationWorkspaceController } from './qa-certification.controller';
+import { QACertificationWorkspaceService } from './qa-certification.service';
 import { QACertificationChecksService } from './qa-certification-checks.service';
 import { LocationChecksService } from '../location-workspace/location-checks.service';
 import { TestSummaryChecksService } from '../test-summary-workspace/test-summary-checks.service';
