@@ -86,6 +86,8 @@ import { InjectionProtocolCode } from '../entities/injection-protocol-code.entit
 const MIN_DATE = '1993-01-01';
 const MIN_HOUR = 0;
 const MAX_HOUR = 23;
+const MIN_MINUTE = 0; 
+const MAX_MINUTE = 59;
 const KEY = 'General Test'
 const DATE_FORMAT = 'YYYY-MM-DD';
 const BEGIN_DATE_TEST_TYPE_CODES = [
@@ -263,15 +265,8 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Begin Minute. ADD TO PROPERTY METADATA',
   })
-  @IsInRange(0, 59, {
-    message: (args: ValidationArguments) => {
-      return formatTestSummaryValidationError(
-        args,
-        `Begin Minute must be a numeric number from 0 to 59${''}. You reported an invalid minute of [${
-          args.value
-        }]`,
-      );
-    },
+  @IsInRange(MIN_MINUTE, MAX_MINUTE, {
+    message: (args: ValidationArguments) => `The value [${args.value}] in the field [beginMinute] for [General Test] is not within the range of valid values from [${MIN_MINUTE}] to [${MAX_MINUTE}].`
   })
   beginMinute?: number;
 
