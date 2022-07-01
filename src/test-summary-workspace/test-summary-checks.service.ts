@@ -49,6 +49,11 @@ export class TestSummaryChecksService {
     // IMPORT-17 Extraneous Test Summary Data Check
     error = this.import17Check(summary);
     if (error) errorList.push(error);
+    
+    // TEST-7 Test Dates Consistent
+    // NOTE: beginMinute and endMinute validity tests need to run before this test
+    error = this.test7Check(summary);
+    if (error) errorList.push(error);
 
     error = await this.duplicateTestCheck(
       locationId,
@@ -454,6 +459,38 @@ export class TestSummaryChecksService {
     }
 
     return error;
+  }
+
+  // TEST-7 Test Dates Consistent
+  private test7Check(summary: TestSummaryBaseDTO): string{  
+
+    const errorResponse = `You reported endDate, endHour, and endMinute which is prior to or equal to beginDate, beginHour, and beginMinute for [General Test].`
+    const testTypeCode = summary.testTypeCode.toUpperCase();
+    
+    // need to add a 0 in front if the hour is a single digit or else new Date() will through error
+    const beginHour = summary.beginHour > 9 ?  summary.beginHour : `0${summary.beginHour}`;
+    const endHour = summary.endHour > 9 ?  summary.endHour : `0${summary.endHour}`;
+    const beginMinute = summary.beginMinute > 9 ?  summary.beginMinute : `0${summary.beginMinute}`;
+    const endMinute = summary.endMinute > 9 ?  summary.endMinute : `0${summary.endMinute}`;
+    
+    if( testTypeCode === TestTypeCodes.ONOFF.toString() || testTypeCode === TestTypeCodes.FF2LBAS.toString()){
+      
+      const beginDateHour = new Date(`${summary.beginDate}T${beginHour}:00`);
+      const endDateHour = new Date(`${summary.endDate}T${endHour}:00`);
+
+      if( beginDateHour >= endDateHour )
+        return errorResponse;
+    }
+    else{
+
+      const beginDateHourMinute = new Date(`${summary.beginDate}T${beginHour}:${beginMinute}`);
+      const endDateHourMinute = new Date(`${summary.endDate}T${endHour}:${endMinute}`);
+
+      if( beginDateHourMinute >= endDateHourMinute )
+        return errorResponse;
+    }
+
+    return null;
   }
 
   private compareFields(
