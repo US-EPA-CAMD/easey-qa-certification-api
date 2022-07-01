@@ -301,19 +301,11 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'End Minute. ADD TO PROPERTY METADATA',
   })
-  @IsInRange(0, 59, {
-    message: (args: ValidationArguments) => {
-      return `End Minute must be a numeric number from 0 to 59. You reported an invalid minute of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
-    },
+
+  @IsInRange(MIN_MINUTE, MAX_MINUTE, {
+    message: (args: ValidationArguments) => `The value [${args.value}] in the field [endMinute] for [General Test] is not within the range of valid values from [${MIN_MINUTE}] to [${MAX_MINUTE}].`
   })
+  @ValidateIf(o => o.testTypeCode.toUpperCase() !== "ONOFF")
   endMinute?: number;
 
   @ApiProperty({
