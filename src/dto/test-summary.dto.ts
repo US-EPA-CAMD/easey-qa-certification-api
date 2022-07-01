@@ -305,7 +305,7 @@ export class TestSummaryBaseDTO {
   @IsInRange(MIN_MINUTE, MAX_MINUTE, {
     message: (args: ValidationArguments) => `The value [${args.value}] in the field [endMinute] for [General Test] is not within the range of valid values from [${MIN_MINUTE}] to [${MAX_MINUTE}].`
   })
-  @ValidateIf(o => o.testTypeCode.toUpperCase() !== "ONOFF")
+  @ValidateIf(o => o.testTypeCode.toUpperCase() !== TestTypeCodes.ONOFF.toString())
   endMinute?: number;
 
   @ApiProperty({

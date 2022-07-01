@@ -49,7 +49,7 @@ export class TestSummaryChecksService {
     // IMPORT-17 Extraneous Test Summary Data Check
     error = this.import17Check(summary);
     if (error) errorList.push(error);
-    
+
     // TEST-7 Test Dates Consistent
     // NOTE: beginMinute and endMinute validity tests need to run before this test
     error = this.test7Check(summary);
@@ -462,32 +462,53 @@ export class TestSummaryChecksService {
   }
 
   // TEST-7 Test Dates Consistent
-  private test7Check(summary: TestSummaryBaseDTO): string{  
-
-    const errorResponse = `You reported endDate, endHour, and endMinute which is prior to or equal to beginDate, beginHour, and beginMinute for [General Test].`
+  test7Check(summary: TestSummaryBaseDTO): string {
+    const errorResponse = `You reported endDate, endHour, and endMinute which is prior to or equal to beginDate, beginHour, and beginMinute for [General Test].`;
     const testTypeCode = summary.testTypeCode.toUpperCase();
-    
+
     // need to add a 0 in front if the hour is a single digit or else new Date() will through error
-    const beginHour = summary.beginHour > 9 ?  summary.beginHour : `0${summary.beginHour}`;
-    const endHour = summary.endHour > 9 ?  summary.endHour : `0${summary.endHour}`;
-    const beginMinute = summary.beginMinute > 9 ?  summary.beginMinute : `0${summary.beginMinute}`;
-    const endMinute = summary.endMinute > 9 ?  summary.endMinute : `0${summary.endMinute}`;
-    
-    if( testTypeCode === TestTypeCodes.ONOFF.toString() || testTypeCode === TestTypeCodes.FF2LBAS.toString()){
+    const beginHour =
+      summary.beginHour > 9 ? summary.beginHour : `0${summary.beginHour}`;
+    const endHour =
+      summary.endHour > 9 ? summary.endHour : `0${summary.endHour}`;
+    const beginMinute =
+      summary.beginMinute > 9 ? summary.beginMinute : `0${summary.beginMinute}`;
+    const endMinute =
+      summary.endMinute > 9 ? summary.endMinute : `0${summary.endMinute}`;
+
+    // creates a date string in format yyyy-mm-dd
+    const beginDate = `${summary.beginDate.getFullYear()}-${
+      summary.beginDate.getMonth() < 10 ? '0' : ''
+    }${summary.beginDate.getMonth()}-${
+      summary.beginDate.getDay() < 10 ? '0' : ''
+    }${summary.beginDate.getDay()}`;
+    const endDate = `${summary.endDate.getFullYear()}-${
+      summary.endDate.getMonth() < 10 ? '0' : ''
+    }${summary.endDate.getMonth()}-${
+      summary.endDate.getDay() < 10 ? '0' : ''
+    }${summary.endDate.getDay()}`;
       
-      const beginDateHour = new Date(`${summary.beginDate}T${beginHour}:00`);
-      const endDateHour = new Date(`${summary.endDate}T${endHour}:00`);
+    if (
+      testTypeCode === TestTypeCodes.ONOFF.toString() ||
+      testTypeCode === TestTypeCodes.FF2LBAS.toString()
+    ) {
 
-      if( beginDateHour >= endDateHour )
-        return errorResponse;
-    }
-    else{
+      // then create a datetime string in format yyyy-mm-dd:hh:mm
+      const beginDateHour = new Date(`${beginDate}T${beginHour}:00`);
+      const endDateHour = new Date(`${endDate}T${endHour}:00`);
 
-      const beginDateHourMinute = new Date(`${summary.beginDate}T${beginHour}:${beginMinute}`);
-      const endDateHourMinute = new Date(`${summary.endDate}T${endHour}:${endMinute}`);
-
-      if( beginDateHourMinute >= endDateHourMinute )
-        return errorResponse;
+      if (beginDateHour >= endDateHour) return errorResponse;
+    } else {
+      const beginDateHourMinute = new Date(
+        `${beginDate}T${beginHour}:${beginMinute}`,
+      );
+      const endDateHourMinute = new Date(
+        `${endDate}T${endHour}:${endMinute}`,
+      );
+      
+      console.log(beginDateHourMinute)
+      console.log(endDateHourMinute)
+      if (beginDateHourMinute >= endDateHourMinute) return errorResponse;
     }
 
     return null;
