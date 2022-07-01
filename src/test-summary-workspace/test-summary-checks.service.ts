@@ -470,6 +470,7 @@ export class TestSummaryChecksService {
     return error;
   }
 
+<<<<<<< HEAD
   // TEST-3 Test Begin Minute Valid
   private async test3Check(summary: TestSummaryBaseDTO, locationId: string): Promise<string>{
 
@@ -523,6 +524,55 @@ export class TestSummaryChecksService {
 
       if( beginDateHourMinute >= endDateHourMinute )
         return errorResponse;
+=======
+  // TEST-7 Test Dates Consistent
+  test7Check(summary: TestSummaryBaseDTO): string {
+    const errorResponse = `You reported endDate, endHour, and endMinute which is prior to or equal to beginDate, beginHour, and beginMinute for [Test Summary].`;
+    const testTypeCode = summary.testTypeCode.toUpperCase();
+
+    // cannot call getFullYear and other functions unless we do new Date
+    const summaryBeginDate = new Date(summary.beginDate);
+
+    const summaryEndDate = new Date(summary.endDate);
+    // need to add a 0 in front if the hour is a single digit or else new Date() will through error
+    const beginHour =
+      summary.beginHour > 9 ? summary.beginHour : `0${summary.beginHour}`;
+    const endHour =
+      summary.endHour > 9 ? summary.endHour : `0${summary.endHour}`;
+    const beginMinute =
+      summary.beginMinute > 9 ? summary.beginMinute : `0${summary.beginMinute}`;
+    const endMinute =
+      summary.endMinute > 9 ? summary.endMinute : `0${summary.endMinute}`;
+
+    // creates a date string in format yyyy-mm-dd
+    const beginDate = `${summaryBeginDate.getFullYear()}-${
+      summaryBeginDate.getMonth() < 10 ? '0' : ''
+    }${summaryBeginDate.getMonth()}-${
+      summaryBeginDate.getDay() < 10 ? '0' : ''
+    }${summaryBeginDate.getDay()}`;
+    const endDate = `${summaryEndDate.getFullYear()}-${
+      summaryEndDate.getMonth() < 10 ? '0' : ''
+    }${summaryEndDate.getMonth()}-${
+      summaryEndDate.getDay() < 10 ? '0' : ''
+    }${summaryEndDate.getDay()}`;
+
+    if (
+      testTypeCode === TestTypeCodes.ONOFF.toString() ||
+      testTypeCode === TestTypeCodes.FF2LBAS.toString()
+    ) {
+      // then create a datetime string in format yyyy-mm-dd:hh:mm
+      const beginDateHour = new Date(`${beginDate}T${beginHour}:00`);
+      const endDateHour = new Date(`${endDate}T${endHour}:00`);
+
+      if (beginDateHour >= endDateHour) return errorResponse;
+    } else {
+      const beginDateHourMinute = new Date(
+        `${beginDate}T${beginHour}:${beginMinute}`,
+      );
+      const endDateHourMinute = new Date(`${endDate}T${endHour}:${endMinute}`);
+
+      if (beginDateHourMinute >= endDateHourMinute) return errorResponse;
+>>>>>>> feature/3670-test-summary-dto-validations
     }
 
     return null;
@@ -535,17 +585,17 @@ export class TestSummaryChecksService {
     const fields: string[] = [];
 
     if (
-      (duplicate.system === null && summary.monitoringSystemId) ||
+      (duplicate.system === null && summary.monitoringSystemID) ||
       (duplicate.system &&
-        duplicate.system.monitoringSystemId !== summary.monitoringSystemId)
+        duplicate.system.monitoringSystemID !== summary.monitoringSystemID)
     ) {
       fields.push('Monitoring System Id');
     }
 
     if (
-      (duplicate.component === null && summary.componentId) ||
+      (duplicate.component === null && summary.componentID) ||
       (duplicate.component &&
-        duplicate.component.componentId !== summary.componentId)
+        duplicate.component.componentID !== summary.componentID)
     ) {
       fields.push('Component Id');
     }

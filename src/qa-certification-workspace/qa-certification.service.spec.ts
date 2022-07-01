@@ -24,8 +24,8 @@ const location = {
   unitId: '1',
   locationId: '1',
   stackPipeId: '1',
-  systemIds: ['1'],
-  componentIds: ['1'],
+  systemIDs: ['1'],
+  componentIDs: ['1'],
 };
 const mockTestSummaryWorkspaceService = () => ({
   export: jest.fn().mockResolvedValue([testSummary]),
