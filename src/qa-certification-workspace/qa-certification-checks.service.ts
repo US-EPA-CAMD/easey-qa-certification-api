@@ -44,8 +44,8 @@ export class QACertificationChecksService {
     let locations: LocationIdentifiers[] = [];
 
     const addLocation = (i: any) => {
-      const systemIds = [];
-      const componentIds = [];
+      const systemIDs = [];
+      const componentIDs = [];
 
       const location = locations.find(l => {
         if (
@@ -57,24 +57,24 @@ export class QACertificationChecksService {
 
       if (location) {
         if (
-          i.monitoringSystemId &&
-          !location.systemIds.includes(i.monitoringSystemId)
+          i.monitoringSystemID &&
+          !location.systemIDs.includes(i.monitoringSystemID)
         ) {
-          location.systemIds.push(i.monitoringSystemId);
+          location.systemIDs.push(i.monitoringSystemID);
         }
-        if (i.componentId && !location.componentIds.includes(i.componentId)) {
-          location.componentIds.push(i.componentId);
+        if (i.componentID && !location.componentIDs.includes(i.componentID)) {
+          location.componentIDs.push(i.componentID);
         }
       } else {
-        if (i.monitoringSystemId) systemIds.push(i.monitoringSystemId);
-        if (i.componentId) componentIds.push(i.componentId);
+        if (i.monitoringSystemID) systemIDs.push(i.monitoringSystemID);
+        if (i.componentID) componentIDs.push(i.componentID);
 
         locations.push({
           unitId: i.unitId,
           locationId: null,
           stackPipeId: i.stackPipeId,
-          systemIds,
-          componentIds,
+          systemIDs,
+          componentIDs,
         });
       }
     };

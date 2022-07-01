@@ -148,12 +148,12 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOId.description,
   })
-  monitoringSystemId?: string;
+  monitoringSystemID?: string;
 
   @ApiProperty({
     description: propertyMetadata.componentDTOComponentId.description,
   })
-  componentId?: string;
+  componentID?: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSpanDTOSpanScaleCode.description,

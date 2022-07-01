@@ -520,17 +520,17 @@ export class TestSummaryChecksService {
     const fields: string[] = [];
 
     if (
-      (duplicate.system === null && summary.monitoringSystemId) ||
+      (duplicate.system === null && summary.monitoringSystemID) ||
       (duplicate.system &&
-        duplicate.system.monitoringSystemId !== summary.monitoringSystemId)
+        duplicate.system.monitoringSystemID !== summary.monitoringSystemID)
     ) {
       fields.push('Monitoring System Id');
     }
 
     if (
-      (duplicate.component === null && summary.componentId) ||
+      (duplicate.component === null && summary.componentID) ||
       (duplicate.component &&
-        duplicate.component.componentId !== summary.componentId)
+        duplicate.component.componentID !== summary.componentID)
     ) {
       fields.push('Component Id');
     }
