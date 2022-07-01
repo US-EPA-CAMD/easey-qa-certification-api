@@ -466,6 +466,10 @@ export class TestSummaryChecksService {
     const errorResponse = `You reported endDate, endHour, and endMinute which is prior to or equal to beginDate, beginHour, and beginMinute for [General Test].`;
     const testTypeCode = summary.testTypeCode.toUpperCase();
 
+    // cannot call getFullYear and other functions unless we do new Date
+    const summaryBeginDate = new Date(summary.beginDate);
+
+    const summaryEndDate = new Date(summary.endDate);
     // need to add a 0 in front if the hour is a single digit or else new Date() will through error
     const beginHour =
       summary.beginHour > 9 ? summary.beginHour : `0${summary.beginHour}`;
@@ -477,22 +481,21 @@ export class TestSummaryChecksService {
       summary.endMinute > 9 ? summary.endMinute : `0${summary.endMinute}`;
 
     // creates a date string in format yyyy-mm-dd
-    const beginDate = `${summary.beginDate.getFullYear()}-${
-      summary.beginDate.getMonth() < 10 ? '0' : ''
-    }${summary.beginDate.getMonth()}-${
-      summary.beginDate.getDay() < 10 ? '0' : ''
-    }${summary.beginDate.getDay()}`;
-    const endDate = `${summary.endDate.getFullYear()}-${
-      summary.endDate.getMonth() < 10 ? '0' : ''
-    }${summary.endDate.getMonth()}-${
-      summary.endDate.getDay() < 10 ? '0' : ''
-    }${summary.endDate.getDay()}`;
-      
+    const beginDate = `${summaryBeginDate.getFullYear()}-${
+      summaryBeginDate.getMonth() < 10 ? '0' : ''
+    }${summaryBeginDate.getMonth()}-${
+      summaryBeginDate.getDay() < 10 ? '0' : ''
+    }${summaryBeginDate.getDay()}`;
+    const endDate = `${summaryEndDate.getFullYear()}-${
+      summaryEndDate.getMonth() < 10 ? '0' : ''
+    }${summaryEndDate.getMonth()}-${
+      summaryEndDate.getDay() < 10 ? '0' : ''
+    }${summaryEndDate.getDay()}`;
+
     if (
       testTypeCode === TestTypeCodes.ONOFF.toString() ||
       testTypeCode === TestTypeCodes.FF2LBAS.toString()
     ) {
-
       // then create a datetime string in format yyyy-mm-dd:hh:mm
       const beginDateHour = new Date(`${beginDate}T${beginHour}:00`);
       const endDateHour = new Date(`${endDate}T${endHour}:00`);
@@ -502,12 +505,8 @@ export class TestSummaryChecksService {
       const beginDateHourMinute = new Date(
         `${beginDate}T${beginHour}:${beginMinute}`,
       );
-      const endDateHourMinute = new Date(
-        `${endDate}T${endHour}:${endMinute}`,
-      );
-      
-      console.log(beginDateHourMinute)
-      console.log(endDateHourMinute)
+      const endDateHourMinute = new Date(`${endDate}T${endHour}:${endMinute}`);
+
       if (beginDateHourMinute >= endDateHourMinute) return errorResponse;
     }
 
