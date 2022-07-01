@@ -17,6 +17,7 @@ const payload = new QACertificationImportDTO();
 payload.testSummaryData = [new TestSummaryImportDTO()];
 payload.testSummaryData[0].unitId = '1';
 payload.testSummaryData[0].stackPipeId = '1';
+payload.orisCode = 1;
 
 const userId = 'testUser';
 
@@ -69,7 +70,9 @@ describe('QA Certification Workspace Service Test', () => {
   describe('import', () => {
     it('successfully calls import() service function', async () => {
       const result = await service.import([location], payload, userId);
-      expect(result).toEqual(undefined);
+      expect(result).toEqual({
+        message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${payload.orisCode}]`,
+      });
     });
   });
 });

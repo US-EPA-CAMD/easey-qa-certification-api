@@ -50,7 +50,7 @@ export class QACertificationWorkspaceService {
     locations: LocationIdentifiers[],
     payload: QACertificationImportDTO,
     userId: string,
-  ): Promise<void> {
+  ): Promise<any> {
     this.logger.info(
       `Importing QA Certification data for Facility Id/Oris Code [${payload.orisCode}]`,
     );
@@ -78,5 +78,9 @@ export class QACertificationWorkspaceService {
     });
 
     await Promise.all(promises);
+
+    return {
+      message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${payload.orisCode}]`,
+    };
   }
 }
