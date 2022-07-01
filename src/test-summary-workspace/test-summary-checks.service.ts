@@ -56,7 +56,6 @@ export class TestSummaryChecksService {
 
     // TEST-3
     error = await this.test3Check(summary, locationId);
-    
     if (error) errorList.push(error);
 
     // TEST-7 Test Dates Consistent
@@ -470,7 +469,6 @@ export class TestSummaryChecksService {
     return error;
   }
 
-<<<<<<< HEAD
   // TEST-3 Test Begin Minute Valid
   private async test3Check(summary: TestSummaryBaseDTO, locationId: string): Promise<string>{
 
@@ -497,34 +495,6 @@ export class TestSummaryChecksService {
     return null;
   }
 
-  // TEST-7 Test Dates Consistent
-  private test7Check(summary: TestSummaryBaseDTO): string{  
-
-    const errorResponse = `You reported endDate, endHour, and endMinute which is prior to or equal to beginDate, beginHour, and beginMinute for [General Test].`
-    const testTypeCode = summary.testTypeCode.toUpperCase();
-    
-    // need to add a 0 in front if the hour is a single digit or else new Date() will through error
-    const beginHour = summary.beginHour > 9 ?  summary.beginHour : `0${summary.beginHour}`;
-    const endHour = summary.endHour > 9 ?  summary.endHour : `0${summary.endHour}`;
-    const beginMinute = summary.beginMinute > 9 ?  summary.beginMinute : `0${summary.beginMinute}`;
-    const endMinute = summary.endMinute > 9 ?  summary.endMinute : `0${summary.endMinute}`;
-    
-    if( testTypeCode === "ONOFF" || testTypeCode === "FF2LBAS"){
-      
-      const beginDateHour = new Date(`${summary.beginDate}T${beginHour}:00`);
-      const endDateHour = new Date(`${summary.endDate}T${endHour}:00`);
-
-      if( beginDateHour >= endDateHour )
-        return errorResponse;
-    }
-    else{
-
-      const beginDateHourMinute = new Date(`${summary.beginDate}T${beginHour}:${beginMinute}`);
-      const endDateHourMinute = new Date(`${summary.endDate}T${endHour}:${endMinute}`);
-
-      if( beginDateHourMinute >= endDateHourMinute )
-        return errorResponse;
-=======
   // TEST-7 Test Dates Consistent
   test7Check(summary: TestSummaryBaseDTO): string {
     const errorResponse = `You reported endDate, endHour, and endMinute which is prior to or equal to beginDate, beginHour, and beginMinute for [Test Summary].`;
@@ -572,7 +542,6 @@ export class TestSummaryChecksService {
       const endDateHourMinute = new Date(`${endDate}T${endHour}:${endMinute}`);
 
       if (beginDateHourMinute >= endDateHourMinute) return errorResponse;
->>>>>>> feature/3670-test-summary-dto-validations
     }
 
     return null;
