@@ -13,6 +13,8 @@ import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
+import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
+import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 
 @Injectable()
 export class TestSummaryChecksService {
@@ -22,6 +24,8 @@ export class TestSummaryChecksService {
     private readonly repository: TestSummaryWorkspaceRepository,
     @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
+    @InjectRepository(QAMonitorPlanWorkspaceRepository) 
+    private readonly qaMonitorPlanRepository: QAMonitorPlanWorkspaceRepository
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -48,6 +52,16 @@ export class TestSummaryChecksService {
 
     // IMPORT-17 Extraneous Test Summary Data Check
     error = this.import17Check(summary);
+    if (error) errorList.push(error);
+
+    // TEST-3
+    error = await this.test3Check(summary, locationId);
+    
+    if (error) errorList.push(error);
+
+    // TEST-7 Test Dates Consistent
+    // NOTE: beginMinute and endMinute validity tests need to run before this test
+    error = this.test7Check(summary);
     if (error) errorList.push(error);
 
     error = await this.duplicateTestCheck(
@@ -454,6 +468,64 @@ export class TestSummaryChecksService {
     }
 
     return error;
+  }
+
+  // TEST-3 Test Begin Minute Valid
+  private async test3Check(summary: TestSummaryBaseDTO, locationId: string): Promise<string>{
+
+    const resultA = "You did not provide [beginMinute], which is required for [General Test].";
+    const resultB = "You did not provide [beginMinute] for [General Test]. This information will be required for ECMPS submissions."
+
+    if( summary.beginMinute === null || summary.beginMinute === undefined){
+
+      if( ["LINE2", "RATA", "CYCLE", "F2LREF", "APPE", "UNITDEF"].includes(summary.testTypeCode.toUpperCase()) ){
+        return resultA;
+      }
+
+      // Test MP Begin Date
+      const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(locationId, summary.unitId, summary.beginDate )
+      console.log("-----------printing mp-----------")
+      console.log(mp);
+
+      if( !mp )
+        return resultA
+      
+      return resultB;
+    }
+
+    return null;
+  }
+
+  // TEST-7 Test Dates Consistent
+  private test7Check(summary: TestSummaryBaseDTO): string{  
+
+    const errorResponse = `You reported endDate, endHour, and endMinute which is prior to or equal to beginDate, beginHour, and beginMinute for [General Test].`
+    const testTypeCode = summary.testTypeCode.toUpperCase();
+    
+    // need to add a 0 in front if the hour is a single digit or else new Date() will through error
+    const beginHour = summary.beginHour > 9 ?  summary.beginHour : `0${summary.beginHour}`;
+    const endHour = summary.endHour > 9 ?  summary.endHour : `0${summary.endHour}`;
+    const beginMinute = summary.beginMinute > 9 ?  summary.beginMinute : `0${summary.beginMinute}`;
+    const endMinute = summary.endMinute > 9 ?  summary.endMinute : `0${summary.endMinute}`;
+    
+    if( testTypeCode === "ONOFF" || testTypeCode === "FF2LBAS"){
+      
+      const beginDateHour = new Date(`${summary.beginDate}T${beginHour}:00`);
+      const endDateHour = new Date(`${summary.endDate}T${endHour}:00`);
+
+      if( beginDateHour >= endDateHour )
+        return errorResponse;
+    }
+    else{
+
+      const beginDateHourMinute = new Date(`${summary.beginDate}T${beginHour}:${beginMinute}`);
+      const endDateHourMinute = new Date(`${summary.endDate}T${endHour}:${endMinute}`);
+
+      if( beginDateHourMinute >= endDateHourMinute )
+        return errorResponse;
+    }
+
+    return null;
   }
 
   private compareFields(

@@ -10,11 +10,13 @@ import { TestSummaryWorkspaceService } from './test-summary.service';
 import { TestSummaryChecksService } from './test-summary-checks.service';
 import { TestSummaryMap } from '../maps/test-summary.map';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
+import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       QASuppDataWorkspaceRepository,
+      QAMonitorPlanWorkspaceRepository,
       TestSummaryWorkspaceRepository,
     ]),
     forwardRef(() => LinearitySummaryWorkspaceModule),
