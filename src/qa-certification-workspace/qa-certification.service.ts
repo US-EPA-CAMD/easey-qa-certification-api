@@ -38,12 +38,15 @@ export class QACertificationWorkspaceService {
 
     const results = await Promise.all(promises);
 
-    return {
-      orisCode: params.facilityId,
+    const res = {
+      orisCode: params.facilityId as number,
       testSummaryData: results[SUMMARIES],
       certificationEventData: results[EVENTS],
       testExtensionExemptionData: results[EXT_EXEMPTIONS],
     };
+
+    console.log({orisCode: parseInt(`${params.facilityId}`)})
+    return res;
   }
 
   async import(
