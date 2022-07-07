@@ -22,7 +22,7 @@ export class LinearitySummaryBaseDTO {
       return `You did not provide [${args.property}], which is required for [${KEY}].`;
     },
   })
-  meanMeasuredValue?: number;
+  meanMeasuredValue: number;
 
   @ApiProperty({
     description: 'meanReferenceValue. ADD TO PROPERTY METADATA',
@@ -37,17 +37,32 @@ export class LinearitySummaryBaseDTO {
       return `The value [${args.value}] in the field [${args.property}] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to zero.`;
     },
   })
-  meanReferenceValue?: number;
+  meanReferenceValue: number;
 
   @ApiProperty({
     description: 'percentError. ADD TO PROPERTY METADATA',
   })
-  percentError?: number;
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
+  @IsNotNegative({
+    message: (args: ValidationArguments) => {
+      return `The value [${args.value}] in the field [${args.property}] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to zero.`;
+    },
+  })
+  percentError: number;
 
   @ApiProperty({
     description: 'apsIndicator. ADD TO PROPERTY METADATA',
   })
-  apsIndicator?: number;
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
+  apsIndicator: number;
 }
 
 export class LinearitySummaryRecordDTO extends LinearitySummaryBaseDTO {

@@ -153,7 +153,12 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.componentDTOComponentId.description,
   })
-  componentID?: string;
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
+  componentID: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSpanDTOSpanScaleCode.description,
@@ -194,7 +199,7 @@ export class TestSummaryBaseDTO {
       return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
     },
   })
-  testReasonCode?: string;
+  testReasonCode: string;
 
   @ApiProperty({
     description: 'Test Description. ADD TO PROPERTY METADATA',
@@ -246,7 +251,7 @@ export class TestSummaryBaseDTO {
       `You reported a [beginDate] of [${args.value}] which is outside the range of acceptable values for this date for [${KEY}].`,
   })
   @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
-  beginDate?: Date;
+  beginDate: Date;
 
   @ApiProperty({
     description: 'Begin Hour. ADD TO PROPERTY METADATA',
@@ -259,7 +264,7 @@ export class TestSummaryBaseDTO {
       `The value [${args.value}] in the field [beginHour] for [${KEY}] is not within the range of valid values from [${MIN_HOUR}] to [${MAX_HOUR}].`,
   })
   @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
-  beginHour?: number;
+  beginHour: number;
 
   @ApiProperty({
     description: 'Begin Minute. ADD TO PROPERTY METADATA',
@@ -286,7 +291,7 @@ export class TestSummaryBaseDTO {
   @IsNotEmpty({
     message: `You did not provide [endDate], which is required for [${KEY}].`,
   })
-  endDate?: Date;
+  endDate: Date;
 
   @ApiProperty({
     description: 'End Hour. ADD TO PROPERTY METADATA',
@@ -298,7 +303,7 @@ export class TestSummaryBaseDTO {
   @IsNotEmpty({
     message: `You did not provide [endHour], which is required for [${KEY}].`,
   })
-  endHour?: number;
+  endHour: number;
 
   @ApiProperty({
     description: 'End Minute. ADD TO PROPERTY METADATA',
