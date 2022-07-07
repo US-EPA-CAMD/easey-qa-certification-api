@@ -76,7 +76,7 @@ import {
 
 import { RequireOne } from '../pipes/require-one.pipe';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
-import { IsInDateRange } from '../pipes/is-in-date-range';
+import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
 import { TestTypeCode } from '../entities/test-type-code.entity';
 import { SpanScaleCode } from '../entities/span-scale-code.entity';
 import { TestReasonCode } from '../entities/test-reason-code.entity';
@@ -184,17 +184,14 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Test Reason Code. ADD TO PROPERTY METADATA',
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
   @IsValidCode(TestReasonCode, {
     message: (args: ValidationArguments) => {
-      return `You reported an invalid Test Reason Code of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
+      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
     },
   })
   testReasonCode?: string;

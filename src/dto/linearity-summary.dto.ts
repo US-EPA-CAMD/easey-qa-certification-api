@@ -1,10 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-
-//import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
+import { IsNotEmpty, ValidationArguments } from 'class-validator';
+import { IsNotNegative } from 'src/pipes/is-not-negative.pipe';
 import {
   LinearityInjectionImportDTO,
   LinearityInjectionDTO,
 } from './linearity-injection.dto';
+
+const KEY = 'Linearity Summary';
 
 export class LinearitySummaryBaseDTO {
   @ApiProperty({
@@ -15,10 +17,25 @@ export class LinearitySummaryBaseDTO {
   @ApiProperty({
     description: 'meanMeasuredValue. ADD TO PROPERTY METADATA',
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
   meanMeasuredValue?: number;
 
   @ApiProperty({
     description: 'meanReferenceValue. ADD TO PROPERTY METADATA',
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
+  @IsNotNegative({
+    message: (args: ValidationArguments) => {
+      return `The value [${args.value}] in the field [${args.property}] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to zero.`;
+    },
   })
   meanReferenceValue?: number;
 
