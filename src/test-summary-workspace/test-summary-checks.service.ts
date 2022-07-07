@@ -13,6 +13,8 @@ import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
+import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
+import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 
 @Injectable()
 export class TestSummaryChecksService {
@@ -22,6 +24,8 @@ export class TestSummaryChecksService {
     private readonly repository: TestSummaryWorkspaceRepository,
     @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
+    @InjectRepository(QAMonitorPlanWorkspaceRepository) 
+    private readonly qaMonitorPlanRepository: QAMonitorPlanWorkspaceRepository
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -48,6 +52,10 @@ export class TestSummaryChecksService {
 
     // IMPORT-17 Extraneous Test Summary Data Check
     error = this.import17Check(summary);
+    if (error) errorList.push(error);
+
+    // TEST-3
+    error = await this.test3Check(summary, locationId);
     if (error) errorList.push(error);
 
     // TEST-7 Test Dates Consistent
@@ -459,6 +467,32 @@ export class TestSummaryChecksService {
     }
 
     return error;
+  }
+
+  // TEST-3 Test Begin Minute Valid
+  private async test3Check(summary: TestSummaryBaseDTO, locationId: string): Promise<string>{
+
+    const resultA = "You did not provide [beginMinute], which is required for [General Test].";
+    const resultB = "You did not provide [beginMinute] for [General Test]. This information will be required for ECMPS submissions."
+
+    if( summary.beginMinute === null || summary.beginMinute === undefined){
+
+      if( ["LINE2", "RATA", "CYCLE", "F2LREF", "APPE", "UNITDEF"].includes(summary.testTypeCode.toUpperCase()) ){
+        return resultA;
+      }
+
+      // Test MP Begin Date
+      const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(locationId, summary.unitId, summary.beginDate )
+      console.log("-----------printing mp-----------")
+      console.log(mp);
+
+      if( !mp )
+        return resultA
+      
+      return resultB;
+    }
+
+    return null;
   }
 
   // TEST-7 Test Dates Consistent
