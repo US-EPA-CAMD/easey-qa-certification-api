@@ -290,7 +290,7 @@ export class TestSummaryBaseDTO {
   })
   @IsInDateRange(MIN_DATE, new Date(Date.now()).toISOString(), {
     message: (args: ValidationArguments) =>
-      `You reported an [endDate] of [${args.value}], which is outside the range of acceptable values for this date for [${KEY}].`,
+      `You reported an invalid EndDate in the Test Summary record for Location [${args.object['locationId']}], TestTypeCode [${args.object['testTypeCode']}] and TestNumber [${args.object['testNumber']}]. The test was not imported.`,
   })
   endDate?: Date;
 
