@@ -56,6 +56,7 @@ export class TestSummaryChecksService {
 
     // TEST-3
     error = await this.test3Check(summary, locationId);
+    console.log
     if (error) errorList.push(error);
 
     // TEST-7 Test Dates Consistent
@@ -472,9 +473,10 @@ export class TestSummaryChecksService {
   // TEST-3 Test Begin Minute Valid
   private async test3Check(summary: TestSummaryBaseDTO, locationId: string): Promise<string>{
 
-    const resultA = "You did not provide [beginMinute], which is required for [General Test].";
-    const resultB = "You did not provide [beginMinute] for [General Test]. This information will be required for ECMPS submissions."
+    const resultA = "You did not provide [beginMinute], which is required for [Test Summary].";
+    const resultB = "You did not provide [beginMinute] for [Test Summary]. This information will be required for ECMPS submissions."
 
+    console.log(summary)
     if( summary.beginMinute === null || summary.beginMinute === undefined){
 
       if( ["LINE2", "RATA", "CYCLE", "F2LREF", "APPE", "UNITDEF"].includes(summary.testTypeCode.toUpperCase()) ){
@@ -482,7 +484,7 @@ export class TestSummaryChecksService {
       }
 
       // Test MP Begin Date
-      const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(locationId, summary.unitId, summary.beginDate )
+      const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(locationId, summary.unitId, summary.stackPipeId, summary.beginDate )
       console.log("-----------printing mp-----------")
       console.log(mp);
 
