@@ -422,7 +422,7 @@ export class TestSummaryChecksService {
         fields = this.compareFields(duplicate, summary);
       } else {
         // LINEAR-31 Duplicate Linearity (Result A)
-        error = `The database contains another Test Summary record for Unit/Stack [${
+        error = `Another Test Summary record for Unit/Stack [${
           summary.unitId ? summary.unitId : summary.stackPipeId
         }], Test Type Code [${summary.testTypeCode}], and Test Number [${
           summary.testNumber
@@ -440,7 +440,7 @@ export class TestSummaryChecksService {
           fields = this.compareFields(duplicate, summary);
         } else {
           // LINEAR-31 Duplicate Linearity (Result B)
-          error = `The database contains another Test Summary record for Unit/Stack [${
+          error = `Another Test Summary record for Unit/Stack [${
             summary.unitId ? summary.unitId : summary.stackPipeId
           }], Test Type Code [${summary.testTypeCode}], and Test Number [${
             summary.testNumber

@@ -22,14 +22,17 @@ import {
   LinearitySummaryBaseDTO,
   LinearitySummaryRecordDTO,
 } from '../dto/linearity-summary.dto';
-
+import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
 import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Linearity Summary')
 export class LinearitySummaryWorkspaceController {
-  constructor(private readonly service: LinearitySummaryWorkspaceService) {}
+  constructor(
+    private readonly service: LinearitySummaryWorkspaceService,
+    private readonly checksService: LinearitySummaryChecksService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -72,6 +75,7 @@ export class LinearitySummaryWorkspaceController {
     //    @CurrentUser() userId: string,
   ): Promise<LinearitySummaryRecordDTO> {
     const userId = 'testUser';
+    await this.checksService.runChecks(testSumId, payload);
     return this.service.createSummary(testSumId, payload, userId);
   }
 
@@ -90,6 +94,7 @@ export class LinearitySummaryWorkspaceController {
     //    @CurrentUser() userId: string,
   ): Promise<LinearitySummaryRecordDTO> {
     const userId = 'testUser';
+    await this.checksService.runChecks(testSumId, payload);
     return this.service.updateSummary(testSumId, id, payload, userId);
   }
 
