@@ -16,6 +16,7 @@ import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 
+
 @Injectable()
 export class TestSummaryChecksService {
   constructor(
@@ -24,8 +25,8 @@ export class TestSummaryChecksService {
     private readonly repository: TestSummaryWorkspaceRepository,
     @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
-    @InjectRepository(QAMonitorPlanWorkspaceRepository) 
-    private readonly qaMonitorPlanRepository: QAMonitorPlanWorkspaceRepository
+    @InjectRepository(QAMonitorPlanWorkspaceRepository)
+    private readonly qaMonitorPlanRepository: QAMonitorPlanWorkspaceRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -54,9 +55,12 @@ export class TestSummaryChecksService {
     error = this.import17Check(summary);
     if (error) errorList.push(error);
 
-    // TEST-3
-    error = await this.test3Check(summary, locationId);
-    console.log
+    // TEST-3 Test Begin Minute Valid
+    error = await this.testMinuteField(summary, locationId, 'beginMinute');
+    if (error) errorList.push(error);
+
+    // TEST-6 Test End Minute Valid
+    error = await this.testMinuteField(summary, locationId, 'endMinute');
     if (error) errorList.push(error);
 
     // TEST-7 Test Dates Consistent
@@ -470,27 +474,49 @@ export class TestSummaryChecksService {
     return error;
   }
 
-  // TEST-3 Test Begin Minute Valid
-  private async test3Check(summary: TestSummaryBaseDTO, locationId: string): Promise<string>{
+  // TEST-3 & TEST-6: Test Begin/End Minute Valid
+  private async testMinuteField(
+    summary: TestSummaryBaseDTO,
+    locationId: string,
+    minuteField: string,
+  ): Promise<string> {
+    const resultA =
+      `You did not provide [${minuteField}], which is required for [Test Summary].`;
+    const resultB =
+      `You did not provide [${minuteField}] for [Test Summary]. This information will be required for ECMPS submissions.`;
 
-    const resultA = "You did not provide [beginMinute], which is required for [Test Summary].";
-    const resultB = "You did not provide [beginMinute] for [Test Summary]. This information will be required for ECMPS submissions."
+    if (
+      minuteField === 'endMinute' &&
+      summary.testTypeCode.toUpperCase() === TestTypeCodes.ONOFF
+    )
+      return null;
 
-    console.log(summary)
-    if( summary.beginMinute === null || summary.beginMinute === undefined){
-
-      if( ["LINE2", "RATA", "CYCLE", "F2LREF", "APPE", "UNITDEF"].includes(summary.testTypeCode.toUpperCase()) ){
+    if (summary[minuteField] === null || summary[minuteField] === undefined) {
+      if (
+        [
+          TestTypeCodes.LINE,
+          TestTypeCodes.RATA,
+          TestTypeCodes.CYCLE,
+          TestTypeCodes.F2LREF,
+          TestTypeCodes.APPE,
+          TestTypeCodes.UNITDEF,
+        ]
+          .map(ttc => ttc.toString())
+          .includes(summary.testTypeCode.toUpperCase())
+      ) {
         return resultA;
       }
 
       // Test MP Begin Date
-      const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(locationId, summary.unitId, summary.stackPipeId, summary.beginDate )
-      console.log("-----------printing mp-----------")
-      console.log(mp);
+      const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(
+        locationId,
+        summary.unitId,
+        summary.stackPipeId,
+        summary[minuteField],
+      );
 
-      if( !mp )
-        return resultA
-      
+      if (!mp) return resultA;
+
       return resultB;
     }
 

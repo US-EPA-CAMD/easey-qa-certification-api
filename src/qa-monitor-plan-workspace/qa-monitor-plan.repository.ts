@@ -11,10 +11,11 @@ export class QAMonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
 
     }
 
-    async getMonitorPlanWithALowerBeginDate(locationId: string, unitId: string, stackPipeId: string, testBeginDate: Date): Promise<MonitorPlan>{
+    // TEST-3 & TEST-6
+    async getMonitorPlanWithALowerBeginDate(locationId: string, unitId: string, stackPipeId: string, testDate: Date): Promise<MonitorPlan>{
 
         const query = this.buildBaseQuery().where('ml.id = :locationId', {locationId,})
-                                            .andWhere('rp.beginDate < :testBeginDate', {testBeginDate})
+                                            .andWhere('rp.beginDate < :testDate', {testDate})
                                             .andWhere('mp.endRptPeriod IS NULL');
 
         // A DTO check makes sure that either a unitId or stackPipeId exists
