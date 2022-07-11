@@ -101,6 +101,17 @@ const BEGIN_DATE_TEST_TYPE_CODES = [
   TestTypeCodes.SEVENDAY,
 ];
 
+const CODES_FOR_COMPONENT_ID_VALIDATION = [
+  TestTypeCodes.TSCAL, 
+  TestTypeCodes.FFACCTT, 
+  TestTypeCodes.FFACC, 
+  TestTypeCodes.ONOFF,
+  TestTypeCodes.HGLINE,
+  TestTypeCodes.CYCLE,
+  TestTypeCodes.SEVENDAY,
+  TestTypeCodes.LINE
+]
+
 const formatTestSummaryValidationError = (
   args: ValidationArguments,
   message: string,
@@ -158,6 +169,7 @@ export class TestSummaryBaseDTO {
       return `You did not provide [${args.property}], which is required for [${KEY}].`;
     },
   })
+  @ValidateIf(o => CODES_FOR_COMPONENT_ID_VALIDATION.includes(o.testTypeCode))
   componentID: string;
 
   @ApiProperty({
