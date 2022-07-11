@@ -16,7 +16,6 @@ import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 
-
 @Injectable()
 export class TestSummaryChecksService {
   constructor(
@@ -475,15 +474,13 @@ export class TestSummaryChecksService {
   }
 
   // TEST-3 & TEST-6: Test Begin/End Minute Valid
-  private async testMinuteField(
+  async testMinuteField(
     summary: TestSummaryBaseDTO,
     locationId: string,
     minuteField: string,
   ): Promise<string> {
-    const resultA =
-      `You did not provide [${minuteField}], which is required for [Test Summary].`;
-    const resultB =
-      `You did not provide [${minuteField}] for [Test Summary]. This information will be required for ECMPS submissions.`;
+    const resultA = `You did not provide [${minuteField}], which is required for [Test Summary].`;
+    const resultB = `You did not provide [${minuteField}] for [Test Summary]. This information will be required for ECMPS submissions.`;
 
     if (
       minuteField === 'endMinute' &&
@@ -502,20 +499,25 @@ export class TestSummaryChecksService {
           TestTypeCodes.UNITDEF,
         ]
           .map(ttc => ttc.toString())
-          .includes(summary.testTypeCode.toUpperCase())
+          .includes(summary.testTypeCode)
       ) {
         return resultA;
       }
 
       // Test MP Begin Date
-      const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(
-        locationId,
-        summary.unitId,
-        summary.stackPipeId,
-        summary[minuteField],
-      );
-
-      if (!mp) return resultA;
+      try {
+        const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(
+          locationId,
+          summary.unitId,
+          summary.stackPipeId,
+          summary[minuteField],
+        );
+        
+        if (mp) return resultA;
+      } catch (e) {
+        this.logger.info(e);
+        console.error(e)
+      }
 
       return resultB;
     }
