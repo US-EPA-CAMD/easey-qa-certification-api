@@ -1,4 +1,9 @@
-import { ValidateIf, ValidationArguments, IsNotEmpty } from 'class-validator';
+import {
+  ValidateIf,
+  ValidationArguments,
+  IsNotEmpty,
+  IsOptional,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 import {
@@ -244,7 +249,7 @@ export class TestSummaryBaseDTO {
       );
     },
   })
-  @IsInDateRange(MIN_DATE, null, {
+  @IsInDateRange(MIN_DATE, new Date(Date.now()).toISOString(), {
     message: (args: ValidationArguments) =>
       `You reported a [beginDate] of [${args.value}] which is outside the range of acceptable values for this date for [${KEY}].`,
   })
@@ -276,18 +281,16 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.endDate.description,
   })
+  @IsOptional()
   @IsValidDate({
     message: ErrorMessages.DateValidity(),
   })
   @IsIsoFormat({
     message: ErrorMessages.SingleFormat('endDate', 'YYYY-MM-DD format'),
   })
-  @IsInDateRange(MIN_DATE, null, {
+  @IsInDateRange(MIN_DATE, new Date(Date.now()).toISOString(), {
     message: (args: ValidationArguments) =>
-      `You reported an [endDate] of [${args.value}], which is outside the range of acceptable values for this date for [${KEY}].`,
-  })
-  @IsNotEmpty({
-    message: `You did not provide [endDate], which is required for [${KEY}].`,
+      `You reported an invalid EndDate in the Test Summary record for Location [${args.object['locationId']}], TestTypeCode [${args.object['testTypeCode']}] and TestNumber [${args.object['testNumber']}]. The test was not imported.`,
   })
   endDate?: Date;
 
