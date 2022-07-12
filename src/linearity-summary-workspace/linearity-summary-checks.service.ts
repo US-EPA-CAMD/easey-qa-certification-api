@@ -29,7 +29,7 @@ export class LinearitySummaryChecksService {
   }
 
   async runChecks(
-    locationId: string,
+    testSumId: string,
     linearitySummary: LinearitySummaryBaseDTO | LinearitySummaryImportDTO,
     isImport: boolean = false,
   ): Promise<string[]> {
@@ -38,7 +38,7 @@ export class LinearitySummaryChecksService {
     this.logger.info('Running Linearity Summary Checks');
 
     error = await this.duplicateTestCheck(
-      locationId,
+      testSumId,
       linearitySummary,
       isImport,
     );

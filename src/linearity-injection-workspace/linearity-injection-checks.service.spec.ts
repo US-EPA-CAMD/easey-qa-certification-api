@@ -57,16 +57,14 @@ describe('Linearity Injection Check Service Test', () => {
       jest
         .spyOn(repository, 'getInjectionsByLinSumId')
         .mockResolvedValue([returnValue]);
-      let errored = false;
+
       try {
         await service.runChecks(linSumId, payload);
       } catch (err) {
-        errored = true;
         expect(err.response.message).toEqual([
           `Another Linearity Injection record already exists with the same injectionDate [${payload.injectionDate}], injectionHour [${payload.injectionHour}], injectionMinute [${payload.injectionMinute}].`,
         ]);
       }
-      expect(errored).toEqual(true);
     });
   });
 });

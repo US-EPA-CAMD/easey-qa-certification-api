@@ -7,20 +7,50 @@ import { TestSummaryChecksService } from './test-summary-checks.service';
 import { TestSummaryBaseDTO } from '../dto/test-summary.dto';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 
+const locationId = '1';
+
+const mockRepository = () => ({
+  getTestSummaryByLocationId: jest.fn().mockResolvedValue(null),
+});
+const mockQARepository = () => ({
+  getQASuppDataByLocationId: jest.fn().mockResolvedValue(null),
+});
+
 describe('Test Summary Check Service Test', () => {
   let service: TestSummaryChecksService;
+  let repository: TestSummaryWorkspaceRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
         TestSummaryChecksService,
-        TestSummaryWorkspaceRepository,
-        QASuppDataWorkspaceRepository,
+        {
+          provide: TestSummaryWorkspaceRepository,
+          useFactory: mockRepository,
+        },
+        {
+          provide: QASuppDataWorkspaceRepository,
+          useFactory: mockQARepository,
+        },
       ],
     }).compile();
 
     service = module.get(TestSummaryChecksService);
+    repository = module.get(TestSummaryWorkspaceRepository);
+  });
+
+  describe('Linearity Injection Checks', () => {
+    const payload = new TestSummaryBaseDTO();
+    payload.testTypeCode = TestTypeCodes.LINE;
+    it('Should pass all checks', async () => {
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+      const result = await service.runChecks(locationId, payload);
+
+      expect(result).toEqual([]);
+    });
   });
 
   // TEST-7 Test Dates Consistent

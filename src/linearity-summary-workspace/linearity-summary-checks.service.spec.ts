@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
 import { LinearitySummaryBaseDTO } from '../dto/linearity-summary.dto';
 import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
@@ -35,6 +36,27 @@ describe('Linearity Summary Check Service Test', () => {
       const result = await service.runChecks(testSumId, payload);
 
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('LINEAR-32 Duplicate Linearity Summary (Result A)', () => {
+    const payload = new LinearitySummaryBaseDTO();
+    payload.gasLevelCode = 'LOW';
+
+    const returnValue = new LinearitySummary();
+    returnValue.gasLevelCode = 'LOW';
+
+    it('Should get already exists error', async () => {
+      jest
+        .spyOn(repository, 'getSummariesByTestSumId')
+        .mockResolvedValue([returnValue]);
+      try {
+        await service.runChecks(testSumId, payload);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `Another Linearity Summary record already exists with the same gasLevelCode [${payload.gasLevelCode}].`,
+        ]);
+      }
     });
   });
 });
