@@ -5,10 +5,10 @@ import {
   addTestTypeWhere,
   addTestNumberWhere,
   addBeginAndEndDateWhere,
+  addTestSummaryIdWhere,
 } from '../utilities/test-summary.querybuilder';
 
 import { TestSummary } from '../entities/test-summary.entity';
-import { addTestSummaryIdWhere } from '../utilities/test-summary.querybuilder';
 
 @EntityRepository(TestSummary)
 export class TestSummaryRepository extends Repository<TestSummary> {
