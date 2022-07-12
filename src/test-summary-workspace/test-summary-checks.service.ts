@@ -489,18 +489,11 @@ export class TestSummaryChecksService {
       return null;
 
     if (summary[minuteField] === null || summary[minuteField] === undefined) {
-      if (
-        [
-          TestTypeCodes.LINE,
-          TestTypeCodes.RATA,
-          TestTypeCodes.CYCLE,
-          TestTypeCodes.F2LREF,
-          TestTypeCodes.APPE,
-          TestTypeCodes.UNITDEF,
-        ]
-          .map(ttc => ttc.toString())
-          .includes(summary.testTypeCode)
-      ) {
+
+      const listOfCodes = [TestTypeCodes.LINE, TestTypeCodes.RATA, TestTypeCodes.CYCLE, TestTypeCodes.F2LREF, TestTypeCodes.APPE, TestTypeCodes.UNITDEF,]
+      const isSummaryTTCinListOfCodes: boolean = listOfCodes.map(ttc => ttc.toString()).includes(summary.testTypeCode);
+
+      if (isSummaryTTCinListOfCodes) {
         return resultA;
       }
 
@@ -513,9 +506,9 @@ export class TestSummaryChecksService {
           summary[minuteField],
         );
         
+        this.qaMonitorPlanRepository.find()
         if (mp) return resultA;
       } catch (e) {
-        this.logger.info(e);
         console.error(e)
       }
 

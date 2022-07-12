@@ -18,7 +18,7 @@ export class QAMonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
                                             .andWhere(':testDate >= rp.beginDate', {testDate})
                                             .andWhere('mp.endRptPeriod IS NULL');
 
-        // A DTO check makes sure that either a unitId or stackPipeId exists
+        // Check for either unitId or stackPipeId 
         if(unitId !== null && unitId !== undefined){
             query.andWhere('ml.unitId = :unitId', {unitId})
         }
