@@ -49,6 +49,14 @@ export class QACertificationParamsDTO {
   stackPipeIds?: string[];
 
   @ApiProperty({
+    isArray: true,
+    description:
+      'The Test Summary ID is a unique identifier of a test summary record',
+  })
+  @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
+  testSummaryIds?: string[];
+
+  @ApiProperty({
     enum: TestTypeCodes,
     description: 'Test Type Code. ADD TO PROPERTY METADATA',
   })
