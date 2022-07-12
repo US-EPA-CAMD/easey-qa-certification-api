@@ -34,7 +34,7 @@ export class LinearityInjectionChecksService {
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
-    this.logger.info('Running Linearity Summary Checks');
+    this.logger.info('Running Linearity Injection Checks');
 
     error = await this.duplicateTestCheck(
       locationId,
@@ -45,6 +45,7 @@ export class LinearityInjectionChecksService {
     if (error) errorList.push(error);
 
     this.throwIfErrors(errorList, isImport);
+    this.logger.info('Completed Linearity Injection Checks');
     return errorList;
   }
 

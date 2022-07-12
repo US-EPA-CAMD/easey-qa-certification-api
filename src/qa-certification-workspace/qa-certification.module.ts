@@ -6,9 +6,16 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
 import { QACertificationWorkspaceController } from './qa-certification.controller';
 import { QACertificationChecksService } from './qa-certification-checks.service';
 import { QACertificationWorkspaceService } from './qa-certification.service';
+import { LinearitySummaryWorkspaceModule } from '../linearity-summary-workspace/linearity-summary.module';
+import { LinearityInjectionWorkspaceModule } from '../linearity-injection-workspace/linearity-injection.module';
 
 @Module({
-  imports: [LocationWorkspaceModule, TestSummaryWorkspaceModule],
+  imports: [
+    LocationWorkspaceModule,
+    TestSummaryWorkspaceModule,
+    LinearitySummaryWorkspaceModule,
+    LinearityInjectionWorkspaceModule,
+  ],
   controllers: [QACertificationWorkspaceController],
   providers: [QACertificationChecksService, QACertificationWorkspaceService],
   exports: [QACertificationChecksService, QACertificationWorkspaceService],

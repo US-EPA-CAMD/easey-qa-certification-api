@@ -43,6 +43,7 @@ export class LinearitySummaryChecksService {
     if (error) errorList.push(error);
 
     this.throwIfErrors(errorList, isImport);
+    this.logger.info('Completed Linearity Summary Checks');
     return errorList;
   }
 

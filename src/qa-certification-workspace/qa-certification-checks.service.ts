@@ -160,7 +160,7 @@ export class QACertificationChecksService {
       });
     });
     this.throwIfErrors(await this.extractErrors(promises));
-
+    this.logger.info('Completed QA Certification Checks');
     return locations;
   }
 }
