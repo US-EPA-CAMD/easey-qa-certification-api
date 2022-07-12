@@ -101,15 +101,40 @@ const BEGIN_DATE_TEST_TYPE_CODES = [
   TestTypeCodes.SEVENDAY,
 ];
 
-const CODES_FOR_COMPONENT_ID_VALIDATION = [
+const VALID_CODES_FOR_COMPONENT_ID_VALIDATION = [
   TestTypeCodes.TSCAL, 
   TestTypeCodes.FFACCTT, 
   TestTypeCodes.FFACC, 
   TestTypeCodes.ONOFF,
   TestTypeCodes.HGLINE,
+  TestTypeCodes.LINE,
   TestTypeCodes.CYCLE,
   TestTypeCodes.SEVENDAY,
-  TestTypeCodes.LINE
+]
+
+const VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION = [
+  TestTypeCodes.MFMCAL, 
+  TestTypeCodes.TSCAL, 
+  TestTypeCodes.BCAL, 
+  TestTypeCodes.QGA, 
+  TestTypeCodes.LEAK, 
+  TestTypeCodes.OTHER, 
+  TestTypeCodes.PEI, 
+  TestTypeCodes.PEMSACC, 
+  TestTypeCodes.DGFMCAL, 
+  TestTypeCodes.DAHS, 
+  TestTypeCodes.UNITDEF,
+  TestTypeCodes.FF2LTST,
+  TestTypeCodes.FFACCTT,
+  TestTypeCodes.FFACC,
+  TestTypeCodes.APPE,
+  TestTypeCodes.ONOFF,
+  TestTypeCodes.F2LCHK,
+  TestTypeCodes.RATA,
+  TestTypeCodes.HGLINE,
+  TestTypeCodes.LINE,
+  TestTypeCodes.CYCLE,
+  TestTypeCodes.SEVENDAY,
 ]
 
 const formatTestSummaryValidationError = (
@@ -169,7 +194,7 @@ export class TestSummaryBaseDTO {
       return `You did not provide [${args.property}], which is required for [${KEY}].`;
     },
   })
-  @ValidateIf(o => CODES_FOR_COMPONENT_ID_VALIDATION.includes(o.testTypeCode))
+  @ValidateIf(o => VALID_CODES_FOR_COMPONENT_ID_VALIDATION.includes(o.testTypeCode))
   componentID: string;
 
   @ApiProperty({
@@ -211,6 +236,7 @@ export class TestSummaryBaseDTO {
       return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
     },
   })
+  @ValidateIf(o => VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION.includes(o.testTypeCode))
   testReasonCode: string;
 
   @ApiProperty({

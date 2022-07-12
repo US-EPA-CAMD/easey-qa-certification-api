@@ -46,9 +46,11 @@ export class TestSummaryChecksService {
       if (error) errorList.push(error);
     }
 
-    // IMPORT-17 Extraneous Test Summary Data Check
-    error = this.import17Check(summary);
-    if (error) errorList.push(error);
+    if (isImport) {
+      // IMPORT-17 Extraneous Test Summary Data Check
+      error = this.import17Check(summary);
+      if (error) errorList.push(error);
+    }
 
     // TEST-7 Test Dates Consistent
     // NOTE: beginMinute and endMinute validity tests need to run before this test

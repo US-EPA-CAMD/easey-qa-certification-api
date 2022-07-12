@@ -25,16 +25,15 @@ describe('Test Summary Check Service Test', () => {
 
   // TEST-7 Test Dates Consistent
   describe('test7Check test', () => {
-    const summaryBase: TestSummaryBaseDTO = {
-      beginHour: 1,
-      beginMinute: 1,
-      endHour: 1,
-      endMinute: 2,
-      beginDate: new Date('2020-01-01'),
-      endDate: new Date('2020-01-01'),
-      testTypeCode: TestTypeCodes.ONOFF.toString(),
-      testNumber: '',
-    };
+    const summaryBase: TestSummaryBaseDTO = new TestSummaryBaseDTO()
+    summaryBase.beginHour= 1;
+    summaryBase.beginMinute= 1;
+    summaryBase.endHour= 1;
+    summaryBase.endMinute= 2;
+    summaryBase.beginDate= new Date('2020-01-01');
+    summaryBase.endDate= new Date('2020-01-01');
+    summaryBase.testTypeCode= TestTypeCodes.ONOFF.toString();
+    summaryBase.testNumber= '';
 
     it('returns error message when beginDate/hour >= endDate/hour for testTypeCode=ONOFF', () => {
       const result = service.test7Check(summaryBase);
