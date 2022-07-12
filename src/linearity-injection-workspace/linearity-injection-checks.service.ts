@@ -59,16 +59,17 @@ export class LinearityInjectionChecksService {
     );
     records.forEach(record => {
       if (
-        record.injectionDate.toDateString() === linearityInjection.injectionDate.toDateString() &&
+        record.injectionDate.toDateString() ===
+          linearityInjection.injectionDate.toDateString() &&
         record.injectionHour === linearityInjection.injectionHour &&
         record.injectionMinute === linearityInjection.injectionMinute
       ) {
-        console.log('IF condition matches')
+        console.log('IF condition matches');
         // LINEAR-33 Duplicate Linearity Injection (Result A)
         error = `Another Linearity Injection record already exists with the same injectionDate [${linearityInjection.injectionDate}], injectionHour [${linearityInjection.injectionHour}], injectionMinute [${linearityInjection.injectionMinute}].`;
       }
     });
-    console.log(error)
+    console.log(error);
     return error;
   }
 }

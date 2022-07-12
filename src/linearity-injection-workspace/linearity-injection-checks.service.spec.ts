@@ -8,8 +8,10 @@ import { LinearityInjectionWorkspaceRepository } from './linearity-injection.rep
 const linSumId = '1';
 
 const mockRepository = () => ({
-  getInjectionsByLinSumId: jest.fn().mockResolvedValue([new LinearityInjection()])
-})
+  getInjectionsByLinSumId: jest
+    .fn()
+    .mockResolvedValue([new LinearityInjection()]),
+});
 
 describe('Linearity Injection Check Service Test', () => {
   let service: LinearityInjectionChecksService;
@@ -22,7 +24,7 @@ describe('Linearity Injection Check Service Test', () => {
         LinearityInjectionChecksService,
         {
           provide: LinearityInjectionWorkspaceRepository,
-          useFactory: mockRepository
+          useFactory: mockRepository,
         },
       ],
     }).compile();
@@ -32,35 +34,39 @@ describe('Linearity Injection Check Service Test', () => {
   });
 
   describe('Linearity Injection Checks', () => {
-    const payload = new LinearityInjectionBaseDTO()
+    const payload = new LinearityInjectionBaseDTO();
     it('Should pass all checks', async () => {
-      jest.spyOn(repository, 'getInjectionsByLinSumId').mockResolvedValue([])
+      jest.spyOn(repository, 'getInjectionsByLinSumId').mockResolvedValue([]);
       const result = await service.runChecks(linSumId, payload);
       expect(result).toEqual([]);
     });
   });
 
   describe('LINEAR-33 Duplicate Linearity Injection (Result A)', () => {
-    const payload = new LinearityInjectionBaseDTO()
+    const payload = new LinearityInjectionBaseDTO();
     payload.injectionDate = new Date('2022-01-12');
     payload.injectionHour = 1;
     payload.injectionMinute = 1;
-    
-    const returnValue = new LinearityInjection()
+
+    const returnValue = new LinearityInjection();
     returnValue.injectionDate = new Date('2022-01-12');
     returnValue.injectionHour = 1;
     returnValue.injectionMinute = 1;
 
     it('Should get already exists error', async () => {
-      jest.spyOn(repository, 'getInjectionsByLinSumId').mockResolvedValue([returnValue])
-      let errored = false
+      jest
+        .spyOn(repository, 'getInjectionsByLinSumId')
+        .mockResolvedValue([returnValue]);
+      let errored = false;
       try {
         await service.runChecks(linSumId, payload);
       } catch (err) {
-        errored = true
-        expect(err.response.message).toEqual([`Another Linearity Injection record already exists with the same injectionDate [${payload.injectionDate}], injectionHour [${payload.injectionHour}], injectionMinute [${payload.injectionMinute}].`]);
+        errored = true;
+        expect(err.response.message).toEqual([
+          `Another Linearity Injection record already exists with the same injectionDate [${payload.injectionDate}], injectionHour [${payload.injectionHour}], injectionMinute [${payload.injectionMinute}].`,
+        ]);
       }
-      expect(errored).toEqual(true)
+      expect(errored).toEqual(true);
     });
   });
 });
