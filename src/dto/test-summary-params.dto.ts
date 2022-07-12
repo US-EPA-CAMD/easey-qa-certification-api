@@ -5,7 +5,7 @@ import { IsValidDate, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
-import { IsInDateRange } from '../pipes/is-in-date-range';
+import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestTypeCode } from './../entities/test-type-code.entity';
 

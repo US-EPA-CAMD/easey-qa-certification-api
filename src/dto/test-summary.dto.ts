@@ -81,7 +81,7 @@ import {
 
 import { RequireOne } from '../pipes/require-one.pipe';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
-import { IsInDateRange } from '../pipes/is-in-date-range';
+import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
 import { TestTypeCode } from '../entities/test-type-code.entity';
 import { SpanScaleCode } from '../entities/span-scale-code.entity';
 import { TestReasonCode } from '../entities/test-reason-code.entity';
@@ -105,6 +105,17 @@ const BEGIN_DATE_TEST_TYPE_CODES = [
   TestTypeCodes.UNITDEF,
   TestTypeCodes.SEVENDAY,
 ];
+
+const CODES_FOR_COMPONENT_ID_VALIDATION = [
+  TestTypeCodes.TSCAL, 
+  TestTypeCodes.FFACCTT, 
+  TestTypeCodes.FFACC, 
+  TestTypeCodes.ONOFF,
+  TestTypeCodes.HGLINE,
+  TestTypeCodes.CYCLE,
+  TestTypeCodes.SEVENDAY,
+  TestTypeCodes.LINE
+]
 
 const formatTestSummaryValidationError = (
   args: ValidationArguments,
@@ -158,7 +169,13 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.componentDTOComponentId.description,
   })
-  componentID?: string;
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
+  @ValidateIf(o => CODES_FOR_COMPONENT_ID_VALIDATION.includes(o.testTypeCode))
+  componentID: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSpanDTOSpanScaleCode.description,
@@ -189,20 +206,17 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Test Reason Code. ADD TO PROPERTY METADATA',
   })
-  @IsValidCode(TestReasonCode, {
+  @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `You reported an invalid Test Reason Code of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
+      return `You did not provide [${args.property}], which is required for [${KEY}].`;
     },
   })
-  testReasonCode?: string;
+  @IsValidCode(TestReasonCode, {
+    message: (args: ValidationArguments) => {
+      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
+    },
+  })
+  testReasonCode: string;
 
   @ApiProperty({
     description: 'Test Description. ADD TO PROPERTY METADATA',
@@ -254,7 +268,7 @@ export class TestSummaryBaseDTO {
       `You reported a [beginDate] of [${args.value}] which is outside the range of acceptable values for this date for [${KEY}].`,
   })
   @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
-  beginDate?: Date;
+  beginDate: Date;
 
   @ApiProperty({
     description: 'Begin Hour. ADD TO PROPERTY METADATA',
@@ -267,7 +281,7 @@ export class TestSummaryBaseDTO {
       `The value [${args.value}] in the field [beginHour] for [${KEY}] is not within the range of valid values from [${MIN_HOUR}] to [${MAX_HOUR}].`,
   })
   @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
-  beginHour?: number;
+  beginHour: number;
 
   @ApiProperty({
     description: 'Begin Minute. ADD TO PROPERTY METADATA',
@@ -292,7 +306,7 @@ export class TestSummaryBaseDTO {
     message: (args: ValidationArguments) =>
       `You reported an invalid EndDate in the Test Summary record for Location [${args.object['locationId']}], TestTypeCode [${args.object['testTypeCode']}] and TestNumber [${args.object['testNumber']}]. The test was not imported.`,
   })
-  endDate?: Date;
+  endDate: Date;
 
   @ApiProperty({
     description: 'End Hour. ADD TO PROPERTY METADATA',
@@ -304,7 +318,7 @@ export class TestSummaryBaseDTO {
   @IsNotEmpty({
     message: `You did not provide [endHour], which is required for [${KEY}].`,
   })
-  endHour?: number;
+  endHour: number;
 
   @ApiProperty({
     description: 'End Minute. ADD TO PROPERTY METADATA',
