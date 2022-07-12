@@ -27,9 +27,8 @@ export class LinearityInjectionChecksService {
   }
 
   async runChecks(
-    locationId: string,
+    linSumId: string,
     linearityInjection: LinearityInjectionBaseDTO | LinearityInjectionImportDTO,
-    linearitySummary?: LinearitySummaryImportDTO,
     isImport: boolean = false,
   ): Promise<string[]> {
     let error: string = null;
@@ -37,9 +36,8 @@ export class LinearityInjectionChecksService {
     this.logger.info('Running Linearity Injection Checks');
 
     error = await this.duplicateTestCheck(
-      locationId,
+      linSumId,
       linearityInjection,
-      linearitySummary,
       isImport,
     );
     if (error) errorList.push(error);
@@ -52,16 +50,12 @@ export class LinearityInjectionChecksService {
   private async duplicateTestCheck(
     linSumId: string,
     linearityInjection: LinearityInjectionBaseDTO | LinearityInjectionImportDTO,
-    linearitySummary: LinearitySummaryImportDTO,
-    isImport: boolean = false,
+    _isImport: boolean = false,
   ): Promise<string> {
     let error: string = null;
     let records: LinearityInjection[];
 
     records = await this.linearityInjectionRepository.getInjectionsByLinSumId(
-      linSumId,
-    );
-    const linSumRecord = await this.linearitySummaryRepository.getSummaryById(
       linSumId,
     );
 
@@ -72,13 +66,7 @@ export class LinearityInjectionChecksService {
         record.injectionMinute === linearityInjection.injectionMinute
       ) {
         // LINEAR-33 Duplicate Linearity Injection (Result A)
-        if (isImport) {
-          if (linearitySummary?.gasLevelCode === linSumRecord.gasLevelCode) {
-            error = `Another Linearity Injection record already exists with the same injectionDate [${linearityInjection.injectionDate}], injectionHour [${linearityInjection.injectionHour}], injectionMinute [${linearityInjection.injectionMinute}], gasLavelCode [${linearitySummary.gasLevelCode}].`;
-          }
-        } else {
-          error = `Another Linearity Injection record already exists with the same injectionDate [${linearityInjection.injectionDate}], injectionHour [${linearityInjection.injectionHour}], injectionMinute [${linearityInjection.injectionMinute}].`;
-        }
+        error = `Another Linearity Injection record already exists with the same injectionDate [${linearityInjection.injectionDate}], injectionHour [${linearityInjection.injectionHour}], injectionMinute [${linearityInjection.injectionMinute}].`;
       }
     });
 

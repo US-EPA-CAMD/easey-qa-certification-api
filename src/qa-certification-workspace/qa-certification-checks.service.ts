@@ -135,7 +135,6 @@ export class QACertificationChecksService {
             const results = this.linearitySummaryChecksService.runChecks(
               locationId,
               linearitySummary,
-              summary.linearitySummaryData,
               true,
             );
 
@@ -149,7 +148,6 @@ export class QACertificationChecksService {
               const results = this.linearityInjectionChecksService.runChecks(
                 locationId,
                 linearityInjection,
-                linearitySummary,
                 true,
               );
 

@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -27,7 +31,6 @@ export class LinearitySummaryChecksService {
   async runChecks(
     locationId: string,
     linearitySummary: LinearitySummaryBaseDTO | LinearitySummaryImportDTO,
-    linearitySummaries?: LinearitySummaryImportDTO[],
     isImport: boolean = false,
   ): Promise<string[]> {
     let error: string = null;
@@ -37,7 +40,6 @@ export class LinearitySummaryChecksService {
     error = await this.duplicateTestCheck(
       locationId,
       linearitySummary,
-      linearitySummaries,
       isImport,
     );
     if (error) errorList.push(error);
@@ -50,21 +52,18 @@ export class LinearitySummaryChecksService {
   private async duplicateTestCheck(
     testSumId: string,
     linearitySummary: LinearitySummaryBaseDTO | LinearitySummaryImportDTO,
-    _linearitySummaries: LinearitySummaryImportDTO[] = [],
     _isImport: boolean = false,
   ): Promise<string> {
     let error: string = null;
     let records: LinearitySummary[];
 
     records = await this.repository.getSummariesByTestSumId(testSumId);
-
     records.forEach(record => {
       if (record.gasLevelCode === linearitySummary.gasLevelCode) {
         // LINEAR-32 Duplicate Linearity Summary (Result A)
         error = `Another Linearity Summary record already exists with the same gasLevelCode [${linearitySummary.gasLevelCode}].`;
       }
     });
-
     return error;
   }
 }
