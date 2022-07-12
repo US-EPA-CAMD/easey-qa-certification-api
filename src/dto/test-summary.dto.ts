@@ -1,4 +1,9 @@
-import { ValidateIf, ValidationArguments, IsNotEmpty } from 'class-validator';
+import {
+  ValidateIf,
+  ValidationArguments,
+  IsNotEmpty,
+  IsOptional,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 import {
@@ -102,27 +107,27 @@ const BEGIN_DATE_TEST_TYPE_CODES = [
 ];
 
 const VALID_CODES_FOR_COMPONENT_ID_VALIDATION = [
-  TestTypeCodes.TSCAL, 
-  TestTypeCodes.FFACCTT, 
-  TestTypeCodes.FFACC, 
+  TestTypeCodes.TSCAL,
+  TestTypeCodes.FFACCTT,
+  TestTypeCodes.FFACC,
   TestTypeCodes.ONOFF,
   TestTypeCodes.HGLINE,
   TestTypeCodes.LINE,
   TestTypeCodes.CYCLE,
   TestTypeCodes.SEVENDAY,
-]
+];
 
 const VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION = [
-  TestTypeCodes.MFMCAL, 
-  TestTypeCodes.TSCAL, 
-  TestTypeCodes.BCAL, 
-  TestTypeCodes.QGA, 
-  TestTypeCodes.LEAK, 
-  TestTypeCodes.OTHER, 
-  TestTypeCodes.PEI, 
-  TestTypeCodes.PEMSACC, 
-  TestTypeCodes.DGFMCAL, 
-  TestTypeCodes.DAHS, 
+  TestTypeCodes.MFMCAL,
+  TestTypeCodes.TSCAL,
+  TestTypeCodes.BCAL,
+  TestTypeCodes.QGA,
+  TestTypeCodes.LEAK,
+  TestTypeCodes.OTHER,
+  TestTypeCodes.PEI,
+  TestTypeCodes.PEMSACC,
+  TestTypeCodes.DGFMCAL,
+  TestTypeCodes.DAHS,
   TestTypeCodes.UNITDEF,
   TestTypeCodes.FF2LTST,
   TestTypeCodes.FFACCTT,
@@ -135,7 +140,7 @@ const VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION = [
   TestTypeCodes.LINE,
   TestTypeCodes.CYCLE,
   TestTypeCodes.SEVENDAY,
-]
+];
 
 const formatTestSummaryValidationError = (
   args: ValidationArguments,
@@ -194,7 +199,9 @@ export class TestSummaryBaseDTO {
       return `You did not provide [${args.property}], which is required for [${KEY}].`;
     },
   })
-  @ValidateIf(o => VALID_CODES_FOR_COMPONENT_ID_VALIDATION.includes(o.testTypeCode))
+  @ValidateIf(o =>
+    VALID_CODES_FOR_COMPONENT_ID_VALIDATION.includes(o.testTypeCode),
+  )
   componentID: string;
 
   @ApiProperty({
@@ -236,7 +243,9 @@ export class TestSummaryBaseDTO {
       return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
     },
   })
-  @ValidateIf(o => VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION.includes(o.testTypeCode))
+  @ValidateIf(o =>
+    VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION.includes(o.testTypeCode),
+  )
   testReasonCode: string;
 
   @ApiProperty({
@@ -284,7 +293,7 @@ export class TestSummaryBaseDTO {
       );
     },
   })
-  @IsInDateRange(MIN_DATE, null, {
+  @IsInDateRange(MIN_DATE, new Date(Date.now()).toISOString(), {
     message: (args: ValidationArguments) =>
       `You reported a [beginDate] of [${args.value}] which is outside the range of acceptable values for this date for [${KEY}].`,
   })
@@ -316,18 +325,16 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.endDate.description,
   })
+  @IsOptional()
   @IsValidDate({
     message: ErrorMessages.DateValidity(),
   })
   @IsIsoFormat({
     message: ErrorMessages.SingleFormat('endDate', 'YYYY-MM-DD format'),
   })
-  @IsInDateRange(MIN_DATE, null, {
+  @IsInDateRange(MIN_DATE, new Date(Date.now()).toISOString(), {
     message: (args: ValidationArguments) =>
-      `You reported an [endDate] of [${args.value}], which is outside the range of acceptable values for this date for [${KEY}].`,
-  })
-  @IsNotEmpty({
-    message: `You did not provide [endDate], which is required for [${KEY}].`,
+      `You reported an invalid EndDate in the Test Summary record for Location [${args.object['locationId']}], TestTypeCode [${args.object['testTypeCode']}] and TestNumber [${args.object['testNumber']}]. The test was not imported.`,
   })
   endDate: Date;
 
