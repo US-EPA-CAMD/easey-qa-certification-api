@@ -1,27 +1,39 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { LinearitySummaryBaseDTO } from 'src/dto/linearity-summary.dto';
 import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 
+const testSumId = '1'
 describe('Linearity Summary Check Service Test', () => {
   let service: LinearitySummaryChecksService;
+  let repository: LinearitySummaryWorkspaceRepository;
+
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
         LinearitySummaryChecksService,
-        LinearitySummaryWorkspaceRepository,
+        {
+          provide: LinearitySummaryWorkspaceRepository,
+          useFactory: () => ({
+            getSummariesByTestSumId: jest.fn()
+          })
+        },
       ],
     }).compile();
 
     service = module.get(LinearitySummaryChecksService);
   });
 
-  // TEST-7 Test Dates Consistent
-  describe('To be defined', () => {
-    it('To be defined', () => {
-      expect(service).toBeDefined();
+  describe('Linearity Injection Checks', () => {
+    const payload = new LinearitySummaryBaseDTO()
+    it('Should pass all checks', async () => {
+      jest.spyOn(repository, 'getSummariesByTestSumId').mockResolvedValue([])
+      const result = await service.runChecks(testSumId, payload);
+      
+      expect(result).not.toBeNull();
     });
   });
 });

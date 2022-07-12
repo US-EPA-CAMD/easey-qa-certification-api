@@ -13,7 +13,6 @@ import { LinearitySummaryWorkspaceModule } from '../linearity-summary-workspace/
   imports: [
     TypeOrmModule.forFeature([LinearityInjectionWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
-    forwardRef(() => LinearitySummaryWorkspaceModule),
   ],
   controllers: [LinearityInjectionWorkspaceController],
   providers: [
