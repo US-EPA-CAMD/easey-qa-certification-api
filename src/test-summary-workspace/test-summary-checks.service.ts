@@ -50,9 +50,11 @@ export class TestSummaryChecksService {
       if (error) errorList.push(error);
     }
 
-    // IMPORT-17 Extraneous Test Summary Data Check
-    error = this.import17Check(summary);
-    if (error) errorList.push(error);
+    if (isImport) {
+      // IMPORT-17 Extraneous Test Summary Data Check
+      error = this.import17Check(summary);
+      if (error) errorList.push(error);
+    }
 
     // TEST-3 Test Begin Minute Valid
     error = await this.testMinuteField(summary, locationId, 'beginMinute');
@@ -489,9 +491,17 @@ export class TestSummaryChecksService {
       return null;
 
     if (summary[minuteField] === null || summary[minuteField] === undefined) {
-
-      const listOfCodes = [TestTypeCodes.LINE, TestTypeCodes.RATA, TestTypeCodes.CYCLE, TestTypeCodes.F2LREF, TestTypeCodes.APPE, TestTypeCodes.UNITDEF,]
-      const isSummaryTTCinListOfCodes: boolean = listOfCodes.map(ttc => ttc.toString()).includes(summary.testTypeCode);
+      const listOfCodes = [
+        TestTypeCodes.LINE,
+        TestTypeCodes.RATA,
+        TestTypeCodes.CYCLE,
+        TestTypeCodes.F2LREF,
+        TestTypeCodes.APPE,
+        TestTypeCodes.UNITDEF,
+      ];
+      const isSummaryTTCinListOfCodes: boolean = listOfCodes
+        .map(ttc => ttc.toString())
+        .includes(summary.testTypeCode);
 
       if (isSummaryTTCinListOfCodes) {
         return resultA;
@@ -505,11 +515,11 @@ export class TestSummaryChecksService {
           summary.stackPipeId,
           summary[minuteField],
         );
-        
-        this.qaMonitorPlanRepository.find()
+
+        this.qaMonitorPlanRepository.find();
         if (mp) return resultA;
       } catch (e) {
-        console.error(e)
+        console.error(e);
       }
 
       return resultB;

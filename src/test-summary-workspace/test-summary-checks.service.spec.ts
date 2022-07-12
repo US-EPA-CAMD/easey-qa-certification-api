@@ -13,20 +13,19 @@ describe('Test Summary Check Service Test', () => {
   let service: TestSummaryChecksService;
   let qaMonitorPlanWSRepo: any;
 
-  const summaryBase: TestSummaryBaseDTO = {
-    beginHour: 1,
-    beginMinute: 1,
-    endHour: 1,
-    endMinute: 2,
-    beginDate: new Date('2020-01-01'),
-    endDate: new Date('2020-01-01'),
-    testTypeCode: TestTypeCodes.ONOFF.toString(),
-    testNumber: '',
-  };
+  const summaryBase: TestSummaryBaseDTO = new TestSummaryBaseDTO();
+  summaryBase.beginHour = 1;
+  summaryBase.beginMinute = 1;
+  summaryBase.endHour = 1;
+  summaryBase.endMinute = 2;
+  summaryBase.beginDate = new Date('2020-01-01');
+  summaryBase.endDate = new Date('2020-01-01');
+  summaryBase.testTypeCode = TestTypeCodes.ONOFF.toString();
+  summaryBase.testNumber = '';
 
-  const mockQAMonitorPlanWorkspaceRepository = ()=>({
-    getMonitorPlanWithALowerBeginDate: jest.fn()
-  })
+  const mockQAMonitorPlanWorkspaceRepository = () => ({
+    getMonitorPlanWithALowerBeginDate: jest.fn(),
+  });
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -36,9 +35,9 @@ describe('Test Summary Check Service Test', () => {
         TestSummaryWorkspaceRepository,
         QASuppDataWorkspaceRepository,
         {
-            provide: QAMonitorPlanWorkspaceRepository,
-            useFactory: mockQAMonitorPlanWorkspaceRepository
-        }
+          provide: QAMonitorPlanWorkspaceRepository,
+          useFactory: mockQAMonitorPlanWorkspaceRepository,
+        },
       ],
     }).compile();
 
@@ -48,9 +47,7 @@ describe('Test Summary Check Service Test', () => {
   });
 
   // TEST-7 Test Dates Consistent
-  describe('test7Check() test', () => {
-    
-
+  describe('test7Check test', () => {
     it('returns error message when beginDate/hour >= endDate/hour for testTypeCode=ONOFF', () => {
       const result = service.test7Check(summaryBase);
       expect(result).not.toBeNull();
@@ -84,39 +81,63 @@ describe('Test Summary Check Service Test', () => {
     });
   });
 
-  describe('testMinuteField() test', ()=>{
+  describe('testMinuteField() test', () => {
+    it('returns null when startMinute and endMinute are valid', async () => {
+      const startMinuteresult = await service.testMinuteField(
+        summaryBase,
+        '1',
+        'beginMinute',
+      );
+      const endMinuteresult = await service.testMinuteField(
+        summaryBase,
+        '1',
+        'endMinute',
+      );
 
-    it( 'returns null when startMinute and endMinute are valid', async()=>{
+      expect(startMinuteresult).toBeNull();
+      expect(endMinuteresult).toBeNull();
+    });
 
-        const startMinuteresult = await service.testMinuteField(summaryBase, "1", "beginMinute");
-        const endMinuteresult = await service.testMinuteField(summaryBase, "1", "endMinute");
+    it('returns error message when testType "LINE"', async () => {
+      const summary = {
+        ...summaryBase,
+        testTypeCode: TestTypeCodes.LINE.toString(),
+        beginMinute: null,
+      };
+      const result = await service.testMinuteField(summary, '1', 'beginMinute');
+      expect(result).toBe(
+        'You did not provide [beginMinute], which is required for [Test Summary].',
+      );
+    });
 
-        expect(startMinuteresult).toBeNull();
-        expect(endMinuteresult).toBeNull();
-    })
+    it('returns error message A when startMinute is null and testType is not [LINE, RATA, CYCLE, F2LREF, APPE, UNITDEF] and monitor plan is found', async () => {
+      qaMonitorPlanWSRepo.getMonitorPlanWithALowerBeginDate.mockResolvedValue(
+        new MonitorPlan(),
+      );
+      const summary = {
+        ...summaryBase,
+        testTypeCode: TestTypeCodes.F2LCHK.toString(),
+        beginMinute: null,
+      };
+      const result = await service.testMinuteField(summary, '1', 'beginMinute');
+      expect(result).toBe(
+        'You did not provide [beginMinute] for [Test Summary]. This information will be required for ECMPS submissions.',
+      );
+    });
 
-    it( 'returns error message when testType "LINE"', async ()=>{
-
-        const summary = {...summaryBase, testTypeCode: TestTypeCodes.LINE.toString(), beginMinute: null, }
-        const result = await service.testMinuteField(summary, "1", "beginMinute");
-        expect(result).toBe("You did not provide [beginMinute], which is required for [Test Summary].");
-    })
-
-    it ('returns error message A when startMinute is null and testType is not [LINE, RATA, CYCLE, F2LREF, APPE, UNITDEF] and monitor plan is found', async ()=>{
-        qaMonitorPlanWSRepo.getMonitorPlanWithALowerBeginDate.mockResolvedValue(new MonitorPlan());
-        const summary = {...summaryBase, testTypeCode: TestTypeCodes.F2LCHK.toString(), beginMinute: null, }
-        const result = await service.testMinuteField(summary, "1", "beginMinute");
-        expect(result).toBe("You did not provide [beginMinute], which is required for [Test Summary].");
-    })
-
-    it ('returns error message B when startMinute is null and testType is not [LINE, RATA, CYCLE, F2LREF, APPE, UNITDEF] and monitor plan is NOT found', async ()=>{
-        qaMonitorPlanWSRepo.getMonitorPlanWithALowerBeginDate.mockResolvedValue(null);
-        const summary = {...summaryBase, testTypeCode: TestTypeCodes.F2LCHK.toString(), beginMinute: null, }
-        const result = await service.testMinuteField(summary, "1", "beginMinute");
-        expect(result).toBe("You did not provide [beginMinute] for [Test Summary]. This information will be required for ECMPS submissions.");
-    })
-
-  })
+    it('returns error message B when startMinute is null and testType is not [LINE, RATA, CYCLE, F2LREF, APPE, UNITDEF] and monitor plan is NOT found', async () => {
+      qaMonitorPlanWSRepo.getMonitorPlanWithALowerBeginDate.mockResolvedValue(
+        null,
+      );
+      const summary = {
+        ...summaryBase,
+        testTypeCode: TestTypeCodes.F2LCHK.toString(),
+        beginMinute: null,
+      };
+      const result = await service.testMinuteField(summary, '1', 'beginMinute');
+      expect(result).toBe(
+        'You did not provide [beginMinute] for [Test Summary]. This information will be required for ECMPS submissions.',
+      );
+    });
+  });
 });
-
-
