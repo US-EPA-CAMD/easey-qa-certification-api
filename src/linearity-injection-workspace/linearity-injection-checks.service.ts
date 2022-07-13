@@ -2,8 +2,6 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LinearitySummaryImportDTO } from '../dto/linearity-summary.dto';
-import { LinearitySummaryWorkspaceRepository } from '../linearity-summary-workspace/linearity-summary.repository';
 import {
   LinearityInjectionBaseDTO,
   LinearityInjectionImportDTO,
@@ -39,7 +37,9 @@ export class LinearityInjectionChecksService {
       linearityInjection,
       isImport,
     );
-    if (error) errorList.push(error);
+    if (error) {
+      errorList.push(error);
+    }
 
     this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed Linearity Injection Checks');
@@ -52,9 +52,8 @@ export class LinearityInjectionChecksService {
     _isImport: boolean = false,
   ): Promise<string> {
     let error: string = null;
-    let records: LinearityInjection[];
 
-    records = await this.linearityInjectionRepository.getInjectionsByLinSumId(
+    const records: LinearityInjection[] = await this.linearityInjectionRepository.getInjectionsByLinSumId(
       linSumId,
     );
     records.forEach(record => {
