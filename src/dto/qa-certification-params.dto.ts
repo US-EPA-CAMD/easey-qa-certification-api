@@ -14,7 +14,7 @@ import {
 
 import { OneOrMore } from '../pipes/one-or-more.pipe';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
-import { IsInDateRange } from '../pipes/is-in-date-range';
+import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestTypeCode } from './../entities/test-type-code.entity';
 
@@ -47,6 +47,14 @@ export class QACertificationParamsDTO {
   })
   @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
   stackPipeIds?: string[];
+
+  @ApiProperty({
+    isArray: true,
+    description:
+      'The Test Summary ID is a unique identifier of a test summary record',
+  })
+  @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
+  testSummaryIds?: string[];
 
   @ApiProperty({
     enum: TestTypeCodes,

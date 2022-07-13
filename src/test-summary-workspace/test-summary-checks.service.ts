@@ -13,6 +13,8 @@ import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
+import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
+import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 
 @Injectable()
 export class TestSummaryChecksService {
@@ -22,6 +24,8 @@ export class TestSummaryChecksService {
     private readonly repository: TestSummaryWorkspaceRepository,
     @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
+    @InjectRepository(QAMonitorPlanWorkspaceRepository)
+    private readonly qaMonitorPlanRepository: QAMonitorPlanWorkspaceRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -46,8 +50,18 @@ export class TestSummaryChecksService {
       if (error) errorList.push(error);
     }
 
-    // IMPORT-17 Extraneous Test Summary Data Check
-    error = this.import17Check(summary);
+    if (isImport) {
+      // IMPORT-17 Extraneous Test Summary Data Check
+      error = this.import17Check(summary);
+      if (error) errorList.push(error);
+    }
+
+    // TEST-3 Test Begin Minute Valid
+    error = await this.testMinuteField(summary, locationId, 'beginMinute');
+    if (error) errorList.push(error);
+
+    // TEST-6 Test End Minute Valid
+    error = await this.testMinuteField(summary, locationId, 'endMinute');
     if (error) errorList.push(error);
 
     // TEST-7 Test Dates Consistent
@@ -460,6 +474,59 @@ export class TestSummaryChecksService {
     }
 
     return error;
+  }
+
+  // TEST-3 & TEST-6: Test Begin/End Minute Valid
+  async testMinuteField(
+    summary: TestSummaryBaseDTO,
+    locationId: string,
+    minuteField: string,
+  ): Promise<string> {
+    const resultA = `You did not provide [${minuteField}], which is required for [Test Summary].`;
+    const resultB = `You did not provide [${minuteField}] for [Test Summary]. This information will be required for ECMPS submissions.`;
+
+    if (
+      minuteField === 'endMinute' &&
+      summary.testTypeCode.toUpperCase() === TestTypeCodes.ONOFF
+    )
+      return null;
+
+    if (summary[minuteField] === null || summary[minuteField] === undefined) {
+      const listOfCodes = [
+        TestTypeCodes.LINE,
+        TestTypeCodes.RATA,
+        TestTypeCodes.CYCLE,
+        TestTypeCodes.F2LREF,
+        TestTypeCodes.APPE,
+        TestTypeCodes.UNITDEF,
+      ];
+      const isSummaryTTCinListOfCodes: boolean = listOfCodes
+        .map(ttc => ttc.toString())
+        .includes(summary.testTypeCode);
+
+      if (isSummaryTTCinListOfCodes) {
+        return resultA;
+      }
+
+      // Test MP Begin Date
+      try {
+        const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(
+          locationId,
+          summary.unitId,
+          summary.stackPipeId,
+          summary[minuteField],
+        );
+
+        this.qaMonitorPlanRepository.find();
+        if (mp) return resultA;
+      } catch (e) {
+        console.error(e);
+      }
+
+      return resultB;
+    }
+
+    return null;
   }
 
   // TEST-7 Test Dates Consistent

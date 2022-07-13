@@ -28,6 +28,16 @@ export const addTestTypeWhere = (
   return query;
 };
 
+export const addTestSummaryIdWhere = (
+  query: any,
+  testSummaryIds: string[],
+): SelectQueryBuilder<TestSummary | WorkspaceTestSummary> => {
+  if (testSummaryIds) {
+    query.andWhere('ts.id IN (:...testSummaryIds)', { testSummaryIds });
+  }
+  return query;
+};
+
 export const addTestNumberWhere = (
   query: SelectQueryBuilder<TestSummary | WorkspaceTestSummary>,
   testNumber: string,

@@ -5,6 +5,7 @@ import {
   addTestTypeWhere,
   addTestNumberWhere,
   addBeginAndEndDateWhere,
+  addTestSummaryIdWhere,
 } from '../utilities/test-summary.querybuilder';
 
 import { TestSummary } from '../entities/workspace/test-summary.entity';
@@ -67,6 +68,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
     facilityId: number,
     unitIds?: string[],
     stackPipeIds?: string[],
+    testSummaryIds?: string[],
     testTypeCode?: string,
     beginDate?: Date,
     endDate?: Date,
@@ -97,6 +99,9 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
       stackPipeIds,
     });
 
+    query = addTestSummaryIdWhere(query, testSummaryIds) as SelectQueryBuilder<
+      TestSummary
+    >;
     query = addTestTypeWhere(query, testTypeCode) as SelectQueryBuilder<
       TestSummary
     >;

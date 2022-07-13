@@ -27,6 +27,7 @@ export class QACertificationWorkspaceService {
         params.facilityId,
         params.unitIds,
         params.stackPipeIds,
+        params.testSummaryIds,
         params.testTypeCode,
         params.beginDate,
         params.endDate,

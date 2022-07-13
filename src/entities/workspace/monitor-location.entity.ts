@@ -6,6 +6,8 @@ import {
   JoinColumn,
   OneToOne,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 
 import { Unit } from './unit.entity';
@@ -14,21 +16,25 @@ import { StackPipe } from './stack-pipe.entity';
 import { TestSummary } from './test-summary.entity';
 import { MonitorSystem } from './monitor-system.entity';
 import { QASuppData } from './qa-supp-data.entity';
+import { MonitorPlan } from './monitor-plan.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_location' })
 export class MonitorLocation extends BaseEntity {
   @PrimaryColumn({
     name: 'mon_loc_id',
+    type: 'varchar',
   })
   id: string;
 
   @Column({
     name: 'unit_id',
+    type: 'varchar',
   })
   unitId: string;
 
   @Column({
     name: 'stack_pipe_id',
+    type: 'varchar',
   })
   stackPipeId: string;
 
