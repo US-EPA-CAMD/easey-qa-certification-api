@@ -6,7 +6,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { LinearitySummaryController } from './linearity-summary.controller';
 import { LinearitySummaryService } from './linearity-summary.service';
 
-describe('Event Controller', () => {
+describe('Linearity Summary Controller', () => {
   let controller: LinearitySummaryController;
   let service: LinearitySummaryService;
 
@@ -14,7 +14,13 @@ describe('Event Controller', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       controllers: [LinearitySummaryController],
-      providers: [LinearitySummaryService, ConfigService],
+      providers: [
+        {
+          provide: LinearitySummaryService,
+          useFactory: () => ({}),
+        },
+        ConfigService,
+      ],
     }).compile();
 
     controller = module.get(LinearitySummaryController);

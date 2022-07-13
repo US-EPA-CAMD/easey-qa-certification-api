@@ -37,6 +37,11 @@ const location = {
   componentIDs: ['string'],
 };
 
+const mockService = () => ({
+  import: jest.fn(),
+  export: jest.fn(),
+});
+
 const mockCheckService = () => ({
   runChecks: jest.fn().mockResolvedValue(''),
 });
@@ -51,25 +56,14 @@ describe('QA Certification Workspace Controller Test', () => {
       imports: [LoggerModule],
       controllers: [QACertificationWorkspaceController],
       providers: [
-        QACertificationWorkspaceService,
+        {
+          provide: QACertificationWorkspaceService,
+          useFactory: mockService,
+        },
         {
           provide: QACertificationChecksService,
           useFactory: mockCheckService,
         },
-        ConfigService,
-        TestSummaryWorkspaceService,
-        TestSummaryMap,
-        LinearitySummaryWorkspaceService,
-        TestSummaryWorkspaceRepository,
-        LinearitySummaryMap,
-        LinearitySummaryWorkspaceRepository,
-        LinearityInjectionWorkspaceService,
-        LinearityInjectionMap,
-        LinearityInjectionWorkspaceRepository,
-        LocationChecksService,
-        TestSummaryChecksService,
-        LocationWorkspaceRepository,
-        QASuppDataWorkspaceRepository,
       ],
     }).compile();
 

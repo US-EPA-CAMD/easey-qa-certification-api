@@ -22,6 +22,7 @@ import {
   LinearityInjectionBaseDTO,
   LinearityInjectionRecordDTO,
 } from '../dto/linearity-injection.dto';
+import { LinearityInjectionChecksService } from './linearity-injection-checks.service';
 
 import { LinearityInjectionWorkspaceService } from './linearity-injection.service';
 
@@ -29,7 +30,10 @@ import { LinearityInjectionWorkspaceService } from './linearity-injection.servic
 @ApiSecurity('APIKey')
 @ApiTags('Linearity Injection')
 export class LinearityInjectionWorkspaceController {
-  constructor(private readonly service: LinearityInjectionWorkspaceService) {}
+  constructor(
+    private readonly service: LinearityInjectionWorkspaceService,
+    private readonly checksService: LinearityInjectionChecksService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -75,6 +79,7 @@ export class LinearityInjectionWorkspaceController {
     //    @CurrentUser() userId: string,
   ): Promise<LinearityInjectionRecordDTO> {
     const userId = 'testUser';
+    await this.checksService.runChecks(linSumId, payload);
     return this.service.createInjection(testSumId, linSumId, payload, userId);
   }
 
@@ -88,12 +93,13 @@ export class LinearityInjectionWorkspaceController {
   async updateLinearityInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-    @Param('linSumId') _linSumId: string,
+    @Param('linSumId') linSumId: string,
     @Param('id') id: string,
     @Body() payload: LinearityInjectionBaseDTO,
     //    @CurrentUser() userId: string,
   ): Promise<LinearityInjectionRecordDTO> {
     const userId = 'testUser';
+    await this.checksService.runChecks(linSumId, payload);
     return this.service.updateInjection(testSumId, id, payload, userId);
   }
 

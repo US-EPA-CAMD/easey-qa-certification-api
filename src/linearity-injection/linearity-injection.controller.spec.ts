@@ -6,7 +6,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { LinearityInjectionController } from './linearity-injection.controller';
 import { LinearityInjectionService } from './linearity-injection.service';
 
-describe('Event Controller', () => {
+describe('Lineraity Injection Controller', () => {
   let controller: LinearityInjectionController;
   let service: LinearityInjectionService;
 
@@ -14,7 +14,13 @@ describe('Event Controller', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       controllers: [LinearityInjectionController],
-      providers: [LinearityInjectionService, ConfigService],
+      providers: [
+        {
+          provide: LinearityInjectionService,
+          useFactory: () => ({}),
+        },
+        ConfigService,
+      ],
     }).compile();
 
     controller = module.get(LinearityInjectionController);

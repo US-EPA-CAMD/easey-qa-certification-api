@@ -39,14 +39,14 @@ export class LinearitySummaryWorkspaceService {
   ) {}
 
   async getSummaryById(id: string): Promise<LinearitySummaryDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.getSummaryById(id);
     return this.map.one(result);
   }
 
   async getSummariesByTestSumId(
     testSumId: string,
   ): Promise<LinearitySummaryDTO[]> {
-    const results = await this.repository.find({ testSumId });
+    const results = await this.repository.getSummariesByTestSumId(testSumId);
     return this.map.many(results);
   }
 
