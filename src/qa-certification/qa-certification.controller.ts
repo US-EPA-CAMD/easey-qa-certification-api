@@ -29,6 +29,12 @@ export class QACertificationController {
     required: false,
     explode: false,
   })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'testSummaryIds',
+    required: false,
+    explode: false,
+  })
   async export(
     @Query() params: QACertificationParamsDTO,
   ): Promise<QACertificationDTO> {

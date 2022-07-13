@@ -22,6 +22,7 @@ export class QACertificationService {
         params.facilityId,
         params.unitIds,
         params.stackPipeIds,
+        params.testSummaryIds,
         params.testTypeCode,
         params.beginDate,
         params.endDate,
