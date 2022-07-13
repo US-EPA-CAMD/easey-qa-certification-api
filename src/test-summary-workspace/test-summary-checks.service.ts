@@ -520,8 +520,6 @@ export class TestSummaryChecksService {
   ): string[] {
     const fields: string[] = [];
 
-    console.log('duplicate', duplicate);
-
     if (
       (duplicate.system === null && summary.monitoringSystemID) ||
       (duplicate.system &&
