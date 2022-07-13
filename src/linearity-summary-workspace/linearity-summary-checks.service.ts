@@ -54,15 +54,15 @@ export class LinearitySummaryChecksService {
   ): Promise<string> {
     let error: string = null;
 
-    const records: LinearitySummary[] = await this.repository.getSummariesByTestSumId(
-      testSumId,
-    );
-    records.forEach(record => {
-      if (record.gasLevelCode === linearitySummary.gasLevelCode) {
-        // LINEAR-32 Duplicate Linearity Summary (Result A)
-        error = `Another Linearity Summary record already exists with the same gasLevelCode [${linearitySummary.gasLevelCode}].`;
-      }
+    const record: LinearitySummary = await this.repository.findOne({
+      testSumId: testSumId,
+      gasLevelCode: linearitySummary.gasLevelCode,
     });
+
+    if (record) {
+      // LINEAR-32 Duplicate Linearity Summary (Result A)
+      error = `Another Linearity Summary record already exists with the same gasLevelCode [${linearitySummary.gasLevelCode}].`;
+    }
     return error;
   }
 }

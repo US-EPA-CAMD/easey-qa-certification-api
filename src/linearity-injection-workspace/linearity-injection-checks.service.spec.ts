@@ -8,9 +8,7 @@ import { LinearityInjectionWorkspaceRepository } from './linearity-injection.rep
 const linSumId = '1';
 
 const mockRepository = () => ({
-  getInjectionsByLinSumId: jest
-    .fn()
-    .mockResolvedValue([new LinearityInjection()]),
+  findOne: jest.fn().mockResolvedValue(new LinearityInjection()),
 });
 
 describe('Linearity Injection Check Service Test', () => {
@@ -36,7 +34,7 @@ describe('Linearity Injection Check Service Test', () => {
   describe('Linearity Injection Checks', () => {
     const payload = new LinearityInjectionBaseDTO();
     it('Should pass all checks', async () => {
-      jest.spyOn(repository, 'getInjectionsByLinSumId').mockResolvedValue([]);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
       const result = await service.runChecks(linSumId, payload);
       expect(result).toEqual([]);
     });
@@ -54,9 +52,7 @@ describe('Linearity Injection Check Service Test', () => {
     returnValue.injectionMinute = 1;
 
     it('Should get already exists error', async () => {
-      jest
-        .spyOn(repository, 'getInjectionsByLinSumId')
-        .mockResolvedValue([returnValue]);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(returnValue);
 
       try {
         await service.runChecks(linSumId, payload);

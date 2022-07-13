@@ -19,7 +19,7 @@ describe('Linearity Summary Check Service Test', () => {
         {
           provide: LinearitySummaryWorkspaceRepository,
           useFactory: () => ({
-            getSummariesByTestSumId: jest.fn(),
+            findOne: jest.fn(),
           }),
         },
       ],
@@ -32,7 +32,7 @@ describe('Linearity Summary Check Service Test', () => {
   describe('Linearity Injection Checks', () => {
     const payload = new LinearitySummaryBaseDTO();
     it('Should pass all checks', async () => {
-      jest.spyOn(repository, 'getSummariesByTestSumId').mockResolvedValue([]);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
       const result = await service.runChecks(testSumId, payload);
 
       expect(result).toEqual([]);
@@ -47,9 +47,7 @@ describe('Linearity Summary Check Service Test', () => {
     returnValue.gasLevelCode = 'LOW';
 
     it('Should get already exists error', async () => {
-      jest
-        .spyOn(repository, 'getSummariesByTestSumId')
-        .mockResolvedValue([returnValue]);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(returnValue);
       try {
         await service.runChecks(testSumId, payload);
       } catch (err) {
