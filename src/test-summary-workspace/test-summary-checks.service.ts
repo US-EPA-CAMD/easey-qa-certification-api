@@ -15,6 +15,7 @@ import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+import { Component } from 'src/entities/workspace/component.entity';
 
 @Injectable()
 export class TestSummaryChecksService {
@@ -566,6 +567,97 @@ export class TestSummaryChecksService {
     }
 
     return null;
+  }
+
+  // TEST-8
+  private test8Check(summary: TestSummaryBaseDTO): string {
+    let error: string = null;
+
+    if (summary.componentID) {
+      // TODO: componentTypeCode is !== "FLOW"
+      let x: string;
+      if (x !== 'FLOW') {
+        if (summary.spanScaleCode === null) {
+          // TODO: set Test Span Scale Valid to false
+          error = `You did not provide [fieldname], which is required for [key]`;
+          return error;
+        }
+        if (!['H', 'L'].includes(summary.spanScaleCode)) {
+          // TODO: set Test Span Scale Valid to false
+          error = `You did not provide [fieldname], which is required for [key]`;
+          return error;
+        }
+
+        // TODO: Check is Test Dates Consistent is true,
+        if (true) {
+          if (summary.spanScaleCode === 'H') {
+            // TODO: Locate an Analyzer Range records for the component where the AnalyzerRangeCode is equal to "L", the beginDate and beginHour is on
+            // on or before the beginDate and beginHour of the current test, and the endDate is null or the endDate and endHour is after the endDate and
+            // endHour of the current test.
+            const analyerRange = 'GET ANALYZER RANGE';
+
+            if (analyerRange) {
+              //TODO: set Test Span Scale Valid to false
+              error = `The active analyzer range for the component is inconsistent with the span scale ${summary.spanScaleCode}`;
+              return error;
+            }
+          }
+
+          if (summary.spanScaleCode === 'L') {
+            // TODO: Locate an Analyzer Range records for the component where the AnalyzerRangeCode is equal to "H", the beginDate and beginHour is on
+            // on or before the beginDate and beginHour of the current test, and the endDate is null or the endDate and endHour is after the endDate and
+            // endHour of the current test.
+            const analyerRange = 'GET ANALYZER RANGE';
+
+            if (analyerRange) {
+              //TODO: set Test Span Scale Valid to false
+              error = `The active analyzer range for the component is inconsistent with the span scale ${summary.spanScaleCode}`;
+              return error;
+            }
+          }
+        }
+      } else {
+        if (summary.spanScaleCode !== null) {
+          error = `You reported a SpanScaleCode, but this is not appropriate for flow component`;
+          return error;
+        }
+      }
+    }
+  }
+
+  private test23Check(summary: TestSummaryBaseDTO) {
+    let message: string;
+    const resultA = `You did not identify an injection protocol (HGE or HGO), as required for a Hg CEMS seven day calibration or cycle time test`;
+    const resultC = `An injection protocol is only reported for Hg CEMS.`;
+    const resultD = `An injection protocol is not required for this test type.`;
+
+    if (['7DAY', 'CYCLE'].includes(summary.testTypeCode)) {
+      // TODO: set Component Record
+
+      let componentRecord: Component;
+
+      if (componentRecord) {
+        if (componentRecord.componentTypeCode === 'HG') {
+          if (summary.injectionProtocolCode) {
+            message = resultA;
+            return message;
+          } else if (['HGE', 'HGO'].includes(summary.injectionProtocolCode)) {
+            message = resultA;
+            return message;
+          } else {
+            if (summary.injectionProtocolCode !== null) {
+              message = resultC;
+              return message;
+            }
+          }
+        }
+      }
+    } else {
+      if (summary.injectionProtocolCode !== null) {
+        message = resultD;
+        return message;
+      }
+    }
   }
 
   private compareFields(
