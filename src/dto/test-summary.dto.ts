@@ -309,7 +309,7 @@ export class TestSummaryBaseDTO {
   @ValidateIf(o =>
     VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION.includes(o.testTypeCode),
   )
-  testReasonCode: string;
+  testReasonCode?: string;
 
   @ApiProperty({
     description: 'Test Description. ADD TO PROPERTY METADATA',
