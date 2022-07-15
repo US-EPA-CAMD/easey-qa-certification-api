@@ -51,13 +51,9 @@ export class QACertificationChecksService {
       const systemIDs = [];
       const componentIDs = [];
 
-      const location = locations.find(l => {
-        if (
-          (l.unitId && l.unitId === i.unitId) ||
-          (l.stackPipeId && l.stackPipeId === i.stackPipeId)
-        )
-          return l;
-      });
+      const location = locations.find(
+        l => l?.unitId === i?.unitId || l?.stackPipeId === i?.stackPipeId,
+      );
 
       if (location) {
         if (
@@ -95,12 +91,16 @@ export class QACertificationChecksService {
       payload.testExtensionExemptionData.forEach(i => addLocation(i));
     }
 
+    console.log('locations');
+    console.log(locations);
+
+    // IMPORT-13 Result
     if (locations.length === 0) {
       errorList.push(
         'There are no test summary, certifications events, or extension/exmeption records present in the file to be imported',
       );
+      this.throwIfErrors(errorList);
     }
-    this.throwIfErrors(errorList);
 
     [locations, errors] = await this.locationChecksService.runChecks(
       payload.orisCode,

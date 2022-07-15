@@ -20,10 +20,8 @@ export class LocationWorkspaceRepository extends Repository<MonitorLocation> {
         : '';
 
     if (
-      unitIds &&
-      unitIds.length > 0 &&
-      stackPipeIds &&
-      stackPipeIds.length > 0
+      unitIds?.length > 0 &&
+      stackPipeIds?.length > 0
     ) {
       unitsWhere = `(${unitsWhere})`;
       stacksWhere = ` OR (${stacksWhere})`;

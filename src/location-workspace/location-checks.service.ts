@@ -28,16 +28,16 @@ export class LocationChecksService {
       locations.filter(i => i.unitId !== null).map(i => i.unitId),
       locations.filter(i => i.stackPipeId !== null).map(i => i.stackPipeId),
     );
+    
+    console.log("dbLocations")
+    console.log(dbLocations)
 
     locations.forEach(location => {
       let unitStack = '';
-      const dbLocation = dbLocations.find(i => {
-        if (
-          (i.unit && i.unit.name === location.unitId) ||
-          (i.stackPipe && i.stackPipe.name === location.stackPipeId)
-        )
-          return i;
-      });
+      const dbLocation = dbLocations.find(i => (
+          (i?.unit.name === location.unitId) ||
+          (i?.stackPipe.name === location.stackPipeId)
+      ));
 
       if (location.unitId) {
         unitStack = `Unit [${location.unitId}]`;
