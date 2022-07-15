@@ -16,6 +16,8 @@ import { QACertificationWorkspaceModule } from './qa-certification-workspace/qa-
 
 import { LocationModule } from './location/location.module';
 import { LocationWorkspaceModule } from './location-workspace/location.module';
+import { ComponentModule } from './component/component.module';
+import { AnalyzerRangeModule } from './analyzer-range/analyzer-range.module';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { LocationWorkspaceModule } from './location-workspace/location.module';
     QACertificationWorkspaceModule,
     LocationModule,
     LocationWorkspaceModule,
+    ComponentModule,
+    AnalyzerRangeModule,
   ],
 })
 export class AppModule {}
