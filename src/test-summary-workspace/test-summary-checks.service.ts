@@ -47,31 +47,43 @@ export class TestSummaryChecksService {
     if (isImport) {
       // IMPORT-16 Inappropriate Children Records for Test Summary
       error = this.import16Check(summary as TestSummaryImportDTO);
-      if (error) errorList.push(error);
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     if (isImport) {
       // IMPORT-17 Extraneous Test Summary Data Check
       error = this.import17Check(locationId, summary);
-      if (error) errorList.push(error);
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     // TEST-3 Test Begin Minute Valid
     error = await this.testMinuteField(summary, locationId, 'beginMinute');
-    if (error) errorList.push(error);
+    if (error) {
+      errorList.push(error);
+    }
 
     // TEST-6 Test End Minute Valid
     error = await this.testMinuteField(summary, locationId, 'endMinute');
-    if (error) errorList.push(error);
+    if (error) {
+      errorList.push(error);
+    }
 
     // TEST-7 Test Dates Consistent
     // NOTE: beginMinute and endMinute validity tests need to run before this test
     error = this.test7Check(summary);
-    if (error) errorList.push(error);
+    if (error) {
+      errorList.push(error);
+    }
 
     // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
     error = await this.linear4Check(locationId, summary, isImport);
-    if (error) errorList.push(error);
+    if (error) {
+      errorList.push(error);
+    }
 
     error = await this.duplicateTestCheck(
       locationId,
@@ -79,7 +91,9 @@ export class TestSummaryChecksService {
       summaries,
       isImport,
     );
-    if (error) errorList.push(error);
+    if (error) {
+      errorList.push(error);
+    }
 
     this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed Test Summary Checks');
