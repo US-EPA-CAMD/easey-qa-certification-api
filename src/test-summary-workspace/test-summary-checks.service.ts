@@ -648,7 +648,7 @@ export class TestSummaryChecksService {
     });
 
     if (duplicateTestSum) {
-      error = `Based on the information in this record, this test has already been submitted with a different test number [${duplicateTestSum.testNumber}], or the Client Tool database already contains the same test with a different test number [${duplicateTestSum.testNumber}]. This test cannot be submitted.`;
+      error = `Based on the information in this record, this test has already been submitted with a different test number, or the Client Tool database already contains the same test with a different test number. This test cannot be submitted.`;
     } else {
       duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
@@ -662,7 +662,7 @@ export class TestSummaryChecksService {
       );
 
       if (duplicateQaSupp) {
-        error = `Based on the information in this record, this test has already been submitted with a different test number [${duplicateQaSupp.testNumber}], or the Client Tool database already contains the same test with a different test number [${duplicateQaSupp.testNumber}]. This test cannot be submitted.`;
+        error = `Based on the information in this record, this test has already been submitted with a different test number, or the Client Tool database already contains the same test with a different test number. This test cannot be submitted.`;
       } else {
         // TODO: BLOCKED DUE TO COLUMN DOESNOT EXISTS IN DATABASE
         /* duplicateQaSupp = await this.qaSuppDataRepository.findOne({
