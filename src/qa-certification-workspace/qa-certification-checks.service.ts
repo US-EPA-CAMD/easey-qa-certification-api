@@ -129,7 +129,7 @@ export class QACertificationChecksService {
         }),
       );
 
-      summary.linearitySummaryData.forEach(linearitySummary => {
+      summary.linearitySummaryData?.forEach(linearitySummary => {
         promises.push(
           new Promise(async (resolve, _reject) => {
             const results = this.linearitySummaryChecksService.runChecks(
@@ -142,7 +142,7 @@ export class QACertificationChecksService {
           }),
         );
 
-        linearitySummary.linearityInjectionData.forEach(linearityInjection => {
+        linearitySummary.linearityInjectionData?.forEach(linearityInjection => {
           promises.push(
             new Promise(async (resolve, _reject) => {
               const results = this.linearityInjectionChecksService.runChecks(

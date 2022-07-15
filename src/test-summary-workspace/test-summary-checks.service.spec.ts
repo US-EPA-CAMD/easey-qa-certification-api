@@ -13,6 +13,7 @@ import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/q
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { LinearitySummaryImportDTO } from '../dto/linearity-summary.dto';
 
 const locationId = '1';
 
@@ -181,6 +182,151 @@ describe('Test Summary Check Service Test', () => {
       } catch (err) {
         expect(err.response.message).toEqual([
           `Another Test Summary record for Unit/Stack [${payload.unitId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. You cannot change the Test Number to the value that you have entered, because a test with this Test Type and Test Number has already been submitted. If this is a different test, you should assign it a different Test Number. If you are trying to resubmit this test, you should delete this test, and either reimport this test with its original Test Number or retrieve the original test from the EPA host system.`,
+        ]);
+      }
+    });
+
+    it('Should get error IMPORT-16 inappropriate Child when Test Type Code not equal to RATA, 7DAY, HGLINE, HGSI3, F2LREF, F2LCHK, CYCLE, ONOFF, FFACC, FFACCTT, FF2LBAS, FF2LTST, APPE and UNITDEF.', async () => {
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+
+      const importPayload = new TestSummaryImportDTO();
+      importPayload.testTypeCode = TestTypeCodes.LINE;
+      importPayload.rataData = [{}];
+      importPayload.testQualificationData = [{}];
+      importPayload.calibrationInjectionData = [{}];
+      importPayload.hgSummaryData = [{}];
+      importPayload.flowToLoadReferenceData = [{}];
+      importPayload.flowToLoadCheckData = [{}];
+      importPayload.cycleTimeSummaryData = [{}];
+      importPayload.onlineOfflineCalibrationData = [{}];
+      importPayload.fuelFlowmeterAccuracyData = [{}];
+      importPayload.transmitterTransducerData = [{}];
+      importPayload.fuelFlowToLoadBaselineData = [{}];
+      importPayload.fuelFlowToLoadTestData = [{}];
+      importPayload.appECorrelationTestSummaryData = [{}];
+      importPayload.unitDefaultTestData = [{}];
+      importPayload.airEmissionTestData = [{}];
+
+      try {
+        await service.runChecks(
+          locationId,
+          importPayload,
+          [importPayload],
+          true,
+        );
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `You have reported invalid [RATA, Test Qualification, Calibration Injection, Hg Linearity or System Integrity Summary, Flow to Load Reference, Flow to Load Check, Cycle Time Summary, Online Offline Calibration, Fuel Flowmeter Accuracy, Transmitter Transducer, Fuel Flow to Load Baseline, Fuel Flow to Load Test, Appendix E Correlation Test Summary, Unit Default Test, Air Emission Test] records for a Test Summary record with a Test Type Code of [${importPayload.testTypeCode}]. This file was not imported.`,
+        ]);
+      }
+    });
+
+    it('Should get error IMPORT-16 inappropriate Child when Test Type Code not equal to RATA, LINE, APPE and UNITDEF, ', async () => {
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+
+      const importPayload = new TestSummaryImportDTO();
+      importPayload.testTypeCode = TestTypeCodes.FF2LTST;
+      importPayload.protocolGasData = [{}];
+      importPayload.linearitySummaryData = [new LinearitySummaryImportDTO()];
+
+      try {
+        await service.runChecks(
+          locationId,
+          importPayload,
+          [importPayload],
+          true,
+        );
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `You have reported invalid [Linearity Summary, Protocol Gas] records for a Test Summary record with a Test Type Code of [${importPayload.testTypeCode}]. This file was not imported.`,
+        ]);
+      }
+    });
+
+    it('Should get error IMPORT-17 TestDescription, TestResultCode, SpanScaleCode, TestReasonCode, GracePeriodIndicator, BeginMinute, EndMinute Extraneous Test Summary Field, ', async () => {
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+
+      const importPayload = new TestSummaryImportDTO();
+      importPayload.testNumber = '1';
+      importPayload.testTypeCode = TestTypeCodes.FF2LBAS;
+      importPayload.testDescription = 'Description';
+      importPayload.testResultCode = 'PASSED';
+      importPayload.testReasonCode = 'RETEST';
+      importPayload.spanScaleCode = 'CODE';
+      importPayload.gracePeriodIndicator = 1;
+      importPayload.endMinute = 1;
+      importPayload.beginMinute = 1;
+
+      try {
+        await service.runChecks(
+          locationId,
+          importPayload,
+          [importPayload],
+          true,
+        );
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `An extraneous value has been reported for [TestDescription, TestResultCode, SpanScaleCode, TestReasonCode, GracePeriodIndicator, BeginMinute, EndMinute] in the Test Summary record for Location [${locationId}], TestTypeCode [${importPayload.testTypeCode}] and Test Number [${importPayload.testNumber}]. This value was not imported.`,
+        ]);
+      }
+    });
+
+    it('Should get error IMPORT-17 BeginDate, BeginHour, BeginMinute, Year, Quarter Extraneous Test Summary Field, ', async () => {
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+
+      const importPayload = new TestSummaryImportDTO();
+      importPayload.testNumber = '1';
+      importPayload.testTypeCode = TestTypeCodes.DAHS;
+      importPayload.beginDate = new Date();
+      importPayload.beginHour = 1;
+      importPayload.beginMinute = 1;
+      importPayload.year = 2000;
+      importPayload.quarter = 2;
+
+      try {
+        await service.runChecks(
+          locationId,
+          importPayload,
+          [importPayload],
+          true,
+        );
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `An extraneous value has been reported for [BeginDate, BeginHour, BeginMinute, Year, Quarter] in the Test Summary record for Location [${locationId}], TestTypeCode [${importPayload.testTypeCode}] and Test Number [${importPayload.testNumber}]. This value was not imported.`,
+        ]);
+      }
+    });
+
+    it('Should get error IMPORT-17 EndDate, EndHour, EndMinute Extraneous Test Summary Field, ', async () => {
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+
+      const importPayload = new TestSummaryImportDTO();
+      importPayload.testNumber = '1';
+      importPayload.testTypeCode = TestTypeCodes.F2LCHK;
+      importPayload.endDate = new Date();
+      importPayload.endHour = 1;
+      importPayload.endMinute = 1;
+
+      try {
+        await service.runChecks(
+          locationId,
+          importPayload,
+          [importPayload],
+          true,
+        );
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `An extraneous value has been reported for [EndDate, EndHour, EndMinute] in the Test Summary record for Location [${locationId}], TestTypeCode [${importPayload.testTypeCode}] and Test Number [${importPayload.testNumber}]. This value was not imported.`,
         ]);
       }
     });
