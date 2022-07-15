@@ -78,6 +78,7 @@ export class TestSummaryChecksService {
     if (error) errorList.push(error);
 
     this.throwIfErrors(errorList, isImport);
+    this.logger.info('Completed Test Summary Checks');
     return errorList;
   }
 
@@ -399,14 +400,14 @@ export class TestSummaryChecksService {
     if (duplicate) {
       if (isImport) {
         fields = this.compareFields(duplicate, summary);
-      } else {
-        // LINEAR-31 Duplicate Linearity (Result A)
-        error = `The database contains another Test Summary record for Unit/Stack [${
-          summary.unitId ? summary.unitId : summary.stackPipeId
-        }], Test Type Code [${summary.testTypeCode}], and Test Number [${
-          summary.testNumber
-        }]. You must assign a different test number.`;
       }
+
+      // LINEAR-31 Duplicate Linearity (Result A)
+      error = `Another Test Summary record for Unit/Stack [${
+        summary.unitId ? summary.unitId : summary.stackPipeId
+      }], Test Type Code [${summary.testTypeCode}], and Test Number [${
+        summary.testNumber
+      }]. You must assign a different test number.`;
     } else {
       duplicate = await this.qaSuppDataRepository.getQASuppDataByLocationId(
         locationId,
@@ -417,14 +418,14 @@ export class TestSummaryChecksService {
       if (duplicate) {
         if (isImport) {
           fields = this.compareFields(duplicate, summary);
-        } else {
-          // LINEAR-31 Duplicate Linearity (Result B)
-          error = `The database contains another Test Summary record for Unit/Stack [${
-            summary.unitId ? summary.unitId : summary.stackPipeId
-          }], Test Type Code [${summary.testTypeCode}], and Test Number [${
-            summary.testNumber
-          }]. You cannot change the Test Number to the value that you have entered, because a test with this Test Type and Test Number has already been submitted. If this is a different test, you should assign it a different Test Number. If you are trying to resubmit this test, you should delete this test, and either reimport this test with its original Test Number or retrieve the original test from the EPA host system.`;
         }
+
+        // LINEAR-31 Duplicate Linearity (Result B)
+        error = `Another Test Summary record for Unit/Stack [${
+          summary.unitId ? summary.unitId : summary.stackPipeId
+        }], Test Type Code [${summary.testTypeCode}], and Test Number [${
+          summary.testNumber
+        }]. You cannot change the Test Number to the value that you have entered, because a test with this Test Type and Test Number has already been submitted. If this is a different test, you should assign it a different Test Number. If you are trying to resubmit this test, you should delete this test, and either reimport this test with its original Test Number or retrieve the original test from the EPA host system.`;
       }
     }
 

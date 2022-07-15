@@ -93,6 +93,7 @@ export class LocationChecksService {
       }
     });
 
+    this.logger.info('Completed Unit/Stack Location Checks');
     return [locations, errorList];
   }
 }

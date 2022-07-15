@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, ValidationArguments } from 'class-validator';
-import { IsNotNegative } from 'src/pipes/is-not-negative.pipe';
+import { IsNotNegative } from '../pipes/is-not-negative.pipe';
 
 const KEY = 'Linearity Injection';
 

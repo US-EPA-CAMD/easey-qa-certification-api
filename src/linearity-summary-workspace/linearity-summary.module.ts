@@ -7,6 +7,7 @@ import { LinearitySummaryWorkspaceController } from './linearity-summary.control
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
+import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
 
 @Module({
   imports: [
@@ -15,11 +16,16 @@ import { LinearitySummaryMap } from '../maps/linearity-summary.map';
     forwardRef(() => LinearityInjectionWorkspaceModule),
   ],
   controllers: [LinearitySummaryWorkspaceController],
-  providers: [LinearitySummaryMap, LinearitySummaryWorkspaceService],
+  providers: [
+    LinearitySummaryMap,
+    LinearitySummaryWorkspaceService,
+    LinearitySummaryChecksService,
+  ],
   exports: [
     TypeOrmModule,
     LinearitySummaryMap,
     LinearitySummaryWorkspaceService,
+    LinearitySummaryChecksService,
   ],
 })
 export class LinearitySummaryWorkspaceModule {}
