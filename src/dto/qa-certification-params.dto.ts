@@ -39,8 +39,7 @@ export class QACertificationParamsDTO {
 
   @ApiProperty({
     isArray: true,
-    description:
-      'Unique identifier for each stack/pipe at a facility. Required if no unitId provided. ADD TO PROPERTY METADATA',
+    description: propertyMetadata.stackPipeId.description,
   })
   @OneOrMore('unitIds', {
     message: 'At least one Unit or Stack Pipe identifier is required',
@@ -50,15 +49,14 @@ export class QACertificationParamsDTO {
 
   @ApiProperty({
     isArray: true,
-    description:
-      'The Test Summary ID is a unique identifier of a test summary record',
+    description: propertyMetadata.testSummaryId.description,
   })
   @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
   testSummaryIds?: string[];
 
   @ApiProperty({
     enum: TestTypeCodes,
-    description: 'Test Type Code. ADD TO PROPERTY METADATA',
+    description: propertyMetadata.testTypeCode.description,
   })
   @IsValidCode(TestTypeCode, {
     message: 'Invalid Test Type Code',
@@ -80,7 +78,7 @@ export class QACertificationParamsDTO {
   beginDate?: Date;
 
   @ApiProperty({
-    description: propertyMetadata.beginDate.description,
+    description: propertyMetadata.endDate.description,
   })
   @IsValidDate({
     message: `End Date must be a valid date in the format of ${DATE_FORMAT}.`,
