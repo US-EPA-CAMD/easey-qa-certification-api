@@ -15,7 +15,7 @@ const DATE_FORMAT = 'YYYY-MM-DD';
 export class TestSummaryParamsDTO {
   @ApiProperty({
     enum: TestTypeCodes,
-    description: 'Test Type Code. ADD TO PROPERTY METADATA',
+    description: propertyMetadata.testTypeCode.description,
   })
   @IsValidCode(TestTypeCode, {
     message: 'Invalid Test Type Code',
@@ -37,7 +37,7 @@ export class TestSummaryParamsDTO {
   beginDate?: Date;
 
   @ApiProperty({
-    description: propertyMetadata.beginDate.description,
+    description: propertyMetadata.endDate.description,
   })
   @IsValidDate({
     message: `End Date must be a valid date in the format of ${DATE_FORMAT}.`,
