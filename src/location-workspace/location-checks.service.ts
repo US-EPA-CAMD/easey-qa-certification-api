@@ -35,8 +35,8 @@ export class LocationChecksService {
     locations.forEach(location => {
       let unitStack = '';
       const dbLocation = dbLocations.find(i => (
-          (i?.unit.name === location.unitId) ||
-          (i?.stackPipe.name === location.stackPipeId)
+          (i?.unit?.name === location?.unitId) ||
+          (i?.stackPipe?.name === location?.stackPipeId)
       ));
 
       if (location.unitId) {
