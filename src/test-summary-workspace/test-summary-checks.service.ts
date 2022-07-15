@@ -623,11 +623,9 @@ export class TestSummaryChecksService {
     _isImport: boolean = false,
   ): Promise<string> {
     let error: string = null;
-    let extraLinearityTest: boolean = false;
-    let linearitySuppDataID: string = null;
-    let duplicate: TestSummary | QASuppData;
+    let duplicateQaSupp: TestSummary | QASuppData;
 
-    duplicate = await this.repository.findOne({
+    const duplicateTestSum = await this.repository.findOne({
       testTypeCode: summary.testTypeCode,
       spanScaleCode: summary.spanScaleCode,
       endDate: summary.endDate,
@@ -635,11 +633,10 @@ export class TestSummaryChecksService {
       endMinute: summary.endMinute,
     });
 
-    if (duplicate) {
-      extraLinearityTest = true;
-      error = `Based on the information in this record, this test has already been submitted with a different test number [${duplicate.testNumber}], or the Client Tool database already contains the same test with a different test number [${duplicate.testNumber}]. This test cannot be submitted.`;
+    if (duplicateTestSum) {
+      error = `Based on the information in this record, this test has already been submitted with a different test number [${duplicateTestSum.testNumber}], or the Client Tool database already contains the same test with a different test number [${duplicateTestSum.testNumber}]. This test cannot be submitted.`;
     } else {
-      duplicate = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
+      duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
         summary.componentID,
         summary.testTypeCode,
@@ -650,36 +647,32 @@ export class TestSummaryChecksService {
         summary.endMinute,
       );
 
-      if (duplicate) {
-        // TODO: Not sure what to do with this verify with @Jason
-        extraLinearityTest = true;
-
-        error = `Based on the information in this record, this test has already been submitted with a different test number [${duplicate.testNumber}], or the Client Tool database already contains the same test with a different test number [${duplicate.testNumber}]. This test cannot be submitted.`;
+      if (duplicateQaSupp) {
+        error = `Based on the information in this record, this test has already been submitted with a different test number [${duplicateQaSupp.testNumber}], or the Client Tool database already contains the same test with a different test number [${duplicateQaSupp.testNumber}]. This test cannot be submitted.`;
       } else {
-        duplicate = await this.qaSuppDataRepository.findOne({
+        // TODO: BLOCKED DUE TO COLUMN DOESNOT EXISTS IN DATABASE
+        /* duplicateQaSupp = await this.qaSuppDataRepository.findOne({
           locationId: locationId,
           testTypeCode: summary.testTypeCode,
           testNumber: summary.testNumber,
         });
 
-        if (duplicate) {
-          // TODO: Not sure what to do with this verify with @Jason
-          linearitySuppDataID = duplicate.id;
-
-          if (duplicate.canSubmit === 'N') {
+        if (duplicateQaSupp) {
+          if (duplicateQaSupp.canSubmit === 'N') {
             if (
-              duplicate.component.componentID !== summary.componentID &&
-              duplicate.spanScaleCode !== summary.spanScaleCode &&
-              duplicate.endDate !== summary.endDate &&
-              duplicate.endHour !== summary.endHour &&
-              duplicate.endMinute !== summary.endMinute
+              duplicateQaSupp.testSumId !== duplicateTestSum.id &&
+              duplicateQaSupp.component.componentID !== summary.componentID &&
+              duplicateQaSupp.spanScaleCode !== summary.spanScaleCode &&
+              duplicateQaSupp.endDate !== summary.endDate &&
+              duplicateQaSupp.endHour !== summary.endHour &&
+              duplicateQaSupp.endMinute !== summary.endMinute
             ) {
-              error = `Another [${duplicate.testTypeCode}] with this test number [${duplicate.testNumber}] has already been submitted for this location. This test cannot be submitted with this test number. If this is a different test, you should assign it a unique test number.`;
+              error = `Another [${duplicateQaSupp.testTypeCode}] with this test number [${duplicateQaSupp.testNumber}] has already been submitted for this location. This test cannot be submitted with this test number. If this is a different test, you should assign it a unique test number.`;
             } else {
               error = `This test has already been submitted and will not be resubmitted. If you wish to resubmit this test, please contact EPA for approval.`;
             }
           }
-        }
+        } */
       }
     }
 
