@@ -627,7 +627,7 @@ export class TestSummaryChecksService {
           return error;
         }
 
-        if (!testDateConsistent) {
+        if (testDateConsistent) {
           if (summary.spanScaleCode === 'H') {
             // TODO: Locate an Analyzer Range records for the component where the AnalyzerRangeCode is equal to "L", the beginDate and beginHour is on or before the beginDate and beginHour of the current test, and the endDate is null or the endDate and endHour is after the endDate and endHour of the current test.
 
