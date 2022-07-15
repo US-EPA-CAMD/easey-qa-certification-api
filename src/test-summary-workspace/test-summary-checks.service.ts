@@ -52,7 +52,7 @@ export class TestSummaryChecksService {
 
     if (isImport) {
       // IMPORT-17 Extraneous Test Summary Data Check
-      error = this.import17Check(summary);
+      error = this.import17Check(locationId, summary);
       if (error) errorList.push(error);
     }
 
@@ -87,160 +87,131 @@ export class TestSummaryChecksService {
     const invalidChildRecords: string[] = [];
 
     if (summary.testTypeCode !== TestTypeCodes.RATA) {
-      if (summary.rataData && summary.rataData.length > 0) {
+      if (summary.rataData?.length > 0) {
         invalidChildRecords.push('RATA');
       }
-      if (
-        summary.testQualificationData &&
-        summary.testQualificationData.length > 0
-      ) {
+      if (summary.testQualificationData?.length > 0) {
         invalidChildRecords.push('Test Qualification');
       }
     }
 
-    if (summary.testTypeCode !== TestTypeCodes.SEVENDAY) {
-      if (
-        summary.calibrationInjectionData &&
-        summary.calibrationInjectionData.length > 0
-      ) {
-        invalidChildRecords.push('Calibration Injection');
-      }
+    if (
+      summary.testTypeCode !== TestTypeCodes.SEVENDAY &&
+      summary.calibrationInjectionData?.length > 0
+    ) {
+      invalidChildRecords.push('Calibration Injection');
     }
 
-    if (summary.testTypeCode !== TestTypeCodes.LINE) {
-      if (
-        summary.linearitySummaryData &&
-        summary.linearitySummaryData.length > 0
-      ) {
-        invalidChildRecords.push('Linearity Summary');
-      }
+    if (
+      summary.testTypeCode !== TestTypeCodes.LINE &&
+      summary.linearitySummaryData?.length > 0
+    ) {
+      invalidChildRecords.push('Linearity Summary');
     }
 
     if (
       summary.testTypeCode !== TestTypeCodes.HGLINE &&
-      summary.testTypeCode !== TestTypeCodes.HGSI3
+      summary.testTypeCode !== TestTypeCodes.HGSI3 &&
+      summary.hgSummaryData?.length > 0
     ) {
-      if (summary.hgSummaryData && summary.hgSummaryData.length > 0) {
-        invalidChildRecords.push('Hg Linearity or System Integrity Summary');
-      }
-    }
-
-    if (summary.testTypeCode !== TestTypeCodes.F2LREF) {
-      if (
-        summary.flowToLoadReferenceData &&
-        summary.flowToLoadReferenceData.length > 0
-      ) {
-        invalidChildRecords.push('Flow to Load Reference');
-      }
-    }
-
-    if (summary.testTypeCode !== TestTypeCodes.F2LCHK) {
-      if (
-        summary.flowToLoadCheckData &&
-        summary.flowToLoadCheckData.length > 0
-      ) {
-        invalidChildRecords.push('Flow to Load Check');
-      }
-    }
-
-    if (summary.testTypeCode !== TestTypeCodes.CYCLE) {
-      if (
-        summary.cycleTimeSummaryData &&
-        summary.cycleTimeSummaryData.length > 0
-      ) {
-        invalidChildRecords.push('Cycle Time Summary');
-      }
-    }
-
-    if (summary.testTypeCode !== TestTypeCodes.ONOFF) {
-      if (
-        summary.onlineOfflineCalibrationData &&
-        summary.onlineOfflineCalibrationData.length > 0
-      ) {
-        invalidChildRecords.push('Online Offline Calibration');
-      }
-    }
-
-    if (summary.testTypeCode !== TestTypeCodes.FFACC) {
-      if (
-        summary.fuelFlowmeterAccuracyData &&
-        summary.fuelFlowmeterAccuracyData.length > 0
-      ) {
-        invalidChildRecords.push('Fuel Flowmeter Accuracy');
-      }
-    }
-
-    if (summary.testTypeCode !== TestTypeCodes.FFACCTT) {
-      if (
-        summary.transmitterTransducerData &&
-        summary.transmitterTransducerData.length > 0
-      ) {
-        invalidChildRecords.push('Transmitter Transducer');
-      }
-    }
-
-    if (summary.testTypeCode !== TestTypeCodes.FF2LBAS) {
-      if (
-        summary.fuelFlowToLoadBaselineData &&
-        summary.fuelFlowToLoadBaselineData.length > 0
-      ) {
-        invalidChildRecords.push('Fuel Flow to Load Baseline');
-      }
-    }
-
-    if (summary.testTypeCode !== TestTypeCodes.FF2LTST) {
-      if (
-        summary.fuelFlowToLoadTestData &&
-        summary.fuelFlowToLoadTestData.length > 0
-      ) {
-        invalidChildRecords.push('Fuel Flow to Load Test');
-      }
-    }
-
-    if (summary.testTypeCode !== TestTypeCodes.APPE) {
-      if (
-        summary.appECorrelationTestSummaryData &&
-        summary.appECorrelationTestSummaryData.length > 0
-      ) {
-        invalidChildRecords.push('Appendix E Correlation Test Summary');
-      }
-    }
-
-    if (summary.testTypeCode !== TestTypeCodes.UNITDEF) {
-      if (
-        summary.unitDefaultTestData &&
-        summary.unitDefaultTestData.length > 0
-      ) {
-        invalidChildRecords.push('Unit Default Test');
-      }
+      invalidChildRecords.push('Hg Linearity or System Integrity Summary');
     }
 
     if (
-      summary.testTypeCode !== TestTypeCodes.RATA &&
-      summary.testTypeCode !== TestTypeCodes.LINE &&
-      summary.testTypeCode !== TestTypeCodes.APPE &&
-      summary.testTypeCode !== TestTypeCodes.UNITDEF
+      summary.testTypeCode !== TestTypeCodes.F2LREF &&
+      summary.flowToLoadReferenceData?.length > 0
     ) {
-      if (summary.protocolGasData && summary.protocolGasData.length > 0) {
-        invalidChildRecords.push('Protocol Gas');
-      }
+      invalidChildRecords.push('Flow to Load Reference');
     }
 
     if (
-      summary.testTypeCode !== TestTypeCodes.RATA &&
-      summary.testTypeCode !== TestTypeCodes.APPE &&
-      summary.testTypeCode !== TestTypeCodes.UNITDEF
+      summary.testTypeCode !== TestTypeCodes.F2LCHK &&
+      summary.flowToLoadCheckData?.length > 0
     ) {
-      if (
-        summary.airEmissionTestData &&
-        summary.airEmissionTestData.length > 0
-      ) {
-        invalidChildRecords.push('Air Emission Test');
-      }
+      invalidChildRecords.push('Flow to Load Check');
+    }
+
+    if (
+      summary.testTypeCode !== TestTypeCodes.CYCLE &&
+      summary.cycleTimeSummaryData?.length > 0
+    ) {
+      invalidChildRecords.push('Cycle Time Summary');
+    }
+
+    if (
+      summary.testTypeCode !== TestTypeCodes.ONOFF &&
+      summary.onlineOfflineCalibrationData?.length > 0
+    ) {
+      invalidChildRecords.push('Online Offline Calibration');
+    }
+
+    if (
+      summary.testTypeCode !== TestTypeCodes.FFACC &&
+      summary.fuelFlowmeterAccuracyData?.length > 0
+    ) {
+      invalidChildRecords.push('Fuel Flowmeter Accuracy');
+    }
+
+    if (
+      summary.testTypeCode !== TestTypeCodes.FFACCTT &&
+      summary.transmitterTransducerData?.length > 0
+    ) {
+      invalidChildRecords.push('Transmitter Transducer');
+    }
+
+    if (
+      summary.testTypeCode !== TestTypeCodes.FF2LBAS &&
+      summary.fuelFlowToLoadBaselineData?.length > 0
+    ) {
+      invalidChildRecords.push('Fuel Flow to Load Baseline');
+    }
+
+    if (
+      summary.testTypeCode !== TestTypeCodes.FF2LTST &&
+      summary.fuelFlowToLoadTestData?.length > 0
+    ) {
+      invalidChildRecords.push('Fuel Flow to Load Test');
+    }
+
+    if (
+      summary.testTypeCode !== TestTypeCodes.APPE &&
+      summary.appECorrelationTestSummaryData?.length > 0
+    ) {
+      invalidChildRecords.push('Appendix E Correlation Test Summary');
+    }
+
+    if (
+      summary.testTypeCode !== TestTypeCodes.UNITDEF &&
+      summary.unitDefaultTestData?.length > 0
+    ) {
+      invalidChildRecords.push('Unit Default Test');
+    }
+
+    if (
+      ![
+        TestTypeCodes.RATA.toString(),
+        TestTypeCodes.LINE.toString(),
+        TestTypeCodes.APPE.toString(),
+        TestTypeCodes.UNITDEF.toString(),
+      ].includes(summary.testTypeCode) &&
+      summary.protocolGasData?.length > 0
+    ) {
+      invalidChildRecords.push('Protocol Gas');
+    }
+
+    if (
+      ![
+        TestTypeCodes.RATA.toString(),
+        TestTypeCodes.APPE.toString(),
+        TestTypeCodes.UNITDEF.toString(),
+      ].includes(summary.testTypeCode) &&
+      summary.airEmissionTestData?.length > 0
+    ) {
+      invalidChildRecords.push('Air Emission Test');
     }
 
     if (invalidChildRecords.length > 0) {
-      error = `You have reported invalid [${invalidChildRecords}] records for Test Summary record [${summary.testNumber}] with a Test Type Code of [${summary.testTypeCode}].`;
+      error = `You have reported invalid [${invalidChildRecords}] records for a Test Summary record with a Test Type Code of [${summary.testTypeCode}]. This file was not imported.`;
     }
 
     return error;
@@ -248,97 +219,97 @@ export class TestSummaryChecksService {
 
   // IMPORT-17 Extraneous Test Summary Data Check
   private import17Check(
+    locationId: string,
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
   ): string {
     let error: string = null;
-    const properties: string[] = [];
+    const extraneousTestSummaryFields: string[] = [];
 
     if (
       summary.testDescription &&
       summary.testDescription !== null &&
       summary.testTypeCode !== TestTypeCodes.OTHER
     ) {
-      properties.push('Test Description');
+      extraneousTestSummaryFields.push('TestDescription');
     }
 
     if (
       summary.testResultCode &&
       summary.testResultCode !== null &&
       [
-        TestTypeCodes.APPE.toString(),
-        TestTypeCodes.F2LREF.toString(),
         TestTypeCodes.FF2LBAS.toString(),
+        TestTypeCodes.F2LREF.toString(),
+        TestTypeCodes.APPE.toString(),
         TestTypeCodes.UNITDEF.toString(),
       ].includes(summary.testTypeCode)
     ) {
-      properties.push('Test Result Code');
+      extraneousTestSummaryFields.push('TestResultCode');
+    }
+
+    if (
+      summary.spanScaleCode &&
+      summary.spanScaleCode !== null &&
+      ![
+        TestTypeCodes.SEVENDAY.toString(),
+        TestTypeCodes.LINE.toString(),
+        TestTypeCodes.CYCLE.toString(),
+        TestTypeCodes.ONOFF.toString(),
+        TestTypeCodes.HGLINE.toString(),
+        TestTypeCodes.HGSI3.toString(),
+      ].includes(summary.testTypeCode)
+    ) {
+      extraneousTestSummaryFields.push('SpanScaleCode');
     }
 
     if (
       summary.testReasonCode &&
       summary.testReasonCode !== null &&
       [
-        TestTypeCodes.F2LREF.toString(),
         TestTypeCodes.FF2LBAS.toString(),
+        TestTypeCodes.F2LREF.toString(),
       ].includes(summary.testTypeCode)
     ) {
-      properties.push('Test Reason Code');
-    }
-
-    if (
-      summary.spanScaleCode &&
-      summary.spanScaleCode !== null &&
-      [
-        TestTypeCodes.LINE.toString(),
-        TestTypeCodes.CYCLE.toString(),
-        TestTypeCodes.ONOFF.toString(),
-        TestTypeCodes.HGSI3.toString(),
-        TestTypeCodes.HGLINE.toString(),
-        TestTypeCodes.SEVENDAY.toString(),
-      ].includes(summary.testTypeCode) === false
-    ) {
-      properties.push('Span Scale Code');
+      extraneousTestSummaryFields.push('TestReasonCode');
     }
 
     if (
       summary.gracePeriodIndicator &&
-      summary.gracePeriodIndicator !== null &&
       summary.gracePeriodIndicator === 1 &&
-      [
+      ![
         TestTypeCodes.RATA.toString(),
         TestTypeCodes.LINE.toString(),
         TestTypeCodes.LEAK.toString(),
-        TestTypeCodes.HGSI3.toString(),
         TestTypeCodes.HGLINE.toString(),
-      ].includes(summary.testTypeCode) === false
+        TestTypeCodes.HGSI3.toString(),
+      ].includes(summary.testTypeCode)
     ) {
-      properties.push('Grace Period Indicator');
+      extraneousTestSummaryFields.push('GracePeriodIndicator');
     }
 
     if (
-      [
-        TestTypeCodes.APPE.toString(),
-        TestTypeCodes.LINE.toString(),
+      ![
         TestTypeCodes.RATA.toString(),
+        TestTypeCodes.SEVENDAY.toString(),
+        TestTypeCodes.LINE.toString(),
         TestTypeCodes.CYCLE.toString(),
         TestTypeCodes.ONOFF.toString(),
+        TestTypeCodes.FF2LBAS.toString(),
+        TestTypeCodes.APPE.toString(),
+        TestTypeCodes.UNITDEF.toString(),
         TestTypeCodes.HGSI3.toString(),
         TestTypeCodes.HGLINE.toString(),
-        TestTypeCodes.UNITDEF.toString(),
-        TestTypeCodes.FF2LBAS.toString(),
-        TestTypeCodes.SEVENDAY.toString(),
-      ].includes(summary.testTypeCode) === false
+      ].includes(summary.testTypeCode)
     ) {
       if (summary.beginDate && summary.beginDate !== null) {
-        properties.push('Begin Date');
+        extraneousTestSummaryFields.push('BeginDate');
       }
 
       if (summary.beginHour && summary.beginHour !== null) {
-        properties.push('Begin Hour');
+        extraneousTestSummaryFields.push('BeginHour');
       }
 
       if (summary.beginMinute && summary.beginMinute !== null) {
-        properties.push('Begin Minute');
+        extraneousTestSummaryFields.push('BeginMinute');
       }
     }
 
@@ -349,49 +320,43 @@ export class TestSummaryChecksService {
       ].includes(summary.testTypeCode)
     ) {
       if (summary.endDate && summary.endDate !== null) {
-        properties.push('End Date');
+        extraneousTestSummaryFields.push('EndDate');
       }
 
       if (summary.endHour && summary.endHour !== null) {
-        properties.push('End Hour');
+        extraneousTestSummaryFields.push('EndHour');
       }
 
       if (summary.endMinute && summary.endMinute !== null) {
-        properties.push('End Minute');
+        extraneousTestSummaryFields.push('EndMinute');
       }
     } else {
       if (summary.year && summary.year !== null) {
-        properties.push('Year');
+        extraneousTestSummaryFields.push('Year');
       }
 
       if (summary.quarter && summary.quarter !== null) {
-        properties.push('Quarter');
+        extraneousTestSummaryFields.push('Quarter');
       }
     }
 
     if (
       [
-        TestTypeCodes.ONOFF.toString(),
         TestTypeCodes.FF2LBAS.toString(),
+        TestTypeCodes.ONOFF.toString(),
       ].includes(summary.testTypeCode)
     ) {
       if (summary.beginMinute && summary.beginMinute !== null) {
-        properties.push('Begin Minute');
+        extraneousTestSummaryFields.push('BeginMinute');
       }
 
       if (summary.endMinute && summary.endMinute !== null) {
-        properties.push('End Minute');
+        extraneousTestSummaryFields.push('EndMinute');
       }
     }
 
-    if (properties.length > 0) {
-      error = `You have reported extraneous values for [${properties}] propert${
-        properties.length > 1 ? 'ies' : 'y'
-      } in Test Summary record for Unit/Stack [${
-        summary.unitId ? summary.unitId : summary.stackPipeId
-      }], Test Type Code [${summary.testTypeCode}], and Test Number [${
-        summary.testNumber
-      }]`;
+    if (extraneousTestSummaryFields.length > 0) {
+      error = `An extraneous value has been reported for [${extraneousTestSummaryFields}] in the Test Summary record for Location [${locationId}], TestTypeCode [${summary.testTypeCode}] and Test Number [${summary.testNumber}]. This value was not imported.`;
     }
 
     return error;
