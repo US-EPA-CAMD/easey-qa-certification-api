@@ -15,7 +15,9 @@ import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
-import { Component } from 'src/entities/workspace/component.entity';
+import { Component } from '../entities/workspace/component.entity';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 
 @Injectable()
 export class TestSummaryChecksService {
@@ -27,6 +29,10 @@ export class TestSummaryChecksService {
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
     @InjectRepository(QAMonitorPlanWorkspaceRepository)
     private readonly qaMonitorPlanRepository: QAMonitorPlanWorkspaceRepository,
+    @InjectRepository(ComponentWorkspaceRepository)
+    private readonly componentRepository: ComponentWorkspaceRepository,
+    @InjectRepository(AnalyzerRangeWorkspaceRepository)
+    private readonly analyzerRangeRepository: AnalyzerRangeWorkspaceRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -68,6 +74,14 @@ export class TestSummaryChecksService {
     // TEST-7 Test Dates Consistent
     // NOTE: beginMinute and endMinute validity tests need to run before this test
     error = this.test7Check(summary);
+    if (error) errorList.push(error);
+
+    // TEST-8 Test Span Scale Valid
+    error = await this.testSpanScale(summary);
+    if (error) errorList.push(error);
+
+    // TEST-23 Injection Protocol Valid
+    error = this.testInjectionProtocol(summary);
     if (error) errorList.push(error);
 
     error = await this.duplicateTestCheck(
@@ -582,48 +596,58 @@ export class TestSummaryChecksService {
     return null;
   }
 
-  // TEST-8
-  private test8Check(summary: TestSummaryBaseDTO): string {
-    let error: string = null;
+  // TEST-8 - Test Span Scale Valid
+  private async testSpanScale(summary: TestSummaryBaseDTO): Promise<string> {
+    // RUN FIRST
+    const testDateConsistent = this.test7Check(summary);
+
+    let error: string;
+    const resultA = `You did not provide ${summary.spanScaleCode}, which is required for [key]`;
 
     if (summary.componentID) {
-      // TODO: componentTypeCode is !== "FLOW"
-      let x: string;
-      if (x !== 'FLOW') {
+      const component = await this.componentRepository.findOne(
+        summary.componentID,
+      );
+
+      const analyzerRange = component.analyzerRanges.filter(ar => {
+        (ar.analyzerRangeCode === 'L' &&
+          ar.beginDate <= summary.beginDate &&
+          ar.beginHour <= summary.beginHour &&
+          ar.endDate === null) ||
+          (ar.endDate >= summary.endDate && ar.endHour >= summary.endHour);
+      });
+
+      if (component && component.componentTypeCode !== 'FLOW') {
         if (summary.spanScaleCode === null) {
-          // TODO: set Test Span Scale Valid to false
-          error = `You did not provide [fieldname], which is required for [key]`;
+          error = resultA;
           return error;
         }
         if (!['H', 'L'].includes(summary.spanScaleCode)) {
-          // TODO: set Test Span Scale Valid to false
-          error = `You did not provide [fieldname], which is required for [key]`;
+          error = resultA;
           return error;
         }
 
-        // TODO: Check is Test Dates Consistent is true,
-        if (true) {
+        if (!testDateConsistent) {
           if (summary.spanScaleCode === 'H') {
-            // TODO: Locate an Analyzer Range records for the component where the AnalyzerRangeCode is equal to "L", the beginDate and beginHour is on
-            // on or before the beginDate and beginHour of the current test, and the endDate is null or the endDate and endHour is after the endDate and
-            // endHour of the current test.
-            const analyerRange = 'GET ANALYZER RANGE';
+            // TODO: Locate an Analyzer Range records for the component where the AnalyzerRangeCode is equal to "L", the beginDate and beginHour is on or before the beginDate and beginHour of the current test, and the endDate is null or the endDate and endHour is after the endDate and endHour of the current test.
+
+            const analyerRange = await this.analyzerRangeRepository.getAnalyzerRangeByComponentIdAndDate(
+              summary,
+            );
 
             if (analyerRange) {
-              //TODO: set Test Span Scale Valid to false
               error = `The active analyzer range for the component is inconsistent with the span scale ${summary.spanScaleCode}`;
               return error;
             }
           }
 
           if (summary.spanScaleCode === 'L') {
-            // TODO: Locate an Analyzer Range records for the component where the AnalyzerRangeCode is equal to "H", the beginDate and beginHour is on
-            // on or before the beginDate and beginHour of the current test, and the endDate is null or the endDate and endHour is after the endDate and
-            // endHour of the current test.
-            const analyerRange = 'GET ANALYZER RANGE';
+            // TODO: Locate an Analyzer Range records for the component where the AnalyzerRangeCode is equal to "H", the beginDate and beginHour is or before the beginDate and beginHour of the current test, and the endDate is null or the endDate and endHour is after the endDate and endHour of the current test.
+            const analyerRange = await this.analyzerRangeRepository.getAnalyzerRangeByComponentIdAndDate(
+              summary,
+            );
 
             if (analyerRange) {
-              //TODO: set Test Span Scale Valid to false
               error = `The active analyzer range for the component is inconsistent with the span scale ${summary.spanScaleCode}`;
               return error;
             }
@@ -638,7 +662,7 @@ export class TestSummaryChecksService {
     }
   }
 
-  private test23Check(summary: TestSummaryBaseDTO) {
+  private testInjectionProtocol(summary: TestSummaryBaseDTO) {
     let message: string;
     const resultA = `You did not identify an injection protocol (HGE or HGO), as required for a Hg CEMS seven day calibration or cycle time test`;
     const resultC = `An injection protocol is only reported for Hg CEMS.`;
