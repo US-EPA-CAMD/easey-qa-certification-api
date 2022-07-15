@@ -69,6 +69,10 @@ export class TestSummaryChecksService {
     error = this.test7Check(summary);
     if (error) errorList.push(error);
 
+    // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
+    error = await this.linear4Check(locationId, summary, isImport);
+    if (error) errorList.push(error);
+
     error = await this.duplicateTestCheck(
       locationId,
       summary,
@@ -398,6 +402,10 @@ export class TestSummaryChecksService {
     return error;
   }
 
+  // IMPORT-20 Duplicate Test Check
+  // LINEAR-31 Duplicate Linearity (Result A)
+  // LINEAR-31 Duplicate Linearity (Result B)
+  // IMPORT-21 Duplicate Test Number Check
   private async duplicateTestCheck(
     locationId: string,
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
@@ -641,5 +649,75 @@ export class TestSummaryChecksService {
     }
 
     return fields;
+  }
+
+  // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
+  private async linear4Check(
+    locationId: string,
+    summary: TestSummaryBaseDTO | TestSummaryImportDTO,
+    _isImport: boolean = false,
+  ): Promise<string> {
+    let error: string = null;
+    let extraLinearityTest: boolean = false;
+    let linearitySuppDataID: string = null;
+    let duplicate: TestSummary | QASuppData;
+
+    duplicate = await this.repository.findOne({
+      testTypeCode: summary.testTypeCode,
+      spanScaleCode: summary.spanScaleCode,
+      endDate: summary.endDate,
+      endHour: summary.endHour,
+      endMinute: summary.endMinute,
+    });
+
+    if (duplicate) {
+      extraLinearityTest = true;
+      error = `Based on the information in this record, this test has already been submitted with a different test number [${duplicate.testNumber}], or the Client Tool database already contains the same test with a different test number [${duplicate.testNumber}]. This test cannot be submitted.`;
+    } else {
+      duplicate = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
+        locationId,
+        summary.componentID,
+        summary.testTypeCode,
+        summary.testNumber,
+        summary.spanScaleCode,
+        summary.endDate,
+        summary.endHour,
+        summary.endMinute,
+      );
+
+      if (duplicate) {
+        // TODO: Not sure what to do with this verify with @Jason
+        extraLinearityTest = true;
+
+        error = `Based on the information in this record, this test has already been submitted with a different test number [${duplicate.testNumber}], or the Client Tool database already contains the same test with a different test number [${duplicate.testNumber}]. This test cannot be submitted.`;
+      } else {
+        duplicate = await this.qaSuppDataRepository.findOne({
+          locationId: locationId,
+          testTypeCode: summary.testTypeCode,
+          testNumber: summary.testNumber,
+        });
+
+        if (duplicate) {
+          // TODO: Not sure what to do with this verify with @Jason
+          linearitySuppDataID = duplicate.id;
+
+          if (duplicate.canSubmit === 'N') {
+            if (
+              duplicate.component.componentID !== summary.componentID &&
+              duplicate.spanScaleCode !== summary.spanScaleCode &&
+              duplicate.endDate !== summary.endDate &&
+              duplicate.endHour !== summary.endHour &&
+              duplicate.endMinute !== summary.endMinute
+            ) {
+              error = `Another [${duplicate.testTypeCode}] with this test number [${duplicate.testNumber}] has already been submitted for this location. This test cannot be submitted with this test number. If this is a different test, you should assign it a unique test number.`;
+            } else {
+              error = `This test has already been submitted and will not be resubmitted. If you wish to resubmit this test, please contact EPA for approval.`;
+            }
+          }
+        }
+      }
+    }
+
+    return error;
   }
 }
