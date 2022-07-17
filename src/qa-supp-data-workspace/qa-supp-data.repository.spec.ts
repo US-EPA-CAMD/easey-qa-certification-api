@@ -4,8 +4,13 @@ import { SelectQueryBuilder } from 'typeorm';
 import { QASuppDataWorkspaceRepository } from './qa-supp-data.repository';
 
 const locationId = '1';
+const componentID = '1';
 const testTypeCode = '1';
 const testNumber = '1';
+const spanScaleCode = '1';
+const endDate = new Date();
+const endHour = 1;
+const endMinute = 1;
 
 const qaSuppData = new QASuppData();
 
@@ -37,19 +42,17 @@ describe('QASuppDataWorkspaceRepository', () => {
     );
 
     repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
+    queryBuilder.innerJoinAndSelect.mockReturnValue(queryBuilder);
+    queryBuilder.leftJoinAndSelect.mockReturnValue(queryBuilder);
+    queryBuilder.leftJoin.mockReturnValue(queryBuilder);
+
+    queryBuilder.where.mockReturnValue(queryBuilder);
+    queryBuilder.andWhere.mockReturnValue(queryBuilder);
+    queryBuilder.getOne.mockReturnValue(qaSuppData);
   });
 
-  it('should be defined', () => {
-    expect(repository).toBeDefined();
-  });
-
-  /* describe('getQASuppDataByLocationId', () => {
+  describe('getQASuppDataByLocationId', () => {
     it('calls buildBaseQuery and get a QA Support Data from the repository using LocationId, testTypeCode, TestNumber', async () => {
-      queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.andWhere.mockReturnValue(queryBuilder);
-      queryBuilder.andWhere.mockReturnValue(queryBuilder);
-      queryBuilder.getOne.mockReturnValue(qaSuppData);
-
       const result = await repository.getQASuppDataByLocationId(
         locationId,
         testTypeCode,
@@ -58,5 +61,22 @@ describe('QASuppDataWorkspaceRepository', () => {
 
       expect(result).toEqual(qaSuppData);
     });
-  }); */
+  });
+
+  describe('getQASuppDataByTestTypeCodeComponentIdEndDateEndTime', () => {
+    it('calls buildBaseQuery and get a QA Support Data from the repository using LocationId, componentID, testTypeCode, TestNumber, spanScaleCode, endDate and endTime', async () => {
+      const result = await repository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
+        locationId,
+        componentID,
+        testTypeCode,
+        testNumber,
+        spanScaleCode,
+        endDate,
+        endHour,
+        endMinute,
+      );
+
+      expect(result).toEqual(qaSuppData);
+    });
+  });
 });
