@@ -643,6 +643,8 @@ export class TestSummaryChecksService {
         }
       }
     }
+
+    return null;
   }
 
   private testInjectionProtocol(summary: TestSummaryBaseDTO) {
@@ -676,6 +678,8 @@ export class TestSummaryChecksService {
         return message;
       }
     }
+
+    return null;
   }
 
   private compareFields(
