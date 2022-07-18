@@ -11,6 +11,7 @@ import {
 import { TestSummary } from './test-summary.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { QASuppData } from './qa-supp-data.entity';
+import { AnalyzerRange } from './analyzerRange.entity';
 
 @Entity({ name: 'camdecmpswks.component' })
 export class Component extends BaseEntity {
@@ -42,6 +43,12 @@ export class Component extends BaseEntity {
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;
+
+  @OneToMany(
+    () => AnalyzerRange,
+    ar => ar.component,
+  )
+  analyzerRanges: AnalyzerRange[];
 
   @OneToMany(
     () => TestSummary,

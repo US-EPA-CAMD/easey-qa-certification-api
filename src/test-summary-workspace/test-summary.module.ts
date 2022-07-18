@@ -11,6 +11,8 @@ import { TestSummaryChecksService } from './test-summary-checks.service';
 import { TestSummaryMap } from '../maps/test-summary.map';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/q
       QASuppDataWorkspaceRepository,
       QAMonitorPlanWorkspaceRepository,
       TestSummaryWorkspaceRepository,
+      ComponentWorkspaceRepository,
+      AnalyzerRangeWorkspaceRepository,
     ]),
     forwardRef(() => LinearitySummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),

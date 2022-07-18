@@ -15,6 +15,9 @@ import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+import { Component } from '../entities/workspace/component.entity';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 
 @Injectable()
 export class TestSummaryChecksService {
@@ -26,6 +29,10 @@ export class TestSummaryChecksService {
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
     @InjectRepository(QAMonitorPlanWorkspaceRepository)
     private readonly qaMonitorPlanRepository: QAMonitorPlanWorkspaceRepository,
+    @InjectRepository(ComponentWorkspaceRepository)
+    private readonly componentRepository: ComponentWorkspaceRepository,
+    @InjectRepository(AnalyzerRangeWorkspaceRepository)
+    private readonly analyzerRangeRepository: AnalyzerRangeWorkspaceRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -81,6 +88,18 @@ export class TestSummaryChecksService {
 
     // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
     error = await this.linear4Check(locationId, summary, isImport);
+    if (error) {
+      errorList.push(error);
+    }
+
+    // TEST-8 Test Span Scale Valid
+    error = await this.testSpanScale(summary);
+    if (error) {
+      errorList.push(error);
+    }
+
+    // TEST-23 Injection Protocol Valid
+    error = this.testInjectionProtocol(summary);
     if (error) {
       errorList.push(error);
     }
@@ -563,6 +582,97 @@ export class TestSummaryChecksService {
       const endDateHourMinute = new Date(`${endDate}T${endHour}:${endMinute}`);
 
       if (beginDateHourMinute >= endDateHourMinute) return errorResponse;
+    }
+
+    return null;
+  }
+
+  // TEST-8 - Test Span Scale Valid
+  private async testSpanScale(summary: TestSummaryBaseDTO): Promise<string> {
+    const testDateConsistent = this.test7Check(summary);
+
+    let error: string;
+    const resultA = `You did not provide ${summary.spanScaleCode}, which is required for [key]`;
+
+    if (summary.componentID) {
+      const component = await this.componentRepository.findOne(
+        summary.componentID,
+      );
+
+      if (component && component.componentTypeCode !== 'FLOW') {
+        if (summary.spanScaleCode === null) {
+          error = resultA;
+          return error;
+        }
+        if (!['H', 'L'].includes(summary.spanScaleCode)) {
+          error = resultA;
+          return error;
+        }
+
+        if (!testDateConsistent) {
+          if (summary.spanScaleCode === 'H') {
+            const analyerRange = await this.analyzerRangeRepository.getAnalyzerRangeByComponentIdAndDate(
+              summary,
+            );
+
+            if (analyerRange) {
+              error = `The active analyzer range for the component is inconsistent with the span scale ${summary.spanScaleCode}`;
+              return error;
+            }
+          }
+
+          if (summary.spanScaleCode === 'L') {
+            const analyerRange = await this.analyzerRangeRepository.getAnalyzerRangeByComponentIdAndDate(
+              summary,
+            );
+
+            if (analyerRange) {
+              error = `The active analyzer range for the component is inconsistent with the span scale ${summary.spanScaleCode}`;
+              return error;
+            }
+          }
+        }
+      } else {
+        if (summary.spanScaleCode !== null) {
+          error = `You reported a SpanScaleCode, but this is not appropriate for flow component`;
+          return error;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  private testInjectionProtocol(summary: TestSummaryBaseDTO) {
+    let message: string;
+    const resultA = `You did not identify an injection protocol (HGE or HGO), as required for a Hg CEMS seven day calibration or cycle time test`;
+    const resultC = `An injection protocol is only reported for Hg CEMS.`;
+    const resultD = `An injection protocol is not required for this test type.`;
+
+    if (['7DAY', 'CYCLE'].includes(summary.testTypeCode)) {
+      let componentRecord: Component;
+
+      if (componentRecord) {
+        if (componentRecord.componentTypeCode === 'HG') {
+          if (summary.injectionProtocolCode) {
+            message = resultA;
+            return message;
+          } else if (['HGE', 'HGO'].includes(summary.injectionProtocolCode)) {
+            message = resultA;
+            return message;
+          } else {
+            if (summary.injectionProtocolCode !== null) {
+              message = resultC;
+              return message;
+            }
+          }
+        }
+      }
+    } else {
+      if (summary.injectionProtocolCode !== null) {
+        message = resultD;
+        return message;
+      }
     }
 
     return null;
