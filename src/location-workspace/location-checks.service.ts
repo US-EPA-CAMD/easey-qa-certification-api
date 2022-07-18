@@ -15,7 +15,7 @@ export class LocationChecksService {
     private readonly repository: LocationWorkspaceRepository,
   ) {}
 
-  processLocations(payload: QACertificationImportDTO): LocationIdentifiers[]{
+  processLocations(payload: QACertificationImportDTO): LocationIdentifiers[] {
     const locations: LocationIdentifiers[] = [];
 
     const addLocation = (i: any) => {
@@ -37,10 +37,10 @@ export class LocationChecksService {
           location.componentIDs.push(i.componentID);
         }
       } else {
-        if (i.monitoringSystemID){
+        if (i.monitoringSystemID) {
           systemIDs.push(i.monitoringSystemID);
         }
-        if (i.componentID){ 
+        if (i.componentID) {
           componentIDs.push(i.componentID);
         }
 
@@ -78,7 +78,7 @@ export class LocationChecksService {
     const stackPipePrefixes = ['CS', 'MS', 'CP', 'MP'];
     const orisCode = payload.orisCode;
 
-    const locations: LocationIdentifiers[] = this.processLocations(payload)
+    const locations: LocationIdentifiers[] = this.processLocations(payload);
 
     if (locations.length === 0) {
       // IMPORT-13 (Result A)

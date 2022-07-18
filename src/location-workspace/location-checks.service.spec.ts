@@ -35,14 +35,15 @@ describe('location checks service tests', () => {
     repository = module.get(LocationWorkspaceRepository);
   });
 
-  describe ('processLocations tests', ()=>{
+  describe('processLocations tests', () => {
     const payload = new QACertificationImportDTO();
+
     const testSummary = new TestSummaryImportDTO();
     testSummary.monitoringSystemID = "1";
     testSummary.componentID = "1";
     testSummary.unitId = "51";
     payload.testSummaryData = [testSummary]
-    it( 'is able to return and is not null', ()=>{
+    it( 'is able to return weith expected values', ()=>{
       const result = service.processLocations(payload);
 
       expect(result[0].componentIDs).toEqual(["1"])
@@ -66,10 +67,9 @@ describe('location checks service tests', () => {
     payload.orisCode = 1;
 
     it('returns a response successfully', async () => {
-
       repository.getLocationsByUnitStackPipeIds.mockResolvedValue([]);
 
-      jest.spyOn(service, 'processLocations').mockReturnValue(baseLocations)
+      jest.spyOn(service, 'processLocations').mockReturnValue(baseLocations);
 
       const result = await service.runChecks(payload);
 
@@ -86,7 +86,7 @@ describe('location checks service tests', () => {
       const locations = [{ ...baseLocations[0] }];
       locations[0].unitId = 'CS51';
 
-      jest.spyOn(service, 'processLocations').mockReturnValue(locations)
+      jest.spyOn(service, 'processLocations').mockReturnValue(locations);
 
       const result = await service.runChecks(payload);
 
@@ -104,7 +104,7 @@ describe('location checks service tests', () => {
         mockedMonitorLoc,
       ]);
 
-      jest.spyOn(service, 'processLocations').mockReturnValue(baseLocations)
+      jest.spyOn(service, 'processLocations').mockReturnValue(baseLocations);
 
       const result = await service.runChecks(payload);
 
@@ -125,7 +125,7 @@ describe('location checks service tests', () => {
         mockedMonitorLoc,
       ]);
 
-      jest.spyOn(service, 'processLocations').mockReturnValue(location)
+      jest.spyOn(service, 'processLocations').mockReturnValue(location);
 
       const result = await service.runChecks(payload);
 
@@ -151,7 +151,7 @@ describe('location checks service tests', () => {
         mockedMonitorLoc,
       ]);
 
-      jest.spyOn(service, 'processLocations').mockReturnValue(baseLocations)
+      jest.spyOn(service, 'processLocations').mockReturnValue(baseLocations);
 
       const result = await service.runChecks(payload);
 
