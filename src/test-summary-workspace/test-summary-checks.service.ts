@@ -94,11 +94,15 @@ export class TestSummaryChecksService {
 
     // TEST-8 Test Span Scale Valid
     error = await this.testSpanScale(summary);
-    if (error) errorList.push(error);
+    if (error) {
+      errorList.push(error);
+    }
 
     // TEST-23 Injection Protocol Valid
     error = this.testInjectionProtocol(summary);
-    if (error) errorList.push(error);
+    if (error) {
+      errorList.push(error);
+    }
 
     error = await this.duplicateTestCheck(
       locationId,

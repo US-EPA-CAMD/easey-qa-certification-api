@@ -14,8 +14,19 @@ import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { LinearitySummaryImportDTO } from '../dto/linearity-summary.dto';
+import { Component } from '../entities/workspace/component.entity';
 
 const locationId = '1';
+
+const component = new Component();
+
+const mockComponentWorkspaceRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(component),
+});
+
+const mockAnalyzerRangeWorkspaceRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(component),
+});
 
 const mockRepository = () => ({
   getTestSummaryByLocationId: jest.fn().mockResolvedValue(null),

@@ -17,8 +17,12 @@ export class AnalyzerRangeWorkspaceRepository extends Repository<
     const endDate = summary.endDate;
     const endHour = summary.endHour;
 
-    if (spanScaleCode === 'H') analyzerRanceCode = 'L';
-    if (spanScaleCode === 'L') analyzerRanceCode = 'H';
+    if (spanScaleCode === 'H') {
+      analyzerRanceCode = 'L';
+    }
+    if (spanScaleCode === 'L') {
+      analyzerRanceCode = 'H';
+    }
 
     return this.createQueryBuilder('ar')
       .where('ar.componentRecordId = :componentId', {
