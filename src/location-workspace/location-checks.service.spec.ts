@@ -128,8 +128,16 @@ describe('location checks service tests', () => {
       // 2 will match and 2 won't match the db. The errors we are testing below are for the ones that don't match
       expect(result).not.toBeNull();
       expect(result[1].length).toBe(2);
-      expect(result[1].includes(`The database does not contain System [${baseLocations[0].systemIDs[0]}] for Unit [${baseLocations[0].unitId}] and Facility [${facilityId}]`)).toBe(true);
-      expect(result[1].includes(`The database does not contain Component [${baseLocations[0].componentIDs[0]}] for Unit [${baseLocations[0].unitId}] and Facility [${facilityId}]`)).toBe(true);
+      expect(
+        result[1].includes(
+          `The database does not contain System [${baseLocations[0].systemIDs[0]}] for Unit [${baseLocations[0].unitId}] and Facility [${facilityId}]`,
+        ),
+      ).toBe(true);
+      expect(
+        result[1].includes(
+          `The database does not contain Component [${baseLocations[0].componentIDs[0]}] for Unit [${baseLocations[0].unitId}] and Facility [${facilityId}]`,
+        ),
+      ).toBe(true);
     });
   });
 });

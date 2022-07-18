@@ -82,15 +82,22 @@ describe('QA Certification Check Service Test', () => {
       const result = await service.runChecks(payload);
       expect(result).toEqual(returnLocationRunChecks);
     });
-    
-    it('should return error message A for IMPORT-13', async ()=>{
-      const pl = {...payload, testSummaryData: [], certificationEventData: [], testExtensionExemptionData: []}
-      try{
-        await service.runChecks(pl)
-      }catch(err){
-        expect(err).toBeInstanceOf(BadRequestException)
-        expect(err.response.message).toEqual(["There are no test summary, certifications events, or extension/exmeption records present in the file to be imported"]);
+
+    it('should return error message A for IMPORT-13', async () => {
+      const pl = {
+        ...payload,
+        testSummaryData: [],
+        certificationEventData: [],
+        testExtensionExemptionData: [],
+      };
+      try {
+        await service.runChecks(pl);
+      } catch (err) {
+        expect(err).toBeInstanceOf(BadRequestException);
+        expect(err.response.message).toEqual([
+          'There are no test summary, certifications events, or extension/exmeption records present in the file to be imported',
+        ]);
       }
-    })
+    });
   });
 });

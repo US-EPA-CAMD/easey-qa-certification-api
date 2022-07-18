@@ -19,10 +19,7 @@ export class LocationWorkspaceRepository extends Repository<MonitorLocation> {
         ? 'spp.orisCode = :facilityId AND sp.name IN (:...stackPipeIds)'
         : '';
 
-    if (
-      unitIds?.length > 0 &&
-      stackPipeIds?.length > 0
-    ) {
+    if (unitIds?.length > 0 && stackPipeIds?.length > 0) {
       unitsWhere = `(${unitsWhere})`;
       stacksWhere = ` OR (${stacksWhere})`;
     }
