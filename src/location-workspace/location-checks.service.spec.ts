@@ -8,7 +8,8 @@ import { LocationChecksService } from './location-checks.service';
 import { LocationWorkspaceRepository } from './location.repository';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { Component } from '../entities/workspace/component.entity';
-import { QACertificationImportDTO } from '../dto/qa-certification.dto';
+import { QACertificationImportDTO} from '../dto/qa-certification.dto';
+import {TestSummaryImportDTO} from '../dto/test-summary.dto';
 
 describe('location checks service tests', () => {
   let service: LocationChecksService;
@@ -36,10 +37,17 @@ describe('location checks service tests', () => {
 
   describe ('processLocations tests', ()=>{
     const payload = new QACertificationImportDTO();
-
+    const testSummary = new TestSummaryImportDTO();
+    testSummary.monitoringSystemID = "1";
+    testSummary.componentID = "1";
+    testSummary.unitId = "51";
+    payload.testSummaryData = [testSummary]
     it( 'is able to return and is not null', ()=>{
       const result = service.processLocations(payload);
-      expect(result).toEqual([])
+
+      expect(result[0].componentIDs).toEqual(["1"])
+      expect(result[0].systemIDs).toEqual(["1"])
+      expect(result[0].unitId).toEqual("51")
     })
   })
 
