@@ -27,11 +27,13 @@ export class AnalyzerRangeWorkspaceRepository extends Repository<
       .andWhere('ar.analyzerRanceCode = :analyzerRanceCode', {
         analyzerRanceCode,
       })
+      .andWhere('(ar.beginDate <= :beginDate AND ar.beginHour <= :beginHour)', {
+        beginDate,
+        beginHour,
+      })
       .andWhere(
-        '(ar.beginDate = :beginDate AND ar.beginHour = :beginHour) OR (ar.endDate = :endDate AND ar.endHour = :endHour)',
+        'ar.endDate IS NULL OR ar.endDate >= :endDate AND ar.endHour >= :endHour',
         {
-          beginDate,
-          beginHour,
           endDate,
           endHour,
         },
