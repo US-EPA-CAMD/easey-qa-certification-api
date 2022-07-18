@@ -34,6 +34,15 @@ describe('location checks service tests', () => {
     repository = module.get(LocationWorkspaceRepository);
   });
 
+  describe ('processLocations tests', ()=>{
+    const payload = new QACertificationImportDTO();
+
+    it( 'is able to return and is not null', ()=>{
+      const result = service.processLocations(payload);
+      expect(result).toEqual([])
+    })
+  })
+
   describe('runChecks tests', () => {
     const baseLocations: LocationIdentifiers[] = [
       {

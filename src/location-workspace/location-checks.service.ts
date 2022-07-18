@@ -16,7 +16,7 @@ export class LocationChecksService {
   ) {}
 
   processLocations(payload: QACertificationImportDTO): LocationIdentifiers[]{
-    let locations: LocationIdentifiers[] = [];
+    const locations: LocationIdentifiers[] = [];
 
     const addLocation = (i: any) => {
       const systemIDs = [];
@@ -37,8 +37,12 @@ export class LocationChecksService {
           location.componentIDs.push(i.componentID);
         }
       } else {
-        if (i.monitoringSystemID) systemIDs.push(i.monitoringSystemID);
-        if (i.componentID) componentIDs.push(i.componentID);
+        if (i.monitoringSystemID){
+          systemIDs.push(i.monitoringSystemID);
+        }
+        if (i.componentID){ 
+          componentIDs.push(i.componentID);
+        }
 
         locations.push({
           unitId: i.unitId,
@@ -74,7 +78,7 @@ export class LocationChecksService {
     const stackPipePrefixes = ['CS', 'MS', 'CP', 'MP'];
     const orisCode = payload.orisCode;
 
-    let locations: LocationIdentifiers[] = this.processLocations(payload)
+    const locations: LocationIdentifiers[] = this.processLocations(payload)
 
     if (locations.length === 0) {
       // IMPORT-13 (Result A)
