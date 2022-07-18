@@ -8,6 +8,7 @@ import { LocationChecksService } from './location-checks.service';
 import { LocationWorkspaceRepository } from './location.repository';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { Component } from '../entities/workspace/component.entity';
+import { QACertificationImportDTO } from '../dto/qa-certification.dto';
 
 describe('location checks service tests', () => {
   let service: LocationChecksService;
@@ -44,26 +45,33 @@ describe('location checks service tests', () => {
       },
     ];
 
-    it('returns a response successfully', async () => {
-      repository.getLocationsByUnitStackPipeIds.mockResolvedValue([]);
-      const facilityId = 1;
+    const payload = new QACertificationImportDTO();
+    payload.orisCode = 1;
 
-      const result = await service.runChecks(facilityId, baseLocations);
+    it('returns a response successfully', async () => {
+
+      repository.getLocationsByUnitStackPipeIds.mockResolvedValue([]);
+
+      jest.spyOn(service, 'processLocations').mockReturnValue(baseLocations)
+
+      const result = await service.runChecks(payload);
+
       expect(result).not.toBeNull();
       expect(result[0]).toBe(baseLocations);
       expect(result[1]).toEqual([
-        `The database does not contain Unit [${baseLocations[0].unitId}] for Facility [${facilityId}]`,
+        `The database does not contain Unit [${baseLocations[0].unitId}] for Facility [${payload.orisCode}]`,
       ]);
     });
 
     it('IMPORT-13: Tests stack/pipe prefix', async () => {
-      const facilityId = 1;
       repository.getLocationsByUnitStackPipeIds.mockResolvedValue([]);
 
       const locations = [{ ...baseLocations[0] }];
       locations[0].unitId = 'CS51';
 
-      const result = await service.runChecks(facilityId, locations);
+      jest.spyOn(service, 'processLocations').mockReturnValue(locations)
+
+      const result = await service.runChecks(payload);
 
       expect(result[1]).toEqual([
         `The following Stack/Pipe was misidentified as a unit [${locations[0].unitId}]`,
@@ -75,14 +83,16 @@ describe('location checks service tests', () => {
       mockedMonitorLoc.unit = new Unit();
       mockedMonitorLoc.unit.name = '52';
 
-      const facilityId = 1;
       repository.getLocationsByUnitStackPipeIds.mockResolvedValue([
         mockedMonitorLoc,
       ]);
-      const result = await service.runChecks(facilityId, baseLocations);
+
+      jest.spyOn(service, 'processLocations').mockReturnValue(baseLocations)
+
+      const result = await service.runChecks(payload);
 
       expect(result[1]).toEqual([
-        `The database does not contain Unit [${baseLocations[0].unitId}] for Facility [${facilityId}]`,
+        `The database does not contain Unit [${baseLocations[0].unitId}] for Facility [${payload.orisCode}]`,
       ]);
     });
 
@@ -94,14 +104,16 @@ describe('location checks service tests', () => {
       const location: LocationIdentifiers[] = [
         { ...baseLocations[0], stackPipeId: 'sp53', unitId: null },
       ];
-      const facilityId = 1;
       repository.getLocationsByUnitStackPipeIds.mockResolvedValue([
         mockedMonitorLoc,
       ]);
-      const result = await service.runChecks(facilityId, location);
+
+      jest.spyOn(service, 'processLocations').mockReturnValue(location)
+
+      const result = await service.runChecks(payload);
 
       expect(result[1]).toEqual([
-        `The database does not contain Stack/Pipe [${location[0].stackPipeId}] for Facility [${facilityId}]`,
+        `The database does not contain Stack/Pipe [${location[0].stackPipeId}] for Facility [${payload.orisCode}]`,
       ]);
     });
 
@@ -118,11 +130,13 @@ describe('location checks service tests', () => {
       mockedMonitorLoc.systems = [ms];
       mockedMonitorLoc.components = [component];
 
-      const facilityId = 1;
       repository.getLocationsByUnitStackPipeIds.mockResolvedValue([
         mockedMonitorLoc,
       ]);
-      const result = await service.runChecks(facilityId, baseLocations);
+
+      jest.spyOn(service, 'processLocations').mockReturnValue(baseLocations)
+
+      const result = await service.runChecks(payload);
 
       // There should be 2 error messages since between both componentIds and systemIds specificed in location
       // 2 will match and 2 won't match the db. The errors we are testing below are for the ones that don't match
@@ -130,12 +144,12 @@ describe('location checks service tests', () => {
       expect(result[1].length).toBe(2);
       expect(
         result[1].includes(
-          `The database does not contain System [${baseLocations[0].systemIDs[0]}] for Unit [${baseLocations[0].unitId}] and Facility [${facilityId}]`,
+          `The database does not contain System [${baseLocations[0].systemIDs[0]}] for Unit [${baseLocations[0].unitId}] and Facility [${payload.orisCode}]`,
         ),
       ).toBe(true);
       expect(
         result[1].includes(
-          `The database does not contain Component [${baseLocations[0].componentIDs[0]}] for Unit [${baseLocations[0].unitId}] and Facility [${facilityId}]`,
+          `The database does not contain Component [${baseLocations[0].componentIDs[0]}] for Unit [${baseLocations[0].unitId}] and Facility [${payload.orisCode}]`,
         ),
       ).toBe(true);
     });

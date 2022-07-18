@@ -15,15 +15,8 @@ export class LocationChecksService {
     private readonly repository: LocationWorkspaceRepository,
   ) {}
 
-  async runChecks(
-    payload: QACertificationImportDTO,
-  ): Promise<[LocationIdentifiers[], string[]]> {
-    this.logger.info('Running Unit/Stack Location Checks');
-
-    let errorList = [];
-    const stackPipePrefixes = ['CS', 'MS', 'CP', 'MP'];
+  processLocations(payload: QACertificationImportDTO): LocationIdentifiers[]{
     let locations: LocationIdentifiers[] = [];
-    const orisCode = payload.orisCode;
 
     const addLocation = (i: any) => {
       const systemIDs = [];
@@ -68,6 +61,20 @@ export class LocationChecksService {
     if (payload.testExtensionExemptionData) {
       payload.testExtensionExemptionData.forEach(i => addLocation(i));
     }
+
+    return locations;
+  }
+
+  async runChecks(
+    payload: QACertificationImportDTO,
+  ): Promise<[LocationIdentifiers[], string[]]> {
+    this.logger.info('Running Unit/Stack Location Checks');
+
+    let errorList = [];
+    const stackPipePrefixes = ['CS', 'MS', 'CP', 'MP'];
+    const orisCode = payload.orisCode;
+
+    let locations: LocationIdentifiers[] = this.processLocations(payload)
 
     if (locations.length === 0) {
       // IMPORT-13 (Result A)
