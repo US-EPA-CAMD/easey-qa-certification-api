@@ -10,6 +10,7 @@ import { TestSummaryChecksService } from '../test-summary-workspace/test-summary
 import { QACertificationChecksService } from './qa-certification-checks.service';
 import { LinearitySummaryImportDTO } from '../dto/linearity-summary.dto';
 import { LinearityInjectionImportDTO } from '../dto/linearity-injection.dto';
+import { BadRequestException } from '@nestjs/common';
 
 const returnLocationRunChecks = [
   {
@@ -80,6 +81,23 @@ describe('QA Certification Check Service Test', () => {
     it('Should pass all checks', async () => {
       const result = await service.runChecks(payload);
       expect(result).toEqual(returnLocationRunChecks);
+    });
+
+    it('should return error message A for IMPORT-13', async () => {
+      const pl = {
+        ...payload,
+        testSummaryData: [],
+        certificationEventData: [],
+        testExtensionExemptionData: [],
+      };
+      try {
+        await service.runChecks(pl);
+      } catch (err) {
+        expect(err).toBeInstanceOf(BadRequestException);
+        expect(err.response.message).toEqual([
+          'There are no test summary, certifications events, or extension/exmeption records present in the file to be imported',
+        ]);
+      }
     });
   });
 });

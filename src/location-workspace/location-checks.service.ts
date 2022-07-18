@@ -5,6 +5,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { LocationWorkspaceRepository } from './location.repository';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
+import { QACertificationImportDTO } from 'src/dto/qa-certification.dto';
 
 @Injectable()
 export class LocationChecksService {
@@ -14,14 +15,77 @@ export class LocationChecksService {
     private readonly repository: LocationWorkspaceRepository,
   ) {}
 
+  processLocations(payload: QACertificationImportDTO): LocationIdentifiers[] {
+    const locations: LocationIdentifiers[] = [];
+
+    const addLocation = (i: any) => {
+      const systemIDs = [];
+      const componentIDs = [];
+
+      const location = locations.find(
+        l => l?.unitId === i?.unitId || l?.stackPipeId === i?.stackPipeId,
+      );
+
+      if (location) {
+        if (
+          i.monitoringSystemID &&
+          !location.systemIDs.includes(i.monitoringSystemID)
+        ) {
+          location.systemIDs.push(i.monitoringSystemID);
+        }
+        if (i.componentID && !location.componentIDs.includes(i.componentID)) {
+          location.componentIDs.push(i.componentID);
+        }
+      } else {
+        if (i.monitoringSystemID) {
+          systemIDs.push(i.monitoringSystemID);
+        }
+        if (i.componentID) {
+          componentIDs.push(i.componentID);
+        }
+
+        locations.push({
+          unitId: i.unitId,
+          locationId: null,
+          stackPipeId: i.stackPipeId,
+          systemIDs,
+          componentIDs,
+        });
+      }
+    };
+
+    if (payload.testSummaryData) {
+      payload.testSummaryData.forEach(i => addLocation(i));
+    }
+
+    if (payload.certificationEventData) {
+      payload.certificationEventData.forEach(i => addLocation(i));
+    }
+
+    if (payload.testExtensionExemptionData) {
+      payload.testExtensionExemptionData.forEach(i => addLocation(i));
+    }
+
+    return locations;
+  }
+
   async runChecks(
-    orisCode: number,
-    locations: LocationIdentifiers[],
+    payload: QACertificationImportDTO,
   ): Promise<[LocationIdentifiers[], string[]]> {
     this.logger.info('Running Unit/Stack Location Checks');
 
     let errorList = [];
     const stackPipePrefixes = ['CS', 'MS', 'CP', 'MP'];
+    const orisCode = payload.orisCode;
+
+    const locations: LocationIdentifiers[] = this.processLocations(payload);
+
+    if (locations.length === 0) {
+      // IMPORT-13 (Result A)
+      errorList.push(
+        'There are no test summary, certifications events, or extension/exmeption records present in the file to be imported',
+      );
+    }
 
     const dbLocations = await this.repository.getLocationsByUnitStackPipeIds(
       orisCode,
@@ -31,37 +95,36 @@ export class LocationChecksService {
 
     locations.forEach(location => {
       let unitStack = '';
-      const dbLocation = dbLocations.find(i => {
-        if (
-          (i.unit && i.unit.name === location.unitId) ||
-          (i.stackPipe && i.stackPipe.name === location.stackPipeId)
-        )
-          return i;
-      });
+      const dbLocation = dbLocations.find(
+        i =>
+          i?.unit?.name === location?.unitId ||
+          i?.stackPipe?.name === location?.stackPipeId,
+      );
 
       if (location.unitId) {
         unitStack = `Unit [${location.unitId}]`;
 
-        // IMPORT-13 All Unit Locations Present in the Production Database
         if (
           location.unitId.length >= 2 &&
           stackPipePrefixes.includes(location.unitId.substring(0, 2))
         ) {
+          // IMPORT-13 All Unit Locations Present in the Production Database (Result C)
           errorList.push(
             `The following Stack/Pipe was misidentified as a unit [${location.unitId}]`,
           );
         } else if (!dbLocation) {
+          // IMPORT-13 All Stack/Pipe Locations Present in the Production Database (Result B)
           errorList.push(
             `The database does not contain Unit [${location.unitId}] for Facility [${orisCode}]`,
           );
         }
       }
 
-      // IMPORT-13 All Stack/Pipe Locations Present in the Production Database
       if (location.stackPipeId) {
         unitStack = `Stack/Pipe [${location.stackPipeId}]`;
 
         if (!dbLocation) {
+          // IMPORT-13 All Stack/Pipe Locations Present in the Production Database (Result B)
           errorList.push(
             `The database does not contain Stack/Pipe [${location.stackPipeId}] for Facility [${orisCode}]`,
           );
@@ -73,18 +136,18 @@ export class LocationChecksService {
         const dbSystemIDs = dbLocation.systems.map(i => i.monitoringSystemID);
         const dbComponentIDs = dbLocation.components.map(i => i.componentID);
 
-        // IMPORT-14 All QA Systems Present in the Production Database
         location.systemIDs.forEach(systemId => {
           if (!dbSystemIDs.includes(systemId)) {
+            // IMPORT-14 All QA Systems Present in the Production Database (Result A)
             errorList.push(
               `The database does not contain System [${systemId}] for ${unitStack} and Facility [${orisCode}]`,
             );
           }
         });
 
-        // IMPORT-15 All QA Components Present in the Production Database
         location.componentIDs.forEach(componentID => {
           if (!dbComponentIDs.includes(componentID)) {
+            // IMPORT-15 All QA Components Present in the Production Database (Result A)
             errorList.push(
               `The database does not contain Component [${componentID}] for ${unitStack} and Facility [${orisCode}]`,
             );
