@@ -595,14 +595,6 @@ export class TestSummaryChecksService {
         summary.componentID,
       );
 
-      const analyzerRange = component.analyzerRanges.filter(ar => {
-        (ar.analyzerRangeCode === 'L' &&
-          ar.beginDate <= summary.beginDate &&
-          ar.beginHour <= summary.beginHour &&
-          ar.endDate === null) ||
-          (ar.endDate >= summary.endDate && ar.endHour >= summary.endHour);
-      });
-
       if (component && component.componentTypeCode !== 'FLOW') {
         if (summary.spanScaleCode === null) {
           error = resultA;
