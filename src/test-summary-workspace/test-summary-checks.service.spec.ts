@@ -19,9 +19,14 @@ const locationId = '1';
 
 const mockRepository = () => ({
   getTestSummaryByLocationId: jest.fn().mockResolvedValue(null),
+  findOne: jest.fn().mockResolvedValue(null),
 });
 const mockQARepository = () => ({
+  findOne: jest.fn().mockResolvedValue(null),
   getQASuppDataByLocationId: jest.fn().mockResolvedValue(null),
+  getQASuppDataByTestTypeCodeComponentIdEndDateEndTime: jest
+    .fn()
+    .mockResolvedValue(null),
 });
 
 describe('Test Summary Check Service Test', () => {

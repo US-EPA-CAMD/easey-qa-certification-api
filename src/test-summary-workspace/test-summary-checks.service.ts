@@ -47,27 +47,43 @@ export class TestSummaryChecksService {
     if (isImport) {
       // IMPORT-16 Inappropriate Children Records for Test Summary
       error = this.import16Check(summary as TestSummaryImportDTO);
-      if (error) errorList.push(error);
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     if (isImport) {
       // IMPORT-17 Extraneous Test Summary Data Check
       error = this.import17Check(locationId, summary);
-      if (error) errorList.push(error);
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     // TEST-3 Test Begin Minute Valid
     error = await this.testMinuteField(summary, locationId, 'beginMinute');
-    if (error) errorList.push(error);
+    if (error) {
+      errorList.push(error);
+    }
 
     // TEST-6 Test End Minute Valid
     error = await this.testMinuteField(summary, locationId, 'endMinute');
-    if (error) errorList.push(error);
+    if (error) {
+      errorList.push(error);
+    }
 
     // TEST-7 Test Dates Consistent
     // NOTE: beginMinute and endMinute validity tests need to run before this test
     error = this.test7Check(summary);
-    if (error) errorList.push(error);
+    if (error) {
+      errorList.push(error);
+    }
+
+    // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
+    error = await this.linear4Check(locationId, summary, isImport);
+    if (error) {
+      errorList.push(error);
+    }
 
     error = await this.duplicateTestCheck(
       locationId,
@@ -75,7 +91,9 @@ export class TestSummaryChecksService {
       summaries,
       isImport,
     );
-    if (error) errorList.push(error);
+    if (error) {
+      errorList.push(error);
+    }
 
     this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed Test Summary Checks');
@@ -363,6 +381,10 @@ export class TestSummaryChecksService {
     return error;
   }
 
+  // IMPORT-20 Duplicate Test Check
+  // LINEAR-31 Duplicate Linearity (Result A)
+  // LINEAR-31 Duplicate Linearity (Result B)
+  // IMPORT-21 Duplicate Test Number Check
   private async duplicateTestCheck(
     locationId: string,
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
@@ -606,5 +628,68 @@ export class TestSummaryChecksService {
     }
 
     return fields;
+  }
+
+  // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
+  private async linear4Check(
+    locationId: string,
+    summary: TestSummaryBaseDTO | TestSummaryImportDTO,
+    _isImport: boolean = false,
+  ): Promise<string> {
+    let error: string = null;
+    let duplicateQaSupp: TestSummary | QASuppData;
+
+    const duplicateTestSum = await this.repository.findOne({
+      testTypeCode: summary.testTypeCode,
+      spanScaleCode: summary.spanScaleCode,
+      endDate: summary.endDate,
+      endHour: summary.endHour,
+      endMinute: summary.endMinute,
+    });
+
+    if (duplicateTestSum) {
+      error = `Based on the information in this record, this test has already been submitted with a different test number, or the Client Tool database already contains the same test with a different test number. This test cannot be submitted.`;
+    } else {
+      duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
+        locationId,
+        summary.componentID,
+        summary.testTypeCode,
+        summary.testNumber,
+        summary.spanScaleCode,
+        summary.endDate,
+        summary.endHour,
+        summary.endMinute,
+      );
+
+      if (duplicateQaSupp) {
+        error = `Based on the information in this record, this test has already been submitted with a different test number, or the Client Tool database already contains the same test with a different test number. This test cannot be submitted.`;
+      } else {
+        // TODO: BLOCKED DUE TO COLUMN DOESNOT EXISTS IN DATABASE
+        /* duplicateQaSupp = await this.qaSuppDataRepository.findOne({
+          locationId: locationId,
+          testTypeCode: summary.testTypeCode,
+          testNumber: summary.testNumber,
+        });
+
+        if (duplicateQaSupp) {
+          if (duplicateQaSupp.canSubmit === 'N') {
+            if (
+              duplicateQaSupp.testSumId !== duplicateTestSum.id &&
+              duplicateQaSupp.component.componentID !== summary.componentID &&
+              duplicateQaSupp.spanScaleCode !== summary.spanScaleCode &&
+              duplicateQaSupp.endDate !== summary.endDate &&
+              duplicateQaSupp.endHour !== summary.endHour &&
+              duplicateQaSupp.endMinute !== summary.endMinute
+            ) {
+              error = `Another [${duplicateQaSupp.testTypeCode}] with this test number [${duplicateQaSupp.testNumber}] has already been submitted for this location. This test cannot be submitted with this test number. If this is a different test, you should assign it a unique test number.`;
+            } else {
+              error = `This test has already been submitted and will not be resubmitted. If you wish to resubmit this test, please contact EPA for approval.`;
+            }
+          }
+        } */
+      }
+    }
+
+    return error;
   }
 }

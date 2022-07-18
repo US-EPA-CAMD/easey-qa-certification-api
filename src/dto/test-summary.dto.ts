@@ -112,6 +112,7 @@ const VALID_CODES_FOR_COMPONENT_ID_VALIDATION = [
   TestTypeCodes.FFACC,
   TestTypeCodes.ONOFF,
   TestTypeCodes.HGLINE,
+  TestTypeCodes.HGSI3,
   TestTypeCodes.LINE,
   TestTypeCodes.CYCLE,
   TestTypeCodes.SEVENDAY,
@@ -140,6 +141,65 @@ const VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION = [
   TestTypeCodes.LINE,
   TestTypeCodes.CYCLE,
   TestTypeCodes.SEVENDAY,
+];
+
+const VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION = [
+  TestTypeCodes.SEVENDAY,
+  TestTypeCodes.CYCLE,
+  TestTypeCodes.LINE,
+  TestTypeCodes.HGLINE,
+  TestTypeCodes.HGSI3,
+  TestTypeCodes.ONOFF,
+];
+
+const VALID_CODES_FOR_END_HOUR_VALIDATION = [
+  TestTypeCodes.SEVENDAY,
+  TestTypeCodes.CYCLE,
+  TestTypeCodes.LINE,
+  TestTypeCodes.HGLINE,
+  TestTypeCodes.HGSI3,
+  TestTypeCodes.RATA,
+  TestTypeCodes.F2LREF,
+  TestTypeCodes.ONOFF,
+  TestTypeCodes.APPE,
+  TestTypeCodes.FFACC,
+  TestTypeCodes.FFACCTT,
+  TestTypeCodes.FF2LBAS,
+  TestTypeCodes.UNITDEF,
+  TestTypeCodes.DAHS,
+  TestTypeCodes.DGFMCAL,
+  TestTypeCodes.MFMCAL,
+  TestTypeCodes.TSCAL,
+  TestTypeCodes.BCAL,
+  TestTypeCodes.QGA,
+  TestTypeCodes.LEAK,
+  TestTypeCodes.OTHER,
+  TestTypeCodes.PEI,
+  TestTypeCodes.PEMSACC,
+];
+
+const VALID_CODES_FOR_END_MINUTE_VALIDATION = [
+  TestTypeCodes.SEVENDAY,
+  TestTypeCodes.CYCLE,
+  TestTypeCodes.LINE,
+  TestTypeCodes.HGLINE,
+  TestTypeCodes.HGSI3,
+  TestTypeCodes.RATA,
+  TestTypeCodes.F2LREF,
+  TestTypeCodes.APPE,
+  TestTypeCodes.FFACC,
+  TestTypeCodes.FFACCTT,
+  TestTypeCodes.UNITDEF,
+  TestTypeCodes.DAHS,
+  TestTypeCodes.DGFMCAL,
+  TestTypeCodes.MFMCAL,
+  TestTypeCodes.TSCAL,
+  TestTypeCodes.BCAL,
+  TestTypeCodes.QGA,
+  TestTypeCodes.LEAK,
+  TestTypeCodes.OTHER,
+  TestTypeCodes.PEI,
+  TestTypeCodes.PEMSACC,
 ];
 
 const formatTestSummaryValidationError = (
@@ -220,6 +280,9 @@ export class TestSummaryBaseDTO {
       }]`;
     },
   })
+  @ValidateIf(o =>
+    VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION.includes(o.testTypeCode),
+  )
   spanScaleCode?: string;
 
   @ApiProperty({
@@ -348,6 +411,7 @@ export class TestSummaryBaseDTO {
   @IsNotEmpty({
     message: `You did not provide [endHour], which is required for [${KEY}].`,
   })
+  @ValidateIf(o => VALID_CODES_FOR_END_HOUR_VALIDATION.includes(o.testTypeCode))
   endHour?: number;
 
   @ApiProperty({
@@ -357,8 +421,8 @@ export class TestSummaryBaseDTO {
     message: (args: ValidationArguments) =>
       `The value [${args.value}] in the field [endMinute] for [${KEY}] is not within the range of valid values from [${MIN_MINUTE}] to [${MAX_MINUTE}].`,
   })
-  @ValidateIf(
-    o => o.testTypeCode.toUpperCase() !== TestTypeCodes.ONOFF.toString(),
+  @ValidateIf(o =>
+    VALID_CODES_FOR_END_MINUTE_VALIDATION.includes(o.testTypeCode),
   )
   endMinute?: number;
 

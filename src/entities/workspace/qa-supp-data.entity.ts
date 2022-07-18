@@ -149,6 +149,10 @@ export class QASuppData extends BaseEntity {
   @Column({ name: 'fuel_cd' })
   fuelCode: string;
 
+  // TODO: COLUMN DOESNOT EXISTS IN DATABASE
+  // @Column({ name: 'can_submit' })
+  // canSubmit: string;
+
   @ManyToOne(
     () => MonitorLocation,
     o => o.qaSuppData,
