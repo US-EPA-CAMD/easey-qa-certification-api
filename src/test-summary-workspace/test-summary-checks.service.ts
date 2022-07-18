@@ -585,7 +585,6 @@ export class TestSummaryChecksService {
 
   // TEST-8 - Test Span Scale Valid
   private async testSpanScale(summary: TestSummaryBaseDTO): Promise<string> {
-    // RUN FIRST
     const testDateConsistent = this.test7Check(summary);
 
     let error: string;
@@ -614,7 +613,7 @@ export class TestSummaryChecksService {
           return error;
         }
 
-        if (testDateConsistent) {
+        if (!testDateConsistent) {
           if (summary.spanScaleCode === 'H') {
             // TODO: Locate an Analyzer Range records for the component where the AnalyzerRangeCode is equal to "L", the beginDate and beginHour is on or before the beginDate and beginHour of the current test, and the endDate is null or the endDate and endHour is after the endDate and endHour of the current test.
 
