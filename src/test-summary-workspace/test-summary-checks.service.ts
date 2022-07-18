@@ -615,8 +615,6 @@ export class TestSummaryChecksService {
 
         if (!testDateConsistent) {
           if (summary.spanScaleCode === 'H') {
-            // TODO: Locate an Analyzer Range records for the component where the AnalyzerRangeCode is equal to "L", the beginDate and beginHour is on or before the beginDate and beginHour of the current test, and the endDate is null or the endDate and endHour is after the endDate and endHour of the current test.
-
             const analyerRange = await this.analyzerRangeRepository.getAnalyzerRangeByComponentIdAndDate(
               summary,
             );
@@ -628,7 +626,6 @@ export class TestSummaryChecksService {
           }
 
           if (summary.spanScaleCode === 'L') {
-            // TODO: Locate an Analyzer Range records for the component where the AnalyzerRangeCode is equal to "H", the beginDate and beginHour is or before the beginDate and beginHour of the current test, and the endDate is null or the endDate and endHour is after the endDate and endHour of the current test.
             const analyerRange = await this.analyzerRangeRepository.getAnalyzerRangeByComponentIdAndDate(
               summary,
             );
@@ -655,8 +652,6 @@ export class TestSummaryChecksService {
     const resultD = `An injection protocol is not required for this test type.`;
 
     if (['7DAY', 'CYCLE'].includes(summary.testTypeCode)) {
-      // TODO: set Component Record
-
       let componentRecord: Component;
 
       if (componentRecord) {
