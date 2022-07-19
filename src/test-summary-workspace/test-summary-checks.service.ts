@@ -93,7 +93,7 @@ export class TestSummaryChecksService {
     }
 
     // TEST-8 Test Span Scale Valid
-    error = await this.testSpanScale(summary);
+    error = await this.testSpanScale(locationId, summary);
     if (error) {
       errorList.push(error);
     }
@@ -588,18 +588,21 @@ export class TestSummaryChecksService {
   }
 
   // TEST-8 - Test Span Scale Valid
-  private async testSpanScale(summary: TestSummaryBaseDTO): Promise<string> {
+  private async testSpanScale(
+    locationId: string,
+    summary: TestSummaryBaseDTO,
+  ): Promise<string> {
     const testDateConsistent = this.test7Check(summary);
 
     let error: string;
     const resultA = `You did not provide ${summary.spanScaleCode}, which is required for [key]`;
 
     if (summary.componentID) {
-      const component = await this.componentRepository.findOne(
-        summary.componentID,
-      );
-
-      if (component && component.componentTypeCode !== 'FLOW') {
+      const component = await this.componentRepository.findOne({
+        componentID: summary.componentID,
+        locationId: locationId,
+      });
+      if (component?.componentTypeCode !== 'FLOW') {
         if (summary.spanScaleCode === null) {
           error = resultA;
           return error;
@@ -610,9 +613,25 @@ export class TestSummaryChecksService {
         }
 
         if (!testDateConsistent) {
-          const analyerRange = await this.analyzerRangeRepository.getAnalyzerRangeByComponentIdAndDate(
+          let analyzerRangeCode: string;
+          if (summary.spanScaleCode === 'H') {
+            analyzerRangeCode = 'L';
+          }
+          if (summary.spanScaleCode === 'L') {
+            analyzerRangeCode = 'H';
+          }
+
+          const analyerRanges = await this.analyzerRangeRepository.getAnalyzerRangeByComponentIdAndDate(
+            component.id,
             summary,
           );
+
+          const analyerRange = analyerRanges.find(i => {
+            return (
+              i.analyzerRangeCode === analyzerRangeCode &&
+              i.componentRecordId === component.id
+            );
+          });
 
           if (analyerRange) {
             error = `The active analyzer range for the component is inconsistent with the span scale ${summary.spanScaleCode}`;
