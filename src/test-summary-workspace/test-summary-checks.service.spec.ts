@@ -15,6 +15,8 @@ import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { LinearitySummaryImportDTO } from '../dto/linearity-summary.dto';
 import { Component } from '../entities/workspace/component.entity';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 
 const locationId = '1';
 
@@ -78,6 +80,14 @@ describe('Test Summary Check Service Test', () => {
         {
           provide: QAMonitorPlanWorkspaceRepository,
           useFactory: mockQAMonitorPlanWorkspaceRepository,
+        },
+        {
+          provide: ComponentWorkspaceRepository,
+          useFactory: mockComponentWorkspaceRepository,
+        },
+        {
+          provide: AnalyzerRangeWorkspaceRepository,
+          useFactory: mockAnalyzerRangeWorkspaceRepository,
         },
       ],
     }).compile();

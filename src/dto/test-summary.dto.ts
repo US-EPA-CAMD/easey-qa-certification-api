@@ -143,13 +143,13 @@ const VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION = [
   TestTypeCodes.SEVENDAY,
 ];
 
-const VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION = [
-  TestTypeCodes.SEVENDAY,
-  TestTypeCodes.CYCLE,
-  TestTypeCodes.LINE,
-  TestTypeCodes.HGLINE,
-  TestTypeCodes.HGSI3,
-  TestTypeCodes.ONOFF,
+export const VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION = [
+  TestTypeCodes.SEVENDAY.toString(),
+  TestTypeCodes.CYCLE.toString(),
+  TestTypeCodes.LINE.toString(),
+  TestTypeCodes.HGLINE.toString(),
+  TestTypeCodes.HGSI3.toString(),
+  TestTypeCodes.ONOFF.toString(),
 ];
 
 const VALID_CODES_FOR_END_HOUR_VALIDATION = [
@@ -262,7 +262,7 @@ export class TestSummaryBaseDTO {
   @ValidateIf(o =>
     VALID_CODES_FOR_COMPONENT_ID_VALIDATION.includes(o.testTypeCode),
   )
-  componentID: string;
+  componentID?: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSpanDTOSpanScaleCode.description,
