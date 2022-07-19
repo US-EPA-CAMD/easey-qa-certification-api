@@ -99,7 +99,7 @@ export class TestSummaryChecksService {
     }
 
     // TEST-23 Injection Protocol Valid
-    error = this.testInjectionProtocol(summary);
+    error = await this.testInjectionProtocol(locationId, summary);
     if (error) {
       errorList.push(error);
     }
@@ -649,17 +649,23 @@ export class TestSummaryChecksService {
     return null;
   }
 
-  private testInjectionProtocol(summary: TestSummaryBaseDTO) {
+  private async testInjectionProtocol(
+    locationId: string,
+    summary: TestSummaryBaseDTO,
+  ) {
     let message: string;
     const resultA = `You did not identify an injection protocol (HGE or HGO), as required for a Hg CEMS seven day calibration or cycle time test`;
     const resultC = `An injection protocol is only reported for Hg CEMS.`;
     const resultD = `An injection protocol is not required for this test type.`;
 
     if (['7DAY', 'CYCLE'].includes(summary.testTypeCode)) {
-      let componentRecord: Component;
+      const component = await this.componentRepository.findOne({
+        componentID: summary.componentID,
+        locationId,
+      });
 
-      if (componentRecord) {
-        if (componentRecord.componentTypeCode === 'HG') {
+      if (component) {
+        if (component.componentTypeCode === 'HG') {
           if (summary.injectionProtocolCode) {
             message = resultA;
             return message;
