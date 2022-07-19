@@ -610,35 +610,21 @@ export class TestSummaryChecksService {
         }
 
         if (!testDateConsistent) {
-          if (summary.spanScaleCode === 'H') {
-            const analyerRange = await this.analyzerRangeRepository.getAnalyzerRangeByComponentIdAndDate(
-              summary,
-            );
+          const analyerRange = await this.analyzerRangeRepository.getAnalyzerRangeByComponentIdAndDate(
+            summary,
+          );
 
-            if (analyerRange) {
-              error = `The active analyzer range for the component is inconsistent with the span scale ${summary.spanScaleCode}`;
-              return error;
-            }
-          }
-
-          if (summary.spanScaleCode === 'L') {
-            const analyerRange = await this.analyzerRangeRepository.getAnalyzerRangeByComponentIdAndDate(
-              summary,
-            );
-
-            if (analyerRange) {
-              error = `The active analyzer range for the component is inconsistent with the span scale ${summary.spanScaleCode}`;
-              return error;
-            }
+          if (analyerRange) {
+            error = `The active analyzer range for the component is inconsistent with the span scale ${summary.spanScaleCode}`;
+            return error;
           }
         }
+      } else {
+        if (summary.spanScaleCode !== null) {
+          error = `You reported a SpanScaleCode, but this is not appropriate for flow component`;
+          return error;
+        }
       }
-      // } else {
-      //   if (summary.spanScaleCode !== null) {
-      //     error = `You reported a SpanScaleCode, but this is not appropriate for flow component`;
-      //     return error;
-      //   }
-      // }
     }
 
     return null;

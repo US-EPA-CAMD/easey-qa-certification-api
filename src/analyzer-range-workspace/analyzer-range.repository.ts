@@ -11,25 +11,25 @@ export class AnalyzerRangeWorkspaceRepository extends Repository<
   ): Promise<AnalyzerRange> {
     const componentId = summary.componentID;
     const spanScaleCode = summary.spanScaleCode;
-    let analyzerRanceCode: string;
+    let analyzerRangeCode: string;
     const beginDate = summary.beginDate;
     const beginHour = summary.beginHour;
     const endDate = summary.endDate;
     const endHour = summary.endHour;
 
     if (spanScaleCode === 'H') {
-      analyzerRanceCode = 'L';
+      analyzerRangeCode = 'L';
     }
     if (spanScaleCode === 'L') {
-      analyzerRanceCode = 'H';
+      analyzerRangeCode = 'H';
     }
 
     return this.createQueryBuilder('ar')
       .where('ar.componentRecordId = :componentId', {
         componentId,
       })
-      .andWhere('ar.analyzerRanceCode = :analyzerRanceCode', {
-        analyzerRanceCode,
+      .andWhere('ar.analyzerRangeCode = :analyzerRangeCode', {
+        analyzerRangeCode,
       })
       .andWhere('(ar.beginDate <= :beginDate AND ar.beginHour <= :beginHour)', {
         beginDate,
