@@ -6,6 +6,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import {
   TestSummaryBaseDTO,
   TestSummaryImportDTO,
+  VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION,
 } from '../dto/test-summary.dto';
 
 import { TestTypeCodes } from '../enums/test-type-code.enum';
@@ -93,13 +94,13 @@ export class TestSummaryChecksService {
     }
 
     // TEST-8 Test Span Scale Valid
-    error = await this.testSpanScale(locationId, summary);
+    error = await this.test8Check(locationId, summary);
     if (error) {
       errorList.push(error);
     }
 
     // TEST-23 Injection Protocol Valid
-    error = await this.testInjectionProtocol(locationId, summary);
+    error = await this.test23Check(locationId, summary);
     if (error) {
       errorList.push(error);
     }
@@ -588,32 +589,37 @@ export class TestSummaryChecksService {
   }
 
   // TEST-8 - Test Span Scale Valid
-  private async testSpanScale(
+  private async test8Check(
     locationId: string,
     summary: TestSummaryBaseDTO,
   ): Promise<string> {
     const testDateConsistent = this.test7Check(summary);
 
     let error: string;
-    const resultA = `You did not provide ${summary.spanScaleCode}, which is required for [key]`;
 
     if (summary.componentID) {
       const component = await this.componentRepository.findOne({
         componentID: summary.componentID,
         locationId: locationId,
       });
-      if (component?.componentTypeCode !== 'FLOW') {
+      if (
+        component?.componentTypeCode !== 'FLOW' &&
+        VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION.includes(
+          summary.testTypeCode,
+        )
+      ) {
         if (summary.spanScaleCode === null) {
-          error = resultA;
+          error = `You did not provide [spanScaleCode], which is required for [Test Summary]`;
           return error;
         }
         if (!['H', 'L'].includes(summary.spanScaleCode)) {
-          error = resultA;
+          error = `You reported the value [${summary.spanScaleCode}], which is not in the list of valid values, in the field [spanScaleCode] for [Test Summary].`;
           return error;
         }
 
-        if (!testDateConsistent) {
+        if (testDateConsistent !== null) {
           let analyzerRangeCode: string;
+
           if (summary.spanScaleCode === 'H') {
             analyzerRangeCode = 'L';
           }
@@ -634,7 +640,7 @@ export class TestSummaryChecksService {
           });
 
           if (analyerRange) {
-            error = `The active analyzer range for the component is inconsistent with the span scale ${summary.spanScaleCode}`;
+            error = `The active analyzer range for the component is inconsistent with the span scale [${summary.spanScaleCode}] reported for this test.`;
             return error;
           }
         }
@@ -649,45 +655,45 @@ export class TestSummaryChecksService {
     return null;
   }
 
-  private async testInjectionProtocol(
-    locationId: string,
-    summary: TestSummaryBaseDTO,
-  ) {
-    let message: string;
+  // TEST-23 Injection Protocol Valid
+  private async test23Check(locationId: string, summary: TestSummaryBaseDTO) {
+    let error: string;
     const resultA = `You did not identify an injection protocol (HGE or HGO), as required for a Hg CEMS seven day calibration or cycle time test`;
     const resultC = `An injection protocol is only reported for Hg CEMS.`;
     const resultD = `An injection protocol is not required for this test type.`;
 
-    if (['7DAY', 'CYCLE'].includes(summary.testTypeCode)) {
+    if (
+      [
+        TestTypeCodes.SEVENDAY.toString(),
+        TestTypeCodes.CYCLE.toString(),
+      ].includes(summary.testTypeCode)
+    ) {
       const component = await this.componentRepository.findOne({
+        locationId: locationId,
         componentID: summary.componentID,
-        locationId,
       });
 
       if (component) {
         if (component.componentTypeCode === 'HG') {
-          if (summary.injectionProtocolCode) {
-            message = resultA;
-            return message;
-          } else if (['HGE', 'HGO'].includes(summary.injectionProtocolCode)) {
-            message = resultA;
-            return message;
-          } else {
-            if (summary.injectionProtocolCode !== null) {
-              message = resultC;
-              return message;
-            }
+          if (
+            summary.injectionProtocolCode === null ||
+            !['HGE', 'HGO'].includes(summary.injectionProtocolCode)
+          ) {
+            error = resultA;
+          }
+        } else {
+          if (summary.injectionProtocolCode !== null) {
+            error = resultC;
           }
         }
       }
     } else {
       if (summary.injectionProtocolCode !== null) {
-        message = resultD;
-        return message;
+        error = resultD;
       }
     }
 
-    return null;
+    return error;
   }
 
   private compareFields(
