@@ -595,8 +595,6 @@ export class TestSummaryChecksService {
   ): Promise<string> {
     const testDateConsistent = this.test7Check(summary);
 
-    let error: string;
-
     if (summary.componentID) {
       const component = await this.componentRepository.findOne({
         componentID: summary.componentID,
@@ -609,12 +607,10 @@ export class TestSummaryChecksService {
         )
       ) {
         if (summary.spanScaleCode === null) {
-          error = `You did not provide [spanScaleCode], which is required for [Test Summary]`;
-          return error;
+          return `You did not provide [spanScaleCode], which is required for [Test Summary].`;
         }
         if (!['H', 'L'].includes(summary.spanScaleCode)) {
-          error = `You reported the value [${summary.spanScaleCode}], which is not in the list of valid values, in the field [spanScaleCode] for [Test Summary].`;
-          return error;
+          return `You reported the value [${summary.spanScaleCode}], which is not in the list of valid values, in the field [spanScaleCode] for [Test Summary].`;
         }
 
         if (testDateConsistent !== null) {
@@ -640,14 +636,12 @@ export class TestSummaryChecksService {
           });
 
           if (analyerRange) {
-            error = `The active analyzer range for the component is inconsistent with the span scale [${summary.spanScaleCode}] reported for this test.`;
-            return error;
+            return `The active analyzer range for the component is inconsistent with the span scale [${summary.spanScaleCode}] reported for this test.`;
           }
         }
       } else {
         if (summary.spanScaleCode !== null) {
-          error = `You reported a SpanScaleCode, but this is not appropriate for flow component`;
-          return error;
+          return `You reported a SpanScaleCode, but this is not appropriate for flow component.`;
         }
       }
     }
