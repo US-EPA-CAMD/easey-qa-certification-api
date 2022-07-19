@@ -632,12 +632,13 @@ export class TestSummaryChecksService {
             }
           }
         }
-      } else {
-        if (summary.spanScaleCode !== null) {
-          error = `You reported a SpanScaleCode, but this is not appropriate for flow component`;
-          return error;
-        }
       }
+      // } else {
+      //   if (summary.spanScaleCode !== null) {
+      //     error = `You reported a SpanScaleCode, but this is not appropriate for flow component`;
+      //     return error;
+      //   }
+      // }
     }
 
     return null;
