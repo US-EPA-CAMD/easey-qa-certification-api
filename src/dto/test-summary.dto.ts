@@ -143,7 +143,7 @@ const VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION = [
   TestTypeCodes.SEVENDAY,
 ];
 
-export const VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION = [
+const VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION = [
   TestTypeCodes.SEVENDAY.toString(),
   TestTypeCodes.CYCLE.toString(),
   TestTypeCodes.LINE.toString(),
