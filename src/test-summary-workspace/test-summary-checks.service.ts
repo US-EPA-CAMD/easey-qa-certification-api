@@ -6,7 +6,6 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import {
   TestSummaryBaseDTO,
   TestSummaryImportDTO,
-  VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION,
 } from '../dto/test-summary.dto';
 
 import { TestTypeCodes } from '../enums/test-type-code.enum';
@@ -16,7 +15,6 @@ import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
-import { Component } from '../entities/workspace/component.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 
@@ -600,12 +598,7 @@ export class TestSummaryChecksService {
         componentID: summary.componentID,
         locationId: locationId,
       });
-      if (
-        component?.componentTypeCode !== 'FLOW' &&
-        VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION.includes(
-          summary.testTypeCode,
-        )
-      ) {
+      if (component?.componentTypeCode !== 'FLOW') {
         if (summary.spanScaleCode === null) {
           return `You did not provide [spanScaleCode], which is required for [Test Summary].`;
         }
@@ -613,7 +606,7 @@ export class TestSummaryChecksService {
           return `You reported the value [${summary.spanScaleCode}], which is not in the list of valid values, in the field [spanScaleCode] for [Test Summary].`;
         }
 
-        if (testDateConsistent !== null) {
+        if (!testDateConsistent) {
           let analyzerRangeCode: string;
 
           if (summary.spanScaleCode === 'H') {
