@@ -13,6 +13,7 @@ import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
+import { TestSummaryRelationshipsRepository } from './test-summary-relationships.repository';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/an
       TestSummaryWorkspaceRepository,
       ComponentWorkspaceRepository,
       AnalyzerRangeWorkspaceRepository,
+      TestSummaryRelationshipsRepository,
     ]),
     forwardRef(() => LinearitySummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),

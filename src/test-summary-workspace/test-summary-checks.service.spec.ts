@@ -17,6 +17,7 @@ import { LinearitySummaryImportDTO } from '../dto/linearity-summary.dto';
 import { Component } from '../entities/workspace/component.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
+import { TestSummaryRelationshipsRepository } from './test-summary-relationships.repository';
 
 const locationId = '1';
 
@@ -57,6 +58,7 @@ describe('Test Summary Check Service Test', () => {
   summaryBase.beginDate = new Date('2020-01-01');
   summaryBase.endDate = new Date('2020-01-01');
   summaryBase.testTypeCode = TestTypeCodes.ONOFF.toString();
+  summaryBase.testResultCode = 'PASSED';
   summaryBase.testNumber = '';
 
   const mockQAMonitorPlanWorkspaceRepository = () => ({
@@ -69,6 +71,12 @@ describe('Test Summary Check Service Test', () => {
       imports: [LoggerModule],
       providers: [
         TestSummaryChecksService,
+        {
+          provide: TestSummaryRelationshipsRepository,
+          useFactory: () => ({
+            findOne: jest.fn().mockResolvedValue(null),
+          }),
+        },
         {
           provide: TestSummaryWorkspaceRepository,
           useFactory: mockRepository,
@@ -102,6 +110,7 @@ describe('Test Summary Check Service Test', () => {
   describe('Test Summary Checks', () => {
     const payload = new TestSummaryImportDTO();
     payload.testTypeCode = TestTypeCodes.LINE;
+    payload.testResultCode = 'PASSED';
     payload.testNumber = '';
     payload.beginHour = 1;
     payload.beginMinute = 1;
@@ -173,6 +182,7 @@ describe('Test Summary Check Service Test', () => {
       returnedTestSummary.component = null;
       returnedTestSummary.system = null;
       returnedTestSummary.testTypeCode = TestTypeCodes.LINE;
+      returnedTestSummary.testResultCode = 'PASSED';
       returnedTestSummary.testNumber = '';
       returnedTestSummary.beginHour = 1;
       returnedTestSummary.beginMinute = 1;
@@ -256,6 +266,7 @@ describe('Test Summary Check Service Test', () => {
 
       const importPayload = new TestSummaryImportDTO();
       importPayload.testTypeCode = TestTypeCodes.FF2LTST;
+      payload.testResultCode = 'PASSED';
       importPayload.protocolGasData = [{}];
       importPayload.linearitySummaryData = [new LinearitySummaryImportDTO()];
 

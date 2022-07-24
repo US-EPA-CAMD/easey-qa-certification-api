@@ -7,7 +7,6 @@ import {
   TestSummaryBaseDTO,
   TestSummaryImportDTO,
 } from '../dto/test-summary.dto';
-
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
@@ -17,6 +16,8 @@ import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/q
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
+import { TestSummaryRelationshipsRepository } from './test-summary-relationships.repository';
+import { VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE } from '../utilities/constants';
 
 @Injectable()
 export class TestSummaryChecksService {
@@ -32,6 +33,7 @@ export class TestSummaryChecksService {
     private readonly componentRepository: ComponentWorkspaceRepository,
     @InjectRepository(AnalyzerRangeWorkspaceRepository)
     private readonly analyzerRangeRepository: AnalyzerRangeWorkspaceRepository,
+    private readonly testSummaryRelationshipsRepository: TestSummaryRelationshipsRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -87,6 +89,12 @@ export class TestSummaryChecksService {
 
     // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
     error = await this.linear4Check(locationId, summary, isImport);
+    if (error) {
+      errorList.push(error);
+    }
+
+    // LINEAR-10 Linearity Test Result Code Valid
+    error = await this.linear10Check(summary);
     if (error) {
       errorList.push(error);
     }
@@ -802,6 +810,36 @@ export class TestSummaryChecksService {
             }
           }
         } */
+      }
+    }
+
+    return error;
+  }
+
+  // LINEAR-10 Linearity Test Result Code Valid (Result A & Result B)
+  // LINEAR-29 Determine Linearity Check Results (Result A & Result B)
+  private async linear10Check(
+    summary: TestSummaryBaseDTO | TestSummaryImportDTO,
+  ): Promise<string> {
+    let error: string = null;
+
+    if (
+      !['ABORTED', 'PASSED', 'PASSAPS', 'FAILED'].includes(
+        summary.testResultCode,
+      ) &&
+      VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE.includes(summary.testTypeCode)
+    ) {
+      const option = await this.testSummaryRelationshipsRepository.findOne({
+        testTypeCode: summary.testTypeCode,
+        testResultCode: summary.testResultCode,
+      });
+
+      console.log(option);
+
+      if (option) {
+        error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type, in the field [testResultCode] for [Test Summary].`;
+      } else {
+        error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`;
       }
     }
 
