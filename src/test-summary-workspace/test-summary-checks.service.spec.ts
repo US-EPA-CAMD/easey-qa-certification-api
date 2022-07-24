@@ -18,10 +18,15 @@ import { Component } from '../entities/workspace/component.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { TestSummaryRelationshipsRepository } from './test-summary-relationships.repository';
+import { TestSummaryRelationships } from '../entities/workspace/vw_test_summary_master_data_relationships.entity';
 
 const locationId = '1';
 
 const component = new Component();
+
+const mockTestSummaryRelationshipRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(new TestSummaryRelationships()),
+});
 
 const mockComponentWorkspaceRepository = () => ({
   findOne: jest.fn().mockResolvedValue(component),
@@ -46,7 +51,8 @@ const mockQARepository = () => ({
 describe('Test Summary Check Service Test', () => {
   let service: TestSummaryChecksService;
   let repository: TestSummaryWorkspaceRepository;
-  let qArepository: QASuppDataWorkspaceRepository;
+  let qaRepository: QASuppDataWorkspaceRepository;
+  let testSummaryRelationshipRepository: TestSummaryRelationshipsRepository;
   let qaMonitorPlanWSRepo: any;
 
   const summaryBase: TestSummaryBaseDTO = new TestSummaryBaseDTO();
@@ -73,9 +79,7 @@ describe('Test Summary Check Service Test', () => {
         TestSummaryChecksService,
         {
           provide: TestSummaryRelationshipsRepository,
-          useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(null),
-          }),
+          useFactory: mockTestSummaryRelationshipRepository,
         },
         {
           provide: TestSummaryWorkspaceRepository,
@@ -101,7 +105,10 @@ describe('Test Summary Check Service Test', () => {
     }).compile();
 
     qaMonitorPlanWSRepo = module.get(QAMonitorPlanWorkspaceRepository);
-    qArepository = module.get(QASuppDataWorkspaceRepository);
+    testSummaryRelationshipRepository = module.get(
+      TestSummaryRelationshipsRepository,
+    );
+    qaRepository = module.get(QASuppDataWorkspaceRepository);
 
     service = module.get(TestSummaryChecksService);
     repository = module.get(TestSummaryWorkspaceRepository);
@@ -118,6 +125,7 @@ describe('Test Summary Check Service Test', () => {
     payload.endMinute = 2;
     payload.beginDate = new Date('2020-01-01');
     payload.endDate = new Date('2020-01-01');
+    payload.injectionProtocolCode = null;
 
     it('Should pass all checks', async () => {
       jest
@@ -211,7 +219,7 @@ describe('Test Summary Check Service Test', () => {
         .mockResolvedValue(null);
 
       jest
-        .spyOn(qArepository, 'getQASuppDataByLocationId')
+        .spyOn(qaRepository, 'getQASuppDataByLocationId')
         .mockResolvedValue(returnedQASupp);
       try {
         await service.runChecks(locationId, payload, [payload, payload]);
@@ -364,6 +372,74 @@ describe('Test Summary Check Service Test', () => {
       } catch (err) {
         expect(err.response.message).toEqual([
           `An extraneous value has been reported for [EndDate, EndHour, EndMinute] in the Test Summary record for Location [${locationId}], TestTypeCode [${importPayload.testTypeCode}] and Test Number [${importPayload.testNumber}]. This value was not imported.`,
+        ]);
+      }
+    });
+
+    it('Should get error for LINEAR-10 Linearity Test Result Code Valid and LINEAR-29 Determine Linearity Check Results with valid testResultCode', async () => {
+      payload.testResultCode = 'INC';
+
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+
+      try {
+        await service.runChecks(locationId, payload, [payload], true);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `You reported the value [${payload.testResultCode}], which is not in the list of valid values for this test type, in the field [testResultCode] for [Test Summary].`,
+        ]);
+      }
+    });
+
+    it('Should get error for LINEAR-10 Linearity Test Result Code Valid and LINEAR-29 Determine Linearity Check Results with invalid testResultCode', async () => {
+      payload.testResultCode = 'INC';
+
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+      jest
+        .spyOn(testSummaryRelationshipRepository, 'findOne')
+        .mockResolvedValue(null);
+
+      try {
+        await service.runChecks(locationId, payload, [payload], true);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `You reported the value [${payload.testResultCode}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`,
+        ]);
+      }
+    });
+
+    it('Should get error for LINEAR-4 check Result A', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(new TestSummary());
+
+      try {
+        await service.runChecks(locationId, payload, [payload], true);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `Based on the information in this record, this test has already been submitted with a different test number, or the Client Tool database already contains the same test with a different test number. This test cannot be submitted.`,
+        ]);
+      }
+    });
+
+    it('Should get error for LINEAR-4 check Result A', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(
+          qaRepository,
+          'getQASuppDataByTestTypeCodeComponentIdEndDateEndTime',
+        )
+        .mockResolvedValue(new QASuppData());
+
+      try {
+        await service.runChecks(locationId, payload, [payload], true);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `Based on the information in this record, this test has already been submitted with a different test number, or the Client Tool database already contains the same test with a different test number. This test cannot be submitted.`,
         ]);
       }
     });
