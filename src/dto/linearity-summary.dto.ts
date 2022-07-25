@@ -8,7 +8,6 @@ import {
   LinearityInjectionDTO,
 } from './linearity-injection.dto';
 import { GasLevelCode } from '../entities/workspace/gas-level-code.entity';
-GasLevelCodes;
 
 const KEY = 'Linearity Summary';
 
