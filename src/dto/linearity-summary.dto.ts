@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
-import { GasLevelCodes } from '../enums/gas-level-code.enum';
 import { IsNotNegative } from '../pipes/is-not-negative.pipe';
 import {
   LinearityInjectionImportDTO,
@@ -10,12 +9,6 @@ import {
 import { GasLevelCode } from '../entities/workspace/gas-level-code.entity';
 
 const KEY = 'Linearity Summary';
-
-const VALID_CODES_FOR_GAS_LEVEL_CODE_VALIDATION = [
-  GasLevelCodes.HIGH,
-  GasLevelCodes.MID,
-  GasLevelCodes.LOW,
-];
 
 export class LinearitySummaryBaseDTO {
   @ApiProperty({
@@ -28,12 +21,9 @@ export class LinearitySummaryBaseDTO {
   })
   @IsValidCode(GasLevelCode, {
     message: (args: ValidationArguments) => {
-      return `You reported a [${args.property}], that is not in the list of valid values.`;
+      return `You reported an invalid gas level code of [${args.value}].`;
     },
   })
-  @ValidateIf(o =>
-    VALID_CODES_FOR_GAS_LEVEL_CODE_VALIDATION.includes(o.gasLevelCode),
-  )
   gasLevelCode: string;
 
   @ApiProperty({

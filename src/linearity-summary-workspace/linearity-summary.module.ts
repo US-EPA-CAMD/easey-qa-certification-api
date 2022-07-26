@@ -8,10 +8,14 @@ import { LinearitySummaryWorkspaceRepository } from './linearity-summary.reposit
 import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
+import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([LinearitySummaryWorkspaceRepository]),
+    TypeOrmModule.forFeature([
+      LinearitySummaryWorkspaceRepository,
+      TestSummaryMasterDataRelationshipRepository,
+    ]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),
   ],
