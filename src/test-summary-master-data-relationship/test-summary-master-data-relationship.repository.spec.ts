@@ -1,13 +1,14 @@
 import { Test } from '@nestjs/testing';
-import { TestSummaryRelationshipsDTO } from '../dto/test-summary-relationships.dto';
-import { TestSummaryRelationships } from '../entities/workspace/vw_test_summary_master_data_relationships.entity';
 import { SelectQueryBuilder } from 'typeorm';
-import { TestSummaryRelationshipsRepository } from './test-summary-relationships.repository';
+import { TestSummaryMasterDataRelationshipRepository } from './test-summary-master-data-relationship.repository';
+import { TestSummaryMasterDataRelationship } from '../entities/workspace/vw-test-summary-md-relationships.entity';
 
 const mockQueryBuilder = () => ({
   select: jest.fn(),
   getMany: jest.fn(),
 });
+
+const returnTestSummary = new TestSummaryMasterDataRelationship();
 
 describe('TestSummaryRelationshipsRepository', () => {
   let repository;
@@ -16,7 +17,7 @@ describe('TestSummaryRelationshipsRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
-        TestSummaryRelationshipsRepository,
+        TestSummaryMasterDataRelationshipRepository,
         {
           provide: SelectQueryBuilder,
           useFactory: mockQueryBuilder,
@@ -24,18 +25,18 @@ describe('TestSummaryRelationshipsRepository', () => {
       ],
     }).compile();
 
-    repository = module.get<TestSummaryRelationshipsRepository>(
-      TestSummaryRelationshipsRepository,
+    repository = module.get<TestSummaryMasterDataRelationshipRepository>(
+      TestSummaryMasterDataRelationshipRepository,
     );
 
-    queryBuilder = module.get<SelectQueryBuilder<TestSummaryRelationships>>(
-      SelectQueryBuilder,
-    );
+    queryBuilder = module.get<
+      SelectQueryBuilder<TestSummaryMasterDataRelationship>
+    >(SelectQueryBuilder);
 
     repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
 
     queryBuilder.select.mockReturnValue(queryBuilder);
-    queryBuilder.getMany.mockReturnValue(TestSummaryRelationshipsDTO);
+    queryBuilder.getMany.mockReturnValue([returnTestSummary]);
   });
 
   it('should be defined', () => {

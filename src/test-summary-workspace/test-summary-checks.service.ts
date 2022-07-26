@@ -16,8 +16,7 @@ import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/q
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
-import { TestSummaryRelationshipsRepository } from './test-summary-relationships.repository';
-import { VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE } from '../utilities/constants';
+import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 
 @Injectable()
 export class TestSummaryChecksService {
@@ -33,7 +32,7 @@ export class TestSummaryChecksService {
     private readonly componentRepository: ComponentWorkspaceRepository,
     @InjectRepository(AnalyzerRangeWorkspaceRepository)
     private readonly analyzerRangeRepository: AnalyzerRangeWorkspaceRepository,
-    private readonly testSummaryRelationshipsRepository: TestSummaryRelationshipsRepository,
+    private readonly testSummaryRelationshipsRepository: TestSummaryMasterDataRelationshipRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -823,14 +822,20 @@ export class TestSummaryChecksService {
   ): Promise<string> {
     let error: string = null;
 
+    const testSummaryMDRelationships = await this.testSummaryRelationshipsRepository.getTestTypeCodesRelationships(
+      TestTypeCodes.LINE,
+      'testResultCode',
+    );
+
+    const testResultCodes = testSummaryMDRelationships.map(
+      s => s.testResultCode,
+    );
+
     if (
-      !['ABORTED', 'PASSED', 'PASSAPS', 'FAILED'].includes(
-        summary.testResultCode,
-      ) &&
-      VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE.includes(summary.testTypeCode)
+      !testResultCodes.includes(summary.testResultCode) &&
+      [TestTypeCodes.LINE.toString()].includes(summary.testTypeCode)
     ) {
       const option = await this.testSummaryRelationshipsRepository.findOne({
-        testTypeCode: summary.testTypeCode,
         testResultCode: summary.testResultCode,
       });
 

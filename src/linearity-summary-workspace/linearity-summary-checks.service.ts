@@ -10,6 +10,7 @@ import { LinearitySummary } from '../entities/linearity-summary.entity';
 
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
+import { TestTypeCodes } from 'src/enums/test-type-code.enum';
 
 @Injectable()
 export class LinearitySummaryChecksService {
@@ -60,10 +61,10 @@ export class LinearitySummaryChecksService {
     linearitySummary: LinearitySummaryBaseDTO | LinearitySummaryImportDTO,
   ) {
     let error: string = null;
-    const typeCode = 'LINE';
 
-    const testSummaryMDRelationships = await this.testSummaryMDRepository.getGasLevelCodesByTestTypeCode(
-      typeCode,
+    const testSummaryMDRelationships = await this.testSummaryMDRepository.getTestTypeCodesRelationships(
+      TestTypeCodes.LINE,
+      'gasLevelCode',
     );
 
     const gasLevelCodes = testSummaryMDRelationships.map(
