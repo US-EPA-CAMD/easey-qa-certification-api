@@ -94,7 +94,7 @@ export class LinearitySummaryWorkspaceController {
     //    @CurrentUser() userId: string,
   ): Promise<LinearitySummaryRecordDTO> {
     const userId = 'testUser';
-    await this.checksService.runChecks(testSumId, payload);
+    // await this.checksService.runChecks(testSumId, payload);
     return this.service.updateSummary(testSumId, id, payload, userId);
   }
 
