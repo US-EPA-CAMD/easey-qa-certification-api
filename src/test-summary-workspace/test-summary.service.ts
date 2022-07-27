@@ -59,7 +59,7 @@ export class TestSummaryWorkspaceService {
 
   async getTestSummariesByLocationId(
     locationId: string,
-    testTypeCode?: string,
+    testTypeCode?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
@@ -78,7 +78,7 @@ export class TestSummaryWorkspaceService {
     unitIds?: string[],
     stackPipeIds?: string[],
     testSummaryIds?: string[],
-    testTypeCode?: string,
+    testTypeCode?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
@@ -100,7 +100,7 @@ export class TestSummaryWorkspaceService {
     unitIds?: string[],
     stackPipeIds?: string[],
     testSummaryIds?: string[],
-    testTypeCode?: string,
+    testTypeCode?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
@@ -145,7 +145,7 @@ export class TestSummaryWorkspaceService {
 
     const summary = await this.repository.getTestSummaryByLocationId(
       locationId,
-      payload.testTypeCode,
+      [payload.testTypeCode],
       payload.testNumber,
     );
 

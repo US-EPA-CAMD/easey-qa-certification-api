@@ -25,7 +25,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
 
   async getTestSummaryByLocationId(
     locationId: string,
-    testTypeCode?: string,
+    testTypeCode?: string[],
     testNumber?: string,
   ): Promise<TestSummary> {
     let query = this.buildBaseQuery().where('ts.locationId = :locationId', {
@@ -44,7 +44,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
 
   async getTestSummariesByLocationId(
     locationId: string,
-    testTypeCode?: string,
+    testTypeCode?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummary[]> {
@@ -69,7 +69,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
     unitIds?: string[],
     stackPipeIds?: string[],
     testSummaryIds?: string[],
-    testTypeCode?: string,
+    testTypeCode?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummary[]> {
