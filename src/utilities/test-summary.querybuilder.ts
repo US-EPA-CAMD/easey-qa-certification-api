@@ -19,10 +19,10 @@ export const addJoins = (
 
 export const addTestTypeWhere = (
   query: SelectQueryBuilder<TestSummary | WorkspaceTestSummary>,
-  testTypeCode: string,
+  testTypeCodes: string[],
 ): SelectQueryBuilder<TestSummary | WorkspaceTestSummary> => {
-  if (testTypeCode) {
-    query.andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode });
+  if (testTypeCodes) {
+    query.andWhere('ts.testTypeCode IN (:...testTypeCodes)', { testTypeCodes });
   }
 
   return query;

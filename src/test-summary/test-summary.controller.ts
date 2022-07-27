@@ -1,6 +1,6 @@
 import { Get, Query, Controller, Param } from '@nestjs/common';
 
-import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery } from '@nestjs/swagger';
 
 import { TestSummaryRecordDTO } from '../dto/test-summary.dto';
 import { TestSummaryParamsDTO } from '../dto/test-summary-params.dto';
@@ -18,13 +18,19 @@ export class TestSummaryController {
     type: TestSummaryRecordDTO,
     description: 'Retrieves official Test Summary records per filter criteria',
   })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'testTypeCodes',
+    required: false,
+    explode: false,
+  })
   async getTestSummaries(
     @Param('locId') locationId: string,
     @Query() params: TestSummaryParamsDTO,
   ): Promise<TestSummaryRecordDTO[]> {
     return this.service.getTestSummariesByLocationId(
       locationId,
-      params.testTypeCode,
+      params.testTypeCodes,
       params.beginDate,
       params.endDate,
     );

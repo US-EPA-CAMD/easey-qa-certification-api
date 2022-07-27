@@ -1,26 +1,37 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { In } from 'typeorm';
+import { Transform } from 'class-transformer';
+import { ValidationArguments } from 'class-validator';
 
 import { IsValidDate, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
-import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
-import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestTypeCode } from './../entities/test-type-code.entity';
+import { IsValidCodes } from '../pipes/is-valid-codes.pipe';
+import { FindOneOptions } from 'typeorm';
 
 const MIN_DATE = '1993-01-01';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class TestSummaryParamsDTO {
   @ApiProperty({
-    enum: TestTypeCodes,
+    isArray: true,
     description: propertyMetadata.testTypeCode.description,
   })
-  @IsValidCode(TestTypeCode, {
-    message: 'Invalid Test Type Code',
-  })
-  testTypeCode?: string;
+  @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
+  @IsValidCodes(
+    TestTypeCode,
+    (args: ValidationArguments): FindOneOptions<TestTypeCode> => {
+      return { where: { testTypeCode: In(args.value) } };
+    },
+    {
+      message: (args: ValidationArguments) => {
+        return `The database does not contain any Test Type Code with ${args.value}`;
+      },
+    },
+  )
+  testTypeCodes?: string[];
 
   @ApiProperty({
     description: propertyMetadata.beginDate.description,

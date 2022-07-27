@@ -32,7 +32,7 @@ export class TestSummaryService {
 
   async getTestSummariesByLocationId(
     locationId: string,
-    testTypeCode?: string,
+    testTypeCode?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
@@ -51,7 +51,7 @@ export class TestSummaryService {
     unitIds?: string[],
     stackPipeIds?: string[],
     testSummaryIds?: string[],
-    testTypeCode?: string,
+    testTypeCode?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
@@ -73,7 +73,7 @@ export class TestSummaryService {
     unitIds?: string[],
     stackPipeIds?: string[],
     testSummaryIds?: string[],
-    testTypeCode?: string,
+    testTypeCode?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
