@@ -423,7 +423,7 @@ export class TestSummaryChecksService {
     });
 
     // IMPORT-20 Duplicate Test Check
-    if (duplicates.length > 1) {
+    if (isImport && duplicates.length > 1) {
       error = `You have reported multiple Test Summary records for Unit/Stack [${
         summary.unitId ? summary.unitId : summary.stackPipeId
       }], Test Type Code [${summary.testTypeCode}], and Test Number [${
@@ -475,7 +475,7 @@ export class TestSummaryChecksService {
         summary.unitId ? summary.unitId : summary.stackPipeId
       }], Test Type Code [${summary.testTypeCode}], and Test Number [${
         summary.testNumber
-      }]. However, the values reported for [${fields}] are different between the two tests.`;
+      }]. However, the values reported for [${fields}] are different between the two tests. This Test was not imported.`;
     }
 
     return error;
@@ -694,7 +694,7 @@ export class TestSummaryChecksService {
       (duplicate.system &&
         duplicate.system.monitoringSystemID !== summary.monitoringSystemID)
     ) {
-      fields.push('Monitoring System Id');
+      fields.push('monitoringSystemID');
     }
 
     if (
@@ -702,19 +702,19 @@ export class TestSummaryChecksService {
       (duplicate.component &&
         duplicate.component.componentID !== summary.componentID)
     ) {
-      fields.push('Component Id');
+      fields.push('componentID');
     }
 
     if (duplicate.spanScaleCode !== summary.spanScaleCode) {
-      fields.push('Span Scale Code');
+      fields.push('spanScaleCode');
     }
 
     if (duplicate.endDate !== summary.endDate) {
-      fields.push('End Date');
+      fields.push('endDate');
     }
 
     if (duplicate.endHour !== summary.endHour) {
-      fields.push('End Hour');
+      fields.push('endHour');
     }
 
     if (
@@ -722,23 +722,22 @@ export class TestSummaryChecksService {
       (duplicate.reportingPeriod &&
         duplicate.reportingPeriod.year !== summary.year)
     ) {
-      fields.push('Year');
+      fields.push('year');
     }
     if (
       (duplicate.reportingPeriod === null && summary.quarter) ||
       (duplicate.reportingPeriod &&
         duplicate.reportingPeriod.quarter !== summary.quarter)
     ) {
-      fields.push('Quarter');
+      fields.push('quarter');
     }
 
     if (fields.length === 0) {
       if (
-        summary.endMinute &&
-        duplicate.endMinute &&
-        duplicate.endMinute !== summary.endMinute
+        (duplicate.endMinute === null && summary.endMinute) ||
+        (duplicate.endMinute && duplicate.endMinute !== summary.endMinute)
       ) {
-        fields.push('End Minute');
+        fields.push('endMinute');
       }
     }
 

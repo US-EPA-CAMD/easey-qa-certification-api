@@ -9,7 +9,9 @@ describe('TestSummaryMasterDataRelationshipService', () => {
       providers: [TestSummaryMasterDataRelationshipService],
     }).compile();
 
-    service = module.get<TestSummaryMasterDataRelationshipService>(TestSummaryMasterDataRelationshipService);
+    service = module.get<TestSummaryMasterDataRelationshipService>(
+      TestSummaryMasterDataRelationshipService,
+    );
   });
 
   it('should be defined', () => {
