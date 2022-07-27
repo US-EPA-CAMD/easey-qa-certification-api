@@ -816,7 +816,6 @@ export class TestSummaryChecksService {
   }
 
   // LINEAR-10 Linearity Test Result Code Valid (Result A & Result B)
-  // LINEAR-29 Determine Linearity Check Results (Result A & Result B)
   private async linear10Check(
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
   ): Promise<string> {
@@ -839,10 +838,10 @@ export class TestSummaryChecksService {
         testResultCode: summary.testResultCode,
       });
 
-      if (!option) {
-        error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`;
+      if (option) {
+        error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type [${summary.testTypeCode}], in the field [testResultCode] for [Test Summary].`;
       } else {
-        error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type, in the field [testResultCode] for [Test Summary].`;
+        error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`;
       }
     }
     return error;

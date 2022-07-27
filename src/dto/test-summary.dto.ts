@@ -225,15 +225,7 @@ export class TestSummaryBaseDTO {
   })
   @IsValidCode(TestResultCode, {
     message: (args: ValidationArguments) => {
-      return `You reported an invalid Test Result Code of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
+      return `You reported the value [${args.value}], which is not in the list of valid values for this test type, in the field [testResultCode] for [Test Summary].`;
     },
   })
   @ValidateIf(o =>

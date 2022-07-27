@@ -4,7 +4,9 @@ import { TestSummaryMasterDataRelationshipRepository } from './test-summary-mast
 import { TestSummaryMasterDataRelationship } from '../entities/workspace/vw-test-summary-md-relationships.entity';
 
 const mockQueryBuilder = () => ({
+  distinct: jest.fn(),
   select: jest.fn(),
+  where: jest.fn(),
   getMany: jest.fn(),
 });
 
@@ -35,11 +37,15 @@ describe('TestSummaryRelationshipsRepository', () => {
 
     repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
 
+    queryBuilder.distinct.mockReturnValue(queryBuilder);
     queryBuilder.select.mockReturnValue(queryBuilder);
+    queryBuilder.where.mockReturnValue(queryBuilder);
     queryBuilder.getMany.mockReturnValue([returnTestSummary]);
   });
 
-  it('should be defined', () => {
-    expect(repository).toBeDefined();
+  it('should return list of test type code', async () => {
+    expect(
+      await repository.getTestTypeCodesRelationships('LINE', 'testResultCode'),
+    ).toEqual([returnTestSummary]);
   });
 });

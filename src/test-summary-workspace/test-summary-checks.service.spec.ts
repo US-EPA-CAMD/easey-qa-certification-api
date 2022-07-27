@@ -17,8 +17,8 @@ import { LinearitySummaryImportDTO } from '../dto/linearity-summary.dto';
 import { Component } from '../entities/workspace/component.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
-import { TestSummaryRelationshipsRepository } from './test-summary-relationships.repository';
 import { TestSummaryRelationships } from '../entities/workspace/vw_test_summary_master_data_relationships.entity';
+import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 
 const locationId = '1';
 
@@ -26,6 +26,9 @@ const component = new Component();
 
 const mockTestSummaryRelationshipRepository = () => ({
   findOne: jest.fn().mockResolvedValue(new TestSummaryRelationships()),
+  getTestTypeCodesRelationships: jest
+    .fn()
+    .mockResolvedValue([{ testResultCode: 'PASSED' }]),
 });
 
 const mockComponentWorkspaceRepository = () => ({
@@ -52,7 +55,7 @@ describe('Test Summary Check Service Test', () => {
   let service: TestSummaryChecksService;
   let repository: TestSummaryWorkspaceRepository;
   let qaRepository: QASuppDataWorkspaceRepository;
-  let testSummaryRelationshipRepository: TestSummaryRelationshipsRepository;
+  let testSummaryRelationshipRepository: TestSummaryMasterDataRelationshipRepository;
   let qaMonitorPlanWSRepo: any;
 
   const summaryBase: TestSummaryBaseDTO = new TestSummaryBaseDTO();
@@ -78,7 +81,7 @@ describe('Test Summary Check Service Test', () => {
       providers: [
         TestSummaryChecksService,
         {
-          provide: TestSummaryRelationshipsRepository,
+          provide: TestSummaryMasterDataRelationshipRepository,
           useFactory: mockTestSummaryRelationshipRepository,
         },
         {
@@ -106,7 +109,7 @@ describe('Test Summary Check Service Test', () => {
 
     qaMonitorPlanWSRepo = module.get(QAMonitorPlanWorkspaceRepository);
     testSummaryRelationshipRepository = module.get(
-      TestSummaryRelationshipsRepository,
+      TestSummaryMasterDataRelationshipRepository,
     );
     qaRepository = module.get(QASuppDataWorkspaceRepository);
 
