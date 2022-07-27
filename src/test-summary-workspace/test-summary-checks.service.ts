@@ -56,11 +56,15 @@ export class TestSummaryChecksService {
       if (error) {
         errorList.push(error);
       }
-    }
 
-    if (isImport) {
       // IMPORT-17 Extraneous Test Summary Data Check
       error = this.import17Check(locationId, summary);
+      if (error) {
+        errorList.push(error);
+      }
+
+      // IMPORT-33 Inappropriate Test Type For Location
+      error = this.import33Check(summary as TestSummaryImportDTO);
       if (error) {
         errorList.push(error);
       }
@@ -598,7 +602,7 @@ export class TestSummaryChecksService {
         componentID: summary.componentID,
         locationId: locationId,
       });
-      if (component?.componentTypeCode !== 'FLOW') {
+      if (component && component.componentTypeCode !== 'FLOW') {
         if (summary.spanScaleCode === null) {
           return `You did not provide [spanScaleCode], which is required for [Test Summary].`;
         }
@@ -615,7 +619,6 @@ export class TestSummaryChecksService {
           if (summary.spanScaleCode === 'L') {
             analyzerRangeCode = 'H';
           }
-
           const analyerRanges = await this.analyzerRangeRepository.getAnalyzerRangeByComponentIdAndDate(
             component.id,
             summary,
@@ -801,6 +804,99 @@ export class TestSummaryChecksService {
             }
           }
         } */
+      }
+    }
+
+    return error;
+  }
+
+  // IMPORT-33 Inappropriate Test Type For Location
+  private import33Check(
+    summary: TestSummaryBaseDTO | TestSummaryImportDTO,
+  ): string {
+    let error: string = null;
+    const resultA = `You have reported a [${
+      summary.testTypeCode
+    }] test that is inappropriate  for Unit/Stack [${
+      summary.unitId ? summary.unitId : summary.stackPipeId
+    }].The test was not imported.`;
+
+    const INVALID_TEST_TYPE_CODES_FOR_CS_AND_MS = [
+      TestTypeCodes.FFACC.toString(),
+      TestTypeCodes.FFACCTT.toString(),
+      TestTypeCodes.FF2LTST.toString(),
+      TestTypeCodes.FF2LBAS.toString(),
+      TestTypeCodes.APPE.toString(),
+      TestTypeCodes.UNITDEF.toString(),
+      TestTypeCodes.PEI.toString(),
+      TestTypeCodes.PEMSACC.toString(),
+    ];
+
+    const INVALID_TEST_TYPE_CODES_FOR_CP = [
+      TestTypeCodes.RATA.toString(),
+      TestTypeCodes.LINE.toString(),
+      TestTypeCodes.SEVENDAY.toString(),
+      TestTypeCodes.ONOFF.toString(),
+      TestTypeCodes.CYCLE.toString(),
+      TestTypeCodes.LEAK.toString(),
+      TestTypeCodes.APPE.toString(),
+      TestTypeCodes.UNITDEF.toString(),
+      TestTypeCodes.PEMSACC.toString(),
+      TestTypeCodes.HGLINE.toString(),
+      TestTypeCodes.HGSI3.toString(),
+    ];
+
+    const INVALID_TEST_TYPE_CODES_FOR_MP = [
+      TestTypeCodes.RATA.toString(),
+      TestTypeCodes.LINE.toString(),
+      TestTypeCodes.SEVENDAY.toString(),
+      TestTypeCodes.ONOFF.toString(),
+      TestTypeCodes.CYCLE.toString(),
+      TestTypeCodes.LEAK.toString(),
+      TestTypeCodes.UNITDEF.toString(),
+      TestTypeCodes.PEMSACC.toString(),
+      TestTypeCodes.HGLINE.toString(),
+      TestTypeCodes.HGSI3.toString(),
+    ];
+
+    if (
+      (summary.unitId !== null &&
+        summary.unitId.length >= 2 &&
+        ['CS', 'MS'].includes(summary.unitId.substring(0, 2))) ||
+      (summary.stackPipeId !== null &&
+        summary.stackPipeId.length >= 2 &&
+        ['CS', 'MS'].includes(summary.stackPipeId.substring(0, 2)))
+    ) {
+      if (
+        INVALID_TEST_TYPE_CODES_FOR_CS_AND_MS.includes(summary.testTypeCode)
+      ) {
+        error = resultA;
+      }
+    }
+
+    if (
+      (summary.unitId !== null &&
+        summary.unitId.length >= 2 &&
+        ['CP'].includes(summary.unitId.substring(0, 2))) ||
+      (summary.stackPipeId !== null &&
+        summary.stackPipeId.length >= 2 &&
+        ['CP'].includes(summary.stackPipeId.substring(0, 2)))
+    ) {
+      if (INVALID_TEST_TYPE_CODES_FOR_CP.includes(summary.testTypeCode)) {
+        error = resultA;
+      }
+    }
+
+    if (
+      (summary.unitId !== null &&
+        summary.unitId.length >= 2 &&
+        ['MP'].includes(summary.unitId.substring(0, 2))) ||
+      (summary.stackPipeId !== null &&
+        summary.stackPipeId.length >= 2 &&
+        ['MP'].includes(summary.stackPipeId.substring(0, 2)))
+    ) {
+      if (INVALID_TEST_TYPE_CODES_FOR_MP.includes(summary.testTypeCode)) {
+        error = resultA;
       }
     }
 
