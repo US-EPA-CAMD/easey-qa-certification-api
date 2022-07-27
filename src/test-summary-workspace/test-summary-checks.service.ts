@@ -840,8 +840,6 @@ export class TestSummaryChecksService {
 
       if (option) {
         error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type [${summary.testTypeCode}], in the field [testResultCode] for [Test Summary].`;
-      } else {
-        error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`;
       }
     }
     return error;
