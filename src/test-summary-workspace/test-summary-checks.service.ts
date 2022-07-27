@@ -433,7 +433,7 @@ export class TestSummaryChecksService {
 
     duplicate = await this.repository.getTestSummaryByLocationId(
       locationId,
-      summary.testTypeCode,
+      [summary.testTypeCode],
       summary.testNumber,
     );
 
