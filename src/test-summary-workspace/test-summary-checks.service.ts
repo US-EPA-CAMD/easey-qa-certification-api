@@ -838,7 +838,7 @@ export class TestSummaryChecksService {
       !testResultCodes.includes(summary.testResultCode) &&
       [TestTypeCodes.LINE.toString()].includes(summary.testTypeCode)
     ) {
-      const option = await getEntityManager().findOne(TestResultCode, {
+      const option = getEntityManager().findOne(TestResultCode, {
         testResultCode: summary.testResultCode,
       });
 
