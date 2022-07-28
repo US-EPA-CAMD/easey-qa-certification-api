@@ -63,8 +63,9 @@ export class QACertificationChecksService {
           const results = this.testSummaryChecksService.runChecks(
             locationId,
             summary,
-            payload.testSummaryData,
             true,
+            false,
+            payload.testSummaryData,
           );
 
           resolve(results);

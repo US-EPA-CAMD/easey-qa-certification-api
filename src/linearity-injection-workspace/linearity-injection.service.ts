@@ -6,6 +6,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -118,6 +119,17 @@ export class LinearityInjectionWorkspaceService {
   ): Promise<LinearityInjectionRecordDTO> {
     const timestamp = currentDateTime();
     const entity = await this.repository.findOne(id);
+
+    if (!entity) {
+      this.logger.error(
+        NotFoundException,
+        'Linearity Injection not found.',
+        true,
+        {
+          id: id,
+        },
+      );
+    }
 
     entity.injectionDate = payload.injectionDate;
     entity.injectionHour = payload.injectionHour;

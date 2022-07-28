@@ -46,8 +46,9 @@ export class TestSummaryChecksService {
   async runChecks(
     locationId: string,
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
-    summaries?: TestSummaryImportDTO[],
     isImport: boolean = false,
+    isUpdate: boolean = false,
+    summaries?: TestSummaryImportDTO[],
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
@@ -112,14 +113,16 @@ export class TestSummaryChecksService {
       errorList.push(error);
     }
 
-    error = await this.duplicateTestCheck(
-      locationId,
-      summary,
-      summaries,
-      isImport,
-    );
-    if (error) {
-      errorList.push(error);
+    if (!isUpdate) {
+      error = await this.duplicateTestCheck(
+        locationId,
+        summary,
+        summaries,
+        isImport,
+      );
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     this.throwIfErrors(errorList, isImport);
@@ -835,7 +838,7 @@ export class TestSummaryChecksService {
       !testResultCodes.includes(summary.testResultCode) &&
       [TestTypeCodes.LINE.toString()].includes(summary.testTypeCode)
     ) {
-      const option = await getEntityManager().findOne(TestResultCode, {
+      const option = getEntityManager().findOne(TestResultCode, {
         testResultCode: summary.testResultCode,
       });
 

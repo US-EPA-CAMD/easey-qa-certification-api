@@ -273,6 +273,13 @@ export class TestSummaryWorkspaceService {
   ): Promise<TestSummaryRecordDTO> {
     const timestamp = currentDateTime();
     const entity = await this.repository.getTestSummaryById(id);
+
+    if (!entity) {
+      this.logger.error(NotFoundException, 'Test summary not found.', true, {
+        testSumId: id,
+      });
+    }
+
     const [
       reportPeriodId,
       componentRecordId,

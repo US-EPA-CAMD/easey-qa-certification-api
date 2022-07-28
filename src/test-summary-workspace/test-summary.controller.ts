@@ -106,7 +106,7 @@ export class TestSummaryWorkspaceController {
     //    @CurrentUser() userId: string,
   ): Promise<TestSummaryRecordDTO> {
     const userId = 'testUser';
-    // await this.checksService.runChecks(locationId, payload);
+    await this.checksService.runChecks(locationId, payload, false, true);
     return this.service.updateTestSummary(locationId, id, payload, userId);
   }
 
