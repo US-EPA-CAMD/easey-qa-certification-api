@@ -17,6 +17,8 @@ import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
+import { TestResultCode } from 'src/entities/test-result-code.entity';
+import { getEntityManager } from 'src/utilities/utils';
 
 @Injectable()
 export class TestSummaryChecksService {
@@ -829,12 +831,12 @@ export class TestSummaryChecksService {
     const testResultCodes = testSummaryMDRelationships.map(
       s => s.testResultCode,
     );
-
+    console.log(testResultCodes);
     if (
       !testResultCodes.includes(summary.testResultCode) &&
       [TestTypeCodes.LINE.toString()].includes(summary.testTypeCode)
     ) {
-      const option = await this.testSummaryRelationshipsRepository.findOne({
+      const option = await getEntityManager().findOne(TestResultCode, {
         testResultCode: summary.testResultCode,
       });
 
