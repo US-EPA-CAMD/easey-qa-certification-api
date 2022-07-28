@@ -5,12 +5,13 @@ import { TestSummaryMasterDataRelationship } from '../entities/workspace/vw-test
 export class TestSummaryMasterDataRelationshipRepository extends Repository<
   TestSummaryMasterDataRelationship
 > {
-  async getGasLevelCodesByTestTypeCode(
+  async getTestTypeCodesRelationships(
     testTypeCode: string,
+    distinctColumnName: string,
   ): Promise<TestSummaryMasterDataRelationship[]> {
     return this.createQueryBuilder('tsmdr')
       .distinct(true)
-      .select('tsmdr.gasLevelCode')
+      .select(`tsmdr.${distinctColumnName}`)
       .where('tsmdr.testTypeCode = :testTypeCode', { testTypeCode })
       .getMany();
   }

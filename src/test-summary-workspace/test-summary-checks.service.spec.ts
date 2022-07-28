@@ -17,10 +17,17 @@ import { LinearitySummaryImportDTO } from '../dto/linearity-summary.dto';
 import { Component } from '../entities/workspace/component.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
+import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 
 const locationId = '1';
 
 const component = new Component();
+
+const mockTestSummaryRelationshipRepository = () => ({
+  getTestTypeCodesRelationships: jest
+    .fn()
+    .mockResolvedValue([{ testResultCode: 'PASSED' }]),
+});
 
 const mockComponentWorkspaceRepository = () => ({
   findOne: jest.fn().mockResolvedValue(component),
@@ -45,7 +52,8 @@ const mockQARepository = () => ({
 describe('Test Summary Check Service Test', () => {
   let service: TestSummaryChecksService;
   let repository: TestSummaryWorkspaceRepository;
-  let qArepository: QASuppDataWorkspaceRepository;
+  let qaRepository: QASuppDataWorkspaceRepository;
+  let testSummaryRelationshipRepository: TestSummaryMasterDataRelationshipRepository;
   let qaMonitorPlanWSRepo: any;
 
   const summaryBase: TestSummaryBaseDTO = new TestSummaryBaseDTO();
@@ -57,6 +65,7 @@ describe('Test Summary Check Service Test', () => {
   summaryBase.beginDate = new Date('2020-01-01');
   summaryBase.endDate = new Date('2020-01-01');
   summaryBase.testTypeCode = TestTypeCodes.ONOFF.toString();
+  summaryBase.testResultCode = 'PASSED';
   summaryBase.testNumber = '';
 
   const mockQAMonitorPlanWorkspaceRepository = () => ({
@@ -69,6 +78,10 @@ describe('Test Summary Check Service Test', () => {
       imports: [LoggerModule],
       providers: [
         TestSummaryChecksService,
+        {
+          provide: TestSummaryMasterDataRelationshipRepository,
+          useFactory: mockTestSummaryRelationshipRepository,
+        },
         {
           provide: TestSummaryWorkspaceRepository,
           useFactory: mockRepository,
@@ -93,7 +106,10 @@ describe('Test Summary Check Service Test', () => {
     }).compile();
 
     qaMonitorPlanWSRepo = module.get(QAMonitorPlanWorkspaceRepository);
-    qArepository = module.get(QASuppDataWorkspaceRepository);
+    testSummaryRelationshipRepository = module.get(
+      TestSummaryMasterDataRelationshipRepository,
+    );
+    qaRepository = module.get(QASuppDataWorkspaceRepository);
 
     service = module.get(TestSummaryChecksService);
     repository = module.get(TestSummaryWorkspaceRepository);
@@ -102,6 +118,7 @@ describe('Test Summary Check Service Test', () => {
   describe('Test Summary Checks', () => {
     const payload = new TestSummaryImportDTO();
     payload.testTypeCode = TestTypeCodes.LINE;
+    payload.testResultCode = 'PASSED';
     payload.testNumber = '';
     payload.beginHour = 1;
     payload.beginMinute = 1;
@@ -109,6 +126,7 @@ describe('Test Summary Check Service Test', () => {
     payload.endMinute = 2;
     payload.beginDate = new Date('2020-01-01');
     payload.endDate = new Date('2020-01-01');
+    payload.injectionProtocolCode = null;
 
     it('Should pass all checks', async () => {
       jest
@@ -173,6 +191,7 @@ describe('Test Summary Check Service Test', () => {
       returnedTestSummary.component = null;
       returnedTestSummary.system = null;
       returnedTestSummary.testTypeCode = TestTypeCodes.LINE;
+      returnedTestSummary.testResultCode = 'PASSED';
       returnedTestSummary.testNumber = '';
       returnedTestSummary.beginHour = 1;
       returnedTestSummary.beginMinute = 1;
@@ -201,7 +220,7 @@ describe('Test Summary Check Service Test', () => {
         .mockResolvedValue(null);
 
       jest
-        .spyOn(qArepository, 'getQASuppDataByLocationId')
+        .spyOn(qaRepository, 'getQASuppDataByLocationId')
         .mockResolvedValue(returnedQASupp);
       try {
         await service.runChecks(locationId, payload, [payload, payload]);
@@ -256,6 +275,7 @@ describe('Test Summary Check Service Test', () => {
 
       const importPayload = new TestSummaryImportDTO();
       importPayload.testTypeCode = TestTypeCodes.FF2LTST;
+      payload.testResultCode = 'PASSED';
       importPayload.protocolGasData = [{}];
       importPayload.linearitySummaryData = [new LinearitySummaryImportDTO()];
 
@@ -356,6 +376,68 @@ describe('Test Summary Check Service Test', () => {
         ]);
       }
     });
+
+    it('Should get error for LINEAR-4 check Result A', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(new TestSummary());
+
+      try {
+        await service.runChecks(locationId, payload, [payload], true);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `Based on the information in this record, this test has already been submitted with a different test number, or the Client Tool database already contains the same test with a different test number. This test cannot be submitted.`,
+        ]);
+      }
+    });
+
+    it('Should get error for LINEAR-4 check Result A', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(
+          qaRepository,
+          'getQASuppDataByTestTypeCodeComponentIdEndDateEndTime',
+        )
+        .mockResolvedValue(new QASuppData());
+
+      try {
+        await service.runChecks(locationId, payload, [payload], true);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `Based on the information in this record, this test has already been submitted with a different test number, or the Client Tool database already contains the same test with a different test number. This test cannot be submitted.`,
+        ]);
+      }
+    });
+
+    it('Should get error for LINEAR-10 Linearity Test Result Code Valid and LINEAR-29 Determine Linearity Check Results with valid testResultCode', async () => {
+      payload.testResultCode = 'INC';
+
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+
+      try {
+        await service.runChecks(locationId, payload, [payload], true);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `You reported the value [${payload.testResultCode}], which is not in the list of valid values for this test type, in the field [testResultCode] for [Test Summary].`,
+        ]);
+      }
+    });
+
+    // it('Should get error for LINEAR-10 Linearity Test Result Code Valid and LINEAR-29 Determine Linearity Check Results with invalid testResultCode', async () => {
+    //   payload.testResultCode = 'INC';
+
+    //   jest
+    //     .spyOn(repository, 'getTestSummaryByLocationId')
+    //     .mockResolvedValue(null);
+
+    //   try {
+    //     await service.runChecks(locationId, payload, [payload], true);
+    //   } catch (err) {
+    //     expect(err.response.message).toEqual([
+    //       `You reported the value [${payload.testResultCode}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`,
+    //     ]);
+    //   }
+    // });
   });
 
   // TEST-7 Test Dates Consistent
