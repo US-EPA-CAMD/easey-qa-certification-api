@@ -4,8 +4,15 @@ import { LinearitySummary } from '../entities/workspace/linearity-summary.entity
 import { LinearitySummaryBaseDTO } from '../dto/linearity-summary.dto';
 import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
+import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 
 const testSumId = '1';
+
+const mockTestSummaryRelationshipRepository = () => ({
+  getTestTypeCodesRelationships: jest
+    .fn()
+    .mockResolvedValue([{ testResultCode: 'PASSED' }]),
+});
 
 describe('Linearity Summary Check Service Test', () => {
   let service: LinearitySummaryChecksService;
@@ -16,6 +23,10 @@ describe('Linearity Summary Check Service Test', () => {
       imports: [LoggerModule],
       providers: [
         LinearitySummaryChecksService,
+        {
+          provide: TestSummaryMasterDataRelationshipRepository,
+          useFactory: mockTestSummaryRelationshipRepository,
+        },
         {
           provide: LinearitySummaryWorkspaceRepository,
           useFactory: () => ({
@@ -53,6 +64,7 @@ describe('Linearity Summary Check Service Test', () => {
       } catch (err) {
         expect(err.response.message).toEqual([
           `Another Linearity Summary record already exists with the same gasLevelCode [${payload.gasLevelCode}].`,
+          'You reported a [gasLevelCode] that is not in the list of valid values.',
         ]);
       }
     });
