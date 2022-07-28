@@ -17,7 +17,6 @@ import { LinearitySummaryImportDTO } from '../dto/linearity-summary.dto';
 import { Component } from '../entities/workspace/component.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
-import { TestSummaryRelationships } from '../entities/workspace/vw_test_summary_master_data_relationships.entity';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 
 const locationId = '1';
@@ -25,7 +24,6 @@ const locationId = '1';
 const component = new Component();
 
 const mockTestSummaryRelationshipRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(new TestSummaryRelationships()),
   getTestTypeCodesRelationships: jest
     .fn()
     .mockResolvedValue([{ testResultCode: 'PASSED' }]),
@@ -379,44 +377,6 @@ describe('Test Summary Check Service Test', () => {
       }
     });
 
-    it('Should get error for LINEAR-10 Linearity Test Result Code Valid and LINEAR-29 Determine Linearity Check Results with valid testResultCode', async () => {
-      payload.testResultCode = 'INC';
-
-      jest
-        .spyOn(repository, 'getTestSummaryByLocationId')
-        .mockResolvedValue(null);
-      jest
-        .spyOn(repository, 'getTestSummaryByLocationId')
-        .mockResolvedValue(null);
-
-      try {
-        await service.runChecks(locationId, payload, [payload], true);
-      } catch (err) {
-        expect(err.response.message).toEqual([
-          `You reported the value [${payload.testResultCode}], which is not in the list of valid values for this test type, in the field [testResultCode] for [Test Summary].`,
-        ]);
-      }
-    });
-
-    it('Should get error for LINEAR-10 Linearity Test Result Code Valid and LINEAR-29 Determine Linearity Check Results with invalid testResultCode', async () => {
-      payload.testResultCode = 'INC';
-
-      jest
-        .spyOn(repository, 'getTestSummaryByLocationId')
-        .mockResolvedValue(null);
-      jest
-        .spyOn(testSummaryRelationshipRepository, 'findOne')
-        .mockResolvedValue(null);
-
-      try {
-        await service.runChecks(locationId, payload, [payload], true);
-      } catch (err) {
-        expect(err.response.message).toEqual([
-          `You reported the value [${payload.testResultCode}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`,
-        ]);
-      }
-    });
-
     it('Should get error for LINEAR-4 check Result A', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(new TestSummary());
 
@@ -446,6 +406,38 @@ describe('Test Summary Check Service Test', () => {
         ]);
       }
     });
+
+    it('Should get error for LINEAR-10 Linearity Test Result Code Valid and LINEAR-29 Determine Linearity Check Results with valid testResultCode', async () => {
+      payload.testResultCode = 'INC';
+
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+
+      try {
+        await service.runChecks(locationId, payload, [payload], true);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `You reported the value [${payload.testResultCode}], which is not in the list of valid values for this test type, in the field [testResultCode] for [Test Summary].`,
+        ]);
+      }
+    });
+
+    // it('Should get error for LINEAR-10 Linearity Test Result Code Valid and LINEAR-29 Determine Linearity Check Results with invalid testResultCode', async () => {
+    //   payload.testResultCode = 'INC';
+
+    //   jest
+    //     .spyOn(repository, 'getTestSummaryByLocationId')
+    //     .mockResolvedValue(null);
+
+    //   try {
+    //     await service.runChecks(locationId, payload, [payload], true);
+    //   } catch (err) {
+    //     expect(err.response.message).toEqual([
+    //       `You reported the value [${payload.testResultCode}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`,
+    //     ]);
+    //   }
+    // });
   });
 
   // TEST-7 Test Dates Consistent

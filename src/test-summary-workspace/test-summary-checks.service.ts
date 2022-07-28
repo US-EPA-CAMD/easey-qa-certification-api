@@ -17,8 +17,8 @@ import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
-import { TestResultCode } from 'src/entities/test-result-code.entity';
-import { getEntityManager } from 'src/utilities/utils';
+import { TestResultCode } from '../entities/test-result-code.entity';
+import { getEntityManager } from '../utilities/utils';
 
 @Injectable()
 export class TestSummaryChecksService {
@@ -817,7 +817,7 @@ export class TestSummaryChecksService {
     return error;
   }
 
-  // LINEAR-10 Linearity Test Result Code Valid (Result A & Result B)
+  // LINEAR-10 Linearity Test Result Code Valid (Result C)
   private async linear10Check(
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
   ): Promise<string> {
@@ -831,7 +831,6 @@ export class TestSummaryChecksService {
     const testResultCodes = testSummaryMDRelationships.map(
       s => s.testResultCode,
     );
-    console.log(testResultCodes);
     if (
       !testResultCodes.includes(summary.testResultCode) &&
       [TestTypeCodes.LINE.toString()].includes(summary.testTypeCode)
