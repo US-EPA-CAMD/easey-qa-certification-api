@@ -92,6 +92,8 @@ export class QACertificationChecksService {
                 locationId,
                 linearityInjection,
                 true,
+                false,
+                linearitySummary.linearityInjectionData,
               );
 
               resolve(results);

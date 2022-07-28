@@ -8,12 +8,10 @@ export class LinearityInjectionWorkspaceRepository extends Repository<
   async getInjectionsByLinSumId(
     linSumId: string,
   ): Promise<LinearityInjection[]> {
-    const query = this.createQueryBuilder('li').where(
-      'li.linSumId = :linSumId',
-      {
+    return this.createQueryBuilder('li')
+      .where('li.linSumId = :linSumId', {
         linSumId,
-      },
-    );
-    return query.getMany();
+      })
+      .getMany();
   }
 }
