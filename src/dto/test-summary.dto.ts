@@ -225,7 +225,7 @@ export class TestSummaryBaseDTO {
   })
   @IsValidCode(TestResultCode, {
     message: (args: ValidationArguments) => {
-      return `You reported the value [${args.value}], which is not in the list of valid values for this test type, in the field [testResultCode] for [Test Summary].`;
+      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`;
     },
   })
   @ValidateIf(o =>
