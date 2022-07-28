@@ -7,6 +7,7 @@ import { LinearitySummaryWorkspaceRepository } from '../linearity-summary-worksp
 import {
   LinearityInjectionBaseDTO,
   LinearityInjectionImportDTO,
+  LinearityInjectionRecordDTO,
 } from '../dto/linearity-injection.dto';
 import { LinearityInjection } from '../entities/workspace/linearity-injection.entity';
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
@@ -31,6 +32,7 @@ export class LinearityInjectionChecksService {
     linearityInjection: LinearityInjectionBaseDTO | LinearityInjectionImportDTO,
     isImport: boolean = false,
     isUpdate: boolean = false,
+    linearityInjections?: LinearityInjectionImportDTO[],
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
@@ -47,7 +49,7 @@ export class LinearityInjectionChecksService {
       }
     }
 
-    error = await this.linear34Check(linSumId);
+    error = await this.linear34Check(linSumId, linearityInjections, isImport);
     if (error) {
       errorList.push(error);
     }
@@ -81,13 +83,25 @@ export class LinearityInjectionChecksService {
   }
 
   // LINEAR-34 Too Many Gas Injections (Result A)
-  private async linear34Check(linSumId: string): Promise<string> {
+  private async linear34Check(
+    linSumId: string,
+    linearityInjections: LinearityInjectionImportDTO[],
+    isImport: boolean = false,
+  ): Promise<string> {
     let error: string = null;
-    const linSumRecord: LinearitySummary = await this.linearitySummaryRepository.getSummaryById(
-      linSumId,
-    );
+    let injections:
+      | LinearityInjectionRecordDTO[]
+      | LinearityInjectionImportDTO[] = [];
 
-    if (linSumRecord?.injections.length > 3) {
+    if (isImport) {
+      injections = linearityInjections;
+    } else {
+      const linSumRecord: LinearitySummary = await this.linearitySummaryRepository.getSummaryById(
+        linSumId,
+      );
+      injections = linSumRecord?.injections;
+    }
+    if (injections.length > 3) {
       // LINEAR-34 Too Many Gas Injections (Result A)
       error = `There were more than three gas injections for [Linearity Summary]. Only the last three injections at this level were retained for analysis. All other gas injections have been disregarded.`;
     }

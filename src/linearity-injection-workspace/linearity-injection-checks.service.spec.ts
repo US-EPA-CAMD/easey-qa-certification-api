@@ -1,19 +1,33 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { LinearityInjection } from '../entities/workspace/linearity-injection.entity';
-import { LinearityInjectionBaseDTO } from '../dto/linearity-injection.dto';
+import {
+  LinearityInjectionBaseDTO,
+  LinearityInjectionImportDTO,
+} from '../dto/linearity-injection.dto';
 import { LinearityInjectionChecksService } from './linearity-injection-checks.service';
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
+import { LinearitySummaryWorkspaceRepository } from '../linearity-summary-workspace/linearity-summary.repository';
+import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
 
 const linSumId = '1';
 
 const mockRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(new LinearityInjection()),
+  findOne: jest.fn().mockResolvedValue(null),
+});
+
+const linInj = new LinearityInjection();
+const linSum = new LinearitySummary();
+linSum.injections = [linInj];
+
+const mockLinearySummaryRepository = () => ({
+  getSummaryById: jest.fn().mockResolvedValue(linSum),
 });
 
 describe('Linearity Injection Check Service Test', () => {
   let service: LinearityInjectionChecksService;
   let repository: LinearityInjectionWorkspaceRepository;
+  let linearitySummaryRepository: LinearitySummaryWorkspaceRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -24,17 +38,23 @@ describe('Linearity Injection Check Service Test', () => {
           provide: LinearityInjectionWorkspaceRepository,
           useFactory: mockRepository,
         },
+        {
+          provide: LinearitySummaryWorkspaceRepository,
+          useFactory: mockLinearySummaryRepository,
+        },
       ],
     }).compile();
 
     service = module.get(LinearityInjectionChecksService);
     repository = module.get(LinearityInjectionWorkspaceRepository);
+    linearitySummaryRepository = module.get(
+      LinearitySummaryWorkspaceRepository,
+    );
   });
 
   describe('Linearity Injection Checks', () => {
     const payload = new LinearityInjectionBaseDTO();
     it('Should pass all checks', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
       const result = await service.runChecks(linSumId, payload);
       expect(result).toEqual([]);
     });
@@ -59,6 +79,48 @@ describe('Linearity Injection Check Service Test', () => {
       } catch (err) {
         expect(err.response.message).toEqual([
           `Another Linearity Injection record already exists with the same injectionDate [${payload.injectionDate}], injectionHour [${payload.injectionHour}], injectionMinute [${payload.injectionMinute}].`,
+        ]);
+      }
+    });
+  });
+
+  describe('LINEAR-34 Too Many Gas Injections (Result A)', () => {
+    const payload = new LinearityInjectionBaseDTO();
+    payload.injectionDate = new Date('2022-01-12');
+    payload.injectionHour = 1;
+    payload.injectionMinute = 1;
+
+    const linInjImportDto = new LinearityInjectionImportDTO();
+    const importpayload = [linInjImportDto, linInjImportDto, linInjImportDto];
+    linInjImportDto.injectionDate = new Date('2022-01-12');
+    linInjImportDto.injectionHour = 1;
+    linInjImportDto.injectionMinute = 1;
+    importpayload.push(linInjImportDto);
+
+    it('Should get There were more than three gas injections for [Linearity Summary] error while importing', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      try {
+        await service.runChecks(linSumId, payload, true, false, importpayload);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `There were more than three gas injections for [Linearity Summary]. Only the last three injections at this level were retained for analysis. All other gas injections have been disregarded.`,
+        ]);
+      }
+    });
+
+    it('Should get There were more than three gas injections for [Linearity Summary] error', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      linSum.injections = [linInj, linInj, linInj, linInj];
+      jest
+        .spyOn(linearitySummaryRepository, 'getSummaryById')
+        .mockResolvedValue(linSum);
+
+      try {
+        await service.runChecks(linSumId, payload);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `There were more than three gas injections for [Linearity Summary]. Only the last three injections at this level were retained for analysis. All other gas injections have been disregarded.`,
         ]);
       }
     });
