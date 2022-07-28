@@ -99,7 +99,7 @@ export class LinearityInjectionWorkspaceController {
     //    @CurrentUser() userId: string,
   ): Promise<LinearityInjectionRecordDTO> {
     const userId = 'testUser';
-    await this.checksService.runChecks(linSumId, payload);
+    await this.checksService.runChecks(linSumId, payload, false, true);
     return this.service.updateInjection(testSumId, id, payload, userId);
   }
 

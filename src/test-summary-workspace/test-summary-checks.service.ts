@@ -7,7 +7,6 @@ import {
   TestSummaryBaseDTO,
   TestSummaryImportDTO,
 } from '../dto/test-summary.dto';
-
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
@@ -17,6 +16,9 @@ import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/q
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
+import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
+import { TestResultCode } from '../entities/test-result-code.entity';
+import { getEntityManager } from '../utilities/utils';
 
 @Injectable()
 export class TestSummaryChecksService {
@@ -32,6 +34,7 @@ export class TestSummaryChecksService {
     private readonly componentRepository: ComponentWorkspaceRepository,
     @InjectRepository(AnalyzerRangeWorkspaceRepository)
     private readonly analyzerRangeRepository: AnalyzerRangeWorkspaceRepository,
+    private readonly testSummaryRelationshipsRepository: TestSummaryMasterDataRelationshipRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -43,8 +46,9 @@ export class TestSummaryChecksService {
   async runChecks(
     locationId: string,
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
-    summaries?: TestSummaryImportDTO[],
     isImport: boolean = false,
+    isUpdate: boolean = false,
+    summaries?: TestSummaryImportDTO[],
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
@@ -91,6 +95,12 @@ export class TestSummaryChecksService {
       errorList.push(error);
     }
 
+    // LINEAR-10 Linearity Test Result Code Valid
+    error = await this.linear10Check(summary);
+    if (error) {
+      errorList.push(error);
+    }
+
     // TEST-8 Test Span Scale Valid
     error = await this.test8Check(locationId, summary);
     if (error) {
@@ -103,14 +113,16 @@ export class TestSummaryChecksService {
       errorList.push(error);
     }
 
-    error = await this.duplicateTestCheck(
-      locationId,
-      summary,
-      summaries,
-      isImport,
-    );
-    if (error) {
-      errorList.push(error);
+    if (!isUpdate) {
+      error = await this.duplicateTestCheck(
+        locationId,
+        summary,
+        summaries,
+        isImport,
+      );
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     this.throwIfErrors(errorList, isImport);
@@ -433,7 +445,7 @@ export class TestSummaryChecksService {
 
     duplicate = await this.repository.getTestSummaryByLocationId(
       locationId,
-      summary.testTypeCode,
+      [summary.testTypeCode],
       summary.testNumber,
     );
 
@@ -805,6 +817,35 @@ export class TestSummaryChecksService {
       }
     }
 
+    return error;
+  }
+
+  // LINEAR-10 Linearity Test Result Code Valid (Result C)
+  private async linear10Check(
+    summary: TestSummaryBaseDTO | TestSummaryImportDTO,
+  ): Promise<string> {
+    let error: string = null;
+
+    const testSummaryMDRelationships = await this.testSummaryRelationshipsRepository.getTestTypeCodesRelationships(
+      TestTypeCodes.LINE,
+      'testResultCode',
+    );
+
+    const testResultCodes = testSummaryMDRelationships.map(
+      s => s.testResultCode,
+    );
+    if (
+      !testResultCodes.includes(summary.testResultCode) &&
+      [TestTypeCodes.LINE.toString()].includes(summary.testTypeCode)
+    ) {
+      const option = getEntityManager().findOne(TestResultCode, {
+        testResultCode: summary.testResultCode,
+      });
+
+      if (option) {
+        error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type [${summary.testTypeCode}], in the field [testResultCode] for [Test Summary].`;
+      }
+    }
     return error;
   }
 }

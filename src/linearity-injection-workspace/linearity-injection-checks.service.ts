@@ -30,18 +30,21 @@ export class LinearityInjectionChecksService {
     linSumId: string,
     linearityInjection: LinearityInjectionBaseDTO | LinearityInjectionImportDTO,
     isImport: boolean = false,
+    isUpdate: boolean = false,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
     this.logger.info('Running Linearity Injection Checks');
 
-    error = await this.duplicateTestCheck(
-      linSumId,
-      linearityInjection,
-      isImport,
-    );
-    if (error) {
-      errorList.push(error);
+    if (!isUpdate) {
+      error = await this.duplicateTestCheck(
+        linSumId,
+        linearityInjection,
+        isImport,
+      );
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     error = await this.linear34Check(linSumId);
