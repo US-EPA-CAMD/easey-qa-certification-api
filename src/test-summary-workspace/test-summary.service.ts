@@ -145,7 +145,7 @@ export class TestSummaryWorkspaceService {
 
     const summary = await this.repository.getTestSummaryByLocationId(
       locationId,
-      [payload.testTypeCode],
+      payload.testTypeCode,
       payload.testNumber,
     );
 
