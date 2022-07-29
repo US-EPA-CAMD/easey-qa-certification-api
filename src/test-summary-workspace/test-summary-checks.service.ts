@@ -264,7 +264,7 @@ export class TestSummaryChecksService {
     }
 
     if (invalidChildRecords.length > 0) {
-      error = `You have reported invalid [${invalidChildRecords}] records for a Test Summary record with a Test Type Code of [${summary.testTypeCode}]. This file was not imported.`;
+      error = `You have reported invalid [${invalidChildRecords}] records for a Test Summary record with a Test Type Code of [${summary.testTypeCode}].`;
     }
 
     return error;
@@ -300,7 +300,6 @@ export class TestSummaryChecksService {
     }
 
     if (
-      summary.spanScaleCode &&
       summary.spanScaleCode !== null &&
       ![
         TestTypeCodes.SEVENDAY.toString(),
@@ -409,7 +408,7 @@ export class TestSummaryChecksService {
     }
 
     if (extraneousTestSummaryFields.length > 0) {
-      error = `An extraneous value has been reported for [${extraneousTestSummaryFields}] in the Test Summary record for Location [${locationId}], TestTypeCode [${summary.testTypeCode}] and Test Number [${summary.testNumber}]. This value was not imported.`;
+      error = `An extraneous value has been reported for [${extraneousTestSummaryFields}] in the Test Summary record for Location [${locationId}], TestTypeCode [${summary.testTypeCode}] and Test Number [${summary.testNumber}].`;
     }
 
     return error;
@@ -827,11 +826,7 @@ export class TestSummaryChecksService {
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
   ): string {
     let error: string = null;
-    const resultA = `You have reported a [${
-      summary.testTypeCode
-    }] test that is inappropriate  for Unit/Stack [${
-      summary.unitId ? summary.unitId : summary.stackPipeId
-    }].`;
+    const resultA = `You have reported a [${summary.testTypeCode}] test that is inappropriate for Stack [${summary.stackPipeId}].`;
 
     const INVALID_TEST_TYPE_CODES_FOR_CS_AND_MS = [
       TestTypeCodes.FFACC.toString(),
@@ -872,12 +867,9 @@ export class TestSummaryChecksService {
     ];
 
     if (
-      (summary.unitId !== null &&
-        summary.unitId.length >= 2 &&
-        ['CS', 'MS'].includes(summary.unitId.substring(0, 2))) ||
-      (summary.stackPipeId !== null &&
-        summary.stackPipeId.length >= 2 &&
-        ['CS', 'MS'].includes(summary.stackPipeId.substring(0, 2)))
+      summary.stackPipeId !== null &&
+      summary.stackPipeId.length >= 2 &&
+      ['CS', 'MS'].includes(summary.stackPipeId.substring(0, 2))
     ) {
       if (
         INVALID_TEST_TYPE_CODES_FOR_CS_AND_MS.includes(summary.testTypeCode)
@@ -887,12 +879,9 @@ export class TestSummaryChecksService {
     }
 
     if (
-      (summary.unitId !== null &&
-        summary.unitId.length >= 2 &&
-        ['CP'].includes(summary.unitId.substring(0, 2))) ||
-      (summary.stackPipeId !== null &&
-        summary.stackPipeId.length >= 2 &&
-        ['CP'].includes(summary.stackPipeId.substring(0, 2)))
+      summary.stackPipeId !== null &&
+      summary.stackPipeId.length >= 2 &&
+      ['CP'].includes(summary.stackPipeId.substring(0, 2))
     ) {
       if (INVALID_TEST_TYPE_CODES_FOR_CP.includes(summary.testTypeCode)) {
         error = resultA;
@@ -900,12 +889,9 @@ export class TestSummaryChecksService {
     }
 
     if (
-      (summary.unitId !== null &&
-        summary.unitId.length >= 2 &&
-        ['MP'].includes(summary.unitId.substring(0, 2))) ||
-      (summary.stackPipeId !== null &&
-        summary.stackPipeId.length >= 2 &&
-        ['MP'].includes(summary.stackPipeId.substring(0, 2)))
+      summary.stackPipeId !== null &&
+      summary.stackPipeId.length >= 2 &&
+      ['MP'].includes(summary.stackPipeId.substring(0, 2))
     ) {
       if (INVALID_TEST_TYPE_CODES_FOR_MP.includes(summary.testTypeCode)) {
         error = resultA;

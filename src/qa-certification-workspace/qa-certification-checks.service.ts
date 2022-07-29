@@ -49,7 +49,7 @@ export class QACertificationChecksService {
 
     [locations, errors] = await this.locationChecksService.runChecks(payload);
     errorList.push(...errors);
-    // this.throwIfErrors(errorList);
+    this.throwIfErrors(errorList);
 
     payload.testSummaryData.forEach(async summary => {
       const locationId = locations.find(i => {

@@ -260,7 +260,7 @@ describe('Test Summary Check Service Test', () => {
         ]);
       } catch (err) {
         // expect(err.response.message).toEqual([
-        //   `You have reported invalid [RATA, Test Qualification, Calibration Injection, Hg Linearity or System Integrity Summary, Flow to Load Reference, Flow to Load Check, Cycle Time Summary, Online Offline Calibration, Fuel Flowmeter Accuracy, Transmitter Transducer, Fuel Flow to Load Baseline, Fuel Flow to Load Test, Appendix E Correlation Test Summary, Unit Default Test, Air Emission Test] records for a Test Summary record with a Test Type Code of [${importPayload.testTypeCode}]. This file was not imported.`,
+        //   `You have reported invalid [RATA, Test Qualification, Calibration Injection, Hg Linearity or System Integrity Summary, Flow to Load Reference, Flow to Load Check, Cycle Time Summary, Online Offline Calibration, Fuel Flowmeter Accuracy, Transmitter Transducer, Fuel Flow to Load Baseline, Fuel Flow to Load Test, Appendix E Correlation Test Summary, Unit Default Test, Air Emission Test] records for a Test Summary record with a Test Type Code of [${importPayload.testTypeCode}].`,
         // ]);
       }
     });
@@ -282,7 +282,7 @@ describe('Test Summary Check Service Test', () => {
         ]);
       } catch (err) {
         expect(err.response.message).toEqual([
-          `You have reported invalid [Linearity Summary, Protocol Gas] records for a Test Summary record with a Test Type Code of [${importPayload.testTypeCode}]. This file was not imported.`,
+          `You have reported invalid [Linearity Summary, Protocol Gas] records for a Test Summary record with a Test Type Code of [${importPayload.testTypeCode}].`,
         ]);
       }
     });
@@ -309,7 +309,7 @@ describe('Test Summary Check Service Test', () => {
         ]);
       } catch (err) {
         expect(err.response.message).toEqual([
-          `An extraneous value has been reported for [TestDescription, TestResultCode, SpanScaleCode, TestReasonCode, GracePeriodIndicator, BeginMinute, EndMinute] in the Test Summary record for Location [${locationId}], TestTypeCode [${importPayload.testTypeCode}] and Test Number [${importPayload.testNumber}]. This value was not imported.`,
+          `An extraneous value has been reported for [TestDescription, TestResultCode, SpanScaleCode, TestReasonCode, GracePeriodIndicator, BeginMinute, EndMinute] in the Test Summary record for Location [${locationId}], TestTypeCode [${importPayload.testTypeCode}] and Test Number [${importPayload.testNumber}].`,
         ]);
       }
     });
@@ -334,7 +334,7 @@ describe('Test Summary Check Service Test', () => {
         ]);
       } catch (err) {
         expect(err.response.message).toEqual([
-          `An extraneous value has been reported for [BeginDate, BeginHour, BeginMinute, Year, Quarter] in the Test Summary record for Location [${locationId}], TestTypeCode [${importPayload.testTypeCode}] and Test Number [${importPayload.testNumber}]. This value was not imported.`,
+          `An extraneous value has been reported for [BeginDate, BeginHour, BeginMinute, Year, Quarter] in the Test Summary record for Location [${locationId}], TestTypeCode [${importPayload.testTypeCode}] and Test Number [${importPayload.testNumber}].`,
         ]);
       }
     });
@@ -357,7 +357,7 @@ describe('Test Summary Check Service Test', () => {
         ]);
       } catch (err) {
         expect(err.response.message).toEqual([
-          `An extraneous value has been reported for [EndDate, EndHour, EndMinute] in the Test Summary record for Location [${locationId}], TestTypeCode [${importPayload.testTypeCode}] and Test Number [${importPayload.testNumber}]. This value was not imported.`,
+          `An extraneous value has been reported for [EndDate, EndHour, EndMinute] in the Test Summary record for Location [${locationId}], TestTypeCode [${importPayload.testTypeCode}] and Test Number [${importPayload.testNumber}].`,
         ]);
       }
     });

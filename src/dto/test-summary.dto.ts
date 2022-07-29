@@ -282,6 +282,7 @@ export class TestSummaryBaseDTO {
     message: (args: ValidationArguments) =>
       `The value [${args.value}] in the field [beginMinute] for [${KEY}] is not within the range of valid values from [${MIN_MINUTE}] to [${MAX_MINUTE}].`,
   })
+  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginMinute?: number;
 
   @ApiProperty({
