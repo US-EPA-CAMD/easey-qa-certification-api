@@ -15,6 +15,7 @@ import { MonitorSystem } from './monitor-system.entity';
 import { ReportingPeriod } from './reporting-period.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { LinearitySummary } from './linearity-summary.entity';
+import { ProtocolGas } from './protocol-gas.entity';
 
 @Entity({ name: 'camdecmps.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -195,6 +196,13 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   linearitySummaries: LinearitySummary[];
+
+  @OneToMany(
+    () => LinearitySummary,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  protocolGases: ProtocolGas[];
 
   @ManyToOne(
     () => ReportingPeriod,

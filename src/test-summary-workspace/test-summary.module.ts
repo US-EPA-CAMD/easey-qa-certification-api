@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { LinearitySummaryWorkspaceModule } from '../linearity-summary-workspace/linearity-summary.module';
 import { LinearityInjectionWorkspaceModule } from '../linearity-injection-workspace/linearity-injection.module';
+import { ProtocolGasWorkspaceModule } from '../protocol-gas-workspace/protocol-gas.module';
 
 import { TestSummaryWorkspaceController } from './test-summary.controller';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
@@ -27,6 +28,7 @@ import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-mas
     ]),
     forwardRef(() => LinearitySummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),
+    forwardRef(() => ProtocolGasWorkspaceModule),
   ],
   controllers: [TestSummaryWorkspaceController],
   providers: [
