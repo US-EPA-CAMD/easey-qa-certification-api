@@ -440,16 +440,16 @@ export class TestSummaryChecksService {
 
     // IMPORT-20 Duplicate Test Check
     if (isImport && duplicates.length > 1) {
-      error = `You have reported multiple Test Summary records for Unit/Stack [${
+      error = `You have reported another Test Summary Record for Unit/Stack [${
         summary.unitId ? summary.unitId : summary.stackPipeId
       }], Test Type Code [${summary.testTypeCode}], and Test Number [${
         summary.testNumber
-      }]`;
+      }]. This Test imported.`;
     }
 
     duplicate = await this.repository.getTestSummaryByLocationId(
       locationId,
-      [summary.testTypeCode],
+      summary.testTypeCode,
       summary.testNumber,
     );
 
@@ -491,7 +491,7 @@ export class TestSummaryChecksService {
         summary.unitId ? summary.unitId : summary.stackPipeId
       }], Test Type Code [${summary.testTypeCode}], and Test Number [${
         summary.testNumber
-      }]. However, the values reported for [${fields}] are different between the two tests. This Test was not imported.`;
+      }]. However, the values reported for [${fields}] are different between the two tests.`;
     }
 
     return error;
@@ -831,7 +831,7 @@ export class TestSummaryChecksService {
       summary.testTypeCode
     }] test that is inappropriate  for Unit/Stack [${
       summary.unitId ? summary.unitId : summary.stackPipeId
-    }].The test was not imported.`;
+    }].`;
 
     const INVALID_TEST_TYPE_CODES_FOR_CS_AND_MS = [
       TestTypeCodes.FFACC.toString(),

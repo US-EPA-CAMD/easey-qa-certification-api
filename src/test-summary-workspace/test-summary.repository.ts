@@ -25,14 +25,14 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
 
   async getTestSummaryByLocationId(
     locationId: string,
-    testTypeCode?: string[],
+    testTypeCode?: string,
     testNumber?: string,
   ): Promise<TestSummary> {
     let query = this.buildBaseQuery().where('ts.locationId = :locationId', {
       locationId,
     });
 
-    query = addTestTypeWhere(query, testTypeCode) as SelectQueryBuilder<
+    query = addTestTypeWhere(query, [testTypeCode]) as SelectQueryBuilder<
       TestSummary
     >;
     query = addTestNumberWhere(query, testNumber) as SelectQueryBuilder<
@@ -44,7 +44,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
 
   async getTestSummariesByLocationId(
     locationId: string,
-    testTypeCode?: string[],
+    testTypeCodes?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummary[]> {
@@ -52,7 +52,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
       locationId,
     });
 
-    query = addTestTypeWhere(query, testTypeCode) as SelectQueryBuilder<
+    query = addTestTypeWhere(query, testTypeCodes) as SelectQueryBuilder<
       TestSummary
     >;
     query = addBeginAndEndDateWhere(
@@ -69,7 +69,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
     unitIds?: string[],
     stackPipeIds?: string[],
     testSummaryIds?: string[],
-    testTypeCode?: string[],
+    testTypeCodes?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummary[]> {
@@ -102,7 +102,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
     query = addTestSummaryIdWhere(query, testSummaryIds) as SelectQueryBuilder<
       TestSummary
     >;
-    query = addTestTypeWhere(query, testTypeCode) as SelectQueryBuilder<
+    query = addTestTypeWhere(query, testTypeCodes) as SelectQueryBuilder<
       TestSummary
     >;
     query = addBeginAndEndDateWhere(
