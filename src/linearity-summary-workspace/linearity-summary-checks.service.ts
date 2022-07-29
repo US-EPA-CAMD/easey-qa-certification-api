@@ -10,6 +10,7 @@ import { LinearitySummary } from '../entities/linearity-summary.entity';
 
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 @Injectable()
 export class LinearitySummaryChecksService {
@@ -31,18 +32,21 @@ export class LinearitySummaryChecksService {
     testSumId: string,
     linearitySummary: LinearitySummaryBaseDTO | LinearitySummaryImportDTO,
     isImport: boolean = false,
+    isUpdate: boolean = false,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
     this.logger.info('Running Linearity Summary Checks');
 
-    error = await this.duplicateTestCheck(
-      testSumId,
-      linearitySummary,
-      isImport,
-    );
-    if (error) {
-      errorList.push(error);
+    if (!isUpdate) {
+      error = await this.duplicateTestCheck(
+        testSumId,
+        linearitySummary,
+        isImport,
+      );
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     error = await this.gasLevelCodeCheck(linearitySummary);
@@ -60,10 +64,10 @@ export class LinearitySummaryChecksService {
     linearitySummary: LinearitySummaryBaseDTO | LinearitySummaryImportDTO,
   ) {
     let error: string = null;
-    const typeCode = 'LINE';
 
-    const testSummaryMDRelationships = await this.testSummaryMDRepository.getGasLevelCodesByTestTypeCode(
-      typeCode,
+    const testSummaryMDRelationships = await this.testSummaryMDRepository.getTestTypeCodesRelationships(
+      TestTypeCodes.LINE,
+      'gasLevelCode',
     );
 
     const gasLevelCodes = testSummaryMDRelationships.map(

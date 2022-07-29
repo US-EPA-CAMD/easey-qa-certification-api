@@ -6,6 +6,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -155,6 +156,17 @@ export class LinearitySummaryWorkspaceService {
   ): Promise<LinearitySummaryRecordDTO> {
     const timestamp = currentDateTime();
     const entity = await this.repository.findOne(id);
+
+    if (!entity) {
+      this.logger.error(
+        NotFoundException,
+        'Linearity summary not found.',
+        true,
+        {
+          id: id,
+        },
+      );
+    }
 
     entity.meanReferenceValue = payload.meanReferenceValue;
     entity.meanMeasuredValue = payload.meanMeasuredValue;

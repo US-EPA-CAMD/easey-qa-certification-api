@@ -6,21 +6,21 @@ export class LinearitySummaryWorkspaceRepository extends Repository<
   LinearitySummary
 > {
   async getSummaryById(linSumId: string): Promise<LinearitySummary> {
-    const query = this.createQueryBuilder('ls').where('ls.id = :linSumId', {
-      linSumId,
-    });
-    return query.getOne();
+    return this.createQueryBuilder('ls')
+      .innerJoinAndSelect('ls.injections', 'injections')
+      .where('ls.id = :linSumId', {
+        linSumId,
+      })
+      .getOne();
   }
 
   async getSummariesByTestSumId(
     testSumId: string,
   ): Promise<LinearitySummary[]> {
-    const query = this.createQueryBuilder('ls').where(
-      'ls.testSumId = :testSumId',
-      {
+    return this.createQueryBuilder('ls')
+      .where('ls.testSumId = :testSumId', {
         testSumId,
-      },
-    );
-    return query.getMany();
+      })
+      .getMany();
   }
 }

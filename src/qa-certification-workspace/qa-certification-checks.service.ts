@@ -63,8 +63,9 @@ export class QACertificationChecksService {
           const results = this.testSummaryChecksService.runChecks(
             locationId,
             summary,
-            payload.testSummaryData,
             true,
+            false,
+            payload.testSummaryData,
           );
 
           resolve(results);
@@ -91,6 +92,8 @@ export class QACertificationChecksService {
                 locationId,
                 linearityInjection,
                 true,
+                false,
+                linearitySummary.linearityInjectionData,
               );
 
               resolve(results);

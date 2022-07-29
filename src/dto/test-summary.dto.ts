@@ -17,8 +17,6 @@ import {
   propertyMetadata,
 } from '@us-epa-camd/easey-common/constants';
 
-import { TestTypeCodes } from '../enums/test-type-code.enum';
-
 import { RataDTO, RataImportDTO } from './rata.dto';
 import { HgSummaryDTO, HgSummaryImportDTO } from './hg-summary.dto';
 import { ProtocolGasDTO, ProtocolGasImportDTO } from './protocol-gas.dto';
@@ -87,6 +85,15 @@ import { SpanScaleCode } from '../entities/span-scale-code.entity';
 import { TestReasonCode } from '../entities/test-reason-code.entity';
 import { TestResultCode } from '../entities/test-result-code.entity';
 import { InjectionProtocolCode } from '../entities/injection-protocol-code.entity';
+import {
+  BEGIN_DATE_TEST_TYPE_CODES,
+  VALID_CODES_FOR_COMPONENT_ID_VALIDATION,
+  VALID_CODES_FOR_END_HOUR_VALIDATION,
+  VALID_CODES_FOR_END_MINUTE_VALIDATION,
+  VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION,
+  VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION,
+  VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE,
+} from '../utilities/constants';
 
 const MIN_DATE = '1993-01-01';
 const MIN_HOUR = 0;
@@ -95,112 +102,6 @@ const MIN_MINUTE = 0;
 const MAX_MINUTE = 59;
 const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';
-const BEGIN_DATE_TEST_TYPE_CODES = [
-  TestTypeCodes.APPE,
-  TestTypeCodes.RATA,
-  TestTypeCodes.LINE,
-  TestTypeCodes.CYCLE,
-  TestTypeCodes.ONOFF,
-  TestTypeCodes.FF2LBAS,
-  TestTypeCodes.UNITDEF,
-  TestTypeCodes.SEVENDAY,
-];
-
-const VALID_CODES_FOR_COMPONENT_ID_VALIDATION = [
-  TestTypeCodes.TSCAL,
-  TestTypeCodes.FFACCTT,
-  TestTypeCodes.FFACC,
-  TestTypeCodes.ONOFF,
-  TestTypeCodes.HGLINE,
-  TestTypeCodes.HGSI3,
-  TestTypeCodes.LINE,
-  TestTypeCodes.CYCLE,
-  TestTypeCodes.SEVENDAY,
-];
-
-const VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION = [
-  TestTypeCodes.MFMCAL,
-  TestTypeCodes.TSCAL,
-  TestTypeCodes.BCAL,
-  TestTypeCodes.QGA,
-  TestTypeCodes.LEAK,
-  TestTypeCodes.OTHER,
-  TestTypeCodes.PEI,
-  TestTypeCodes.PEMSACC,
-  TestTypeCodes.DGFMCAL,
-  TestTypeCodes.DAHS,
-  TestTypeCodes.UNITDEF,
-  TestTypeCodes.FF2LTST,
-  TestTypeCodes.FFACCTT,
-  TestTypeCodes.FFACC,
-  TestTypeCodes.APPE,
-  TestTypeCodes.ONOFF,
-  TestTypeCodes.F2LCHK,
-  TestTypeCodes.RATA,
-  TestTypeCodes.HGLINE,
-  TestTypeCodes.LINE,
-  TestTypeCodes.CYCLE,
-  TestTypeCodes.SEVENDAY,
-];
-
-const VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION = [
-  TestTypeCodes.SEVENDAY.toString(),
-  TestTypeCodes.CYCLE.toString(),
-  TestTypeCodes.LINE.toString(),
-  TestTypeCodes.HGLINE.toString(),
-  TestTypeCodes.HGSI3.toString(),
-  TestTypeCodes.ONOFF.toString(),
-];
-
-const VALID_CODES_FOR_END_HOUR_VALIDATION = [
-  TestTypeCodes.SEVENDAY,
-  TestTypeCodes.CYCLE,
-  TestTypeCodes.LINE,
-  TestTypeCodes.HGLINE,
-  TestTypeCodes.HGSI3,
-  TestTypeCodes.RATA,
-  TestTypeCodes.F2LREF,
-  TestTypeCodes.ONOFF,
-  TestTypeCodes.APPE,
-  TestTypeCodes.FFACC,
-  TestTypeCodes.FFACCTT,
-  TestTypeCodes.FF2LBAS,
-  TestTypeCodes.UNITDEF,
-  TestTypeCodes.DAHS,
-  TestTypeCodes.DGFMCAL,
-  TestTypeCodes.MFMCAL,
-  TestTypeCodes.TSCAL,
-  TestTypeCodes.BCAL,
-  TestTypeCodes.QGA,
-  TestTypeCodes.LEAK,
-  TestTypeCodes.OTHER,
-  TestTypeCodes.PEI,
-  TestTypeCodes.PEMSACC,
-];
-
-const VALID_CODES_FOR_END_MINUTE_VALIDATION = [
-  TestTypeCodes.SEVENDAY,
-  TestTypeCodes.CYCLE,
-  TestTypeCodes.LINE,
-  TestTypeCodes.HGLINE,
-  TestTypeCodes.HGSI3,
-  TestTypeCodes.RATA,
-  TestTypeCodes.F2LREF,
-  TestTypeCodes.APPE,
-  TestTypeCodes.FFACC,
-  TestTypeCodes.FFACCTT,
-  TestTypeCodes.UNITDEF,
-  TestTypeCodes.DAHS,
-  TestTypeCodes.DGFMCAL,
-  TestTypeCodes.MFMCAL,
-  TestTypeCodes.TSCAL,
-  TestTypeCodes.BCAL,
-  TestTypeCodes.QGA,
-  TestTypeCodes.LEAK,
-  TestTypeCodes.OTHER,
-  TestTypeCodes.PEI,
-  TestTypeCodes.PEMSACC,
-];
 
 const formatTestSummaryValidationError = (
   args: ValidationArguments,
@@ -319,19 +220,17 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Test Result Code. ADD TO PROPERTY METADATA',
   })
+  @IsNotEmpty({
+    message: `You did not provide [testResultCode], which is required for [${KEY}].`,
+  })
   @IsValidCode(TestResultCode, {
     message: (args: ValidationArguments) => {
-      return `You reported an invalid Test Result Code of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
+      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`;
     },
   })
+  @ValidateIf(o =>
+    VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE.includes(o.testTypeCode),
+  )
   testResultCode?: string;
 
   @ApiProperty({

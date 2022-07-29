@@ -14,6 +14,7 @@ import {
   ApiOkResponse,
   ApiCreatedResponse,
   ApiSecurity,
+  ApiQuery,
 } from '@nestjs/swagger';
 
 //import { AuthGuard } from '@us-epa-camd/easey-common/guards';
@@ -27,6 +28,7 @@ import {
 import { TestSummaryParamsDTO } from '../dto/test-summary-params.dto';
 import { TestSummaryWorkspaceService } from './test-summary.service';
 import { TestSummaryChecksService } from './test-summary-checks.service';
+import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -43,13 +45,19 @@ export class TestSummaryWorkspaceController {
     type: TestSummaryRecordDTO,
     description: 'Retrieves workspace Test Summary records per filter criteria',
   })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'testTypeCodes',
+    required: false,
+    explode: false,
+  })
   async getTestSummaries(
     @Param('locId') locationId: string,
     @Query() params: TestSummaryParamsDTO,
   ): Promise<TestSummaryRecordDTO[]> {
     return this.service.getTestSummariesByLocationId(
       locationId,
-      params.testTypeCode,
+      params.testTypeCodes,
       params.beginDate,
       params.endDate,
     );
@@ -98,7 +106,7 @@ export class TestSummaryWorkspaceController {
     //    @CurrentUser() userId: string,
   ): Promise<TestSummaryRecordDTO> {
     const userId = 'testUser';
-    // await this.checksService.runChecks(locationId, payload);
+    await this.checksService.runChecks(locationId, payload, false, true);
     return this.service.updateTestSummary(locationId, id, payload, userId);
   }
 
