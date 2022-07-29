@@ -41,6 +41,11 @@ export class LinearitySummaryWorkspaceService {
 
   async getSummaryById(id: string): Promise<LinearitySummaryDTO> {
     const result = await this.repository.getSummaryById(id);
+
+    this.logger.error(NotFoundException, 'Linearity Summary not found.', true, {
+      id,
+    });
+
     return this.map.one(result);
   }
 
@@ -177,6 +182,7 @@ export class LinearitySummaryWorkspaceService {
     entity.updateDate = timestamp;
 
     await this.repository.save(entity);
+
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
