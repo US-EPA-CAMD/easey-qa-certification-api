@@ -47,11 +47,11 @@ export class LinearityInjectionChecksService {
       if (error) {
         errorList.push(error);
       }
-    }
 
-    error = await this.linear34Check(linSumId, linearityInjections, isImport);
-    if (error) {
-      errorList.push(error);
+      error = await this.linear34Check(linSumId, linearityInjections, isImport);
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     this.throwIfErrors(errorList, isImport);
@@ -101,7 +101,7 @@ export class LinearityInjectionChecksService {
       );
       injections = linSumRecord?.injections;
     }
-    if (injections.length > 3) {
+    if (injections.length > 2) {
       // LINEAR-34 Too Many Gas Injections (Result A)
       error = `There were more than three gas injections for [Linearity Summary]. Only the last three injections at this level were retained for analysis. All other gas injections have been disregarded.`;
     }
