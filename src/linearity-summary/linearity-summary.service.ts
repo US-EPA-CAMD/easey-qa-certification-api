@@ -1,6 +1,6 @@
 import { In } from 'typeorm';
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -22,6 +22,11 @@ export class LinearitySummaryService {
 
   async getSummaryById(id: string): Promise<LinearitySummaryDTO> {
     const result = await this.repository.findOne(id);
+
+    this.logger.error(NotFoundException, 'Linearity Summary not found.', true, {
+      id,
+    });
+
     return this.map.one(result);
   }
 
