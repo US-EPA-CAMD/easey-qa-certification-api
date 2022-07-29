@@ -14,6 +14,8 @@ import { LinearitySummaryWorkspaceModule } from './linearity-summary-workspace/l
 
 import { LinearityInjectionModule } from './linearity-injection/linearity-injection.module';
 import { LinearityInjectionWorkspaceModule } from './linearity-injection-workspace/linearity-injection.module';
+import { ProtocolGasModule } from './protocol-gas/protocol-gas.module';
+import { ProtocolGasWorkspaceModule } from './protocol-gas-workspace/protocol-gas.module';
 
 const routes: Routes = [
   {
@@ -42,6 +44,10 @@ const routes: Routes = [
               },
             ],
           },
+          {
+            path: ':testSumId/protocol-gases',
+            module: ProtocolGasModule,
+          },
         ],
       },
     ],
@@ -63,6 +69,10 @@ const routes: Routes = [
                 module: LinearityInjectionWorkspaceModule,
               },
             ],
+          },
+          {
+            path: ':testSumId/protocol-gases',
+            module: ProtocolGasWorkspaceModule,
           },
         ],
       },

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { LinearitySummaryModule } from '../linearity-summary/linearity-summary.module';
 import { LinearityInjectionModule } from '../linearity-injection/linearity-injection.module';
+import { ProtocolGasModule } from '../protocol-gas/protocol-gas.module';
 
 import { TestSummaryController } from './test-summary.controller';
 import { TestSummaryRepository } from './test-summary.repository';
@@ -14,6 +15,7 @@ import { TestSummaryMap } from '../maps/test-summary.map';
     TypeOrmModule.forFeature([TestSummaryRepository]),
     LinearitySummaryModule,
     LinearityInjectionModule,
+    ProtocolGasModule,
   ],
   controllers: [TestSummaryController],
   providers: [TestSummaryMap, TestSummaryService],
