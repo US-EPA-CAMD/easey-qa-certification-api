@@ -1,24 +1,10 @@
-import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { LinearityInjectionWorkspaceRepository } from '../linearity-injection-workspace/linearity-injection.repository';
-import { LinearityInjectionWorkspaceService } from '../linearity-injection-workspace/linearity-injection.service';
-import { LinearitySummaryWorkspaceRepository } from '../linearity-summary-workspace/linearity-summary.repository';
-import { LinearitySummaryWorkspaceService } from '../linearity-summary-workspace/linearity-summary.service';
-import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { LinearityInjectionMap } from '../maps/linearity-injection.map';
-import { LinearitySummaryMap } from '../maps/linearity-summary.map';
-import { TestSummaryMap } from '../maps/test-summary.map';
 
 import { QACertificationWorkspaceController } from './qa-certification.controller';
 import { QACertificationWorkspaceService } from './qa-certification.service';
 import { QACertificationChecksService } from './qa-certification-checks.service';
-import { LocationChecksService } from '../location-workspace/location-checks.service';
-import { TestSummaryChecksService } from '../test-summary-workspace/test-summary-checks.service';
-import { LocationWorkspaceRepository } from '../location-workspace/location.repository';
-import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
 import {
   QACertificationDTO,
   QACertificationImportDTO,

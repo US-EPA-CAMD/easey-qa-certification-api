@@ -440,11 +440,11 @@ export class TestSummaryChecksService {
 
     // IMPORT-20 Duplicate Test Check
     if (isImport && duplicates.length > 1) {
-      error = `You have reported another Test Summary Record for Unit/Stack [${
+      error = `You have reported multiple Test Summary Records for Unit/Stack [${
         summary.unitId ? summary.unitId : summary.stackPipeId
       }], Test Type Code [${summary.testTypeCode}], and Test Number [${
         summary.testNumber
-      }]. This Test imported.`;
+      }].`;
     }
 
     duplicate = await this.repository.getTestSummaryByLocationId(
@@ -777,7 +777,7 @@ export class TestSummaryChecksService {
     });
 
     if (duplicateTestSum) {
-      error = `Based on the information in this record, this test has already been submitted with a different test number, or the Client Tool database already contains the same test with a different test number. This test cannot be submitted.`;
+      error = `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`;
     } else {
       duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
@@ -791,7 +791,7 @@ export class TestSummaryChecksService {
       );
 
       if (duplicateQaSupp) {
-        error = `Based on the information in this record, this test has already been submitted with a different test number, or the Client Tool database already contains the same test with a different test number. This test cannot be submitted.`;
+        error = `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`;
       } else {
         // TODO: BLOCKED DUE TO COLUMN DOESNOT EXISTS IN DATABASE
         /* duplicateQaSupp = await this.qaSuppDataRepository.findOne({

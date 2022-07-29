@@ -19,6 +19,7 @@ import { ComponentWorkspaceRepository } from '../component-workspace/component.r
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { TestResultCode } from '../entities/test-result-code.entity';
+import { ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
 
 const locationId = '1';
 
@@ -272,7 +273,7 @@ describe('Test Summary Check Service Test', () => {
       const importPayload = new TestSummaryImportDTO();
       importPayload.testTypeCode = TestTypeCodes.FF2LTST;
       payload.testResultCode = 'PASSED';
-      importPayload.protocolGasData = [{}];
+      importPayload.protocolGasData = [new ProtocolGasImportDTO()];
       importPayload.linearitySummaryData = [new LinearitySummaryImportDTO()];
 
       try {
@@ -368,7 +369,7 @@ describe('Test Summary Check Service Test', () => {
         await service.runChecks(locationId, payload, true, false, [payload]);
       } catch (err) {
         expect(err.response.message).toEqual([
-          `Based on the information in this record, this test has already been submitted with a different test number, or the Client Tool database already contains the same test with a different test number. This test cannot be submitted.`,
+          `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`,
         ]);
       }
     });
@@ -386,7 +387,7 @@ describe('Test Summary Check Service Test', () => {
         await service.runChecks(locationId, payload, true, false, [payload]);
       } catch (err) {
         expect(err.response.message).toEqual([
-          `Based on the information in this record, this test has already been submitted with a different test number, or the Client Tool database already contains the same test with a different test number. This test cannot be submitted.`,
+          `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`,
         ]);
       }
     });
