@@ -89,19 +89,19 @@ export class LinearityInjectionChecksService {
     isImport: boolean = false,
   ): Promise<string> {
     let error: string = null;
-    let injections:
-      | LinearityInjectionRecordDTO[]
-      | LinearityInjectionImportDTO[] = [];
+    let injectionsLength: number = null;
 
     if (isImport) {
-      injections = linearityInjections;
+      const injections = linearityInjections;
+      injectionsLength = injections.length;
     } else {
       const linSumRecord: LinearitySummary = await this.linearitySummaryRepository.getSummaryById(
         linSumId,
       );
-      injections = linSumRecord?.injections;
+      injectionsLength = linSumRecord?.injections.length + 1;
     }
-    if (injections.length > 2) {
+
+    if (injectionsLength > 3) {
       // LINEAR-34 Too Many Gas Injections (Result A)
       error = `There were more than three gas injections for [Linearity Summary]. Only the last three injections at this level were retained for analysis. All other gas injections have been disregarded.`;
     }
