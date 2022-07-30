@@ -8,7 +8,12 @@ describe('ProtocolGasWorkspaceController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProtocolGasWorkspaceController],
-      providers: [ProtocolGasWorkspaceService],
+      providers: [
+        {
+          provide: ProtocolGasWorkspaceService,
+          useFactory: () => ({}),
+        },
+      ],
     }).compile();
 
     controller = module.get<ProtocolGasWorkspaceController>(

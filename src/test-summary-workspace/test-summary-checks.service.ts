@@ -60,11 +60,15 @@ export class TestSummaryChecksService {
       if (error) {
         errorList.push(error);
       }
-    }
 
-    if (isImport) {
       // IMPORT-17 Extraneous Test Summary Data Check
       error = this.import17Check(locationId, summary);
+      if (error) {
+        errorList.push(error);
+      }
+
+      // IMPORT-33 Inappropriate Test Type For Location
+      error = this.import33Check(summary as TestSummaryImportDTO);
       if (error) {
         errorList.push(error);
       }
@@ -260,7 +264,7 @@ export class TestSummaryChecksService {
     }
 
     if (invalidChildRecords.length > 0) {
-      error = `You have reported invalid [${invalidChildRecords}] records for a Test Summary record with a Test Type Code of [${summary.testTypeCode}]. This file was not imported.`;
+      error = `You have reported invalid [${invalidChildRecords}] records for a Test Summary record with a Test Type Code of [${summary.testTypeCode}].`;
     }
 
     return error;
@@ -296,7 +300,6 @@ export class TestSummaryChecksService {
     }
 
     if (
-      summary.spanScaleCode &&
       summary.spanScaleCode !== null &&
       ![
         TestTypeCodes.SEVENDAY.toString(),
@@ -405,7 +408,7 @@ export class TestSummaryChecksService {
     }
 
     if (extraneousTestSummaryFields.length > 0) {
-      error = `An extraneous value has been reported for [${extraneousTestSummaryFields}] in the Test Summary record for Location [${locationId}], TestTypeCode [${summary.testTypeCode}] and Test Number [${summary.testNumber}]. This value was not imported.`;
+      error = `An extraneous value has been reported for [${extraneousTestSummaryFields}] in the Test Summary record for Location [${locationId}], TestTypeCode [${summary.testTypeCode}] and Test Number [${summary.testNumber}].`;
     }
 
     return error;
@@ -435,17 +438,17 @@ export class TestSummaryChecksService {
     });
 
     // IMPORT-20 Duplicate Test Check
-    if (duplicates.length > 1) {
+    if (isImport && duplicates.length > 1) {
       error = `You have reported multiple Test Summary records for Unit/Stack [${
         summary.unitId ? summary.unitId : summary.stackPipeId
       }], Test Type Code [${summary.testTypeCode}], and Test Number [${
         summary.testNumber
-      }]`;
+      }].`;
     }
 
     duplicate = await this.repository.getTestSummaryByLocationId(
       locationId,
-      [summary.testTypeCode],
+      summary.testTypeCode,
       summary.testNumber,
     );
 
@@ -610,7 +613,7 @@ export class TestSummaryChecksService {
         componentID: summary.componentID,
         locationId: locationId,
       });
-      if (component?.componentTypeCode !== 'FLOW') {
+      if (component && component.componentTypeCode !== 'FLOW') {
         if (summary.spanScaleCode === null) {
           return `You did not provide [spanScaleCode], which is required for [Test Summary].`;
         }
@@ -627,7 +630,6 @@ export class TestSummaryChecksService {
           if (summary.spanScaleCode === 'L') {
             analyzerRangeCode = 'H';
           }
-
           const analyerRanges = await this.analyzerRangeRepository.getAnalyzerRangeByComponentIdAndDate(
             component.id,
             summary,
@@ -703,54 +705,49 @@ export class TestSummaryChecksService {
 
     if (
       (duplicate.system === null && summary.monitoringSystemID) ||
-      (duplicate.system &&
-        duplicate.system.monitoringSystemID !== summary.monitoringSystemID)
+      duplicate.system?.monitoringSystemID !== summary.monitoringSystemID
     ) {
-      fields.push('Monitoring System Id');
+      fields.push('monitoringSystemID');
     }
 
     if (
       (duplicate.component === null && summary.componentID) ||
-      (duplicate.component &&
-        duplicate.component.componentID !== summary.componentID)
+      duplicate.component?.componentID !== summary.componentID
     ) {
-      fields.push('Component Id');
+      fields.push('componentID');
     }
 
     if (duplicate.spanScaleCode !== summary.spanScaleCode) {
-      fields.push('Span Scale Code');
+      fields.push('spanScaleCode');
     }
 
-    if (duplicate.endDate !== summary.endDate) {
-      fields.push('End Date');
+    if (duplicate.endDate.toDateString() !== summary.endDate.toDateString()) {
+      fields.push('endDate');
     }
 
     if (duplicate.endHour !== summary.endHour) {
-      fields.push('End Hour');
+      fields.push('endHour');
     }
 
     if (
       (duplicate.reportingPeriod === null && summary.year) ||
-      (duplicate.reportingPeriod &&
-        duplicate.reportingPeriod.year !== summary.year)
+      duplicate.reportingPeriod?.year !== summary.year
     ) {
-      fields.push('Year');
+      fields.push('year');
     }
     if (
       (duplicate.reportingPeriod === null && summary.quarter) ||
-      (duplicate.reportingPeriod &&
-        duplicate.reportingPeriod.quarter !== summary.quarter)
+      duplicate.reportingPeriod?.quarter !== summary.quarter
     ) {
-      fields.push('Quarter');
+      fields.push('quarter');
     }
 
     if (fields.length === 0) {
       if (
-        summary.endMinute &&
-        duplicate.endMinute &&
-        duplicate.endMinute !== summary.endMinute
+        (duplicate.endMinute === null && summary.endMinute) ||
+        (duplicate.endMinute && duplicate.endMinute !== summary.endMinute)
       ) {
-        fields.push('End Minute');
+        fields.push('endMinute');
       }
     }
 
@@ -775,7 +772,7 @@ export class TestSummaryChecksService {
     });
 
     if (duplicateTestSum) {
-      error = `Based on the information in this record, this test has already been submitted with a different test number, or the Client Tool database already contains the same test with a different test number. This test cannot be submitted.`;
+      error = `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`;
     } else {
       duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
@@ -789,7 +786,7 @@ export class TestSummaryChecksService {
       );
 
       if (duplicateQaSupp) {
-        error = `Based on the information in this record, this test has already been submitted with a different test number, or the Client Tool database already contains the same test with a different test number. This test cannot be submitted.`;
+        error = `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`;
       } else {
         // TODO: BLOCKED DUE TO COLUMN DOESNOT EXISTS IN DATABASE
         /* duplicateQaSupp = await this.qaSuppDataRepository.findOne({
@@ -814,6 +811,89 @@ export class TestSummaryChecksService {
             }
           }
         } */
+      }
+    }
+
+    return error;
+  }
+
+  // IMPORT-33 Inappropriate Test Type For Location
+  private import33Check(
+    summary: TestSummaryBaseDTO | TestSummaryImportDTO,
+  ): string {
+    let error: string = null;
+    const resultA = `You have reported a [${summary.testTypeCode}] test that is inappropriate for Stack [${summary.stackPipeId}].`;
+
+    const INVALID_TEST_TYPE_CODES_FOR_CS_AND_MS = [
+      TestTypeCodes.FFACC.toString(),
+      TestTypeCodes.FFACCTT.toString(),
+      TestTypeCodes.FF2LTST.toString(),
+      TestTypeCodes.FF2LBAS.toString(),
+      TestTypeCodes.APPE.toString(),
+      TestTypeCodes.UNITDEF.toString(),
+      TestTypeCodes.PEI.toString(),
+      TestTypeCodes.PEMSACC.toString(),
+    ];
+
+    const INVALID_TEST_TYPE_CODES_FOR_CP = [
+      TestTypeCodes.RATA.toString(),
+      TestTypeCodes.LINE.toString(),
+      TestTypeCodes.SEVENDAY.toString(),
+      TestTypeCodes.ONOFF.toString(),
+      TestTypeCodes.CYCLE.toString(),
+      TestTypeCodes.LEAK.toString(),
+      TestTypeCodes.APPE.toString(),
+      TestTypeCodes.UNITDEF.toString(),
+      TestTypeCodes.PEMSACC.toString(),
+      TestTypeCodes.HGLINE.toString(),
+      TestTypeCodes.HGSI3.toString(),
+    ];
+
+    const INVALID_TEST_TYPE_CODES_FOR_MP = [
+      TestTypeCodes.RATA.toString(),
+      TestTypeCodes.LINE.toString(),
+      TestTypeCodes.SEVENDAY.toString(),
+      TestTypeCodes.ONOFF.toString(),
+      TestTypeCodes.CYCLE.toString(),
+      TestTypeCodes.LEAK.toString(),
+      TestTypeCodes.UNITDEF.toString(),
+      TestTypeCodes.PEMSACC.toString(),
+      TestTypeCodes.HGLINE.toString(),
+      TestTypeCodes.HGSI3.toString(),
+    ];
+
+    if (
+      summary.stackPipeId &&
+      summary.stackPipeId !== null &&
+      summary.stackPipeId.length >= 2 &&
+      ['CS', 'MS'].includes(summary.stackPipeId.substring(0, 2))
+    ) {
+      if (
+        INVALID_TEST_TYPE_CODES_FOR_CS_AND_MS.includes(summary.testTypeCode)
+      ) {
+        error = resultA;
+      }
+    }
+
+    if (
+      summary.stackPipeId &&
+      summary.stackPipeId !== null &&
+      summary.stackPipeId.length >= 2 &&
+      ['CP'].includes(summary.stackPipeId.substring(0, 2))
+    ) {
+      if (INVALID_TEST_TYPE_CODES_FOR_CP.includes(summary.testTypeCode)) {
+        error = resultA;
+      }
+    }
+
+    if (
+      summary.stackPipeId &&
+      summary.stackPipeId !== null &&
+      summary.stackPipeId.length >= 2 &&
+      ['MP'].includes(summary.stackPipeId.substring(0, 2))
+    ) {
+      if (INVALID_TEST_TYPE_CODES_FOR_MP.includes(summary.testTypeCode)) {
+        error = resultA;
       }
     }
 

@@ -282,6 +282,7 @@ export class TestSummaryBaseDTO {
     message: (args: ValidationArguments) =>
       `The value [${args.value}] in the field [beginMinute] for [${KEY}] is not within the range of valid values from [${MIN_MINUTE}] to [${MAX_MINUTE}].`,
   })
+  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginMinute?: number;
 
   @ApiProperty({
@@ -296,7 +297,7 @@ export class TestSummaryBaseDTO {
   })
   @IsInDateRange(MIN_DATE, new Date(Date.now()).toISOString(), {
     message: (args: ValidationArguments) =>
-      `You reported an invalid EndDate in the Test Summary record for Location [${args.object['locationId']}], TestTypeCode [${args.object['testTypeCode']}] and TestNumber [${args.object['testNumber']}]. The test was not imported.`,
+      `You reported an invalid EndDate in the Test Summary record for Location [${args.object['locationId']}], TestTypeCode [${args.object['testTypeCode']}] and TestNumber [${args.object['testNumber']}].`,
   })
   endDate?: Date;
 
