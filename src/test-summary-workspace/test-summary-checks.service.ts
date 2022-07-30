@@ -439,7 +439,7 @@ export class TestSummaryChecksService {
 
     // IMPORT-20 Duplicate Test Check
     if (isImport && duplicates.length > 1) {
-      error = `You have reported multiple Test Summary Records for Unit/Stack [${
+      error = `You have reported multiple Test Summary records for Unit/Stack [${
         summary.unitId ? summary.unitId : summary.stackPipeId
       }], Test Type Code [${summary.testTypeCode}], and Test Number [${
         summary.testNumber
@@ -705,16 +705,14 @@ export class TestSummaryChecksService {
 
     if (
       (duplicate.system === null && summary.monitoringSystemID) ||
-      (duplicate.system &&
-        duplicate.system.monitoringSystemID !== summary.monitoringSystemID)
+      duplicate.system?.monitoringSystemID !== summary.monitoringSystemID
     ) {
       fields.push('monitoringSystemID');
     }
 
     if (
       (duplicate.component === null && summary.componentID) ||
-      (duplicate.component &&
-        duplicate.component.componentID !== summary.componentID)
+      duplicate.component?.componentID !== summary.componentID
     ) {
       fields.push('componentID');
     }
@@ -723,7 +721,7 @@ export class TestSummaryChecksService {
       fields.push('spanScaleCode');
     }
 
-    if (duplicate.endDate !== summary.endDate) {
+    if (duplicate.endDate.toDateString() !== summary.endDate.toDateString()) {
       fields.push('endDate');
     }
 
@@ -733,15 +731,13 @@ export class TestSummaryChecksService {
 
     if (
       (duplicate.reportingPeriod === null && summary.year) ||
-      (duplicate.reportingPeriod &&
-        duplicate.reportingPeriod.year !== summary.year)
+      duplicate.reportingPeriod?.year !== summary.year
     ) {
       fields.push('year');
     }
     if (
       (duplicate.reportingPeriod === null && summary.quarter) ||
-      (duplicate.reportingPeriod &&
-        duplicate.reportingPeriod.quarter !== summary.quarter)
+      duplicate.reportingPeriod?.quarter !== summary.quarter
     ) {
       fields.push('quarter');
     }
@@ -867,6 +863,7 @@ export class TestSummaryChecksService {
     ];
 
     if (
+      summary.stackPipeId &&
       summary.stackPipeId !== null &&
       summary.stackPipeId.length >= 2 &&
       ['CS', 'MS'].includes(summary.stackPipeId.substring(0, 2))
@@ -879,6 +876,7 @@ export class TestSummaryChecksService {
     }
 
     if (
+      summary.stackPipeId &&
       summary.stackPipeId !== null &&
       summary.stackPipeId.length >= 2 &&
       ['CP'].includes(summary.stackPipeId.substring(0, 2))
@@ -889,6 +887,7 @@ export class TestSummaryChecksService {
     }
 
     if (
+      summary.stackPipeId &&
       summary.stackPipeId !== null &&
       summary.stackPipeId.length >= 2 &&
       ['MP'].includes(summary.stackPipeId.substring(0, 2))

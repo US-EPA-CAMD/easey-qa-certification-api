@@ -20,6 +20,8 @@ import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/an
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { TestResultCode } from '../entities/test-result-code.entity';
 import { ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
+import { ReportingPeriod } from '../entities/workspace/reporting-period.entity';
+import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 
 const locationId = '1';
 
@@ -60,6 +62,7 @@ describe('Test Summary Check Service Test', () => {
 
   const summaryBase: TestSummaryBaseDTO = new TestSummaryBaseDTO();
   summaryBase.unitId = '1';
+  summaryBase.stackPipeId = null;
   summaryBase.beginHour = 1;
   summaryBase.beginMinute = 1;
   summaryBase.endHour = 1;
@@ -120,6 +123,7 @@ describe('Test Summary Check Service Test', () => {
   describe('Test Summary Checks', () => {
     const payload = new TestSummaryImportDTO();
     payload.testTypeCode = TestTypeCodes.LINE;
+    payload.stackPipeId = '';
     payload.testResultCode = 'PASSED';
     payload.testNumber = '';
     payload.beginHour = 1;
@@ -160,12 +164,23 @@ describe('Test Summary Check Service Test', () => {
       ]);
 
       expect(result).toEqual([
-        `You have reported multiple Test Summary records for Unit/Stack [${payload.unitId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]`,
+        `You have reported multiple Test Summary records for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}].`,
       ]);
     });
 
     it('Should get error IMPORT -21 Duplicate Test Summary record', async () => {
       const returnedTestSummary = new TestSummary();
+      returnedTestSummary.spanScaleCode = 'L';
+      returnedTestSummary.endHour = 2;
+      returnedTestSummary.endDate = new Date();
+      returnedTestSummary.reportingPeriod = new ReportingPeriod();
+      returnedTestSummary.reportingPeriod.year = 2000;
+      returnedTestSummary.reportingPeriod.quarter = 1;
+      returnedTestSummary.system = new MonitorSystem();
+      returnedTestSummary.system.monitoringSystemID = '1';
+      returnedTestSummary.component = new Component();
+      returnedTestSummary.component.componentID = 'A01';
+
       jest
         .spyOn(repository, 'getTestSummaryByLocationId')
         .mockResolvedValue(returnedTestSummary);
@@ -174,7 +189,46 @@ describe('Test Summary Check Service Test', () => {
       ]);
 
       expect(result).toEqual([
-        `The database contains another Test Summary record for Unit/Stack [${payload.unitId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. However, the values reported for [End Date,End Hour] are different between the two tests.`,
+        `The database contains another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. However, the values reported for [monitoringSystemID,componentID,spanScaleCode,endDate,endHour,year,quarter] are different between the two tests.`,
+      ]);
+    });
+
+    it('Should get error IMPORT -21 Duplicate Test Summary record (endMinute)', async () => {
+      const returnedTestSummary = new TestSummary();
+      returnedTestSummary.endMinute = 3;
+      returnedTestSummary.endHour = 1;
+      returnedTestSummary.endDate = new Date('2020-01-01');
+
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(returnedTestSummary);
+      const result = await service.runChecks(locationId, payload, true, false, [
+        payload,
+      ]);
+
+      expect(result).toEqual([
+        `The database contains another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. However, the values reported for [endMinute] are different between the two tests.`,
+      ]);
+    });
+
+    it('Should get error IMPORT -21 Duplicate Test Summary record (when QASuppDataFound)', async () => {
+      const returnedQASupp = new QASuppData();
+      returnedQASupp.endHour = 2;
+      returnedQASupp.endDate = new Date();
+
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+
+      jest
+        .spyOn(qaRepository, 'getQASuppDataByLocationId')
+        .mockResolvedValue(returnedQASupp);
+
+      const result = await service.runChecks(locationId, payload, true, false, [
+        payload,
+      ]);
+      expect(result).toEqual([
+        `The database contains another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. However, the values reported for [endDate,endHour] are different between the two tests.`,
       ]);
     });
 
@@ -204,7 +258,7 @@ describe('Test Summary Check Service Test', () => {
         ]);
       } catch (err) {
         expect(err.response.message).toEqual([
-          `Another Test Summary record for Unit/Stack [${payload.unitId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. You must assign a different test number.`,
+          `Another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. You must assign a different test number.`,
         ]);
       }
     });
@@ -226,7 +280,7 @@ describe('Test Summary Check Service Test', () => {
         ]);
       } catch (err) {
         expect(err.response.message).toEqual([
-          `Another Test Summary record for Unit/Stack [${payload.unitId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. You cannot change the Test Number to the value that you have entered, because a test with this Test Type and Test Number has already been submitted. If this is a different test, you should assign it a different Test Number. If you are trying to resubmit this test, you should delete this test, and either reimport this test with its original Test Number or retrieve the original test from the EPA host system.`,
+          `Another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. You cannot change the Test Number to the value that you have entered, because a test with this Test Type and Test Number has already been submitted. If this is a different test, you should assign it a different Test Number. If you are trying to resubmit this test, you should delete this test, and either reimport this test with its original Test Number or retrieve the original test from the EPA host system.`,
         ]);
       }
     });
@@ -358,6 +412,78 @@ describe('Test Summary Check Service Test', () => {
       } catch (err) {
         expect(err.response.message).toEqual([
           `An extraneous value has been reported for [EndDate, EndHour, EndMinute] in the Test Summary record for Location [${locationId}], TestTypeCode [${importPayload.testTypeCode}] and Test Number [${importPayload.testNumber}].`,
+        ]);
+      }
+    });
+
+    it('Should get error for IMPORT-33 Check with stackPipe CS0AAN', async () => {
+      const importPayload = new TestSummaryImportDTO();
+      importPayload.testNumber = '1';
+      importPayload.stackPipeId = 'CS0AAN';
+      importPayload.testTypeCode = TestTypeCodes.FFACC;
+      importPayload.endDate = new Date();
+      importPayload.endHour = 1;
+      importPayload.endMinute = 1;
+
+      try {
+        await service.runChecks(locationId, importPayload, true, false, [
+          importPayload,
+        ]);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `You have reported a [${importPayload.testTypeCode}] test that is inappropriate for Stack [${importPayload.stackPipeId}].`,
+        ]);
+      }
+    });
+
+    it('Should get error for IMPORT-33 Check with stackPipe CPO', async () => {
+      const importPayload = new TestSummaryImportDTO();
+      importPayload.testNumber = '1';
+      importPayload.stackPipeId = 'CPO';
+      importPayload.testTypeCode = TestTypeCodes.RATA;
+      importPayload.endDate = new Date();
+      importPayload.endHour = 1;
+      importPayload.endMinute = 1;
+
+      try {
+        await service.runChecks(locationId, importPayload, true, false, [
+          importPayload,
+        ]);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `You have reported a [${importPayload.testTypeCode}] test that is inappropriate for Stack [${importPayload.stackPipeId}].`,
+        ]);
+      }
+    });
+
+    it('Should get error for IMPORT-33 Check with stackPipe MP1', async () => {
+      const importPayload = new TestSummaryImportDTO();
+      importPayload.testNumber = '1';
+      importPayload.stackPipeId = 'MP1';
+      importPayload.testTypeCode = TestTypeCodes.RATA;
+      importPayload.endDate = new Date();
+      importPayload.endHour = 1;
+      importPayload.endMinute = 1;
+
+      try {
+        await service.runChecks(locationId, importPayload, true, false, [
+          importPayload,
+        ]);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `You have reported a [${importPayload.testTypeCode}] test that is inappropriate for Stack [${importPayload.stackPipeId}].`,
+        ]);
+      }
+    });
+
+    it('Should get error for TEST-8 - Test Span Scale Valid check Result A', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(new TestSummary());
+
+      try {
+        await service.runChecks(locationId, payload, true, false, [payload]);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`,
         ]);
       }
     });
