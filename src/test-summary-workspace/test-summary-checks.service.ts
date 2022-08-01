@@ -705,14 +705,16 @@ export class TestSummaryChecksService {
 
     if (
       (duplicate.system === null && summary.monitoringSystemID) ||
-      duplicate.system?.monitoringSystemID !== summary.monitoringSystemID
+      (duplicate.system &&
+        duplicate.system.monitoringSystemID !== summary.monitoringSystemID)
     ) {
       fields.push('monitoringSystemID');
     }
 
     if (
       (duplicate.component === null && summary.componentID) ||
-      duplicate.component?.componentID !== summary.componentID
+      (duplicate.component &&
+        duplicate.component.componentID !== summary.componentID)
     ) {
       fields.push('componentID');
     }
@@ -731,13 +733,15 @@ export class TestSummaryChecksService {
 
     if (
       (duplicate.reportingPeriod === null && summary.year) ||
-      duplicate.reportingPeriod?.year !== summary.year
+      (duplicate.reportingPeriod &&
+        duplicate.reportingPeriod.year !== summary.year)
     ) {
       fields.push('year');
     }
     if (
       (duplicate.reportingPeriod === null && summary.quarter) ||
-      duplicate.reportingPeriod?.quarter !== summary.quarter
+      (duplicate.reportingPeriod &&
+        duplicate.reportingPeriod.quarter !== summary.quarter)
     ) {
       fields.push('quarter');
     }
