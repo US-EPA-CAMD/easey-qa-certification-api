@@ -327,7 +327,7 @@ describe('Test Summary Check Service Test', () => {
       const importPayload = new TestSummaryImportDTO();
       importPayload.testTypeCode = TestTypeCodes.FF2LTST;
       payload.testResultCode = 'PASSED';
-      importPayload.protocolGasData = [new ProtocolGasImportDTO()];
+      importPayload.protocolGasData = [];
       importPayload.linearitySummaryData = [new LinearitySummaryImportDTO()];
 
       try {
