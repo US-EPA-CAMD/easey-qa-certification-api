@@ -723,7 +723,7 @@ export class TestSummaryChecksService {
       fields.push('spanScaleCode');
     }
 
-    if (duplicate.endDate.toDateString() !== summary.endDate.toDateString()) {
+    if (duplicate.endDate !== summary.endDate) {
       fields.push('endDate');
     }
 
