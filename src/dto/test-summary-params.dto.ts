@@ -4,12 +4,14 @@ import { Transform } from 'class-transformer';
 import { ValidationArguments } from 'class-validator';
 
 import { IsValidDate, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import { FindOneOptions } from 'typeorm';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
-import { TestTypeCode } from './../entities/test-type-code.entity';
 import { IsValidCodes } from '../pipes/is-valid-codes.pipe';
-import { FindOneOptions } from 'typeorm';
+
+import { TestTypeCode } from './../entities/test-type-code.entity';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 const MIN_DATE = '1993-01-01';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -17,6 +19,7 @@ const DATE_FORMAT = 'YYYY-MM-DD';
 export class TestSummaryParamsDTO {
   @ApiProperty({
     isArray: true,
+    enum: TestTypeCodes,
     description: propertyMetadata.testTypeCode.description,
   })
   @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
