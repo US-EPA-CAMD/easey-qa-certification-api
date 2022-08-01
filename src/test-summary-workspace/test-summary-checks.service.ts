@@ -723,8 +723,17 @@ export class TestSummaryChecksService {
       fields.push('spanScaleCode');
     }
 
-    if (duplicate.endDate !== summary.endDate) {
-      fields.push('endDate');
+    if (
+      typeof duplicate.endDate === 'object' &&
+      typeof summary.endDate === 'object'
+    ) {
+      if (duplicate.endDate.toDateString() !== summary.endDate.toDateString()) {
+        fields.push('endDate');
+      }
+    } else {
+      if (duplicate.endDate !== summary.endDate) {
+        fields.push('endDate');
+      }
     }
 
     if (duplicate.endHour !== summary.endHour) {
