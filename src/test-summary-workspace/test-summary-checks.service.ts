@@ -724,16 +724,10 @@ export class TestSummaryChecksService {
     }
 
     if (
-      typeof duplicate.endDate === 'object' &&
-      typeof summary.endDate === 'object'
+      new Date(duplicate.endDate).toDateString() !==
+      new Date(summary.endDate).toDateString()
     ) {
-      if (duplicate.endDate.toDateString() !== summary.endDate.toDateString()) {
-        fields.push('endDate');
-      }
-    } else {
-      if (duplicate.endDate !== summary.endDate) {
-        fields.push('endDate');
-      }
+      fields.push('endDate');
     }
 
     if (duplicate.endHour !== summary.endHour) {
