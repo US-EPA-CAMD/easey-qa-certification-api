@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -11,6 +11,7 @@ import {
 } from '../dto/linearity-injection.dto';
 import { LinearityInjection } from '../entities/workspace/linearity-injection.entity';
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class LinearityInjectionChecksService {
@@ -23,6 +24,11 @@ export class LinearityInjectionChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
+      throw new LoggingException(
+        'Validation Errors',
+        HttpStatus.BAD_REQUEST,
+        errorList,
+      );
     }
   }
 
