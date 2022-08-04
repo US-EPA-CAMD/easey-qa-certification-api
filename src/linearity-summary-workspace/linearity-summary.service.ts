@@ -23,7 +23,6 @@ import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 import { LinearityInjectionWorkspaceService } from '../linearity-injection-workspace/linearity-injection.service';
 import { TestSummaryWorkspaceService } from './../test-summary-workspace/test-summary.service';
-import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
 
 @Injectable()
 export class LinearitySummaryWorkspaceService {
@@ -38,7 +37,7 @@ export class LinearitySummaryWorkspaceService {
     private readonly repository: LinearitySummaryWorkspaceRepository,
   ) {}
 
-  async getSummaryById(id: string): Promise<LinearitySummary> {
+  async getSummaryById(id: string): Promise<LinearitySummaryDTO> {
     const entity = await this.repository.getSummaryById(id);
 
     if (!entity) {
@@ -49,7 +48,7 @@ export class LinearitySummaryWorkspaceService {
       );
     }
 
-    return entity;
+    return this.map.one(entity);
   }
 
   async getSummariesByTestSumId(
@@ -162,7 +161,7 @@ export class LinearitySummaryWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<LinearitySummaryRecordDTO> {
-    const timestamp = currentDateTime();
+    const timestamp = currentDateTime().toLocaleString();
     const entity = await this.getSummaryById(id);
 
     entity.meanReferenceValue = payload.meanReferenceValue;
@@ -181,7 +180,7 @@ export class LinearitySummaryWorkspaceService {
       isImport,
     );
 
-    return this.map.one(entity);
+    return this.getSummaryById(id);
   }
 
   async deleteSummary(

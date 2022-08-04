@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In } from 'typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
-import { LinearitySummary } from '../entities/linearity-summary.entity';
 import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryRepository } from './linearity-summary.repository';
@@ -18,7 +17,7 @@ export class LinearitySummaryService {
     private readonly repository: LinearitySummaryRepository,
   ) {}
 
-  async getSummaryById(id: string): Promise<LinearitySummary> {
+  async getSummaryById(id: string): Promise<LinearitySummaryDTO> {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
@@ -29,7 +28,7 @@ export class LinearitySummaryService {
       );
     }
 
-    return entity;
+    return this.map.one(entity);
   }
 
   async getSummariesByTestSumId(
