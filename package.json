@@ -9,7 +9,7 @@
     "url": "git+https://github.com/US-EPA-CAMD/easey-qa-certification-api.git"
   },
   "engines": {
-    "node": "16.x"
+    "node": ">= 16.10.0"
   },
   "scripts": {
     "prebuild": "rimraf dist",
