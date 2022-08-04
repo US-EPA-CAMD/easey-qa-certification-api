@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid';
 
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { currentDateTime } from 'src/utilities/functions';
+import { currentDateTime } from '../utilities/functions';
 import {
   ProtocolGasBaseDTO,
   ProtocolGasDTO,
@@ -10,7 +10,7 @@ import {
 } from '../dto/protocol-gas.dto';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
-import { TestSummaryWorkspaceService } from 'src/test-summary-workspace/test-summary.service';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 
 @Injectable()
 export class ProtocolGasWorkspaceService {

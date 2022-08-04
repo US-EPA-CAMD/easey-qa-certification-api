@@ -10,7 +10,7 @@ import {
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { ProtocolGas } from '../protocol-gas.entity';
 
-@Entity({ name: 'camdecmpswks.protocol_gas_vendor' })
+@Entity({ name: 'camdecmps.protocol_gas_vendor' })
 export class ProtocolGasVendor extends BaseEntity {
   @PrimaryColumn({
     type: 'varchar',

@@ -27,7 +27,7 @@ export class ProtocolGasWorkspaceController {
   getProtocolGases(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ) {
+  ): Promise<ProtocolGasRecordDTO[]> {
     return this.service.getProtocolGases(testSumId);
   }
 
@@ -38,7 +38,7 @@ export class ProtocolGasWorkspaceController {
     type: ProtocolGasRecordDTO,
     description: 'Creates a Protocol Gas record in the workspace',
   })
-  async createLinearitySummary(
+  async createProtocolGas(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: ProtocolGasBaseDTO,
