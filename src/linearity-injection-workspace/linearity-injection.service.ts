@@ -1,26 +1,24 @@
-import { In } from 'typeorm';
-import { v4 as uuid } from 'uuid';
-
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common';
-
 import { InjectRepository } from '@nestjs/typeorm';
+import { In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
+import { currentDateTime } from '../utilities/functions';
 import {
   LinearityInjectionDTO,
   LinearityInjectionBaseDTO,
   LinearityInjectionRecordDTO,
   LinearityInjectionImportDTO,
 } from '../dto/linearity-injection.dto';
-
-import { currentDateTime } from '../utilities/functions';
 import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
 import { TestSummaryWorkspaceService } from './../test-summary-workspace/test-summary.service';
@@ -121,13 +119,10 @@ export class LinearityInjectionWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      this.logger.error(
-        NotFoundException,
+      throw new LoggingException(
         'Linearity Injection not found.',
-        true,
-        {
-          id: id,
-        },
+        HttpStatus.NOT_FOUND,
+        { id },
       );
     }
 
@@ -140,11 +135,13 @@ export class LinearityInjectionWorkspaceService {
     entity.updateDate = timestamp;
 
     await this.repository.save(entity);
+
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
     );
+
     return this.map.one(entity);
   }
 

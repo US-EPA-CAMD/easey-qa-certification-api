@@ -3,12 +3,14 @@ import { v4 as uuid } from 'uuid';
 
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -25,6 +27,7 @@ import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 import { LinearityInjectionWorkspaceService } from '../linearity-injection-workspace/linearity-injection.service';
 import { TestSummaryWorkspaceService } from './../test-summary-workspace/test-summary.service';
+import { LinearitySummary } from 'src/entities/workspace/linearity-summary.entity';
 
 @Injectable()
 export class LinearitySummaryWorkspaceService {
@@ -39,14 +42,18 @@ export class LinearitySummaryWorkspaceService {
     private readonly repository: LinearitySummaryWorkspaceRepository,
   ) {}
 
-  async getSummaryById(id: string): Promise<LinearitySummaryDTO> {
-    const result = await this.repository.getSummaryById(id);
+  async getSummaryById(id: string): Promise<LinearitySummary> {
+    const entity = await this.repository.getSummaryById(id);
 
-    this.logger.error(NotFoundException, 'Linearity Summary not found.', true, {
-      id,
-    });
+    if (!entity) {
+      throw new LoggingException(
+        'Linearity Summary not found.',
+        HttpStatus.NOT_FOUND,
+        { id },
+      );
+    }
 
-    return this.map.one(result);
+    return entity;
   }
 
   async getSummariesByTestSumId(
@@ -160,18 +167,7 @@ export class LinearitySummaryWorkspaceService {
     isImport: boolean = false,
   ): Promise<LinearitySummaryRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOne(id);
-
-    if (!entity) {
-      this.logger.error(
-        NotFoundException,
-        'Linearity summary not found.',
-        true,
-        {
-          id: id,
-        },
-      );
-    }
+    const entity = await this.getSummaryById(id);
 
     entity.meanReferenceValue = payload.meanReferenceValue;
     entity.meanMeasuredValue = payload.meanMeasuredValue;
@@ -188,6 +184,7 @@ export class LinearitySummaryWorkspaceService {
       userId,
       isImport,
     );
+
     return this.map.one(entity);
   }
 

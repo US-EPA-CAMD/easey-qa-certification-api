@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator';
+import { IsNotEmpty, ValidationArguments } from 'class-validator';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { IsNotNegative } from '../pipes/is-not-negative.pipe';
 import {
@@ -85,8 +85,8 @@ export class LinearitySummaryRecordDTO extends LinearitySummaryBaseDTO {
   calculatedPercentError: number;
   calculatedAPSIndicator: number;
   userId: string;
-  addDate: string;
-  updateDate: string;
+  addDate: Date;
+  updateDate: Date;
 }
 
 export class LinearitySummaryImportDTO extends LinearitySummaryBaseDTO {

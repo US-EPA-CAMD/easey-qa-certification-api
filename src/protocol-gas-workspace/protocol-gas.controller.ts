@@ -1,7 +1,10 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Put } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 
-import { ProtocolGasRecordDTO } from '../dto/protocol-gas.dto';
+import {
+  ProtocolGasBaseDTO,
+  ProtocolGasRecordDTO,
+} from '../dto/protocol-gas.dto';
 import { ProtocolGasWorkspaceService } from './protocol-gas.service';
 
 @ApiTags('Protocol Gas')
@@ -21,5 +24,20 @@ export class ProtocolGasWorkspaceController {
     @Param('testSumId') testSumId: string,
   ) {
     return this.service.getProtocolGases(testSumId);
+  }
+
+  @Put(':id')
+  @ApiOkResponse({
+    type: ProtocolGasRecordDTO,
+    description: 'Updates a Linearity Injection record in the workspace',
+  })
+  editProtolGas(
+    @Param('locid') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: ProtocolGasBaseDTO,
+  ) {
+    const userId = 'testUser';
+    return this.service.updateProtocolgas(testSumId, id, payload, userId);
   }
 }
