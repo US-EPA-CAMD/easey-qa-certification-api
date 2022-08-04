@@ -85,8 +85,8 @@ export class LinearitySummaryRecordDTO extends LinearitySummaryBaseDTO {
   calculatedPercentError: number;
   calculatedAPSIndicator: number;
   userId: string;
-  addDate: Date;
-  updateDate: Date;
+  addDate: string;
+  updateDate: string;
 }
 
 export class LinearitySummaryImportDTO extends LinearitySummaryBaseDTO {
