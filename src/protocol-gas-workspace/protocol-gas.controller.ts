@@ -38,6 +38,6 @@ export class ProtocolGasWorkspaceController {
     @Body() payload: ProtocolGasBaseDTO,
   ) {
     const userId = 'testUser';
-    return this.service.updateProtocolgas(testSumId, id, payload, userId);
+    return this.service.updateProtocolGas(testSumId, id, payload, userId);
   }
 }

@@ -42,7 +42,7 @@ export class ProtocolGasWorkspaceService {
     return this.map.many(records);
   }
 
-  async updateProtocolgas(
+  async updateProtocolGas(
     testSumId: string,
     id: string,
     payload: ProtocolGasBaseDTO,
@@ -58,6 +58,8 @@ export class ProtocolGasWorkspaceService {
     entity.vendorId = payload.vendorId;
     entity.cylinderId = payload.cylinderId;
     entity.expirationDate = payload.expirationDate;
+    entity.userId = userId;
+    entity.updateDate = timestamp;
 
     await this.repository.save(entity);
 
