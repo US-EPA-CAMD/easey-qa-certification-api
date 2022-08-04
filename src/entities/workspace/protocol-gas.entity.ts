@@ -6,7 +6,6 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
-import { ProtocolGasVendor } from './protocol-gas-vendor.entity';
 import { TestSummary } from './test-summary.entity';
 
 @Entity({
@@ -78,10 +77,10 @@ export class ProtocolGas extends BaseEntity {
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
 
-  @ManyToOne(
-    () => ProtocolGasVendor,
-    o => o.protocolGas,
-  )
-  @JoinColumn({ name: 'vendor_id' })
-  protocolGasVendor: ProtocolGasVendor;
+  // @ManyToOne(
+  //   () => ProtocolGasVendor,
+  //   o => o.protocolGas,
+  // )
+  // @JoinColumn({ name: 'vendor_id' })
+  // protocolGasVendor: ProtocolGasVendor;
 }

@@ -79,5 +79,4 @@ export class ProtocolGas extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
-  protocolGasVendor: any;
 }

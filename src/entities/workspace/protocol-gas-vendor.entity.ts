@@ -10,7 +10,7 @@ import {
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { ProtocolGas } from '../protocol-gas.entity';
 
-@Entity({ name: 'camdecmps.protocol_gas_vendor' })
+@Entity({ name: 'camdecmpswks.protocol_gas_vendor' })
 export class ProtocolGasVendor extends BaseEntity {
   @PrimaryColumn({
     type: 'varchar',
@@ -54,10 +54,10 @@ export class ProtocolGasVendor extends BaseEntity {
   })
   updateDate: Date;
 
-  @OneToMany(
-    () => ProtocolGas,
-    o => o.protocolGasVendor,
-  )
-  @JoinColumn({ name: 'vendor_id' })
-  protocolGas: ProtocolGas[];
+  // @OneToMany(
+  //   () => ProtocolGas,
+  //   o => o.protocolGasVendor,
+  // )
+  // @JoinColumn({ name: 'vendor_id' })
+  // protocolGas: ProtocolGas[];
 }
