@@ -53,16 +53,16 @@ export class ProtocolGas extends BaseEntity {
   expirationDate: Date;
 
   @Column({
-    type: 'date',
+    type: 'time without time zone',
     name: 'add_date',
   })
-  addDate: Date;
+  addDate: string;
 
   @Column({
-    type: 'date',
+    type: 'time without time zone',
     name: 'update_date',
   })
-  updateDate: Date;
+  updateDate: string;
 
   @Column({
     type: 'varchar',
@@ -76,11 +76,4 @@ export class ProtocolGas extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
-
-  // @ManyToOne(
-  //   () => ProtocolGasVendor,
-  //   o => o.protocolGas,
-  // )
-  // @JoinColumn({ name: 'vendor_id' })
-  // protocolGasVendor: ProtocolGasVendor;
 }
