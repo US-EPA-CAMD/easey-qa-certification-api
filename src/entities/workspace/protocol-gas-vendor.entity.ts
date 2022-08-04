@@ -3,12 +3,9 @@ import {
   Entity,
   Column,
   PrimaryColumn,
-  OneToMany,
-  JoinColumn,
 } from 'typeorm';
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
-import { ProtocolGas } from '../protocol-gas.entity';
 
 @Entity({ name: 'camdecmpswks.protocol_gas_vendor' })
 export class ProtocolGasVendor extends BaseEntity {
