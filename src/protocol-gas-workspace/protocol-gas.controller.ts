@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -51,7 +59,7 @@ export class ProtocolGasWorkspaceController {
   @Put(':id')
   @ApiOkResponse({
     type: ProtocolGasRecordDTO,
-    description: 'Updates a Linearity Injection record in the workspace',
+    description: 'Updates a Protocol Gas record in the workspace',
   })
   editProtolGas(
     @Param('locid') _locationId: string,
@@ -61,5 +69,18 @@ export class ProtocolGasWorkspaceController {
   ) {
     const userId = 'testUser';
     return this.service.updateProtocolGas(testSumId, id, payload, userId);
+  }
+
+  @Delete(':id')
+  @ApiOkResponse({
+    description: 'Deletes a Protocol Gas record from the workspace',
+  })
+  deleteProtolGas(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+  ): Promise<void> {
+    const userId = 'testUser';
+    return this.service.deleteProtocolGas(testSumId, id, userId);
   }
 }
