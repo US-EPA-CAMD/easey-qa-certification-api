@@ -10,8 +10,8 @@ export class ProtocolGasRecordDTO extends ProtocolGasBaseDTO {
   id: string;
   testSumId: string;
   userId: string;
-  addDate: Date;
-  updateDate: Date;
+  addDate: string;
+  updateDate: string;
 }
 
 export class ProtocolGasImportDTO extends ProtocolGasBaseDTO {}

@@ -1,7 +1,9 @@
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+
 import { currentDateTime } from '../utilities/functions';
 import {
   ProtocolGasBaseDTO,
@@ -22,6 +24,20 @@ export class ProtocolGasWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
   ) {}
 
+  async getProtocolGas(id: string): Promise<ProtocolGasDTO> {
+    const entity = await this.repository.findOne(id);
+
+    if (!entity) {
+      throw new LoggingException(
+        'Protocol Gas not found.',
+        HttpStatus.NOT_FOUND,
+        { id },
+      );
+    }
+
+    return this.map.one(entity);
+  }
+
   async getProtocolGases(testSumId: string): Promise<ProtocolGasDTO[]> {
     const records = await this.repository.find({
       where: { testSumId },
@@ -36,7 +52,7 @@ export class ProtocolGasWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<ProtocolGasRecordDTO> {
-    const timestamp = currentDateTime();
+    const timestamp = currentDateTime().toLocaleDateString();
 
     let entity = this.repository.create({
       ...payload,
@@ -55,5 +71,35 @@ export class ProtocolGasWorkspaceService {
       isImport,
     );
     return this.map.one(entity);
+  }
+
+  async updateProtocolGas(
+    testSumId: string,
+    id: string,
+    payload: ProtocolGasBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<ProtocolGasDTO> {
+    const timestamp = currentDateTime().toLocaleString();
+
+    const entity = await this.getProtocolGas(id);
+
+    entity.gasLevelCode = payload.gasLevelCode;
+    entity.gasTypeCode = payload.gasTypeCode;
+    entity.vendorID = payload.vendorID;
+    entity.cylinderID = payload.cylinderID;
+    entity.expirationDate = payload.expirationDate;
+    entity.userId = userId;
+    entity.updateDate = timestamp;
+
+    await this.repository.save(entity);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return await this.getProtocolGas(id);
   }
 }

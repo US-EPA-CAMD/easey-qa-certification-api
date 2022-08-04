@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -46,5 +46,20 @@ export class ProtocolGasWorkspaceController {
   ): Promise<ProtocolGasRecordDTO> {
     const userId = 'testUser';
     return this.service.createProtocolGas(testSumId, payload, userId);
+  }
+
+  @Put(':id')
+  @ApiOkResponse({
+    type: ProtocolGasRecordDTO,
+    description: 'Updates a Linearity Injection record in the workspace',
+  })
+  editProtolGas(
+    @Param('locid') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: ProtocolGasBaseDTO,
+  ) {
+    const userId = 'testUser';
+    return this.service.updateProtocolGas(testSumId, id, payload, userId);
   }
 }
