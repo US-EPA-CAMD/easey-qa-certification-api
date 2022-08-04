@@ -41,13 +41,13 @@ export class ProtocolGas extends BaseEntity {
     type: 'varchar',
     name: 'vendor_id',
   })
-  vendorId: string;
+  vendorID: string;
 
   @Column({
     type: 'varchar',
     name: 'cylinder_id',
   })
-  cylinderId: string;
+  cylinderID: string;
 
   @Column({
     type: 'date',

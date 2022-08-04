@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ProtocolGasDTO } from '../dto/protocol-gas.dto';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { ProtocolGasBaseDTO, ProtocolGasDTO } from '../dto/protocol-gas.dto';
 import { ProtocolGas } from '../entities/workspace/protocol-gas.entity';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
@@ -13,8 +14,23 @@ const userId = 'testuser';
 const protocolGas = new ProtocolGas();
 const protocolGasDTO = new ProtocolGasDTO();
 
+const payload: ProtocolGasBaseDTO = {
+  gasLevelCode: '',
+  gasTypeCode: '',
+  vendorID: '',
+  cylinderID: '',
+  expirationDate: new Date(),
+};
+
+const mockTestSumService = () => ({
+  resetToNeedsEvaluation: jest.fn(),
+});
+
 const mockRepository = () => ({
-  find: jest.fn(() => []),
+  find: jest.fn().mockResolvedValue([protocolGas]),
+  create: jest.fn().mockResolvedValue(protocolGas),
+  save: jest.fn().mockResolvedValue(protocolGas),
+  findOne: jest.fn().mockResolvedValue(protocolGas),
 });
 
 const mockMap = () => ({
@@ -30,6 +46,10 @@ describe('ProtocolGasWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ProtocolGasWorkspaceService,
+        {
+          provide: TestSummaryWorkspaceService,
+          useFactory: mockTestSumService,
+        },
         {
           provide: ProtocolGasWorkspaceRepository,
           useFactory: mockRepository,
@@ -52,8 +72,20 @@ describe('ProtocolGasWorkspaceService', () => {
   describe('getProtocolGases', () => {
     it('calls the repository.find() and get protocol gases by id', async () => {
       const result = await service.getProtocolGases(testSumId);
-      expect(result).toEqual([]);
+      expect(result).toEqual([protocolGasDTO]);
       expect(repository.find).toHaveBeenCalled();
+    });
+  });
+
+  describe('createProtocolGas', () => {
+    it('calls the repository.create() and insert a protocol gas record', async () => {
+      const result = await service.createProtocolGas(
+        testSumId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(protocolGasDTO);
+      expect(repository.create).toHaveBeenCalled();
     });
   });
 });

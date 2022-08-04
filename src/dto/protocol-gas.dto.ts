@@ -1,8 +1,8 @@
 export class ProtocolGasBaseDTO {
   gasLevelCode: string;
   gasTypeCode: string;
-  vendorId: string;
-  cylinderId: string;
+  vendorID: string;
+  cylinderID: string;
   expirationDate: Date;
 }
 
