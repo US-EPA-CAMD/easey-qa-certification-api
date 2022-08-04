@@ -1,17 +1,15 @@
-import { v4 as uuid } from 'uuid';
-
 import {
-  BadRequestException,
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common';
-
 import { InjectRepository } from '@nestjs/typeorm';
+import { v4 as uuid } from 'uuid';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 import {
   TestSummaryDTO,
@@ -19,12 +17,9 @@ import {
   TestSummaryRecordDTO,
   TestSummaryImportDTO,
 } from '../dto/test-summary.dto';
-
-import { currentDateTime } from '../utilities/functions';
 import { TestSummaryMap } from '../maps/test-summary.map';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { LinearitySummaryWorkspaceService } from '../linearity-summary-workspace/linearity-summary.service';
-
 import { Unit } from './../entities/workspace/unit.entity';
 import { Component } from './../entities/workspace/component.entity';
 import { StackPipe } from './../entities/workspace/stack-pipe.entity';
@@ -33,6 +28,7 @@ import { MonitorLocation } from './../entities/workspace/monitor-location.entity
 import { ReportingPeriod } from './../entities/workspace/reporting-period.entity';
 
 import { getEntityManager } from '../utilities/utils';
+import { currentDateTime } from '../utilities/functions';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -49,9 +45,11 @@ export class TestSummaryWorkspaceService {
     const result = await this.repository.getTestSummaryById(testSumId);
 
     if (!result) {
-      this.logger.error(NotFoundException, 'Test summary not found.', true, {
-        testSumId: testSumId,
-      });
+      throw new LoggingException(
+        'Test Summary not found.',
+        HttpStatus.NOT_FOUND,
+        { testSumId },
+      );
     }
 
     return this.map.one(result);
@@ -214,12 +212,11 @@ export class TestSummaryWorkspaceService {
       (unit && payload.unitId !== unit.name) ||
       (stackPipe && payload.stackPipeId !== stackPipe.name)
     ) {
-      this.logger.error(
-        BadRequestException,
+      throw new LoggingException(
         `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${
           payload.unitId ? payload.unitId : payload.stackPipeId
         }]`,
-        true,
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -275,9 +272,11 @@ export class TestSummaryWorkspaceService {
     const entity = await this.repository.getTestSummaryById(id);
 
     if (!entity) {
-      this.logger.error(NotFoundException, 'Test summary not found.', true, {
-        testSumId: id,
-      });
+      throw new LoggingException(
+        'Test summary not found.',
+        HttpStatus.NOT_FOUND,
+        { testSumId: id },
+      );
     }
 
     const [

@@ -1,12 +1,13 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LinearitySummaryChecksService } from '../linearity-summary-workspace/linearity-summary-checks.service';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 import { QACertificationImportDTO } from '../dto/qa-certification.dto';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { LocationChecksService } from '../location-workspace/location-checks.service';
 import { TestSummaryChecksService } from '../test-summary-workspace/test-summary-checks.service';
+import { LinearitySummaryChecksService } from '../linearity-summary-workspace/linearity-summary-checks.service';
 import { LinearityInjectionChecksService } from '../linearity-injection-workspace/linearity-injection-checks.service';
 
 @Injectable()
@@ -32,7 +33,11 @@ export class QACertificationChecksService {
 
   private throwIfErrors(errorList: string[]) {
     if (errorList.length > 0) {
-      this.logger.error(BadRequestException, errorList, true);
+      throw new LoggingException(
+        'Bad Request',
+        HttpStatus.BAD_REQUEST,
+        errorList,
+      );
     }
   }
 

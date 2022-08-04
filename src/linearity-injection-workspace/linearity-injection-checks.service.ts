@@ -1,13 +1,14 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+
 import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
 import { LinearitySummaryWorkspaceRepository } from '../linearity-summary-workspace/linearity-summary.repository';
 import {
   LinearityInjectionBaseDTO,
   LinearityInjectionImportDTO,
-  LinearityInjectionRecordDTO,
 } from '../dto/linearity-injection.dto';
 import { LinearityInjection } from '../entities/workspace/linearity-injection.entity';
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
@@ -23,7 +24,11 @@ export class LinearityInjectionChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      this.logger.error(BadRequestException, errorList, true);
+      throw new LoggingException(
+        'Bad Request',
+        HttpStatus.BAD_REQUEST,
+        errorList,
+      );
     }
   }
 

@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -11,6 +11,7 @@ import { LinearitySummary } from '../entities/linearity-summary.entity';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class LinearitySummaryChecksService {
@@ -24,7 +25,11 @@ export class LinearitySummaryChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      this.logger.error(BadRequestException, errorList, true);
+      throw new LoggingException(
+        'Bad Request',
+        HttpStatus.BAD_REQUEST,
+        errorList,
+      );
     }
   }
 

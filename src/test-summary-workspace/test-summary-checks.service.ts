@@ -1,7 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 import {
   TestSummaryBaseDTO,
@@ -39,7 +40,11 @@ export class TestSummaryChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      this.logger.error(BadRequestException, errorList, true);
+      throw new LoggingException(
+        'Bad Request',
+        HttpStatus.BAD_REQUEST,
+        errorList,
+      );
     }
   }
 

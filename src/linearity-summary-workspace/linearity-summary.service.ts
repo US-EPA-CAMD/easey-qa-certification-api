@@ -1,33 +1,29 @@
-import { In } from 'typeorm';
-import { v4 as uuid } from 'uuid';
-
 import {
   forwardRef,
   HttpStatus,
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common';
+import { In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
 
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
-
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
+import { currentDateTime } from '../utilities/functions';
 import {
   LinearitySummaryDTO,
   LinearitySummaryBaseDTO,
   LinearitySummaryRecordDTO,
   LinearitySummaryImportDTO,
 } from '../dto/linearity-summary.dto';
-
-import { currentDateTime } from '../utilities/functions';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 import { LinearityInjectionWorkspaceService } from '../linearity-injection-workspace/linearity-injection.service';
 import { TestSummaryWorkspaceService } from './../test-summary-workspace/test-summary.service';
-import { LinearitySummary } from 'src/entities/workspace/linearity-summary.entity';
+import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
 
 @Injectable()
 export class LinearitySummaryWorkspaceService {

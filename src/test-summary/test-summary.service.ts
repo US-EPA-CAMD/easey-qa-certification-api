@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 import { TestSummaryDTO } from '../dto/test-summary.dto';
 import { TestSummaryMap } from '../maps/test-summary.map';
@@ -11,7 +11,6 @@ import { LinearitySummaryService } from '../linearity-summary/linearity-summary.
 @Injectable()
 export class TestSummaryService {
   constructor(
-    private readonly logger: Logger,
     private readonly map: TestSummaryMap,
     private readonly linearityService: LinearitySummaryService,
     @InjectRepository(TestSummaryRepository)
@@ -22,9 +21,11 @@ export class TestSummaryService {
     const result = await this.repository.getTestSummaryById(testSumId);
 
     if (!result) {
-      this.logger.error(NotFoundException, 'Test summary not found.', true, {
-        testSumId: testSumId,
-      });
+      throw new LoggingException(
+        'Test summary not found.',
+        HttpStatus.NOT_FOUND,
+        { testSumId },
+      );
     }
 
     return this.map.one(result);

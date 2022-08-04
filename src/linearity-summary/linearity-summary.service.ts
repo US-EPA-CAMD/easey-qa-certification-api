@@ -1,10 +1,9 @@
-import { In } from 'typeorm';
-
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { In } from 'typeorm';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
-import { Logger } from '@us-epa-camd/easey-common/logger';
-
+import { LinearitySummary } from '../entities/linearity-summary.entity';
 import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryRepository } from './linearity-summary.repository';
@@ -13,21 +12,24 @@ import { LinearityInjectionService } from '../linearity-injection/linearity-inje
 @Injectable()
 export class LinearitySummaryService {
   constructor(
-    private readonly logger: Logger,
     private readonly map: LinearitySummaryMap,
     private readonly injectionService: LinearityInjectionService,
     @InjectRepository(LinearitySummaryRepository)
     private readonly repository: LinearitySummaryRepository,
   ) {}
 
-  async getSummaryById(id: string): Promise<LinearitySummaryDTO> {
-    const result = await this.repository.findOne(id);
+  async getSummaryById(id: string): Promise<LinearitySummary> {
+    const entity = await this.repository.findOne(id);
 
-    this.logger.error(NotFoundException, 'Linearity Summary not found.', true, {
-      id,
-    });
+    if (!entity) {
+      throw new LoggingException(
+        'Linearity Summary not found.',
+        HttpStatus.NOT_FOUND,
+        { id },
+      );
+    }
 
-    return this.map.one(result);
+    return entity;
   }
 
   async getSummariesByTestSumId(

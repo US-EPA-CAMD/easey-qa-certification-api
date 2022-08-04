@@ -1,17 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { Logger } from '@us-epa-camd/easey-common/logger';
-
 import { QACertificationDTO } from '../dto/qa-certification.dto';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { TestSummaryService } from '../test-summary/test-summary.service';
 
 @Injectable()
 export class QACertificationService {
-  constructor(
-    private readonly logger: Logger,
-    private readonly testSummaryService: TestSummaryService,
-  ) {}
+  constructor(private readonly testSummaryService: TestSummaryService) {}
 
   async export(params: QACertificationParamsDTO): Promise<QACertificationDTO> {
     const promises = [];
