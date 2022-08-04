@@ -1,5 +1,6 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -39,7 +40,7 @@ export class TestSummaryChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      this.logger.error(BadRequestException, errorList, true);
+      throw new LoggingException('Hm', HttpStatus.BAD_REQUEST);
     }
   }
 

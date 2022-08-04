@@ -49,9 +49,6 @@ export class TestSummaryWorkspaceService {
     const result = await this.repository.getTestSummaryById(testSumId);
 
     if (!result) {
-      this.logger.error(NotFoundException, 'Test summary not found.', true, {
-        testSumId: testSumId,
-      });
     }
 
     return this.map.one(result);
@@ -214,13 +211,6 @@ export class TestSummaryWorkspaceService {
       (unit && payload.unitId !== unit.name) ||
       (stackPipe && payload.stackPipeId !== stackPipe.name)
     ) {
-      this.logger.error(
-        BadRequestException,
-        `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${
-          payload.unitId ? payload.unitId : payload.stackPipeId
-        }]`,
-        true,
-      );
     }
 
     const entity = this.repository.create({
@@ -275,9 +265,6 @@ export class TestSummaryWorkspaceService {
     const entity = await this.repository.getTestSummaryById(id);
 
     if (!entity) {
-      this.logger.error(NotFoundException, 'Test summary not found.', true, {
-        testSumId: id,
-      });
     }
 
     const [
