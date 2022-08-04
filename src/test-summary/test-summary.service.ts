@@ -22,9 +22,6 @@ export class TestSummaryService {
     const result = await this.repository.getTestSummaryById(testSumId);
 
     if (!result) {
-      this.logger.error(NotFoundException, 'Test summary not found.', true, {
-        testSumId: testSumId,
-      });
     }
 
     return this.map.one(result);

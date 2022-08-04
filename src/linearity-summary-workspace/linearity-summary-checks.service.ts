@@ -24,7 +24,6 @@ export class LinearitySummaryChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      this.logger.error(BadRequestException, errorList, true);
     }
   }
 

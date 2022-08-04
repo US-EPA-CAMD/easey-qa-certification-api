@@ -32,7 +32,6 @@ export class QACertificationChecksService {
 
   private throwIfErrors(errorList: string[]) {
     if (errorList.length > 0) {
-      this.logger.error(BadRequestException, errorList, true);
     }
   }
 

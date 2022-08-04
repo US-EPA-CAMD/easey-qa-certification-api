@@ -23,10 +23,6 @@ export class LinearitySummaryService {
   async getSummaryById(id: string): Promise<LinearitySummaryDTO> {
     const result = await this.repository.findOne(id);
 
-    this.logger.error(NotFoundException, 'Linearity Summary not found.', true, {
-      id,
-    });
-
     return this.map.one(result);
   }
 

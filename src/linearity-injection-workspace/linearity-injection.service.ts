@@ -121,14 +121,6 @@ export class LinearityInjectionWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      this.logger.error(
-        NotFoundException,
-        'Linearity Injection not found.',
-        true,
-        {
-          id: id,
-        },
-      );
     }
 
     entity.injectionDate = payload.injectionDate;
