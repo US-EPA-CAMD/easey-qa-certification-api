@@ -6,6 +6,7 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
+import { ProtocolGasVendor } from './protocol-gas-vendor.entity';
 import { TestSummary } from './test-summary.entity';
 
 @Entity({
@@ -37,17 +38,14 @@ export class ProtocolGas extends BaseEntity {
   })
   gasTypeCode: string;
 
-  @Column({
-    type: 'varchar',
-    name: 'vendor_id',
-  })
-  vendorId: string;
+  @Column({ type: 'varchar', name: 'vendor_id' })
+  vendorID: string;
 
   @Column({
     type: 'varchar',
     name: 'cylinder_id',
   })
-  cylinderId: string;
+  cylinderID: string;
 
   @Column({
     type: 'date',
@@ -79,4 +77,11 @@ export class ProtocolGas extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
+
+  @ManyToOne(
+    () => ProtocolGasVendor,
+    o => o.protocolGas,
+  )
+  @JoinColumn({ name: 'vendor_id' })
+  protocolGasVendor: ProtocolGasVendor;
 }
