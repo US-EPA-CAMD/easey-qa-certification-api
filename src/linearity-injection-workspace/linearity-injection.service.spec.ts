@@ -9,17 +9,23 @@ import { LinearityInjectionWorkspaceService } from './linearity-injection.servic
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
 import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
 
 const testSumId = '1';
 const linSumId = '1';
 const userId = 'testuser';
 
+const lineInjection = new LinearitySummary();
 const lineInjectionDto = new LinearitySummaryDTO();
 const lineInjectionRecordDto = new LinearityInjectionRecordDTO();
 
 const payload = new LinearityInjectionImportDTO();
 
-const mockRepository = () => ({});
+const mockRepository = () => ({
+  create: jest.fn().mockResolvedValue(lineInjection),
+  save: jest.fn().mockResolvedValue(lineInjection),
+  findOne: jest.fn().mockResolvedValue(lineInjection),
+});
 
 const mockTestSummaryService = () => ({});
 
@@ -30,6 +36,7 @@ const mockMap = () => ({
 
 describe('TestSummaryWorkspaceService', () => {
   let service: LinearityInjectionWorkspaceService;
+  let testSummaryService: TestSummaryWorkspaceService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -48,19 +55,38 @@ describe('TestSummaryWorkspaceService', () => {
           provide: LinearityInjectionMap,
           useFactory: mockMap,
         },
+        {
+          provide: TestSummaryWorkspaceService,
+          useFactory: () => ({
+            resetToNeedsEvaluation: jest.fn().mockResolvedValue(null),
+          }),
+        },
       ],
     }).compile();
 
     service = module.get(LinearityInjectionWorkspaceService);
+    testSummaryService = module.get(TestSummaryWorkspaceService);
   });
 
   describe('import', () => {
-    it('Should import Linearity Summary', async () => {
+    it('Should import Linearity Injection', async () => {
       jest
         .spyOn(service, 'createInjection')
         .mockResolvedValue(lineInjectionRecordDto);
       const result = await service.import(testSumId, linSumId, payload, userId);
       expect(result).toEqual(null);
+    });
+  });
+
+  describe('createInjection', () => {
+    it('Should insert a Linearity Injection record', async () => {
+      const result = await service.createInjection(
+        testSumId,
+        linSumId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(lineInjectionDto);
     });
   });
 });

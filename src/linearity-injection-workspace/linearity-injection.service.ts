@@ -6,7 +6,6 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -85,7 +84,7 @@ export class LinearityInjectionWorkspaceService {
   async createInjection(
     testSumId: string,
     linSumId: string,
-    payload: LinearityInjectionBaseDTO,
+    payload: LinearityInjectionBaseDTO | LinearityInjectionImportDTO,
     userId: string,
     isImport: boolean = false,
   ): Promise<LinearityInjectionRecordDTO> {
