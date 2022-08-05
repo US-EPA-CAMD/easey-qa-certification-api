@@ -10,8 +10,7 @@ import { LinearityInjectionWorkspaceRepository } from './linearity-injection.rep
 import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
-import { HttpStatus, InternalServerErrorException } from '@nestjs/common';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { InternalServerErrorException } from '@nestjs/common';
 
 const testSumId = '1';
 const linSumId = '1';
@@ -25,6 +24,7 @@ const lineInjectionRecordDto = new LinearityInjectionRecordDTO();
 const payload = new LinearityInjectionImportDTO();
 
 const mockRepository = () => ({
+  find: jest.fn().mockResolvedValue([lineInjection]),
   create: jest.fn().mockResolvedValue(lineInjection),
   save: jest.fn().mockResolvedValue(lineInjection),
   findOne: jest.fn().mockResolvedValue(lineInjection),
@@ -41,7 +41,6 @@ const mockMap = () => ({
 describe('TestSummaryWorkspaceService', () => {
   let service: LinearityInjectionWorkspaceService;
   let repository: LinearityInjectionWorkspaceRepository;
-  let testSummaryService: TestSummaryWorkspaceService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -71,7 +70,48 @@ describe('TestSummaryWorkspaceService', () => {
 
     service = module.get(LinearityInjectionWorkspaceService);
     repository = module.get(LinearityInjectionWorkspaceRepository);
-    testSummaryService = module.get(TestSummaryWorkspaceService);
+  });
+
+  describe('getInjectionById', () => {
+    it('Should get Linearity Injection', async () => {
+      const result = await service.getInjectionById(linInjId);
+      expect(result).toEqual(lineInjectionDto);
+    });
+
+    it('Should through error while getting a Linearity Injection record', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.getInjectionById(linInjId);
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('getInjectionsByLinSumId', () => {
+    it('Should get Linearity Injections', async () => {
+      const result = await service.getInjectionsByLinSumId(linSumId);
+      expect(result).toEqual([lineInjectionDto]);
+    });
+  });
+
+  describe('getInjectionsByLinSumIds', () => {
+    it('Should get Linearity Injections', async () => {
+      const result = await service.getInjectionsByLinSumIds([linSumId]);
+      expect(result).toEqual([lineInjectionDto]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Linearity Injections', async () => {
+      jest.spyOn(service, 'getInjectionsByLinSumIds').mockResolvedValue([]);
+
+      const result = await service.export([linSumId]);
+      expect(result).toEqual([]);
+    });
   });
 
   describe('import', () => {

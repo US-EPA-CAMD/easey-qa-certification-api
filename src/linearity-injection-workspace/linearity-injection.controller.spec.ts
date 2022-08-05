@@ -27,6 +27,8 @@ const payload: LinearityInjectionBaseDTO = {
 };
 
 const mockService = () => ({
+  getInjectionsByLinSumId: jest.fn().mockResolvedValue([linInjDto]),
+  getInjectionById: jest.fn().mockResolvedValue(linInjDto),
   createInjection: jest.fn().mockResolvedValue(linInjDto),
   updateInjection: jest.fn().mockResolvedValue(linInjDto),
   deleteInjection: jest.fn().mockResolvedValue(null),
@@ -62,6 +64,25 @@ describe('Linearity Injection Controller', () => {
     controller = module.get(LinearityInjectionWorkspaceController);
     service = module.get(LinearityInjectionWorkspaceService);
     checkService = module.get(LinearityInjectionChecksService);
+  });
+
+  describe('getInjections', () => {
+    it('should get Linearity injection records by Linearity Summary Id', async () => {
+      const result = await controller.getInjections(locId, testSumId, linSumId);
+      expect(result).toEqual([linInjDto]);
+    });
+  });
+
+  describe('getLinearityInjection', () => {
+    it('should get Linearity injection record', async () => {
+      const result = await controller.getLinearityInjection(
+        locId,
+        testSumId,
+        linSumId,
+        linInjId,
+      );
+      expect(result).toEqual(linInjDto);
+    });
   });
 
   describe('createLinearityInjection', () => {
