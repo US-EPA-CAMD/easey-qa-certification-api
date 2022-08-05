@@ -10,6 +10,8 @@ import { LinearityInjectionWorkspaceRepository } from './linearity-injection.rep
 import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
+import { HttpStatus, InternalServerErrorException } from '@nestjs/common';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 const testSumId = '1';
 const linSumId = '1';
@@ -26,6 +28,7 @@ const mockRepository = () => ({
   create: jest.fn().mockResolvedValue(lineInjection),
   save: jest.fn().mockResolvedValue(lineInjection),
   findOne: jest.fn().mockResolvedValue(lineInjection),
+  delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockTestSummaryService = () => ({});
@@ -37,6 +40,7 @@ const mockMap = () => ({
 
 describe('TestSummaryWorkspaceService', () => {
   let service: LinearityInjectionWorkspaceService;
+  let repository: LinearityInjectionWorkspaceRepository;
   let testSummaryService: TestSummaryWorkspaceService;
 
   beforeEach(async () => {
@@ -66,6 +70,7 @@ describe('TestSummaryWorkspaceService', () => {
     }).compile();
 
     service = module.get(LinearityInjectionWorkspaceService);
+    repository = module.get(LinearityInjectionWorkspaceRepository);
     testSummaryService = module.get(TestSummaryWorkspaceService);
   });
 
@@ -100,6 +105,40 @@ describe('TestSummaryWorkspaceService', () => {
         userId,
       );
       expect(result).toEqual(lineInjectionDto);
+    });
+
+    it('Should through error while updating a Linearity Injection record', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.updateInjection(testSumId, linInjId, payload, userId);
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteInjection', () => {
+    it('Should delete a Linearity Injection record', async () => {
+      const result = await service.deleteInjection(testSumId, linInjId, userId);
+      expect(result).toEqual(undefined);
+    });
+
+    it('Should through error while deleting a Linearity Injection record', async () => {
+      const error = new InternalServerErrorException(
+        `Error deleting Linearity Injection record Id [${linInjId}]`,
+      );
+      jest.spyOn(repository, 'delete').mockRejectedValue(error);
+
+      let errored = false;
+      try {
+        await service.deleteInjection(testSumId, linInjId, userId);
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
     });
   });
 });

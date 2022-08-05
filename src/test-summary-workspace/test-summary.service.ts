@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import {
   BadRequestException,
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -33,6 +34,7 @@ import { MonitorLocation } from './../entities/workspace/monitor-location.entity
 import { ReportingPeriod } from './../entities/workspace/reporting-period.entity';
 
 import { getEntityManager } from '../utilities/utils';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -49,6 +51,10 @@ export class TestSummaryWorkspaceService {
     const result = await this.repository.getTestSummaryById(testSumId);
 
     if (!result) {
+      throw new LoggingException(
+        'Invalid Test Summary Id',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     return this.map.one(result);
@@ -211,6 +217,12 @@ export class TestSummaryWorkspaceService {
       (unit && payload.unitId !== unit.name) ||
       (stackPipe && payload.stackPipeId !== stackPipe.name)
     ) {
+      throw new LoggingException(
+        `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${
+          payload.unitId ? payload.unitId : payload.stackPipeId
+        }]`,
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const entity = this.repository.create({
@@ -265,6 +277,10 @@ export class TestSummaryWorkspaceService {
     const entity = await this.repository.getTestSummaryById(id);
 
     if (!entity) {
+      throw new LoggingException(
+        'Invalid Test Summary Id',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     const [

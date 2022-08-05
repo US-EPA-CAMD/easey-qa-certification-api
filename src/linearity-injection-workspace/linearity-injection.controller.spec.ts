@@ -29,6 +29,7 @@ const payload: LinearityInjectionBaseDTO = {
 const mockService = () => ({
   createInjection: jest.fn().mockResolvedValue(linInjDto),
   updateInjection: jest.fn().mockResolvedValue(linInjDto),
+  deleteInjection: jest.fn().mockResolvedValue(null),
 });
 
 const mockCheckService = () => ({
@@ -89,6 +90,18 @@ describe('Linearity Injection Controller', () => {
       );
       expect(result).toEqual(linInjDto);
       expect(spyCheckService).toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteLinearityInjection', () => {
+    it('should delete Linearity injection record', async () => {
+      const result = await controller.deleteLinearityInjection(
+        locId,
+        testSumId,
+        linSumId,
+        linInjId,
+      );
+      expect(result).toEqual(null);
     });
   });
 });
