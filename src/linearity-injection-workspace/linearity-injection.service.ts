@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -23,6 +24,7 @@ import { currentDateTime } from '../utilities/functions';
 import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
 import { TestSummaryWorkspaceService } from './../test-summary-workspace/test-summary.service';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class LinearityInjectionWorkspaceService {
@@ -120,6 +122,10 @@ export class LinearityInjectionWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
+      throw new LoggingException(
+        'Invalid Linearity Injection Id',
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     entity.injectionDate = payload.injectionDate;

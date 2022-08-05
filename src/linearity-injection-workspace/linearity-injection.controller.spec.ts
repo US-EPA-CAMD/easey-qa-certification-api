@@ -15,6 +15,7 @@ import { LinearityInjectionWorkspaceService } from './linearity-injection.servic
 const locId = '';
 const testSumId = '';
 const linSumId = '';
+const linInjId = '';
 const linInjDto = new LinearityInjectionDTO();
 
 const payload: LinearityInjectionBaseDTO = {
@@ -27,6 +28,7 @@ const payload: LinearityInjectionBaseDTO = {
 
 const mockService = () => ({
   createInjection: jest.fn().mockResolvedValue(linInjDto),
+  updateInjection: jest.fn().mockResolvedValue(linInjDto),
 });
 
 const mockCheckService = () => ({
@@ -68,6 +70,21 @@ describe('Linearity Injection Controller', () => {
         locId,
         testSumId,
         linSumId,
+        payload,
+      );
+      expect(result).toEqual(linInjDto);
+      expect(spyCheckService).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateLinearityInjection', () => {
+    it('should update Linearity injection record', async () => {
+      const spyCheckService = jest.spyOn(checkService, 'runChecks');
+      const result = await controller.updateLinearityInjection(
+        locId,
+        testSumId,
+        linSumId,
+        linInjId,
         payload,
       );
       expect(result).toEqual(linInjDto);
