@@ -13,8 +13,8 @@ entity.vendorID = string;
 entity.cylinderID = string;
 entity.expirationDate = date;
 entity.userId = string;
-entity.addDate = date;
-entity.updateDate = date;
+entity.addDate = string;
+entity.updateDate = string;
 
 describe('ProtocolGasMap', () => {
   it('maps an entity to a dto', async () => {
@@ -28,7 +28,7 @@ describe('ProtocolGasMap', () => {
     expect(result.cylinderID).toEqual(string);
     expect(result.expirationDate).toEqual(date);
     expect(result.userId).toEqual(string);
-    expect(result.addDate).toEqual(date);
-    expect(result.updateDate).toEqual(date);
+    expect(result.addDate).toEqual(string);
+    expect(result.updateDate).toEqual(string);
   });
 });

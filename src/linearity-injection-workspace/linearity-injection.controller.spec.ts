@@ -27,8 +27,11 @@ const payload: LinearityInjectionBaseDTO = {
 };
 
 const mockService = () => ({
+  getInjectionsByLinSumId: jest.fn().mockResolvedValue([linInjDto]),
+  getInjectionById: jest.fn().mockResolvedValue(linInjDto),
   createInjection: jest.fn().mockResolvedValue(linInjDto),
   updateInjection: jest.fn().mockResolvedValue(linInjDto),
+  deleteInjection: jest.fn().mockResolvedValue(null),
 });
 
 const mockCheckService = () => ({
@@ -63,6 +66,25 @@ describe('Linearity Injection Controller', () => {
     checkService = module.get(LinearityInjectionChecksService);
   });
 
+  describe('getInjections', () => {
+    it('should get Linearity injection records by Linearity Summary Id', async () => {
+      const result = await controller.getInjections(locId, testSumId, linSumId);
+      expect(result).toEqual([linInjDto]);
+    });
+  });
+
+  describe('getLinearityInjection', () => {
+    it('should get Linearity injection record', async () => {
+      const result = await controller.getLinearityInjection(
+        locId,
+        testSumId,
+        linSumId,
+        linInjId,
+      );
+      expect(result).toEqual(linInjDto);
+    });
+  });
+
   describe('createLinearityInjection', () => {
     it('should create Linearity injection record', async () => {
       const spyCheckService = jest.spyOn(checkService, 'runChecks');
@@ -89,6 +111,18 @@ describe('Linearity Injection Controller', () => {
       );
       expect(result).toEqual(linInjDto);
       expect(spyCheckService).toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteLinearityInjection', () => {
+    it('should delete Linearity injection record', async () => {
+      const result = await controller.deleteLinearityInjection(
+        locId,
+        testSumId,
+        linSumId,
+        linInjId,
+      );
+      expect(result).toEqual(null);
     });
   });
 });

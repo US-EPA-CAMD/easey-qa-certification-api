@@ -39,13 +39,23 @@ export class LinearityInjectionWorkspaceService {
 
   async getInjectionById(id: string): Promise<LinearityInjectionDTO> {
     const result = await this.repository.findOne(id);
+
+    if (!result) {
+      throw new LoggingException(
+        'Invalid Linearity Injection Id',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     return this.map.one(result);
   }
 
   async getInjectionsByLinSumId(
     linSumId: string,
   ): Promise<LinearityInjectionDTO[]> {
-    const results = await this.repository.getInjectionsByLinSumId(linSumId);
+    const results = await this.repository.find({
+      linSumId: linSumId,
+    });
     return this.map.many(results);
   }
 
