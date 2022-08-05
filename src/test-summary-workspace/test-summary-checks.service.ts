@@ -40,7 +40,7 @@ export class TestSummaryChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      throw new LoggingException('Hm', HttpStatus.BAD_REQUEST);
+      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }
 

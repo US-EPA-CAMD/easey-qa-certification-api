@@ -1,6 +1,6 @@
 import { In } from 'typeorm';
 
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -8,6 +8,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { LinearityInjectionDTO } from '../dto/linearity-injection.dto';
 import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { LinearityInjectionRepository } from './linearity-injection.repository';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class LinearityInjectionService {
@@ -20,6 +21,14 @@ export class LinearityInjectionService {
 
   async getInjectionById(id: string): Promise<LinearityInjectionDTO> {
     const result = await this.repository.findOne(id);
+
+    if (!result) {
+      throw new LoggingException(
+        `A linearity injection record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     return this.map.one(result);
   }
 
