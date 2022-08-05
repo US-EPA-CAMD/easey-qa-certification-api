@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 
 import {
   forwardRef,
+  HttpStatus,
   Inject,
   Injectable,
   InternalServerErrorException,
@@ -25,6 +26,7 @@ import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 import { LinearityInjectionWorkspaceService } from '../linearity-injection-workspace/linearity-injection.service';
 import { TestSummaryWorkspaceService } from './../test-summary-workspace/test-summary.service';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class LinearitySummaryWorkspaceService {
@@ -41,6 +43,13 @@ export class LinearitySummaryWorkspaceService {
 
   async getSummaryById(id: string): Promise<LinearitySummaryDTO> {
     const result = await this.repository.getSummaryById(id);
+
+    if (!result) {
+      throw new LoggingException(
+        `A linearity summary record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     return this.map.one(result);
   }
@@ -159,6 +168,10 @@ export class LinearitySummaryWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
+      throw new LoggingException(
+        `A linearity summary record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
     }
 
     entity.meanReferenceValue = payload.meanReferenceValue;

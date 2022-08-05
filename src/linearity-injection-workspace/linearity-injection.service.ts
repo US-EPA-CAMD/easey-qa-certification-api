@@ -42,7 +42,7 @@ export class LinearityInjectionWorkspaceService {
 
     if (!result) {
       throw new LoggingException(
-        'Invalid Linearity Injection Id',
+        `A linearity injection record not found with Record Id [${id}].`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -133,7 +133,7 @@ export class LinearityInjectionWorkspaceService {
 
     if (!entity) {
       throw new LoggingException(
-        'Invalid Linearity Injection Id',
+        `A linearity injection record not found with Record Id [${id}].`,
         HttpStatus.NOT_FOUND,
       );
     }

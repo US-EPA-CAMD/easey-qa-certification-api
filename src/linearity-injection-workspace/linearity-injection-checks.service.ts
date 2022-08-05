@@ -24,11 +24,7 @@ export class LinearityInjectionChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      throw new LoggingException(
-        'Validation Errors',
-        HttpStatus.BAD_REQUEST,
-        errorList,
-      );
+      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }
 

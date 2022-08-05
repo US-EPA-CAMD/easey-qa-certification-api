@@ -29,9 +29,8 @@ export class ProtocolGasWorkspaceService {
 
     if (!entity) {
       throw new LoggingException(
-        'Protocol Gas not found.',
+        `A protocol gas record not found with Record Id [${id}].`,
         HttpStatus.NOT_FOUND,
-        { id },
       );
     }
 

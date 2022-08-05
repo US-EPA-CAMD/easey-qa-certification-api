@@ -52,7 +52,7 @@ export class TestSummaryWorkspaceService {
 
     if (!result) {
       throw new LoggingException(
-        'Invalid Test Summary Id',
+        `A test summary record not found with Record Id [${testSumId}].`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -278,7 +278,7 @@ export class TestSummaryWorkspaceService {
 
     if (!entity) {
       throw new LoggingException(
-        'Invalid Test Summary Id',
+        `A test summary record not found with Record Id [${id}].`,
         HttpStatus.NOT_FOUND,
       );
     }
