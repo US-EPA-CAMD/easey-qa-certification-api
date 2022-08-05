@@ -13,6 +13,7 @@ import { LinearitySummary } from '../entities/workspace/linearity-summary.entity
 
 const testSumId = '1';
 const linSumId = '1';
+const linInjId = '1';
 const userId = 'testuser';
 
 const lineInjection = new LinearitySummary();
@@ -83,6 +84,18 @@ describe('TestSummaryWorkspaceService', () => {
       const result = await service.createInjection(
         testSumId,
         linSumId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(lineInjectionDto);
+    });
+  });
+
+  describe('updateInjection', () => {
+    it('Should update a Linearity Injection record', async () => {
+      const result = await service.updateInjection(
+        testSumId,
+        linInjId,
         payload,
         userId,
       );
