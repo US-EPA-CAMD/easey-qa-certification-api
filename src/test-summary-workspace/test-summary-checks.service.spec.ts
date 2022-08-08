@@ -19,7 +19,6 @@ import { ComponentWorkspaceRepository } from '../component-workspace/component.r
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { TestResultCode } from '../entities/test-result-code.entity';
-import { ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
 import { ReportingPeriod } from '../entities/workspace/reporting-period.entity';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { RataBaseDTO } from '../dto/rata.dto';
