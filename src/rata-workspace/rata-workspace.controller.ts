@@ -14,9 +14,9 @@ export class RataWorkspaceController {
   //  @UseGuards(AuthGuard)
   @ApiCreatedResponse({
     type: RataRecordDTO,
-    description: 'Creates a Linearity Summary record in the workspace',
+    description: 'Creates a Rata record in the workspace',
   })
-  async createLinearitySummary(
+  async createRata(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: RataBaseDTO,
