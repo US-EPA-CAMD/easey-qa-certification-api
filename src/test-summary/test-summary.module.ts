@@ -9,6 +9,7 @@ import { TestSummaryController } from './test-summary.controller';
 import { TestSummaryRepository } from './test-summary.repository';
 import { TestSummaryService } from './test-summary.service';
 import { TestSummaryMap } from '../maps/test-summary.map';
+import { RataModule } from '../rata/rata.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { TestSummaryMap } from '../maps/test-summary.map';
     LinearitySummaryModule,
     LinearityInjectionModule,
     ProtocolGasModule,
+    RataModule,
   ],
   controllers: [TestSummaryController],
   providers: [TestSummaryMap, TestSummaryService],

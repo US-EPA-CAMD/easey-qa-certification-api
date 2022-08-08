@@ -18,6 +18,8 @@ import { LocationModule } from './location/location.module';
 import { LocationWorkspaceModule } from './location-workspace/location.module';
 import { ComponentModule } from './component-workspace/component.module';
 import { AnalyzerRangeModule } from './analyzer-range-workspace/analyzer-range.module';
+import { RataModule } from './rata/rata.module';
+import { RataWorkspaceModule } from './rata-workspace/rata-workspace.module';
 
 @Module({
   imports: [
@@ -37,6 +39,8 @@ import { AnalyzerRangeModule } from './analyzer-range-workspace/analyzer-range.m
     LocationWorkspaceModule,
     ComponentModule,
     AnalyzerRangeModule,
+    RataModule,
+    RataWorkspaceModule,
   ],
 })
 export class AppModule {}
