@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { In } from 'typeorm';
 import { Transform } from 'class-transformer';
 import { ValidationArguments } from 'class-validator';
 
 import { IsValidDate, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { FindOneOptions } from 'typeorm';
+import { FindOneOptions, In } from 'typeorm';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
