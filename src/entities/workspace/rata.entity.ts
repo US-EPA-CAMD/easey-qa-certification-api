@@ -5,7 +5,6 @@ import {
   PrimaryColumn,
   ManyToOne,
   JoinColumn,
-  OneToMany,
 } from 'typeorm';
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
