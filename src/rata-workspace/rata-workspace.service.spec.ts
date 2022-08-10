@@ -5,6 +5,8 @@ import { RataMap } from '../maps/rata.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { RataWorkspaceRepository } from './rata-workspace.repository';
 import { RataWorkspaceService } from './rata-workspace.service';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { HttpStatus } from '@nestjs/common';
 
 const rataDto = new RataDTO();
 
@@ -26,6 +28,7 @@ const mockRepository = () => ({
   create: jest.fn().mockResolvedValue(rataEntity),
   save: jest.fn().mockResolvedValue(rataEntity),
   findOne: jest.fn().mockResolvedValue(rataEntity),
+  delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockTestSummaryService = () => ({
@@ -93,6 +96,29 @@ describe('RataWorkspaceService', () => {
         errored = true;
       }
       expect(errored).toEqual(true);
+    });
+
+    describe('deleteRata', () => {
+      it('Should delete a Rata record', async () => {
+        const result = await service.deleteRata(testSumId, rataId, userId);
+        expect(result).toEqual(undefined);
+      });
+
+      it('Should through error while deleting a Rata record', async () => {
+        const error = new LoggingException(
+          `Error deleting RATA with record Id [${rataId}]`,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
+        jest.spyOn(repository, 'delete').mockRejectedValue(error);
+
+        let errored = false;
+        try {
+          await service.deleteRata(testSumId, rataId, userId);
+        } catch (e) {
+          errored = true;
+        }
+        expect(errored).toEqual(true);
+      });
     });
   });
 });

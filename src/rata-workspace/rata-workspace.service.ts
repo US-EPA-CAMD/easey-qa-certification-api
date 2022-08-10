@@ -78,4 +78,26 @@ export class RataWorkspaceService {
     );
     return this.map.one(entity);
   }
+
+  async deleteRata(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete(id);
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting RATA with record Id [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+  }
 }
