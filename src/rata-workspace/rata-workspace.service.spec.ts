@@ -10,6 +10,7 @@ const rataDto = new RataDTO();
 
 const locId = '';
 const testSumId = '';
+const rataId = '';
 const userId = 'testUser';
 const rataEntity = new Rata();
 const rataRecord = new RataRecordDTO();
@@ -68,6 +69,30 @@ describe('RataWorkspaceService', () => {
       const result = await service.createRata(testSumId, payload, userId);
       expect(result).toEqual(rataRecord);
       expect(repository.create).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateRata', () => {
+    it('should update a rata record', async () => {
+      const result = await service.updateRata(
+        testSumId,
+        rataId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(rataRecord);
+    });
+
+    it('should throw error with invalid rata record id', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.updateRata(testSumId, rataId, payload, userId);
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
     });
   });
 });
