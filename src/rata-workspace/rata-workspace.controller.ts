@@ -1,7 +1,14 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
-import { ApiCreatedResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Param, Post, Put } from '@nestjs/common';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import { RataBaseDTO, RataRecordDTO } from '../dto/rata.dto';
 import { RataWorkspaceService } from './rata-workspace.service';
+
+const userId = 'testUser';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -22,7 +29,23 @@ export class RataWorkspaceController {
     @Body() payload: RataBaseDTO,
     //    @CurrentUser() userId: string,
   ): Promise<RataRecordDTO> {
-    const userId = 'testUser';
     return this.service.createRata(testSumId, payload, userId);
+  }
+
+  @Put(':id')
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: RataRecordDTO,
+    description: 'Updates a Rata record in the workspace',
+  })
+  async updateRata(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: RataBaseDTO,
+    //    @CurrentUser() userId: string,
+  ): Promise<RataRecordDTO> {
+    return this.service.updateRata(testSumId, id, payload, userId);
   }
 }

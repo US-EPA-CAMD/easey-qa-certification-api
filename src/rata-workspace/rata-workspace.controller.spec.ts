@@ -5,6 +5,7 @@ import { RataWorkspaceService } from './rata-workspace.service';
 
 const locId = '';
 const testSumId = '';
+const rataId = '';
 const rataRecord = new RataRecordDTO();
 
 const payload: RataBaseDTO = {
@@ -16,6 +17,7 @@ const payload: RataBaseDTO = {
 
 const mockService = () => ({
   createRata: jest.fn().mockResolvedValue(rataRecord),
+  updateRata: jest.fn().mockResolvedValue(rataRecord),
 });
 
 describe('RataWorkspaceController', () => {
@@ -38,11 +40,18 @@ describe('RataWorkspaceController', () => {
   });
 
   describe('createRata', () => {
-    it('should call the RataService.createRata', async () => {
-      jest.spyOn(service, 'createRata').mockResolvedValue(rataRecord);
+    it('should call the RataService.createRata and insert a rata record', async () => {
       expect(await controller.createRata(locId, testSumId, payload)).toEqual(
         rataRecord,
       );
+    });
+  });
+
+  describe('updateRata', () => {
+    it('should call the RataService.updateRata and update rata record', async () => {
+      expect(
+        await controller.updateRata(locId, testSumId, rataId, payload),
+      ).toEqual(rataRecord);
     });
   });
 });
