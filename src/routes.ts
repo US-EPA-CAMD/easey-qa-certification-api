@@ -16,6 +16,8 @@ import { LinearityInjectionModule } from './linearity-injection/linearity-inject
 import { LinearityInjectionWorkspaceModule } from './linearity-injection-workspace/linearity-injection.module';
 import { ProtocolGasModule } from './protocol-gas/protocol-gas.module';
 import { ProtocolGasWorkspaceModule } from './protocol-gas-workspace/protocol-gas.module';
+import { RataWorkspaceModule } from './rata-workspace/rata-workspace.module';
+import { RataModule } from './rata/rata.module';
 
 const routes: Routes = [
   {
@@ -48,6 +50,10 @@ const routes: Routes = [
             path: ':testSumId/protocol-gases',
             module: ProtocolGasModule,
           },
+          {
+            path: ':testSumId/rata',
+            module: RataModule,
+          },
         ],
       },
     ],
@@ -73,6 +79,10 @@ const routes: Routes = [
           {
             path: ':testSumId/protocol-gases',
             module: ProtocolGasWorkspaceModule,
+          },
+          {
+            path: ':testSumId/rata',
+            module: RataWorkspaceModule,
           },
         ],
       },

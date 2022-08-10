@@ -5,10 +5,16 @@ import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { LinearitySummaryMap } from './linearity-summary.map';
 import { TestSummary } from '../entities/test-summary.entity';
 import { TestSummaryDTO } from '../dto/test-summary.dto';
+import { ProtocolGasMap } from './protocol-gas.map';
+import { RataMap } from './rata.map';
 
 @Injectable()
 export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
-  constructor(private readonly linearityMap: LinearitySummaryMap) {
+  constructor(
+    private readonly linearityMap: LinearitySummaryMap,
+    private readonly protocolGasMap: ProtocolGasMap,
+    private readonly rataMap: RataMap,
+  ) {
     super();
   }
 
@@ -18,6 +24,12 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
     const linearitySummaries = entity.linearitySummaries
       ? await this.linearityMap.many(entity.linearitySummaries)
       : [];
+
+    const protocolGases = entity.protocolGases
+      ? await this.protocolGasMap.many(entity.protocolGases)
+      : [];
+
+    const ratas = entity.ratas ? await this.rataMap.many(entity.ratas) : [];
 
     if (entity['evalStatusCode']) {
       evalStatusCode = entity['evalStatusCode'];
@@ -65,7 +77,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       reportPeriodId: entity.reportPeriodId,
       calibrationInjectionData: [],
       linearitySummaryData: linearitySummaries,
-      rataData: [],
+      rataData: ratas,
       flowToLoadReferenceData: [],
       flowToLoadCheckData: [],
       cycleTimeSummaryData: [],
@@ -78,7 +90,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       unitDefaultTestData: [],
       hgSummaryData: [],
       testQualificationData: [],
-      protocolGasData: [],
+      protocolGasData: protocolGases,
       airEmissionTestData: [],
     };
   }
