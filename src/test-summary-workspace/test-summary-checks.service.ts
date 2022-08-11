@@ -18,6 +18,7 @@ import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { TestResultCode } from '../entities/test-result-code.entity';
 import { getEntityManager } from '../utilities/utils';
 
@@ -35,7 +36,10 @@ export class TestSummaryChecksService {
     private readonly componentRepository: ComponentWorkspaceRepository,
     @InjectRepository(AnalyzerRangeWorkspaceRepository)
     private readonly analyzerRangeRepository: AnalyzerRangeWorkspaceRepository,
+    @InjectRepository(TestSummaryMasterDataRelationshipRepository)
     private readonly testSummaryRelationshipsRepository: TestSummaryMasterDataRelationshipRepository,
+    @InjectRepository(MonitorSystemRepository)
+    private readonly monitorSystemRepository: MonitorSystemRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -64,6 +68,12 @@ export class TestSummaryChecksService {
 
       // IMPORT-17 Extraneous Test Summary Data Check
       error = this.import17Check(locationId, summary);
+      if (error) {
+        errorList.push(error);
+      }
+
+      // IMPORT-18 System and Component Check
+      error = await this.import18Check(locationId, summary);
       if (error) {
         errorList.push(error);
       }
@@ -413,6 +423,206 @@ export class TestSummaryChecksService {
     }
 
     return error;
+  }
+
+  // IMPORT-18 System and Component Check
+  private async import18Check(
+    locationId: string,
+    summary: TestSummaryBaseDTO | TestSummaryImportDTO,
+  ): Promise<string> {
+    let error: string = null;
+
+    const resultA = `You have reported a Test Summary Record for Location ${[
+      locationId,
+    ]}, TestTypeCode [${summary.testTypeCode}] and Test Number [${
+      summary.testNumber
+    }], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.`;
+
+    const resultB = `You have reported a Test Summary Record for Location ${[
+      locationId,
+    ]}, TestTypeCode [${summary.testTypeCode}] and Test Number [${
+      summary.testNumber
+    }], which is inappropriate for the component type for ComponentID [${
+      summary.componentID
+    }]. This test record was not imported.`;
+
+    const resultC = `You have reported a Test Summary Record for Location ${[
+      locationId,
+    ]}, TestTypeCode [${summary.testTypeCode}] and Test Number [${
+      summary.testNumber
+    }], which either does not have a MonitorSystemID or inappropriately has a ComponentID. This test record was not imported.`;
+
+    const resultD = `You have reported a Test Summary Record for Location ${[
+      locationId,
+    ]}, TestTypeCode [${summary.testTypeCode}] and Test Number [${
+      summary.testNumber
+    }], which is inappropriate for the system type for MonitoringSystemID [${
+      summary.monitoringSystemID
+    }]. This test record was not imported.`;
+
+    const resultE = `You have reported a Test Summary Record for Location ${[
+      locationId,
+    ]}, TestTypeCode [${summary.testTypeCode}] and Test Number [${
+      summary.testNumber
+    }], which inappropriately contains eithera MonitorSystemID or a ComponentID. This test record was not imported.`;
+
+    const resultF = `You have reported a Test Summary Record for Location ${[
+      locationId,
+    ]}, TestTypeCode [${summary.testTypeCode}] and Test Number [${
+      summary.testNumber
+    }], which is inappropriate for a non-LME unit. This test record was not imported.`;
+
+    const monitorSystem = await this.monitorSystemRepository.findOne({
+      where: {
+        monitoringSystemID: summary.monitoringSystemID,
+      },
+    });
+
+    const component = await this.componentRepository.findOne({
+      componentID: summary.componentID,
+      locationId: locationId,
+    });
+
+    if (
+      [
+        TestTypeCodes.SEVENDAY.toString(),
+        TestTypeCodes.LINE.toString(),
+        TestTypeCodes.CYCLE.toString(),
+        TestTypeCodes.ONOFF.toString(),
+        TestTypeCodes.FFACC.toString(),
+        TestTypeCodes.FFACCTT.toString(),
+        TestTypeCodes.HGSI3.toString(),
+        TestTypeCodes.HGLINE.toString(),
+      ].includes(summary.testTypeCode)
+    ) {
+      if (summary.monitoringSystemID !== null || summary.componentID === null) {
+        error = resultA;
+        return error;
+      } else {
+        if (
+          [
+            TestTypeCodes.SEVENDAY.toString(),
+            TestTypeCodes.ONOFF.toString(),
+            TestTypeCodes.CYCLE.toString(),
+            TestTypeCodes.LINE.toString(),
+          ].includes(summary.testTypeCode)
+        ) {
+          if (
+            !['SO2', 'CO2', 'NOX', 'O2', 'FLOW', 'HG'].includes(
+              component.componentTypeCode,
+            )
+          ) {
+            error = resultB;
+            return error;
+          }
+        }
+
+        if (
+          [
+            TestTypeCodes.HGSI3.toString(),
+            TestTypeCodes.HGLINE.toString(),
+          ].includes(summary.testTypeCode)
+        ) {
+          if (component.componentTypeCode !== 'HG') {
+            error = resultB;
+            return error;
+          }
+        }
+
+        if (
+          [
+            TestTypeCodes.FFACC.toString(),
+            TestTypeCodes.FFACCTT.toString(),
+          ].includes(summary.testTypeCode)
+        ) {
+          if (!['OFFM', 'GFFM'].includes(component.componentTypeCode)) {
+            error = resultB;
+            return error;
+          }
+        }
+      }
+    }
+
+    if (
+      [
+        TestTypeCodes.RATA.toString(),
+        TestTypeCodes.F2LCHK.toString(),
+        TestTypeCodes.F2LREF.toString(),
+        TestTypeCodes.FF2LBAS.toString(),
+        TestTypeCodes.FF2LTST.toString(),
+        TestTypeCodes.APPE.toString(),
+      ].includes(summary.testTypeCode)
+    ) {
+      if (summary.monitoringSystemID === null || summary.componentID !== null) {
+        error = resultC;
+        return error;
+      } else {
+        if (summary.testTypeCode === TestTypeCodes.RATA.toString()) {
+          if (
+            ![
+              'SO2',
+              'CO2',
+              'NOX',
+              'NOXC',
+              'O2',
+              'FLOW',
+              'H2O',
+              'H2OM',
+              'NOXP',
+              'SO2R',
+              'HG',
+              'HCL',
+              'HF',
+              'ST',
+            ].includes(monitorSystem.systemTypeCode)
+          ) {
+            error = resultD;
+            return error;
+          }
+
+          if (summary.testTypeCode === 'APPE') {
+            if (monitorSystem.systemTypeCode !== 'NOXE') {
+              error = resultD;
+              return error;
+            }
+          }
+
+          if (['F2LCHK', 'F2LREF'].includes(summary.testTypeCode)) {
+            if (monitorSystem.systemTypeCode !== 'FLOW') {
+              error = resultD;
+              return error;
+            }
+          }
+
+          if (['FF2LBAS', 'FF2LTST'].includes(summary.testTypeCode)) {
+            if (
+              !['OILV', 'OILM', 'GAS', 'LTOL', 'LTGS'].includes(
+                monitorSystem.systemTypeCode,
+              )
+            ) {
+              error = resultD;
+              return error;
+            }
+          }
+        }
+      }
+    }
+
+    if (summary.testTypeCode === TestTypeCodes.UNITDEF.toString()) {
+      if (summary.monitoringSystemID !== null || summary.componentID !== null) {
+        error = resultE;
+        return error;
+      } else {
+        const monitorMethod = 'GET RECORD'; // TODO: Locate a Production Monitor Method record for the location with a parameterCode equal to "NOXM" and methodCode equal to "LME"
+
+        if (!monitorMethod) {
+          error = resultF;
+          return error;
+        }
+      }
+    }
+
+    return null;
   }
 
   // IMPORT-20 Duplicate Test Check

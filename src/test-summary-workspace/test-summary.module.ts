@@ -15,6 +15,7 @@ import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/q
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { RataWorkspaceModule } from '../rata-workspace/rata-workspace.module';
 
 @Module({
@@ -26,6 +27,7 @@ import { RataWorkspaceModule } from '../rata-workspace/rata-workspace.module';
       ComponentWorkspaceRepository,
       AnalyzerRangeWorkspaceRepository,
       TestSummaryMasterDataRelationshipRepository,
+      MonitorSystemRepository,
     ]),
     forwardRef(() => LinearitySummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),

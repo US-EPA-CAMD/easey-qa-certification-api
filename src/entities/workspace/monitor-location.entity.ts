@@ -6,8 +6,6 @@ import {
   JoinColumn,
   OneToOne,
   OneToMany,
-  ManyToMany,
-  JoinTable,
 } from 'typeorm';
 
 import { Unit } from './unit.entity';
@@ -16,7 +14,7 @@ import { StackPipe } from './stack-pipe.entity';
 import { TestSummary } from './test-summary.entity';
 import { MonitorSystem } from './monitor-system.entity';
 import { QASuppData } from './qa-supp-data.entity';
-import { MonitorPlan } from './monitor-plan.entity';
+import { MonitorMethod } from './monitor-method.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_location' })
 export class MonitorLocation extends BaseEntity {
@@ -67,6 +65,12 @@ export class MonitorLocation extends BaseEntity {
   )
   @JoinColumn({ name: 'mon_loc_id' })
   systems: MonitorSystem[];
+
+  @OneToMany(
+    () => MonitorMethod,
+    method => method.location,
+  )
+  methods: MonitorMethod[];
 
   @OneToMany(
     () => TestSummary,
