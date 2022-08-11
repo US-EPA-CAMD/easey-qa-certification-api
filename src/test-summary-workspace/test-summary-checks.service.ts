@@ -19,6 +19,7 @@ import { ComponentWorkspaceRepository } from '../component-workspace/component.r
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
 import { TestResultCode } from '../entities/test-result-code.entity';
 import { getEntityManager } from '../utilities/utils';
 
@@ -40,6 +41,8 @@ export class TestSummaryChecksService {
     private readonly testSummaryRelationshipsRepository: TestSummaryMasterDataRelationshipRepository,
     @InjectRepository(MonitorSystemRepository)
     private readonly monitorSystemRepository: MonitorSystemRepository,
+    @InjectRepository(MonitorMethodRepository)
+    private readonly monitorMethodRepository: MonitorMethodRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -613,7 +616,13 @@ export class TestSummaryChecksService {
         error = resultE;
         return error;
       } else {
-        const monitorMethod = 'GET RECORD'; // TODO: Locate a Production Monitor Method record for the location with a parameterCode equal to "NOXM" and methodCode equal to "LME"
+        const monitorMethod = await this.monitorMethodRepository.findOne({
+          where: {
+            locationId,
+            parameterCode: 'NOXM',
+            monitoringMethodCode: 'LME',
+          },
+        });
 
         if (!monitorMethod) {
           error = resultF;
