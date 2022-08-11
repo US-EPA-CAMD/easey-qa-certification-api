@@ -18,6 +18,7 @@ const payload: RataBaseDTO = {
 const mockService = () => ({
   createRata: jest.fn().mockResolvedValue(rataRecord),
   updateRata: jest.fn().mockResolvedValue(rataRecord),
+  deleteRata: jest.fn().mockResolvedValue(null),
 });
 
 describe('RataWorkspaceController', () => {
@@ -52,6 +53,13 @@ describe('RataWorkspaceController', () => {
       expect(
         await controller.updateRata(locId, testSumId, rataId, payload),
       ).toEqual(rataRecord);
+    });
+  });
+
+  describe('deleteRata', () => {
+    it('should call the RataService.deleteRata and delete rata record', async () => {
+      const result = await controller.deleteRata(locId, testSumId, rataId);
+      expect(result).toEqual(null);
     });
   });
 });
