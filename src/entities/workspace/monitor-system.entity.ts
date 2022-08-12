@@ -28,6 +28,12 @@ export class MonitorSystem extends BaseEntity {
   })
   monitoringSystemID: string;
 
+  @Column({
+    type: 'varchar',
+    name: 'sys_type_cd',
+  })
+  systemTypeCode: string;
+
   @ManyToOne(
     () => MonitorLocation,
     o => o.systems,

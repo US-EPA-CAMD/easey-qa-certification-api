@@ -20,6 +20,8 @@ import { ComponentModule } from './component-workspace/component.module';
 import { AnalyzerRangeModule } from './analyzer-range-workspace/analyzer-range.module';
 import { RataModule } from './rata/rata.module';
 import { RataWorkspaceModule } from './rata-workspace/rata-workspace.module';
+import { MonitorSystemModule } from './monitor-system/monitor-system.module';
+import { MonitorMethodModule } from './monitor-method/monitor-method.module';
 
 @Module({
   imports: [
@@ -41,6 +43,8 @@ import { RataWorkspaceModule } from './rata-workspace/rata-workspace.module';
     AnalyzerRangeModule,
     RataModule,
     RataWorkspaceModule,
+    MonitorSystemModule,
+    MonitorMethodModule,
   ],
 })
 export class AppModule {}
