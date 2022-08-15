@@ -498,7 +498,7 @@ export class TestSummaryChecksService {
         TestTypeCodes.HGLINE.toString(),
       ].includes(summary.testTypeCode)
     ) {
-      if (summary.monitoringSystemID !== null || summary.componentID === null) {
+      if (summary.monitoringSystemID || !summary.componentID) {
         error = resultA;
         return error;
       } else {
