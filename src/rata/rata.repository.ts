@@ -1,4 +1,4 @@
-import { Rata } from '../entities/workspace/rata.entity';
+import { Rata } from '../entities/rata.entity';
 import { Repository, EntityRepository } from 'typeorm';
 
 @EntityRepository(Rata)

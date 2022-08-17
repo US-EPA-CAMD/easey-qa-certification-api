@@ -1,20 +1,48 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { RataRecordDTO } from '../dto/rata.dto';
 import { RataController } from './rata.controller';
 import { RataService } from './rata.service';
 
+const locId = '';
+const testSumId = '';
+const rataId = '';
+const rataRecord = new RataRecordDTO();
+
+const mockService = () => ({
+  getRatasByTestSumId: jest.fn().mockResolvedValue([rataRecord]),
+  getRataById: jest.fn().mockResolvedValue(rataRecord),
+});
+
 describe('RataController', () => {
   let controller: RataController;
+  let service: RataService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [RataController],
-      providers: [RataService],
+      providers: [
+        {
+          provide: RataService,
+          useFactory: mockService,
+        },
+      ],
     }).compile();
 
     controller = module.get<RataController>(RataController);
+    service = module.get<RataService>(RataService);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
+  describe('getRata', () => {
+    it('should call the RataService.getRata and get a rata record', async () => {
+      expect(await controller.getRata(locId, testSumId, rataId)).toEqual(
+        rataRecord,
+      );
+    });
+  });
+
+  describe('getRatas', () => {
+    it('should call the RataService.getRata and get a rata record', async () => {
+      expect(await controller.getRatas(locId, testSumId)).toEqual([rataRecord]);
+    });
   });
 });
