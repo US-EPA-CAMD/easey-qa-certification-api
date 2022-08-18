@@ -166,7 +166,9 @@ describe('Test Summary Check Service Test', () => {
         payload,
       ]);
 
-      expect(result).toEqual(["You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported."]);
+      expect(result).toEqual([
+        'You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.',
+      ]);
     });
 
     it('Should get error IMPORT -20 Duplicate Test Summary record', async () => {

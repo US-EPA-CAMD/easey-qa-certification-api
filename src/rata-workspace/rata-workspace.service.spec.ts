@@ -25,6 +25,7 @@ const payload: RataBaseDTO = {
 };
 
 const mockRepository = () => ({
+  find: jest.fn().mockResolvedValue([rataEntity]),
   create: jest.fn().mockResolvedValue(rataEntity),
   save: jest.fn().mockResolvedValue(rataEntity),
   findOne: jest.fn().mockResolvedValue(rataEntity),
@@ -65,6 +66,34 @@ describe('RataWorkspaceService', () => {
 
     service = module.get<RataWorkspaceService>(RataWorkspaceService);
     repository = module.get<RataWorkspaceRepository>(RataWorkspaceRepository);
+  });
+
+  describe('getRataById', () => {
+    it('calls the repository.findOne() and get one rata record', async () => {
+      const result = await service.getRataById(rataId);
+      expect(result).toEqual(rataRecord);
+      expect(repository.findOne).toHaveBeenCalled();
+    });
+
+    it('Should through error while not finding a Rata record', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.getRataById(rataId);
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('getRatasByTestSumId', () => {
+    it('calls the repository.find() and get many rata record', async () => {
+      const result = await service.getRatasByTestSumId(rataId);
+      expect(result).toEqual([rataRecord]);
+      expect(repository.find).toHaveBeenCalled();
+    });
   });
 
   describe('createRata', () => {

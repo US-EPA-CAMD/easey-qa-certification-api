@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -15,6 +23,32 @@ const userId = 'testUser';
 @ApiTags('Rata')
 export class RataWorkspaceController {
   constructor(private readonly service: RataWorkspaceService) {}
+
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: RataRecordDTO,
+    description: 'Retrieves workspace RATA records by Test Summary Id',
+  })
+  async getRatas(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+  ): Promise<RataRecordDTO[]> {
+    return this.service.getRatasByTestSumId(testSumId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    type: RataRecordDTO,
+    description: 'Retrieves workspace RATA record by its Id',
+  })
+  async getRata(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('id') id: string,
+  ): Promise<RataRecordDTO> {
+    return this.service.getRataById(id);
+  }
 
   @Post()
   //  @ApiBearerAuth('Token')
