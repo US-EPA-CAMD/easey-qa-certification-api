@@ -15,3 +15,13 @@ Please ensure your pull request meets the following criteria:
 - Connected to the issue via ZenHub
 
 ```
+
+```
+### Important
+
+Please ensure your pull request meets the followings before merging:
+- Run `yarn format` to format the code
+- Unit Tests for Added Codes or Code Changes
+- Resolve failing unit tests due to Code Changes
+
+```

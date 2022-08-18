@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 const KEY = 'RATA Summary';
 
-export class RataBaseDTO {
+export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'operatingLevelCode. ADD TO PROPERTY METADATA',
   })
@@ -44,9 +44,9 @@ export class RataBaseDTO {
   confidenceCoefficient: number;
 
   @ApiProperty({
-    description: 't_value. ADD TO PROPERTY METADATA',
+    description: 'tValue. ADD TO PROPERTY METADATA',
   })
-  t_value: number;
+  tValue: number;
 
   @ApiProperty({
     description: 'apsIndicator. ADD TO PROPERTY METADATA',
@@ -99,7 +99,7 @@ export class RataBaseDTO {
   defaultWAF: number;
 }
 
-export class RataRecordDTO extends RataBaseDTO {
+export class RataSummaryRecordDTO extends RataSummaryBaseDTO {
   id: string;
   rataId: string;
   calculatedAverageGrossUnitLoad: number;
@@ -119,6 +119,6 @@ export class RataRecordDTO extends RataBaseDTO {
   updateDate: string;
 }
 
-export class RataImportDTO extends RataBaseDTO {}
+export class RataSummaryImportDTO extends RataSummaryBaseDTO {}
 
-export class RataDTO extends RataRecordDTO {}
+export class RataSummaryDTO extends RataSummaryRecordDTO {}
