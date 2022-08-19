@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '../utilities/functions';
@@ -9,6 +9,7 @@ import {
 import { RataSummaryMap } from '../maps/rata-summary.map';
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class RataSummaryWorkspaceService {
@@ -46,5 +47,54 @@ export class RataSummaryWorkspaceService {
       isImport,
     );
     return this.map.one(entity);
+  }
+
+  async updateRataSummary(
+    testSumId: string,
+    rataSumId: string,
+    payload: RataSummaryBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<RataSummaryRecordDTO> {
+    const timestamp = currentDateTime();
+    const record = await this.repository.findOne(rataSumId);
+
+    if (!record) {
+      throw new LoggingException(
+        `A Rata Summary record not found with Record Id [${rataSumId}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    record.operatingLevelCode = payload.operatingLevelCode;
+    record.averageGrossUnitLoad = payload.averageGrossUnitLoad;
+    record.referenceMethodCode = payload.referenceMethodCode;
+    record.meanCEMValue = payload.meanCEMValue;
+    record.meanRATAReferenceValue = payload.meanRATAReferenceValue;
+    record.meanDifference = payload.meanDifference;
+    record.standardDeviationDifference = payload.standardDeviationDifference;
+    record.confidenceCoefficient = payload.confidenceCoefficient;
+    record.tValue = payload.tValue;
+    record.apsIndicator = payload.apsIndicator;
+    record.apsCode = payload.apsCode;
+    record.relativeAccuracy = payload.relativeAccuracy;
+    record.biasAdjustmentFactor = payload.biasAdjustmentFactor;
+    record.co2OrO2ReferenceMethodCode = payload.co2OrO2ReferenceMethodCode;
+    record.stackDiameter = payload.stackDiameter;
+    record.stackArea = payload.stackArea;
+    record.numberOfTraversePoints = payload.numberOfTraversePoints;
+    record.calculatedWAF = payload.calculatedWAF;
+    record.defaultWAF = payload.defaultWAF;
+    record.userId = userId;
+    record.updateDate = timestamp;
+
+    await this.repository.save(record);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+    return this.map.one(record);
   }
 }
