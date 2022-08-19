@@ -25,7 +25,7 @@ export class ReferenceMethodCode extends BaseEntity {
   })
   referenceMethodCodeDescription: string;
 
-  @PrimaryColumn({
+  @Column({
     type: 'varchar',
     length: 9,
     name: 'parameter_cd',

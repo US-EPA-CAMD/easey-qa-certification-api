@@ -4,8 +4,6 @@ import { ApsCode } from '../entities/workspace/aps-code.entity';
 import { ReferenceMethodCode } from '../entities/workspace/reference-method-code.entity';
 import { OperatingLevelCode } from '../entities/workspace/operating-level-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
-import { DbLookup } from '../pipes/db-lookup.pipe';
-import { FindOneOptions } from 'typeorm';
 
 const KEY = 'RATA Summary';
 
@@ -28,17 +26,11 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'referenceMethodCode. ADD TO PROPERTY METADATA',
   })
-  @DbLookup(
-    ReferenceMethodCode,
-    (args: ValidationArguments): FindOneOptions<ReferenceMethodCode> => {
-      return { where: { referenceMethodCode: args.value } };
+  @IsValidCode(ReferenceMethodCode, {
+    message: (args: ValidationArguments) => {
+      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
     },
-    {
-      message: (args: ValidationArguments) => {
-        return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
-      },
-    },
-  )
+  })
   referenceMethodCode: string;
 
   @ApiProperty({
@@ -99,17 +91,11 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'co2OrO2ReferenceMethodCode. ADD TO PROPERTY METADATA',
   })
-  @DbLookup(
-    ReferenceMethodCode,
-    (args: ValidationArguments): FindOneOptions<ReferenceMethodCode> => {
-      return { where: { referenceMethodCode: args.value } };
+  @IsValidCode(ReferenceMethodCode, {
+    message: (args: ValidationArguments) => {
+      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
     },
-    {
-      message: (args: ValidationArguments) => {
-        return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
-      },
-    },
-  )
+  })
   co2OrO2ReferenceMethodCode: string;
 
   @ApiProperty({
