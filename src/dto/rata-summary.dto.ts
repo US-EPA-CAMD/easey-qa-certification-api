@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, Min, ValidationArguments } from 'class-validator';
 import { RataRunImportDTO } from './rata-run.dto';
+
+const KEY = 'RATA Summary';
 
 export class RataSummaryBaseDTO {
   @ApiProperty({
@@ -15,10 +18,26 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'meanCEMValue. ADD TO PROPERTY METADATA',
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-17: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
   meanCEMValue: number;
 
   @ApiProperty({
     description: 'meanRataReferenceValue. ADD TO PROPERTY METADATA',
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-18: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
+  @Min(1, {
+    message: (args: ValidationArguments) => {
+      return `RATA-18: You defined an invalid [${args.property}] for [${KEY}]. This value must be greater than zero and
+      less than 20,000.`;
+    },
   })
   meanRataReferenceValue: number;
 
@@ -29,6 +48,11 @@ export class RataSummaryBaseDTO {
 
   @ApiProperty({
     description: 'meanDifference. ADD TO PROPERTY METADATA',
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-19: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
   })
   meanDifference: number;
 
@@ -50,10 +74,20 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'standardDeviationDifference. ADD TO PROPERTY METADATA',
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-20: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
   standardDeviationDifference: number;
 
   @ApiProperty({
     description: 'confidenceCoefficent. ADD TO PROPERTY METADATA',
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-21: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
   })
   confidenceCoefficent: number;
 
