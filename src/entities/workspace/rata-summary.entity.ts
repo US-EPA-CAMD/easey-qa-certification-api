@@ -256,5 +256,10 @@ export class RataSummary extends BaseEntity {
   @JoinColumn({ name: 'co2_o2_ref_method_cd' })
   Co2OrO2ReferenceMethodCode: ReferenceMethodCode;
 
-  // rataRun: RataRun[]
+  // @OneToMany(
+  //   () => RataRun,
+  //   rr => rr.RataRun,
+  // )
+  // @JoinColumn({ name: 'rata_sum_id' })
+  // RataRun: RataRun[];
 }

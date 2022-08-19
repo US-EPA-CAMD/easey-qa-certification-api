@@ -4,7 +4,7 @@ import { ReferenceMethodCode } from '../entities/workspace/reference-method-code
 import { OperatingLevelCode } from '../entities/workspace/operating-level-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { IsNotEmpty, Min, ValidationArguments } from 'class-validator';
-import { RataRunImportDTO } from './rata-run.dto';
+import { RataRunDTO, RataRunImportDTO } from './rata-run.dto';
 
 const KEY = 'RATA Summary';
 
@@ -178,6 +178,6 @@ export class RataSummaryRecordDTO extends RataSummaryBaseDTO {
 export class RataSummaryImportDTO extends RataSummaryBaseDTO {
   rataRunData: RataRunImportDTO[];
 }
-export class RataSummaryDTO extends RataSummaryBaseDTO {
-  rataRunData: RataRunImportDTO[];
+export class RataSummaryDTO extends RataSummaryRecordDTO {
+  rataRunData: RataRunDTO[];
 }

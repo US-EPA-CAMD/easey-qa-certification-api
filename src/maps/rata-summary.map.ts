@@ -6,6 +6,8 @@ import { RataSummary } from '../entities/rata-summary.entity';
 @Injectable()
 export class RataSummaryMap extends BaseMap<RataSummary, RataSummaryDTO> {
   public async one(entity: RataSummary): Promise<RataSummaryDTO> {
+    const rataRuns = [];
+
     return {
       id: entity.id,
       rataId: entity.rataId,
@@ -44,6 +46,7 @@ export class RataSummaryMap extends BaseMap<RataSummary, RataSummaryDTO> {
       userId: entity.userId,
       addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
+      rataRunData: rataRuns,
     };
   }
 }

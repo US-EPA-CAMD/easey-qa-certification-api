@@ -16,6 +16,7 @@ import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { QACertificationDTO } from '../dto/qa-certification.dto';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { RataMap } from '../maps/rata.map';
+import { RataSummaryMap } from '../maps/rata-summary.map';
 
 describe('QA Certification Controller Test', () => {
   let controller: QACertificationController;
@@ -40,6 +41,7 @@ describe('QA Certification Controller Test', () => {
         LinearityInjectionRepository,
         ProtocolGasMap,
         RataMap,
+        RataSummaryMap,
       ],
     }).compile();
 

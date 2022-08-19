@@ -225,5 +225,10 @@ export class RataSummary extends BaseEntity {
   @JoinColumn({ name: 'rata_id' })
   rata: Rata;
 
-  // rataRun: RataRun[]
+  // @OneToMany(
+  //   () => RataRun,
+  //   rr => rr.RataRun,
+  // )
+  // @JoinColumn({ name: 'rata_sum_id' })
+  // RataRun: RataRun[];
 }
