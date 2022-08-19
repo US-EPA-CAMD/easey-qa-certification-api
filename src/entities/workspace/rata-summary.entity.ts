@@ -17,7 +17,7 @@ import { ReferenceMethodCode } from './reference-method-code.entity';
 @Entity({ name: 'camdecmpswks.rata_summary' })
 export class RataSummary extends BaseEntity {
   @PrimaryColumn({
-    name: 'rata_id',
+    name: 'rata_sum_id',
   })
   id: string;
 
@@ -253,7 +253,7 @@ export class RataSummary extends BaseEntity {
     () => ReferenceMethodCode,
     rmc => rmc.RataSummary,
   )
-  @JoinColumn({ name: 'ref_method_cd' })
+  @JoinColumn({ name: 'co2_o2_ref_method_cd' })
   Co2OrO2ReferenceMethodCode: ReferenceMethodCode;
 
   // rataRun: RataRun[]

@@ -22,6 +22,7 @@ import { RataModule } from './rata/rata.module';
 import { RataWorkspaceModule } from './rata-workspace/rata-workspace.module';
 import { MonitorSystemModule } from './monitor-system/monitor-system.module';
 import { MonitorMethodModule } from './monitor-method/monitor-method.module';
+import { RataSummaryWorkspaceModule } from './rata-summary-workspace/rata-summary-workspace.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { MonitorMethodModule } from './monitor-method/monitor-method.module';
     RataWorkspaceModule,
     MonitorSystemModule,
     MonitorMethodModule,
+    RataSummaryWorkspaceModule,
   ],
 })
 export class AppModule {}

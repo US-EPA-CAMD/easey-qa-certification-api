@@ -14,7 +14,7 @@ import { Rata } from './rata.entity';
 @Entity({ name: 'camdecmps.rata_summary' })
 export class RataSummary extends BaseEntity {
   @PrimaryColumn({
-    name: 'rata_id',
+    name: 'rata_sum_id',
   })
   id: string;
 

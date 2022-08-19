@@ -38,4 +38,15 @@ describe('RataMap', () => {
     expect(result.addDate).toEqual(date.toLocaleString());
     expect(result.updateDate).toEqual(date.toLocaleString());
   });
+
+  it('should return null when addDate and updateDate is undefined', async () => {
+    entity.addDate = undefined;
+    entity.updateDate = undefined;
+
+    const map = new RataMap();
+    const result = await map.one(entity);
+
+    expect(result.addDate).toEqual(null);
+    expect(result.updateDate).toEqual(null);
+  });
 });
