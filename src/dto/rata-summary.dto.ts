@@ -1,10 +1,20 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ValidationArguments } from 'class-validator';
+import { ApsCode } from '../entities/workspace/aps-code.entity';
+import { ReferenceMethodCode } from '../entities/workspace/reference-method-code.entity';
+import { OperatingLevelCode } from '../entities/workspace/operating-level-code.entity';
+import { IsValidCode } from '../pipes/is-valid-code.pipe';
 
 const KEY = 'RATA Summary';
 
 export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'operatingLevelCode. ADD TO PROPERTY METADATA',
+  })
+  @IsValidCode(OperatingLevelCode, {
+    message: (args: ValidationArguments) => {
+      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
+    },
   })
   operatingLevelCode: string;
 
@@ -15,6 +25,11 @@ export class RataSummaryBaseDTO {
 
   @ApiProperty({
     description: 'referenceMethodCode. ADD TO PROPERTY METADATA',
+  })
+  @IsValidCode(ReferenceMethodCode, {
+    message: (args: ValidationArguments) => {
+      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
+    },
   })
   referenceMethodCode: string;
 
@@ -56,6 +71,11 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'apsCode. ADD TO PROPERTY METADATA',
   })
+  @IsValidCode(ApsCode, {
+    message: (args: ValidationArguments) => {
+      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
+    },
+  })
   apsCode: string;
 
   @ApiProperty({
@@ -70,6 +90,11 @@ export class RataSummaryBaseDTO {
 
   @ApiProperty({
     description: 'co2OrO2ReferenceMethodCode. ADD TO PROPERTY METADATA',
+  })
+  @IsValidCode(ReferenceMethodCode, {
+    message: (args: ValidationArguments) => {
+      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
+    },
   })
   co2OrO2ReferenceMethodCode: string;
 
