@@ -34,7 +34,11 @@ export class ReferenceMethodCode extends BaseEntity {
 
   @OneToMany(
     () => RataSummary,
-    o => o.ReferenceMethodCode,
+    rs => rs.ReferenceMethodCode,
+  )
+  @OneToMany(
+    () => RataSummary,
+    rs => rs.Co2OrO2ReferenceMethodCode,
   )
   @JoinColumn({ name: 'ref_method_cd' })
   RataSummary: RataSummary[];
