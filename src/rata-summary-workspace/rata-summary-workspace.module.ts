@@ -5,11 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { RataSummaryMap } from '../maps/rata-summary.map';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
+import { RataWorkspaceModule } from '../rata-workspace/rata-workspace.module';
+import { RataMap } from '../maps/rata.map';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([RataSummaryWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
+    forwardRef(() => RataWorkspaceModule),
   ],
   controllers: [RataSummaryWorkspaceController],
   providers: [RataSummaryMap, RataSummaryWorkspaceService],
