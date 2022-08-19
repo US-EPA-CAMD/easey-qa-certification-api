@@ -4,7 +4,7 @@ import { ApsCode } from '../entities/workspace/aps-code.entity';
 import { ReferenceMethodCode } from '../entities/workspace/reference-method-code.entity';
 import { OperatingLevelCode } from '../entities/workspace/operating-level-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
-import { DbLookup } from 'src/pipes/db-lookup.pipe';
+import { DbLookup } from '../pipes/db-lookup.pipe';
 import { FindOneOptions } from 'typeorm';
 
 const KEY = 'RATA Summary';
