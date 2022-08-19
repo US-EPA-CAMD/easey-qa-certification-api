@@ -6,9 +6,7 @@ import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
 import { ProtocolGasWorkspaceService } from './protocol-gas.service';
 
-const locationId = '121';
-const facilityId = 1;
-const unitId = '121';
+const protocolGasId = 'a1b2c3';
 const testSumId = '1';
 const userId = 'testuser';
 const protocolGas = new ProtocolGas();
@@ -77,6 +75,28 @@ describe('ProtocolGasWorkspaceService', () => {
     });
   });
 
+  describe('getProtocolGas', () => {
+    it('Calls repository.findOne({id}) to get a single Protocol Gas record', async () => {
+      const result = await service.getProtocolGas(protocolGasId);
+      expect(result).toEqual(protocolGasDTO);
+      expect(repository.findOne).toHaveBeenCalled();
+    });
+
+    it('Should throw error when Protocol Gas record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      let errored = false;
+
+      try {
+        await service.getProtocolGas(protocolGasId);
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
+    });
+  })
+
   describe('createProtocolGas', () => {
     it('calls the repository.create() and insert a protocol gas record', async () => {
       const result = await service.createProtocolGas(
@@ -87,5 +107,6 @@ describe('ProtocolGasWorkspaceService', () => {
       expect(result).toEqual(protocolGasDTO);
       expect(repository.create).toHaveBeenCalled();
     });
+
   });
 });

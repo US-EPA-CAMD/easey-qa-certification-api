@@ -10,11 +10,13 @@ import { ProtocolGasWorkspaceService } from './protocol-gas.service';
 
 const locId = '';
 const testSumId = '';
+const protocolGasId = '';
 const protocolGasRecord = new ProtocolGasRecordDTO();
 const protocolGases: ProtocolGasDTO[] = [];
 protocolGases.push(protocolGasRecord);
 
 const mockService = () => ({
+  getProtocolGas: jest.fn().mockResolvedValue(protocolGasRecord),
   getProtocolGases: jest.fn(),
   createProtocolGas: jest.fn(),
 });
@@ -60,13 +62,24 @@ describe('Protocol Gas Workspace Controller', () => {
     });
   });
 
+  describe('getProtocolGas', () => {
+    it('Calls the repository to get one Protocol Gas record by Id', async () => {
+      const result = await controller.getProtocolGas(
+        locId,
+        testSumId,
+        protocolGasId
+      );
+      expect(result).toEqual(protocolGasRecord);
+      expect(service.getProtocolGas).toHaveBeenCalled();
+    })
+  });
+
   describe('createProtocolGas', () => {
     it('should call the ProtocolGasWorkspaceService.createProtocolGas', async () => {
       jest
         .spyOn(service, 'createProtocolGas')
         .mockResolvedValue(protocolGasRecord);
-      expect(
-        await controller.createProtocolGas(locId, testSumId, payload),
+      expect(await controller.createProtocolGas(locId, testSumId, payload),
       ).toEqual(protocolGasRecord);
     });
   });

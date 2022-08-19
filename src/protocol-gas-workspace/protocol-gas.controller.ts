@@ -39,6 +39,20 @@ export class ProtocolGasWorkspaceController {
     return this.service.getProtocolGases(testSumId);
   }
 
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: ProtocolGasRecordDTO,
+    description: 'Retrieves workspace Protocol Gas record by its Id'
+  })
+  getProtocolGas(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('id') id: string
+  ) {
+    return this.service.getProtocolGas(id);
+  }
+
   @Post()
   //  @ApiBearerAuth('Token')
   //  @UseGuards(AuthGuard)
