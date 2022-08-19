@@ -5,11 +5,13 @@ import {
   PrimaryColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
 import { TestSummary } from './test-summary.entity';
+import { RataSummary } from './rata-summary.entity';
 
 @Entity({ name: 'camdecmps.rata' })
 export class Rata extends BaseEntity {
@@ -88,4 +90,11 @@ export class Rata extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
+
+  @OneToMany(
+    () => RataSummary,
+    rs => rs.rata,
+  )
+  @JoinColumn({ name: 'rata_id' })
+  rataSummaries: RataSummary[];
 }

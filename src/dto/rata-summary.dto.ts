@@ -1,19 +1,38 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ApsCode } from '../entities/workspace/aps-code.entity';
+import { ReferenceMethodCode } from '../entities/workspace/reference-method-code.entity';
+import { OperatingLevelCode } from '../entities/workspace/operating-level-code.entity';
+import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { IsNotEmpty, Min, ValidationArguments } from 'class-validator';
-import { RataRunImportDTO } from './rata-run.dto';
+import { RataRunDTO, RataRunImportDTO } from './rata-run.dto';
 
 const KEY = 'RATA Summary';
 
 export class RataSummaryBaseDTO {
   @ApiProperty({
-    description: 'relativeAccuracy. ADD TO PROPERTY METADATA',
+    description: 'operatingLevelCode. ADD TO PROPERTY METADATA',
   })
-  relativeAccuracy: number;
+  @IsValidCode(OperatingLevelCode, {
+    message: (args: ValidationArguments) => {
+      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
+    },
+  })
+  operatingLevelCode: string;
 
   @ApiProperty({
-    description: 'biasAdjustmentFactor. ADD TO PROPERTY METADATA',
+    description: 'averageGrossUnitLoad. ADD TO PROPERTY METADATA',
   })
-  biasAdjustmentFactor: number;
+  averageGrossUnitLoad: number;
+
+  @ApiProperty({
+    description: 'referenceMethodCode. ADD TO PROPERTY METADATA',
+  })
+  @IsValidCode(ReferenceMethodCode, {
+    message: (args: ValidationArguments) => {
+      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
+    },
+  })
+  referenceMethodCode: string;
 
   @ApiProperty({
     description: 'meanCEMValue. ADD TO PROPERTY METADATA',
@@ -26,7 +45,7 @@ export class RataSummaryBaseDTO {
   meanCEMValue: number;
 
   @ApiProperty({
-    description: 'meanRataReferenceValue. ADD TO PROPERTY METADATA',
+    description: 'meanRATAReferenceValue. ADD TO PROPERTY METADATA',
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -35,16 +54,10 @@ export class RataSummaryBaseDTO {
   })
   @Min(1, {
     message: (args: ValidationArguments) => {
-      return `RATA-18: You defined an invalid [${args.property}] for [${KEY}]. This value must be greater than zero and
-      less than 20,000.`;
+      return `RATA-18: You defined an invalid [${args.property}] for [${KEY}]. This value must be greater than zero and less than 20,000.`;
     },
   })
-  meanRataReferenceValue: number;
-
-  @ApiProperty({
-    description: 'operatingLevelCode. ADD TO PROPERTY METADATA',
-  })
-  operatingLevelCode: string;
+  meanRATAReferenceValue: number;
 
   @ApiProperty({
     description: 'meanDifference. ADD TO PROPERTY METADATA',
@@ -57,21 +70,6 @@ export class RataSummaryBaseDTO {
   meanDifference: number;
 
   @ApiProperty({
-    description: 'defaultWaf. ADD TO PROPERTY METADATA',
-  })
-  defaultWaf: number;
-
-  @ApiProperty({
-    description: 'averageGrossUnitLoad. ADD TO PROPERTY METADATA',
-  })
-  averageGrossUnitLoad: number;
-
-  @ApiProperty({
-    description: 'apsIndicator. ADD TO PROPERTY METADATA',
-  })
-  apsIndicator: number;
-
-  @ApiProperty({
     description: 'standardDeviationDifference. ADD TO PROPERTY METADATA',
   })
   @IsNotEmpty({
@@ -82,29 +80,54 @@ export class RataSummaryBaseDTO {
   standardDeviationDifference: number;
 
   @ApiProperty({
-    description: 'confidenceCoefficent. ADD TO PROPERTY METADATA',
+    description: 'confidenceCoefficient. ADD TO PROPERTY METADATA',
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return `RATA-21: You did not provide [${args.property}], which is required for [${KEY}].`;
     },
   })
-  confidenceCoefficent: number;
-
-  @ApiProperty({
-    description: 'co2OrO2ReferenceMethodCode. ADD TO PROPERTY METADATA',
-  })
-  co2OrO2ReferenceMethodCode: string;
-
-  @ApiProperty({
-    description: 'referenceMethodCode. ADD TO PROPERTY METADATA',
-  })
-  referenceMethodCode: string;
+  confidenceCoefficient: number;
 
   @ApiProperty({
     description: 'tValue. ADD TO PROPERTY METADATA',
   })
   tValue: number;
+
+  @ApiProperty({
+    description: 'apsIndicator. ADD TO PROPERTY METADATA',
+  })
+  apsIndicator: number;
+
+  @ApiProperty({
+    description: 'apsCode. ADD TO PROPERTY METADATA',
+  })
+  @IsValidCode(ApsCode, {
+    message: (args: ValidationArguments) => {
+      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
+    },
+  })
+  apsCode: string;
+
+  @ApiProperty({
+    description: 'relativeAccuracy. ADD TO PROPERTY METADATA',
+  })
+  relativeAccuracy: number;
+
+  @ApiProperty({
+    description: 'biasAdjustmentFactor. ADD TO PROPERTY METADATA',
+  })
+  biasAdjustmentFactor: number;
+
+  @ApiProperty({
+    description: 'co2OrO2ReferenceMethodCode. ADD TO PROPERTY METADATA',
+  })
+  @IsValidCode(ReferenceMethodCode, {
+    message: (args: ValidationArguments) => {
+      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
+    },
+  })
+  co2OrO2ReferenceMethodCode: string;
 
   @ApiProperty({
     description: 'stackDiameter. ADD TO PROPERTY METADATA',
@@ -117,36 +140,36 @@ export class RataSummaryBaseDTO {
   stackArea: number;
 
   @ApiProperty({
-    description: 'calculatedWaf. ADD TO PROPERTY METADATA',
-  })
-  calculatedWaf: number;
-
-  @ApiProperty({
     description: 'numberOfTraversePoints. ADD TO PROPERTY METADATA',
   })
   numberOfTraversePoints: number;
 
   @ApiProperty({
-    description: 'apsCode. ADD TO PROPERTY METADATA',
+    description: 'calculatedWAF. ADD TO PROPERTY METADATA',
   })
-  apsCode: string;
+  calculatedWAF: number;
+
+  @ApiProperty({
+    description: 'defaultWAF. ADD TO PROPERTY METADATA',
+  })
+  defaultWAF: number;
 }
 
 export class RataSummaryRecordDTO extends RataSummaryBaseDTO {
   id: string;
   rataId: string;
+  calculatedAverageGrossUnitLoad: number;
+  calculatedMeanCEMValue: number;
+  calculatedMeanRATAReferenceValue: number;
+  calculatedMeanDifference: number;
+  calculatedStandardDeviationDifference: number;
+  calculatedConfidenceCoefficient: number;
+  calculatedTValue: number;
+  calculatedApsIndicator: number;
   calculatedRelativeAccuracy: number;
   calculatedBiasAdjustmentFactor: number;
-  calculatedMeanCEMValue: number;
-  calculatedMeanRataReferenceValue: number;
-  calculatedMeanDifference: number;
-  calculatedAverageGrossUnitLoad: number;
-  calculatedApsIndicator: number;
-  calculatedStandardDeviationDifference: number;
-  calculatedConfidenceCoefficent: number;
-  calculatedTValue: number;
   calculatedStackArea: number;
-  calculatedCalculatedWaf: number;
+  calculatedCalculatedWAF: number;
   userId: string;
   addDate: string;
   updateDate: string;
@@ -155,6 +178,6 @@ export class RataSummaryRecordDTO extends RataSummaryBaseDTO {
 export class RataSummaryImportDTO extends RataSummaryBaseDTO {
   rataRunData: RataRunImportDTO[];
 }
-export class RataSummaryDTO extends RataSummaryBaseDTO {
-  rataRunData: RataRunImportDTO[];
+export class RataSummaryDTO extends RataSummaryRecordDTO {
+  rataRunData: RataRunDTO[];
 }

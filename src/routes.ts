@@ -18,6 +18,7 @@ import { ProtocolGasModule } from './protocol-gas/protocol-gas.module';
 import { ProtocolGasWorkspaceModule } from './protocol-gas-workspace/protocol-gas.module';
 import { RataWorkspaceModule } from './rata-workspace/rata-workspace.module';
 import { RataModule } from './rata/rata.module';
+import { RataSummaryWorkspaceModule } from './rata-summary-workspace/rata-summary-workspace.module';
 
 const routes: Routes = [
   {
@@ -83,6 +84,12 @@ const routes: Routes = [
           {
             path: ':testSumId/rata',
             module: RataWorkspaceModule,
+            children: [
+              {
+                path: ':rataId/rata-summary',
+                module: RataSummaryWorkspaceModule,
+              },
+            ],
           },
         ],
       },

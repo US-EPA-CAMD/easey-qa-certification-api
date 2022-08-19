@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ValidationArguments } from 'class-validator';
 import { RataFrequencyCode } from '../entities/workspace/rata-frequency-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
+import { RataSummaryDTO, RataSummaryImportDTO } from './rata-summary.dto';
 
 const KEY = 'RATA';
 
@@ -44,6 +45,10 @@ export class RataRecordDTO extends RataBaseDTO {
   updateDate: string;
 }
 
-export class RataImportDTO extends RataBaseDTO {}
+export class RataImportDTO extends RataBaseDTO {
+  rataSummaryData: RataSummaryImportDTO[];
+}
 
-export class RataDTO extends RataRecordDTO {}
+export class RataDTO extends RataRecordDTO {
+  rataSummaryData: RataSummaryDTO[];
+}
