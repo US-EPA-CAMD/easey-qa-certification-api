@@ -1,9 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ValidationArguments } from 'class-validator';
 import { ApsCode } from '../entities/workspace/aps-code.entity';
 import { ReferenceMethodCode } from '../entities/workspace/reference-method-code.entity';
 import { OperatingLevelCode } from '../entities/workspace/operating-level-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
+import { IsNotEmpty, Min, ValidationArguments } from 'class-validator';
+import { RataRunImportDTO } from './rata-run.dto';
 
 const KEY = 'RATA Summary';
 
@@ -36,25 +37,55 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'meanCEMValue. ADD TO PROPERTY METADATA',
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-17: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
   meanCEMValue: number;
 
   @ApiProperty({
     description: 'meanRATAReferenceValue. ADD TO PROPERTY METADATA',
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-18: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
+  @Min(1, {
+    message: (args: ValidationArguments) => {
+      return `RATA-18: You defined an invalid [${args.property}] for [${KEY}]. This value must be greater than zero and less than 20,000.`;
+    },
   })
   meanRATAReferenceValue: number;
 
   @ApiProperty({
     description: 'meanDifference. ADD TO PROPERTY METADATA',
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-19: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
   meanDifference: number;
 
   @ApiProperty({
     description: 'standardDeviationDifference. ADD TO PROPERTY METADATA',
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-20: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
   standardDeviationDifference: number;
 
   @ApiProperty({
     description: 'confidenceCoefficient. ADD TO PROPERTY METADATA',
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-21: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
   })
   confidenceCoefficient: number;
 
@@ -144,6 +175,9 @@ export class RataSummaryRecordDTO extends RataSummaryBaseDTO {
   updateDate: string;
 }
 
-export class RataSummaryImportDTO extends RataSummaryBaseDTO {}
-
-export class RataSummaryDTO extends RataSummaryRecordDTO {}
+export class RataSummaryImportDTO extends RataSummaryBaseDTO {
+  rataRunData: RataRunImportDTO[];
+}
+export class RataSummaryDTO extends RataSummaryBaseDTO {
+  rataRunData: RataRunImportDTO[];
+}
