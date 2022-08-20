@@ -126,28 +126,28 @@ describe('RataWorkspaceService', () => {
       }
       expect(errored).toEqual(true);
     });
+  });
 
-    describe('deleteRata', () => {
-      it('Should delete a Rata record', async () => {
-        const result = await service.deleteRata(testSumId, rataId, userId);
-        expect(result).toEqual(undefined);
-      });
+  describe('deleteRata', () => {
+    it('Should delete a Rata record', async () => {
+      const result = await service.deleteRata(testSumId, rataId, userId);
+      expect(result).toEqual(undefined);
+    });
 
-      it('Should through error while deleting a Rata record', async () => {
-        const error = new LoggingException(
-          `Error deleting RATA with record Id [${rataId}]`,
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-        jest.spyOn(repository, 'delete').mockRejectedValue(error);
+    it('Should through error while deleting a Rata record', async () => {
+      const error = new LoggingException(
+        `Error deleting RATA with record Id [${rataId}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+      jest.spyOn(repository, 'delete').mockRejectedValue(error);
 
-        let errored = false;
-        try {
-          await service.deleteRata(testSumId, rataId, userId);
-        } catch (e) {
-          errored = true;
-        }
-        expect(errored).toEqual(true);
-      });
+      let errored = false;
+      try {
+        await service.deleteRata(testSumId, rataId, userId);
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
     });
   });
 });
