@@ -95,7 +95,7 @@ describe('ProtocolGasWorkspaceService', () => {
 
       expect(errored).toBe(true);
     });
-  })
+  });
 
   describe('createProtocolGas', () => {
     it('calls the repository.create() and insert a protocol gas record', async () => {
@@ -107,6 +107,5 @@ describe('ProtocolGasWorkspaceService', () => {
       expect(result).toEqual(protocolGasDTO);
       expect(repository.create).toHaveBeenCalled();
     });
-
   });
 });

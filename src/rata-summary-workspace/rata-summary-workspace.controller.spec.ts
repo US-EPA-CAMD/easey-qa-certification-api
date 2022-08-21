@@ -9,6 +9,7 @@ import { RataSummaryWorkspaceService } from './rata-summary-workspace.service';
 const locId = '';
 const testSumId = '';
 const rataId = '';
+const rataSumId = '';
 const record = new RataSummaryRecordDTO();
 
 const payload: RataSummaryBaseDTO = {
@@ -35,6 +36,7 @@ const payload: RataSummaryBaseDTO = {
 
 const mockService = () => ({
   createRataSummary: jest.fn().mockResolvedValue(record),
+  deleteRataSummary: jest.fn().mockResolvedValue(null),
 });
 
 describe('RataSummaryWorkspaceController', () => {
@@ -66,6 +68,19 @@ describe('RataSummaryWorkspaceController', () => {
         await controller.createRataSummary(locId, testSumId, rataId, payload),
       ).toEqual(record);
       expect(service.createRataSummary).toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteRataSummary', () => {
+    it('should call the RataService.deleteRataSummary and delete rata summary record', async () => {
+      const result = await controller.deleteRataSummary(
+        locId,
+        testSumId,
+        rataId,
+        rataSumId,
+      );
+      expect(result).toEqual(null);
+      expect(service.deleteRataSummary).toHaveBeenCalled();
     });
   });
 });
