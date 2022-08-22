@@ -10,7 +10,7 @@ const protocolGasId = 'g7h8i9';
 const protocolGasDTO = new ProtocolGasDTO();
 
 const mockProtocolGasService = () => ({
-  getProtocolGas: jest.fn().mockResolvedValue(protocolGasDTO)
+  getProtocolGas: jest.fn().mockResolvedValue(protocolGasDTO),
 });
 
 describe('ProtocolGasController', () => {
@@ -23,8 +23,8 @@ describe('ProtocolGasController', () => {
       providers: [
         {
           provide: ProtocolGasService,
-          useFactory: mockProtocolGasService
-        }
+          useFactory: mockProtocolGasService,
+        },
       ],
     }).compile();
 
@@ -37,16 +37,14 @@ describe('ProtocolGasController', () => {
   });
 
   describe('getProtocolGas', () => {
-
     it('Calls the repository to get one Protocol Gas record by Id', async () => {
       const result = await controller.getProtocolGas(
         locId,
         testSumId,
-        protocolGasId
+        protocolGasId,
       );
       expect(result).toEqual(protocolGasDTO);
       expect(service.getProtocolGas).toHaveBeenCalled();
-    })
-  })
-
+    });
+  });
 });

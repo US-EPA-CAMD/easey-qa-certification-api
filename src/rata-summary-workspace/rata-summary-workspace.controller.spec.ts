@@ -9,6 +9,7 @@ import { RataSummaryWorkspaceService } from './rata-summary-workspace.service';
 const locId = '';
 const testSumId = '';
 const rataId = '';
+const rataSumId = '';
 const record = new RataSummaryRecordDTO();
 
 const payload: RataSummaryBaseDTO = {
@@ -35,6 +36,7 @@ const payload: RataSummaryBaseDTO = {
 
 const mockService = () => ({
   createRataSummary: jest.fn().mockResolvedValue(record),
+  updateRataSummary: jest.fn().mockResolvedValue(record),
 });
 
 describe('RataSummaryWorkspaceController', () => {
@@ -66,6 +68,21 @@ describe('RataSummaryWorkspaceController', () => {
         await controller.createRataSummary(locId, testSumId, rataId, payload),
       ).toEqual(record);
       expect(service.createRataSummary).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateRataSummary', () => {
+    it('should call the RataService.updateRataSummary and update rata record', async () => {
+      expect(
+        await controller.updateRataSummary(
+          locId,
+          testSumId,
+          rataId,
+          rataSumId,
+          payload,
+        ),
+      ).toEqual(record);
+      expect(service.updateRataSummary).toHaveBeenCalled();
     });
   });
 });

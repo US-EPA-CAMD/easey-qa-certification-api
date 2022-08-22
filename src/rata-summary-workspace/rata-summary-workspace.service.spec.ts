@@ -99,4 +99,28 @@ describe('RataSummaryWorkspaceService', () => {
       expect(repository.create).toHaveBeenCalled();
     });
   });
+
+  describe('updateRataSummary', () => {
+    it('should update a rata summary record', async () => {
+      const result = await service.updateRataSummary(
+        testSumId,
+        rataId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(record);
+    });
+
+    it('should throw error with invalid rata summary record id', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.updateRataSummary(testSumId, rataId, payload, userId);
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
+    });
+  });
 });

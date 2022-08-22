@@ -15,12 +15,12 @@ export class RataSummaryController {
     type: RataSummaryRecordDTO,
     description: 'Retrieves official Rata Summary records.',
   })
-  getRataSummaryes(
+  getRataSummaries(
     @Param('locId') _locationId: string,
-    @Param('testSumId') testSumId: string,
+    @Param('testSumId') _testSumId: string,
     @Param('rataId') rataId: string,
   ) {
-    return this.service.getRataSummaries(testSumId, rataId);
+    return this.service.getRataSummaries(rataId);
   }
 
   @Get(':id')
@@ -32,6 +32,7 @@ export class RataSummaryController {
   getRataSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
+    @Param('rataId') _rataId: string,
     @Param('id') id: string,
   ) {
     return this.service.getRataSummary(id);

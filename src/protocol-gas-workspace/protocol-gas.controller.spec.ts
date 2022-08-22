@@ -67,11 +67,11 @@ describe('Protocol Gas Workspace Controller', () => {
       const result = await controller.getProtocolGas(
         locId,
         testSumId,
-        protocolGasId
+        protocolGasId,
       );
       expect(result).toEqual(protocolGasRecord);
       expect(service.getProtocolGas).toHaveBeenCalled();
-    })
+    });
   });
 
   describe('createProtocolGas', () => {
@@ -79,7 +79,8 @@ describe('Protocol Gas Workspace Controller', () => {
       jest
         .spyOn(service, 'createProtocolGas')
         .mockResolvedValue(protocolGasRecord);
-      expect(await controller.createProtocolGas(locId, testSumId, payload),
+      expect(
+        await controller.createProtocolGas(locId, testSumId, payload),
       ).toEqual(protocolGasRecord);
     });
   });

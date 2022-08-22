@@ -23,12 +23,9 @@ export class RataSummaryWorkspaceService {
     private readonly repository: RataSummaryWorkspaceRepository,
   ) {}
 
-  async getRataSummaries(
-    testSumId: string,
-    rataId: string,
-  ): Promise<RataSummaryDTO[]> {
+  async getRataSummaries(rataId: string): Promise<RataSummaryDTO[]> {
     const records = await this.repository.find({
-      where: { testSumId, rataId },
+      rataId: rataId,
     });
 
     return this.map.many(records);
@@ -73,5 +70,54 @@ export class RataSummaryWorkspaceService {
       isImport,
     );
     return this.map.one(entity);
+  }
+
+  async updateRataSummary(
+    testSumId: string,
+    rataSumId: string,
+    payload: RataSummaryBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<RataSummaryRecordDTO> {
+    const timestamp = currentDateTime();
+    const record = await this.repository.findOne(rataSumId);
+
+    if (!record) {
+      throw new LoggingException(
+        `A Rata Summary record not found with Record Id [${rataSumId}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    record.operatingLevelCode = payload.operatingLevelCode;
+    record.averageGrossUnitLoad = payload.averageGrossUnitLoad;
+    record.referenceMethodCode = payload.referenceMethodCode;
+    record.meanCEMValue = payload.meanCEMValue;
+    record.meanRATAReferenceValue = payload.meanRATAReferenceValue;
+    record.meanDifference = payload.meanDifference;
+    record.standardDeviationDifference = payload.standardDeviationDifference;
+    record.confidenceCoefficient = payload.confidenceCoefficient;
+    record.tValue = payload.tValue;
+    record.apsIndicator = payload.apsIndicator;
+    record.apsCode = payload.apsCode;
+    record.relativeAccuracy = payload.relativeAccuracy;
+    record.biasAdjustmentFactor = payload.biasAdjustmentFactor;
+    record.co2OrO2ReferenceMethodCode = payload.co2OrO2ReferenceMethodCode;
+    record.stackDiameter = payload.stackDiameter;
+    record.stackArea = payload.stackArea;
+    record.numberOfTraversePoints = payload.numberOfTraversePoints;
+    record.calculatedWAF = payload.calculatedWAF;
+    record.defaultWAF = payload.defaultWAF;
+    record.userId = userId;
+    record.updateDate = timestamp;
+
+    await this.repository.save(record);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+    return this.map.one(record);
   }
 }
