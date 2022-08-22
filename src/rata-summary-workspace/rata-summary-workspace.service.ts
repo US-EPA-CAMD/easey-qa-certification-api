@@ -1,6 +1,8 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+
 import { currentDateTime } from '../utilities/functions';
 import {
   RataSummaryBaseDTO,
@@ -10,7 +12,6 @@ import {
 import { RataSummaryMap } from '../maps/rata-summary.map';
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class RataSummaryWorkspaceService {
