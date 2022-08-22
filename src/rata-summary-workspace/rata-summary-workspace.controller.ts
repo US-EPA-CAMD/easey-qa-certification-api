@@ -1,5 +1,10 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
-import { ApiCreatedResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   RataSummaryBaseDTO,
   RataSummaryRecordDTO,
@@ -14,12 +19,41 @@ const userId = 'testUser';
 export class RataSummaryWorkspaceController {
   constructor(private readonly service: RataSummaryWorkspaceService) {}
 
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: RataSummaryRecordDTO,
+    description: 'Retrieves workspace Rata Summary records.',
+  })
+  getRataSummaryes(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('rataId') rataId: string,
+  ) {
+    return this.service.getRataSummaries(testSumId, rataId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: RataSummaryRecordDTO,
+    description: 'Retrieves a workspace Rata Summary record.',
+  })
+  getRataSummary(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('rataId') _rataId: string,
+    @Param('id') id: string,
+  ) {
+    return this.service.getRataSummary(id);
+  }
+
   @Post()
   //  @ApiBearerAuth('Token')
   //  @UseGuards(AuthGuard)
   @ApiCreatedResponse({
     type: RataSummaryRecordDTO,
-    description: 'Creates a Rata summary record in the workspace',
+    description: 'Creates a workspace Rata Summary record.',
   })
   async createRataSummary(
     @Param('locId') _locationId: string,
