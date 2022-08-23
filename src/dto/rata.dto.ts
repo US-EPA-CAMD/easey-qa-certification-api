@@ -8,9 +8,9 @@ const KEY = 'RATA';
 
 export class RataBaseDTO {
   @ApiProperty({
-    description: 'numberLoadLevel. ADD TO PROPERTY METADATA',
+    description: 'NumberOfLoadLevels. ADD TO PROPERTY METADATA',
   })
-  numberLoadLevel: number;
+  numberOfLoadLevels: number;
 
   @ApiProperty({
     description: 'relativeAccuracy. ADD TO PROPERTY METADATA',
@@ -39,7 +39,7 @@ export class RataRecordDTO extends RataBaseDTO {
   calculatedRataFrequencyCode: string;
   calculatedRelativeAccuracy: number;
   calculatedOverallBiasAdjustmentFactor: number;
-  calculatedNumberLoadLevel: number;
+  calculatedNumberOfLoadLevel: number;
   userId: string;
   addDate: string;
   updateDate: string;

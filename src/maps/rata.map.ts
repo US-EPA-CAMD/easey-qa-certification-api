@@ -24,8 +24,8 @@ export class RataMap extends BaseMap<Rata, RataDTO> {
       overallBiasAdjustmentFactor: entity.overallBiasAdjustmentFactor,
       calculatedOverallBiasAdjustmentFactor:
         entity.calculatedOverallBiasAdjustmentFactor,
-      numberLoadLevel: entity.numberLoadLevel,
-      calculatedNumberLoadLevel: entity.calculatedNumberLoadLevel,
+      numberOfLoadLevels: entity.numberOfLoadLevels,
+      calculatedNumberOfLoadLevel: entity.calculatedNumberOfLoadLevels,
       userId: entity.userId,
       addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,

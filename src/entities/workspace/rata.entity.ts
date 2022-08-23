@@ -64,13 +64,13 @@ export class Rata extends BaseEntity {
     name: 'num_load_level',
     transformer: new NumericColumnTransformer(),
   })
-  numberLoadLevel: number;
+  numberOfLoadLevels: number;
 
   @Column({
     name: 'calc_num_load_level',
     transformer: new NumericColumnTransformer(),
   })
-  calculatedNumberLoadLevel: number;
+  calculatedNumberOfLoadLevels: number;
 
   @Column({ name: 'userid' })
   userId: string;

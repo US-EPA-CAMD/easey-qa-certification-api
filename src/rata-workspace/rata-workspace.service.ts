@@ -84,7 +84,7 @@ export class RataWorkspaceService {
       );
     }
 
-    entity.numberLoadLevel = payload.numberLoadLevel;
+    entity.numberOfLoadLevels = payload.numberOfLoadLevels;
     entity.relativeAccuracy = payload.relativeAccuracy;
     entity.rataFrequencyCode = payload.rataFrequencyCode;
     entity.overallBiasAdjustmentFactor = payload.overallBiasAdjustmentFactor;
