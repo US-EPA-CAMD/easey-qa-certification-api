@@ -21,7 +21,7 @@ const payload: RataBaseDTO = {
   rataFrequencyCode: 'OS',
   relativeAccuracy: 0,
   overallBiasAdjustmentFactor: 0,
-  numberLoadLevel: 0,
+  numberOfLoadLevels: 0,
 };
 
 const mockRepository = () => ({

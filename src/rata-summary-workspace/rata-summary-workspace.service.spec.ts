@@ -1,4 +1,6 @@
+import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
   RataSummaryBaseDTO,
   RataSummaryDTO,
@@ -117,6 +119,29 @@ describe('RataSummaryWorkspaceService', () => {
       let errored = false;
       try {
         await service.updateRataSummary(testSumId, rataId, payload, userId);
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteRataSummary', () => {
+    it('Should delete a Rata Summary record', async () => {
+      const result = await service.deleteRataSummary(testSumId, rataId, userId);
+      expect(result).toEqual(undefined);
+    });
+
+    it('Should through error while deleting a Rata Summary record', async () => {
+      const error = new LoggingException(
+        `Error deleting Rata Summary with record Id [${rataId}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+      jest.spyOn(repository, 'delete').mockRejectedValue(error);
+
+      let errored = false;
+      try {
+        await service.deleteRataSummary(testSumId, rataId, userId);
       } catch (e) {
         errored = true;
       }

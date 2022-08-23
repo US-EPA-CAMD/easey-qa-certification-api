@@ -1,7 +1,6 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 import { currentDateTime } from '../utilities/functions';
 import {
@@ -12,6 +11,7 @@ import {
 import { RataSummaryMap } from '../maps/rata-summary.map';
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class RataSummaryWorkspaceService {
@@ -119,5 +119,27 @@ export class RataSummaryWorkspaceService {
       isImport,
     );
     return this.map.one(record);
+  }
+
+  async deleteRataSummary(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete(id);
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting Rata Summary with record Id [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
   }
 }

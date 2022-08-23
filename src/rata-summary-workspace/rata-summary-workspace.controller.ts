@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -81,5 +89,21 @@ export class RataSummaryWorkspaceController {
     //    @CurrentUser() userId: string,
   ): Promise<RataSummaryRecordDTO> {
     return this.service.updateRataSummary(testSumId, id, payload, userId);
+  }
+
+  @Delete(':id')
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    description: 'Deletes a Rata summary record from the workspace',
+  })
+  async deleteRataSummary(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('rataId') _rataId: string,
+    @Param('id') id: string,
+    //    @CurrentUser() userId: string,
+  ): Promise<void> {
+    return this.service.deleteRataSummary(testSumId, id, userId);
   }
 }
