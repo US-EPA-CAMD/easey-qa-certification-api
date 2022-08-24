@@ -15,7 +15,7 @@ export class RataRunRecordDTO extends RataRunBaseDTO {
   cemValue: number;
   rataReferenceValue: number;
   grossUnitLoad: number;
-  runStatusCode: String;
+  runStatusCode: string;
 }
 
 export class RataRunImportDTO extends RataRunBaseDTO {}
