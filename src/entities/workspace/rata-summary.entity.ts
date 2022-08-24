@@ -5,6 +5,7 @@ import {
   PrimaryColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
@@ -13,6 +14,7 @@ import { Rata } from './rata.entity';
 import { ApsCode } from './aps-code.entity';
 import { OperatingLevelCode } from './operating-level-code.entity';
 import { ReferenceMethodCode } from './reference-method-code.entity';
+import { RataRun } from './rata-run.entity';
 
 @Entity({ name: 'camdecmpswks.rata_summary' })
 export class RataSummary extends BaseEntity {
@@ -256,10 +258,10 @@ export class RataSummary extends BaseEntity {
   @JoinColumn({ name: 'co2_o2_ref_method_cd' })
   Co2OrO2ReferenceMethodCode: ReferenceMethodCode;
 
-  // @OneToMany(
-  //   () => RataRun,
-  //   rr => rr.RataRun,
-  // )
-  // @JoinColumn({ name: 'rata_sum_id' })
-  // RataRun: RataRun[];
+  @OneToMany(
+    () => RataRun,
+    rr => rr.RataSummary,
+  )
+  @JoinColumn({ name: 'rata_sum_id' })
+  RataRuns: RataRun[];
 }

@@ -47,17 +47,12 @@ describe('ProtocolGasService', () => {
         {
           provide: ProtocolGasMap,
           useFactory: mockMap,
-        }
+        },
       ],
     }).compile();
 
-    service = module.get<ProtocolGasService>(
-      ProtocolGasService
-    );
-    repository = module.get<ProtocolGasRepository>(
-      ProtocolGasRepository,
-    );
-
+    service = module.get<ProtocolGasService>(ProtocolGasService);
+    repository = module.get<ProtocolGasRepository>(ProtocolGasRepository);
   });
 
   it('should be defined', () => {
@@ -84,6 +79,5 @@ describe('ProtocolGasService', () => {
 
       expect(errored).toBe(true);
     });
-  })
-
+  });
 });

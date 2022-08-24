@@ -1,10 +1,8 @@
+import { FlowRataRunDTO, FlowRataRunImportDTO } from './flow-rata-run.dto';
+
 const KEY = 'RATA Run';
 
-export class RataRunBaseDTO {}
-
-export class RataRunRecordDTO extends RataRunBaseDTO {
-  id: string;
-  rataSummaryId: string;
+export class RataRunBaseDTO {
   runNumber: number;
   beginDate: Date;
   beginHour: number;
@@ -18,6 +16,19 @@ export class RataRunRecordDTO extends RataRunBaseDTO {
   runStatusCode: string;
 }
 
-export class RataRunImportDTO extends RataRunBaseDTO {}
+export class RataRunRecordDTO extends RataRunBaseDTO {
+  id: string;
+  rataSumId: string;
+  calculatedRataReferenceValue: number;
+  userId: string;
+  addDate: string;
+  updateDate: string;
+}
 
-export class RataRunDTO extends RataRunRecordDTO {}
+export class RataRunImportDTO extends RataRunBaseDTO {
+  flowRataRunData: FlowRataRunImportDTO[];
+}
+
+export class RataRunDTO extends RataRunRecordDTO {
+  flowRataRunData: FlowRataRunDTO[];
+}

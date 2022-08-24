@@ -1,14 +1,21 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
+import { RataSummary } from './rata-summary.entity';
 
 @Entity({ name: 'camdecmps.rata_run' })
 export class RataRun extends BaseEntity {
-
   @PrimaryColumn({ name: 'rata_run_id' })
   id: string;
 
   @Column({ name: 'rata_sum_id' })
-  rataSummaryId: string;
+  rataSumId: string;
 
   @Column({ name: 'run_num', transformer: new NumericColumnTransformer() })
   runNumber: number;
@@ -34,12 +41,44 @@ export class RataRun extends BaseEntity {
   @Column({ name: 'cem_value', transformer: new NumericColumnTransformer() })
   cemValue: number;
 
-  @Column({ name: 'rata_ref_value', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'rata_ref_value',
+    transformer: new NumericColumnTransformer(),
+  })
   rataReferenceValue: number;
 
-  @Column({ name: 'gross_unit_load', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'calc_rata_ref_value',
+    transformer: new NumericColumnTransformer(),
+  })
+  calculatedRataReferenceValue: number;
+
+  @Column({
+    name: 'gross_unit_load',
+    transformer: new NumericColumnTransformer(),
+  })
   grossUnitLoad: number;
 
   @Column({ name: 'run_status_cd' })
   runStatusCode: string;
+
+  @Column({ name: 'userid' })
+  userId: string;
+
+  @Column({
+    name: 'add_date',
+  })
+  addDate: Date;
+
+  @Column({
+    name: 'update_date',
+  })
+  updateDate: Date;
+
+  @ManyToOne(
+    () => RataSummary,
+    r => r.RataRuns,
+  )
+  @JoinColumn({ name: 'rata_sum_id' })
+  RataSummary: RataSummary;
 }

@@ -15,4 +15,4 @@ import { RataRunMap } from '../maps/rata-run.map';
   providers: [RataRunWorkspaceService, RataRunMap],
   exports: [TypeOrmModule, RataRunMap, RataRunWorkspaceService],
 })
-export class RataRunModule {}
+export class RataRunWorkspaceModule {}

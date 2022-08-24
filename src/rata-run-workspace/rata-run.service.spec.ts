@@ -23,7 +23,7 @@ const payload: RataRunDTO = {
   cemValue: 13,
   rataReferenceValue: 11,
   grossUnitLoad: 7,
-  runStatusCode: ''
+  runStatusCode: '',
 };
 
 const mockMap = () => ({
@@ -52,17 +52,14 @@ describe('RataRunWorkspaceService', () => {
         {
           provide: RataRunMap,
           useFactory: mockMap,
-        }
+        },
       ],
     }).compile();
 
-    service = module.get<RataRunWorkspaceService>(
-      RataRunWorkspaceService
-    );
+    service = module.get<RataRunWorkspaceService>(RataRunWorkspaceService);
     repository = module.get<RataRunWorkspaceRepository>(
       RataRunWorkspaceRepository,
     );
-
   });
 
   it('should be defined', () => {
@@ -89,14 +86,13 @@ describe('RataRunWorkspaceService', () => {
 
       expect(errored).toBe(true);
     });
-  })
+  });
 
   describe('getRataRuns', () => {
     it('Should return an array of Rata Run records', async () => {
       const result = await service.getRataRuns(rataSumId);
       expect(result).toEqual([rataRun]);
       expect(repository.find).toHaveBeenCalled();
-    })
-  })
-
+    });
+  });
 });

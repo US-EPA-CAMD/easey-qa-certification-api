@@ -7,16 +7,14 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class RataRunWorkspaceService {
+  constructor(
+    @InjectRepository(RataRunWorkspaceRepository)
+    private readonly repository: RataRunWorkspaceRepository,
+    private readonly map: RataRunMap,
+  ) {}
 
-  constructor(@InjectRepository(RataRunWorkspaceRepository)
-              private readonly repository: RataRunWorkspaceRepository,
-              private readonly map: RataRunMap
-  ) {  }
-
-  async getRataRuns(rataSummaryId: string): Promise<RataRunDTO[]> {
-    const records = await this.repository.find(
-      { where: {rataSummaryId } }
-    );
+  async getRataRuns(rataSumId: string): Promise<RataRunDTO[]> {
+    const records = await this.repository.find({ where: { rataSumId } });
 
     return this.map.many(records);
   }

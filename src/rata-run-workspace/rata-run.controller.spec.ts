@@ -14,7 +14,7 @@ const rataRuns: RataRunDTO[] = [rataRunDTO];
 
 const mockRataRunWorkspaceService = () => ({
   getRataRun: jest.fn().mockResolvedValue(rataRunDTO),
-  getRataRuns: jest.fn().mockResolvedValue(rataRuns)
+  getRataRuns: jest.fn().mockResolvedValue(rataRuns),
 });
 
 describe('RataRunWorkspaceController', () => {
@@ -27,12 +27,14 @@ describe('RataRunWorkspaceController', () => {
       providers: [
         {
           provide: RataRunWorkspaceService,
-          useFactory: mockRataRunWorkspaceService
-        }
+          useFactory: mockRataRunWorkspaceService,
+        },
       ],
     }).compile();
 
-    controller = module.get<RataRunWorkspaceController>(RataRunWorkspaceController);
+    controller = module.get<RataRunWorkspaceController>(
+      RataRunWorkspaceController,
+    );
     service = module.get<RataRunWorkspaceService>(RataRunWorkspaceService);
   });
 
@@ -41,24 +43,29 @@ describe('RataRunWorkspaceController', () => {
   });
 
   describe('getRataRun', () => {
-
     it('Calls the repository to get one Rata Run record by Id', async () => {
       const result = await controller.getRataRun(
-        locId, testSumId, rataId, rataSumId, rataRunId
+        locId,
+        testSumId,
+        rataId,
+        rataSumId,
+        rataRunId,
       );
       expect(result).toEqual(rataRunDTO);
       expect(service.getRataRun).toHaveBeenCalled();
-    })
-  })
+    });
+  });
 
   describe('getRataRuns', () => {
-
     it('Calls the repository to get all Rata Run records for a Rata Summary Id', async () => {
       const result = await controller.getRataRuns(
-        locId, testSumId, rataId, rataSumId
+        locId,
+        testSumId,
+        rataId,
+        rataSumId,
       );
       expect(result).toEqual(rataRuns);
       expect(service.getRataRuns).toHaveBeenCalled();
-    })
-  })
+    });
+  });
 });
