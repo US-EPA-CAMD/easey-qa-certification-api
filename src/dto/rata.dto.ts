@@ -25,11 +25,6 @@ export class RataBaseDTO {
   @ApiProperty({
     description: 'rataFrequencyCode. ADD TO PROPERTY METADATA',
   })
-  // @IsValidCode(RataFrequencyCode, {
-  //   message: (args: ValidationArguments) => {
-  //     return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
-  //   },
-  // })
   rataFrequencyCode: string;
 
   @ApiProperty({
