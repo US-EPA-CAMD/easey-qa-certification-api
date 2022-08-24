@@ -2,7 +2,21 @@ const KEY = 'RATA Run';
 
 export class RataRunBaseDTO {}
 
-export class RataRunRecordDTO extends RataRunBaseDTO {}
+export class RataRunRecordDTO extends RataRunBaseDTO {
+  id: string;
+  rataSummaryId: string;
+  runNumber: number;
+  beginDate: Date;
+  beginHour: number;
+  beginMinute: number;
+  endDate: Date;
+  endHour: number;
+  endMinute: number;
+  cemValue: number;
+  rataReferenceValue: number;
+  grossUnitLoad: number;
+  runStatusCode: String;
+}
 
 export class RataRunImportDTO extends RataRunBaseDTO {}
 

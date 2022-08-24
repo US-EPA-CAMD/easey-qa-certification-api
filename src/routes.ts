@@ -20,6 +20,7 @@ import { RataWorkspaceModule } from './rata-workspace/rata-workspace.module';
 import { RataModule } from './rata/rata.module';
 import { RataSummaryWorkspaceModule } from './rata-summary-workspace/rata-summary-workspace.module';
 import { RataSummaryModule } from './rata-summary/rata-summary.module';
+import { RataRunModule } from './rata-run/rata-run.module';
 
 const routes: Routes = [
   {
@@ -59,6 +60,12 @@ const routes: Routes = [
               {
                 path: ':rataId/rata-summary',
                 module: RataSummaryModule,
+                children: [
+                  {
+                    path: ':rataSumId/rata-run',
+                    module: RataRunModule
+                  }
+                ]
               },
             ],
           },
@@ -95,6 +102,12 @@ const routes: Routes = [
               {
                 path: ':rataId/rata-summary',
                 module: RataSummaryWorkspaceModule,
+                children: [
+                  {
+                    path: ':rataSumId/rata-run',
+                    module: RataRunModule
+                  }
+                ]
               },
             ],
           },
