@@ -9,6 +9,7 @@ import { LocationChecksService } from '../location-workspace/location-checks.ser
 import { TestSummaryChecksService } from '../test-summary-workspace/test-summary-checks.service';
 import { LinearityInjectionChecksService } from '../linearity-injection-workspace/linearity-injection-checks.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { RataChecksService } from '../rata-workspace/rata-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -18,6 +19,7 @@ export class QACertificationChecksService {
     private readonly testSummaryChecksService: TestSummaryChecksService,
     private readonly linearitySummaryChecksService: LinearitySummaryChecksService,
     private readonly linearityInjectionChecksService: LinearityInjectionChecksService,
+    private readonly rataChecksService: RataChecksService,
   ) {}
 
   private async extractErrors(
@@ -101,6 +103,20 @@ export class QACertificationChecksService {
             }),
           );
         });
+      });
+
+      summary.rataData?.forEach(rataData => {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const results = this.rataChecksService.runChecks(
+              locationId,
+              rataData,
+              true,
+            );
+
+            resolve(results);
+          }),
+        );
       });
     });
     this.throwIfErrors(await this.extractErrors(promises));
