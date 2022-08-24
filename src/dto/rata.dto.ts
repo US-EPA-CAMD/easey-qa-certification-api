@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ValidationArguments } from 'class-validator';
+import { IsNotEmpty, ValidationArguments } from 'class-validator';
 import { RataFrequencyCode } from '../entities/workspace/rata-frequency-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { RataSummaryDTO, RataSummaryImportDTO } from './rata-summary.dto';
@@ -9,6 +9,11 @@ const KEY = 'RATA';
 export class RataBaseDTO {
   @ApiProperty({
     description: 'NumberOfLoadLevels. ADD TO PROPERTY METADATA',
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-102-A: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
   })
   numberOfLoadLevels: number;
 

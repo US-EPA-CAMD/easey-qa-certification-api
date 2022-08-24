@@ -12,15 +12,30 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'operatingLevelCode. ADD TO PROPERTY METADATA',
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-112-A: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
   @IsValidCode(OperatingLevelCode, {
     message: (args: ValidationArguments) => {
-      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
+      return `RATA-112-B: You reported a [${args.property}] that is not in the list of valid values.`;
     },
   })
   operatingLevelCode: string;
 
   @ApiProperty({
     description: 'averageGrossUnitLoad. ADD TO PROPERTY METADATA',
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-23-A: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
+  @Min(1, {
+    message: (args: ValidationArguments) => {
+      return `RATA-23-B: You defined an invalid [${args.property}] for [${KEY}]. This value must be greater than zero and less than 20,000.`;
+    },
   })
   averageGrossUnitLoad: number;
 
@@ -49,12 +64,12 @@ export class RataSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `RATA-18: You did not provide [${args.property}], which is required for [${KEY}].`;
+      return `RATA-18-A: You did not provide [${args.property}], which is required for [${KEY}].`;
     },
   })
   @Min(1, {
     message: (args: ValidationArguments) => {
-      return `RATA-18: You defined an invalid [${args.property}] for [${KEY}]. This value must be greater than zero and less than 20,000.`;
+      return `RATA-18-B: You defined an invalid [${args.property}] for [${KEY}]. This value must be greater than zero and less than 20,000.`;
     },
   })
   meanRATAReferenceValue: number;
@@ -64,7 +79,7 @@ export class RataSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `RATA-19: You did not provide [${args.property}], which is required for [${KEY}].`;
+      return `RATA-19-A: You did not provide [${args.property}], which is required for [${KEY}].`;
     },
   })
   meanDifference: number;
@@ -74,7 +89,7 @@ export class RataSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `RATA-20: You did not provide [${args.property}], which is required for [${KEY}].`;
+      return `RATA-20-A: You did not provide [${args.property}], which is required for [${KEY}].`;
     },
   })
   standardDeviationDifference: number;
@@ -84,13 +99,18 @@ export class RataSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `RATA-21: You did not provide [${args.property}], which is required for [${KEY}].`;
+      return `RATA-21-A: You did not provide [${args.property}], which is required for [${KEY}].`;
     },
   })
   confidenceCoefficient: number;
 
   @ApiProperty({
     description: 'tValue. ADD TO PROPERTY METADATA',
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-22-A: You have not reported the required value in the field [${args.property}] for [${KEY}].`;
+    },
   })
   tValue: number;
 
@@ -111,6 +131,16 @@ export class RataSummaryBaseDTO {
 
   @ApiProperty({
     description: 'relativeAccuracy. ADD TO PROPERTY METADATA',
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-24-A: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
+  @Min(0, {
+    message: (args: ValidationArguments) => {
+      return `RATA-24-B: The value [${args.value}] in the field [${args.property}] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to zero.`;
+    },
   })
   relativeAccuracy: number;
 
