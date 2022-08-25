@@ -5,9 +5,9 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
-import { DbLookup } from '../pipes/db-lookup.pipe';
 import { Plant } from '../entities/plant.entity';
-
+import { DbLookup } from '../pipes/db-lookup.pipe';
+import { CacheService } from './../cache/cache.service';
 import { TestSummaryDTO, TestSummaryImportDTO } from './test-summary.dto';
 
 import {
@@ -31,7 +31,7 @@ export class QACertificationBaseDTO {
     },
     {
       message: (args: ValidationArguments) => {
-        return `The database does not contain any Facility with Oris Code ${args.value}`;
+        return CacheService.getCheckCatalogResult('IMPORT-24-A', { orisCode: args.value });
       },
     },
   )
