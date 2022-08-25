@@ -1,7 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, ValidationArguments } from 'class-validator';
-import { RataFrequencyCode } from '../entities/workspace/rata-frequency-code.entity';
-import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { RataSummaryDTO, RataSummaryImportDTO } from './rata-summary.dto';
 
 const KEY = 'RATA';
