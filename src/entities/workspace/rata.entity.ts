@@ -5,12 +5,14 @@ import {
   PrimaryColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
 import { TestSummary } from './test-summary.entity';
 import { RataFrequencyCode } from './rata-frequency-code.entity';
+import { RataSummary } from './rata-summary.entity';
 
 @Entity({ name: 'camdecmpswks.rata' })
 export class Rata extends BaseEntity {
@@ -62,13 +64,13 @@ export class Rata extends BaseEntity {
     name: 'num_load_level',
     transformer: new NumericColumnTransformer(),
   })
-  numberLoadLevel: number;
+  numberOfLoadLevels: number;
 
   @Column({
     name: 'calc_num_load_level',
     transformer: new NumericColumnTransformer(),
   })
-  calculatedNumberLoadLevel: number;
+  calculatedNumberOfLoadLevels: number;
 
   @Column({ name: 'userid' })
   userId: string;
@@ -96,4 +98,11 @@ export class Rata extends BaseEntity {
   )
   @JoinColumn({ name: 'rata_frequency_cd' })
   rataFrequency: RataFrequencyCode;
+
+  @OneToMany(
+    () => RataSummary,
+    rs => rs.rata,
+  )
+  @JoinColumn({ name: 'rata_id' })
+  rataSummaries: RataSummary[];
 }

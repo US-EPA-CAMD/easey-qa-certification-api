@@ -2,10 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { RataDTO } from '../dto/rata.dto';
 import { Rata } from '../entities/rata.entity';
+import { RataSummaryMap } from './rata-summary.map';
 
 @Injectable()
 export class RataMap extends BaseMap<Rata, RataDTO> {
+  constructor(private readonly rataSummaryMap: RataSummaryMap) {
+    super();
+  }
   public async one(entity: Rata): Promise<RataDTO> {
+    const rataSummaries = entity.rataSummaries
+      ? await this.rataSummaryMap.many(entity.rataSummaries)
+      : [];
+
     return {
       id: entity.id,
       testSumId: entity.testSumId,
@@ -16,11 +24,12 @@ export class RataMap extends BaseMap<Rata, RataDTO> {
       overallBiasAdjustmentFactor: entity.overallBiasAdjustmentFactor,
       calculatedOverallBiasAdjustmentFactor:
         entity.calculatedOverallBiasAdjustmentFactor,
-      numberLoadLevel: entity.numberLoadLevel,
-      calculatedNumberLoadLevel: entity.calculatedNumberLoadLevel,
+      numberOfLoadLevels: entity.numberOfLoadLevels,
+      calculatedNumberOfLoadLevel: entity.calculatedNumberOfLoadLevels,
       userId: entity.userId,
       addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
+      rataSummaryData: rataSummaries,
     };
   }
 }

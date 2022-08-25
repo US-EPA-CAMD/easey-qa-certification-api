@@ -1,15 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ValidationArguments } from 'class-validator';
+import { IsNotEmpty, ValidationArguments } from 'class-validator';
 import { RataFrequencyCode } from '../entities/workspace/rata-frequency-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
+import { RataSummaryDTO, RataSummaryImportDTO } from './rata-summary.dto';
 
 const KEY = 'RATA';
 
 export class RataBaseDTO {
   @ApiProperty({
-    description: 'numberLoadLevel. ADD TO PROPERTY METADATA',
+    description: 'NumberOfLoadLevels. ADD TO PROPERTY METADATA',
   })
-  numberLoadLevel: number;
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-102-A: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
+  numberOfLoadLevels: number;
 
   @ApiProperty({
     description: 'relativeAccuracy. ADD TO PROPERTY METADATA',
@@ -38,12 +44,16 @@ export class RataRecordDTO extends RataBaseDTO {
   calculatedRataFrequencyCode: string;
   calculatedRelativeAccuracy: number;
   calculatedOverallBiasAdjustmentFactor: number;
-  calculatedNumberLoadLevel: number;
+  calculatedNumberOfLoadLevel: number;
   userId: string;
   addDate: string;
   updateDate: string;
 }
 
-export class RataImportDTO extends RataBaseDTO {}
+export class RataImportDTO extends RataBaseDTO {
+  rataSummaryData: RataSummaryImportDTO[];
+}
 
-export class RataDTO extends RataRecordDTO {}
+export class RataDTO extends RataRecordDTO {
+  rataSummaryData: RataSummaryDTO[];
+}

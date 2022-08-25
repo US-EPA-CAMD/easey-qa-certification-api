@@ -2,7 +2,7 @@ import { v4 as uuid } from 'uuid';
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { currentDateTime } from '../utilities/functions';
-import { RataBaseDTO, RataRecordDTO } from '../dto/rata.dto';
+import { RataBaseDTO, RataDTO, RataRecordDTO } from '../dto/rata.dto';
 import { RataMap } from '../maps/rata.map';
 import { RataWorkspaceRepository } from './rata-workspace.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -17,6 +17,28 @@ export class RataWorkspaceService {
     @InjectRepository(RataWorkspaceRepository)
     private readonly repository: RataWorkspaceRepository,
   ) {}
+
+  async getRataById(id: string): Promise<RataDTO> {
+    const result = await this.repository.findOne({
+      id: id,
+    });
+
+    if (!result) {
+      throw new LoggingException(
+        `A RATA record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
+
+  async getRatasByTestSumId(testSumId: string): Promise<RataDTO[]> {
+    const results = await this.repository.find({
+      testSumId: testSumId,
+    });
+    return this.map.many(results);
+  }
 
   async createRata(
     testSumId: string,
@@ -62,7 +84,7 @@ export class RataWorkspaceService {
       );
     }
 
-    entity.numberLoadLevel = payload.numberLoadLevel;
+    entity.numberOfLoadLevels = payload.numberOfLoadLevels;
     entity.relativeAccuracy = payload.relativeAccuracy;
     entity.rataFrequencyCode = payload.rataFrequencyCode;
     entity.overallBiasAdjustmentFactor = payload.overallBiasAdjustmentFactor;

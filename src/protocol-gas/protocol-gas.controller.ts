@@ -13,12 +13,26 @@ export class ProtocolGasController {
   @ApiOkResponse({
     isArray: true,
     type: ProtocolGasRecordDTO,
-    description: 'Retrieves workspace Protocol Gas records by Test Summary Id',
+    description: 'Retrieves official Protocol Gas records by Test Summary Id',
   })
   getProtocolGases(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
   ) {
     return this.service.getProtocolGases(testSumId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: ProtocolGasRecordDTO,
+    description: 'Retrieves official Protocol Gas record by its Id',
+  })
+  getProtocolGas(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('id') id: string,
+  ) {
+    return this.service.getProtocolGas(id);
   }
 }

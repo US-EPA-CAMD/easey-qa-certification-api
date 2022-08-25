@@ -21,7 +21,10 @@ import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-mas
 import { TestResultCode } from '../entities/test-result-code.entity';
 import { ReportingPeriod } from '../entities/workspace/reporting-period.entity';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { RataBaseDTO } from '../dto/rata.dto';
+import { RataBaseDTO, RataImportDTO } from '../dto/rata.dto';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
+import { MonitorMethod } from '../entities/monitor-method.entity';
 
 const locationId = '1';
 
@@ -107,6 +110,18 @@ describe('Test Summary Check Service Test', () => {
           provide: AnalyzerRangeWorkspaceRepository,
           useFactory: mockAnalyzerRangeWorkspaceRepository,
         },
+        {
+          provide: MonitorSystemRepository,
+          useFactory: () => ({
+            findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
+          }),
+        },
+        {
+          provide: MonitorMethodRepository,
+          useFactory: () => ({
+            findOne: jest.fn().mockResolvedValue(new MonitorMethod()),
+          }),
+        },
       ],
     }).compile();
 
@@ -151,7 +166,9 @@ describe('Test Summary Check Service Test', () => {
         payload,
       ]);
 
-      expect(result).toEqual([]);
+      expect(result).toEqual([
+        'You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.',
+      ]);
     });
 
     it('Should get error IMPORT -20 Duplicate Test Summary record', async () => {
@@ -164,6 +181,7 @@ describe('Test Summary Check Service Test', () => {
       ]);
 
       expect(result).toEqual([
+        'You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.',
         `You have reported multiple Test Summary records for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}].`,
       ]);
     });
@@ -189,6 +207,7 @@ describe('Test Summary Check Service Test', () => {
       ]);
 
       expect(result).toEqual([
+        'You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.',
         `The database contains another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. However, the values reported for [monitoringSystemID,componentID,spanScaleCode,endDate,endHour,year,quarter] are different between the two tests.`,
       ]);
     });
@@ -207,6 +226,7 @@ describe('Test Summary Check Service Test', () => {
       ]);
 
       expect(result).toEqual([
+        'You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.',
         `The database contains another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. However, the values reported for [endMinute] are different between the two tests.`,
       ]);
     });
@@ -228,6 +248,7 @@ describe('Test Summary Check Service Test', () => {
         payload,
       ]);
       expect(result).toEqual([
+        'You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.',
         `The database contains another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. However, the values reported for [endDate,endHour] are different between the two tests.`,
       ]);
     });
@@ -292,7 +313,7 @@ describe('Test Summary Check Service Test', () => {
 
       const importPayload = new TestSummaryImportDTO();
       importPayload.testTypeCode = TestTypeCodes.LINE;
-      importPayload.rataData = [new RataBaseDTO()];
+      importPayload.rataData = [new RataImportDTO()];
       importPayload.testQualificationData = [{}];
       importPayload.calibrationInjectionData = [{}];
       importPayload.hgSummaryData = [{}];
