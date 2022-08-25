@@ -1,9 +1,16 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { RataRunWorkspaceRepository } from './rata-run.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RataRunMap } from '../maps/rata-run.map';
-import { RataRunDTO } from '../dto/rata-run.dto';
+import {
+  RataRunBaseDTO,
+  RataRunDTO,
+  RataRunRecordDTO,
+} from '../dto/rata-run.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { currentDateTime } from '../utilities/functions';
+import { v4 as uuid } from 'uuid';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 
 @Injectable()
 export class RataRunWorkspaceService {
@@ -11,6 +18,8 @@ export class RataRunWorkspaceService {
     @InjectRepository(RataRunWorkspaceRepository)
     private readonly repository: RataRunWorkspaceRepository,
     private readonly map: RataRunMap,
+    @Inject(forwardRef(() => TestSummaryWorkspaceService))
+    private readonly testSummaryService: TestSummaryWorkspaceService,
   ) {}
 
   async getRataRuns(rataSumId: string): Promise<RataRunDTO[]> {
@@ -30,5 +39,34 @@ export class RataRunWorkspaceService {
     }
 
     return this.map.one(result);
+  }
+
+  async createRataRun(
+    testSumId: string,
+    rataSumId: string,
+    payload: RataRunBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<RataRunRecordDTO> {
+    const timestamp = currentDateTime().toLocaleDateString();
+
+    let entity = this.repository.create({
+      ...payload,
+      id: uuid(),
+      rataSumId,
+      userId,
+      addDate: timestamp,
+      updateDate: timestamp,
+    });
+
+    await this.repository.save(entity);
+    entity = await this.repository.findOne(entity.id);
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.map.one(entity);
   }
 }

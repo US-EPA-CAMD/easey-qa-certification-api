@@ -12,9 +12,31 @@ const rataRunId = 'm3n4o5';
 const rataRunDTO: RataRunDTO = new RataRunDTO();
 const rataRuns: RataRunDTO[] = [rataRunDTO];
 
+const payload: RataRunDTO = {
+  id: 'a1b2c3',
+  rataSumId: 'd4e5f6',
+  runNumber: 1,
+  beginDate: new Date(),
+  beginHour: 12,
+  beginMinute: 30,
+  endDate: new Date(),
+  endHour: 18,
+  endMinute: 15,
+  cemValue: 13,
+  rataReferenceValue: 11,
+  grossUnitLoad: 7,
+  runStatusCode: '',
+  flowRataRunData: [],
+  calculatedRataReferenceValue: 0,
+  userId: '',
+  addDate: '',
+  updateDate: '',
+};
+
 const mockRataRunWorkspaceService = () => ({
   getRataRun: jest.fn().mockResolvedValue(rataRunDTO),
   getRataRuns: jest.fn().mockResolvedValue(rataRuns),
+  createRataRun: jest.fn().mockResolvedValue(rataRunDTO),
 });
 
 describe('RataRunWorkspaceController', () => {
@@ -66,6 +88,20 @@ describe('RataRunWorkspaceController', () => {
       );
       expect(result).toEqual(rataRuns);
       expect(service.getRataRuns).toHaveBeenCalled();
+    });
+  });
+
+  describe('createRataRun', () => {
+    it('Calls the service to create a new Rata Run record', async () => {
+      const result = await controller.createRataRun(
+        locId,
+        testSumId,
+        rataId,
+        rataSumId,
+        payload,
+      );
+      expect(result).toEqual(rataRunDTO);
+      expect(service.createRataRun).toHaveBeenCalled();
     });
   });
 });
