@@ -1,0 +1,12 @@
+export enum TestResultCodes {
+  IGNORED = 'IGNORED',
+  ABORTED = 'ABORTED',
+  EXC168H = 'EXC168H',
+  FAILED = 'FAILED',
+  FEW168H = 'FEW168H',
+  INC = 'INC',
+  INPROG = 'INPROG',
+  INVALID = 'INVALID',
+  PASSAPS = 'PASSAPS',
+  PASSED = 'PASSED',
+}
