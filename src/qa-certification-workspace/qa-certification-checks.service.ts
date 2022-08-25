@@ -109,8 +109,9 @@ export class QACertificationChecksService {
         promises.push(
           new Promise(async (resolve, _reject) => {
             const results = this.rataChecksService.runChecks(
-              locationId,
               rataData,
+              null,
+              summary,
               true,
             );
 

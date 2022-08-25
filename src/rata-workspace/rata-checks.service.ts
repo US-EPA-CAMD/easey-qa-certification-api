@@ -3,13 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { RataFrequencyCode } from '../entities/workspace/rata-frequency-code.entity';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestResultCodes } from '../enums/test-result-code.enum';
 import { RataFrequencyCodeRepository } from '../rata-frequency-code/rata-frequency-code.repository';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { getEntityManager } from '../utilities/utils';
 import { RataBaseDTO, RataImportDTO } from '../dto/rata.dto';
+import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 
 const KEY = 'RATA';
 
@@ -20,6 +20,8 @@ export class RataChecksService {
     private readonly rataFreqCodeRepository: RataFrequencyCodeRepository,
     @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
+    @InjectRepository(MonitorSystemRepository)
+    private readonly monitorSystemRepository: MonitorSystemRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -29,18 +31,27 @@ export class RataChecksService {
   }
 
   async runChecks(
-    testSumId: string,
     rata: RataBaseDTO | RataImportDTO,
+    testSumId?: string,
+    testSummary?: TestSummaryImportDTO,
     isImport: boolean = false,
     isUpdate: boolean = false,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
     this.logger.info('Running RATA Checks');
+    let testSumRecord;
 
-    const testSumRecord = await this.testSummaryRepository.getTestSummaryById(
-      testSumId,
-    );
+    if (isImport) {
+      testSumRecord = testSummary;
+      testSumRecord.system = this.monitorSystemRepository.findOne({
+        monitoringSystemID: testSummary.monitoringSystemID,
+      });
+    } else {
+      testSumRecord = await this.testSummaryRepository.getTestSummaryById(
+        testSumId,
+      );
+    }
 
     // RATA-102 Number of Load Levels Valid
     error = this.rata102Check(testSumRecord, rata.numberOfLoadLevels);
@@ -99,7 +110,7 @@ export class RataChecksService {
     if (testSumRecord.testResultCode === TestResultCodes.ABORTED) {
       // RATA-103 Result A
       if (relativeAccuracy !== null) {
-        error = `[RATA-103-A] You reported [relativeAccuracy], which is not appropriate for [${testSumRecord.testTypeCode}]`;
+        error = `[RATA-103-A] You reported [relativeAccuracy], which is not appropriate for [${testSumRecord.testTypeCode}].`;
       }
     } else if (
       [
@@ -113,7 +124,7 @@ export class RataChecksService {
         error = `[RATA-103-B] You did not provide [relativeAccuracy], which is required for [${KEY}].`;
       } else if (relativeAccuracy < 0) {
         // RATA-103 Result C
-        error = `[RATA-103-C] The value [${relativeAccuracy}] in the field [relativeAccuracy] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to zero`;
+        error = `[RATA-103-C] The value [${relativeAccuracy}] in the field [relativeAccuracy] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to zero.`;
       }
     }
     return error;
@@ -132,7 +143,7 @@ export class RataChecksService {
       ].includes(testSumRecord.testResultCode)
     ) {
       if (overallBiasAdjustmentFactor !== null) {
-        error = `[RATA-104-A] You reported [overallBiasAdjustmentFactor], which is not appropriate for [${testSumRecord.testTypeCode}]`;
+        error = `[RATA-104-A] You reported [overallBiasAdjustmentFactor], which is not appropriate for [${testSumRecord.testTypeCode}].`;
       }
     } else if (
       [
@@ -143,7 +154,7 @@ export class RataChecksService {
       if (overallBiasAdjustmentFactor === null) {
         error = `[RATA-104-B] You did not provide [overallBiasAdjustmentFactor], which is required for [${KEY}].`;
       } else if (overallBiasAdjustmentFactor < 1) {
-        error = `[RATA-104-C] The value [${overallBiasAdjustmentFactor}] in the field [overallBiasAdjustmentFactor] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to 1.00`;
+        error = `[RATA-104-C] The value [${overallBiasAdjustmentFactor}] in the field [overallBiasAdjustmentFactor] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to 1.00.`;
       }
     }
     return error;
@@ -167,7 +178,7 @@ export class RataChecksService {
     ) {
       // RATA-105 Result A
       if (rataFrequencyCode !== null) {
-        error = `[RATA-105-A] You reported [rataFrequencyCode], which is not appropriate for [${testSumRecord.testTypeCode}]`;
+        error = `[RATA-105-A] You reported [rataFrequencyCode], which is not appropriate for [${testSumRecord.testTypeCode}].`;
       }
     } else if (
       [
@@ -178,14 +189,14 @@ export class RataChecksService {
       if (rataFrequencyCode === null) {
         error = `[RATA-105-B] You did not provide [rataFrequencyCode], which is required for [${KEY}].`;
       } else if (!validCode) {
-        error = `[RATA-105-C] You reported the value [${rataFrequencyCode}], which is not in the list of valid values, in the field [rataFrequencyCode] for [${KEY}]`;
+        error = `[RATA-105-C] You reported the value [${rataFrequencyCode}], which is not in the list of valid values, in the field [rataFrequencyCode] for [${KEY}].`;
       } else if (rataFrequencyCode === '8QTRS') {
         if (testSumRecord.system?.systemDesignationCode !== 'B') {
-          error = `[RATA-105-C] You reported the value [${rataFrequencyCode}], which is not in the list of valid values, in the field [rataFrequencyCode] for [${KEY}]`;
+          error = `[RATA-105-C] You reported the value [${rataFrequencyCode}], which is not in the list of valid values, in the field [rataFrequencyCode] for [${KEY}].`;
         }
       } else if (rataFrequencyCode === 'ALTSL') {
         if (testSumRecord.system?.systemTypeCode !== 'FLOW') {
-          error = `[RATA-105-C] You reported the value [${rataFrequencyCode}], which is not in the list of valid values, in the field [rataFrequencyCode] for [${KEY}]`;
+          error = `[RATA-105-C] You reported the value [${rataFrequencyCode}], which is not in the list of valid values, in the field [rataFrequencyCode] for [${KEY}].`;
         }
       }
     }
