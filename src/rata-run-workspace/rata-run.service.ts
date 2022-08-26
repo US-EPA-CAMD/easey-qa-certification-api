@@ -48,7 +48,7 @@ export class RataRunWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<RataRunRecordDTO> {
-    const timestamp = currentDateTime().toLocaleDateString();
+    const timestamp = currentDateTime();
 
     let entity = this.repository.create({
       ...payload,
