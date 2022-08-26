@@ -21,7 +21,7 @@ import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-mas
 import { TestResultCode } from '../entities/test-result-code.entity';
 import { ReportingPeriod } from '../entities/workspace/reporting-period.entity';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { RataBaseDTO, RataImportDTO } from '../dto/rata.dto';
+import { RataImportDTO } from '../dto/rata.dto';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
 import { MonitorMethod } from '../entities/monitor-method.entity';
