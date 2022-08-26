@@ -22,6 +22,8 @@ import { RataSummaryWorkspaceModule } from './rata-summary-workspace/rata-summar
 import { RataSummaryModule } from './rata-summary/rata-summary.module';
 import { RataRunModule } from './rata-run/rata-run.module';
 import { RataRunWorkspaceModule } from './rata-run-workspace/rata-run.module';
+import { TestQualificationModule } from './test-qualification/test-qualification.module';
+import { TestQualificationWorkspaceModule } from './test-qualification-workspace/test-qualification-workspace.module';
 
 const routes: Routes = [
   {
@@ -53,6 +55,10 @@ const routes: Routes = [
           {
             path: ':testSumId/protocol-gases',
             module: ProtocolGasModule,
+          },
+          {
+            path: ':testSumId/test-qualifications',
+            module: TestQualificationModule,
           },
           {
             path: ':testSumId/rata',
@@ -95,6 +101,10 @@ const routes: Routes = [
           {
             path: ':testSumId/protocol-gases',
             module: ProtocolGasWorkspaceModule,
+          },
+          {
+            path: ':testSumId/test-qualifications',
+            module: TestQualificationWorkspaceModule,
           },
           {
             path: ':testSumId/rata',
