@@ -18,6 +18,7 @@ import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-mas
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { RataWorkspaceModule } from '../rata-workspace/rata-workspace.module';
 import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
+import { TestResultCodeModule } from '../test-result-code/test-result-code.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { MonitorMethodRepository } from '../monitor-method/monitor-method.reposi
     forwardRef(() => LinearityInjectionWorkspaceModule),
     forwardRef(() => ProtocolGasWorkspaceModule),
     forwardRef(() => RataWorkspaceModule),
+    TestResultCodeModule,
   ],
   controllers: [TestSummaryWorkspaceController],
   providers: [
