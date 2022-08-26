@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { RataRunDTO } from '../dto/rata-run.dto';
+import { RataRunBaseDTO, RataRunDTO } from '../dto/rata-run.dto';
 import { RataRunWorkspaceController } from './rata-run.controller';
 import { RataRunWorkspaceService } from './rata-run.service';
 
@@ -9,12 +9,7 @@ const rataId = 'g7h8i9';
 const rataSumId = 'j0k1l2';
 const rataRunId = 'm3n4o5';
 
-const rataRunDTO: RataRunDTO = new RataRunDTO();
-const rataRuns: RataRunDTO[] = [rataRunDTO];
-
-const payload: RataRunDTO = {
-  id: 'a1b2c3',
-  rataSumId: 'd4e5f6',
+const payload: RataRunBaseDTO = {
   runNumber: 1,
   beginDate: new Date(),
   beginHour: 12,
@@ -25,15 +20,14 @@ const payload: RataRunDTO = {
   cemValue: 13,
   rataReferenceValue: 11,
   grossUnitLoad: 7,
-  runStatusCode: '',
-  flowRataRunData: [],
-  calculatedRataReferenceValue: 0,
-  userId: '',
-  addDate: '',
-  updateDate: '',
+  runStatusCode: 'NOTUSED',
 };
 
+const rataRunDTO: RataRunDTO = new RataRunDTO();
+const rataRuns: RataRunDTO[] = [rataRunDTO];
+
 const mockRataRunWorkspaceService = () => ({
+  updateRataRun: jest.fn().mockResolvedValue(rataRunDTO),
   getRataRun: jest.fn().mockResolvedValue(rataRunDTO),
   getRataRuns: jest.fn().mockResolvedValue(rataRuns),
   createRataRun: jest.fn().mockResolvedValue(rataRunDTO),
@@ -58,10 +52,6 @@ describe('RataRunWorkspaceController', () => {
       RataRunWorkspaceController,
     );
     service = module.get<RataRunWorkspaceService>(RataRunWorkspaceService);
-  });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
   });
 
   describe('getRataRun', () => {
@@ -102,6 +92,22 @@ describe('RataRunWorkspaceController', () => {
       );
       expect(result).toEqual(rataRunDTO);
       expect(service.createRataRun).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateRataRun', () => {
+    it('should call the RataRunService.updateRataRun and update rata run record', async () => {
+      expect(
+        await controller.updateRataRun(
+          locId,
+          testSumId,
+          rataId,
+          rataSumId,
+          rataRunId,
+          payload,
+        ),
+      ).toEqual(rataRunDTO);
+      expect(service.updateRataRun).toHaveBeenCalled();
     });
   });
 });

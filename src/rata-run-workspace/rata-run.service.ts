@@ -69,4 +69,45 @@ export class RataRunWorkspaceService {
 
     return this.map.one(entity);
   }
+
+  async updateRataRun(
+    testSumId: string,
+    rataRunId: string,
+    payload: RataRunBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<RataRunRecordDTO> {
+    const timestamp = currentDateTime();
+    const record = await this.repository.findOne(rataRunId);
+
+    if (!record) {
+      throw new LoggingException(
+        `A Rata Run record not found with Record Id [${rataRunId}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    record.runNumber = payload.runNumber;
+    record.beginDate = payload.beginDate;
+    record.beginHour = payload.beginHour;
+    record.beginMinute = payload.beginMinute;
+    record.endDate = payload.endDate;
+    record.endHour = payload.endHour;
+    record.endMinute = payload.endMinute;
+    record.cemValue = payload.cemValue;
+    record.rataReferenceValue = payload.rataReferenceValue;
+    record.grossUnitLoad = payload.grossUnitLoad;
+    record.runStatusCode = payload.runStatusCode;
+    record.userId = userId;
+    record.updateDate = timestamp;
+
+    await this.repository.save(record);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+    return this.map.one(record);
+  }
 }

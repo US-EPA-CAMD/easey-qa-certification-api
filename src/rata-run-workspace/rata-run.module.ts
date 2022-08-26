@@ -10,6 +10,7 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
 @Module({
   imports: [
     TypeOrmModule.forFeature([RataRunWorkspaceRepository]),
+    forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => RataSummaryWorkspaceModule),
     forwardRef(() => TestSummaryWorkspaceModule),
   ],

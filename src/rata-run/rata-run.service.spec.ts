@@ -10,22 +10,6 @@ const rataSumId = 'd4e5f6';
 const rataRun = new RataRun();
 const rataRunDTO = new RataRunDTO();
 
-const payload: RataRunDTO = {
-  id: 'a1b2c3',
-  rataSummaryId: 'd4e5f6',
-  runNumber: 1,
-  beginDate: new Date(),
-  beginHour: 12,
-  beginMinute: 30,
-  endDate: new Date(),
-  endHour: 18,
-  endMinute: 15,
-  cemValue: 13,
-  rataReferenceValue: 11,
-  grossUnitLoad: 7,
-  runStatusCode: '',
-};
-
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(rataRunDTO),
   many: jest.fn().mockResolvedValue([rataRunDTO]),
