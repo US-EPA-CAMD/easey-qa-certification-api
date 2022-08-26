@@ -27,6 +27,10 @@ const payload: RataRunBaseDTO = {
   runStatusCode: 'NOTUSED',
 };
 
+const mockTestSumService = () => ({
+  resetToNeedsEvaluation: jest.fn(),
+});
+
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(rataRunDTO),
   many: jest.fn().mockResolvedValue([rataRunDTO]),
@@ -36,25 +40,19 @@ const mockRepository = () => ({
   save: jest.fn().mockResolvedValue(rataRun),
   find: jest.fn().mockResolvedValue([rataRun]),
   findOne: jest.fn().mockResolvedValue(rataRun),
-});
-
-const mockTestSummaryService = () => ({
-  resetToNeedsEvaluation: jest.fn(),
+  create: jest.fn().mockResolvedValue(rataRun),
 });
 
 describe('RataRunWorkspaceService', () => {
   let service: RataRunWorkspaceService;
   let repository: RataRunWorkspaceRepository;
+  let testSummaryService: TestSummaryWorkspaceService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RataRunWorkspaceService,
         RataRunMap,
-        {
-          provide: TestSummaryWorkspaceService,
-          useFactory: mockTestSummaryService,
-        },
         {
           provide: RataRunWorkspaceRepository,
           useFactory: mockRepository,
@@ -63,12 +61,19 @@ describe('RataRunWorkspaceService', () => {
           provide: RataRunMap,
           useFactory: mockMap,
         },
+        {
+          provide: TestSummaryWorkspaceService,
+          useFactory: mockTestSumService,
+        },
       ],
     }).compile();
 
     service = module.get<RataRunWorkspaceService>(RataRunWorkspaceService);
     repository = module.get<RataRunWorkspaceRepository>(
       RataRunWorkspaceRepository,
+    );
+    testSummaryService = module.get<TestSummaryWorkspaceService>(
+      TestSummaryWorkspaceService,
     );
   });
 
@@ -99,6 +104,23 @@ describe('RataRunWorkspaceService', () => {
       const result = await service.getRataRuns(rataSumId);
       expect(result).toEqual([rataRun]);
       expect(repository.find).toHaveBeenCalled();
+    });
+  });
+
+  describe('createRataRun', () => {
+    it('Should create and return a new Rata Run record', async () => {
+      const result = await service.createRataRun(
+        testSumId,
+        rataSumId,
+        payload,
+        userId,
+      );
+
+      expect(result).toEqual(rataRun);
+      expect(repository.create).toHaveBeenCalled();
+      expect(repository.save).toHaveBeenCalled();
+      expect(repository.findOne).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
   });
 

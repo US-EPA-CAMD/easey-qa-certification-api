@@ -12,6 +12,7 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
     TypeOrmModule.forFeature([RataRunWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => RataSummaryWorkspaceModule),
+    forwardRef(() => TestSummaryWorkspaceModule),
   ],
   controllers: [RataRunWorkspaceController],
   providers: [RataRunWorkspaceService, RataRunMap],

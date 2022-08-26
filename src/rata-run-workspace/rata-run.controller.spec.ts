@@ -30,6 +30,7 @@ const mockRataRunWorkspaceService = () => ({
   updateRataRun: jest.fn().mockResolvedValue(rataRunDTO),
   getRataRun: jest.fn().mockResolvedValue(rataRunDTO),
   getRataRuns: jest.fn().mockResolvedValue(rataRuns),
+  createRataRun: jest.fn().mockResolvedValue(rataRunDTO),
 });
 
 describe('RataRunWorkspaceController', () => {
@@ -77,6 +78,20 @@ describe('RataRunWorkspaceController', () => {
       );
       expect(result).toEqual(rataRuns);
       expect(service.getRataRuns).toHaveBeenCalled();
+    });
+  });
+
+  describe('createRataRun', () => {
+    it('Calls the service to create a new Rata Run record', async () => {
+      const result = await controller.createRataRun(
+        locId,
+        testSumId,
+        rataId,
+        rataSumId,
+        payload,
+      );
+      expect(result).toEqual(rataRunDTO);
+      expect(service.createRataRun).toHaveBeenCalled();
     });
   });
 

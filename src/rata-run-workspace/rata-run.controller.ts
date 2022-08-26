@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Put } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
   RataRunBaseDTO,
@@ -42,6 +42,23 @@ export class RataRunWorkspaceController {
     @Param('id') rataRunId: string,
   ): Promise<RataRunDTO> {
     return this.service.getRataRun(rataRunId);
+  }
+
+  @Post()
+  @ApiOkResponse({
+    isArray: false,
+    type: RataRunRecordDTO,
+    description: 'Creates a Rata Run record in the workspace',
+  })
+  async createRataRun(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('rataId') _rataId: string,
+    @Param('rataSumId') rataSumId: string,
+    @Body() payload: RataRunBaseDTO,
+    //    @CurrentUser() userId: string,
+  ): Promise<RataRunRecordDTO> {
+    return this.service.createRataRun(testSumId, rataSumId, payload, userId);
   }
 
   @Put(':id')

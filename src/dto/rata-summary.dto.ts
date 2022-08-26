@@ -117,6 +117,11 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'apsIndicator. ADD TO PROPERTY METADATA',
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-123-A: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
   apsIndicator: number;
 
   @ApiProperty({

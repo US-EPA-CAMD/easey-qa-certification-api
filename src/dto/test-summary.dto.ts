@@ -150,6 +150,11 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOId.description,
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `RATA-117-A: You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
   monitoringSystemID?: string;
 
   @ApiProperty({

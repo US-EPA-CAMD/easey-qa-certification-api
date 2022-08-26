@@ -9,6 +9,7 @@ import {
 } from '../dto/rata-run.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '../utilities/functions';
+import { v4 as uuid } from 'uuid';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 
 @Injectable()
@@ -38,6 +39,35 @@ export class RataRunWorkspaceService {
     }
 
     return this.map.one(result);
+  }
+
+  async createRataRun(
+    testSumId: string,
+    rataSumId: string,
+    payload: RataRunBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<RataRunRecordDTO> {
+    const timestamp = currentDateTime();
+
+    let entity = this.repository.create({
+      ...payload,
+      id: uuid(),
+      rataSumId,
+      userId,
+      addDate: timestamp,
+      updateDate: timestamp,
+    });
+
+    await this.repository.save(entity);
+    entity = await this.repository.findOne(entity.id);
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.map.one(entity);
   }
 
   async updateRataRun(
