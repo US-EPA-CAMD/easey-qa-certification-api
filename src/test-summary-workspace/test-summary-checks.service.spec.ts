@@ -27,6 +27,7 @@ import { MonitorMethodRepository } from '../monitor-method/monitor-method.reposi
 import { MonitorMethod } from '../entities/monitor-method.entity';
 import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
 import { ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
+import { TestQualificationImportDTO } from '../dto/test-qualification.dto';
 
 const locationId = '1';
 
@@ -324,7 +325,7 @@ describe('Test Summary Check Service Test', () => {
       const importPayload = new TestSummaryImportDTO();
       importPayload.testTypeCode = TestTypeCodes.LINE;
       importPayload.rataData = [new RataImportDTO()];
-      importPayload.testQualificationData = [{}];
+      importPayload.testQualificationData = [new TestQualificationImportDTO()];
       importPayload.calibrationInjectionData = [{}];
       importPayload.hgSummaryData = [{}];
       importPayload.flowToLoadReferenceData = [{}];
