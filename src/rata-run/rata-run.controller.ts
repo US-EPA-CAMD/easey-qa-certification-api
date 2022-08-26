@@ -1,9 +1,10 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { RataRunDTO } from '../dto/rata-run.dto';
 import { RataRunService } from './rata-run.service';
 
 @Controller()
+@ApiSecurity('APIKey')
 @ApiTags('Rata Run')
 export class RataRunController {
   constructor(private readonly service: RataRunService) {}

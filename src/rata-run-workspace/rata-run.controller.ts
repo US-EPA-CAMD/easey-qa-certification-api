@@ -1,5 +1,10 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   RataRunBaseDTO,
   RataRunDTO,
@@ -10,6 +15,7 @@ import { RataRunWorkspaceService } from './rata-run.service';
 const userId = 'testUser';
 
 @Controller()
+@ApiSecurity('APIKey')
 @ApiTags('Rata Run')
 export class RataRunWorkspaceController {
   constructor(private readonly service: RataRunWorkspaceService) {}
@@ -45,7 +51,7 @@ export class RataRunWorkspaceController {
   }
 
   @Post()
-  @ApiOkResponse({
+  @ApiCreatedResponse({
     isArray: false,
     type: RataRunRecordDTO,
     description: 'Creates a Rata Run record in the workspace',
