@@ -37,6 +37,7 @@ const mockRataRunWorkspaceService = () => ({
   getRataRun: jest.fn().mockResolvedValue(rataRunDTO),
   getRataRuns: jest.fn().mockResolvedValue(rataRuns),
   createRataRun: jest.fn().mockResolvedValue(rataRunDTO),
+  deleteRataRun: jest.fn().mockResolvedValue(''),
 });
 
 describe('RataRunWorkspaceController', () => {
@@ -102,6 +103,20 @@ describe('RataRunWorkspaceController', () => {
       );
       expect(result).toEqual(rataRunDTO);
       expect(service.createRataRun).toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteRataRun', () => {
+    it('Calls the service to delete an existing Rata Run record', async () => {
+      const result = await controller.deleteRataRun(
+        locId,
+        testSumId,
+        rataId,
+        rataSumId,
+        rataRunId,
+      );
+      expect(result).toEqual('');
+      expect(service.deleteRataRun).toHaveBeenCalled();
     });
   });
 });

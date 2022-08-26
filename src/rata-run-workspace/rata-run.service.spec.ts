@@ -48,6 +48,7 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(rataRun),
   create: jest.fn().mockResolvedValue(rataRun),
   save: jest.fn().mockResolvedValue(rataRun),
+  delete: jest.fn().mockReturnValue(''),
 });
 
 describe('RataRunWorkspaceService', () => {
@@ -131,6 +132,14 @@ describe('RataRunWorkspaceService', () => {
       expect(repository.create).toHaveBeenCalled();
       expect(repository.save).toHaveBeenCalled();
       expect(repository.findOne).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteRataRun', () => {
+    it('Should return an array of Rata Run records', async () => {
+      const result = await service.deleteRataRun(testSumId, rataRunId, userId);
+      expect(repository.delete).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
   });
