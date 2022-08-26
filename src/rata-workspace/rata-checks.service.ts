@@ -154,7 +154,7 @@ export class RataChecksService {
       if (overallBiasAdjustmentFactor === null) {
         error = `[RATA-104-B] You did not provide [overallBiasAdjustmentFactor], which is required for [${KEY}].`;
       } else if (overallBiasAdjustmentFactor < 1) {
-        error = `[RATA-104-C] The value [${overallBiasAdjustmentFactor}] in the field [overallBiasAdjustmentFactor] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to 1.00.`;
+        error = `[RATA-104-C] The value [${overallBiasAdjustmentFactor}] in the field [overallBiasAdjustmentFactor] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to 1.000.`;
       }
     }
     return error;

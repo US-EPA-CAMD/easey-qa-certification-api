@@ -254,7 +254,7 @@ describe('Rata Checks Service Test', () => {
         await service.runChecks(importPayload, testSumId);
       } catch (err) {
         expect(err.response.message).toEqual([
-          `[RATA-104-C] The value [${importPayload.overallBiasAdjustmentFactor}] in the field [overallBiasAdjustmentFactor] for [RATA] is not within the range of valid values. This value must be greater than or equal to 1.00.`,
+          `[RATA-104-C] The value [${importPayload.overallBiasAdjustmentFactor}] in the field [overallBiasAdjustmentFactor] for [RATA] is not within the range of valid values. This value must be greater than or equal to 1.000.`,
         ]);
       }
     });
