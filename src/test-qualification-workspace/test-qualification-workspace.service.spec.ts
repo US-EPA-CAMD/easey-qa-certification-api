@@ -9,7 +9,9 @@ describe('TestQualificationWorkspaceService', () => {
       providers: [TestQualificationWorkspaceService],
     }).compile();
 
-    service = module.get<TestQualificationWorkspaceService>(TestQualificationWorkspaceService);
+    service = module.get<TestQualificationWorkspaceService>(
+      TestQualificationWorkspaceService,
+    );
   });
 
   it('should be defined', () => {

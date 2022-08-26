@@ -47,11 +47,13 @@ export class TestQualification extends BaseEntity {
   lowLoadPercentage: number;
 
   @Column({
+    type: 'date',
     name: 'begin_date',
   })
   beginDate: Date;
 
   @Column({
+    type: 'date',
     name: 'end_date',
   })
   endDate: Date;
@@ -75,5 +77,4 @@ export class TestQualification extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
-
 }

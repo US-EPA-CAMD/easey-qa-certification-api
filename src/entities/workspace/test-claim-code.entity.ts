@@ -1,4 +1,11 @@
-import { BaseEntity, Column, Entity, JoinColumn, OneToMany, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  PrimaryColumn,
+} from 'typeorm';
 import { TestQualification } from './test-qualification.entity';
 
 @Entity({ name: 'camdecmpsmd.test_claim_code' })

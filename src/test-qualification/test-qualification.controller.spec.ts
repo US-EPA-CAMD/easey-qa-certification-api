@@ -11,7 +11,9 @@ describe('TestQualificationController', () => {
       providers: [TestQualificationService],
     }).compile();
 
-    controller = module.get<TestQualificationController>(TestQualificationController);
+    controller = module.get<TestQualificationController>(
+      TestQualificationController,
+    );
   });
 
   it('should be defined', () => {
