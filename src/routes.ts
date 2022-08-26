@@ -63,7 +63,7 @@ const routes: Routes = [
                 module: RataSummaryModule,
                 children: [
                   {
-                    path: ':rataSumId/rata-run',
+                    path: ':rataSumId/rata-runs',
                     module: RataRunModule,
                   },
                 ],
@@ -105,7 +105,7 @@ const routes: Routes = [
                 module: RataSummaryWorkspaceModule,
                 children: [
                   {
-                    path: ':rataSumId/rata-run',
+                    path: ':rataSumId/rata-runs',
                     module: RataRunWorkspaceModule,
                   },
                 ],
