@@ -1182,7 +1182,6 @@ export class TestSummaryChecksService {
 
       if (record) {
         error = resultC;
-      } else {
       }
 
       return error;
