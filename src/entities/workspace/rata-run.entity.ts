@@ -20,7 +20,7 @@ export class RataRun extends BaseEntity {
   @Column({ name: 'run_num', transformer: new NumericColumnTransformer() })
   runNumber: number;
 
-  @Column({ name: 'begin_date' })
+  @Column({ type: 'date', name: 'begin_date' })
   beginDate: Date;
 
   @Column({ name: 'begin_hour', transformer: new NumericColumnTransformer() })
@@ -29,7 +29,7 @@ export class RataRun extends BaseEntity {
   @Column({ name: 'begin_min', transformer: new NumericColumnTransformer() })
   beginMinute: number;
 
-  @Column({ name: 'end_date' })
+  @Column({ type: 'date', name: 'end_date' })
   endDate: Date;
 
   @Column({ name: 'end_hour', transformer: new NumericColumnTransformer() })
