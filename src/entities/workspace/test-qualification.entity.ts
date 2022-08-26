@@ -9,10 +9,10 @@ import {
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
-import { TestSummary } from './test-summary.entity';
 import { TestClaimCode } from './test-claim-code.entity';
+import { TestSummary } from './test-summary.entity';
 
-@Entity({ name: 'camdecmps.test_qualification' })
+@Entity({ name: 'camdecmpswks.test_qualification' })
 export class TestQualification extends BaseEntity {
   @PrimaryColumn({
     name: 'test_qualification_id',
@@ -81,7 +81,7 @@ export class TestQualification extends BaseEntity {
 
   @ManyToOne(
     () => TestClaimCode,
-    olc => olc.TestQualifications,
+    tcc => tcc.TestQualifications,
   )
   @JoinColumn({ name: 'test_claim_cd' })
   TestClaimCode: TestClaimCode;
