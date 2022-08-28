@@ -7,6 +7,7 @@ import { TestSummary } from '../entities/test-summary.entity';
 import { TestSummaryDTO } from '../dto/test-summary.dto';
 import { ProtocolGasMap } from './protocol-gas.map';
 import { RataMap } from './rata.map';
+import { TestQualificationMap } from './test-qualification.map';
 
 @Injectable()
 export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
@@ -14,6 +15,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
     private readonly linearityMap: LinearitySummaryMap,
     private readonly protocolGasMap: ProtocolGasMap,
     private readonly rataMap: RataMap,
+    private readonly testQualificationMap: TestQualificationMap,
   ) {
     super();
   }
@@ -30,6 +32,9 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       : [];
 
     const ratas = entity.ratas ? await this.rataMap.many(entity.ratas) : [];
+    const testQuals = entity.testQualifications
+      ? await this.testQualificationMap.many(entity.testQualifications)
+      : [];
 
     if (entity['evalStatusCode']) {
       evalStatusCode = entity['evalStatusCode'];
@@ -89,7 +94,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       appECorrelationTestSummaryData: [],
       unitDefaultTestData: [],
       hgSummaryData: [],
-      testQualificationData: [],
+      testQualificationData: testQuals,
       protocolGasData: protocolGases,
       airEmissionTestData: [],
     };

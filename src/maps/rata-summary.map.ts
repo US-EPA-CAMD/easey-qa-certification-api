@@ -2,11 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { RataSummaryDTO } from '../dto/rata-summary.dto';
 import { RataSummary } from '../entities/rata-summary.entity';
+import { RataRunMap } from './rata-run.map';
 
 @Injectable()
 export class RataSummaryMap extends BaseMap<RataSummary, RataSummaryDTO> {
+  constructor(private readonly rataRunMap: RataRunMap) {
+    super();
+  }
   public async one(entity: RataSummary): Promise<RataSummaryDTO> {
-    const rataRuns = [];
+    const rataRuns = entity.RataRuns
+      ? await this.rataRunMap.many(entity.RataRuns)
+      : [];
 
     return {
       id: entity.id,

@@ -10,6 +10,7 @@ import {
   TestSummaryImportDTO,
 } from '../dto/test-summary.dto';
 
+import { CacheService } from './../cache/cache.service';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
@@ -23,7 +24,7 @@ import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-mas
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
 import { TestResultCode } from '../entities/test-result-code.entity';
-import { CacheService } from './../cache/cache.service';
+import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
 
 @Injectable()
 export class TestSummaryChecksService {
@@ -45,6 +46,8 @@ export class TestSummaryChecksService {
     private readonly monitorSystemRepository: MonitorSystemRepository,
     @InjectRepository(MonitorMethodRepository)
     private readonly monitorMethodRepository: MonitorMethodRepository,
+    @InjectRepository(TestResultCodeRepository)
+    private readonly testResultCodeRepository: TestResultCodeRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -129,6 +132,12 @@ export class TestSummaryChecksService {
 
     // TEST-23 Injection Protocol Valid
     error = await this.test23Check(locationId, summary);
+    if (error) {
+      errorList.push(error);
+    }
+
+    // RATA-100 Test Result Code Valid
+    error = await this.rata100check(summary);
     if (error) {
       errorList.push(error);
     }
@@ -1106,14 +1115,40 @@ export class TestSummaryChecksService {
       !testResultCodes.includes(summary.testResultCode) &&
       [TestTypeCodes.LINE.toString()].includes(summary.testTypeCode)
     ) {
-      const option = getManager().findOne(TestResultCode, {
-        testResultCode: summary.testResultCode,
-      });
+      const option = this.testResultCodeRepository.findOne(
+        summary.testResultCode,
+      );
 
       if (option) {
         error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type [${summary.testTypeCode}], in the field [testResultCode] for [Test Summary].`;
       }
     }
     return error;
+  }
+
+  // RATA-100 Test Result Code Valid
+  async rata100check(
+    summary: TestSummaryBaseDTO | TestSummaryImportDTO,
+  ): Promise<string> {
+    let error: string = null;
+
+    const resultC = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type,
+    in the field, in the field [testResultCode] for [Test Summary]`;
+
+    if (
+      !['PASSED', 'PASSAPS', 'FAILED', 'ABORTED'].includes(
+        summary.testResultCode,
+      )
+    ) {
+      const record = this.testResultCodeRepository.findOne(
+        summary.testResultCode,
+      );
+
+      if (record) {
+        error = resultC;
+      }
+
+      return error;
+    }
   }
 }

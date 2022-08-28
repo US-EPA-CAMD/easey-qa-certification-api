@@ -14,6 +14,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { RataBaseDTO, RataRecordDTO } from '../dto/rata.dto';
+import { RataChecksService } from './rata-checks.service';
 import { RataWorkspaceService } from './rata-workspace.service';
 
 const userId = 'testUser';
@@ -22,7 +23,10 @@ const userId = 'testUser';
 @ApiSecurity('APIKey')
 @ApiTags('Rata')
 export class RataWorkspaceController {
-  constructor(private readonly service: RataWorkspaceService) {}
+  constructor(
+    private readonly service: RataWorkspaceService,
+    private readonly checksService: RataChecksService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -63,6 +67,7 @@ export class RataWorkspaceController {
     @Body() payload: RataBaseDTO,
     //    @CurrentUser() userId: string,
   ): Promise<RataRecordDTO> {
+    await this.checksService.runChecks(payload, testSumId);
     return this.service.createRata(testSumId, payload, userId);
   }
 
@@ -80,6 +85,7 @@ export class RataWorkspaceController {
     @Body() payload: RataBaseDTO,
     //    @CurrentUser() userId: string,
   ): Promise<RataRecordDTO> {
+    await this.checksService.runChecks(payload, testSumId, null, false, true);
     return this.service.updateRata(testSumId, id, payload, userId);
   }
 
