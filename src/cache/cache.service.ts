@@ -6,15 +6,8 @@ export class CacheService {
   private static checkCatalog = [];
 
   static async load() {
-    const results = await getManager().query(`
-      SELECT check_type_cd AS "checkTypeCode",
-        check_number AS "checkNumber",
-        check_result AS "resultCode",
-        response_catalog_description AS "resultMessage"
-      FROM camdecmpsmd.vw_check_catalog_result
-      WHERE check_type_cd IN ('IMPORT', 'TEST', 'LINEAR', 'RATA')
-      ORDER BY check_type_cd, check_number, check_result`
-    );
+    const results = await getManager()
+      .query('SELECT * FROM camdecmpsmd.vw_qa_certification_api_check_catalog_results');
 
     CacheService.checkCatalog = results.map(i => {
       const parts = i.resultMessage.split('[')
