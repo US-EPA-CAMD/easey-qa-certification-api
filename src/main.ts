@@ -3,12 +3,12 @@ import { ConfigService } from "@nestjs/config";
 import { applySwagger, applyMiddleware } from "@us-epa-camd/easey-common/nestjs";
 
 import { AppModule } from './app.module';
-import { CacheService } from './cache/cache.service';
+import { CheckCatalogService } from './check-catalog/check-catalog.service';
 
 export async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  CacheService.load();
+  CheckCatalogService.load();
   applyMiddleware(AppModule, app);
   applySwagger(app);
 

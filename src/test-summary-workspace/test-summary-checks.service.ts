@@ -1,4 +1,3 @@
-import { getManager } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { HttpStatus, Injectable } from '@nestjs/common';
 
@@ -10,7 +9,7 @@ import {
   TestSummaryImportDTO,
 } from '../dto/test-summary.dto';
 
-import { CacheService } from './../cache/cache.service';
+import { CheckCatalogService } from '../check-catalog/check-catalog.service';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
@@ -23,7 +22,6 @@ import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/an
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
-import { TestResultCode } from '../entities/test-result-code.entity';
 import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
 
 @Injectable()
@@ -289,7 +287,7 @@ export class TestSummaryChecksService {
     }
 
     if (invalidChildRecords.length > 0) {
-      error = CacheService.getCheckCatalogResult(
+      error = CheckCatalogService.formatResultMessage(
         'IMPORT-16-A', {
           inappropriateChildren: invalidChildRecords,
           testTypeCode: summary.testTypeCode,
@@ -438,7 +436,7 @@ export class TestSummaryChecksService {
     }
 
     if (extraneousTestSummaryFields.length > 0) {
-      error = CacheService.getCheckCatalogResult(
+      error = CheckCatalogService.formatResultMessage(
         'IMPORT-17-A', {
           fieldname: extraneousTestSummaryFields,
           locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
@@ -462,18 +460,18 @@ export class TestSummaryChecksService {
       testNumber: summary.testNumber,
     };
 
-    const resultA = CacheService.getCheckCatalogResult('IMPORT-18-A', locTestTypeNumber);
-    const resultB = CacheService.getCheckCatalogResult('IMPORT-18-B', {
+    const resultA = CheckCatalogService.formatResultMessage('IMPORT-18-A', locTestTypeNumber);
+    const resultB = CheckCatalogService.formatResultMessage('IMPORT-18-B', {
       ...locTestTypeNumber,
       component: summary.componentID,
     });
-    const resultC = CacheService.getCheckCatalogResult('IMPORT-18-C', locTestTypeNumber);
-    const resultD = CacheService.getCheckCatalogResult('IMPORT-18-D', {
+    const resultC = CheckCatalogService.formatResultMessage('IMPORT-18-C', locTestTypeNumber);
+    const resultD = CheckCatalogService.formatResultMessage('IMPORT-18-D', {
       ...locTestTypeNumber,
       system: summary.monitoringSystemID,
     });
-    const resultE = CacheService.getCheckCatalogResult('IMPORT-18-E', locTestTypeNumber);
-    const resultF = CacheService.getCheckCatalogResult('IMPORT-18-F', locTestTypeNumber);
+    const resultE = CheckCatalogService.formatResultMessage('IMPORT-18-E', locTestTypeNumber);
+    const resultF = CheckCatalogService.formatResultMessage('IMPORT-18-F', locTestTypeNumber);
 
     const monitorSystem = await this.monitorSystemRepository.findOne({
       where: {
@@ -635,7 +633,7 @@ export class TestSummaryChecksService {
 
     // IMPORT-20 Duplicate Test Check
     if (isImport && duplicates.length > 1) {
-      error = CacheService.getCheckCatalogResult(
+      error = CheckCatalogService.formatResultMessage(
         'IMPORT-20-A', {
           locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
           testTypeCode: summary.testTypeCode,
@@ -656,7 +654,7 @@ export class TestSummaryChecksService {
       }
 
       // LINEAR-31 Duplicate Linearity (Result A)
-      error = CacheService.getCheckCatalogResult('LINEAR-31-A');
+      error = CheckCatalogService.formatResultMessage('LINEAR-31-A');
     } else {
       duplicate = await this.qaSuppDataRepository.getQASuppDataByLocationId(
         locationId,
@@ -670,7 +668,7 @@ export class TestSummaryChecksService {
         }
 
         // LINEAR-31 Duplicate Linearity (Result B)
-        error = CacheService.getCheckCatalogResult('LINEAR-31-B');
+        error = CheckCatalogService.formatResultMessage('LINEAR-31-B');
       }
     }
 

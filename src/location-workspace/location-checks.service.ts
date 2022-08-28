@@ -6,7 +6,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { LocationWorkspaceRepository } from './location.repository';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { QACertificationImportDTO } from 'src/dto/qa-certification.dto';
-import { CacheService } from '../cache/cache.service';
+import { CheckCatalogService } from '../check-catalog/check-catalog.service';
 
 @Injectable()
 export class LocationChecksService {
@@ -82,7 +82,7 @@ export class LocationChecksService {
 
     if (locations.length === 0) {
       errorList.push(
-        CacheService.getCheckCatalogResult('IMPORT-13-A')
+        CheckCatalogService.formatResultMessage('IMPORT-13-A')
       );
     }
     else {
@@ -105,12 +105,12 @@ export class LocationChecksService {
           ) {
             // IMPORT-13 All Unit Locations Present in the Production Database (Result C)
             errorList.push(
-              CacheService.getCheckCatalogResult('IMPORT-13-C', { invalid: location.unitId })
+              CheckCatalogService.formatResultMessage('IMPORT-13-C', { invalid: location.unitId })
             );
           } else if (!dbLocation) {
             // IMPORT-13 All Stack/Pipe Locations Present in the Production Database (Result B)
             errorList.push(
-              CacheService.getCheckCatalogResult('IMPORT-13-B', { unitStackID: location.unitId })
+              CheckCatalogService.formatResultMessage('IMPORT-13-B', { unitStackID: location.unitId })
             );
           }
         }
@@ -119,7 +119,7 @@ export class LocationChecksService {
           if (!dbLocation) {
             // IMPORT-13 All Stack/Pipe Locations Present in the Production Database (Result B)
             errorList.push(
-              CacheService.getCheckCatalogResult('IMPORT-13-B', { unitStackID: location.stackPipeId })
+              CheckCatalogService.formatResultMessage('IMPORT-13-B', { unitStackID: location.stackPipeId })
             );
           }
         }
@@ -133,7 +133,7 @@ export class LocationChecksService {
             if (!dbSystemIDs.includes(systemID)) {
               // IMPORT-14 All QA Systems Present in the Production Database (Result A)
               errorList.push(
-                CacheService.getCheckCatalogResult('IMPORT-14-A', { systemID })
+                CheckCatalogService.formatResultMessage('IMPORT-14-A', { systemID })
               );
             }
           });
@@ -142,7 +142,7 @@ export class LocationChecksService {
             if (!dbComponentIDs.includes(componentID)) {
               // IMPORT-15 All QA Components Present in the Production Database (Result A)
               errorList.push(
-                CacheService.getCheckCatalogResult('IMPORT-15-A', { componentID })
+                CheckCatalogService.formatResultMessage('IMPORT-15-A', { componentID })
               );
             }
           });

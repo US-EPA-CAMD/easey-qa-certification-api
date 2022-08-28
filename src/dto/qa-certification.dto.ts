@@ -7,7 +7,7 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 import { Plant } from '../entities/plant.entity';
 import { DbLookup } from '../pipes/db-lookup.pipe';
-import { CacheService } from './../cache/cache.service';
+import { CheckCatalogService } from '../check-catalog/check-catalog.service';
 import { TestSummaryDTO, TestSummaryImportDTO } from './test-summary.dto';
 
 import {
@@ -31,7 +31,7 @@ export class QACertificationBaseDTO {
     },
     {
       message: (args: ValidationArguments) => {
-        return CacheService.getCheckCatalogResult('IMPORT-24-A', { orisCode: args.value });
+        return CheckCatalogService.formatResultMessage('IMPORT-24-A', { orisCode: args.value });
       },
     },
   )

@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsOptional,
 } from 'class-validator';
+
 import { ApiProperty } from '@nestjs/swagger';
 
 import {
@@ -77,6 +78,7 @@ import {
   AppECorrelationTestSummaryImportDTO,
 } from './app-e-correlation-test-summary.dto';
 
+import { CheckCatalogService } from 'src/check-catalog/check-catalog.service';
 import { RequireOne } from '../pipes/require-one.pipe';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
@@ -95,13 +97,13 @@ import {
   VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE,
 } from '../utilities/constants';
 
+const KEY = 'Test Summary';
+const DATE_FORMAT = 'YYYY-MM-DD';
 const MIN_DATE = '1993-01-01';
 const MIN_HOUR = 0;
 const MAX_HOUR = 23;
 const MIN_MINUTE = 0;
 const MAX_MINUTE = 59;
-const KEY = 'Test Summary';
-const DATE_FORMAT = 'YYYY-MM-DD';
 
 const formatTestSummaryValidationError = (
   args: ValidationArguments,
@@ -134,15 +136,15 @@ export class TestSummaryBaseDTO {
   })
   @IsValidCode(TestTypeCode, {
     message: (args: ValidationArguments) => {
-      return `You reported an invalid Test Type Code of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
+      return CheckCatalogService.formatMessage(
+        'You reported an invalid Test Type Code of [testTypeCode] for Test Summary at Location [locationId] and Test Number [testNumber]',
+        {
+          testTypeCode: args.value,
+          locationId: args.object['unitId']
+            ? args.object['unitId']
+            : args.object['stackPipeId'],
+            testNumber: args.object['testNumber'],
+        });
     },
   })
   testTypeCode: string;
@@ -152,9 +154,10 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `RATA-117-A: You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('RATA-117-A', { fieldname: args.property, key: KEY });
     },
   })
+  // TODO: NEED @ValidateIf decorator if this is only for RATA
   monitoringSystemID?: string;
 
   @ApiProperty({
