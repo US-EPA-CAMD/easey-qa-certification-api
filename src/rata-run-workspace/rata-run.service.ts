@@ -70,6 +70,21 @@ export class RataRunWorkspaceService {
     return this.map.one(entity);
   }
 
+  async deleteRataRun(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    await this.repository.delete(id);
+    
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+  }
+  
   async updateRataRun(
     testSumId: string,
     rataRunId: string,
