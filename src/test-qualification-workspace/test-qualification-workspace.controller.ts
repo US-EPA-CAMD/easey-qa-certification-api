@@ -1,5 +1,10 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
-import { ApiCreatedResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   TestQualificationBaseDTO,
   TestQualificationRecordDTO,
@@ -13,6 +18,34 @@ const userId = 'testUser';
 @ApiTags('Test Qualification')
 export class TestQualificationWorkspaceController {
   constructor(private readonly service: TestQualificationWorkspaceService) {}
+
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: TestQualificationRecordDTO,
+    description:
+      'Retrieves official Test Qualification records by Test Summary Id',
+  })
+  async getTestQualifications(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+  ) {
+    return this.service.getTestQualifications(testSumId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: TestQualificationRecordDTO,
+    description: 'Retrieves official Test Qualification record by its Id',
+  })
+  async getTestQualification(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('id') id: string,
+  ) {
+    return this.service.getTestQualification(id);
+  }
 
   @Post()
   //  @ApiBearerAuth('Token')

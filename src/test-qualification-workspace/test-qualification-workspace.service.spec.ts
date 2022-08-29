@@ -10,9 +10,11 @@ import { TestQualificationWorkspaceRepository } from './test-qualification-works
 import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
 
 const testSumId = '';
+const testQualificationId = 'a1b2c3';
 const userId = 'user';
 const entity = new TestQualification();
-const dto = new TestQualificationDTO();
+const testQualificationRecord = new TestQualificationDTO();
+const testQualifications = [testQualificationRecord];
 
 const payload: TestQualificationBaseDTO = {
   testClaimCode: 'SLC',
@@ -24,13 +26,15 @@ const payload: TestQualificationBaseDTO = {
 };
 
 const mockRepository = () => ({
+  find: jest.fn().mockResolvedValue([entity]),
   findOne: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
 });
 
 const mockMap = () => ({
-  one: jest.fn().mockResolvedValue(dto),
+  one: jest.fn().mockResolvedValue(testQualificationRecord),
+  many: jest.fn().mockResolvedValue(testQualifications),
 });
 
 const mockTestSumService = () => ({
@@ -40,6 +44,7 @@ const mockTestSumService = () => ({
 describe('TestQualificationWorkspaceService', () => {
   let service: TestQualificationWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
+  let repository: TestQualificationWorkspaceRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -66,6 +71,9 @@ describe('TestQualificationWorkspaceService', () => {
     testSummaryService = module.get<TestSummaryWorkspaceService>(
       TestSummaryWorkspaceService,
     );
+    repository = module.get<TestQualificationWorkspaceRepository>(
+      TestQualificationWorkspaceRepository,
+    );
   });
 
   describe('createTestQualification', () => {
@@ -76,8 +84,38 @@ describe('TestQualificationWorkspaceService', () => {
         userId,
       );
 
-      expect(result).toEqual(dto);
+      expect(result).toEqual(testQualificationRecord);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+  });
+
+  describe('getTestQualification', () => {
+    it('Calls repository.findOne({id}) to get a single Test Qualification record', async () => {
+      const result = await service.getTestQualification(testQualificationId);
+      expect(result).toEqual(testQualificationRecord);
+      expect(repository.findOne).toHaveBeenCalled();
+    });
+
+    it('Should throw error when Test Qualification record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      let errored = false;
+
+      try {
+        await service.getTestQualification(testQualificationId);
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
+    });
+  });
+
+  describe('getTestQualifications', () => {
+    it('Calls Repository to find all Test Qualification records for a given Test Summary ID', async () => {
+      const results = await service.getTestQualifications(testSumId);
+      expect(results).toEqual(testQualifications);
+      expect(repository.find).toHaveBeenCalled();
     });
   });
 });

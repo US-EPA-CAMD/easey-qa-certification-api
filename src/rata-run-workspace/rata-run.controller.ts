@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -67,6 +67,21 @@ export class RataRunWorkspaceController {
     return this.service.createRataRun(testSumId, rataSumId, payload, userId);
   }
 
+  @Delete(':id')
+  @ApiOkResponse({
+    description: 'Deletes a Rata Run record from the workspace',
+  })
+  deleteRataRun(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('rataId') _rataId: string,
+    @Param('rataSumId') rataSumId: string,
+    @Param('id') id: string,
+  ): Promise<void> {
+    const userId = 'testUser';
+    return this.service.deleteRataRun(testSumId, id, userId);
+  }
+  
   @Put(':id')
   //  @ApiBearerAuth('Token')
   //  @UseGuards(AuthGuard)
