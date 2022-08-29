@@ -26,6 +26,17 @@ export class RataChecksService {
     private readonly rataSummaryChecksService: RataSummaryChecksService,
   ) {}
 
+  private async extractErrors(
+    promises: Promise<string[]>[],
+  ): Promise<string[]> {
+    const errorList: string[] = [];
+    const errors = await Promise.all(promises);
+    errors.forEach(p => {
+      errorList.push(...p);
+    });
+    return [...new Set(errorList)];
+  }
+
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
       throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
@@ -95,7 +106,7 @@ export class RataChecksService {
       errorList.push(error);
     }
 
-    this.throwIfErrors(errorList, isImport);
+    this.throwIfErrors(await this.extractErrors(promises), isImport);
     this.logger.info('Completed RATA Checks');
     return errorList;
   }
@@ -218,6 +229,7 @@ export class RataChecksService {
         }
       }
     }
+
     return error;
   }
 }
