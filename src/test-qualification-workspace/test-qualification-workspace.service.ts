@@ -1,7 +1,8 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   TestQualificationBaseDTO,
+  TestQualificationDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
 import { TestQualificationMap } from '../maps/test-qualification.map';
@@ -9,6 +10,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class TestQualificationWorkspaceService {
@@ -19,6 +21,29 @@ export class TestQualificationWorkspaceService {
     @InjectRepository(TestQualificationWorkspaceRepository)
     private readonly repository: TestQualificationWorkspaceRepository,
   ) {}
+
+  async getTestQualifications(
+    testSumId: string,
+  ): Promise<TestQualificationDTO[]> {
+    const records = await this.repository.find({
+      where: { testSumId },
+    });
+
+    return this.map.many(records);
+  }
+
+  async getTestQualification(id: string): Promise<TestQualificationDTO> {
+    const result = await this.repository.findOne(id);
+
+    if (!result) {
+      throw new LoggingException(
+        `Test Qualification record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
 
   async createTestQualification(
     testSumId: string,
