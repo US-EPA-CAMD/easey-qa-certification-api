@@ -1,8 +1,8 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
 import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestResultCodes } from '../enums/test-result-code.enum';
 import { RataFrequencyCodeRepository } from '../rata-frequency-code/rata-frequency-code.repository';
@@ -10,6 +10,7 @@ import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-s
 import { RataBaseDTO, RataImportDTO } from '../dto/rata.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary-checks.service';
 
 const KEY = 'RATA';
 
@@ -22,6 +23,7 @@ export class RataChecksService {
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
     @InjectRepository(MonitorSystemRepository)
     private readonly monitorSystemRepository: MonitorSystemRepository,
+    private readonly rataSummaryChecksService: RataSummaryChecksService,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -39,6 +41,7 @@ export class RataChecksService {
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
+    const promises: Promise<string[]>[] = [];
     this.logger.info('Running RATA Checks');
     let testSumRecord;
 
@@ -46,6 +49,21 @@ export class RataChecksService {
       testSumRecord = testSummary;
       testSumRecord.system = this.monitorSystemRepository.findOne({
         monitoringSystemID: testSummary.monitoringSystemID,
+      });
+
+      (rata as RataImportDTO).rataSummaryData.forEach(async rataSummary => {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const results = this.rataSummaryChecksService.runChecks(
+              rataSummary,
+              testSumId,
+              testSummary,
+              true,
+            );
+
+            resolve(results);
+          }),
+        );
       });
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
