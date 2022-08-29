@@ -10,7 +10,6 @@ import { TestSummaryChecksService } from '../test-summary-workspace/test-summary
 import { LinearitySummaryChecksService } from '../linearity-summary-workspace/linearity-summary-checks.service';
 import { LinearityInjectionChecksService } from '../linearity-injection-workspace/linearity-injection-checks.service';
 import { RataChecksService } from '../rata-workspace/rata-checks.service';
-import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {

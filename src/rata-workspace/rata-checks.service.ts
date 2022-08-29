@@ -41,7 +41,7 @@ export class RataChecksService {
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
-    const promises: Promise<string[]>[] = [];
+    const promises = [];
     this.logger.info('Running RATA Checks');
     let testSumRecord;
 
