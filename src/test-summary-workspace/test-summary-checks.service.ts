@@ -20,8 +20,7 @@ import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/an
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
-import { TestResultCode } from '../entities/test-result-code.entity';
-import { getEntityManager } from '../utilities/utils';
+import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
 
 @Injectable()
 export class TestSummaryChecksService {
@@ -43,6 +42,8 @@ export class TestSummaryChecksService {
     private readonly monitorSystemRepository: MonitorSystemRepository,
     @InjectRepository(MonitorMethodRepository)
     private readonly monitorMethodRepository: MonitorMethodRepository,
+    @InjectRepository(TestResultCodeRepository)
+    private readonly testResultCodeRepository: TestResultCodeRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -1151,9 +1152,9 @@ export class TestSummaryChecksService {
       !testResultCodes.includes(summary.testResultCode) &&
       [TestTypeCodes.LINE.toString()].includes(summary.testTypeCode)
     ) {
-      const option = getEntityManager().findOne(TestResultCode, {
-        testResultCode: summary.testResultCode,
-      });
+      const option = this.testResultCodeRepository.findOne(
+        summary.testResultCode,
+      );
 
       if (option) {
         error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type [${summary.testTypeCode}], in the field [testResultCode] for [Test Summary].`;
@@ -1168,17 +1169,16 @@ export class TestSummaryChecksService {
   ): Promise<string> {
     let error: string = null;
 
-    const resultC = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type,
-    in the field, in the field [testResultCode] for [Test Summary]`;
+    const resultC = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type, in the field, in the field [testResultCode] for [Test Summary]`;
 
     if (
       !['PASSED', 'PASSAPS', 'FAILED', 'ABORTED'].includes(
         summary.testResultCode,
       )
     ) {
-      const record = getEntityManager().findOne(TestResultCode, {
-        testResultCode: summary.testResultCode,
-      });
+      const record = this.testResultCodeRepository.findOne(
+        summary.testResultCode,
+      );
 
       if (record) {
         error = resultC;

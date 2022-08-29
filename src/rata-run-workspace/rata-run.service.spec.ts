@@ -3,19 +3,17 @@ import { RataRunMap } from '../maps/rata-run.map';
 import { RataRunWorkspaceRepository } from './rata-run.repository';
 import { RataRunWorkspaceService } from './rata-run.service';
 import { RataRun } from '../entities/rata-run.entity';
-import { RataRunDTO } from '../dto/rata-run.dto';
+import { RataRunBaseDTO, RataRunDTO } from '../dto/rata-run.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 
-const testSumId = 'testsumid';
-const rataRunId = 'ratarunid';
-const rataSumId = 'ratasumid';
-const userId = 'userid';
+const rataRunId = 'a1b2c3';
+const testSumId = 'd4e5f6';
+const rataSumId = 'd4e5f6';
+const userId = 'testUser';
 const rataRun = new RataRun();
 const rataRunDTO = new RataRunDTO();
 
-const payload: RataRunDTO = {
-  id: 'a1b2c3',
-  rataSumId: 'd4e5f6',
+const payload: RataRunBaseDTO = {
   runNumber: 1,
   beginDate: new Date(),
   beginHour: 12,
@@ -26,12 +24,7 @@ const payload: RataRunDTO = {
   cemValue: 13,
   rataReferenceValue: 11,
   grossUnitLoad: 7,
-  runStatusCode: '',
-  flowRataRunData: [],
-  calculatedRataReferenceValue: 0,
-  userId: '',
-  addDate: '',
-  updateDate: '',
+  runStatusCode: 'NOTUSED',
 };
 
 const mockTestSumService = () => ({
@@ -44,6 +37,7 @@ const mockMap = () => ({
 });
 
 const mockRepository = () => ({
+  save: jest.fn().mockResolvedValue(rataRun),
   find: jest.fn().mockResolvedValue([rataRun]),
   findOne: jest.fn().mockResolvedValue(rataRun),
   create: jest.fn().mockResolvedValue(rataRun),
@@ -83,10 +77,6 @@ describe('RataRunWorkspaceService', () => {
     testSummaryService = module.get<TestSummaryWorkspaceService>(
       TestSummaryWorkspaceService,
     );
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
   });
 
   describe('getRataRun', () => {
@@ -141,6 +131,28 @@ describe('RataRunWorkspaceService', () => {
       const result = await service.deleteRataRun(testSumId, rataRunId, userId);
       expect(repository.delete).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+
+  describe('updateRataRun', () => {
+    it('should update a rata run record', async () => {
+      const result = await service.updateRataRun(
+        testSumId,
+        rataRunId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(rataRunDTO);
+    });
+
+    it('should throw error with invalid rata run record id', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.updateRataRun(testSumId, rataRunId, payload, userId);
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
     });
   });
 });
