@@ -13,8 +13,6 @@ export class FormatValidationErrorsInterceptor implements NestInterceptor {
     return next.handle().pipe(
       catchError(err => {
         const regex = /((test|linearity|cycleTime|appECorrelationTest|Hg)Summary|certificationEvent|testExtensionExemption|calibrationInjection|rata|flowToLoad(Reference|Check)|onlineOfflineCalibration|fuelFlowmeterAccuracy|transmitterTransducer|fuelFlowToLoad(Baseline|Test)|testQualification|protocolGas|(unitDefault|airEmission)Test)Data.\d./;
-        //const regex = /(testSummary|certificationEvent|testExtensionExemption|calibrationInjection|linearitySummary|rata|flowToLoadReference|flowToLoadCheck|cycleTimeSummary|onlineOfflineCalibration|fuelFlowmeterAccuracy|transmitterTransducer|fuelFlowToLoadBaseline|fuelFlowToLoadTest|appECorrelationTestSummary|unitDefaultTest|hgSummary|testQualification|protocolGas|airEmissionTest)Data.\d./;
-        console.log(err);
         if (
           err.response &&
           err.response.statusCode &&

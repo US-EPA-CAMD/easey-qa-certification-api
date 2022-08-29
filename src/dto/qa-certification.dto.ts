@@ -4,10 +4,10 @@ import { ValidationArguments, ValidateNested } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 import { Plant } from '../entities/plant.entity';
 import { DbLookup } from '../pipes/db-lookup.pipe';
-import { CheckCatalogService } from '../check-catalog/check-catalog.service';
 import { TestSummaryDTO, TestSummaryImportDTO } from './test-summary.dto';
 
 import {

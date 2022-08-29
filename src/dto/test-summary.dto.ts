@@ -18,6 +18,8 @@ import {
   propertyMetadata,
 } from '@us-epa-camd/easey-common/constants';
 
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+
 import { RataDTO, RataImportDTO } from './rata.dto';
 import { HgSummaryDTO, HgSummaryImportDTO } from './hg-summary.dto';
 import { ProtocolGasDTO, ProtocolGasImportDTO } from './protocol-gas.dto';
@@ -78,7 +80,6 @@ import {
   AppECorrelationTestSummaryImportDTO,
 } from './app-e-correlation-test-summary.dto';
 
-import { CheckCatalogService } from 'src/check-catalog/check-catalog.service';
 import { RequireOne } from '../pipes/require-one.pipe';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { IsInDateRange } from '../pipes/is-in-date-range.pipe';

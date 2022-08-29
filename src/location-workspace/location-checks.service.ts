@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 import { LocationWorkspaceRepository } from './location.repository';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { QACertificationImportDTO } from 'src/dto/qa-certification.dto';
-import { CheckCatalogService } from '../check-catalog/check-catalog.service';
 
 @Injectable()
 export class LocationChecksService {
