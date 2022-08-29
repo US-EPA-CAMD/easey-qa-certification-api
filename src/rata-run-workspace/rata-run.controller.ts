@@ -80,7 +80,8 @@ export class RataRunWorkspaceController {
   ): Promise<void> {
     const userId = 'testUser';
     return this.service.deleteRataRun(testSumId, id, userId);
-
+  }
+  
   @Put(':id')
   //  @ApiBearerAuth('Token')
   //  @UseGuards(AuthGuard)
