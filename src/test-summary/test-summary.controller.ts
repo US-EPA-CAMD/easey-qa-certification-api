@@ -1,5 +1,4 @@
 import { Get, Query, Controller, Param } from '@nestjs/common';
-
 import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery } from '@nestjs/swagger';
 
 import { TestSummaryRecordDTO } from '../dto/test-summary.dto';
@@ -10,7 +9,9 @@ import { TestSummaryService } from './test-summary.service';
 @ApiSecurity('APIKey')
 @ApiTags('Test Summary')
 export class TestSummaryController {
-  constructor(private readonly service: TestSummaryService) {}
+  constructor(
+    private readonly service: TestSummaryService,
+  ) {}
 
   @Get()
   @ApiOkResponse({

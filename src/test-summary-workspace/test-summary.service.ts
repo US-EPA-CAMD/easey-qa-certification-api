@@ -1,18 +1,18 @@
 import { v4 as uuid } from 'uuid';
+import { getManager } from 'typeorm';
 
 import {
-  BadRequestException,
   forwardRef,
   HttpStatus,
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 import {
   TestSummaryDTO,
@@ -32,9 +32,6 @@ import { StackPipe } from './../entities/workspace/stack-pipe.entity';
 import { MonitorSystem } from './../entities/workspace/monitor-system.entity';
 import { MonitorLocation } from './../entities/workspace/monitor-location.entity';
 import { ReportingPeriod } from './../entities/workspace/reporting-period.entity';
-
-import { getEntityManager } from '../utilities/utils';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -215,7 +212,7 @@ export class TestSummaryWorkspaceService {
     payload: TestSummaryBaseDTO,
     userId: string,
   ): Promise<TestSummaryRecordDTO> {
-    const mgr = getEntityManager();
+    const mgr = getManager();
     const timestamp = currentDateTime();
     const [
       reportPeriodId,
@@ -370,7 +367,7 @@ export class TestSummaryWorkspaceService {
   }
 
   async lookupValues(locationId: string, payload: TestSummaryBaseDTO) {
-    const mgr = getEntityManager();
+    const mgr = getManager();
 
     let reportPeriodId = null;
     let componentRecordId = null;

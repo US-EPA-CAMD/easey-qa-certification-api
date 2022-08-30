@@ -1,13 +1,15 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { HttpStatus, Injectable } from '@nestjs/common';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 import {
   TestSummaryBaseDTO,
   TestSummaryImportDTO,
 } from '../dto/test-summary.dto';
+
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
@@ -285,7 +287,12 @@ export class TestSummaryChecksService {
     }
 
     if (invalidChildRecords.length > 0) {
-      error = `You have reported invalid [${invalidChildRecords}] records for a Test Summary record with a Test Type Code of [${summary.testTypeCode}].`;
+      error = CheckCatalogService.formatResultMessage(
+        'IMPORT-16-A', {
+          inappropriateChildren: invalidChildRecords,
+          testTypeCode: summary.testTypeCode,
+        },
+      );
     }
 
     return error;
@@ -429,7 +436,14 @@ export class TestSummaryChecksService {
     }
 
     if (extraneousTestSummaryFields.length > 0) {
-      error = `An extraneous value has been reported for [${extraneousTestSummaryFields}] in the Test Summary record for Location [${locationId}], TestTypeCode [${summary.testTypeCode}] and Test Number [${summary.testNumber}].`;
+      error = CheckCatalogService.formatResultMessage(
+        'IMPORT-17-A', {
+          fieldname: extraneousTestSummaryFields,
+          locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
+          testTypeCode: summary.testTypeCode,
+          testNumber: summary.testNumber,
+        }
+      );
     }
 
     return error;
@@ -440,47 +454,24 @@ export class TestSummaryChecksService {
     locationId: string,
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
   ): Promise<string> {
-    let error: string = null;
+    const locTestTypeNumber = {
+      locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
+      testTypeCode: summary.testTypeCode,
+      testNumber: summary.testNumber,
+    };
 
-    const resultA = `You have reported a Test Summary Record for Location ${[
-      locationId,
-    ]}, TestTypeCode [${summary.testTypeCode}] and Test Number [${
-      summary.testNumber
-    }], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.`;
-
-    const resultB = `You have reported a Test Summary Record for Location ${[
-      locationId,
-    ]}, TestTypeCode [${summary.testTypeCode}] and Test Number [${
-      summary.testNumber
-    }], which is inappropriate for the component type for ComponentID [${
-      summary.componentID
-    }]. This test record was not imported.`;
-
-    const resultC = `You have reported a Test Summary Record for Location ${[
-      locationId,
-    ]}, TestTypeCode [${summary.testTypeCode}] and Test Number [${
-      summary.testNumber
-    }], which either does not have a MonitorSystemID or inappropriately has a ComponentID. This test record was not imported.`;
-
-    const resultD = `You have reported a Test Summary Record for Location ${[
-      locationId,
-    ]}, TestTypeCode [${summary.testTypeCode}] and Test Number [${
-      summary.testNumber
-    }], which is inappropriate for the system type for MonitoringSystemID [${
-      summary.monitoringSystemID
-    }]. This test record was not imported.`;
-
-    const resultE = `You have reported a Test Summary Record for Location ${[
-      locationId,
-    ]}, TestTypeCode [${summary.testTypeCode}] and Test Number [${
-      summary.testNumber
-    }], which inappropriately contains eithera MonitorSystemID or a ComponentID. This test record was not imported.`;
-
-    const resultF = `You have reported a Test Summary Record for Location ${[
-      locationId,
-    ]}, TestTypeCode [${summary.testTypeCode}] and Test Number [${
-      summary.testNumber
-    }], which is inappropriate for a non-LME unit. This test record was not imported.`;
+    const resultA = CheckCatalogService.formatResultMessage('IMPORT-18-A', locTestTypeNumber);
+    const resultB = CheckCatalogService.formatResultMessage('IMPORT-18-B', {
+      ...locTestTypeNumber,
+      component: summary.componentID,
+    });
+    const resultC = CheckCatalogService.formatResultMessage('IMPORT-18-C', locTestTypeNumber);
+    const resultD = CheckCatalogService.formatResultMessage('IMPORT-18-D', {
+      ...locTestTypeNumber,
+      system: summary.monitoringSystemID,
+    });
+    const resultE = CheckCatalogService.formatResultMessage('IMPORT-18-E', locTestTypeNumber);
+    const resultF = CheckCatalogService.formatResultMessage('IMPORT-18-F', locTestTypeNumber);
 
     const monitorSystem = await this.monitorSystemRepository.findOne({
       where: {
@@ -506,8 +497,7 @@ export class TestSummaryChecksService {
       ].includes(summary.testTypeCode)
     ) {
       if (summary.monitoringSystemID || !summary.componentID) {
-        error = resultA;
-        return error;
+        return resultA;
       } else {
         if (
           [
@@ -522,8 +512,7 @@ export class TestSummaryChecksService {
               component.componentTypeCode,
             )
           ) {
-            error = resultB;
-            return error;
+            return resultB;
           }
         }
 
@@ -534,8 +523,7 @@ export class TestSummaryChecksService {
           ].includes(summary.testTypeCode)
         ) {
           if (component.componentTypeCode !== 'HG') {
-            error = resultB;
-            return error;
+            return resultB;
           }
         }
 
@@ -546,8 +534,7 @@ export class TestSummaryChecksService {
           ].includes(summary.testTypeCode)
         ) {
           if (!['OFFM', 'GFFM'].includes(component.componentTypeCode)) {
-            error = resultB;
-            return error;
+            return resultB;
           }
         }
       }
@@ -564,43 +551,26 @@ export class TestSummaryChecksService {
       ].includes(summary.testTypeCode)
     ) {
       if (summary.monitoringSystemID === null || summary.componentID !== null) {
-        error = resultC;
-        return error;
+        return resultC;
       } else {
         if (summary.testTypeCode === TestTypeCodes.RATA.toString()) {
-          if (
-            ![
-              'SO2',
-              'CO2',
-              'NOX',
-              'NOXC',
-              'O2',
-              'FLOW',
-              'H2O',
-              'H2OM',
-              'NOXP',
-              'SO2R',
-              'HG',
-              'HCL',
-              'HF',
-              'ST',
+          if (![
+              'SO2','CO2','NOX','NOXC','O2','FLOW','H2O',
+              'H2OM','NOXP','SO2R','HG','HCL','HF','ST',
             ].includes(monitorSystem.systemTypeCode)
           ) {
-            error = resultD;
-            return error;
+            return resultD;
           }
 
           if (summary.testTypeCode === 'APPE') {
             if (monitorSystem.systemTypeCode !== 'NOXE') {
-              error = resultD;
-              return error;
+              return resultD;
             }
           }
 
           if (['F2LCHK', 'F2LREF'].includes(summary.testTypeCode)) {
             if (monitorSystem.systemTypeCode !== 'FLOW') {
-              error = resultD;
-              return error;
+              return resultD;
             }
           }
 
@@ -610,8 +580,7 @@ export class TestSummaryChecksService {
                 monitorSystem.systemTypeCode,
               )
             ) {
-              error = resultD;
-              return error;
+              return resultD;
             }
           }
         }
@@ -620,8 +589,7 @@ export class TestSummaryChecksService {
 
     if (summary.testTypeCode === TestTypeCodes.UNITDEF.toString()) {
       if (summary.monitoringSystemID !== null || summary.componentID !== null) {
-        error = resultE;
-        return error;
+        return resultE;
       } else {
         const monitorMethod = await this.monitorMethodRepository.findOne({
           where: {
@@ -632,8 +600,7 @@ export class TestSummaryChecksService {
         });
 
         if (!monitorMethod) {
-          error = resultF;
-          return error;
+          return resultF;
         }
       }
     }
@@ -666,11 +633,13 @@ export class TestSummaryChecksService {
 
     // IMPORT-20 Duplicate Test Check
     if (isImport && duplicates.length > 1) {
-      error = `You have reported multiple Test Summary records for Unit/Stack [${
-        summary.unitId ? summary.unitId : summary.stackPipeId
-      }], Test Type Code [${summary.testTypeCode}], and Test Number [${
-        summary.testNumber
-      }].`;
+      error = CheckCatalogService.formatResultMessage(
+        'IMPORT-20-A', {
+          locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
+          testTypeCode: summary.testTypeCode,
+          testNumber: summary.testNumber,
+        }
+      );
     }
 
     duplicate = await this.repository.getTestSummaryByLocationId(
@@ -685,11 +654,7 @@ export class TestSummaryChecksService {
       }
 
       // LINEAR-31 Duplicate Linearity (Result A)
-      error = `Another Test Summary record for Unit/Stack [${
-        summary.unitId ? summary.unitId : summary.stackPipeId
-      }], Test Type Code [${summary.testTypeCode}], and Test Number [${
-        summary.testNumber
-      }]. You must assign a different test number.`;
+      error = CheckCatalogService.formatResultMessage('LINEAR-31-A');
     } else {
       duplicate = await this.qaSuppDataRepository.getQASuppDataByLocationId(
         locationId,
@@ -703,11 +668,7 @@ export class TestSummaryChecksService {
         }
 
         // LINEAR-31 Duplicate Linearity (Result B)
-        error = `Another Test Summary record for Unit/Stack [${
-          summary.unitId ? summary.unitId : summary.stackPipeId
-        }], Test Type Code [${summary.testTypeCode}], and Test Number [${
-          summary.testNumber
-        }]. You cannot change the Test Number to the value that you have entered, because a test with this Test Type and Test Number has already been submitted. If this is a different test, you should assign it a different Test Number. If you are trying to resubmit this test, you should delete this test, and either reimport this test with its original Test Number or retrieve the original test from the EPA host system.`;
+        error = CheckCatalogService.formatResultMessage('LINEAR-31-B');
       }
     }
 
