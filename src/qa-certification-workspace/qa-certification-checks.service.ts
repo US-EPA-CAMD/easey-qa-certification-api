@@ -10,6 +10,7 @@ import { TestSummaryChecksService } from '../test-summary-workspace/test-summary
 import { LinearitySummaryChecksService } from '../linearity-summary-workspace/linearity-summary-checks.service';
 import { LinearityInjectionChecksService } from '../linearity-injection-workspace/linearity-injection-checks.service';
 import { RataChecksService } from '../rata-workspace/rata-checks.service';
+import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -20,6 +21,7 @@ export class QACertificationChecksService {
     private readonly linearitySummaryChecksService: LinearitySummaryChecksService,
     private readonly linearityInjectionChecksService: LinearityInjectionChecksService,
     private readonly rataChecksService: RataChecksService,
+    private readonly rataSummaryChecksService: RataSummaryChecksService,
   ) {}
 
   private async extractErrors(
@@ -109,6 +111,7 @@ export class QACertificationChecksService {
         promises.push(
           new Promise(async (resolve, _reject) => {
             const results = this.rataChecksService.runChecks(
+              locationId,
               rataData,
               null,
               summary,
@@ -118,12 +121,27 @@ export class QACertificationChecksService {
             resolve(results);
           }),
         );
+
+        rataData.rataSummaryData?.forEach(rataSummary => {
+          promises.push(
+            new Promise(async (resolve, _reject) => {
+              const results = this.rataSummaryChecksService.runChecks(
+                locationId,
+                rataSummary,
+                null,
+                summary,
+                true,
+              );
+
+              resolve(results);
+            }),
+          );
+        });
       });
     });
 
     this.throwIfErrors(await this.extractErrors(promises));
     this.logger.info('Completed QA Certification Checks');
-
     return locations;
   }
 }

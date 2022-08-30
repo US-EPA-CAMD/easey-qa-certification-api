@@ -10,7 +10,6 @@ import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-s
 import { RataBaseDTO, RataImportDTO } from '../dto/rata.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
-import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary-checks.service';
 
 const KEY = 'RATA';
 
@@ -23,19 +22,7 @@ export class RataChecksService {
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
     @InjectRepository(MonitorSystemRepository)
     private readonly monitorSystemRepository: MonitorSystemRepository,
-    private readonly rataSummaryChecksService: RataSummaryChecksService,
   ) {}
-
-  private async extractErrors(
-    promises: Promise<string[]>[],
-  ): Promise<string[]> {
-    const errorList: string[] = [];
-    const errors = await Promise.all(promises);
-    errors.forEach(p => {
-      errorList.push(...p);
-    });
-    return [...new Set(errorList)];
-  }
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
@@ -44,37 +31,23 @@ export class RataChecksService {
   }
 
   async runChecks(
+    locationId: string,
     rata: RataBaseDTO | RataImportDTO,
     testSumId?: string,
     testSummary?: TestSummaryImportDTO,
     isImport: boolean = false,
-    isUpdate: boolean = false,
+    _isUpdate: boolean = false,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
-    const promises = [];
     this.logger.info('Running RATA Checks');
     let testSumRecord;
 
     if (isImport) {
       testSumRecord = testSummary;
-      testSumRecord.system = this.monitorSystemRepository.findOne({
+      testSumRecord.system = await this.monitorSystemRepository.findOne({
         monitoringSystemID: testSummary.monitoringSystemID,
-      });
-
-      (rata as RataImportDTO).rataSummaryData.forEach(async rataSummary => {
-        promises.push(
-          new Promise(async (resolve, _reject) => {
-            const results = this.rataSummaryChecksService.runChecks(
-              rataSummary,
-              testSumId,
-              testSummary,
-              true,
-            );
-
-            resolve(results);
-          }),
-        );
+        locationId: locationId,
       });
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
@@ -106,7 +79,7 @@ export class RataChecksService {
       errorList.push(error);
     }
 
-    this.throwIfErrors(await this.extractErrors(promises), isImport);
+    this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed RATA Checks');
     return errorList;
   }

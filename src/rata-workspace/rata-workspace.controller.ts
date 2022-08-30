@@ -62,12 +62,12 @@ export class RataWorkspaceController {
     description: 'Creates a Rata record in the workspace',
   })
   async createRata(
-    @Param('locId') _locationId: string,
+    @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: RataBaseDTO,
     //    @CurrentUser() userId: string,
   ): Promise<RataRecordDTO> {
-    await this.checksService.runChecks(payload, testSumId);
+    await this.checksService.runChecks(locationId, payload, testSumId);
     return this.service.createRata(testSumId, payload, userId);
   }
 
@@ -79,13 +79,20 @@ export class RataWorkspaceController {
     description: 'Updates a Rata record in the workspace',
   })
   async updateRata(
-    @Param('locId') _locationId: string,
+    @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
     @Body() payload: RataBaseDTO,
     //    @CurrentUser() userId: string,
   ): Promise<RataRecordDTO> {
-    await this.checksService.runChecks(payload, testSumId, null, false, true);
+    await this.checksService.runChecks(
+      locationId,
+      payload,
+      testSumId,
+      null,
+      false,
+      true,
+    );
     return this.service.updateRata(testSumId, id, payload, userId);
   }
 

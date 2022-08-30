@@ -30,22 +30,24 @@ export class RataSummaryChecksService {
   }
 
   async runChecks(
+    locationId: string,
     rataSummary: RataSummaryBaseDTO | RataSummaryImportDTO,
     testSumId?: string,
     testSummary?: TestSummaryImportDTO,
     isImport: boolean = false,
+    _isUpdate: boolean = false,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
     let testSumRecord;
-
     this.logger.info('Running Rata Summary Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
 
-      testSumRecord.system = this.monitoringSystemRepository.findOne({
+      testSumRecord.system = await this.monitoringSystemRepository.findOne({
         monitoringSystemID: testSummary.monitoringSystemID,
+        locationId: locationId,
       });
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
@@ -60,9 +62,7 @@ export class RataSummaryChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-
     this.logger.info('Completed RATA Summary Checks');
-
     return errorList;
   }
 

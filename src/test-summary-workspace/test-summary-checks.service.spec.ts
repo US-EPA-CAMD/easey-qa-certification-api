@@ -567,7 +567,6 @@ describe('Test Summary Check Service Test', () => {
       try {
         await service.runChecks(locationId, payload, true, false, [payload]);
       } catch (err) {
-        console.log(err);
         expect(err.response.message).toEqual([
           `You reported the value [${payload.testResultCode}], which is not in the list of valid values for this test type, in the field [testResultCode] for [Test Summary].`,
         ]);
@@ -584,7 +583,6 @@ describe('Test Summary Check Service Test', () => {
       try {
         await service.runChecks(locationId, payload, true, false, [payload]);
       } catch (err) {
-        console.log(err);
         expect(err.response.message).toEqual([
           `You reported the value [${payload.testResultCode}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`,
         ]);
