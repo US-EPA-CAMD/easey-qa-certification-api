@@ -34,9 +34,9 @@ export class RataChecksService {
     locationId: string,
     rata: RataBaseDTO | RataImportDTO,
     testSumId?: string,
-    testSummary?: TestSummaryImportDTO,
     isImport: boolean = false,
     _isUpdate: boolean = false,
+    testSummary?: TestSummaryImportDTO,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
