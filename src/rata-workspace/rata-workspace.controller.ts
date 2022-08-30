@@ -89,7 +89,6 @@ export class RataWorkspaceController {
       locationId,
       payload,
       testSumId,
-      null,
       false,
       true,
     );

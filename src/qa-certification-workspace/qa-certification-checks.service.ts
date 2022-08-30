@@ -114,8 +114,9 @@ export class QACertificationChecksService {
               locationId,
               rataData,
               null,
-              summary,
               true,
+              false,
+              summary,
             );
 
             resolve(results);
