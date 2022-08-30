@@ -35,11 +35,11 @@ export class RataSummaryChecksService {
     testSumId?: string,
     testSummary?: TestSummaryImportDTO,
     isImport: boolean = false,
+    _isUpdate: boolean = false,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
     let testSumRecord;
-
     this.logger.info('Running Rata Summary Checks');
 
     if (isImport) {
@@ -54,7 +54,6 @@ export class RataSummaryChecksService {
         testSumId,
       );
     }
-    console.log(testSumRecord);
 
     // RATA-17 Mean CEM Value Valid
     error = this.rata17Check(testSumRecord, rataSummary.meanCEMValue);

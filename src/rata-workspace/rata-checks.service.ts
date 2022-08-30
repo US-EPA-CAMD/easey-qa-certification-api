@@ -36,11 +36,10 @@ export class RataChecksService {
     testSumId?: string,
     testSummary?: TestSummaryImportDTO,
     isImport: boolean = false,
-    isUpdate: boolean = false,
+    _isUpdate: boolean = false,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
-    const promises = [];
     this.logger.info('Running RATA Checks');
     let testSumRecord;
 
