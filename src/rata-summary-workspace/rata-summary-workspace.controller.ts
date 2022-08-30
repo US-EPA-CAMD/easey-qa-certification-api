@@ -17,6 +17,7 @@ import {
   RataSummaryBaseDTO,
   RataSummaryRecordDTO,
 } from '../dto/rata-summary.dto';
+import { RataSummaryChecksService } from './rata-summary-checks.service';
 import { RataSummaryWorkspaceService } from './rata-summary-workspace.service';
 
 const userId = 'testUser';
@@ -25,7 +26,10 @@ const userId = 'testUser';
 @ApiSecurity('APIKey')
 @ApiTags('Rata Summary')
 export class RataSummaryWorkspaceController {
-  constructor(private readonly service: RataSummaryWorkspaceService) {}
+  constructor(
+    private readonly service: RataSummaryWorkspaceService,
+    private readonly checksService: RataSummaryChecksService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -64,12 +68,13 @@ export class RataSummaryWorkspaceController {
     description: 'Creates a workspace Rata Summary record.',
   })
   async createRataSummary(
-    @Param('locId') _locationId: string,
+    @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('rataId') rataId: string,
     @Body() payload: RataSummaryBaseDTO,
     //    @CurrentUser() userId: string,
   ): Promise<RataSummaryRecordDTO> {
+    await this.checksService.runChecks(locationId, payload, testSumId);
     return this.service.createRataSummary(testSumId, rataId, payload, userId);
   }
 
@@ -81,13 +86,20 @@ export class RataSummaryWorkspaceController {
     description: 'Updates a Rata summary record in the workspace',
   })
   async updateRataSummary(
-    @Param('locId') _locationId: string,
+    @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('rataId') _rataId: string,
     @Param('id') id: string,
     @Body() payload: RataSummaryBaseDTO,
     //    @CurrentUser() userId: string,
   ): Promise<RataSummaryRecordDTO> {
+    await this.checksService.runChecks(
+      locationId,
+      payload,
+      testSumId,
+      false,
+      true,
+    );
     return this.service.updateRataSummary(testSumId, id, payload, userId);
   }
 

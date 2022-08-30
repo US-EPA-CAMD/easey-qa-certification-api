@@ -33,9 +33,9 @@ export class RataSummaryChecksService {
     locationId: string,
     rataSummary: RataSummaryBaseDTO | RataSummaryImportDTO,
     testSumId?: string,
-    testSummary?: TestSummaryImportDTO,
     isImport: boolean = false,
     _isUpdate: boolean = false,
+    testSummary?: TestSummaryImportDTO,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
@@ -47,7 +47,7 @@ export class RataSummaryChecksService {
 
       testSumRecord.system = await this.monitoringSystemRepository.findOne({
         monitoringSystemID: testSummary.monitoringSystemID,
-        locationId: locationId,
+        locationId,
       });
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
@@ -71,6 +71,8 @@ export class RataSummaryChecksService {
     meanCEMValue: number,
   ): string {
     let error: string = null;
+
+    console.log(testSumRecord);
 
     if (testSumRecord.system?.systemTypeCode === 'HG' && meanCEMValue === 0) {
       error = `[RATA-17-C] You reported a [meanCEMValue] of zero for [${KEY}]`;
