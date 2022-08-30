@@ -107,8 +107,10 @@ describe('RataRunWorkspaceController', () => {
       );
       expect(result).toEqual('');
       expect(service.deleteRataRun).toHaveBeenCalled();
+    });
+  });
 
-describe('updateRataRun', () => {
+  describe('updateRataRun', () => {
     it('should call the RataRunService.updateRataRun and update rata run record', async () => {
       expect(
         await controller.updateRataRun(

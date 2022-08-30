@@ -77,14 +77,14 @@ export class RataRunWorkspaceService {
     isImport: boolean = false,
   ): Promise<void> {
     await this.repository.delete(id);
-    
+
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
     );
   }
-  
+
   async updateRataRun(
     testSumId: string,
     rataRunId: string,

@@ -8,7 +8,8 @@ import { QACertificationChecksService } from './qa-certification-checks.service'
 import { QACertificationWorkspaceService } from './qa-certification.service';
 import { LinearitySummaryWorkspaceModule } from '../linearity-summary-workspace/linearity-summary.module';
 import { LinearityInjectionWorkspaceModule } from '../linearity-injection-workspace/linearity-injection.module';
-import { RataWorkspaceModule } from 'src/rata-workspace/rata-workspace.module';
+import { RataWorkspaceModule } from '../rata-workspace/rata-workspace.module';
+import { RataSummaryWorkspaceModule } from '../rata-summary-workspace/rata-summary-workspace.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { RataWorkspaceModule } from 'src/rata-workspace/rata-workspace.module';
     LinearitySummaryWorkspaceModule,
     LinearityInjectionWorkspaceModule,
     RataWorkspaceModule,
+    RataSummaryWorkspaceModule,
   ],
   controllers: [QACertificationWorkspaceController],
   providers: [QACertificationChecksService, QACertificationWorkspaceService],

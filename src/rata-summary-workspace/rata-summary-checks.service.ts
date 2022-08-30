@@ -30,6 +30,7 @@ export class RataSummaryChecksService {
   }
 
   async runChecks(
+    locationId: string,
     rataSummary: RataSummaryBaseDTO | RataSummaryImportDTO,
     testSumId?: string,
     testSummary?: TestSummaryImportDTO,
@@ -44,14 +45,16 @@ export class RataSummaryChecksService {
     if (isImport) {
       testSumRecord = testSummary;
 
-      testSumRecord.system = this.monitoringSystemRepository.findOne({
+      testSumRecord.system = await this.monitoringSystemRepository.findOne({
         monitoringSystemID: testSummary.monitoringSystemID,
+        locationId: locationId,
       });
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
       );
     }
+    console.log(testSumRecord);
 
     // RATA-17 Mean CEM Value Valid
     error = this.rata17Check(testSumRecord, rataSummary.meanCEMValue);
@@ -60,9 +63,7 @@ export class RataSummaryChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-
     this.logger.info('Completed RATA Summary Checks');
-
     return errorList;
   }
 
