@@ -29,7 +29,27 @@ export class TestSummaryService {
       );
     }
 
-    return this.map.one(result);
+    const dto = await this.map.one(result);
+
+    delete dto.calibrationInjectionData;
+    delete dto.linearitySummaryData;
+    delete dto.rataData;
+    delete dto.flowToLoadReferenceData;
+    delete dto.flowToLoadCheckData;
+    delete dto.cycleTimeSummaryData;
+    delete dto.onlineOfflineCalibrationData;
+    delete dto.fuelFlowmeterAccuracyData;
+    delete dto.transmitterTransducerData;
+    delete dto.fuelFlowToLoadBaselineData;
+    delete dto.fuelFlowToLoadTestData;
+    delete dto.appECorrelationTestSummaryData;
+    delete dto.unitDefaultTestData;
+    delete dto.hgSummaryData;
+    delete dto.testQualificationData;
+    delete dto.protocolGasData;
+    delete dto.airEmissionTestData;
+
+    return dto;
   }
 
   async getTestSummariesByLocationId(

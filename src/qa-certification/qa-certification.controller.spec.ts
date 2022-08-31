@@ -14,6 +14,11 @@ import { LinearitySummaryService } from '../linearity-summary/linearity-summary.
 import { TestSummaryRepository } from '../test-summary/test-summary.repository';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { QACertificationDTO } from '../dto/qa-certification.dto';
+import { ProtocolGasMap } from '../maps/protocol-gas.map';
+import { RataMap } from '../maps/rata.map';
+import { RataSummaryMap } from '../maps/rata-summary.map';
+import { RataRunMap } from '../maps/rata-run.map';
+import { TestQualificationMap } from '../maps/test-qualification.map';
 
 describe('QA Certification Controller Test', () => {
   let controller: QACertificationController;
@@ -36,15 +41,16 @@ describe('QA Certification Controller Test', () => {
         LinearityInjectionService,
         LinearityInjectionMap,
         LinearityInjectionRepository,
+        ProtocolGasMap,
+        RataMap,
+        RataSummaryMap,
+        RataRunMap,
+        TestQualificationMap,
       ],
     }).compile();
 
     controller = module.get(QACertificationController);
     service = module.get(QACertificationService);
-  });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
   });
 
   it('should return', async () => {

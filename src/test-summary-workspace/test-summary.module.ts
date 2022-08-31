@@ -15,6 +15,11 @@ import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/q
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { RataWorkspaceModule } from '../rata-workspace/rata-workspace.module';
+import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
+import { TestResultCodeModule } from '../test-result-code/test-result-code.module';
+import { TestQualificationWorkspaceModule } from '../test-qualification-workspace/test-qualification-workspace.module';
 
 @Module({
   imports: [
@@ -25,10 +30,15 @@ import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-mas
       ComponentWorkspaceRepository,
       AnalyzerRangeWorkspaceRepository,
       TestSummaryMasterDataRelationshipRepository,
+      MonitorSystemRepository,
+      MonitorMethodRepository,
     ]),
     forwardRef(() => LinearitySummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),
     forwardRef(() => ProtocolGasWorkspaceModule),
+    forwardRef(() => RataWorkspaceModule),
+    forwardRef(() => TestQualificationWorkspaceModule),
+    TestResultCodeModule,
   ],
   controllers: [TestSummaryWorkspaceController],
   providers: [

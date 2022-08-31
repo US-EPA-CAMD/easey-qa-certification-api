@@ -18,6 +18,16 @@ import { LocationModule } from './location/location.module';
 import { LocationWorkspaceModule } from './location-workspace/location.module';
 import { ComponentModule } from './component-workspace/component.module';
 import { AnalyzerRangeModule } from './analyzer-range-workspace/analyzer-range.module';
+import { RataModule } from './rata/rata.module';
+import { RataWorkspaceModule } from './rata-workspace/rata-workspace.module';
+import { MonitorSystemModule } from './monitor-system/monitor-system.module';
+import { MonitorMethodModule } from './monitor-method/monitor-method.module';
+import { RataSummaryWorkspaceModule } from './rata-summary-workspace/rata-summary-workspace.module';
+import { RataSummaryModule } from './rata-summary/rata-summary.module';
+import { RataRunModule } from './rata-run/rata-run.module';
+import { RataRunWorkspaceModule } from './rata-run-workspace/rata-run.module';
+import { TestQualificationModule } from './test-qualification/test-qualification.module';
+import { TestQualificationWorkspaceModule } from './test-qualification-workspace/test-qualification-workspace.module';
 
 @Module({
   imports: [
@@ -37,6 +47,16 @@ import { AnalyzerRangeModule } from './analyzer-range-workspace/analyzer-range.m
     LocationWorkspaceModule,
     ComponentModule,
     AnalyzerRangeModule,
+    RataModule,
+    RataWorkspaceModule,
+    MonitorSystemModule,
+    MonitorMethodModule,
+    RataSummaryWorkspaceModule,
+    RataSummaryModule,
+    RataRunModule,
+    RataRunWorkspaceModule,
+    TestQualificationModule,
+    TestQualificationWorkspaceModule,
   ],
 })
 export class AppModule {}

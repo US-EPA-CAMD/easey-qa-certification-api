@@ -18,6 +18,7 @@ export default registerAs('app', () => ({
   title:
     process.env.EASEY_QA_CERTIFICATION_API_TITLE ||
     'QA Certification Management',
+  description: process.env.EASEY_QA_CERTIFICATION_API_DESC,
   path,
   host,
   apiHost: process.env.EASEY_API_GATEWAY_HOST || 'api.epa.gov/easey/dev',

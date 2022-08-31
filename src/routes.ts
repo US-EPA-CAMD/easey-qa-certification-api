@@ -16,6 +16,14 @@ import { LinearityInjectionModule } from './linearity-injection/linearity-inject
 import { LinearityInjectionWorkspaceModule } from './linearity-injection-workspace/linearity-injection.module';
 import { ProtocolGasModule } from './protocol-gas/protocol-gas.module';
 import { ProtocolGasWorkspaceModule } from './protocol-gas-workspace/protocol-gas.module';
+import { RataWorkspaceModule } from './rata-workspace/rata-workspace.module';
+import { RataModule } from './rata/rata.module';
+import { RataSummaryWorkspaceModule } from './rata-summary-workspace/rata-summary-workspace.module';
+import { RataSummaryModule } from './rata-summary/rata-summary.module';
+import { RataRunModule } from './rata-run/rata-run.module';
+import { RataRunWorkspaceModule } from './rata-run-workspace/rata-run.module';
+import { TestQualificationModule } from './test-qualification/test-qualification.module';
+import { TestQualificationWorkspaceModule } from './test-qualification-workspace/test-qualification-workspace.module';
 
 const routes: Routes = [
   {
@@ -48,6 +56,26 @@ const routes: Routes = [
             path: ':testSumId/protocol-gases',
             module: ProtocolGasModule,
           },
+          {
+            path: ':testSumId/test-qualifications',
+            module: TestQualificationModule,
+          },
+          {
+            path: ':testSumId/rata',
+            module: RataModule,
+            children: [
+              {
+                path: ':rataId/rata-summaries',
+                module: RataSummaryModule,
+                children: [
+                  {
+                    path: ':rataSumId/rata-runs',
+                    module: RataRunModule,
+                  },
+                ],
+              },
+            ],
+          },
         ],
       },
     ],
@@ -73,6 +101,26 @@ const routes: Routes = [
           {
             path: ':testSumId/protocol-gases',
             module: ProtocolGasWorkspaceModule,
+          },
+          {
+            path: ':testSumId/test-qualifications',
+            module: TestQualificationWorkspaceModule,
+          },
+          {
+            path: ':testSumId/rata',
+            module: RataWorkspaceModule,
+            children: [
+              {
+                path: ':rataId/rata-summaries',
+                module: RataSummaryWorkspaceModule,
+                children: [
+                  {
+                    path: ':rataSumId/rata-runs',
+                    module: RataRunWorkspaceModule,
+                  },
+                ],
+              },
+            ],
           },
         ],
       },

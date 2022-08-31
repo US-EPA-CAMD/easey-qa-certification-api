@@ -1,13 +1,15 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { HttpStatus, Injectable } from '@nestjs/common';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 import {
   TestSummaryBaseDTO,
   TestSummaryImportDTO,
 } from '../dto/test-summary.dto';
+
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
@@ -18,8 +20,9 @@ import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
-import { TestResultCode } from '../entities/test-result-code.entity';
-import { getEntityManager } from '../utilities/utils';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
+import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
 
 @Injectable()
 export class TestSummaryChecksService {
@@ -35,7 +38,14 @@ export class TestSummaryChecksService {
     private readonly componentRepository: ComponentWorkspaceRepository,
     @InjectRepository(AnalyzerRangeWorkspaceRepository)
     private readonly analyzerRangeRepository: AnalyzerRangeWorkspaceRepository,
+    @InjectRepository(TestSummaryMasterDataRelationshipRepository)
     private readonly testSummaryRelationshipsRepository: TestSummaryMasterDataRelationshipRepository,
+    @InjectRepository(MonitorSystemRepository)
+    private readonly monitorSystemRepository: MonitorSystemRepository,
+    @InjectRepository(MonitorMethodRepository)
+    private readonly monitorMethodRepository: MonitorMethodRepository,
+    @InjectRepository(TestResultCodeRepository)
+    private readonly testResultCodeRepository: TestResultCodeRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -64,6 +74,12 @@ export class TestSummaryChecksService {
 
       // IMPORT-17 Extraneous Test Summary Data Check
       error = this.import17Check(locationId, summary);
+      if (error) {
+        errorList.push(error);
+      }
+
+      // IMPORT-18 System and Component Check
+      error = await this.import18Check(locationId, summary);
       if (error) {
         errorList.push(error);
       }
@@ -114,6 +130,12 @@ export class TestSummaryChecksService {
 
     // TEST-23 Injection Protocol Valid
     error = await this.test23Check(locationId, summary);
+    if (error) {
+      errorList.push(error);
+    }
+
+    // RATA-100 Test Result Code Valid
+    error = await this.rata100check(summary);
     if (error) {
       errorList.push(error);
     }
@@ -265,7 +287,12 @@ export class TestSummaryChecksService {
     }
 
     if (invalidChildRecords.length > 0) {
-      error = `You have reported invalid [${invalidChildRecords}] records for a Test Summary record with a Test Type Code of [${summary.testTypeCode}].`;
+      error = CheckCatalogService.formatResultMessage(
+        'IMPORT-16-A', {
+          inappropriateChildren: invalidChildRecords,
+          testTypeCode: summary.testTypeCode,
+        },
+      );
     }
 
     return error;
@@ -409,10 +436,176 @@ export class TestSummaryChecksService {
     }
 
     if (extraneousTestSummaryFields.length > 0) {
-      error = `An extraneous value has been reported for [${extraneousTestSummaryFields}] in the Test Summary record for Location [${locationId}], TestTypeCode [${summary.testTypeCode}] and Test Number [${summary.testNumber}].`;
+      error = CheckCatalogService.formatResultMessage(
+        'IMPORT-17-A', {
+          fieldname: extraneousTestSummaryFields,
+          locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
+          testTypeCode: summary.testTypeCode,
+          testNumber: summary.testNumber,
+        }
+      );
     }
 
     return error;
+  }
+
+  // IMPORT-18 System and Component Check
+  private async import18Check(
+    locationId: string,
+    summary: TestSummaryBaseDTO | TestSummaryImportDTO,
+  ): Promise<string> {
+    const locTestTypeNumber = {
+      locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
+      testTypeCode: summary.testTypeCode,
+      testNumber: summary.testNumber,
+    };
+
+    const resultA = CheckCatalogService.formatResultMessage('IMPORT-18-A', locTestTypeNumber);
+    const resultB = CheckCatalogService.formatResultMessage('IMPORT-18-B', {
+      ...locTestTypeNumber,
+      component: summary.componentID,
+    });
+    const resultC = CheckCatalogService.formatResultMessage('IMPORT-18-C', locTestTypeNumber);
+    const resultD = CheckCatalogService.formatResultMessage('IMPORT-18-D', {
+      ...locTestTypeNumber,
+      system: summary.monitoringSystemID,
+    });
+    const resultE = CheckCatalogService.formatResultMessage('IMPORT-18-E', locTestTypeNumber);
+    const resultF = CheckCatalogService.formatResultMessage('IMPORT-18-F', locTestTypeNumber);
+
+    const monitorSystem = await this.monitorSystemRepository.findOne({
+      where: {
+        monitoringSystemID: summary.monitoringSystemID,
+      },
+    });
+
+    const component = await this.componentRepository.findOne({
+      componentID: summary.componentID,
+      locationId: locationId,
+    });
+
+    if (
+      [
+        TestTypeCodes.SEVENDAY.toString(),
+        TestTypeCodes.LINE.toString(),
+        TestTypeCodes.CYCLE.toString(),
+        TestTypeCodes.ONOFF.toString(),
+        TestTypeCodes.FFACC.toString(),
+        TestTypeCodes.FFACCTT.toString(),
+        TestTypeCodes.HGSI3.toString(),
+        TestTypeCodes.HGLINE.toString(),
+      ].includes(summary.testTypeCode)
+    ) {
+      if (summary.monitoringSystemID || !summary.componentID) {
+        return resultA;
+      } else {
+        if (
+          [
+            TestTypeCodes.SEVENDAY.toString(),
+            TestTypeCodes.ONOFF.toString(),
+            TestTypeCodes.CYCLE.toString(),
+            TestTypeCodes.LINE.toString(),
+          ].includes(summary.testTypeCode)
+        ) {
+          if (
+            !['SO2', 'CO2', 'NOX', 'O2', 'FLOW', 'HG'].includes(
+              component.componentTypeCode,
+            )
+          ) {
+            return resultB;
+          }
+        }
+
+        if (
+          [
+            TestTypeCodes.HGSI3.toString(),
+            TestTypeCodes.HGLINE.toString(),
+          ].includes(summary.testTypeCode)
+        ) {
+          if (component.componentTypeCode !== 'HG') {
+            return resultB;
+          }
+        }
+
+        if (
+          [
+            TestTypeCodes.FFACC.toString(),
+            TestTypeCodes.FFACCTT.toString(),
+          ].includes(summary.testTypeCode)
+        ) {
+          if (!['OFFM', 'GFFM'].includes(component.componentTypeCode)) {
+            return resultB;
+          }
+        }
+      }
+    }
+
+    if (
+      [
+        TestTypeCodes.RATA.toString(),
+        TestTypeCodes.F2LCHK.toString(),
+        TestTypeCodes.F2LREF.toString(),
+        TestTypeCodes.FF2LBAS.toString(),
+        TestTypeCodes.FF2LTST.toString(),
+        TestTypeCodes.APPE.toString(),
+      ].includes(summary.testTypeCode)
+    ) {
+      if (summary.monitoringSystemID === null || summary.componentID !== null) {
+        return resultC;
+      } else {
+        if (summary.testTypeCode === TestTypeCodes.RATA.toString()) {
+          if (![
+              'SO2','CO2','NOX','NOXC','O2','FLOW','H2O',
+              'H2OM','NOXP','SO2R','HG','HCL','HF','ST',
+            ].includes(monitorSystem.systemTypeCode)
+          ) {
+            return resultD;
+          }
+
+          if (summary.testTypeCode === 'APPE') {
+            if (monitorSystem.systemTypeCode !== 'NOXE') {
+              return resultD;
+            }
+          }
+
+          if (['F2LCHK', 'F2LREF'].includes(summary.testTypeCode)) {
+            if (monitorSystem.systemTypeCode !== 'FLOW') {
+              return resultD;
+            }
+          }
+
+          if (['FF2LBAS', 'FF2LTST'].includes(summary.testTypeCode)) {
+            if (
+              !['OILV', 'OILM', 'GAS', 'LTOL', 'LTGS'].includes(
+                monitorSystem.systemTypeCode,
+              )
+            ) {
+              return resultD;
+            }
+          }
+        }
+      }
+    }
+
+    if (summary.testTypeCode === TestTypeCodes.UNITDEF.toString()) {
+      if (summary.monitoringSystemID !== null || summary.componentID !== null) {
+        return resultE;
+      } else {
+        const monitorMethod = await this.monitorMethodRepository.findOne({
+          where: {
+            locationId,
+            parameterCode: 'NOXM',
+            monitoringMethodCode: 'LME',
+          },
+        });
+
+        if (!monitorMethod) {
+          return resultF;
+        }
+      }
+    }
+
+    return null;
   }
 
   // IMPORT-20 Duplicate Test Check
@@ -440,11 +633,13 @@ export class TestSummaryChecksService {
 
     // IMPORT-20 Duplicate Test Check
     if (isImport && duplicates.length > 1) {
-      error = `You have reported multiple Test Summary records for Unit/Stack [${
-        summary.unitId ? summary.unitId : summary.stackPipeId
-      }], Test Type Code [${summary.testTypeCode}], and Test Number [${
-        summary.testNumber
-      }].`;
+      error = CheckCatalogService.formatResultMessage(
+        'IMPORT-20-A', {
+          locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
+          testTypeCode: summary.testTypeCode,
+          testNumber: summary.testNumber,
+        }
+      );
     }
 
     duplicate = await this.repository.getTestSummaryByLocationId(
@@ -459,11 +654,7 @@ export class TestSummaryChecksService {
       }
 
       // LINEAR-31 Duplicate Linearity (Result A)
-      error = `Another Test Summary record for Unit/Stack [${
-        summary.unitId ? summary.unitId : summary.stackPipeId
-      }], Test Type Code [${summary.testTypeCode}], and Test Number [${
-        summary.testNumber
-      }]. You must assign a different test number.`;
+      error = CheckCatalogService.formatResultMessage('LINEAR-31-A');
     } else {
       duplicate = await this.qaSuppDataRepository.getQASuppDataByLocationId(
         locationId,
@@ -477,11 +668,7 @@ export class TestSummaryChecksService {
         }
 
         // LINEAR-31 Duplicate Linearity (Result B)
-        error = `Another Test Summary record for Unit/Stack [${
-          summary.unitId ? summary.unitId : summary.stackPipeId
-        }], Test Type Code [${summary.testTypeCode}], and Test Number [${
-          summary.testNumber
-        }]. You cannot change the Test Number to the value that you have entered, because a test with this Test Type and Test Number has already been submitted. If this is a different test, you should assign it a different Test Number. If you are trying to resubmit this test, you should delete this test, and either reimport this test with its original Test Number or retrieve the original test from the EPA host system.`;
+        error = CheckCatalogService.formatResultMessage('LINEAR-31-B');
       }
     }
 
@@ -926,14 +1113,39 @@ export class TestSummaryChecksService {
       !testResultCodes.includes(summary.testResultCode) &&
       [TestTypeCodes.LINE.toString()].includes(summary.testTypeCode)
     ) {
-      const option = getEntityManager().findOne(TestResultCode, {
-        testResultCode: summary.testResultCode,
-      });
+      const option = this.testResultCodeRepository.findOne(
+        summary.testResultCode,
+      );
 
       if (option) {
         error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type [${summary.testTypeCode}], in the field [testResultCode] for [Test Summary].`;
       }
     }
     return error;
+  }
+
+  // RATA-100 Test Result Code Valid
+  async rata100check(
+    summary: TestSummaryBaseDTO | TestSummaryImportDTO,
+  ): Promise<string> {
+    let error: string = null;
+
+    const resultC = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type, in the field, in the field [testResultCode] for [Test Summary]`;
+
+    if (
+      !['PASSED', 'PASSAPS', 'FAILED', 'ABORTED'].includes(
+        summary.testResultCode,
+      )
+    ) {
+      const record = this.testResultCodeRepository.findOne(
+        summary.testResultCode,
+      );
+
+      if (record) {
+        error = resultC;
+      }
+
+      return error;
+    }
   }
 }

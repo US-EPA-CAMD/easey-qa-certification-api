@@ -11,6 +11,8 @@ import { QACertificationChecksService } from './qa-certification-checks.service'
 import { LinearitySummaryImportDTO } from '../dto/linearity-summary.dto';
 import { LinearityInjectionImportDTO } from '../dto/linearity-injection.dto';
 import { BadRequestException } from '@nestjs/common';
+import { RataChecksService } from '../rata-workspace/rata-checks.service';
+import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary-checks.service';
 
 const returnLocationRunChecks = [
   {
@@ -52,6 +54,18 @@ describe('QA Certification Check Service Test', () => {
         },
         {
           provide: LinearityInjectionChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
+        {
+          provide: RataChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
+        {
+          provide: RataSummaryChecksService,
           useFactory: () => ({
             runChecks: jest.fn().mockResolvedValue([]),
           }),

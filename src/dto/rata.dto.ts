@@ -1,7 +1,52 @@
-export class RataBaseDTO {}
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, ValidationArguments } from 'class-validator';
+import { RataSummaryDTO, RataSummaryImportDTO } from './rata-summary.dto';
 
-export class RataRecordDTO extends RataBaseDTO {}
+const KEY = 'RATA';
 
-export class RataImportDTO extends RataBaseDTO {}
+export class RataBaseDTO {
+  @ApiProperty({
+    description: 'NumberOfLoadLevels. ADD TO PROPERTY METADATA',
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `[RATA-102-A] You did not provide [${args.property}], which is required for [${KEY}].`;
+    },
+  })
+  numberOfLoadLevels: number;
 
-export class RataDTO extends RataRecordDTO {}
+  @ApiProperty({
+    description: 'relativeAccuracy. ADD TO PROPERTY METADATA',
+  })
+  relativeAccuracy: number;
+
+  @ApiProperty({
+    description: 'rataFrequencyCode. ADD TO PROPERTY METADATA',
+  })
+  rataFrequencyCode: string;
+
+  @ApiProperty({
+    description: 'overallBiasAdjustmentFactor. ADD TO PROPERTY METADATA',
+  })
+  overallBiasAdjustmentFactor: number;
+}
+
+export class RataRecordDTO extends RataBaseDTO {
+  id: string;
+  testSumId: string;
+  calculatedRataFrequencyCode: string;
+  calculatedRelativeAccuracy: number;
+  calculatedOverallBiasAdjustmentFactor: number;
+  calculatedNumberOfLoadLevel: number;
+  userId: string;
+  addDate: string;
+  updateDate: string;
+}
+
+export class RataImportDTO extends RataBaseDTO {
+  rataSummaryData: RataSummaryImportDTO[];
+}
+
+export class RataDTO extends RataRecordDTO {
+  rataSummaryData: RataSummaryDTO[];
+}

@@ -19,9 +19,15 @@ import { ComponentWorkspaceRepository } from '../component-workspace/component.r
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { TestResultCode } from '../entities/test-result-code.entity';
-import { ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
 import { ReportingPeriod } from '../entities/workspace/reporting-period.entity';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
+import { RataImportDTO } from '../dto/rata.dto';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
+import { MonitorMethod } from '../entities/monitor-method.entity';
+import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
+import { ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
+import { TestQualificationImportDTO } from '../dto/test-qualification.dto';
 
 const locationId = '1';
 
@@ -58,6 +64,7 @@ describe('Test Summary Check Service Test', () => {
   let repository: TestSummaryWorkspaceRepository;
   let qaRepository: QASuppDataWorkspaceRepository;
   let testSummaryRelationshipRepository: TestSummaryMasterDataRelationshipRepository;
+  let testResultCodeRepository: TestResultCodeRepository;
   let qaMonitorPlanWSRepo: any;
 
   const summaryBase: TestSummaryBaseDTO = new TestSummaryBaseDTO();
@@ -107,6 +114,24 @@ describe('Test Summary Check Service Test', () => {
           provide: AnalyzerRangeWorkspaceRepository,
           useFactory: mockAnalyzerRangeWorkspaceRepository,
         },
+        {
+          provide: MonitorSystemRepository,
+          useFactory: () => ({
+            findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
+          }),
+        },
+        {
+          provide: TestResultCodeRepository,
+          useFactory: () => ({
+            findOne: jest.fn().mockResolvedValue(new TestResultCode()),
+          }),
+        },
+        {
+          provide: MonitorMethodRepository,
+          useFactory: () => ({
+            findOne: jest.fn().mockResolvedValue(new MonitorMethod()),
+          }),
+        },
       ],
     }).compile();
 
@@ -114,6 +139,7 @@ describe('Test Summary Check Service Test', () => {
     testSummaryRelationshipRepository = module.get(
       TestSummaryMasterDataRelationshipRepository,
     );
+    testResultCodeRepository = module.get(TestResultCodeRepository);
     qaRepository = module.get(QASuppDataWorkspaceRepository);
 
     service = module.get(TestSummaryChecksService);
@@ -151,7 +177,9 @@ describe('Test Summary Check Service Test', () => {
         payload,
       ]);
 
-      expect(result).toEqual([]);
+      expect(result).toEqual([
+        'You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.',
+      ]);
     });
 
     it('Should get error IMPORT -20 Duplicate Test Summary record', async () => {
@@ -164,6 +192,7 @@ describe('Test Summary Check Service Test', () => {
       ]);
 
       expect(result).toEqual([
+        'You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.',
         `You have reported multiple Test Summary records for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}].`,
       ]);
     });
@@ -189,6 +218,7 @@ describe('Test Summary Check Service Test', () => {
       ]);
 
       expect(result).toEqual([
+        'You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.',
         `The database contains another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. However, the values reported for [monitoringSystemID,componentID,spanScaleCode,endDate,endHour,year,quarter] are different between the two tests.`,
       ]);
     });
@@ -207,6 +237,7 @@ describe('Test Summary Check Service Test', () => {
       ]);
 
       expect(result).toEqual([
+        'You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.',
         `The database contains another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. However, the values reported for [endMinute] are different between the two tests.`,
       ]);
     });
@@ -228,6 +259,7 @@ describe('Test Summary Check Service Test', () => {
         payload,
       ]);
       expect(result).toEqual([
+        'You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.',
         `The database contains another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. However, the values reported for [endDate,endHour] are different between the two tests.`,
       ]);
     });
@@ -292,8 +324,8 @@ describe('Test Summary Check Service Test', () => {
 
       const importPayload = new TestSummaryImportDTO();
       importPayload.testTypeCode = TestTypeCodes.LINE;
-      importPayload.rataData = [{}];
-      importPayload.testQualificationData = [{}];
+      importPayload.rataData = [new RataImportDTO()];
+      importPayload.testQualificationData = [new TestQualificationImportDTO()];
       importPayload.calibrationInjectionData = [{}];
       importPayload.hgSummaryData = [{}];
       importPayload.flowToLoadReferenceData = [{}];
@@ -313,9 +345,9 @@ describe('Test Summary Check Service Test', () => {
           importPayload,
         ]);
       } catch (err) {
-        // expect(err.response.message).toEqual([
-        //   `You have reported invalid [RATA, Test Qualification, Calibration Injection, Hg Linearity or System Integrity Summary, Flow to Load Reference, Flow to Load Check, Cycle Time Summary, Online Offline Calibration, Fuel Flowmeter Accuracy, Transmitter Transducer, Fuel Flow to Load Baseline, Fuel Flow to Load Test, Appendix E Correlation Test Summary, Unit Default Test, Air Emission Test] records for a Test Summary record with a Test Type Code of [${importPayload.testTypeCode}].`,
-        // ]);
+        expect(err.response.message).toEqual([
+          `You have reported invalid [RATA, Test Qualification, Calibration Injection, Hg Linearity or System Integrity Summary, Flow to Load Reference, Flow to Load Check, Cycle Time Summary, Online Offline Calibration, Fuel Flowmeter Accuracy, Transmitter Transducer, Fuel Flow to Load Baseline, Fuel Flow to Load Test, Appendix E Correlation Test Summary, Unit Default Test, Air Emission Test] records for a Test Summary record with a Test Type Code of [${importPayload.testTypeCode}].`,
+        ]);
       }
     });
 
@@ -327,7 +359,7 @@ describe('Test Summary Check Service Test', () => {
       const importPayload = new TestSummaryImportDTO();
       importPayload.testTypeCode = TestTypeCodes.FF2LTST;
       payload.testResultCode = 'PASSED';
-      importPayload.protocolGasData = [];
+      importPayload.protocolGasData = [new ProtocolGasImportDTO()];
       importPayload.linearitySummaryData = [new LinearitySummaryImportDTO()];
 
       try {
@@ -521,12 +553,28 @@ describe('Test Summary Check Service Test', () => {
     it('Should get error for LINEAR-10 Linearity Test Result Code Valid and LINEAR-29 Determine Linearity Check Results with valid testResultCode', async () => {
       payload.testResultCode = 'INC';
 
-      let values = {
-        findOne: jest.fn().mockResolvedValue(new TestResultCode()),
-      };
-      jest.mock('../utilities/utils.ts', () => ({
-        getEntityManager: jest.fn().mockReturnValue(values),
-      }));
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+      jest
+        .spyOn(
+          testSummaryRelationshipRepository,
+          'getTestTypeCodesRelationships',
+        )
+        .mockResolvedValue([]);
+      jest.spyOn(testResultCodeRepository, 'findOne').mockResolvedValue(null);
+
+      try {
+        await service.runChecks(locationId, payload, true, false, [payload]);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `You reported the value [${payload.testResultCode}], which is not in the list of valid values for this test type, in the field [testResultCode] for [Test Summary].`,
+        ]);
+      }
+    });
+
+    it('Should get error for LINEAR-10 Linearity Test Result Code Valid and LINEAR-29 Determine Linearity Check Results with invalid testResultCode', async () => {
+      payload.testResultCode = 'INC';
 
       jest
         .spyOn(repository, 'getTestSummaryByLocationId')
@@ -535,28 +583,11 @@ describe('Test Summary Check Service Test', () => {
       try {
         await service.runChecks(locationId, payload, true, false, [payload]);
       } catch (err) {
-        console.log(err);
-        // expect(err.response.message).toEqual([
-        //   `You reported the value [${payload.testResultCode}], which is not in the list of valid values for this test type, in the field [testResultCode] for [Test Summary].`,
-        // ]);
+        expect(err.response.message).toEqual([
+          `You reported the value [${payload.testResultCode}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`,
+        ]);
       }
     });
-
-    // it('Should get error for LINEAR-10 Linearity Test Result Code Valid and LINEAR-29 Determine Linearity Check Results with invalid testResultCode', async () => {
-    //   payload.testResultCode = 'INC';
-
-    //   jest
-    //     .spyOn(repository, 'getTestSummaryByLocationId')
-    //     .mockResolvedValue(null);
-
-    //   try {
-    //     await service.runChecks(locationId, payload, [payload], true);
-    //   } catch (err) {
-    //     expect(err.response.message).toEqual([
-    //       `You reported the value [${payload.testResultCode}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`,
-    //     ]);
-    //   }
-    // });
   });
 
   // TEST-7 Test Dates Consistent

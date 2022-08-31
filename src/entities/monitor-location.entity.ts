@@ -13,6 +13,7 @@ import { Component } from './component.entity';
 import { StackPipe } from './stack-pipe.entity';
 import { TestSummary } from './test-summary.entity';
 import { MonitorSystem } from './monitor-system.entity';
+import { MonitorMethod } from './monitor-method.entity';
 
 @Entity({ name: 'camdecmps.monitor_location' })
 export class MonitorLocation extends BaseEntity {
@@ -60,6 +61,12 @@ export class MonitorLocation extends BaseEntity {
   )
   @JoinColumn({ name: 'mon_loc_id' })
   systems: MonitorSystem[];
+
+  @OneToMany(
+    () => MonitorMethod,
+    method => method.location,
+  )
+  methods: MonitorMethod[];
 
   @OneToMany(
     () => TestSummary,

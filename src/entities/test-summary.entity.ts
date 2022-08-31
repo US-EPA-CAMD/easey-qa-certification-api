@@ -16,6 +16,8 @@ import { ReportingPeriod } from './reporting-period.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { LinearitySummary } from './linearity-summary.entity';
 import { ProtocolGas } from './protocol-gas.entity';
+import { Rata } from './rata.entity';
+import { TestQualification } from './test-qualification.entity';
 
 @Entity({ name: 'camdecmps.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -198,7 +200,21 @@ export class TestSummary extends BaseEntity {
   linearitySummaries: LinearitySummary[];
 
   @OneToMany(
-    () => LinearitySummary,
+    () => Rata,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  ratas: Rata[];
+
+  @OneToMany(
+    () => TestQualification,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  testQualifications: TestQualification[];
+
+  @OneToMany(
+    () => ProtocolGas,
     o => o.testSummary,
   )
   @JoinColumn({ name: 'test_sum_id' })
