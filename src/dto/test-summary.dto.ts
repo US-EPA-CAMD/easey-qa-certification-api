@@ -96,6 +96,7 @@ import {
   VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION,
   VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION,
   VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE,
+  VALID_CODES_FOR_MON_SYS_ID_VALIDATION,
 } from '../utilities/constants';
 
 const KEY = 'Test Summary';
@@ -144,8 +145,9 @@ export class TestSummaryBaseDTO {
           locationId: args.object['unitId']
             ? args.object['unitId']
             : args.object['stackPipeId'],
-            testNumber: args.object['testNumber'],
-        });
+          testNumber: args.object['testNumber'],
+        },
+      );
     },
   })
   testTypeCode: string;
@@ -155,10 +157,15 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-117-A', { fieldname: args.property, key: KEY });
+      return CheckCatalogService.formatResultMessage('RATA-117-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
-  // TODO: NEED @ValidateIf decorator if this is only for RATA
+  @ValidateIf(o =>
+    VALID_CODES_FOR_MON_SYS_ID_VALIDATION.includes(o.testTypeCode),
+  )
   monitoringSystemID?: string;
 
   @ApiProperty({

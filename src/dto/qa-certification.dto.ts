@@ -31,7 +31,9 @@ export class QACertificationBaseDTO {
     },
     {
       message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatResultMessage('IMPORT-24-A', { orisCode: args.value });
+        return CheckCatalogService.formatResultMessage('IMPORT-24-A', {
+          orisCode: args.value,
+        });
       },
     },
   )

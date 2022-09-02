@@ -61,6 +61,6 @@ export class Component extends BaseEntity {
     () => QASuppData,
     o => o.component,
   )
-  @JoinColumn({ name: 'mon_loc_id' })
+  @JoinColumn({ name: 'component_id' })
   qaSuppData: QASuppData[];
 }

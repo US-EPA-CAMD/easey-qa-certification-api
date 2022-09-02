@@ -287,12 +287,10 @@ export class TestSummaryChecksService {
     }
 
     if (invalidChildRecords.length > 0) {
-      error = CheckCatalogService.formatResultMessage(
-        'IMPORT-16-A', {
-          inappropriateChildren: invalidChildRecords,
-          testTypeCode: summary.testTypeCode,
-        },
-      );
+      error = CheckCatalogService.formatResultMessage('IMPORT-16-A', {
+        inappropriateChildren: invalidChildRecords,
+        testTypeCode: summary.testTypeCode,
+      });
     }
 
     return error;
@@ -436,14 +434,12 @@ export class TestSummaryChecksService {
     }
 
     if (extraneousTestSummaryFields.length > 0) {
-      error = CheckCatalogService.formatResultMessage(
-        'IMPORT-17-A', {
-          fieldname: extraneousTestSummaryFields,
-          locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
-          testTypeCode: summary.testTypeCode,
-          testNumber: summary.testNumber,
-        }
-      );
+      error = CheckCatalogService.formatResultMessage('IMPORT-17-A', {
+        fieldname: extraneousTestSummaryFields,
+        locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
+        testTypeCode: summary.testTypeCode,
+        testNumber: summary.testNumber,
+      });
     }
 
     return error;
@@ -460,18 +456,30 @@ export class TestSummaryChecksService {
       testNumber: summary.testNumber,
     };
 
-    const resultA = CheckCatalogService.formatResultMessage('IMPORT-18-A', locTestTypeNumber);
+    const resultA = CheckCatalogService.formatResultMessage(
+      'IMPORT-18-A',
+      locTestTypeNumber,
+    );
     const resultB = CheckCatalogService.formatResultMessage('IMPORT-18-B', {
       ...locTestTypeNumber,
       component: summary.componentID,
     });
-    const resultC = CheckCatalogService.formatResultMessage('IMPORT-18-C', locTestTypeNumber);
+    const resultC = CheckCatalogService.formatResultMessage(
+      'IMPORT-18-C',
+      locTestTypeNumber,
+    );
     const resultD = CheckCatalogService.formatResultMessage('IMPORT-18-D', {
       ...locTestTypeNumber,
       system: summary.monitoringSystemID,
     });
-    const resultE = CheckCatalogService.formatResultMessage('IMPORT-18-E', locTestTypeNumber);
-    const resultF = CheckCatalogService.formatResultMessage('IMPORT-18-F', locTestTypeNumber);
+    const resultE = CheckCatalogService.formatResultMessage(
+      'IMPORT-18-E',
+      locTestTypeNumber,
+    );
+    const resultF = CheckCatalogService.formatResultMessage(
+      'IMPORT-18-F',
+      locTestTypeNumber,
+    );
 
     const monitorSystem = await this.monitorSystemRepository.findOne({
       where: {
@@ -554,9 +562,22 @@ export class TestSummaryChecksService {
         return resultC;
       } else {
         if (summary.testTypeCode === TestTypeCodes.RATA.toString()) {
-          if (![
-              'SO2','CO2','NOX','NOXC','O2','FLOW','H2O',
-              'H2OM','NOXP','SO2R','HG','HCL','HF','ST',
+          if (
+            ![
+              'SO2',
+              'CO2',
+              'NOX',
+              'NOXC',
+              'O2',
+              'FLOW',
+              'H2O',
+              'H2OM',
+              'NOXP',
+              'SO2R',
+              'HG',
+              'HCL',
+              'HF',
+              'ST',
             ].includes(monitorSystem.systemTypeCode)
           ) {
             return resultD;
@@ -633,13 +654,11 @@ export class TestSummaryChecksService {
 
     // IMPORT-20 Duplicate Test Check
     if (isImport && duplicates.length > 1) {
-      error = CheckCatalogService.formatResultMessage(
-        'IMPORT-20-A', {
-          locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
-          testTypeCode: summary.testTypeCode,
-          testNumber: summary.testNumber,
-        }
-      );
+      error = CheckCatalogService.formatResultMessage('IMPORT-20-A', {
+        locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
+        testTypeCode: summary.testTypeCode,
+        testNumber: summary.testNumber,
+      });
     }
 
     duplicate = await this.repository.getTestSummaryByLocationId(
@@ -958,16 +977,17 @@ export class TestSummaryChecksService {
     let error: string = null;
     let duplicateQaSupp: TestSummary | QASuppData;
 
-    const duplicateTestSum = await this.repository.findOne({
-      testTypeCode: summary.testTypeCode,
-      spanScaleCode: summary.spanScaleCode,
-      endDate: summary.endDate,
-      endHour: summary.endHour,
-      endMinute: summary.endMinute,
-    });
+    const duplicateTestSum = await this.repository.getTestSummaryByComponent(
+      summary.componentID,
+      summary.testTypeCode,
+      summary.spanScaleCode,
+      summary.endDate,
+      summary.endHour,
+      summary.endMinute,
+    );
 
     if (duplicateTestSum) {
-      error = `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`;
+      error = CheckCatalogService.formatResultMessage('LINEAR-4-A');
     } else {
       duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
@@ -981,31 +1001,35 @@ export class TestSummaryChecksService {
       );
 
       if (duplicateQaSupp) {
-        error = `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`;
+        error = CheckCatalogService.formatResultMessage('LINEAR-4-A');
       } else {
-        // TODO: BLOCKED DUE TO COLUMN DOESNOT EXISTS IN DATABASE
-        /* duplicateQaSupp = await this.qaSuppDataRepository.findOne({
-          locationId: locationId,
-          testTypeCode: summary.testTypeCode,
-          testNumber: summary.testNumber,
-        });
+        duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByLocationId(
+          locationId,
+          summary.testTypeCode,
+          summary.testNumber,
+        );
 
         if (duplicateQaSupp) {
-          if (duplicateQaSupp.canSubmit === 'N') {
+          if (
+            ![null, 'GRANTED', 'REQUIRE'].includes(
+              duplicateQaSupp.submissionAvailabilityCode,
+            )
+          ) {
             if (
-              duplicateQaSupp.testSumId !== duplicateTestSum.id &&
               duplicateQaSupp.component.componentID !== summary.componentID &&
               duplicateQaSupp.spanScaleCode !== summary.spanScaleCode &&
               duplicateQaSupp.endDate !== summary.endDate &&
               duplicateQaSupp.endHour !== summary.endHour &&
               duplicateQaSupp.endMinute !== summary.endMinute
             ) {
-              error = `Another [${duplicateQaSupp.testTypeCode}] with this test number [${duplicateQaSupp.testNumber}] has already been submitted for this location. This test cannot be submitted with this test number. If this is a different test, you should assign it a unique test number.`;
+              error = CheckCatalogService.formatResultMessage('LINEAR-4-B', {
+                testtype: duplicateQaSupp.testTypeCode,
+              });
             } else {
-              error = `This test has already been submitted and will not be resubmitted. If you wish to resubmit this test, please contact EPA for approval.`;
+              error = CheckCatalogService.formatResultMessage('LINEAR-4-C');
             }
           }
-        } */
+        }
       }
     }
 

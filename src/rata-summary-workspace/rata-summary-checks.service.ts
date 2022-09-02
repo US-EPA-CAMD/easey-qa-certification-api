@@ -72,8 +72,6 @@ export class RataSummaryChecksService {
   ): string {
     let error: string = null;
 
-    console.log(testSumRecord);
-
     if (testSumRecord.system?.systemTypeCode === 'HG' && meanCEMValue === 0) {
       error = `[RATA-17-C] You reported a [meanCEMValue] of zero for [${KEY}]`;
     }
