@@ -532,7 +532,9 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('Should get error for LINEAR-4 check Result A', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(new TestSummary());
+      jest
+        .spyOn(repository, 'getTestSummaryByComponent')
+        .mockResolvedValue(new TestSummary());
 
       try {
         await service.runChecks(locationId, payload, true, false, [payload]);
