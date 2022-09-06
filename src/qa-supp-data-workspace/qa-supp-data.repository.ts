@@ -50,7 +50,7 @@ export class QASuppDataWorkspaceRepository extends Repository<QASuppData> {
       .where('c.componentID = :componentID', { componentID })
       .andWhere('ts.locationId = :locationId', { locationId })
       .andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode })
-      .andWhere('ts.testNumber = :testNumber', { testNumber })
+      .andWhere('ts.testNumber != :testNumber', { testNumber })
       .andWhere('ts.spanScaleCode = :spanScaleCode', { spanScaleCode })
       .andWhere('ts.endDate = :endDate', { endDate })
       .andWhere('ts.endHour = :endHour', { endHour })
