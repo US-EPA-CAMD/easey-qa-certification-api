@@ -115,8 +115,8 @@ export class TestSummaryChecksService {
     error = await this.linear4Check(
       locationId,
       summary,
-      isImport,
       historicalTestSumId,
+      isImport,
     );
     if (error) {
       errorList.push(error);
@@ -151,8 +151,8 @@ export class TestSummaryChecksService {
         locationId,
         summary,
         summaries,
-        isImport,
         historicalTestSumId,
+        isImport,
       );
       if (error) {
         errorList.push(error);
@@ -644,8 +644,8 @@ export class TestSummaryChecksService {
     locationId: string,
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
     summaries: TestSummaryImportDTO[] = [],
-    isImport: boolean = false,
     historicalTestSumId: string,
+    isImport: boolean = false,
   ): Promise<string> {
     let error: string = null;
     let fields: string[] = [];
@@ -709,7 +709,6 @@ export class TestSummaryChecksService {
       }]. However, the values reported for [${fields}] are different between the two tests.`;
     }
 
-    console.log(error);
     return error;
   }
 
@@ -982,8 +981,8 @@ export class TestSummaryChecksService {
   private async linear4Check(
     locationId: string,
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
-    _isImport: boolean = false,
     historicalTestSumId: string,
+    _isImport: boolean = false,
   ): Promise<string> {
     let error: string = null;
     let duplicateQaSupp: TestSummary | QASuppData;
