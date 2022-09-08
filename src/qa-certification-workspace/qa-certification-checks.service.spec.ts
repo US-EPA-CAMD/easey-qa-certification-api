@@ -25,7 +25,7 @@ const returnLocationRunChecks = [
   },
 ];
 
-const QASuppDatas = [undefined];
+const QASuppDatas = [];
 
 describe('QA Certification Check Service Test', () => {
   let service: QACertificationChecksService;
@@ -40,7 +40,7 @@ describe('QA Certification Check Service Test', () => {
           useFactory: () => ({
             getQASuppDataByTestTypeCodeComponentIdEndDateEndTime: jest
               .fn()
-              .mockResolvedValue(undefined),
+              .mockResolvedValue(null),
           }),
         },
         {

@@ -80,7 +80,9 @@ export class QACertificationChecksService {
         summary.endMinute,
       );
 
-      duplicateQaSuppRecords.push(duplicateQaSupp);
+      if (duplicateQaSupp) {
+        duplicateQaSuppRecords.push(duplicateQaSupp);
+      }
 
       promises.push(
         new Promise(async (resolve, _reject) => {

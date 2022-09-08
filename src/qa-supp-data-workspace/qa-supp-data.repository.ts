@@ -16,26 +16,6 @@ export class QASuppDataWorkspaceRepository extends Repository<QASuppData> {
       .leftJoin('sp.plant', 'spp');
   }
 
-  async getQASuppDataByLocationId(
-    locationId: string,
-    testTypeCode?: string,
-    testNumber?: string,
-  ): Promise<QASuppData> {
-    const query = this.buildBaseQuery().where('ts.locationId = :locationId', {
-      locationId,
-    });
-
-    if (testTypeCode) {
-      query.andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode });
-    }
-
-    if (testNumber) {
-      query.andWhere('ts.testNumber = :testNumber', { testNumber });
-    }
-
-    return query.getOne();
-  }
-
   async getUnassociatedQASuppDataByLocationIdAndTestSum(
     locationId: string,
     testSumId: string,

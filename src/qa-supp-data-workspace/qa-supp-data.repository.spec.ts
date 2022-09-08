@@ -52,18 +52,6 @@ describe('QASuppDataWorkspaceRepository', () => {
     queryBuilder.getOne.mockReturnValue(qaSuppData);
   });
 
-  describe('getQASuppDataByLocationId', () => {
-    it('calls buildBaseQuery and get a QA Support Data from the repository using LocationId, testTypeCode, TestNumber', async () => {
-      const result = await repository.getQASuppDataByLocationId(
-        locationId,
-        testTypeCode,
-        testNumber,
-      );
-
-      expect(result).toEqual(qaSuppData);
-    });
-  });
-
   describe('getUnassociatedQASuppDataByLocationIdAndTestSum', () => {
     it('calls buildBaseQuery and get a QA Support Data from the repository using LocationId, testTypeCode, TestNumber', async () => {
       const result = await repository.getUnassociatedQASuppDataByLocationIdAndTestSum(

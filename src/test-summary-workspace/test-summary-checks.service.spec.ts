@@ -64,7 +64,6 @@ const mockRepository = () => ({
 
 const mockQARepository = () => ({
   findOne: jest.fn().mockResolvedValue(null),
-  getQASuppDataByLocationId: jest.fn().mockResolvedValue(null),
   getUnassociatedQASuppDataByTestTypeCodeComponentIdEndDateEndTime: jest
     .fn()
     .mockResolvedValue(null),
@@ -270,10 +269,6 @@ describe('Test Summary Check Service Test', () => {
         .spyOn(repository, 'getTestSummaryByLocationId')
         .mockResolvedValue(null);
 
-      jest
-        .spyOn(qaRepository, 'getQASuppDataByLocationId')
-        .mockResolvedValue(returnedQASupp);
-
       const result = await service.runChecks(locationId, payload, true, false, [
         payload,
       ]);
@@ -321,9 +316,6 @@ describe('Test Summary Check Service Test', () => {
         .spyOn(repository, 'getTestSummaryByLocationId')
         .mockResolvedValue(null);
 
-      jest
-        .spyOn(qaRepository, 'getQASuppDataByLocationId')
-        .mockResolvedValue(returnedQASupp);
       try {
         await service.runChecks(locationId, payload, false, false, [
           payload,
@@ -589,10 +581,6 @@ describe('Test Summary Check Service Test', () => {
       qaSupp.endHour = 0;
       qaSupp.endMinute = 0;
 
-      jest
-        .spyOn(qaRepository, 'getQASuppDataByLocationId')
-        .mockResolvedValue(qaSupp);
-
       try {
         await service.runChecks(locationId, payload, true, false, [payload]);
       } catch (err) {
@@ -640,10 +628,6 @@ describe('Test Summary Check Service Test', () => {
       qaSupp.endDate = new Date('2022-01-01');
       qaSupp.endHour = 1;
       qaSupp.endMinute = 2;
-
-      jest
-        .spyOn(qaRepository, 'getQASuppDataByLocationId')
-        .mockResolvedValue(qaSupp);
 
       try {
         await service.runChecks(locationId, p, true, false, [p]);
