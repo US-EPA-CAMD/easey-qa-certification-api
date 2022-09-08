@@ -871,9 +871,9 @@ export class TestSummaryChecksService {
   // TEST-23 Injection Protocol Valid
   private async test23Check(locationId: string, summary: TestSummaryBaseDTO) {
     let error: string;
-    const resultA = CheckCatalogService.formatMessage('TEST-23-A');
-    const resultC = CheckCatalogService.formatMessage('TEST-23-C');
-    const resultD = CheckCatalogService.formatMessage('TEST-23-D');
+    const resultA = CheckCatalogService.formatResultMessage('TEST-23-A');
+    const resultC = CheckCatalogService.formatResultMessage('TEST-23-C');
+    const resultD = CheckCatalogService.formatResultMessage('TEST-23-D');
 //    const resultA = `You did not identify an injection protocol (HGE or HGO), as required for a Hg CEMS seven day calibration or cycle time test`;
 //    const resultC = `An injection protocol is only reported for Hg CEMS.`;
 //    const resultD = `An injection protocol is not required for this test type.`;
@@ -984,7 +984,7 @@ export class TestSummaryChecksService {
   ): Promise<string> {
     let error: string = null;
     let duplicateQaSupp: TestSummary | QASuppData;
-    const resultA = CheckCatalogService.formatMessage('LINEAR-4-A');
+    const resultA = CheckCatalogService.formatResultMessage('LINEAR-4-A');
 
     const duplicateTestSum = await this.repository.findOne({
       testTypeCode: summary.testTypeCode,
@@ -1047,7 +1047,7 @@ export class TestSummaryChecksService {
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
   ): string {
     let error: string = null;
-    const resultA = CheckCatalogService.formatMessage('IMPORT-33-A');
+    const resultA = CheckCatalogService.formatResultMessage('IMPORT-33-A');
 //  const resultA = `You have reported a [${summary.testTypeCode}] test that is inappropriate for Stack [${summary.stackPipeId}].`;
 
     const INVALID_TEST_TYPE_CODES_FOR_CS_AND_MS = [
@@ -1150,7 +1150,7 @@ export class TestSummaryChecksService {
       );
 
       if (option) {
-        error =  CheckCatalogService.formatMessage('LINEAR-10-C', {value: summary.testResultCode, fieldname: FIELDNAME, key: KEY} );
+        error =  CheckCatalogService.formatResultMessage('LINEAR-10-C', {value: summary.testResultCode, fieldname: FIELDNAME, key: KEY} );
   //    error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type [${summary.testTypeCode}], in the field [testResultCode] for [Test Summary].`;
       }
     }
@@ -1164,7 +1164,7 @@ export class TestSummaryChecksService {
     let error: string = null;
     let FIELDNAME: string = 'testResultCode';
     let KEY: 'Test Summary';
-    const resultC = CheckCatalogService.formatMessage('RATA-100-C', {value: summary.testResultCode, fieldname: FIELDNAME, key: KEY} );
+    const resultC = CheckCatalogService.formatResultMessage('RATA-100-C', {value: summary.testResultCode, fieldname: FIELDNAME, key: KEY} );
 //  const resultC = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type, in the field, in the field [testResultCode] for [Test Summary]`;
 
     if (
