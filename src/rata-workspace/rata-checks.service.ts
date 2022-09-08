@@ -95,12 +95,12 @@ export class RataChecksService {
 
     if (testSumRecord.system?.systemTypeCode === 'FLOW') {
       if (numberOfLoadLevels < 1 || numberOfLoadLevels > 3) {
-        error = CheckCatalogService.formatResultMessage('RATA-102-B', {value: numberOfLoadLevels, fieldname: FIELDNAME, minvalue: 1, maxvalue: 3, key: KEY} );
+        error = this.getMessage('RATA-102-B', {value: numberOfLoadLevels, fieldname: FIELDNAME, minvalue: 1, maxvalue: 3, key: KEY} );
         //error = `[RATA-102-B] The value [${numberOfLoadLevels}] in the field [numberOfLoadLevels] for [RATA] is not within the range of valid values from [1] to [3].`;
       }
     } else {
       if (numberOfLoadLevels !== 1) {
-        error = CheckCatalogService.formatResultMessage('RATA-102-C', {value: numberOfLoadLevels, fieldname: FIELDNAME, key: KEY});
+        error = this.getMessage('RATA-102-C', {value: numberOfLoadLevels, fieldname: FIELDNAME, key: KEY});
         //error = `[RATA-102-C] The value [${numberOfLoadLevels}] in the field [numberOfLoadLevels] for [RATA] is not within the range of valid values.`;
       }
     }
@@ -118,7 +118,7 @@ export class RataChecksService {
     if (testSumRecord.testResultCode === TestResultCodes.ABORTED) {
       // RATA-103 Result A
       if (relativeAccuracy !== null) {
-        error = CheckCatalogService.formatResultMessage('RATA-103-A', {fieldname: FIELDNAME, testtype: testSumRecord.testTypeCode});
+        error = this.getMessage('RATA-103-A', {fieldname: FIELDNAME, testtype: testSumRecord.testTypeCode});
         //error = `[RATA-103-A] You reported [relativeAccuracy], which is not appropriate for [${testSumRecord.testTypeCode}].`;
       }
     } else if (
@@ -130,11 +130,11 @@ export class RataChecksService {
     ) {
       if (relativeAccuracy === null) {
         // RATA-103 Result B
-        error = CheckCatalogService.formatResultMessage('RATA-103-B', {fieldname: FIELDNAME, key: KEY});
+        error = this.getMessage('RATA-103-B', {fieldname: FIELDNAME, key: KEY});
         //error = `[RATA-103-B] You did not provide [relativeAccuracy], which is required for [${KEY}].`;
       } else if (relativeAccuracy < 0) {
         // RATA-103 Result C
-        error = CheckCatalogService.formatResultMessage('RATA-103-C', {value: relativeAccuracy, fieldname: FIELDNAME, key: KEY});
+        error = this.getMessage('RATA-103-C', {value: relativeAccuracy, fieldname: FIELDNAME, key: KEY});
         //error = `[RATA-103-C] The value [${relativeAccuracy}] in the field [relativeAccuracy] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to zero.`;
       }
     }
@@ -155,7 +155,7 @@ export class RataChecksService {
       ].includes(testSumRecord.testResultCode)
     ) {
       if (overallBiasAdjustmentFactor !== null) {
-        error = CheckCatalogService.formatResultMessage('RATA-104-A', {fieldname: FIELDNAME, testtype: testSumRecord.testTypeCode});
+        error = this.getMessage('RATA-104-A', {fieldname: FIELDNAME, testtype: testSumRecord.testTypeCode});
         //error = `[RATA-104-A] You reported [overallBiasAdjustmentFactor], which is not appropriate for [${testSumRecord.testTypeCode}].`;
       }
     } else if (
@@ -165,10 +165,10 @@ export class RataChecksService {
       ].includes(testSumRecord.testResultCode)
     ) {
       if (overallBiasAdjustmentFactor === null) {
-        error = CheckCatalogService.formatResultMessage('RATA-104-B', {fieldname: FIELDNAME, key: KEY});
+        error = this.getMessage('RATA-104-B', {fieldname: FIELDNAME, key: KEY});
         //error = `[RATA-104-B] You did not provide [overallBiasAdjustmentFactor], which is required for [${KEY}].`;
       } else if (overallBiasAdjustmentFactor < 1) {
-        error = CheckCatalogService.formatResultMessage('RATA-104-C', {fieldname: FIELDNAME, key: KEY});
+        error = this.getMessage('RATA-104-C', {fieldname: FIELDNAME, key: KEY});
         //error = `[RATA-104-C] The value [${overallBiasAdjustmentFactor}] in the field [overallBiasAdjustmentFactor] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to 1.000.`;
       }
     }
@@ -194,7 +194,7 @@ export class RataChecksService {
     ) {
       // RATA-105 Result A
       if (rataFrequencyCode !== null) {
-        error = CheckCatalogService.formatResultMessage('RATA-105-A', {fieldname: FIELDNAME, testtype: testSumRecord.testTypeCode});
+        error = this.getMessage('RATA-105-A', {fieldname: FIELDNAME, testtype: testSumRecord.testTypeCode});
         //error = `[RATA-105-A] You reported [rataFrequencyCode], which is not appropriate for [${testSumRecord.testTypeCode}].`;
       }
     } else if (
@@ -204,23 +204,28 @@ export class RataChecksService {
       ].includes(testSumRecord.testResultCode)
     ) {
       if (rataFrequencyCode === null) {
-        error = CheckCatalogService.formatResultMessage('RATA-105-B', {fieldname: FIELDNAME, key: KEY});
+        error = this.getMessage('RATA-105-B', {fieldname: FIELDNAME, key: KEY});
         //error = `[RATA-105-B] You did not provide [rataFrequencyCode], which is required for [${KEY}].`;
       } else if (!validCode) {
         error = `[RATA-105-C] You reported the value [${rataFrequencyCode}], which is not in the list of valid values, in the field [rataFrequencyCode] for [${KEY}].`;
       } else if (rataFrequencyCode === '8QTRS') {
         if (testSumRecord.system?.systemDesignationCode !== 'B') {
-          error = CheckCatalogService.formatResultMessage('RATA-105-C', {value: rataFrequencyCode, fieldname: FIELDNAME, key: KEY});
+          error = this.getMessage('RATA-105-C', {value: rataFrequencyCode, fieldname: FIELDNAME, key: KEY});
           //error = `[RATA-105-C] You reported the value [${rataFrequencyCode}], which is not in the list of valid values, in the field [rataFrequencyCode] for [${KEY}].`;
         }
       } else if (rataFrequencyCode === 'ALTSL') {
         if (testSumRecord.system?.systemTypeCode !== 'FLOW') {
-          error = CheckCatalogService.formatResultMessage('RATA-105-C', {value: rataFrequencyCode, fieldname: FIELDNAME, key: KEY});
+          error = this.getMessage('RATA-105-C', {value: rataFrequencyCode, fieldname: FIELDNAME, key: KEY});
           //error = `[RATA-105-C] You reported the value [${rataFrequencyCode}], which is not in the list of valid values, in the field [rataFrequencyCode] for [${KEY}].`;
         }
       }
     }
 
     return error;
+  }
+
+  getMessage(messageKey: string, messageArgs: object) :string
+  {
+    return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
   }
 }
