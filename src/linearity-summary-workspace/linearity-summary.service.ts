@@ -27,6 +27,8 @@ import { LinearitySummaryWorkspaceRepository } from './linearity-summary.reposit
 import { LinearityInjectionWorkspaceService } from '../linearity-injection-workspace/linearity-injection.service';
 import { TestSummaryWorkspaceService } from './../test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { LinearitySummary } from '../entities/linearity-summary.entity';
+import { LinearitySummaryRepository } from 'src/linearity-summary/linearity-summary.repository';
 
 @Injectable()
 export class LinearitySummaryWorkspaceService {
@@ -39,6 +41,8 @@ export class LinearitySummaryWorkspaceService {
     private readonly injectionService: LinearityInjectionWorkspaceService,
     @InjectRepository(LinearitySummaryWorkspaceRepository)
     private readonly repository: LinearitySummaryWorkspaceRepository,
+    @InjectRepository(LinearitySummaryRepository)
+    private readonly historicalRepository: LinearitySummaryRepository,
   ) {}
 
   async getSummaryById(id: string): Promise<LinearitySummaryDTO> {
@@ -88,15 +92,25 @@ export class LinearitySummaryWorkspaceService {
     testSumId: string,
     payload: LinearitySummaryImportDTO,
     userId: string,
+    isHistoricalRecord?: boolean,
   ) {
     const isImport = true;
     const promises = [];
+    let historicalRecord: LinearitySummary;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepository.findOne({
+        testSumId: testSumId,
+        gasLevelCode: payload.gasLevelCode,
+      });
+    }
 
     const createdLineSummary = await this.createSummary(
       testSumId,
       payload,
       userId,
       isImport,
+      historicalRecord ? historicalRecord.id : null,
     );
 
     this.logger.info(
@@ -114,6 +128,7 @@ export class LinearitySummaryWorkspaceService {
                 createdLineSummary.id,
                 injection,
                 userId,
+                isHistoricalRecord,
               ),
             );
             await Promise.all(innerPromises);
@@ -133,12 +148,13 @@ export class LinearitySummaryWorkspaceService {
     payload: LinearitySummaryBaseDTO,
     userId: string,
     isImport: boolean = false,
+    historicalRecordId?: string,
   ): Promise<LinearitySummaryRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
       userId,
       addDate: timestamp,

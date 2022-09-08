@@ -19,6 +19,8 @@ import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
 import { TestSummaryWorkspaceService } from './../test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { LinearityInjection } from '../entities/linearity-injection.entity';
+import { LinearityInjectionRepository } from '../linearity-injection/linearity-injection.repository';
 
 @Injectable()
 export class LinearityInjectionWorkspaceService {
@@ -29,6 +31,8 @@ export class LinearityInjectionWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(LinearityInjectionWorkspaceRepository)
     private readonly repository: LinearityInjectionWorkspaceRepository,
+    @InjectRepository(LinearityInjectionRepository)
+    private readonly historicalRepository: LinearityInjectionRepository,
   ) {}
 
   async getInjectionById(id: string): Promise<LinearityInjectionDTO> {
@@ -71,14 +75,27 @@ export class LinearityInjectionWorkspaceService {
     linSumId: string,
     payload: LinearityInjectionImportDTO,
     userId: string,
+    isHistoricalRecord?: boolean,
   ) {
     const isImport = true;
+    let historicalRecord: LinearityInjection;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepository.findOne({
+        linSumId: linSumId,
+        injectionDate: payload.injectionDate,
+        injectionHour: payload.injectionHour,
+        injectionMinute: payload.injectionMinute,
+      });
+    }
+
     const result = await this.createInjection(
       testSumId,
       linSumId,
       payload,
       userId,
       isImport,
+      historicalRecord ? historicalRecord.id : null,
     );
 
     this.logger.info(
@@ -93,12 +110,13 @@ export class LinearityInjectionWorkspaceService {
     payload: LinearityInjectionBaseDTO | LinearityInjectionImportDTO,
     userId: string,
     isImport: boolean = false,
+    historicalRecordId?: string,
   ): Promise<LinearityInjectionRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       linSumId,
       userId,
       addDate: timestamp,

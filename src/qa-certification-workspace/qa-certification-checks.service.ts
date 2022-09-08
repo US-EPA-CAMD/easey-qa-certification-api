@@ -11,6 +11,9 @@ import { LinearitySummaryChecksService } from '../linearity-summary-workspace/li
 import { LinearityInjectionChecksService } from '../linearity-injection-workspace/linearity-injection-checks.service';
 import { RataChecksService } from '../rata-workspace/rata-checks.service';
 import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary-checks.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
+import { QASuppData } from 'src/entities/workspace/qa-supp-data.entity';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -22,6 +25,8 @@ export class QACertificationChecksService {
     private readonly linearityInjectionChecksService: LinearityInjectionChecksService,
     private readonly rataChecksService: RataChecksService,
     private readonly rataSummaryChecksService: RataSummaryChecksService,
+    @InjectRepository(QASuppDataWorkspaceRepository)
+    private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
   ) {}
 
   private async extractErrors(
@@ -43,7 +48,7 @@ export class QACertificationChecksService {
 
   async runChecks(
     payload: QACertificationImportDTO,
-  ): Promise<LocationIdentifiers[]> {
+  ): Promise<[LocationIdentifiers[], QASuppData[]]> {
     this.logger.info('Running QA Certification Checks');
 
     const errorList: string[] = [];
@@ -51,17 +56,29 @@ export class QACertificationChecksService {
 
     let errors: string[] = [];
     let locations: LocationIdentifiers[] = [];
+    let duplicateQaSupp: QASuppData;
 
     [locations, errors] = await this.locationChecksService.runChecks(payload);
     errorList.push(...errors);
     this.throwIfErrors(errorList);
 
-    payload.testSummaryData.forEach(async summary => {
+    for (const summary of payload.testSummaryData) {
       const locationId = locations.find(i => {
         return (
           i.unitId === summary.unitId && i.stackPipeId === summary.stackPipeId
         );
       }).locationId;
+
+      duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
+        locationId,
+        summary.componentID,
+        summary.testTypeCode,
+        summary.testNumber,
+        summary.spanScaleCode,
+        summary.endDate,
+        summary.endHour,
+        summary.endMinute,
+      );
 
       promises.push(
         new Promise(async (resolve, _reject) => {
@@ -71,6 +88,7 @@ export class QACertificationChecksService {
             true,
             false,
             payload.testSummaryData,
+            duplicateQaSupp ? duplicateQaSupp.id : null,
           );
 
           resolve(results);
@@ -140,10 +158,11 @@ export class QACertificationChecksService {
           );
         });
       });
-    });
+    }
 
     this.throwIfErrors(await this.extractErrors(promises));
     this.logger.info('Completed QA Certification Checks');
-    return locations;
+    console.log(duplicateQaSupp);
+    return [locations, [duplicateQaSupp]];
   }
 }

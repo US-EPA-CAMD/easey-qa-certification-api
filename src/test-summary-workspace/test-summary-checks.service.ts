@@ -60,6 +60,7 @@ export class TestSummaryChecksService {
     isImport: boolean = false,
     isUpdate: boolean = false,
     summaries?: TestSummaryImportDTO[],
+    historicalTestSumId?: string,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
@@ -111,7 +112,12 @@ export class TestSummaryChecksService {
     }
 
     // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
-    error = await this.linear4Check(locationId, summary, isImport);
+    error = await this.linear4Check(
+      locationId,
+      summary,
+      isImport,
+      historicalTestSumId,
+    );
     if (error) {
       errorList.push(error);
     }
@@ -146,6 +152,7 @@ export class TestSummaryChecksService {
         summary,
         summaries,
         isImport,
+        historicalTestSumId,
       );
       if (error) {
         errorList.push(error);
@@ -638,6 +645,7 @@ export class TestSummaryChecksService {
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
     summaries: TestSummaryImportDTO[] = [],
     isImport: boolean = false,
+    historicalTestSumId: string,
   ): Promise<string> {
     let error: string = null;
     let fields: string[] = [];
@@ -675,8 +683,9 @@ export class TestSummaryChecksService {
       // LINEAR-31 Duplicate Linearity (Result A)
       error = CheckCatalogService.formatResultMessage('LINEAR-31-A');
     } else {
-      duplicate = await this.qaSuppDataRepository.getQASuppDataByLocationId(
+      duplicate = await this.qaSuppDataRepository.getUnassociatedQASuppDataByLocationIdAndTestSum(
         locationId,
+        historicalTestSumId,
         summary.testTypeCode,
         summary.testNumber,
       );
@@ -685,7 +694,7 @@ export class TestSummaryChecksService {
         if (isImport) {
           fields = this.compareFields(duplicate, summary);
         }
-
+        console.log('duplicate', duplicate);
         // LINEAR-31 Duplicate Linearity (Result B)
         error = CheckCatalogService.formatResultMessage('LINEAR-31-B');
       }
@@ -973,6 +982,7 @@ export class TestSummaryChecksService {
     locationId: string,
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
     _isImport: boolean = false,
+    historicalTestSumId: string,
   ): Promise<string> {
     let error: string = null;
     let duplicateQaSupp: TestSummary | QASuppData;
@@ -989,7 +999,7 @@ export class TestSummaryChecksService {
     if (duplicateTestSum) {
       error = CheckCatalogService.formatResultMessage('LINEAR-4-A');
     } else {
-      duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
+      duplicateQaSupp = await this.qaSuppDataRepository.getUnassociatedQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
         summary.componentID,
         summary.testTypeCode,
@@ -1003,8 +1013,9 @@ export class TestSummaryChecksService {
       if (duplicateQaSupp) {
         error = CheckCatalogService.formatResultMessage('LINEAR-4-A');
       } else {
-        duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByLocationId(
+        duplicateQaSupp = await this.qaSuppDataRepository.getUnassociatedQASuppDataByLocationIdAndTestSum(
           locationId,
+          historicalTestSumId,
           summary.testTypeCode,
           summary.testNumber,
         );
