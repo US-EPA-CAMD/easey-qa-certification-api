@@ -85,10 +85,10 @@ export class QACertificationWorkspaceController {
     //    @CurrentUser() userId: string,
   ) {
     const userId = 'testUser';
-    let qaSupprecords: QASuppData[] = [];
+    let qaSuppRecords: QASuppData[] = [];
     let locations: LocationIdentifiers[] = [];
 
-    [locations, qaSupprecords] = await this.checksService.runChecks(payload);
-    return this.service.import(locations, payload, userId, qaSupprecords);
+    [locations, qaSuppRecords] = await this.checksService.runChecks(payload);
+    return this.service.import(locations, payload, userId, qaSuppRecords);
   }
 }

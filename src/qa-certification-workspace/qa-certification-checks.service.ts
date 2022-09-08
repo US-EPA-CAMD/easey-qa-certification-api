@@ -90,7 +90,7 @@ export class QACertificationChecksService {
             true,
             false,
             payload.testSummaryData,
-            duplicateQaSupp ? duplicateQaSupp.id : null,
+            duplicateQaSupp ? duplicateQaSupp.testSumId : null,
           );
 
           resolve(results);

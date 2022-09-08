@@ -694,7 +694,6 @@ export class TestSummaryChecksService {
         if (isImport) {
           fields = this.compareFields(duplicate, summary);
         }
-        console.log('duplicate', duplicate);
         // LINEAR-31 Duplicate Linearity (Result B)
         error = CheckCatalogService.formatResultMessage('LINEAR-31-B');
       }
