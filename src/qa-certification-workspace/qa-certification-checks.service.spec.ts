@@ -13,6 +13,7 @@ import { LinearityInjectionImportDTO } from '../dto/linearity-injection.dto';
 import { BadRequestException } from '@nestjs/common';
 import { RataChecksService } from '../rata-workspace/rata-checks.service';
 import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary-checks.service';
+import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
 
 const returnLocationRunChecks = [
   {
@@ -24,6 +25,8 @@ const returnLocationRunChecks = [
   },
 ];
 
+const QASuppDatas = [undefined];
+
 describe('QA Certification Check Service Test', () => {
   let service: QACertificationChecksService;
 
@@ -32,6 +35,14 @@ describe('QA Certification Check Service Test', () => {
       imports: [LoggerModule],
       providers: [
         QACertificationChecksService,
+        {
+          provide: QASuppDataWorkspaceRepository,
+          useFactory: () => ({
+            getQASuppDataByTestTypeCodeComponentIdEndDateEndTime: jest
+              .fn()
+              .mockResolvedValue(undefined),
+          }),
+        },
         {
           provide: LocationChecksService,
           useFactory: () => ({
@@ -76,7 +87,7 @@ describe('QA Certification Check Service Test', () => {
     service = module.get(QACertificationChecksService);
   });
 
-  describe('Linearity Injection Checks', () => {
+  describe('QA Certification Checks', () => {
     const payload = new QACertificationImportDTO();
     payload.orisCode = 1;
 
@@ -94,7 +105,7 @@ describe('QA Certification Check Service Test', () => {
 
     it('Should pass all checks', async () => {
       const result = await service.runChecks(payload);
-      expect(result).toEqual(returnLocationRunChecks);
+      expect(result).toEqual([returnLocationRunChecks, QASuppDatas]);
     });
 
     it('should return error message A for IMPORT-13', async () => {

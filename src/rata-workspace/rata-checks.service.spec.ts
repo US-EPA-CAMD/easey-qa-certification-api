@@ -76,8 +76,9 @@ describe('Rata Checks Service Test', () => {
         locationId,
         importPayload,
         null,
-        testSummaryImportPayload,
         true,
+        false,
+        testSummaryImportPayload,
       );
       expect(result).toEqual([]);
     });

@@ -73,7 +73,9 @@ export class QACertificationWorkspaceService {
             locationId,
             summary,
             userId,
-            qaSupprecords.length > 0 ? qaSupprecords[idx]?.testSumId : null,
+            qaSupprecords[idx] !== undefined
+              ? qaSupprecords[idx]?.testSumId
+              : null,
           );
 
           resolve(results);

@@ -7,7 +7,6 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
 } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
@@ -28,7 +27,7 @@ import { LinearityInjectionWorkspaceService } from '../linearity-injection-works
 import { TestSummaryWorkspaceService } from './../test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { LinearitySummary } from '../entities/linearity-summary.entity';
-import { LinearitySummaryRepository } from 'src/linearity-summary/linearity-summary.repository';
+import { LinearitySummaryRepository } from '../linearity-summary/linearity-summary.repository';
 
 @Injectable()
 export class LinearitySummaryWorkspaceService {

@@ -160,7 +160,7 @@ export class TestSummaryWorkspaceService {
     locationId: string,
     payload: TestSummaryImportDTO,
     userId: string,
-    historicalrecordId: string,
+    historicalrecordId?: string,
   ) {
     const promises = [];
 

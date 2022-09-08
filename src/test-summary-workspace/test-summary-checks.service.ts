@@ -709,6 +709,7 @@ export class TestSummaryChecksService {
       }]. However, the values reported for [${fields}] are different between the two tests.`;
     }
 
+    console.log(error);
     return error;
   }
 

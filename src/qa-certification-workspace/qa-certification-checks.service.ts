@@ -56,7 +56,7 @@ export class QACertificationChecksService {
 
     let errors: string[] = [];
     let locations: LocationIdentifiers[] = [];
-    let duplicateQaSupp: QASuppData;
+    let duplicateQaSuppRecords: QASuppData[] = [];
 
     [locations, errors] = await this.locationChecksService.runChecks(payload);
     errorList.push(...errors);
@@ -69,7 +69,7 @@ export class QACertificationChecksService {
         );
       }).locationId;
 
-      duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
+      const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
         summary.componentID,
         summary.testTypeCode,
@@ -79,6 +79,8 @@ export class QACertificationChecksService {
         summary.endHour,
         summary.endMinute,
       );
+
+      duplicateQaSuppRecords.push(duplicateQaSupp);
 
       promises.push(
         new Promise(async (resolve, _reject) => {
@@ -162,7 +164,6 @@ export class QACertificationChecksService {
 
     this.throwIfErrors(await this.extractErrors(promises));
     this.logger.info('Completed QA Certification Checks');
-    console.log(duplicateQaSupp);
-    return [locations, [duplicateQaSupp]];
+    return [locations, duplicateQaSuppRecords];
   }
 }
