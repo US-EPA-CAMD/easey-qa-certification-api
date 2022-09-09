@@ -1003,7 +1003,7 @@ export class TestSummaryChecksService {
     );
 
     if (duplicateTestSum) {
-      error = this.getMessage('LINEAR-4-A');
+      error = this.getMessage('LINEAR-4-A', null);
     } else {
       duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
@@ -1017,7 +1017,7 @@ export class TestSummaryChecksService {
       );
 
       if (duplicateQaSupp) {
-        error = this.getMessage('LINEAR-4-A');
+        error = this.getMessage('LINEAR-4-A', null);
       } else {
         duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByLocationId(
           locationId,
