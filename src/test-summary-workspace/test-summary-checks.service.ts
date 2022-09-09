@@ -56,8 +56,6 @@ export class TestSummaryChecksService {
     }
   }
 
-  
-
   async runChecks(
     locationId: string,
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
@@ -291,12 +289,10 @@ export class TestSummaryChecksService {
     }
 
     if (invalidChildRecords.length > 0) {
-      error = CheckCatalogService.formatResultMessage(
-        'IMPORT-16-A', {
-          inappropriateChildren: invalidChildRecords,
-          testTypeCode: summary.testTypeCode,
-        },
-      );
+      error = this.getMessage('IMPORT-16-A', {
+        inappropriateChildren: invalidChildRecords,
+        testTypeCode: summary.testTypeCode,
+      });
     }
 
     return error;
@@ -440,14 +436,12 @@ export class TestSummaryChecksService {
     }
 
     if (extraneousTestSummaryFields.length > 0) {
-      error = CheckCatalogService.formatResultMessage(
-        'IMPORT-17-A', {
-          fieldname: extraneousTestSummaryFields,
-          locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
-          testTypeCode: summary.testTypeCode,
-          testNumber: summary.testNumber,
-        }
-      );
+      error = this.getMessage('IMPORT-17-A', {
+        fieldname: extraneousTestSummaryFields,
+        locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
+        testTypeCode: summary.testTypeCode,
+        testNumber: summary.testNumber,
+      });
     }
 
     return error;
@@ -464,18 +458,18 @@ export class TestSummaryChecksService {
       testNumber: summary.testNumber,
     };
 
-    const resultA = CheckCatalogService.formatResultMessage('IMPORT-18-A', locTestTypeNumber);
-    const resultB = CheckCatalogService.formatResultMessage('IMPORT-18-B', {
+    const resultA = this.getMessage('IMPORT-18-A', locTestTypeNumber);
+    const resultB = this.getMessage('IMPORT-18-B', {
       ...locTestTypeNumber,
       component: summary.componentID,
     });
-    const resultC = CheckCatalogService.formatResultMessage('IMPORT-18-C', locTestTypeNumber);
-    const resultD = CheckCatalogService.formatResultMessage('IMPORT-18-D', {
+    const resultC = this.getMessage('IMPORT-18-C', locTestTypeNumber);
+    const resultD = this.getMessage('IMPORT-18-D', {
       ...locTestTypeNumber,
       system: summary.monitoringSystemID,
     });
-    const resultE = CheckCatalogService.formatResultMessage('IMPORT-18-E', locTestTypeNumber);
-    const resultF = CheckCatalogService.formatResultMessage('IMPORT-18-F', locTestTypeNumber);
+    const resultE = this.getMessage('IMPORT-18-E', locTestTypeNumber);
+    const resultF = this.getMessage('IMPORT-18-F', locTestTypeNumber);
 
     const monitorSystem = await this.monitorSystemRepository.findOne({
       where: {
@@ -558,9 +552,22 @@ export class TestSummaryChecksService {
         return resultC;
       } else {
         if (summary.testTypeCode === TestTypeCodes.RATA.toString()) {
-          if (![
-              'SO2','CO2','NOX','NOXC','O2','FLOW','H2O',
-              'H2OM','NOXP','SO2R','HG','HCL','HF','ST',
+          if (
+            ![
+              'SO2',
+              'CO2',
+              'NOX',
+              'NOXC',
+              'O2',
+              'FLOW',
+              'H2O',
+              'H2OM',
+              'NOXP',
+              'SO2R',
+              'HG',
+              'HCL',
+              'HF',
+              'ST',
             ].includes(monitorSystem.systemTypeCode)
           ) {
             return resultD;
@@ -625,7 +632,7 @@ export class TestSummaryChecksService {
     let error: string = null;
     let fields: string[] = [];
     let duplicate: TestSummary | QASuppData;
-    let FIELDNAME: string = "fields";
+    let FIELDNAME: string = 'fields';
 
     const duplicates = summaries.filter(i => {
       return (
@@ -638,13 +645,11 @@ export class TestSummaryChecksService {
 
     // IMPORT-20 Duplicate Test Check
     if (isImport && duplicates.length > 1) {
-      error = CheckCatalogService.formatResultMessage(
-        'IMPORT-20-A', {
-          locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
-          testTypeCode: summary.testTypeCode,
-          testNumber: summary.testNumber,
-        }
-      );
+      error = this.getMessage('IMPORT-20-A', {
+        locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
+        testTypeCode: summary.testTypeCode,
+        testNumber: summary.testNumber,
+      });
     }
 
     duplicate = await this.repository.getTestSummaryByLocationId(
@@ -659,7 +664,7 @@ export class TestSummaryChecksService {
       }
 
       // LINEAR-31 Duplicate Linearity (Result A)
-      error = CheckCatalogService.formatResultMessage('LINEAR-31-A');
+      error = this.getMessage('LINEAR-31-A', null);
     } else {
       duplicate = await this.qaSuppDataRepository.getQASuppDataByLocationId(
         locationId,
@@ -673,25 +678,23 @@ export class TestSummaryChecksService {
         }
 
         // LINEAR-31 Duplicate Linearity (Result B)
-        error = CheckCatalogService.formatResultMessage('LINEAR-31-B');
+        error = this.getMessage('LINEAR-31-B', null);
       }
     }
 
     // IMPORT-21 Duplicate Test Number Check
     if (fields.length > 0) {
-      error = CheckCatalogService.formatResultMessage(
-        'IMPORT-21-A', {
-          locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
-          testTypeCode: summary.testTypeCode,
-          testNumber: summary.testNumber,
-          fieldname: FIELDNAME,
-        }
-      )  
-//      error = `The database contains another Test Summary record for Unit/Stack [${
-//        summary.unitId ? summary.unitId : summary.stackPipeId
-//      }], Test Type Code [${summary.testTypeCode}], and Test Number [${
-//        summary.testNumber
-//      }]. However, the values reported for [${fields}] are different between the two tests.`;
+      error = this.getMessage('IMPORT-21-A', {
+        locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
+        testTypeCode: summary.testTypeCode,
+        testNumber: summary.testNumber,
+        fieldname: FIELDNAME,
+      });
+      //      error = `The database contains another Test Summary record for Unit/Stack [${
+      //        summary.unitId ? summary.unitId : summary.stackPipeId
+      //      }], Test Type Code [${summary.testTypeCode}], and Test Number [${
+      //        summary.testNumber
+      //      }]. However, the values reported for [${fields}] are different between the two tests.`;
     }
 
     return error;
@@ -705,10 +708,14 @@ export class TestSummaryChecksService {
   ): Promise<string> {
     let FIELDNAME: string = 'minuteField';
 
-    const resultA = CheckCatalogService.formatResultMessage('TEST-3-A', {fieldname: FIELDNAME, key: KEY} );
-    const resultB = CheckCatalogService.formatResultMessage('TEST-3-B', {fieldname: FIELDNAME, key: KEY} );
-//  const resultA = `You did not provide [${minuteField}], which is required for [Test Summary].`;
-//  const resultB = `You did not provide [${minuteField}] for [Test Summary]. This information will be required for ECMPS submissions.`;
+    const resultA = this.getMessage('TEST-3-A', {
+      fieldname: FIELDNAME,
+      key: KEY,
+    });
+    const resultB = this.getMessage('TEST-3-B', {
+      fieldname: FIELDNAME,
+      key: KEY,
+    });
 
     if (
       minuteField === 'endMinute' &&
@@ -756,9 +763,7 @@ export class TestSummaryChecksService {
 
   // TEST-7 Test Dates Consistent
   test7Check(summary: TestSummaryBaseDTO): string {
- 
-    const errorResponse = CheckCatalogService.formatResultMessage('TEST-7-A', {key: KEY} );
-//  const errorResponse = `You reported endDate, endHour, and endMinute which is prior to or equal to beginDate, beginHour, and beginMinute for [Test Summary].`;
+    const errorResponse = this.getMessage('TEST-7-A', { key: KEY });
     const testTypeCode = summary.testTypeCode.toUpperCase();
 
     // cannot call getFullYear and other functions unless we do new Date
@@ -823,12 +828,17 @@ export class TestSummaryChecksService {
       });
       if (component && component.componentTypeCode !== 'FLOW') {
         if (summary.spanScaleCode === null) {
-          return CheckCatalogService.formatResultMessage('TEST-8-A', {fieldname: FIELDNAME, key: KEY} );
-//          return `You did not provide [spanScaleCode], which is required for [Test Summary].`;
+          return this.getMessage('TEST-8-A', {
+            fieldname: FIELDNAME,
+            key: KEY,
+          });
         }
         if (!['H', 'L'].includes(summary.spanScaleCode)) {
-          return CheckCatalogService.formatResultMessage('TEST-8-B', {value: summary.spanScaleCode, fieldname: FIELDNAME, key: KEY} );
-//        return `You reported the value [${summary.spanScaleCode}], which is not in the list of valid values, in the field [spanScaleCode] for [Test Summary].`;
+          return this.getMessage('TEST-8-B', {
+            value: summary.spanScaleCode,
+            fieldname: FIELDNAME,
+            key: KEY,
+          });
         }
 
         if (!testDateConsistent) {
@@ -853,14 +863,14 @@ export class TestSummaryChecksService {
           });
 
           if (analyerRange) {
-            return CheckCatalogService.formatResultMessage('TEST-8-C', {value: summary.spanScaleCode});
-//          return `The active analyzer range for the component is inconsistent with the span scale [${summary.spanScaleCode}] reported for this test.`;
+            return this.getMessage('TEST-8-C', {
+              value: summary.spanScaleCode,
+            });
           }
         }
       } else {
         if (summary.spanScaleCode !== null) {
-          return CheckCatalogService.formatResultMessage('TEST-8-D');
-//        return `You reported a SpanScaleCode, but this is not appropriate for flow component.`;
+          return this.getMessage('TEST-8-D', null);
         }
       }
     }
@@ -871,12 +881,9 @@ export class TestSummaryChecksService {
   // TEST-23 Injection Protocol Valid
   private async test23Check(locationId: string, summary: TestSummaryBaseDTO) {
     let error: string;
-    const resultA = CheckCatalogService.formatResultMessage('TEST-23-A');
-    const resultC = CheckCatalogService.formatResultMessage('TEST-23-C');
-    const resultD = CheckCatalogService.formatResultMessage('TEST-23-D');
-//    const resultA = `You did not identify an injection protocol (HGE or HGO), as required for a Hg CEMS seven day calibration or cycle time test`;
-//    const resultC = `An injection protocol is only reported for Hg CEMS.`;
-//    const resultD = `An injection protocol is not required for this test type.`;
+    const resultA = this.getMessage('TEST-23-A', null);
+    const resultC = this.getMessage('TEST-23-C', null);
+    const resultD = this.getMessage('TEST-23-D', null);
 
     if (
       [
@@ -984,7 +991,7 @@ export class TestSummaryChecksService {
   ): Promise<string> {
     let error: string = null;
     let duplicateQaSupp: TestSummary | QASuppData;
-    const resultA = CheckCatalogService.formatResultMessage('LINEAR-4-A');
+    const resultA = this.getMessage('LINEAR-4-A', null);
 
     const duplicateTestSum = await this.repository.findOne({
       testTypeCode: summary.testTypeCode,
@@ -996,7 +1003,7 @@ export class TestSummaryChecksService {
 
     if (duplicateTestSum) {
       error = resultA;
-//    error = `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`;
+      //    error = `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`;
     } else {
       duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
@@ -1011,7 +1018,7 @@ export class TestSummaryChecksService {
 
       if (duplicateQaSupp) {
         error = resultA;
-//      error = `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`;
+        //      error = `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`;
       } else {
         // TODO: BLOCKED DUE TO COLUMN DOESNOT EXISTS IN DATABASE
         /* duplicateQaSupp = await this.qaSuppDataRepository.findOne({
@@ -1047,8 +1054,10 @@ export class TestSummaryChecksService {
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
   ): string {
     let error: string = null;
-    const resultA = CheckCatalogService.formatResultMessage('IMPORT-33-A');
-//  const resultA = `You have reported a [${summary.testTypeCode}] test that is inappropriate for Stack [${summary.stackPipeId}].`;
+    const resultA = this.getMessage('IMPORT-33-A', {
+      'test type': summary.testTypeCode,
+      'location type': summary.stackPipeId,
+    });
 
     const INVALID_TEST_TYPE_CODES_FOR_CS_AND_MS = [
       TestTypeCodes.FFACC.toString(),
@@ -1150,8 +1159,12 @@ export class TestSummaryChecksService {
       );
 
       if (option) {
-        error =  CheckCatalogService.formatResultMessage('LINEAR-10-C', {value: summary.testResultCode, fieldname: FIELDNAME, key: KEY} );
-  //    error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type [${summary.testTypeCode}], in the field [testResultCode] for [Test Summary].`;
+        error = this.getMessage('LINEAR-10-C', {
+          value: summary.testResultCode,
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
+        //    error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type [${summary.testTypeCode}], in the field [testResultCode] for [Test Summary].`;
       }
     }
     return error;
@@ -1164,8 +1177,12 @@ export class TestSummaryChecksService {
     let error: string = null;
     let FIELDNAME: string = 'testResultCode';
     let KEY: 'Test Summary';
-    const resultC = CheckCatalogService.formatResultMessage('RATA-100-C', {value: summary.testResultCode, fieldname: FIELDNAME, key: KEY} );
-//  const resultC = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type, in the field, in the field [testResultCode] for [Test Summary]`;
+    const resultC = this.getMessage('RATA-100-C', {
+      value: summary.testResultCode,
+      fieldname: FIELDNAME,
+      key: KEY,
+    });
+    //  const resultC = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type, in the field, in the field [testResultCode] for [Test Summary]`;
 
     if (
       !['PASSED', 'PASSAPS', 'FAILED', 'ABORTED'].includes(
@@ -1182,5 +1199,9 @@ export class TestSummaryChecksService {
 
       return error;
     }
+  }
+
+  getMessage(messageKey: string, messageArgs: object): string {
+    return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
   }
 }

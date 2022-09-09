@@ -144,8 +144,9 @@ export class TestSummaryBaseDTO {
           locationId: args.object['unitId']
             ? args.object['unitId']
             : args.object['stackPipeId'],
-            testNumber: args.object['testNumber'],
-        });
+          testNumber: args.object['testNumber'],
+        },
+      );
     },
   })
   testTypeCode: string;
@@ -155,7 +156,10 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-117-A', { fieldname: args.property, key: KEY });
+      return CheckCatalogService.formatResultMessage('RATA-117-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   // TODO: NEED @ValidateIf decorator if this is only for RATA

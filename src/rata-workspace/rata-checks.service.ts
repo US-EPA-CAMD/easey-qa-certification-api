@@ -95,13 +95,21 @@ export class RataChecksService {
 
     if (testSumRecord.system?.systemTypeCode === 'FLOW') {
       if (numberOfLoadLevels < 1 || numberOfLoadLevels > 3) {
-        error = this.getMessage('RATA-102-B', {value: numberOfLoadLevels, fieldname: FIELDNAME, minvalue: 1, maxvalue: 3, key: KEY} );
-        //error = `[RATA-102-B] The value [${numberOfLoadLevels}] in the field [numberOfLoadLevels] for [RATA] is not within the range of valid values from [1] to [3].`;
+        error = this.getMessage('RATA-102-B', {
+          value: numberOfLoadLevels,
+          fieldname: FIELDNAME,
+          minvalue: 1,
+          maxvalue: 3,
+          key: KEY,
+        });
       }
     } else {
       if (numberOfLoadLevels !== 1) {
-        error = this.getMessage('RATA-102-C', {value: numberOfLoadLevels, fieldname: FIELDNAME, key: KEY});
-        //error = `[RATA-102-C] The value [${numberOfLoadLevels}] in the field [numberOfLoadLevels] for [RATA] is not within the range of valid values.`;
+        error = this.getMessage('RATA-102-C', {
+          value: numberOfLoadLevels,
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
       }
     }
 
@@ -118,8 +126,10 @@ export class RataChecksService {
     if (testSumRecord.testResultCode === TestResultCodes.ABORTED) {
       // RATA-103 Result A
       if (relativeAccuracy !== null) {
-        error = this.getMessage('RATA-103-A', {fieldname: FIELDNAME, testtype: testSumRecord.testTypeCode});
-        //error = `[RATA-103-A] You reported [relativeAccuracy], which is not appropriate for [${testSumRecord.testTypeCode}].`;
+        error = this.getMessage('RATA-103-A', {
+          fieldname: FIELDNAME,
+          testtype: testSumRecord.testTypeCode,
+        });
       }
     } else if (
       [
@@ -130,12 +140,17 @@ export class RataChecksService {
     ) {
       if (relativeAccuracy === null) {
         // RATA-103 Result B
-        error = this.getMessage('RATA-103-B', {fieldname: FIELDNAME, key: KEY});
-        //error = `[RATA-103-B] You did not provide [relativeAccuracy], which is required for [${KEY}].`;
+        error = this.getMessage('RATA-103-B', {
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
       } else if (relativeAccuracy < 0) {
         // RATA-103 Result C
-        error = this.getMessage('RATA-103-C', {value: relativeAccuracy, fieldname: FIELDNAME, key: KEY});
-        //error = `[RATA-103-C] The value [${relativeAccuracy}] in the field [relativeAccuracy] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to zero.`;
+        error = this.getMessage('RATA-103-C', {
+          value: relativeAccuracy,
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
       }
     }
     return error;
@@ -146,8 +161,7 @@ export class RataChecksService {
     overallBiasAdjustmentFactor: number,
   ): string {
     let error: string = null;
-    let FIELDNAME: string = 'overallBiasAdjustmentFactor;' +
-      ''
+    let FIELDNAME: string = 'overallBiasAdjustmentFactor;' + '';
     if (
       [
         TestResultCodes.ABORTED.toString(),
@@ -155,8 +169,10 @@ export class RataChecksService {
       ].includes(testSumRecord.testResultCode)
     ) {
       if (overallBiasAdjustmentFactor !== null) {
-        error = this.getMessage('RATA-104-A', {fieldname: FIELDNAME, testtype: testSumRecord.testTypeCode});
-        //error = `[RATA-104-A] You reported [overallBiasAdjustmentFactor], which is not appropriate for [${testSumRecord.testTypeCode}].`;
+        error = this.getMessage('RATA-104-A', {
+          fieldname: FIELDNAME,
+          testtype: testSumRecord.testTypeCode,
+        });
       }
     } else if (
       [
@@ -165,11 +181,15 @@ export class RataChecksService {
       ].includes(testSumRecord.testResultCode)
     ) {
       if (overallBiasAdjustmentFactor === null) {
-        error = this.getMessage('RATA-104-B', {fieldname: FIELDNAME, key: KEY});
-        //error = `[RATA-104-B] You did not provide [overallBiasAdjustmentFactor], which is required for [${KEY}].`;
+        error = this.getMessage('RATA-104-B', {
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
       } else if (overallBiasAdjustmentFactor < 1) {
-        error = this.getMessage('RATA-104-C', {fieldname: FIELDNAME, key: KEY});
-        //error = `[RATA-104-C] The value [${overallBiasAdjustmentFactor}] in the field [overallBiasAdjustmentFactor] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to 1.000.`;
+        error = this.getMessage('RATA-104-C', {
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
       }
     }
     return error;
@@ -194,8 +214,10 @@ export class RataChecksService {
     ) {
       // RATA-105 Result A
       if (rataFrequencyCode !== null) {
-        error = this.getMessage('RATA-105-A', {fieldname: FIELDNAME, testtype: testSumRecord.testTypeCode});
-        //error = `[RATA-105-A] You reported [rataFrequencyCode], which is not appropriate for [${testSumRecord.testTypeCode}].`;
+        error = this.getMessage('RATA-105-A', {
+          fieldname: FIELDNAME,
+          testtype: testSumRecord.testTypeCode,
+        });
       }
     } else if (
       [
@@ -204,19 +226,31 @@ export class RataChecksService {
       ].includes(testSumRecord.testResultCode)
     ) {
       if (rataFrequencyCode === null) {
-        error = this.getMessage('RATA-105-B', {fieldname: FIELDNAME, key: KEY});
-        //error = `[RATA-105-B] You did not provide [rataFrequencyCode], which is required for [${KEY}].`;
+        error = this.getMessage('RATA-105-B', {
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
       } else if (!validCode) {
-        error = `[RATA-105-C] You reported the value [${rataFrequencyCode}], which is not in the list of valid values, in the field [rataFrequencyCode] for [${KEY}].`;
+        error = this.getMessage('RATA-105-C', {
+          value: rataFrequencyCode,
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
       } else if (rataFrequencyCode === '8QTRS') {
         if (testSumRecord.system?.systemDesignationCode !== 'B') {
-          error = this.getMessage('RATA-105-C', {value: rataFrequencyCode, fieldname: FIELDNAME, key: KEY});
-          //error = `[RATA-105-C] You reported the value [${rataFrequencyCode}], which is not in the list of valid values, in the field [rataFrequencyCode] for [${KEY}].`;
+          error = this.getMessage('RATA-105-C', {
+            value: rataFrequencyCode,
+            fieldname: FIELDNAME,
+            key: KEY,
+          });
         }
       } else if (rataFrequencyCode === 'ALTSL') {
         if (testSumRecord.system?.systemTypeCode !== 'FLOW') {
-          error = this.getMessage('RATA-105-C', {value: rataFrequencyCode, fieldname: FIELDNAME, key: KEY});
-          //error = `[RATA-105-C] You reported the value [${rataFrequencyCode}], which is not in the list of valid values, in the field [rataFrequencyCode] for [${KEY}].`;
+          error = this.getMessage('RATA-105-C', {
+            value: rataFrequencyCode,
+            fieldname: FIELDNAME,
+            key: KEY,
+          });
         }
       }
     }
@@ -224,8 +258,7 @@ export class RataChecksService {
     return error;
   }
 
-  getMessage(messageKey: string, messageArgs: object) :string
-  {
+  getMessage(messageKey: string, messageArgs: object): string {
     return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
   }
 }

@@ -9,9 +9,7 @@ import { TestSummaryService } from './test-summary.service';
 @ApiSecurity('APIKey')
 @ApiTags('Test Summary')
 export class TestSummaryController {
-  constructor(
-    private readonly service: TestSummaryService,
-  ) {}
+  constructor(private readonly service: TestSummaryService) {}
 
   @Get()
   @ApiOkResponse({

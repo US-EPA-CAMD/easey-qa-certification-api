@@ -78,7 +78,7 @@ export class LinearitySummaryChecksService {
     );
 
     if (!gasLevelCodes.includes(linearitySummary.gasLevelCode)) {
-      error = this.getMessage('LINEAR-15-B', {fieldname: FIELDNAME})
+      error = this.getMessage('LINEAR-15-B', { fieldname: FIELDNAME });
       //error = `You reported a [gasLevelCode] that is not in the list of valid values.`;
     }
 
@@ -92,7 +92,7 @@ export class LinearitySummaryChecksService {
   ): Promise<string> {
     let error: string = null;
     let RECORDTYPE: string = 'linearitySummary';
-    let FIELDNAME: string = 'gasLevelCode'
+    let FIELDNAME: string = 'gasLevelCode';
 
     const record: LinearitySummary = await this.repository.findOne({
       testSumId: testSumId,
@@ -101,13 +101,15 @@ export class LinearitySummaryChecksService {
 
     if (record) {
       // LINEAR-32 Duplicate Linearity Summary (Result A)
-      error = this.getMessage('LINEAR-32-A', {recordtype: RECORDTYPE, fieldnames: FIELDNAME})
+      error = this.getMessage('LINEAR-32-A', {
+        recordtype: RECORDTYPE,
+        fieldnames: FIELDNAME,
+      });
       //error = `Another Linearity Summary record already exists with the same gasLevelCode [${linearitySummary.gasLevelCode}].`;
     }
     return error;
   }
-  getMessage(messageKey: string, messageArgs: object) :string
-  {
+  getMessage(messageKey: string, messageArgs: object): string {
     return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
   }
 }
