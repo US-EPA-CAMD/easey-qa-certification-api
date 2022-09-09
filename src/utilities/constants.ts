@@ -1,5 +1,7 @@
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 
+export const VALID_CODES_FOR_MON_SYS_ID_VALIDATION = [TestTypeCodes.RATA];
+
 export const BEGIN_DATE_TEST_TYPE_CODES = [
   TestTypeCodes.APPE,
   TestTypeCodes.RATA,

@@ -96,6 +96,7 @@ import {
   VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION,
   VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION,
   VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE,
+  VALID_CODES_FOR_MON_SYS_ID_VALIDATION,
 } from '../utilities/constants';
 
 const KEY = 'Test Summary';
@@ -162,7 +163,9 @@ export class TestSummaryBaseDTO {
       });
     },
   })
-  // TODO: NEED @ValidateIf decorator if this is only for RATA
+  @ValidateIf(o =>
+    VALID_CODES_FOR_MON_SYS_ID_VALIDATION.includes(o.testTypeCode),
+  )
   monitoringSystemID?: string;
 
   @ApiProperty({

@@ -28,6 +28,10 @@ import { MonitorMethod } from '../entities/monitor-method.entity';
 import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
 import { ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
 import { TestQualificationImportDTO } from '../dto/test-qualification.dto';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { AnalyzerRange } from '../entities/workspace/analyzerRange.entity';
+
+jest.mock('@us-epa-camd/easey-common/check-catalog');
 
 const locationId = '1';
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
@@ -44,14 +48,21 @@ const mockComponentWorkspaceRepository = () => ({
   findOne: jest.fn().mockResolvedValue(component),
 });
 
+const analyerRange = new AnalyzerRange();
+
 const mockAnalyzerRangeWorkspaceRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(component),
+  findOne: jest.fn().mockResolvedValue(analyerRange),
+  getAnalyzerRangeByComponentIdAndDate: jest
+    .fn()
+    .mockResolvedValue([analyerRange]),
 });
 
 const mockRepository = () => ({
   getTestSummaryByLocationId: jest.fn().mockResolvedValue(null),
+  getTestSummaryByComponent: jest.fn().mockResolvedValue(null),
   findOne: jest.fn().mockResolvedValue(null),
 });
+
 const mockQARepository = () => ({
   findOne: jest.fn().mockResolvedValue(null),
   getQASuppDataByLocationId: jest.fn().mockResolvedValue(null),
@@ -180,10 +191,10 @@ describe('Test Summary Check Service Test', () => {
         payload,
       ]);
 
-      expect(result).toEqual([MOCK_ERROR_MSG]);
+      expect(result).toEqual([]);
     });
 
-    it('Should get error IMPORT -20 Duplicate Test Summary record', async () => {
+    it('Should get error IMPORT-20 Duplicate Test Summary record', async () => {
       jest
         .spyOn(repository, 'getTestSummaryByLocationId')
         .mockResolvedValue(null);
@@ -236,6 +247,8 @@ describe('Test Summary Check Service Test', () => {
 
     it('Should get error IMPORT -21 Duplicate Test Summary record (when QASuppDataFound)', async () => {
       const returnedQASupp = new QASuppData();
+      returnedQASupp.component = new Component();
+      returnedQASupp.component.componentID = '011';
       returnedQASupp.endHour = 2;
       returnedQASupp.endDate = new Date();
 
@@ -488,7 +501,9 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('Should get error for LINEAR-4 check Result A', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(new TestSummary());
+      jest
+        .spyOn(repository, 'getTestSummaryByComponent')
+        .mockResolvedValue(new TestSummary());
 
       try {
         await service.runChecks(locationId, payload, true, false, [payload]);
@@ -510,6 +525,89 @@ describe('Test Summary Check Service Test', () => {
         await service.runChecks(locationId, payload, true, false, [payload]);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+
+    it('Should get error for LINEAR-4 check Result B', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(
+          qaRepository,
+          'getQASuppDataByTestTypeCodeComponentIdEndDateEndTime',
+        )
+        .mockResolvedValue(null);
+
+      const qaSupp = new QASuppData();
+      qaSupp.component = new Component();
+      qaSupp.component.componentID = '011';
+      qaSupp.spanScaleCode = 'H';
+      qaSupp.submissionAvailabilityCode = 'UPDATED';
+      qaSupp.endDate = new Date('2022-01-01');
+      qaSupp.endHour = 0;
+      qaSupp.endMinute = 0;
+
+      jest
+        .spyOn(qaRepository, 'getQASuppDataByLocationId')
+        .mockResolvedValue(qaSupp);
+
+      try {
+        await service.runChecks(locationId, payload, true, false, [payload]);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `Another [LINE] with this test number has already been submitted for this location. This test cannot be submitted with this test number. If this is a different test, you should assign it a unique test number.`,
+        ]);
+      }
+    });
+
+    it('Should get error for LINEAR-4 check Result C', async () => {
+      CheckCatalogService.formatResultMessage = jest
+        .fn()
+        .mockResolvedValue(
+          `This test has already been submitted and will not be resubmitted. If you wish to Informational Message resubmit this test, please contact EPA for approval.`,
+        );
+
+      const p = new TestSummaryImportDTO();
+      p.testTypeCode = TestTypeCodes.LINE;
+      p.stackPipeId = '';
+      p.componentID = '011';
+      p.testResultCode = 'PASSED';
+      p.spanScaleCode = 'H';
+      p.testNumber = '';
+      p.beginHour = 1;
+      p.beginMinute = 1;
+      p.endHour = 1;
+      p.endMinute = 2;
+      p.beginDate = new Date('2020-01-01');
+      p.endDate = new Date('2022-01-01');
+      p.injectionProtocolCode = null;
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(
+          qaRepository,
+          'getQASuppDataByTestTypeCodeComponentIdEndDateEndTime',
+        )
+        .mockResolvedValue(null);
+
+      const qaSupp = new QASuppData();
+      qaSupp.component = new Component();
+      qaSupp.component.componentID = '011';
+      qaSupp.spanScaleCode = 'H';
+      qaSupp.submissionAvailabilityCode = 'UPDATED';
+      qaSupp.endDate = new Date('2022-01-01');
+      qaSupp.endHour = 1;
+      qaSupp.endMinute = 2;
+
+      jest
+        .spyOn(qaRepository, 'getQASuppDataByLocationId')
+        .mockResolvedValue(qaSupp);
+
+      try {
+        await service.runChecks(locationId, p, true, false, [p]);
+      } catch (err) {
+        expect(err.response.message).toEqual([
+          `This test has already been submitted and will not be resubmitted. If you wish to Informational Message resubmit this test, please contact EPA for approval.`,
+        ]);
       }
     });
 

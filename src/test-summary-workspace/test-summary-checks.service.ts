@@ -993,17 +993,17 @@ export class TestSummaryChecksService {
     let duplicateQaSupp: TestSummary | QASuppData;
     const resultA = this.getMessage('LINEAR-4-A', null);
 
-    const duplicateTestSum = await this.repository.findOne({
-      testTypeCode: summary.testTypeCode,
-      spanScaleCode: summary.spanScaleCode,
-      endDate: summary.endDate,
-      endHour: summary.endHour,
-      endMinute: summary.endMinute,
-    });
+    const duplicateTestSum = await this.repository.getTestSummaryByComponent(
+      summary.componentID,
+      summary.testTypeCode,
+      summary.spanScaleCode,
+      summary.endDate,
+      summary.endHour,
+      summary.endMinute,
+    );
 
     if (duplicateTestSum) {
-      error = resultA;
-      //    error = `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`;
+      error = this.getMessage('LINEAR-4-A');
     } else {
       duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
@@ -1017,32 +1017,35 @@ export class TestSummaryChecksService {
       );
 
       if (duplicateQaSupp) {
-        error = resultA;
-        //      error = `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`;
+        error = this.getMessage('LINEAR-4-A');
       } else {
-        // TODO: BLOCKED DUE TO COLUMN DOESNOT EXISTS IN DATABASE
-        /* duplicateQaSupp = await this.qaSuppDataRepository.findOne({
-          locationId: locationId,
-          testTypeCode: summary.testTypeCode,
-          testNumber: summary.testNumber,
-        });
+        duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByLocationId(
+          locationId,
+          summary.testTypeCode,
+          summary.testNumber,
+        );
 
         if (duplicateQaSupp) {
-          if (duplicateQaSupp.canSubmit === 'N') {
+          if (
+            ![null, 'GRANTED', 'REQUIRE'].includes(
+              duplicateQaSupp.submissionAvailabilityCode,
+            )
+          ) {
             if (
-              duplicateQaSupp.testSumId !== duplicateTestSum.id &&
               duplicateQaSupp.component.componentID !== summary.componentID &&
               duplicateQaSupp.spanScaleCode !== summary.spanScaleCode &&
               duplicateQaSupp.endDate !== summary.endDate &&
               duplicateQaSupp.endHour !== summary.endHour &&
               duplicateQaSupp.endMinute !== summary.endMinute
             ) {
-              error = `Another [${duplicateQaSupp.testTypeCode}] with this test number [${duplicateQaSupp.testNumber}] has already been submitted for this location. This test cannot be submitted with this test number. If this is a different test, you should assign it a unique test number.`;
+              error = CheckCatalogService.formatResultMessage('LINEAR-4-B', {
+                testtype: duplicateQaSupp.testTypeCode,
+              });
             } else {
-              error = `This test has already been submitted and will not be resubmitted. If you wish to resubmit this test, please contact EPA for approval.`;
+              error = CheckCatalogService.formatResultMessage('LINEAR-4-C');
             }
           }
-        } */
+        }
       }
     }
 
