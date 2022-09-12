@@ -12,6 +12,7 @@ import { LinearitySummaryWorkspaceRepository } from './linearity-summary.reposit
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 @Injectable()
 export class LinearitySummaryChecksService {
@@ -65,6 +66,7 @@ export class LinearitySummaryChecksService {
     linearitySummary: LinearitySummaryBaseDTO | LinearitySummaryImportDTO,
   ) {
     let error: string = null;
+    let FIELDNAME: string = 'gasLevelCode';
 
     const testSummaryMDRelationships = await this.testSummaryMDRepository.getTestTypeCodesRelationships(
       TestTypeCodes.LINE,
@@ -76,7 +78,8 @@ export class LinearitySummaryChecksService {
     );
 
     if (!gasLevelCodes.includes(linearitySummary.gasLevelCode)) {
-      error = `You reported a [gasLevelCode] that is not in the list of valid values.`;
+      error = this.getMessage('LINEAR-15-B', { fieldname: FIELDNAME });
+      //error = `You reported a [gasLevelCode] that is not in the list of valid values.`;
     }
 
     return error;
@@ -88,6 +91,8 @@ export class LinearitySummaryChecksService {
     _isImport: boolean = false,
   ): Promise<string> {
     let error: string = null;
+    let RECORDTYPE: string = 'linearitySummary';
+    let FIELDNAME: string = 'gasLevelCode';
 
     const record: LinearitySummary = await this.repository.findOne({
       testSumId: testSumId,
@@ -96,8 +101,15 @@ export class LinearitySummaryChecksService {
 
     if (record) {
       // LINEAR-32 Duplicate Linearity Summary (Result A)
-      error = `Another Linearity Summary record already exists with the same gasLevelCode [${linearitySummary.gasLevelCode}].`;
+      error = this.getMessage('LINEAR-32-A', {
+        recordtype: RECORDTYPE,
+        fieldnames: FIELDNAME,
+      });
+      //error = `Another Linearity Summary record already exists with the same gasLevelCode [${linearitySummary.gasLevelCode}].`;
     }
     return error;
+  }
+  getMessage(messageKey: string, messageArgs: object): string {
+    return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
   }
 }

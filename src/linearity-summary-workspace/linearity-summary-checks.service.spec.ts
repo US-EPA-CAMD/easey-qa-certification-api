@@ -7,6 +7,7 @@ import { LinearitySummaryWorkspaceRepository } from './linearity-summary.reposit
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 
 const testSumId = '1';
+const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 const mockTestSummaryRelationshipRepository = () => ({
   getTestTypeCodesRelationships: jest
@@ -38,6 +39,8 @@ describe('Linearity Summary Check Service Test', () => {
 
     service = module.get(LinearitySummaryChecksService);
     repository = module.get(LinearitySummaryWorkspaceRepository);
+
+    jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
 
   describe('Linearity Injection Checks', () => {
@@ -62,10 +65,7 @@ describe('Linearity Summary Check Service Test', () => {
       try {
         await service.runChecks(testSumId, payload);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `Another Linearity Summary record already exists with the same gasLevelCode [${payload.gasLevelCode}].`,
-          'You reported a [gasLevelCode] that is not in the list of valid values.',
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
       }
     });
   });
