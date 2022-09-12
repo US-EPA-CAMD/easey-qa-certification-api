@@ -8,6 +8,8 @@ import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { QACertificationWorkspaceService } from './qa-certification.service';
 import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
+import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 
 const testSummary = new TestSummaryDTO();
 const qaCertDto = new QACertificationDTO();
@@ -21,7 +23,10 @@ payload.orisCode = 1;
 
 const userId = 'testUser';
 
-const location = {
+const qaSuppData = new QASuppData();
+qaSuppData.testSumId = '1';
+
+const location: LocationIdentifiers = {
   unitId: '1',
   locationId: '1',
   stackPipeId: '1',
@@ -69,7 +74,16 @@ describe('QA Certification Workspace Service Test', () => {
 
   describe('import', () => {
     it('successfully calls import() service function', async () => {
-      const result = await service.import([location], payload, userId);
+      const result = await service.import([location], payload, userId, []);
+      expect(result).toEqual({
+        message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${payload.orisCode}]`,
+      });
+    });
+
+    it('successfully calls import() service function when qaSuppData found ', async () => {
+      const result = await service.import([location], payload, userId, [
+        qaSuppData,
+      ]);
       expect(result).toEqual({
         message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${payload.orisCode}]`,
       });

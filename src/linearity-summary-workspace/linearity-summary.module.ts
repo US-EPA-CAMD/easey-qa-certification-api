@@ -9,6 +9,7 @@ import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
+import { LinearitySummaryModule } from '../linearity-summary/linearity-summary.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-mas
       LinearitySummaryWorkspaceRepository,
       TestSummaryMasterDataRelationshipRepository,
     ]),
+    forwardRef(() => LinearitySummaryModule),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),
   ],

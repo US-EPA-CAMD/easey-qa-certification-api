@@ -62,6 +62,7 @@ export class TestSummaryChecksService {
     isImport: boolean = false,
     isUpdate: boolean = false,
     summaries?: TestSummaryImportDTO[],
+    historicalTestSumId?: string,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
@@ -113,7 +114,12 @@ export class TestSummaryChecksService {
     }
 
     // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
-    error = await this.linear4Check(locationId, summary, isImport);
+    error = await this.linear4Check(
+      locationId,
+      summary,
+      historicalTestSumId,
+      isImport,
+    );
     if (error) {
       errorList.push(error);
     }
@@ -147,6 +153,7 @@ export class TestSummaryChecksService {
         locationId,
         summary,
         summaries,
+        historicalTestSumId,
         isImport,
       );
       if (error) {
@@ -627,6 +634,7 @@ export class TestSummaryChecksService {
     locationId: string,
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
     summaries: TestSummaryImportDTO[] = [],
+    historicalTestSumId: string,
     isImport: boolean = false,
   ): Promise<string> {
     let error: string = null;
@@ -666,8 +674,9 @@ export class TestSummaryChecksService {
       // LINEAR-31 Duplicate Linearity (Result A)
       error = this.getMessage('LINEAR-31-A', null);
     } else {
-      duplicate = await this.qaSuppDataRepository.getQASuppDataByLocationId(
+      duplicate = await this.qaSuppDataRepository.getUnassociatedQASuppDataByLocationIdAndTestSum(
         locationId,
+        historicalTestSumId,
         summary.testTypeCode,
         summary.testNumber,
       );
@@ -676,7 +685,6 @@ export class TestSummaryChecksService {
         if (isImport) {
           fields = this.compareFields(duplicate, summary);
         }
-
         // LINEAR-31 Duplicate Linearity (Result B)
         error = this.getMessage('LINEAR-31-B', null);
       }
@@ -987,6 +995,7 @@ export class TestSummaryChecksService {
   private async linear4Check(
     locationId: string,
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
+    historicalTestSumId: string,
     _isImport: boolean = false,
   ): Promise<string> {
     let error: string = null;
@@ -1005,7 +1014,7 @@ export class TestSummaryChecksService {
     if (duplicateTestSum) {
       error = this.getMessage('LINEAR-4-A', null);
     } else {
-      duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
+      duplicateQaSupp = await this.qaSuppDataRepository.getUnassociatedQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
         summary.componentID,
         summary.testTypeCode,
@@ -1019,8 +1028,9 @@ export class TestSummaryChecksService {
       if (duplicateQaSupp) {
         error = this.getMessage('LINEAR-4-A', null);
       } else {
-        duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByLocationId(
+        duplicateQaSupp = await this.qaSuppDataRepository.getUnassociatedQASuppDataByLocationIdAndTestSum(
           locationId,
+          historicalTestSumId,
           summary.testTypeCode,
           summary.testNumber,
         );

@@ -160,6 +160,7 @@ export class TestSummaryWorkspaceService {
     locationId: string,
     payload: TestSummaryImportDTO,
     userId: string,
+    historicalrecordId?: string,
   ) {
     const promises = [];
 
@@ -177,6 +178,7 @@ export class TestSummaryWorkspaceService {
       locationId,
       payload,
       userId,
+      historicalrecordId,
     );
 
     this.logger.info(
@@ -193,6 +195,7 @@ export class TestSummaryWorkspaceService {
                 createdTestSummary.id,
                 linearitySummary,
                 userId,
+                historicalrecordId !== null ? true : false,
               ),
             );
             await Promise.all(innerPromises);
@@ -211,6 +214,7 @@ export class TestSummaryWorkspaceService {
     locationId: string,
     payload: TestSummaryBaseDTO,
     userId: string,
+    historicalrecordId?: string,
   ): Promise<TestSummaryRecordDTO> {
     const mgr = getManager();
     const timestamp = currentDateTime();
@@ -244,7 +248,7 @@ export class TestSummaryWorkspaceService {
 
     const entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalrecordId ? historicalrecordId : uuid(),
       locationId,
       monitorSystemRecordId,
       componentRecordId,
