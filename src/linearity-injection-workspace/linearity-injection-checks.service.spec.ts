@@ -10,6 +10,7 @@ import { LinearityInjectionWorkspaceRepository } from './linearity-injection.rep
 import { LinearitySummaryWorkspaceRepository } from '../linearity-summary-workspace/linearity-summary.repository';
 import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
 
+const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 const linSumId = '1';
 
 const mockRepository = () => ({
@@ -50,6 +51,8 @@ describe('Linearity Injection Check Service Test', () => {
     linearitySummaryRepository = module.get(
       LinearitySummaryWorkspaceRepository,
     );
+
+    jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
 
   describe('Linearity Injection Checks', () => {
@@ -77,9 +80,7 @@ describe('Linearity Injection Check Service Test', () => {
       try {
         await service.runChecks(linSumId, payload);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `Another Linearity Injection record already exists with the same injectionDate [${payload.injectionDate}], injectionHour [${payload.injectionHour}], injectionMinute [${payload.injectionMinute}].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
   });
@@ -103,9 +104,7 @@ describe('Linearity Injection Check Service Test', () => {
       try {
         await service.runChecks(linSumId, payload, true, false, importpayload);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `There were more than three gas injections for [Linearity Summary]. Only the last three injections at this level were retained for analysis. All other gas injections have been disregarded.`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -119,9 +118,7 @@ describe('Linearity Injection Check Service Test', () => {
       try {
         await service.runChecks(linSumId, payload);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `There were more than three gas injections for [Linearity Summary]. Only the last three injections at this level were retained for analysis. All other gas injections have been disregarded.`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
   });

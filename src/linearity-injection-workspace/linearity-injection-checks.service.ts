@@ -12,6 +12,7 @@ import {
 import { LinearityInjection } from '../entities/workspace/linearity-injection.entity';
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 @Injectable()
 export class LinearityInjectionChecksService {
@@ -68,6 +69,7 @@ export class LinearityInjectionChecksService {
     _isImport: boolean = false,
   ): Promise<string> {
     let error: string = null;
+    const RECORDTYPE: string = 'Linearity Injection';
     const record: LinearityInjection = await this.linearityInjectionRepository.findOne(
       {
         linSumId: linSumId,
@@ -78,7 +80,15 @@ export class LinearityInjectionChecksService {
     );
     if (record) {
       // LINEAR-33 Duplicate Linearity Injection (Result A)
-      error = `Another Linearity Injection record already exists with the same injectionDate [${linearityInjection.injectionDate}], injectionHour [${linearityInjection.injectionHour}], injectionMinute [${linearityInjection.injectionMinute}].`;
+      error = this.getMessage('LINEAR-33-A', {
+        recordtype: RECORDTYPE,
+        fieldnames: [
+          linearityInjection.injectionDate,
+          linearityInjection.injectionHour,
+          linearityInjection.injectionMinute,
+        ],
+      });
+      //error = `Another Linearity Injection record already exists with the same injectionDate [${linearityInjection.injectionDate}], injectionHour [${linearityInjection.injectionHour}], injectionMinute [${linearityInjection.injectionMinute}].`;
     }
     return error;
   }
@@ -91,6 +101,7 @@ export class LinearityInjectionChecksService {
   ): Promise<string> {
     let error: string = null;
     let injectionsLength: number = null;
+    let KEY: string = 'Linearity Summary';
 
     if (isImport) {
       const injections = linearityInjections;
@@ -104,8 +115,12 @@ export class LinearityInjectionChecksService {
 
     if (injectionsLength > 3) {
       // LINEAR-34 Too Many Gas Injections (Result A)
-      error = `There were more than three gas injections for [Linearity Summary]. Only the last three injections at this level were retained for analysis. All other gas injections have been disregarded.`;
+      error = this.getMessage('LINEAR-34-A', { key: KEY });
+      //error = `There were more than three gas injections for [Linearity Summary]. Only the last three injections at this level were retained for analysis. All other gas injections have been disregarded.`;
     }
     return error;
+  }
+  getMessage(messageKey: string, messageArgs: object): string {
+    return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
   }
 }

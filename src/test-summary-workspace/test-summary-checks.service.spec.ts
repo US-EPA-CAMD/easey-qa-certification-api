@@ -34,6 +34,7 @@ import { AnalyzerRange } from '../entities/workspace/analyzerRange.entity';
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
 const locationId = '1';
+const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 const component = new Component();
 
@@ -155,6 +156,8 @@ describe('Test Summary Check Service Test', () => {
 
     service = module.get(TestSummaryChecksService);
     repository = module.get(TestSummaryWorkspaceRepository);
+
+    jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
 
   describe('Test Summary Checks', () => {
@@ -200,10 +203,7 @@ describe('Test Summary Check Service Test', () => {
         payload,
       ]);
 
-      expect(result).toEqual([
-        'You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.',
-        `You have reported multiple Test Summary records for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}].`,
-      ]);
+      expect(result).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
     });
 
     it('Should get error IMPORT -21 Duplicate Test Summary record', async () => {
@@ -226,10 +226,7 @@ describe('Test Summary Check Service Test', () => {
         payload,
       ]);
 
-      expect(result).toEqual([
-        'You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.',
-        `The database contains another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. However, the values reported for [monitoringSystemID,componentID,spanScaleCode,endDate,endHour,year,quarter] are different between the two tests.`,
-      ]);
+      expect(result).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
     });
 
     it('Should get error IMPORT -21 Duplicate Test Summary record (endMinute)', async () => {
@@ -245,10 +242,7 @@ describe('Test Summary Check Service Test', () => {
         payload,
       ]);
 
-      expect(result).toEqual([
-        'You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.',
-        `The database contains another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. However, the values reported for [endMinute] are different between the two tests.`,
-      ]);
+      expect(result).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
     });
 
     it('Should get error IMPORT -21 Duplicate Test Summary record (when QASuppDataFound)', async () => {
@@ -269,10 +263,7 @@ describe('Test Summary Check Service Test', () => {
       const result = await service.runChecks(locationId, payload, true, false, [
         payload,
       ]);
-      expect(result).toEqual([
-        'You have reported a Test Summary Record for Location 1, TestTypeCode [LINE] and Test Number [], which either does not have a ComponentID or inappropriately has a MonitorSystemID. This test record was not imported.',
-        `The database contains another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. However, the values reported for [endDate,endHour] are different between the two tests.`,
-      ]);
+      expect(result).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
     });
 
     it('Should get error LINEAR -31 Duplicate Test Summary record (Result A)', async () => {
@@ -300,9 +291,7 @@ describe('Test Summary Check Service Test', () => {
           payload,
         ]);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `Another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. You must assign a different test number.`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -322,9 +311,7 @@ describe('Test Summary Check Service Test', () => {
           payload,
         ]);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `Another Test Summary record for Unit/Stack [${payload.stackPipeId}], Test Type Code [${payload.testTypeCode}], and Test Number [${payload.testNumber}]. You cannot change the Test Number to the value that you have entered, because a test with this Test Type and Test Number has already been submitted. If this is a different test, you should assign it a different Test Number. If you are trying to resubmit this test, you should delete this test, and either reimport this test with its original Test Number or retrieve the original test from the EPA host system.`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -356,9 +343,7 @@ describe('Test Summary Check Service Test', () => {
           importPayload,
         ]);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `You have reported invalid [RATA, Test Qualification, Calibration Injection, Hg Linearity or System Integrity Summary, Flow to Load Reference, Flow to Load Check, Cycle Time Summary, Online Offline Calibration, Fuel Flowmeter Accuracy, Transmitter Transducer, Fuel Flow to Load Baseline, Fuel Flow to Load Test, Appendix E Correlation Test Summary, Unit Default Test, Air Emission Test] records for a Test Summary record with a Test Type Code of [${importPayload.testTypeCode}].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -378,9 +363,7 @@ describe('Test Summary Check Service Test', () => {
           importPayload,
         ]);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `You have reported invalid [Linearity Summary, Protocol Gas] records for a Test Summary record with a Test Type Code of [${importPayload.testTypeCode}].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -405,9 +388,7 @@ describe('Test Summary Check Service Test', () => {
           importPayload,
         ]);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `An extraneous value has been reported for [TestDescription, TestResultCode, SpanScaleCode, TestReasonCode, GracePeriodIndicator, BeginMinute, EndMinute] in the Test Summary record for Location [${locationId}], TestTypeCode [${importPayload.testTypeCode}] and Test Number [${importPayload.testNumber}].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -430,9 +411,7 @@ describe('Test Summary Check Service Test', () => {
           importPayload,
         ]);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `An extraneous value has been reported for [BeginDate, BeginHour, BeginMinute, Year, Quarter] in the Test Summary record for Location [${locationId}], TestTypeCode [${importPayload.testTypeCode}] and Test Number [${importPayload.testNumber}].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -453,9 +432,7 @@ describe('Test Summary Check Service Test', () => {
           importPayload,
         ]);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `An extraneous value has been reported for [EndDate, EndHour, EndMinute] in the Test Summary record for Location [${locationId}], TestTypeCode [${importPayload.testTypeCode}] and Test Number [${importPayload.testNumber}].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -473,9 +450,7 @@ describe('Test Summary Check Service Test', () => {
           importPayload,
         ]);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `You have reported a [${importPayload.testTypeCode}] test that is inappropriate for Stack [${importPayload.stackPipeId}].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -493,9 +468,7 @@ describe('Test Summary Check Service Test', () => {
           importPayload,
         ]);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `You have reported a [${importPayload.testTypeCode}] test that is inappropriate for Stack [${importPayload.stackPipeId}].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -513,9 +486,7 @@ describe('Test Summary Check Service Test', () => {
           importPayload,
         ]);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `You have reported a [${importPayload.testTypeCode}] test that is inappropriate for Stack [${importPayload.stackPipeId}].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -525,9 +496,7 @@ describe('Test Summary Check Service Test', () => {
       try {
         await service.runChecks(locationId, payload, true, false, [payload]);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -539,9 +508,7 @@ describe('Test Summary Check Service Test', () => {
       try {
         await service.runChecks(locationId, payload, true, false, [payload]);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -557,9 +524,7 @@ describe('Test Summary Check Service Test', () => {
       try {
         await service.runChecks(locationId, payload, true, false, [payload]);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -663,9 +628,7 @@ describe('Test Summary Check Service Test', () => {
       try {
         await service.runChecks(locationId, payload, true, false, [payload]);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `You reported the value [${payload.testResultCode}], which is not in the list of valid values for this test type, in the field [testResultCode] for [Test Summary].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -679,9 +642,7 @@ describe('Test Summary Check Service Test', () => {
       try {
         await service.runChecks(locationId, payload, true, false, [payload]);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `You reported the value [${payload.testResultCode}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
   });
@@ -745,9 +706,7 @@ describe('Test Summary Check Service Test', () => {
         beginMinute: null,
       };
       const result = await service.testMinuteField(summary, '1', 'beginMinute');
-      expect(result).toBe(
-        'You did not provide [beginMinute], which is required for [Test Summary].',
-      );
+      expect(result).toBe(MOCK_ERROR_MSG);
     });
 
     it('returns error message A when startMinute is null and testType is not [LINE, RATA, CYCLE, F2LREF, APPE, UNITDEF] and monitor plan is found', async () => {
@@ -760,9 +719,7 @@ describe('Test Summary Check Service Test', () => {
         beginMinute: null,
       };
       const result = await service.testMinuteField(summary, '1', 'beginMinute');
-      expect(result).toBe(
-        'You did not provide [beginMinute], which is required for [Test Summary].',
-      );
+      expect(result).toBe(MOCK_ERROR_MSG);
     });
 
     it('returns error message B when startMinute is null and testType is not [LINE, RATA, CYCLE, F2LREF, APPE, UNITDEF] and monitor plan is NOT found', async () => {
@@ -775,9 +732,7 @@ describe('Test Summary Check Service Test', () => {
         beginMinute: null,
       };
       const result = await service.testMinuteField(summary, '1', 'beginMinute');
-      expect(result).toBe(
-        'You did not provide [beginMinute] for [Test Summary]. This information will be required for ECMPS submissions.',
-      );
+      expect(result).toBe(MOCK_ERROR_MSG);
     });
   });
 });
