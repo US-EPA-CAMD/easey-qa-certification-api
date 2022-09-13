@@ -68,6 +68,20 @@ export class TestSummaryChecksService {
     const errorList: string[] = [];
     this.logger.info('Running Test Summary Checks');
 
+    if (!isImport) {
+      const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
+        locationId,
+        summary.componentID,
+        summary.testTypeCode,
+        summary.testNumber,
+        summary.spanScaleCode,
+        summary.endDate,
+        summary.endHour,
+        summary.endMinute,
+      );
+      historicalTestSumId = duplicateQaSupp.testSumId;
+    }
+
     if (isImport) {
       // IMPORT-16 Inappropriate Children Records for Test Summary
       error = this.import16Check(summary as TestSummaryImportDTO);
