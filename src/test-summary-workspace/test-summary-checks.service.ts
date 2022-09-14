@@ -79,7 +79,7 @@ export class TestSummaryChecksService {
         summary.endHour,
         summary.endMinute,
       );
-      historicalTestSumId = duplicateQaSupp.testSumId;
+      historicalTestSumId = duplicateQaSupp?.testSumId;
     }
 
     if (isImport) {
