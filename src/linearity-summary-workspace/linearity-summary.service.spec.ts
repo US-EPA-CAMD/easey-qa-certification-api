@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { LinearitySummary } from '../entities/linearity-summary.entity';
+import { LinearitySummaryRepository } from '../linearity-summary/linearity-summary.repository';
 import { LinearityInjectionImportDTO } from '../dto/linearity-injection.dto';
 import {
   LinearitySummaryDTO,
@@ -22,6 +24,9 @@ const payload = new LinearitySummaryImportDTO();
 payload.linearityInjectionData = [new LinearityInjectionImportDTO()];
 
 const mockRepository = () => ({});
+const mockOfficialRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(new LinearitySummary()),
+});
 
 const mockTestSummaryService = () => ({});
 
@@ -34,7 +39,7 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue([lineSummaryDto]),
 });
 
-describe('TestSummaryWorkspaceService', () => {
+describe('LinearitySummaryWorkspaceService', () => {
   let service: LinearitySummaryWorkspaceService;
 
   beforeEach(async () => {
@@ -53,6 +58,10 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: LinearitySummaryWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: LinearitySummaryRepository,
+          useFactory: mockOfficialRepository,
         },
         {
           provide: LinearitySummaryMap,

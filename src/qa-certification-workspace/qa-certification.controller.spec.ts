@@ -10,11 +10,13 @@ import {
   QACertificationImportDTO,
 } from '../dto/qa-certification.dto';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
+import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 
 const qaCertDto = new QACertificationDTO();
 const qaParamsDto = new QACertificationParamsDTO();
 const payload = new QACertificationImportDTO();
 
+const qaSuppData = new QASuppData();
 const location = {
   unitId: 'string',
   locationId: 'string',
@@ -67,7 +69,9 @@ describe('QA Certification Workspace Controller Test', () => {
 
   describe('import', () => {
     it('should import QA & Cert Data', async () => {
-      jest.spyOn(checkService, 'runChecks').mockResolvedValue([location]);
+      jest
+        .spyOn(checkService, 'runChecks')
+        .mockResolvedValue([[location], [qaSuppData]]);
       jest.spyOn(service, 'import').mockResolvedValue(undefined);
       expect(await controller.import(payload)).toBe(undefined);
     });

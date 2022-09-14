@@ -10,9 +10,11 @@ import { LinearitySummaryWorkspaceModule } from '../linearity-summary-workspace/
 import { LinearityInjectionWorkspaceModule } from '../linearity-injection-workspace/linearity-injection.module';
 import { RataWorkspaceModule } from '../rata-workspace/rata-workspace.module';
 import { RataSummaryWorkspaceModule } from '../rata-summary-workspace/rata-summary-workspace.module';
+import { QASuppDataWorkspaceModule } from '../qa-monitor-plan-workspace/qa-monitor-plan.module';
 
 @Module({
   imports: [
+    QASuppDataWorkspaceModule,
     LocationWorkspaceModule,
     TestSummaryWorkspaceModule,
     LinearitySummaryWorkspaceModule,

@@ -20,6 +20,7 @@ const locationId = '121';
 const facilityId = 1;
 const unitId = '121';
 const testSumId = '1';
+const historicalrecordId = '1';
 const userId = 'testuser';
 
 const testSummary = new TestSummary();
@@ -144,7 +145,12 @@ describe('TestSummaryWorkspaceService', () => {
         .spyOn(service, 'createTestSummary')
         .mockResolvedValue(returnedSummary);
 
-      const result = await service.import(locationId, payload, userId);
+      const result = await service.import(
+        locationId,
+        payload,
+        userId,
+        historicalrecordId,
+      );
 
       expect(creste).toHaveBeenCalled();
       expect(result).toEqual(null);

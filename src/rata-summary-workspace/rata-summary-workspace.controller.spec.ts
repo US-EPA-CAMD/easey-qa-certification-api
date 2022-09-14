@@ -3,6 +3,7 @@ import {
   RataSummaryBaseDTO,
   RataSummaryRecordDTO,
 } from '../dto/rata-summary.dto';
+import { RataSummaryChecksService } from './rata-summary-checks.service';
 import { RataSummaryWorkspaceController } from './rata-summary-workspace.controller';
 import { RataSummaryWorkspaceService } from './rata-summary-workspace.service';
 
@@ -40,6 +41,10 @@ const mockService = () => ({
   deleteRataSummary: jest.fn().mockResolvedValue(null),
 });
 
+const mockChecksService = () => ({
+  runChecks: jest.fn().mockResolvedValue([]),
+});
+
 describe('RataSummaryWorkspaceController', () => {
   let controller: RataSummaryWorkspaceController;
   let service: RataSummaryWorkspaceService;
@@ -51,6 +56,10 @@ describe('RataSummaryWorkspaceController', () => {
         {
           provide: RataSummaryWorkspaceService,
           useFactory: mockService,
+        },
+        {
+          provide: RataSummaryChecksService,
+          useFactory: mockChecksService,
         },
       ],
     }).compile();

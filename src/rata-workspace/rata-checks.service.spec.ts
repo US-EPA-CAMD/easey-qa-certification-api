@@ -14,6 +14,7 @@ import { RataChecksService } from './rata-checks.service';
 
 const locationId = '';
 const testSumId = '';
+const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 const monitorSystemRecord = new MonitorSystem();
 let testSumRecord = {
@@ -68,6 +69,8 @@ describe('Rata Checks Service Test', () => {
     service = module.get(RataChecksService);
     testSummaryRepository = module.get(TestSummaryWorkspaceRepository);
     rataFreqCodeRepository = module.get(RataFrequencyCodeRepository);
+
+    jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
 
   describe('RATA Checks', () => {
@@ -76,8 +79,9 @@ describe('Rata Checks Service Test', () => {
         locationId,
         importPayload,
         null,
-        testSummaryImportPayload,
         true,
+        false,
+        testSummaryImportPayload,
       );
       expect(result).toEqual([]);
     });
@@ -105,9 +109,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `[RATA-102-C] The value [${importPayload.numberOfLoadLevels}] in the field [numberOfLoadLevels] for [RATA] is not within the range of valid values.`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -117,9 +119,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `[RATA-102-B] The value [${importPayload.numberOfLoadLevels}] in the field [numberOfLoadLevels] for [RATA] is not within the range of valid values from [1] to [3].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
   });
@@ -142,9 +142,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `[RATA-103-A] You reported [relativeAccuracy], which is not appropriate for [].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -165,9 +163,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `[RATA-103-B] You did not provide [relativeAccuracy], which is required for [RATA].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -188,9 +184,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `[RATA-103-C] The value [-1] in the field [relativeAccuracy] for [RATA] is not within the range of valid values. This value must be greater than or equal to zero.`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
   });
@@ -213,9 +207,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `[RATA-104-A] You reported [overallBiasAdjustmentFactor], which is not appropriate for [${testSumRec.testTypeCode}].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -236,9 +228,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `[RATA-104-B] You did not provide [overallBiasAdjustmentFactor], which is required for [RATA].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -259,9 +249,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `[RATA-104-C] The value [${importPayload.overallBiasAdjustmentFactor}] in the field [overallBiasAdjustmentFactor] for [RATA] is not within the range of valid values. This value must be greater than or equal to 1.000.`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
   });
@@ -284,9 +272,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `[RATA-105-A] You reported [rataFrequencyCode], which is not appropriate for [${testSumRec.testTypeCode}].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -307,9 +293,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `[RATA-105-B] You did not provide [rataFrequencyCode], which is required for [RATA].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -333,9 +317,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `[RATA-105-C] You reported the value [${importPayload.rataFrequencyCode}], which is not in the list of valid values, in the field [rataFrequencyCode] for [RATA].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -361,9 +343,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `[RATA-105-C] You reported the value [${importPayload.rataFrequencyCode}], which is not in the list of valid values, in the field [rataFrequencyCode] for [RATA].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -390,9 +370,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          `[RATA-105-C] You reported the value [${importPayload.rataFrequencyCode}], which is not in the list of valid values, in the field [rataFrequencyCode] for [RATA].`,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
   });
