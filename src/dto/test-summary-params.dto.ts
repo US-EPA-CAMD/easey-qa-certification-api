@@ -11,6 +11,7 @@ import { IsValidCodes } from '../pipes/is-valid-codes.pipe';
 
 import { TestTypeCode } from './../entities/test-type-code.entity';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 
 const MIN_DATE = '1993-01-01';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -36,7 +37,7 @@ export class TestSummaryParamsDTO {
   testTypeCodes?: string[];
 
   @ApiProperty({
-    description: propertyMetadata.beginDate.description,
+    description: getMetadata(dataDictionary.beginDate, MetadataKeys.TEST_SUMMARY).description,
   })
   @IsValidDate({
     message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`,

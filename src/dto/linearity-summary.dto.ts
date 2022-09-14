@@ -7,6 +7,7 @@ import {
   LinearityInjectionDTO,
 } from './linearity-injection.dto';
 import { GasLevelCode } from '../entities/workspace/gas-level-code.entity';
+import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 
 const KEY = 'Linearity Summary';
 
@@ -66,9 +67,9 @@ export class LinearitySummaryBaseDTO {
   })
   percentError: number;
 
-  @ApiProperty({
-    description: 'apsIndicator. ADD TO PROPERTY METADATA',
-  })
+  @ApiProperty(
+    getMetadata(dataDictionary.apsIndicator, MetadataKeys.LINEARITY_SUMMARY)
+  )
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return `You did not provide [${args.property}], which is required for [${KEY}].`;

@@ -98,6 +98,7 @@ import {
   VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE,
   VALID_CODES_FOR_MON_SYS_ID_VALIDATION,
 } from '../utilities/constants';
+import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 
 const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -249,9 +250,9 @@ export class TestSummaryBaseDTO {
   )
   testResultCode?: string;
 
-  @ApiProperty({
-    description: propertyMetadata.beginDate.description,
-  })
+  @ApiProperty(
+    getMetadata(dataDictionary.beginDate, MetadataKeys.TEST_SUMMARY)
+  )
   @IsNotEmpty({
     message: `You did not provide [beginDate], which is required for [${KEY}].`,
   })

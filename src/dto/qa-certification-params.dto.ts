@@ -19,6 +19,7 @@ import { TestTypeCode } from './../entities/test-type-code.entity';
 import { IsValidCodes } from '../pipes/is-valid-codes.pipe';
 import { ValidationArguments } from 'class-validator';
 import { FindOneOptions, In } from 'typeorm';
+import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 
 const MIN_DATE = '1993-01-01';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -76,7 +77,7 @@ export class QACertificationParamsDTO {
   testTypeCodes?: string[];
 
   @ApiProperty({
-    description: propertyMetadata.beginDate.description,
+    description: getMetadata(dataDictionary.beginDate, MetadataKeys.DEFAULT).description,
   })
   @IsValidDate({
     message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`,
