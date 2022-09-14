@@ -15,8 +15,8 @@ export async function bootstrap() {
     'camdecmpsmd.vw_qa_certification_api_check_catalog_results',
   );
 
-  applyMiddleware(AppModule, app);
-  applySwagger(app);
+  await applyMiddleware(AppModule, app);
+  await applySwagger(app);
 
   const configService = app.get(ConfigService);
   const appPath = configService.get<string>('app.path');
