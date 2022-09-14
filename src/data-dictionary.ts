@@ -78,18 +78,6 @@ export const dataDictionary = {
       },
     },
   },
-  addDate: {
-    fieldLabels: {
-      label: null,
-      value: "addDate",
-    },
-    metadata: {
-      default: {
-        description: "Date and time in which record was added.",
-        example: "2021-01-01",
-      },
-    },
-  },
   aeCorrTestRunId: {
     fieldLabels: {
       label: null,
