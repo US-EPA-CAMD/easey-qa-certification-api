@@ -99,7 +99,7 @@ export class ProtocolGasWorkspaceService {
       isImport,
     );
 
-    return await this.getProtocolGas(id);
+    return this.getProtocolGas(id);
   }
 
   async deleteProtocolGas(

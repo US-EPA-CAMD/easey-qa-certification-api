@@ -30,7 +30,7 @@ import { ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
 import { TestQualificationImportDTO } from '../dto/test-qualification.dto';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { AnalyzerRange } from '../entities/workspace/analyzerRange.entity';
-import { AirEmissionTestImportDTO } from '../dto/air-emission-test.dto';
+import { AirEmissionTestingImportDTO } from '../dto/air-emission-test.dto';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -337,7 +337,9 @@ describe('Test Summary Check Service Test', () => {
       importPayload.fuelFlowToLoadTestData = [{}];
       importPayload.appECorrelationTestSummaryData = [{}];
       importPayload.unitDefaultTestData = [{}];
-      importPayload.airEmissionTestingData = [new AirEmissionTestImportDTO()];
+      importPayload.airEmissionTestingData = [
+        new AirEmissionTestingImportDTO(),
+      ];
 
       try {
         await service.runChecks(locationId, importPayload, true, false, [
