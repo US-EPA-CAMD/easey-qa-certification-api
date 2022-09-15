@@ -1,4 +1,4 @@
-import { AirEmissionTest } from '../entities/air-emission-test';
+import { AirEmissionTest } from '../entities/air-emission-test.entity';
 import { AirEmissionTestMap } from './air-emission-test.map';
 
 const string = '';

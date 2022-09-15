@@ -72,7 +72,7 @@ export class TestSummaryWorkspaceService {
     delete dto.hgSummaryData;
     delete dto.testQualificationData;
     delete dto.protocolGasData;
-    delete dto.airEmissionTestData;
+    delete dto.airEmissionTestingData;
 
     return dto;
   }
@@ -283,7 +283,7 @@ export class TestSummaryWorkspaceService {
     delete dto.hgSummaryData;
     delete dto.testQualificationData;
     delete dto.protocolGasData;
-    delete dto.airEmissionTestData;
+    delete dto.airEmissionTestingData;
 
     return dto;
   }

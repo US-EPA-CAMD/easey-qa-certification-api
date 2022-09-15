@@ -47,7 +47,7 @@ export class TestSummaryService {
     delete dto.hgSummaryData;
     delete dto.testQualificationData;
     delete dto.protocolGasData;
-    delete dto.airEmissionTestData;
+    delete dto.airEmissionTestingData;
 
     return dto;
   }

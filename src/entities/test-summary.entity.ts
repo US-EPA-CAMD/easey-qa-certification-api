@@ -18,7 +18,7 @@ import { LinearitySummary } from './linearity-summary.entity';
 import { ProtocolGas } from './protocol-gas.entity';
 import { Rata } from './rata.entity';
 import { TestQualification } from './test-qualification.entity';
-import { AirEmissionTest } from './air-emission-test';
+import { AirEmissionTest } from './air-emission-test.entity';
 
 @Entity({ name: 'camdecmps.test_summary' })
 export class TestSummary extends BaseEntity {

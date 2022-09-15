@@ -63,7 +63,7 @@ const routes: Routes = [
             module: TestQualificationModule,
           },
           {
-            path: ':testSumId/air-emission-tests',
+            path: ':testSumId/air-emission-testings',
             module: AirEmissionTestModule,
           },
           {
@@ -109,7 +109,7 @@ const routes: Routes = [
             module: ProtocolGasWorkspaceModule,
           },
           {
-            path: ':testSumId/air-emission-tests',
+            path: ':testSumId/air-emission-testings',
             module: AirEmissionTestWorkspaceModule,
           },
           {

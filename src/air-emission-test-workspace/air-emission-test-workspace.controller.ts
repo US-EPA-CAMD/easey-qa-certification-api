@@ -1,5 +1,5 @@
 import { Body, Controller, Param, Post } from '@nestjs/common';
-import { ApiCreatedResponse } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import {
   AirEmissionTestBaseDTO,
   AirEmissionTestRecordDTO,
@@ -8,7 +8,9 @@ import { AirEmissionTestWorkspaceService } from './air-emission-test-workspace.s
 
 const userId = 'testUser';
 
-@Controller('air-emission-test-workspace')
+@Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Air Emission Testing')
 export class AirEmissionTestWorkspaceController {
   constructor(private readonly service: AirEmissionTestWorkspaceService) {}
 

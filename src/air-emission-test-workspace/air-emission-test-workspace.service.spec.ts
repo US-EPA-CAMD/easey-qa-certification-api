@@ -3,7 +3,7 @@ import {
   AirEmissionTestBaseDTO,
   AirEmissionTestDTO,
 } from '../dto/air-emission-test.dto';
-import { AirEmissionTest } from '../entities/workspace/air-emission-test';
+import { AirEmissionTest } from '../entities/workspace/air-emission-test.entity';
 import { AirEmissionTestMap } from '../maps/air-emission-test.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { AirEmissionTestWorkspaceRepository } from './air-emission-test-workspace.repository';

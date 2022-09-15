@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { AirEmissionTestDTO } from '../dto/air-emission-test.dto';
-import { AirEmissionTest } from '../entities/air-emission-test';
+import { AirEmissionTest } from '../entities/air-emission-test.entity';
 
 @Injectable()
 export class AirEmissionTestMap extends BaseMap<
