@@ -8,7 +8,7 @@ import { AirEmissionTestingWorkspaceService } from './air-emission-testing-works
 
 const locId = '';
 const testSumId = '';
-const userId = 'testUser';
+const airEmissiontestingId = '';
 
 const airEmissionTestingRecord = new AirEmissionTestingRecordDTO();
 
@@ -16,6 +16,9 @@ const payload = new AirEmissionTestingBaseDTO();
 
 const mockService = () => ({
   createAirEmissionTesting: jest
+    .fn()
+    .mockResolvedValue(airEmissionTestingRecord),
+  updateAirEmissionTesting: jest
     .fn()
     .mockResolvedValue(airEmissionTestingRecord),
 });
@@ -40,13 +43,26 @@ describe('AirEmissionTestingWorkspaceController', () => {
   });
 
   describe('createAirEmissionTesting', () => {
-    it('Calls the service to create a new Air Emission Test record', async () => {
+    it('Calls the service to create a new Air Emission Testing record', async () => {
       const result = await controller.createAirEmissionTesting(
         locId,
         testSumId,
         payload,
       );
       expect(result).toEqual(airEmissionTestingRecord);
+    });
+  });
+
+  describe('updateAirEmissionTesting', () => {
+    it('should call the updateAirEmissionTesting and update Air Emission Testing record', async () => {
+      expect(
+        await controller.updateAirEmissionTesting(
+          locId,
+          testSumId,
+          airEmissiontestingId,
+          payload,
+        ),
+      ).toEqual(airEmissionTestingRecord);
     });
   });
 });

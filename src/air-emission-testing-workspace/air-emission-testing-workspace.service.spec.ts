@@ -10,6 +10,7 @@ import { AirEmissionTestingWorkspaceRepository } from './air-emission-testing-wo
 import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
 
 const testSumId = '';
+const airEmissiontestingId = '';
 const historicalRecordId = '1';
 const userId = 'user';
 const entity = new AirEmissionTesting();
@@ -89,6 +90,35 @@ describe('AirEmissionTestingWorkspaceService', () => {
       );
 
       expect(result).toEqual(airEmissionTestingRecord);
+    });
+  });
+
+  describe('updateAirEmissionTesting', () => {
+    it('should update a Air Emission Testing', async () => {
+      const result = await service.updateAirEmissionTesting(
+        testSumId,
+        airEmissiontestingId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(airEmissionTestingRecord);
+    });
+
+    it('should throw error with invalid Air Emission Testing', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.updateAirEmissionTesting(
+          testSumId,
+          airEmissiontestingId,
+          payload,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
     });
   });
 });
