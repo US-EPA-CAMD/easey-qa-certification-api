@@ -1,32 +1,32 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  AirEmissionTestBaseDTO,
-  AirEmissionTestRecordDTO,
-} from 'src/dto/air-emission-test.dto';
-import { AirEmissionTestMap } from '../maps/air-emission-test.map';
+  AirEmissionTestingBaseDTO,
+  AirEmissionTestingRecordDTO,
+} from '../dto/air-emission-test.dto';
+import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AirEmissionTestWorkspaceRepository } from './air-emission-test-workspace.repository';
+import { AirEmissionTestingWorkspaceRepository } from './air-emission-testing-workspace.repository';
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
 
 @Injectable()
-export class AirEmissionTestWorkspaceService {
+export class AirEmissionTestingWorkspaceService {
   constructor(
-    private readonly map: AirEmissionTestMap,
+    private readonly map: AirEmissionTestingMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(AirEmissionTestWorkspaceRepository)
-    private readonly repository: AirEmissionTestWorkspaceRepository,
+    @InjectRepository(AirEmissionTestingWorkspaceRepository)
+    private readonly repository: AirEmissionTestingWorkspaceRepository,
   ) {}
 
-  async createAirEmissionTest(
+  async createAirEmissionTesting(
     testSumId: string,
-    payload: AirEmissionTestBaseDTO,
+    payload: AirEmissionTestingBaseDTO,
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
-  ): Promise<AirEmissionTestRecordDTO> {
+  ): Promise<AirEmissionTestingRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({

@@ -13,7 +13,7 @@ import { RataChecksService } from '../rata-workspace/rata-checks.service';
 import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary-checks.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
-import { QASuppData } from 'src/entities/workspace/qa-supp-data.entity';
+import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 
 @Injectable()
 export class QACertificationChecksService {

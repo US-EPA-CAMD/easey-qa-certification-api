@@ -1,10 +1,10 @@
-import { AirEmissionTest } from '../entities/air-emission-test.entity';
-import { AirEmissionTestMap } from './air-emission-test.map';
+import { AirEmissionTesting } from '../entities/air-emission-test.entity';
+import { AirEmissionTestingMap } from './air-emission-testing.map';
 
 const string = '';
 const date = new Date();
 
-const entity = new AirEmissionTest();
+const entity = new AirEmissionTesting();
 entity.id = string;
 entity.testSumId = string;
 
@@ -22,9 +22,9 @@ entity.userId = string;
 entity.addDate = date;
 entity.updateDate = date;
 
-describe('AirEmissionTestMap', () => {
+describe('AirEmissionTestingMap', () => {
   it('should map an entity to a dto', async () => {
-    const map = new AirEmissionTestMap();
+    const map = new AirEmissionTestingMap();
     const result = await map.one(entity);
     expect(result.id).toEqual(string);
     expect(result.testSumId).toEqual(string);
@@ -48,7 +48,7 @@ describe('AirEmissionTestMap', () => {
     entity.addDate = undefined;
     entity.updateDate = undefined;
 
-    const map = new AirEmissionTestMap();
+    const map = new AirEmissionTestingMap();
     const result = await map.one(entity);
 
     expect(result.addDate).toEqual(null);

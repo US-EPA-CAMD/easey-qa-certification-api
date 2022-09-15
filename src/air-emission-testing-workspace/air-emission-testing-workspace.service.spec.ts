@@ -1,21 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
-  AirEmissionTestBaseDTO,
-  AirEmissionTestDTO,
+  AirEmissionTestingBaseDTO,
+  AirEmissionTestingDTO,
 } from '../dto/air-emission-test.dto';
-import { AirEmissionTest } from '../entities/workspace/air-emission-test.entity';
-import { AirEmissionTestMap } from '../maps/air-emission-test.map';
+import { AirEmissionTesting } from '../entities/workspace/air-emission-test.entity';
+import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AirEmissionTestWorkspaceRepository } from './air-emission-test-workspace.repository';
-import { AirEmissionTestWorkspaceService } from './air-emission-test-workspace.service';
+import { AirEmissionTestingWorkspaceRepository } from './air-emission-testing-workspace.repository';
+import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
 
 const testSumId = '';
 const historicalRecordId = '1';
 const userId = 'user';
-const entity = new AirEmissionTest();
-const airEmissionTestRecord = new AirEmissionTestDTO();
+const entity = new AirEmissionTesting();
+const airEmissionTestingRecord = new AirEmissionTestingDTO();
 
-const payload: AirEmissionTestBaseDTO = new AirEmissionTestBaseDTO();
+const payload: AirEmissionTestingBaseDTO = new AirEmissionTestingBaseDTO();
 
 const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(entity),
@@ -24,63 +24,63 @@ const mockRepository = () => ({
 });
 
 const mockMap = () => ({
-  one: jest.fn().mockResolvedValue(airEmissionTestRecord),
-  many: jest.fn().mockResolvedValue([airEmissionTestRecord]),
+  one: jest.fn().mockResolvedValue(airEmissionTestingRecord),
+  many: jest.fn().mockResolvedValue([airEmissionTestingRecord]),
 });
 
 const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
-describe('AirEmissionTestWorkspaceService', () => {
-  let service: AirEmissionTestWorkspaceService;
+describe('AirEmissionTestingWorkspaceService', () => {
+  let service: AirEmissionTestingWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
-  let repository: AirEmissionTestWorkspaceRepository;
+  let repository: AirEmissionTestingWorkspaceRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AirEmissionTestWorkspaceService,
+        AirEmissionTestingWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSumService,
         },
         {
-          provide: AirEmissionTestWorkspaceRepository,
+          provide: AirEmissionTestingWorkspaceRepository,
           useFactory: mockRepository,
         },
         {
-          provide: AirEmissionTestMap,
+          provide: AirEmissionTestingMap,
           useFactory: mockMap,
         },
       ],
     }).compile();
 
-    service = module.get<AirEmissionTestWorkspaceService>(
-      AirEmissionTestWorkspaceService,
+    service = module.get<AirEmissionTestingWorkspaceService>(
+      AirEmissionTestingWorkspaceService,
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
       TestSummaryWorkspaceService,
     );
-    repository = module.get<AirEmissionTestWorkspaceRepository>(
-      AirEmissionTestWorkspaceRepository,
+    repository = module.get<AirEmissionTestingWorkspaceRepository>(
+      AirEmissionTestingWorkspaceRepository,
     );
   });
 
-  describe('createAirEmissionTest', () => {
+  describe('createAirEmissionTesting', () => {
     it('Should create and return a new Air Emission Test record', async () => {
-      const result = await service.createAirEmissionTest(
+      const result = await service.createAirEmissionTesting(
         testSumId,
         payload,
         userId,
       );
 
-      expect(result).toEqual(airEmissionTestRecord);
+      expect(result).toEqual(airEmissionTestingRecord);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
 
     it('Should create and return a new Air Emission Test record using historical Record id', async () => {
-      const result = await service.createAirEmissionTest(
+      const result = await service.createAirEmissionTesting(
         testSumId,
         payload,
         userId,
@@ -88,7 +88,7 @@ describe('AirEmissionTestWorkspaceService', () => {
         historicalRecordId,
       );
 
-      expect(result).toEqual(airEmissionTestRecord);
+      expect(result).toEqual(airEmissionTestingRecord);
     });
   });
 });

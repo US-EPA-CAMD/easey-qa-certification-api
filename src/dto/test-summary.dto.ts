@@ -24,8 +24,8 @@ import { RataDTO, RataImportDTO } from './rata.dto';
 import { HgSummaryDTO, HgSummaryImportDTO } from './hg-summary.dto';
 import { ProtocolGasDTO, ProtocolGasImportDTO } from './protocol-gas.dto';
 import {
-  AirEmissionTestDTO,
-  AirEmissionTestImportDTO,
+  AirEmissionTestingDTO,
+  AirEmissionTestingImportDTO,
 } from './air-emission-test.dto';
 import {
   UnitDefaultTestDTO,
@@ -449,7 +449,7 @@ export class TestSummaryImportDTO extends TestSummaryBaseDTO {
   hgSummaryData: HgSummaryImportDTO[];
   testQualificationData: TestQualificationImportDTO[];
   protocolGasData: ProtocolGasImportDTO[];
-  airEmissionTestingData: AirEmissionTestImportDTO[];
+  airEmissionTestingData: AirEmissionTestingImportDTO[];
 }
 
 export class TestSummaryDTO extends TestSummaryRecordDTO {
@@ -469,5 +469,5 @@ export class TestSummaryDTO extends TestSummaryRecordDTO {
   hgSummaryData: HgSummaryDTO[];
   testQualificationData: TestQualificationDTO[];
   protocolGasData: ProtocolGasDTO[];
-  airEmissionTestingData: AirEmissionTestDTO[];
+  airEmissionTestingData: AirEmissionTestingDTO[];
 }

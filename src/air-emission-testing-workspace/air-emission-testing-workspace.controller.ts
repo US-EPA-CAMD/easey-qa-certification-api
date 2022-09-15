@@ -1,32 +1,32 @@
 import { Body, Controller, Param, Post } from '@nestjs/common';
 import { ApiCreatedResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import {
-  AirEmissionTestBaseDTO,
-  AirEmissionTestRecordDTO,
+  AirEmissionTestingBaseDTO,
+  AirEmissionTestingRecordDTO,
 } from '../dto/air-emission-test.dto';
-import { AirEmissionTestWorkspaceService } from './air-emission-test-workspace.service';
+import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
 
 const userId = 'testUser';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Air Emission Testing')
-export class AirEmissionTestWorkspaceController {
-  constructor(private readonly service: AirEmissionTestWorkspaceService) {}
+export class AirEmissionTestingWorkspaceController {
+  constructor(private readonly service: AirEmissionTestingWorkspaceService) {}
 
   @Post()
   //  @ApiBearerAuth('Token')
   //  @UseGuards(AuthGuard)
   @ApiCreatedResponse({
-    type: AirEmissionTestRecordDTO,
+    type: AirEmissionTestingRecordDTO,
     description: 'Creates a workspace Test Qualification record.',
   })
-  async createAirEmissionTest(
+  async createAirEmissionTesting(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-    @Body() payload: AirEmissionTestBaseDTO,
+    @Body() payload: AirEmissionTestingBaseDTO,
     //    @CurrentUser() userId: string,
-  ): Promise<AirEmissionTestRecordDTO> {
-    return this.service.createAirEmissionTest(testSumId, payload, userId);
+  ): Promise<AirEmissionTestingRecordDTO> {
+    return this.service.createAirEmissionTesting(testSumId, payload, userId);
   }
 }

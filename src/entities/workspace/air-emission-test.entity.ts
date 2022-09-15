@@ -11,7 +11,7 @@ import { TestSummary } from './test-summary.entity';
 @Entity({
   name: 'camdecmpswks.air_emission_testing',
 })
-export class AirEmissionTest extends BaseEntity {
+export class AirEmissionTesting extends BaseEntity {
   @PrimaryColumn({
     type: 'varchar',
     name: 'air_emission_test_id',
@@ -99,7 +99,7 @@ export class AirEmissionTest extends BaseEntity {
 
   @ManyToOne(
     () => TestSummary,
-    o => o.airEmissionTests,
+    o => o.airEmissionTestings,
   )
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
