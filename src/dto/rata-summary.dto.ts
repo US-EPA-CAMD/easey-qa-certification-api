@@ -26,7 +26,7 @@ export class RataSummaryBaseDTO {
   operatingLevelCode: string;
 
   @ApiProperty(
-    getMetadata(dataDictionary.averageGrossUnitLoad, MetadataKeys.RATA_SUMMARY)
+    getMetadata(dataDictionary.averageGrossUnitLoad, MetadataKeys.RATA_SUMMARY),
   )
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -116,7 +116,7 @@ export class RataSummaryBaseDTO {
   tValue: number;
 
   @ApiProperty(
-    getMetadata(dataDictionary.apsIndicator, MetadataKeys.RATA_SUMMARY)
+    getMetadata(dataDictionary.apsIndicator, MetadataKeys.RATA_SUMMARY),
   )
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -125,9 +125,7 @@ export class RataSummaryBaseDTO {
   })
   apsIndicator: number;
 
-  @ApiProperty(
-    getMetadata(dataDictionary.apsCode, MetadataKeys.RATA_SUMMARY)
-  )
+  @ApiProperty(getMetadata(dataDictionary.apsCode, MetadataKeys.RATA_SUMMARY))
   @IsValidCode(ApsCode, {
     message: (args: ValidationArguments) => {
       return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;

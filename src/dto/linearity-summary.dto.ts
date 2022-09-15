@@ -68,7 +68,7 @@ export class LinearitySummaryBaseDTO {
   percentError: number;
 
   @ApiProperty(
-    getMetadata(dataDictionary.apsIndicator, MetadataKeys.LINEARITY_SUMMARY)
+    getMetadata(dataDictionary.apsIndicator, MetadataKeys.LINEARITY_SUMMARY),
   )
   @IsNotEmpty({
     message: (args: ValidationArguments) => {

@@ -37,7 +37,10 @@ export class TestSummaryParamsDTO {
   testTypeCodes?: string[];
 
   @ApiProperty({
-    description: getMetadata(dataDictionary.beginDate, MetadataKeys.TEST_SUMMARY).description,
+    description: getMetadata(
+      dataDictionary.beginDate,
+      MetadataKeys.TEST_SUMMARY,
+    ).description,
   })
   @IsValidDate({
     message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`,
