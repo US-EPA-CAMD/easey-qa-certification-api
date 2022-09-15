@@ -21,6 +21,7 @@ const mockService = () => ({
   updateAirEmissionTesting: jest
     .fn()
     .mockResolvedValue(airEmissionTestingRecord),
+  deleteAirEmissionTesting: jest.fn().mockResolvedValue(null),
 });
 
 describe('AirEmissionTestingWorkspaceController', () => {
@@ -63,6 +64,17 @@ describe('AirEmissionTestingWorkspaceController', () => {
           payload,
         ),
       ).toEqual(airEmissionTestingRecord);
+    });
+  });
+
+  describe('deleteAirEmissionTesting', () => {
+    it('should call the RataService.deleteAirEmissionTesting and delete Air Emission Testing record', async () => {
+      const result = await controller.deleteAirEmissionTesting(
+        locId,
+        testSumId,
+        airEmissiontestingId,
+      );
+      expect(result).toEqual(null);
     });
   });
 });

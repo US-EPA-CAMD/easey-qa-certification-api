@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -36,6 +36,8 @@ export class AirEmissionTestingWorkspaceController {
   }
 
   @Put(':id')
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
   @ApiOkResponse({
     type: AirEmissionTestingRecordDTO,
     description: 'Updates a workspace Air Emission Testing record',
@@ -53,5 +55,20 @@ export class AirEmissionTestingWorkspaceController {
       payload,
       userId,
     );
+  }
+
+  @Delete(':id')
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    description: 'Deletes a workspace Air Emission Testing record',
+  })
+  async deleteAirEmissionTesting(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    //    @CurrentUser() userId: string,
+  ): Promise<void> {
+    return this.service.deleteAirEmissionTesting(testSumId, id, userId);
   }
 }
