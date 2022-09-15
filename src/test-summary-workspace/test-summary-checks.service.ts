@@ -304,7 +304,7 @@ export class TestSummaryChecksService {
         TestTypeCodes.APPE.toString(),
         TestTypeCodes.UNITDEF.toString(),
       ].includes(summary.testTypeCode) &&
-      summary.airEmissionTestData?.length > 0
+      summary.airEmissionTestingData?.length > 0
     ) {
       invalidChildRecords.push('Air Emission Test');
     }

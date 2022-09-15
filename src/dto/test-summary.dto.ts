@@ -250,9 +250,7 @@ export class TestSummaryBaseDTO {
   )
   testResultCode?: string;
 
-  @ApiProperty(
-    getMetadata(dataDictionary.beginDate, MetadataKeys.TEST_SUMMARY)
-  )
+  @ApiProperty(getMetadata(dataDictionary.beginDate, MetadataKeys.TEST_SUMMARY))
   @IsNotEmpty({
     message: `You did not provide [beginDate], which is required for [${KEY}].`,
   })
@@ -451,7 +449,7 @@ export class TestSummaryImportDTO extends TestSummaryBaseDTO {
   hgSummaryData: HgSummaryImportDTO[];
   testQualificationData: TestQualificationImportDTO[];
   protocolGasData: ProtocolGasImportDTO[];
-  airEmissionTestData: AirEmissionTestImportDTO[];
+  airEmissionTestingData: AirEmissionTestImportDTO[];
 }
 
 export class TestSummaryDTO extends TestSummaryRecordDTO {
@@ -471,5 +469,5 @@ export class TestSummaryDTO extends TestSummaryRecordDTO {
   hgSummaryData: HgSummaryDTO[];
   testQualificationData: TestQualificationDTO[];
   protocolGasData: ProtocolGasDTO[];
-  airEmissionTestData: AirEmissionTestDTO[];
+  airEmissionTestingData: AirEmissionTestDTO[];
 }

@@ -77,7 +77,8 @@ export class QACertificationParamsDTO {
   testTypeCodes?: string[];
 
   @ApiProperty({
-    description: getMetadata(dataDictionary.beginDate, MetadataKeys.DEFAULT).description,
+    description: getMetadata(dataDictionary.beginDate, MetadataKeys.DEFAULT)
+      .description,
   })
   @IsValidDate({
     message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`,

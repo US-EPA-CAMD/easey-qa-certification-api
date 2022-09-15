@@ -11,6 +11,7 @@ import { TestSummaryService } from './test-summary.service';
 import { TestSummaryMap } from '../maps/test-summary.map';
 import { RataModule } from '../rata/rata.module';
 import { TestQualificationModule } from '../test-qualification/test-qualification.module';
+import { AirEmissionTestModule } from 'src/air-emission-test/air-emission-test.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { TestQualificationModule } from '../test-qualification/test-qualificatio
     ProtocolGasModule,
     RataModule,
     TestQualificationModule,
+    AirEmissionTestModule,
   ],
   controllers: [TestSummaryController],
   providers: [TestSummaryMap, TestSummaryService],

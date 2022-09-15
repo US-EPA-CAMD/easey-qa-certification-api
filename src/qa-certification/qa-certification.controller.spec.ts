@@ -19,6 +19,7 @@ import { RataMap } from '../maps/rata.map';
 import { RataSummaryMap } from '../maps/rata-summary.map';
 import { RataRunMap } from '../maps/rata-run.map';
 import { TestQualificationMap } from '../maps/test-qualification.map';
+import { AirEmissionTestMap } from '../maps/air-emission-test.map';
 
 describe('QA Certification Controller Test', () => {
   let controller: QACertificationController;
@@ -46,6 +47,7 @@ describe('QA Certification Controller Test', () => {
         RataSummaryMap,
         RataRunMap,
         TestQualificationMap,
+        AirEmissionTestMap,
       ],
     }).compile();
 
