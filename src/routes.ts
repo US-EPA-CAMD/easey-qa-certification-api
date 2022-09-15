@@ -24,6 +24,8 @@ import { RataRunModule } from './rata-run/rata-run.module';
 import { RataRunWorkspaceModule } from './rata-run-workspace/rata-run.module';
 import { TestQualificationModule } from './test-qualification/test-qualification.module';
 import { TestQualificationWorkspaceModule } from './test-qualification-workspace/test-qualification-workspace.module';
+import { AirEmissionTestModule } from './air-emission-test/air-emission-test.module';
+import { AirEmissionTestWorkspaceModule } from './air-emission-test-workspace/air-emission-test-workspace.module';
 
 const routes: Routes = [
   {
@@ -59,6 +61,10 @@ const routes: Routes = [
           {
             path: ':testSumId/test-qualifications',
             module: TestQualificationModule,
+          },
+          {
+            path: ':testSumId/air-emission-tests',
+            module: AirEmissionTestModule,
           },
           {
             path: ':testSumId/rata',
@@ -101,6 +107,10 @@ const routes: Routes = [
           {
             path: ':testSumId/protocol-gases',
             module: ProtocolGasWorkspaceModule,
+          },
+          {
+            path: ':testSumId/air-emission-tests',
+            module: AirEmissionTestWorkspaceModule,
           },
           {
             path: ':testSumId/test-qualifications',

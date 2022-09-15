@@ -28,6 +28,8 @@ import { RataRunModule } from './rata-run/rata-run.module';
 import { RataRunWorkspaceModule } from './rata-run-workspace/rata-run.module';
 import { TestQualificationModule } from './test-qualification/test-qualification.module';
 import { TestQualificationWorkspaceModule } from './test-qualification-workspace/test-qualification-workspace.module';
+import { AirEmissionTestWorkspaceModule } from './air-emission-test-workspace/air-emission-test-workspace.module';
+import { AirEmissionTestModule } from './air-emission-test/air-emission-test.module';
 
 @Module({
   imports: [
@@ -57,6 +59,8 @@ import { TestQualificationWorkspaceModule } from './test-qualification-workspace
     RataRunWorkspaceModule,
     TestQualificationModule,
     TestQualificationWorkspaceModule,
+    AirEmissionTestWorkspaceModule,
+    AirEmissionTestModule,
   ],
 })
 export class AppModule {}

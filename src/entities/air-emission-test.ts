@@ -83,13 +83,13 @@ export class AirEmissionTest extends BaseEntity {
     type: 'time without time zone',
     name: 'add_date',
   })
-  addDate: string;
+  addDate: Date;
 
   @Column({
     type: 'time without time zone',
     name: 'update_date',
   })
-  updateDate: string;
+  updateDate: Date;
 
   @Column({
     type: 'varchar',

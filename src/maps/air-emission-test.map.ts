@@ -13,6 +13,7 @@ export class AirEmissionTestMap extends BaseMap<
     return {
       id: entity.id,
       testSumId: entity.testSumId,
+
       qiLastName: entity.qiLastName,
       qiFirstName: entity.qiFirstName,
       qiMiddleInitial: entity.qiMiddleInitial,
@@ -22,9 +23,10 @@ export class AirEmissionTestMap extends BaseMap<
       examDate: entity.examDate,
       providerName: entity.providerName,
       providerEmail: entity.providerEmail,
+
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
+      updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
     };
   }
 }
