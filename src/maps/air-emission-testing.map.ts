@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
-import { AirEmissionTestDTO } from '../dto/air-emission-test.dto';
-import { AirEmissionTest } from '../entities/air-emission-test.entity';
+import { AirEmissionTestingDTO } from '../dto/air-emission-test.dto';
+import { AirEmissionTesting } from '../entities/air-emission-test.entity';
 
 @Injectable()
-export class AirEmissionTestMap extends BaseMap<
-  AirEmissionTest,
-  AirEmissionTestDTO
+export class AirEmissionTestingMap extends BaseMap<
+  AirEmissionTesting,
+  AirEmissionTestingDTO
 > {
-  public async one(entity: AirEmissionTest): Promise<AirEmissionTestDTO> {
+  public async one(entity: AirEmissionTesting): Promise<AirEmissionTestingDTO> {
     return {
       id: entity.id,
       testSumId: entity.testSumId,

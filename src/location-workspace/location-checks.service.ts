@@ -6,7 +6,7 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 import { LocationWorkspaceRepository } from './location.repository';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
-import { QACertificationImportDTO } from 'src/dto/qa-certification.dto';
+import { QACertificationImportDTO } from '../dto/qa-certification.dto';
 
 @Injectable()
 export class LocationChecksService {

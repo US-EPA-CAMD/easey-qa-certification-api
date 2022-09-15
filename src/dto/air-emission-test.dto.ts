@@ -1,4 +1,4 @@
-export class AirEmissionTestBaseDTO {
+export class AirEmissionTestingBaseDTO {
   qiLastName: string;
   qiFirstName: string;
   qiMiddleInitial: string;
@@ -10,7 +10,7 @@ export class AirEmissionTestBaseDTO {
   providerEmail: string;
 }
 
-export class AirEmissionTestRecordDTO extends AirEmissionTestBaseDTO {
+export class AirEmissionTestingRecordDTO extends AirEmissionTestingBaseDTO {
   id: string;
   testSumId: string;
   userId: string;
@@ -18,6 +18,6 @@ export class AirEmissionTestRecordDTO extends AirEmissionTestBaseDTO {
   updateDate: string;
 }
 
-export class AirEmissionTestImportDTO extends AirEmissionTestBaseDTO {}
+export class AirEmissionTestingImportDTO extends AirEmissionTestingBaseDTO {}
 
-export class AirEmissionTestDTO extends AirEmissionTestRecordDTO {}
+export class AirEmissionTestingDTO extends AirEmissionTestingRecordDTO {}
