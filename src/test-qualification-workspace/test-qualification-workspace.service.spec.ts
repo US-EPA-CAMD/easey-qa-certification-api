@@ -8,6 +8,8 @@ import { TestQualification } from '../entities/workspace/test-qualification.enti
 import { TestQualificationMap } from '../maps/test-qualification.map';
 import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
 import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { HttpStatus } from '@nestjs/common/enums';
 
 const testSumId = '';
 const testQualificationId = 'a1b2c3';
@@ -30,6 +32,7 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
+  delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
@@ -116,6 +119,29 @@ describe('TestQualificationWorkspaceService', () => {
       const results = await service.getTestQualifications(testSumId);
       expect(results).toEqual(testQualifications);
       expect(repository.find).toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteTestQualification', () => {
+    it('Should delete a Test Qualification record', async () => {
+      const result = await service.deleteTestQualification(testSumId, testQualificationId, userId);
+      expect(result).toEqual(undefined);
+    });
+
+    it('Should through error while deleting a Test Qualification record', async () => {
+      const error = new LoggingException(
+        `Error deleting Test Qualification with record Id [${testSumId}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+      jest.spyOn(repository, 'delete').mockRejectedValue(error);
+
+      let errored = false;
+      try {
+        await service.deleteTestQualification(testSumId, testQualificationId, userId);
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
     });
   });
 });
