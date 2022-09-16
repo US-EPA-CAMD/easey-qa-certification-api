@@ -74,7 +74,14 @@ export class RataSummaryWorkspaceController {
     @Body() payload: RataSummaryBaseDTO,
     //    @CurrentUser() userId: string,
   ): Promise<RataSummaryRecordDTO> {
-    await this.checksService.runChecks(locationId, payload, testSumId);
+    await this.checksService.runChecks(
+      locationId,
+      payload,
+      false,
+      false,
+      rataId,
+      testSumId,
+    );
     return this.service.createRataSummary(testSumId, rataId, payload, userId);
   }
 
@@ -88,7 +95,7 @@ export class RataSummaryWorkspaceController {
   async updateRataSummary(
     @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
-    @Param('rataId') _rataId: string,
+    @Param('rataId') rataId: string,
     @Param('id') id: string,
     @Body() payload: RataSummaryBaseDTO,
     //    @CurrentUser() userId: string,
@@ -96,9 +103,10 @@ export class RataSummaryWorkspaceController {
     await this.checksService.runChecks(
       locationId,
       payload,
-      testSumId,
       false,
       true,
+      rataId,
+      testSumId,
     );
     return this.service.updateRataSummary(testSumId, id, payload, userId);
   }

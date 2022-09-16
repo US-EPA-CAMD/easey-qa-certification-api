@@ -10,6 +10,9 @@ import {
 } from '../dto/rata-summary.dto';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
+import { RataSummary } from '../entities/workspace/rata-summary.entity';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 const KEY = 'RATA Summary';
 
@@ -17,6 +20,8 @@ const KEY = 'RATA Summary';
 export class RataSummaryChecksService {
   constructor(
     private readonly logger: Logger,
+    @InjectRepository(RataSummaryWorkspaceRepository)
+    private readonly repository: RataSummaryWorkspaceRepository,
     @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
     @InjectRepository(MonitorSystemRepository)
@@ -32,9 +37,11 @@ export class RataSummaryChecksService {
   async runChecks(
     locationId: string,
     rataSummary: RataSummaryBaseDTO | RataSummaryImportDTO,
-    testSumId?: string,
     isImport: boolean = false,
-    _isUpdate: boolean = false,
+    isUpdate: boolean = false,
+    rataId?: string,
+    testSumId?: string,
+    rataSummaries?: RataSummaryImportDTO[],
     testSummary?: TestSummaryImportDTO,
   ): Promise<string[]> {
     let error: string = null;
@@ -61,6 +68,19 @@ export class RataSummaryChecksService {
       errorList.push(error);
     }
 
+    if (!isUpdate) {
+      // RATA-107 Duplicate RATA Summary
+      error = await this.rata107Check(
+        rataSummary,
+        isImport,
+        rataId,
+        rataSummaries,
+      );
+      if (error) {
+        errorList.push(error);
+      }
+    }
+
     this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed RATA Summary Checks');
     return errorList;
@@ -80,6 +100,43 @@ export class RataSummaryChecksService {
       error = `[RATA-17-B] You defined an invalid [meanCEMValue] for [${KEY}]. This value must be greater than zero and less than 20,000.`;
     }
 
+    return error;
+  }
+
+  private async rata107Check(
+    rataSummary: RataSummaryBaseDTO | RataSummaryImportDTO,
+    isImport: boolean,
+    rataId: string,
+    rataSummaries: RataSummaryImportDTO[],
+  ): Promise<string> {
+    let error: string = null;
+    let duplicates: RataSummary[] | RataSummaryBaseDTO[];
+
+    if (rataId && !isImport) {
+      duplicates = await this.repository.find({
+        rataId: rataId,
+        operatingLevelCode: rataSummary.operatingLevelCode,
+      });
+      if (duplicates.length > 0) {
+        error = CheckCatalogService.formatResultMessage('RATA-107-A', {
+          recordtype: KEY,
+          fieldnames: 'operatingLevelCode',
+        });
+      }
+    }
+
+    if (rataSummaries.length > 1 && isImport) {
+      const duplicates = rataSummaries.map(
+        rs => rs.operatingLevelCode === rataSummary.operatingLevelCode,
+      );
+
+      if (duplicates.length > 1) {
+        error = CheckCatalogService.formatResultMessage('RATA-107-A', {
+          recordtype: KEY,
+          fieldnames: 'operatingLevelCode',
+        });
+      }
+    }
     return error;
   }
 }

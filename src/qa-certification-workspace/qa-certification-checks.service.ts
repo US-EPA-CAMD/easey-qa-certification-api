@@ -129,12 +129,12 @@ export class QACertificationChecksService {
         });
       });
 
-      summary.rataData?.forEach(rataData => {
+      summary.rataData?.forEach(rata => {
         promises.push(
           new Promise(async (resolve, _reject) => {
             const results = this.rataChecksService.runChecks(
               locationId,
-              rataData,
+              rata,
               null,
               true,
               false,
@@ -145,15 +145,17 @@ export class QACertificationChecksService {
           }),
         );
 
-        rataData.rataSummaryData?.forEach(rataSummary => {
+        rata.rataSummaryData?.forEach(rataSummary => {
           promises.push(
             new Promise(async (resolve, _reject) => {
               const results = this.rataSummaryChecksService.runChecks(
                 locationId,
                 rataSummary,
-                null,
                 true,
                 false,
+                null,
+                null,
+                rata.rataSummaryData,
                 summary,
               );
 
