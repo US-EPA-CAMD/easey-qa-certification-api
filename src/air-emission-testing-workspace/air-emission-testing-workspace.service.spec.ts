@@ -1,4 +1,6 @@
+import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
   AirEmissionTestingBaseDTO,
   AirEmissionTestingDTO,
@@ -22,6 +24,7 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
+  delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
@@ -94,7 +97,7 @@ describe('AirEmissionTestingWorkspaceService', () => {
   });
 
   describe('updateAirEmissionTesting', () => {
-    it('should update a Air Emission Testing', async () => {
+    it('should update a Air Emission Testing record', async () => {
       const result = await service.updateAirEmissionTesting(
         testSumId,
         airEmissiontestingId,
@@ -113,6 +116,37 @@ describe('AirEmissionTestingWorkspaceService', () => {
           testSumId,
           airEmissiontestingId,
           payload,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteAirEmissionTesting', () => {
+    it('Should delete a Air Emission Testing record', async () => {
+      const result = await service.deleteAirEmissionTesting(
+        testSumId,
+        airEmissiontestingId,
+        userId,
+      );
+      expect(result).toEqual(undefined);
+    });
+
+    it('Should through error while deleting a Air Emission Testing record', async () => {
+      const error = new LoggingException(
+        `Error deleting RATA with record Id [${airEmissiontestingId}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+      jest.spyOn(repository, 'delete').mockRejectedValue(error);
+
+      let errored = false;
+      try {
+        await service.deleteAirEmissionTesting(
+          testSumId,
+          airEmissiontestingId,
           userId,
         );
       } catch (e) {
