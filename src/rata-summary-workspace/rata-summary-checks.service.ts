@@ -93,11 +93,17 @@ export class RataSummaryChecksService {
     let error: string = null;
 
     if (testSumRecord.system?.systemTypeCode === 'HG' && meanCEMValue === 0) {
-      error = `[RATA-17-C] You reported a [meanCEMValue] of zero for [${KEY}]`;
+      error = CheckCatalogService.formatResultMessage('RATA-17-C', {
+        key: KEY,
+        fieldname: 'meanCEMValue',
+      });
     }
 
     if (meanCEMValue < 0) {
-      error = `[RATA-17-B] You defined an invalid [meanCEMValue] for [${KEY}]. This value must be greater than zero and less than 20,000.`;
+      error = CheckCatalogService.formatResultMessage('RATA-17-B', {
+        key: KEY,
+        fieldname: 'meanCEMValue',
+      });
     }
 
     return error;
@@ -126,7 +132,7 @@ export class RataSummaryChecksService {
     }
 
     if (rataSummaries.length > 1 && isImport) {
-      const duplicates = rataSummaries.map(
+      duplicates = rataSummaries.filter(
         rs => rs.operatingLevelCode === rataSummary.operatingLevelCode,
       );
 
