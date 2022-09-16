@@ -13,7 +13,7 @@ import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.reposit
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
-import { RataRunWorkspaceService } from '../rata-run-workspace/rata-run.service';
+import { RataRunWorkspaceService } from '../rata-run-workspace/rata-run-workspace.service';
 
 @Injectable()
 export class RataSummaryWorkspaceService {
@@ -23,7 +23,7 @@ export class RataSummaryWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(RataSummaryWorkspaceRepository)
     private readonly repository: RataSummaryWorkspaceRepository,
-
+    @Inject(forwardRef(() => RataRunWorkspaceService))
     private readonly rataRunService: RataRunWorkspaceService,
   ) {}
 

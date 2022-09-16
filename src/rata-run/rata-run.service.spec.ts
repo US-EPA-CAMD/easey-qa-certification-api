@@ -44,10 +44,6 @@ describe('RataRunService', () => {
     repository = module.get<RataRunRepository>(RataRunRepository);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('getRataRun', () => {
     it('Calls repository.findOne({id}) to get a single Rata Run record', async () => {
       const result = await service.getRataRun(rataRunId);
@@ -75,6 +71,23 @@ describe('RataRunService', () => {
       const result = await service.getRataRuns(rataSumId);
       expect(result).toEqual([rataRun]);
       expect(repository.find).toHaveBeenCalled();
+    });
+  });
+
+  describe('getRataRunsByRataSumIds', () => {
+    it('Should get Rata Run records by rata summary ids', async () => {
+      const result = await service.getRataRunsByRataSumIds([rataSumId]);
+      expect(result).toEqual([rataRunDTO]);
+    });
+  });
+
+  describe('Export', () => {
+    it('Should Export Rata Run', async () => {
+      jest
+        .spyOn(service, 'getRataRunsByRataSumIds')
+        .mockResolvedValue([rataRunDTO]);
+      const result = await service.export([rataSumId]);
+      expect(result).toEqual([rataRunDTO]);
     });
   });
 });

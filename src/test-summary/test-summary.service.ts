@@ -1,4 +1,10 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  forwardRef,
+  HttpStatus,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -15,7 +21,9 @@ export class TestSummaryService {
   constructor(
     private readonly logger: Logger,
     private readonly map: TestSummaryMap,
+    @Inject(forwardRef(() => LinearitySummaryService))
     private readonly linearityService: LinearitySummaryService,
+    @Inject(forwardRef(() => RataService))
     private readonly rataService: RataService,
     @InjectRepository(TestSummaryRepository)
     private readonly repository: TestSummaryRepository,
@@ -117,14 +125,17 @@ export class TestSummaryService {
       new Promise(async (resolve, _reject) => {
         let linearitySummaryData,
           rataData = null;
-        const testSumIds = testSummaries
-          .filter(i => testTypeCodes.includes(i.testTypeCode))
-          .map(i => i.id);
+        let testSumIds;
+        if (testTypeCodes?.length > 0) {
+          testSumIds = testSummaries.filter(i =>
+            testTypeCodes.includes(i.testTypeCode),
+          );
+        }
+        testSumIds = testSummaries.map(i => i.id);
 
         if (testSumIds) {
           linearitySummaryData = await this.linearityService.export(testSumIds);
           rataData = await this.rataService.export(testSumIds);
-          console.log('rataData', rataData);
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
