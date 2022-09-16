@@ -124,6 +124,7 @@ describe('TestQualificationWorkspaceService', () => {
     });
   });
 
+<<<<<<< HEAD
   describe('deleteTestQualification', () => {
     it('Should delete a Test Qualification record', async () => {
       const result = await service.deleteTestQualification(testSumId, testQualificationId, userId);
@@ -140,6 +141,24 @@ describe('TestQualificationWorkspaceService', () => {
       let errored = false;
       try {
         await service.deleteTestQualification(testSumId, testQualificationId, userId);
+=======
+  describe('updateTestQualification', () => {
+    it('should update a test qualification record', async () => {
+      const result = await service.updateTestQualification(
+        testSumId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(record);
+    });
+
+    it('should throw error with invalid test qualification record id', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.updateTestQualification(testSumId, payload, userId);
+>>>>>>> 1f0eaef (feat: add EDIT endpoint for test-qualification)
       } catch (e) {
         errored = true;
       }
