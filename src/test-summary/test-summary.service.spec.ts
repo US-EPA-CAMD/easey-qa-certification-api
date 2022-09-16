@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { Rata } from '../entities/rata.entity';
+import { RataService } from '../rata/rata.service';
 import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
 import { TestSummaryDTO } from '../dto/test-summary.dto';
 import { TestSummary } from '../entities/test-summary.entity';
@@ -35,6 +37,11 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue([testSumaaryDto]),
 });
 
+const mockRataService = () => ({
+  export: jest.fn().mockResolvedValue([new Rata()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
 describe('TestSummaryService', () => {
   let service: TestSummaryService;
   let repository: TestSummaryRepository;
@@ -55,6 +62,10 @@ describe('TestSummaryService', () => {
         {
           provide: TestSummaryMap,
           useFactory: mockMap,
+        },
+        {
+          provide: RataService,
+          useFactory: mockRataService,
         },
       ],
     }).compile();

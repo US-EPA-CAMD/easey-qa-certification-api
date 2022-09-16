@@ -19,7 +19,7 @@ import {
   RataRunRecordDTO,
 } from '../dto/rata-run.dto';
 import { RataRunChecksService } from './rata-run-checks.service';
-import { RataRunWorkspaceService } from './rata-run.service';
+import { RataRunWorkspaceService } from './rata-run-workspace.service';
 
 const userId = 'testUser';
 

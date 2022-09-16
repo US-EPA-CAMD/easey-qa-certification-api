@@ -1,5 +1,5 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { RataRunWorkspaceRepository } from './rata-run.repository';
+import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RataRunMap } from '../maps/rata-run.map';
 import {

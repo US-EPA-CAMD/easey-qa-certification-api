@@ -43,6 +43,7 @@ export class TestSummaryWorkspaceService {
     private readonly linearityService: LinearitySummaryWorkspaceService,
     @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly repository: TestSummaryWorkspaceRepository,
+    @Inject(forwardRef(() => RataWorkspaceService))
     private readonly rataService: RataWorkspaceService,
   ) {}
 
@@ -142,9 +143,13 @@ export class TestSummaryWorkspaceService {
       new Promise(async (resolve, _reject) => {
         let linearitySummaryData,
           rataData = null;
-        const testSumIds = testSummaries
-          .filter(i => testTypeCodes.includes(i.testTypeCode))
-          .map(i => i.id);
+        let testSumIds;
+        if (testTypeCodes?.length > 0) {
+          testSumIds = testSummaries.filter(i =>
+            testTypeCodes.includes(i.testTypeCode),
+          );
+        }
+        testSumIds = testSummaries.map(i => i.id);
 
         if (testSumIds) {
           linearitySummaryData = await this.linearityService.export(testSumIds);

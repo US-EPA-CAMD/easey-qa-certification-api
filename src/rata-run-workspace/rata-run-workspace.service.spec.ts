@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RataRunMap } from '../maps/rata-run.map';
-import { RataRunWorkspaceRepository } from './rata-run.repository';
-import { RataRunWorkspaceService } from './rata-run.service';
+import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
+import { RataRunWorkspaceService } from './rata-run-workspace.service';
 import { RataRun } from '../entities/rata-run.entity';
 import { RataRunBaseDTO, RataRunDTO } from '../dto/rata-run.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -154,6 +154,23 @@ describe('RataRunWorkspaceService', () => {
         errored = true;
       }
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('getRataRunsByRataSumIds', () => {
+    it('Should get Rata Run records by rata summary ids', async () => {
+      const result = await service.getRataRunsByRataSumIds([rataSumId]);
+      expect(result).toEqual([rataRunDTO]);
+    });
+  });
+
+  describe('Export', () => {
+    it('Should Export Rata Run', async () => {
+      jest
+        .spyOn(service, 'getRataRunsByRataSumIds')
+        .mockResolvedValue([rataRunDTO]);
+      const result = await service.export([rataSumId]);
+      expect(result).toEqual([rataRunDTO]);
     });
   });
 });
