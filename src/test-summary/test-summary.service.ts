@@ -8,6 +8,7 @@ import { TestSummaryMap } from '../maps/test-summary.map';
 import { TestSummaryRepository } from './test-summary.repository';
 import { LinearitySummaryService } from '../linearity-summary/linearity-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { RataService } from '../rata/rata.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -15,6 +16,7 @@ export class TestSummaryService {
     private readonly logger: Logger,
     private readonly map: TestSummaryMap,
     private readonly linearityService: LinearitySummaryService,
+    private readonly rataService: RataService,
     @InjectRepository(TestSummaryRepository)
     private readonly repository: TestSummaryRepository,
   ) {}
@@ -73,7 +75,7 @@ export class TestSummaryService {
     unitIds?: string[],
     stackPipeIds?: string[],
     testSummaryIds?: string[],
-    testTypeCode?: string[],
+    testTypeCodes?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
@@ -82,7 +84,7 @@ export class TestSummaryService {
       unitIds,
       stackPipeIds,
       testSummaryIds,
-      testTypeCode,
+      testTypeCodes,
       beginDate,
       endDate,
     );
@@ -95,43 +97,47 @@ export class TestSummaryService {
     unitIds?: string[],
     stackPipeIds?: string[],
     testSummaryIds?: string[],
-    testTypeCode?: string[],
+    testTypeCodes?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
     const promises = [];
 
-    const summaries = await this.getTestSummaries(
+    const testSummaries = await this.getTestSummaries(
       facilityId,
       unitIds,
       stackPipeIds,
       testSummaryIds,
-      testTypeCode,
+      testTypeCodes,
       beginDate,
       endDate,
     );
 
     promises.push(
       new Promise(async (resolve, _reject) => {
-        let linearities = null;
-        const testSumIds = summaries
-          .filter(i => i.testTypeCode === 'LINE')
+        let linearitySummaryData,
+          rataData = null;
+        const testSumIds = testSummaries
+          .filter(i => testTypeCodes.includes(i.testTypeCode))
           .map(i => i.id);
 
         if (testSumIds) {
-          linearities = await this.linearityService.export(testSumIds);
-          summaries.forEach(s => {
-            s.linearitySummaryData = linearities.filter(
+          linearitySummaryData = await this.linearityService.export(testSumIds);
+          rataData = await this.rataService.export(testSumIds);
+          console.log('rataData', rataData);
+          testSummaries.forEach(s => {
+            s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
             );
+            s.rataData = rataData.filter(i => i.testSumId === s.id);
           });
         }
 
-        resolve(linearities);
+        resolve(testSummaries);
       }),
     );
 
     await Promise.all(promises);
-    return summaries;
+    return testSummaries;
   }
 }
