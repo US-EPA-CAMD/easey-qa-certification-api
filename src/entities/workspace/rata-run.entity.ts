@@ -84,9 +84,9 @@ export class RataRun extends BaseEntity {
   @JoinColumn({ name: 'rata_sum_id' })
   RataSummary: RataSummary;
 
-  @ManyToOne(
+  @OneToMany(
     () => FlowRataRun,
-    r => r.RataRun,
+    fr => fr.RataRun,
   )
   @JoinColumn({ name: 'rata_run_id' })
   FlowRataRuns: FlowRataRun[];

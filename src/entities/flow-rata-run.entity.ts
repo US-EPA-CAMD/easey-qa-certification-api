@@ -129,8 +129,9 @@ export class FlowRataRun extends BaseEntity {
   RataRun: RataRun;
 
   @OneToMany(
-    () => RataTraverse,
-    rt => rt.FlowRataRun,
+    () => FlowRataRun,
+    fr => fr.RataRun,
   )
+  @JoinColumn({ name: 'rata_run_id' })
   RataTraverses: RataTraverse[];
 }

@@ -67,6 +67,7 @@ import { RataTraverseModule } from './rata-traverse/rata-traverse.module';
     TestQualificationWorkspaceModule,
     AirEmissionTestingWorkspaceModule,
     AirEmissionTestingModule,
+    RataTraverseModule,
     RataTraverseWorkspaceModule,
     RataTraverseModule,
   ],
