@@ -31,9 +31,17 @@ import { TestQualificationWorkspaceModule } from './test-qualification-workspace
 import { AirEmissionTestingModule } from './air-emission-testing/air-emission-testing.module';
 import { AirEmissionTestingWorkspaceModule } from './air-emission-testing-workspace/air-emission-testing-workspace.module';
 import { FlowRataRunModule } from './flow-rata-run/flow-rata-run.module';
+<<<<<<< HEAD
 import { FlowRataRunWorkspaceModule } from './flow-rata-run-workspace/flow-rata-run-workspace.module';
 import { RataTraverseWorkspaceModule } from './rata-traverse-workspace/rata-traverse-workspace.module';
+=======
+<<<<<<< HEAD
+import { FlowRataRunWorkspaceModule } from './flow-rata-run-workspace/flow-rata-run.module';
+>>>>>>> cd25b66 (fix: changed rata-run-workspace file names)
 import { RataTraverseModule } from './rata-traverse/rata-traverse.module';
+=======
+import { FlowRataRunWorkspaceModule } from './flow-rata-run-workspace/flow-rata-run-workspace.module';
+>>>>>>> c75d52f (fix: changed rata-run-workspace file names)
 
 @Module({
   imports: [
