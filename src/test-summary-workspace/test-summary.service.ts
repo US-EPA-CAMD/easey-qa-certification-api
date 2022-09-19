@@ -32,6 +32,7 @@ import { StackPipe } from './../entities/workspace/stack-pipe.entity';
 import { MonitorSystem } from './../entities/workspace/monitor-system.entity';
 import { MonitorLocation } from './../entities/workspace/monitor-location.entity';
 import { ReportingPeriod } from './../entities/workspace/reporting-period.entity';
+import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -42,6 +43,8 @@ export class TestSummaryWorkspaceService {
     private readonly linearityService: LinearitySummaryWorkspaceService,
     @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly repository: TestSummaryWorkspaceRepository,
+    @Inject(forwardRef(() => RataWorkspaceService))
+    private readonly rataService: RataWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -98,7 +101,7 @@ export class TestSummaryWorkspaceService {
     unitIds?: string[],
     stackPipeIds?: string[],
     testSummaryIds?: string[],
-    testTypeCode?: string[],
+    testTypeCodes?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
@@ -107,7 +110,7 @@ export class TestSummaryWorkspaceService {
       unitIds,
       stackPipeIds,
       testSummaryIds,
-      testTypeCode,
+      testTypeCodes,
       beginDate,
       endDate,
     );
@@ -120,40 +123,51 @@ export class TestSummaryWorkspaceService {
     unitIds?: string[],
     stackPipeIds?: string[],
     testSummaryIds?: string[],
-    testTypeCode?: string[],
+    testTypeCodes?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
     const promises = [];
 
-    const summaries = await this.getTestSummaries(
+    const testSummaries = await this.getTestSummaries(
       facilityId,
       unitIds,
       stackPipeIds,
       testSummaryIds,
-      testTypeCode,
+      testTypeCodes,
       beginDate,
       endDate,
     );
 
     promises.push(
       new Promise(async (resolve, _reject) => {
-        const testSumIds = summaries
-          .filter(i => i.testTypeCode === 'LINE')
-          .map(i => i.id);
-        const linearities = await this.linearityService.export(testSumIds);
-        summaries.forEach(s => {
-          s.linearitySummaryData = linearities.filter(
-            i => i.testSumId === s.id,
+        let linearitySummaryData,
+          rataData = null;
+        let testSumIds;
+        if (testTypeCodes?.length > 0) {
+          testSumIds = testSummaries.filter(i =>
+            testTypeCodes.includes(i.testTypeCode),
           );
-        });
+        }
+        testSumIds = testSummaries.map(i => i.id);
 
-        resolve(linearities);
+        if (testSumIds) {
+          linearitySummaryData = await this.linearityService.export(testSumIds);
+          rataData = await this.rataService.export(testSumIds);
+          testSummaries.forEach(s => {
+            s.linearitySummaryData = linearitySummaryData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.rataData = rataData.filter(i => i.testSumId === s.id);
+          });
+        }
+
+        resolve(testSummaries);
       }),
     );
 
     await Promise.all(promises);
-    return summaries;
+    return testSummaries;
   }
 
   async import(

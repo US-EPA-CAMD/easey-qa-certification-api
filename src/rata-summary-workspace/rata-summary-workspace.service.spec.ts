@@ -1,6 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { RataRunWorkspaceService } from '../rata-run-workspace/rata-run-workspace.service';
 import {
   RataSummaryBaseDTO,
   RataSummaryDTO,
@@ -11,6 +12,7 @@ import { RataSummaryMap } from '../maps/rata-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { RataSummaryWorkspaceService } from './rata-summary-workspace.service';
+import { RataRunDTO } from '../dto/rata-run.dto';
 
 const dto = new RataSummaryDTO();
 
@@ -46,11 +48,16 @@ const mockRepository = () => ({
   create: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   findOne: jest.fn().mockResolvedValue(entity),
+  find: jest.fn().mockResolvedValue([entity]),
   delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockTestSummaryService = () => ({
   resetToNeedsEvaluation: jest.fn(),
+});
+
+const mockRataRunService = () => ({
+  export: jest.fn().mockResolvedValue([new RataRunDTO()]),
 });
 
 const mockMap = () => ({
@@ -77,6 +84,10 @@ describe('RataSummaryWorkspaceService', () => {
         {
           provide: RataSummaryMap,
           useFactory: mockMap,
+        },
+        {
+          provide: RataRunWorkspaceService,
+          useFactory: mockRataRunService,
         },
       ],
     }).compile();
@@ -146,6 +157,21 @@ describe('RataSummaryWorkspaceService', () => {
         errored = true;
       }
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('getRataSummariesByRataIds', () => {
+    it('Should get Rata Summary records by rata ids', async () => {
+      const result = await service.getRataSummariesByRataIds([rataId]);
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('Export', () => {
+    it('Should Export Rata Summary', async () => {
+      jest.spyOn(service, 'getRataSummariesByRataIds').mockResolvedValue([dto]);
+      const result = await service.export([rataId]);
+      expect(result).toEqual([dto]);
     });
   });
 });

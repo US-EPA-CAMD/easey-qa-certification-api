@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -8,13 +8,17 @@ import { TestSummaryMap } from '../maps/test-summary.map';
 import { TestSummaryRepository } from './test-summary.repository';
 import { LinearitySummaryService } from '../linearity-summary/linearity-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { RataService } from '../rata/rata.service';
 
 @Injectable()
 export class TestSummaryService {
   constructor(
     private readonly logger: Logger,
     private readonly map: TestSummaryMap,
+    @Inject(forwardRef(() => LinearitySummaryService))
     private readonly linearityService: LinearitySummaryService,
+    @Inject(forwardRef(() => RataService))
+    private readonly rataService: RataService,
     @InjectRepository(TestSummaryRepository)
     private readonly repository: TestSummaryRepository,
   ) {}
@@ -73,7 +77,7 @@ export class TestSummaryService {
     unitIds?: string[],
     stackPipeIds?: string[],
     testSummaryIds?: string[],
-    testTypeCode?: string[],
+    testTypeCodes?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
@@ -82,7 +86,7 @@ export class TestSummaryService {
       unitIds,
       stackPipeIds,
       testSummaryIds,
-      testTypeCode,
+      testTypeCodes,
       beginDate,
       endDate,
     );
@@ -95,43 +99,50 @@ export class TestSummaryService {
     unitIds?: string[],
     stackPipeIds?: string[],
     testSummaryIds?: string[],
-    testTypeCode?: string[],
+    testTypeCodes?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
     const promises = [];
 
-    const summaries = await this.getTestSummaries(
+    const testSummaries = await this.getTestSummaries(
       facilityId,
       unitIds,
       stackPipeIds,
       testSummaryIds,
-      testTypeCode,
+      testTypeCodes,
       beginDate,
       endDate,
     );
 
     promises.push(
       new Promise(async (resolve, _reject) => {
-        let linearities = null;
-        const testSumIds = summaries
-          .filter(i => i.testTypeCode === 'LINE')
-          .map(i => i.id);
+        let linearitySummaryData,
+          rataData = null;
+        let testSumIds;
+        if (testTypeCodes?.length > 0) {
+          testSumIds = testSummaries.filter(i =>
+            testTypeCodes.includes(i.testTypeCode),
+          );
+        }
+        testSumIds = testSummaries.map(i => i.id);
 
         if (testSumIds) {
-          linearities = await this.linearityService.export(testSumIds);
-          summaries.forEach(s => {
-            s.linearitySummaryData = linearities.filter(
+          linearitySummaryData = await this.linearityService.export(testSumIds);
+          rataData = await this.rataService.export(testSumIds);
+          testSummaries.forEach(s => {
+            s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
             );
+            s.rataData = rataData.filter(i => i.testSumId === s.id);
           });
         }
 
-        resolve(linearities);
+        resolve(testSummaries);
       }),
     );
 
     await Promise.all(promises);
-    return summaries;
+    return testSummaries;
   }
 }

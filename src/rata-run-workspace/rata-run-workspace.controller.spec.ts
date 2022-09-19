@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RataRunBaseDTO, RataRunDTO } from '../dto/rata-run.dto';
-import { RataRunWorkspaceController } from './rata-run.controller';
-import { RataRunWorkspaceService } from './rata-run.service';
+import { RataRunWorkspaceController } from './rata-run-workspace.controller';
+import { RataRunWorkspaceService } from './rata-run-workspace.service';
 
 const locId = 'a1b2c3';
 const testSumId = 'd4e5f6';
