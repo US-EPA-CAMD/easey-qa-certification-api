@@ -6,6 +6,7 @@ import { RataRunWorkspaceController } from './rata-run.controller';
 import { RataRunWorkspaceService } from './rata-run.service';
 import { RataRunMap } from '../maps/rata-run.map';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
+import { RataRunChecksService } from './rata-run-checks.service';
 
 @Module({
   imports: [
@@ -15,7 +16,12 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
     forwardRef(() => TestSummaryWorkspaceModule),
   ],
   controllers: [RataRunWorkspaceController],
-  providers: [RataRunWorkspaceService, RataRunMap],
-  exports: [TypeOrmModule, RataRunMap, RataRunWorkspaceService],
+  providers: [RataRunWorkspaceService, RataRunMap, RataRunChecksService],
+  exports: [
+    TypeOrmModule,
+    RataRunMap,
+    RataRunWorkspaceService,
+    RataRunChecksService,
+  ],
 })
 export class RataRunWorkspaceModule {}
