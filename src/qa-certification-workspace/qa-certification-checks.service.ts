@@ -14,6 +14,7 @@ import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary
 import { InjectRepository } from '@nestjs/typeorm';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -25,6 +26,7 @@ export class QACertificationChecksService {
     private readonly linearityInjectionChecksService: LinearityInjectionChecksService,
     private readonly rataChecksService: RataChecksService,
     private readonly rataSummaryChecksService: RataSummaryChecksService,
+    private readonly rataRunChecksService: RataRunChecksService,
     @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
   ) {}
@@ -160,6 +162,23 @@ export class QACertificationChecksService {
               resolve(results);
             }),
           );
+
+          rataSummary.rataRunData?.forEach(rataRun => {
+            promises.push(
+              new Promise(async (resolve, _reject) => {
+                const results = this.rataRunChecksService.runChecks(
+                  locationId,
+                  rataRun,
+                  null,
+                  true,
+                  false,
+                  summary,
+                );
+
+                resolve(results);
+              }),
+            );
+          });
         });
       });
     }
