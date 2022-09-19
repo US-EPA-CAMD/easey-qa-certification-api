@@ -10,7 +10,6 @@ import {
   LinearitySummaryImportDTO,
 } from '../dto/linearity-summary.dto';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
-import * as utils from '../utilities/utils';
 import { MonitorLocation } from '../entities/monitor-location.entity';
 import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { Unit } from '../entities/workspace/unit.entity';
@@ -186,7 +185,7 @@ describe('TestSummaryWorkspaceService', () => {
 
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
 
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      // jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
 
       jest
         .spyOn(repository, 'getTestSummaryById')
@@ -222,7 +221,7 @@ describe('TestSummaryWorkspaceService', () => {
 
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
 
-      jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      // jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
 
       let errored = false;
 
