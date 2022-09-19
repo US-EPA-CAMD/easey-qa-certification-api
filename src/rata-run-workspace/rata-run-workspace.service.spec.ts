@@ -54,13 +54,14 @@ const mockRepository = () => ({
 const officialRecord = new RataRunOfficial();
 officialRecord.id = 'uuid';
 const mockOfficialRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(officialRecord),
+  findOne: jest.fn(),
 });
 
 describe('RataRunWorkspaceService', () => {
   let service: RataRunWorkspaceService;
   let repository: RataRunWorkspaceRepository;
   let testSummaryService: TestSummaryWorkspaceService;
+  let officialRepository: RataRunRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -94,6 +95,7 @@ describe('RataRunWorkspaceService', () => {
     testSummaryService = module.get<TestSummaryWorkspaceService>(
       TestSummaryWorkspaceService,
     );
+    officialRepository = module.get<RataRunRepository>(RataRunRepository);
   });
 
   describe('getRataRun', () => {
@@ -140,6 +142,18 @@ describe('RataRunWorkspaceService', () => {
       expect(repository.save).toHaveBeenCalled();
       expect(repository.findOne).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+    it('Should create and return a new Rata Run record with historical record id', async () => {
+      const result = await service.createRataRun(
+        testSumId,
+        rataSumId,
+        payload,
+        userId,
+        true,
+        'uuid',
+      );
+
+      expect(result).toEqual(rataRun);
     });
   });
 
@@ -208,6 +222,9 @@ describe('RataRunWorkspaceService', () => {
 
     it('Should import Rata with historical data', async () => {
       jest.spyOn(service, 'createRataRun').mockResolvedValue(rataRunDTO);
+      jest
+        .spyOn(officialRepository, 'findOne')
+        .mockResolvedValue(officialRecord);
       const result = await service.import(
         testSumId,
         rataSumId,
