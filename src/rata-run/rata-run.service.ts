@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { RataRunMap } from '../maps/rata-run.map';
 import { RataRunDTO } from '../dto/rata-run.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
 
 @Injectable()
 export class RataRunService {
@@ -30,5 +31,16 @@ export class RataRunService {
     }
 
     return this.map.one(result);
+  }
+
+  async getRataRunsByRataSumIds(rataSumIds: string[]): Promise<RataRunDTO[]> {
+    const results = await this.repository.find({
+      where: { rataSumId: In(rataSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(rataSumIds: string[]): Promise<RataRunDTO[]> {
+    return this.getRataRunsByRataSumIds(rataSumIds);
   }
 }

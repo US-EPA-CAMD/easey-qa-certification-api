@@ -12,6 +12,8 @@ import { RataSummaryMap } from '../maps/rata-summary.map';
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
+import { RataRunWorkspaceService } from '../rata-run-workspace/rata-run-workspace.service';
 
 @Injectable()
 export class RataSummaryWorkspaceService {
@@ -21,6 +23,8 @@ export class RataSummaryWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(RataSummaryWorkspaceRepository)
     private readonly repository: RataSummaryWorkspaceRepository,
+    @Inject(forwardRef(() => RataRunWorkspaceService))
+    private readonly rataRunService: RataRunWorkspaceService,
   ) {}
 
   async getRataSummaries(rataId: string): Promise<RataSummaryDTO[]> {
@@ -141,5 +145,28 @@ export class RataSummaryWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getRataSummariesByRataIds(
+    rataIds: string[],
+  ): Promise<RataSummaryDTO[]> {
+    const results = await this.repository.find({
+      where: { rataId: In(rataIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(rataIds: string[]): Promise<RataSummaryDTO[]> {
+    const rataSummaries = await this.getRataSummariesByRataIds(rataIds);
+
+    const rataRuns = await this.rataRunService.export(
+      rataSummaries.map(i => i.id),
+    );
+
+    rataSummaries.forEach(s => {
+      s.rataRunData = rataRuns.filter(i => i.rataSumId === s.id);
+    });
+
+    return rataSummaries;
   }
 }

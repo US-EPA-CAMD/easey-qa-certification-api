@@ -4,8 +4,11 @@ import { RataMap } from '../maps/rata.map';
 import { RataDTO, RataRecordDTO } from '../dto/rata.dto';
 import { RataRepository } from './rata.repository';
 import { RataService } from './rata.service';
+import { RataSummaryService } from '../rata-summary/rata-summary.service';
+import { RataSummaryDTO } from '../dto/rata-summary.dto';
 
 const rataId = '';
+const testSumId = '';
 const rataRecord = new RataRecordDTO();
 const rataDto = new RataDTO();
 const rataEntity = new Rata();
@@ -20,6 +23,10 @@ const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([rataEntity]),
 });
 
+const mockRataSummaryService = () => ({
+  export: jest.fn().mockResolvedValue([new RataSummaryDTO()]),
+});
+
 describe('RataService', () => {
   let service: RataService;
   let repository: RataRepository;
@@ -28,6 +35,10 @@ describe('RataService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RataService,
+        {
+          provide: RataSummaryService,
+          useFactory: mockRataSummaryService,
+        },
         {
           provide: RataRepository,
           useFactory: mockRepository,
@@ -68,6 +79,21 @@ describe('RataService', () => {
       const result = await service.getRatasByTestSumId(rataId);
       expect(result).toEqual([rataRecord]);
       expect(repository.find).toHaveBeenCalled();
+    });
+  });
+
+  describe('getRatasByTestSumIds', () => {
+    it('Should get Rata records by test summary ids', async () => {
+      const result = await service.getRatasByTestSumIds([testSumId]);
+      expect(result).toEqual([rataDto]);
+    });
+  });
+
+  describe('Export', () => {
+    it('Should Export Rata', async () => {
+      jest.spyOn(service, 'getRatasByTestSumIds').mockResolvedValue([rataDto]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([rataDto]);
     });
   });
 });

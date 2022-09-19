@@ -1,5 +1,5 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { RataRunWorkspaceRepository } from './rata-run.repository';
+import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RataRunMap } from '../maps/rata-run.map';
 import {
@@ -11,6 +11,7 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { In } from 'typeorm';
 
 @Injectable()
 export class RataRunWorkspaceService {
@@ -124,5 +125,16 @@ export class RataRunWorkspaceService {
       isImport,
     );
     return this.map.one(record);
+  }
+
+  async getRataRunsByRataSumIds(rataSumIds: string[]): Promise<RataRunDTO[]> {
+    const results = await this.repository.find({
+      where: { rataSumId: In(rataSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(rataSumIds: string[]): Promise<RataRunDTO[]> {
+    return this.getRataRunsByRataSumIds(rataSumIds);
   }
 }
