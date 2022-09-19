@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
-import { FlowRataRunWorkspaceController } from './flow-rata-run.controller';
-import { FlowRataRunWorkspaceService } from './flow-rata-run.service';
+import { FlowRataRunWorkspaceController } from './flow-rata-run-workspace.controller';
+import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
 
 const locId = 'a1b2c3';
 const testSumId = 'd4e5f6';

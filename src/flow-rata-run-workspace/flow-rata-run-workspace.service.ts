@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { FlowRataRunWorkspaceRepository } from './flow-rata-run.repository';
+import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FlowRataRunMap } from '../maps/flow-rata-run.map';
 import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';

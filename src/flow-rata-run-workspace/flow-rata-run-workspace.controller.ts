@@ -1,7 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
-import { FlowRataRunWorkspaceService } from './flow-rata-run.service';
+import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
 
 @Controller()
 @ApiSecurity('APIKey')
