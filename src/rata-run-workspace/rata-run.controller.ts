@@ -18,6 +18,7 @@ import {
   RataRunDTO,
   RataRunRecordDTO,
 } from '../dto/rata-run.dto';
+import { RataRunChecksService } from './rata-run-checks.service';
 import { RataRunWorkspaceService } from './rata-run.service';
 
 const userId = 'testUser';
@@ -26,7 +27,10 @@ const userId = 'testUser';
 @ApiSecurity('APIKey')
 @ApiTags('Rata Run')
 export class RataRunWorkspaceController {
-  constructor(private readonly service: RataRunWorkspaceService) {}
+  constructor(
+    private readonly service: RataRunWorkspaceService,
+    private readonly checksService: RataRunChecksService,
+  ) {}
   @Get()
   @ApiOkResponse({
     isArray: true,
@@ -65,13 +69,20 @@ export class RataRunWorkspaceController {
     description: 'Creates a Rata Run record in the workspace',
   })
   async createRataRun(
-    @Param('locId') _locationId: string,
+    @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('rataId') _rataId: string,
     @Param('rataSumId') rataSumId: string,
     @Body() payload: RataRunBaseDTO,
     //    @CurrentUser() userId: string,
   ): Promise<RataRunRecordDTO> {
+    await this.checksService.runChecks(
+      locationId,
+      payload,
+      testSumId,
+      false,
+      true,
+    );
     return this.service.createRataRun(testSumId, rataSumId, payload, userId);
   }
 
@@ -98,7 +109,7 @@ export class RataRunWorkspaceController {
     description: 'Updates a Rata Run record in the workspace',
   })
   async updateRataRun(
-    @Param('locId') _locationId: string,
+    @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('rataId') _rataId: string,
     @Param('rataSumId') _rataSumId: string,
@@ -106,6 +117,13 @@ export class RataRunWorkspaceController {
     @Body() payload: RataRunBaseDTO,
     //    @CurrentUser() userId: string,
   ): Promise<RataRunRecordDTO> {
+    await this.checksService.runChecks(
+      locationId,
+      payload,
+      testSumId,
+      false,
+      true,
+    );
     return this.service.updateRataRun(testSumId, id, payload, userId);
   }
 }
