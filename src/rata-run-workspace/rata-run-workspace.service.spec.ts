@@ -2,9 +2,16 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { RataRunMap } from '../maps/rata-run.map';
 import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
 import { RataRunWorkspaceService } from './rata-run-workspace.service';
-import { RataRun } from '../entities/rata-run.entity';
-import { RataRunBaseDTO, RataRunDTO } from '../dto/rata-run.dto';
+import { RataRun } from '../entities/workspace/rata-run.entity';
+import { RataRun as RataRunOfficial } from '../entities/rata-run.entity';
+import {
+  RataRunBaseDTO,
+  RataRunDTO,
+  RataRunImportDTO,
+} from '../dto/rata-run.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { RataRunRepository } from '../rata-run/rata-run.repository';
 
 const rataRunId = 'a1b2c3';
 const testSumId = 'd4e5f6';
@@ -44,6 +51,12 @@ const mockRepository = () => ({
   delete: jest.fn().mockReturnValue(''),
 });
 
+const officialRecord = new RataRunOfficial();
+officialRecord.id = 'uuid';
+const mockOfficialRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(officialRecord),
+});
+
 describe('RataRunWorkspaceService', () => {
   let service: RataRunWorkspaceService;
   let repository: RataRunWorkspaceRepository;
@@ -52,6 +65,7 @@ describe('RataRunWorkspaceService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        Logger,
         RataRunWorkspaceService,
         RataRunMap,
         {
@@ -65,6 +79,10 @@ describe('RataRunWorkspaceService', () => {
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSumService,
+        },
+        {
+          provide: RataRunRepository,
+          useFactory: mockOfficialRepository,
         },
       ],
     }).compile();
@@ -171,6 +189,33 @@ describe('RataRunWorkspaceService', () => {
         .mockResolvedValue([rataRunDTO]);
       const result = await service.export([rataSumId]);
       expect(result).toEqual([rataRunDTO]);
+    });
+  });
+
+  describe('import', () => {
+    const importPayload = new RataRunImportDTO();
+
+    it('Should import Rata Run', async () => {
+      jest.spyOn(service, 'createRataRun').mockResolvedValue(rataRunDTO);
+      const result = await service.import(
+        testSumId,
+        rataSumId,
+        importPayload,
+        userId,
+      );
+      expect(result).toEqual(null);
+    });
+
+    it('Should import Rata with historical data', async () => {
+      jest.spyOn(service, 'createRataRun').mockResolvedValue(rataRunDTO);
+      const result = await service.import(
+        testSumId,
+        rataSumId,
+        importPayload,
+        userId,
+        true,
+      );
+      expect(result).toEqual(null);
     });
   });
 });

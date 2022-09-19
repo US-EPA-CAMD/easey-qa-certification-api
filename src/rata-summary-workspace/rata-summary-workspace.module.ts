@@ -6,14 +6,16 @@ import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.reposit
 import { RataSummaryMap } from '../maps/rata-summary.map';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { RataWorkspaceModule } from '../rata-workspace/rata-workspace.module';
-import { RataRunWorkspaceModule } from '../rata-run-workspace/rata-run-workspace.module';
 import { RataSummaryChecksService } from './rata-summary-checks.service';
+import { RataSummaryModule } from '../rata-summary/rata-summary.module';
+import { RataRunWorkspaceModule } from '../rata-run-workspace/rata-run-workspace.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([RataSummaryWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => RataWorkspaceModule),
+    forwardRef(() => RataSummaryModule),
     RataRunWorkspaceModule,
   ],
   controllers: [RataSummaryWorkspaceController],

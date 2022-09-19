@@ -6,10 +6,12 @@ import { RataRunWorkspaceController } from './rata-run-workspace.controller';
 import { RataRunWorkspaceService } from './rata-run-workspace.service';
 import { RataRunMap } from '../maps/rata-run.map';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
+import { RataRunModule } from '../rata-run/rata-run.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([RataRunWorkspaceRepository]),
+    forwardRef(() => RataRunModule),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => RataSummaryWorkspaceModule),
     forwardRef(() => TestSummaryWorkspaceModule),

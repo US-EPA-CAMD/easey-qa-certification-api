@@ -8,12 +8,14 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
 import { RataSummaryWorkspaceModule } from '../rata-summary-workspace/rata-summary-workspace.module';
 import { RataChecksService } from './rata-checks.service';
 import { RataFrequencyCodeModule } from '../rata-frequency-code/rata-frequency-code.module';
+import { RataModule } from '../rata/rata.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([RataWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => RataSummaryWorkspaceModule),
+    forwardRef(() => RataModule),
     RataFrequencyCodeModule,
   ],
   controllers: [RataWorkspaceController],

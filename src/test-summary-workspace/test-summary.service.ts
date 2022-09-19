@@ -33,6 +33,7 @@ import { MonitorSystem } from './../entities/workspace/monitor-system.entity';
 import { MonitorLocation } from './../entities/workspace/monitor-location.entity';
 import { ReportingPeriod } from './../entities/workspace/reporting-period.entity';
 import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -199,7 +200,10 @@ export class TestSummaryWorkspaceService {
       `Test Summary Successfully Imported. Record Id: ${createdTestSummary.id}`,
     );
 
-    if (payload.linearitySummaryData?.length > 0) {
+    if (
+      payload.linearitySummaryData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.LINE
+    ) {
       for (const linearitySummary of payload.linearitySummaryData) {
         promises.push(
           new Promise(async (resolve, _reject) => {
@@ -208,6 +212,29 @@ export class TestSummaryWorkspaceService {
               this.linearityService.import(
                 createdTestSummary.id,
                 linearitySummary,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.rataData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.RATA
+    ) {
+      for (const rata of payload.rataData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.rataService.import(
+                createdTestSummary.id,
+                rata,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),

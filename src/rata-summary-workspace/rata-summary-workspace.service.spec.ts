@@ -5,14 +5,18 @@ import { RataRunWorkspaceService } from '../rata-run-workspace/rata-run-workspac
 import {
   RataSummaryBaseDTO,
   RataSummaryDTO,
+  RataSummaryImportDTO,
   RataSummaryRecordDTO,
 } from '../dto/rata-summary.dto';
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
+import { RataSummary as RataSummaryOfficial } from '../entities/rata-summary.entity';
 import { RataSummaryMap } from '../maps/rata-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { RataSummaryWorkspaceService } from './rata-summary-workspace.service';
-import { RataRunDTO } from '../dto/rata-run.dto';
+import { RataRunDTO, RataRunImportDTO } from '../dto/rata-run.dto';
+import { RataSummaryRepository } from '../rata-summary/rata-summary.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 const dto = new RataSummaryDTO();
 
@@ -58,11 +62,19 @@ const mockTestSummaryService = () => ({
 
 const mockRataRunService = () => ({
   export: jest.fn().mockResolvedValue([new RataRunDTO()]),
+  import: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(dto),
   many: jest.fn().mockResolvedValue([dto]),
+});
+
+const officialRecord = new RataSummaryOfficial();
+officialRecord.id = 'uuid';
+
+const mockOfficialRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(officialRecord),
 });
 
 describe('RataSummaryWorkspaceService', () => {
@@ -72,6 +84,7 @@ describe('RataSummaryWorkspaceService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        Logger,
         RataSummaryWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
@@ -88,6 +101,10 @@ describe('RataSummaryWorkspaceService', () => {
         {
           provide: RataRunWorkspaceService,
           useFactory: mockRataRunService,
+        },
+        {
+          provide: RataSummaryRepository,
+          useFactory: mockOfficialRepository,
         },
       ],
     }).compile();
@@ -172,6 +189,34 @@ describe('RataSummaryWorkspaceService', () => {
       jest.spyOn(service, 'getRataSummariesByRataIds').mockResolvedValue([dto]);
       const result = await service.export([rataId]);
       expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('import', () => {
+    const importPayload = new RataSummaryImportDTO();
+    importPayload.rataRunData = [new RataRunImportDTO()];
+
+    it('Should import Rata Summary', async () => {
+      jest.spyOn(service, 'createRataSummary').mockResolvedValue(dto);
+      const result = await service.import(
+        testSumId,
+        rataId,
+        importPayload,
+        userId,
+      );
+      expect(result).toEqual(null);
+    });
+
+    it('Should import Rata Summary with historical data', async () => {
+      jest.spyOn(service, 'createRataSummary').mockResolvedValue(dto);
+      const result = await service.import(
+        testSumId,
+        rataId,
+        importPayload,
+        userId,
+        true,
+      );
+      expect(result).toEqual(null);
     });
   });
 });
