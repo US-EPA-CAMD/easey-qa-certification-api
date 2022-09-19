@@ -11,7 +11,7 @@ import { LinearityInjectionWorkspaceModule } from '../linearity-injection-worksp
 import { RataWorkspaceModule } from '../rata-workspace/rata-workspace.module';
 import { RataSummaryWorkspaceModule } from '../rata-summary-workspace/rata-summary-workspace.module';
 import { QASuppDataWorkspaceModule } from '../qa-monitor-plan-workspace/qa-monitor-plan.module';
-import { RataRunWorkspaceModule } from '../rata-run-workspace/rata-run.module';
+import { RataRunWorkspaceModule } from '../rata-run-workspace/rata-run-workspace.module';
 
 @Module({
   imports: [
