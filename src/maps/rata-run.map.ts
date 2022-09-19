@@ -2,10 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { RataRunDTO } from '../dto/rata-run.dto';
 import { RataRun } from '../entities/rata-run.entity';
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
+import { FlowRataRunMap } from './flow-rata-run.map';
 
 @Injectable()
 export class RataRunMap extends BaseMap<RataRun, RataRunDTO> {
+  constructor(private readonly flowRataRunMap: FlowRataRunMap) {
+    super();
+  }
   public async one(entity: RataRun): Promise<RataRunDTO> {
+    const flowRataRuns = entity.FlowRataRuns
+      ? await this.flowRataRunMap.many(entity.FlowRataRuns)
+      : [];
+
     return {
       id: entity.id,
       rataSumId: entity.rataSumId,
@@ -24,7 +32,7 @@ export class RataRunMap extends BaseMap<RataRun, RataRunDTO> {
       userId: entity.userId,
       addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
-      flowRataRunData: [],
+      flowRataRunData: flowRataRuns,
     };
   }
 }
