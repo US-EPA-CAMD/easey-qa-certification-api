@@ -3,7 +3,8 @@ import {
   Controller, 
   Get, 
   Param, 
-  Post, 
+  Post,
+  Put, 
   Delete 
 } from '@nestjs/common';
 import {
@@ -80,5 +81,20 @@ export class TestQualificationWorkspaceController {
     @Param('testQualificationId') testQualificationId: string,
   ): Promise<void> {
     return this.service.deleteTestQualification(testSumId, testQualificationId, userId);
+
+  @Put(':id')
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: TestQualificationRecordDTO,
+    description: 'Updates a test qualification record in the workspace',
+  })
+  async testQualificationSummary(
+    @Param('locId') locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Body() payload: TestQualificationBaseDTO,
+    //    @CurrentUser() userId: string,
+  ): Promise<TestQualificationRecordDTO> {
+    return this.service.updateTestQualification(testSumId, payload, userId);
   }
 }

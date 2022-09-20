@@ -93,4 +93,40 @@ export class TestQualificationWorkspaceService {
       isImport,
     );
   }
+  
+  async updateTestQualification(
+    testSumId: string,
+    payload: TestQualificationBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<TestQualificationRecordDTO> {
+    const timestamp = currentDateTime();
+    const record = await this.repository.findOne(testSumId);
+
+    if (!record) {
+      throw new LoggingException(
+        `A Test Qualification record not found with Record Id [${testSumId}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    record.testClaimCode = payload.testClaimCode;
+    record.beginDate = payload.beginDate;
+    record.endDate = payload.endDate;
+    record.highLoadPercentage = payload.highLoadPercentage;
+    record.midLoadPercentage = payload.midLoadPercentage;
+    record.lowLoadPercentage = payload.lowLoadPercentage;
+    record.userId = userId;
+    record.updateDate = timestamp;
+
+    await this.repository.save(record);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.map.one(record);
+  }
 }

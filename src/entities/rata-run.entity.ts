@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { RataSummary } from './rata-summary.entity';
+import { FlowRataRun } from './flow-rata-run.entity';
 
 @Entity({ name: 'camdecmps.rata_run' })
 export class RataRun extends BaseEntity {
@@ -81,4 +82,11 @@ export class RataRun extends BaseEntity {
   )
   @JoinColumn({ name: 'rata_sum_id' })
   RataSummary: RataSummary;
+
+  @ManyToOne(
+    () => FlowRataRun,
+    r => r.RataRun,
+  )
+  @JoinColumn({ name: 'rata_run_id' })
+  FlowRataRuns: FlowRataRun[];
 }

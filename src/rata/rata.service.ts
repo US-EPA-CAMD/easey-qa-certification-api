@@ -1,6 +1,8 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { RataSummaryService } from '../rata-summary/rata-summary.service';
+import { In } from 'typeorm';
 import { RataDTO } from '../dto/rata.dto';
 import { RataMap } from '../maps/rata.map';
 import { RataRepository } from './rata.repository';
@@ -11,6 +13,7 @@ export class RataService {
     private readonly map: RataMap,
     @InjectRepository(RataRepository)
     private readonly repository: RataRepository,
+    private readonly rataSummaryService: RataSummaryService,
   ) {}
 
   async getRataById(id: string): Promise<RataDTO> {
@@ -33,5 +36,26 @@ export class RataService {
       testSumId: testSumId,
     });
     return this.map.many(results);
+  }
+
+  async getRatasByTestSumIds(testSumIds: string[]): Promise<RataDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<RataDTO[]> {
+    const ratas = await this.getRatasByTestSumIds(testSumIds);
+
+    const rataSummaries = await this.rataSummaryService.export(
+      ratas.map(i => i.id),
+    );
+
+    ratas.forEach(s => {
+      s.rataSummaryData = rataSummaries.filter(i => i.rataId === s.id);
+    });
+
+    return ratas;
   }
 }

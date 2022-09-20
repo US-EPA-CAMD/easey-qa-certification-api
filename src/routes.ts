@@ -21,11 +21,13 @@ import { RataModule } from './rata/rata.module';
 import { RataSummaryWorkspaceModule } from './rata-summary-workspace/rata-summary-workspace.module';
 import { RataSummaryModule } from './rata-summary/rata-summary.module';
 import { RataRunModule } from './rata-run/rata-run.module';
-import { RataRunWorkspaceModule } from './rata-run-workspace/rata-run.module';
+import { RataRunWorkspaceModule } from './rata-run-workspace/rata-run-workspace.module';
 import { TestQualificationModule } from './test-qualification/test-qualification.module';
 import { TestQualificationWorkspaceModule } from './test-qualification-workspace/test-qualification-workspace.module';
 import { AirEmissionTestingWorkspaceModule } from './air-emission-testing-workspace/air-emission-testing-workspace.module';
 import { AirEmissionTestingModule } from './air-emission-testing/air-emission-testing.module';
+import { FlowRataRunModule } from './flow-rata-run/flow-rata-run.module';
+import { FlowRataRunWorkspaceModule } from './flow-rata-run-workspace/flow-rata-run-workspace.module';
 
 const routes: Routes = [
   {
@@ -77,6 +79,12 @@ const routes: Routes = [
                   {
                     path: ':rataSumId/rata-runs',
                     module: RataRunModule,
+                    children: [
+                      {
+                        path: ':rataRunId/flow-rata-runs',
+                        module: FlowRataRunModule,
+                      },
+                    ],
                   },
                 ],
               },
@@ -127,6 +135,12 @@ const routes: Routes = [
                   {
                     path: ':rataSumId/rata-runs',
                     module: RataRunWorkspaceModule,
+                    children: [
+                      {
+                        path: ':rataRunId/flow-rata-runs',
+                        module: FlowRataRunWorkspaceModule,
+                      },
+                    ],
                   },
                 ],
               },

@@ -7,6 +7,8 @@ import { RataWorkspaceRepository } from './rata-workspace.repository';
 import { RataWorkspaceService } from './rata-workspace.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { HttpStatus } from '@nestjs/common';
+import { RataSummaryWorkspaceService } from '../rata-summary-workspace/rata-summary-workspace.service';
+import { RataSummaryDTO } from '../dto/rata-summary.dto';
 
 const rataDto = new RataDTO();
 
@@ -36,6 +38,10 @@ const mockTestSummaryService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockRataSummaryService = () => ({
+  export: jest.fn().mockResolvedValue([new RataSummaryDTO()]),
+});
+
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(rataDto),
   many: jest.fn().mockResolvedValue([rataDto]),
@@ -52,6 +58,10 @@ describe('RataWorkspaceService', () => {
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSummaryService,
+        },
+        {
+          provide: RataSummaryWorkspaceService,
+          useFactory: mockRataSummaryService,
         },
         {
           provide: RataWorkspaceRepository,
@@ -148,6 +158,21 @@ describe('RataWorkspaceService', () => {
         errored = true;
       }
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('getRatasByTestSumIds', () => {
+    it('Should get Rata records by test summary ids', async () => {
+      const result = await service.getRatasByTestSumIds([testSumId]);
+      expect(result).toEqual([rataDto]);
+    });
+  });
+
+  describe('Export', () => {
+    it('Should Export Rata', async () => {
+      jest.spyOn(service, 'getRatasByTestSumIds').mockResolvedValue([rataDto]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([rataDto]);
     });
   });
 });

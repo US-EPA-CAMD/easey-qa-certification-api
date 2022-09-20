@@ -3,6 +3,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import {
   TestQualificationBaseDTO,
   TestQualificationDTO,
+  TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
 import { TestQualification } from '../entities/workspace/test-qualification.entity';
 import { TestQualificationMap } from '../maps/test-qualification.map';
@@ -17,6 +18,7 @@ const userId = 'user';
 const entity = new TestQualification();
 const testQualificationRecord = new TestQualificationDTO();
 const testQualifications = [testQualificationRecord];
+const record = new TestQualificationRecordDTO();
 
 const payload: TestQualificationBaseDTO = {
   testClaimCode: 'SLC',
@@ -138,6 +140,23 @@ describe('TestQualificationWorkspaceService', () => {
       let errored = false;
       try {
         await service.deleteTestQualification(testSumId, testQualificationId, userId);
+
+  describe('updateTestQualification', () => {
+    it('should update a test qualification record', async () => {
+      const result = await service.updateTestQualification(
+        testSumId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(record);
+    });
+
+    it('should throw error with invalid test qualification record id', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.updateTestQualification(testSumId, payload, userId);
       } catch (e) {
         errored = true;
       }
