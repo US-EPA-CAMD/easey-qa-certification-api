@@ -81,7 +81,8 @@ export class TestQualificationWorkspaceController {
     @Param('testQualificationId') testQualificationId: string,
   ): Promise<void> {
     return this.service.deleteTestQualification(testSumId, testQualificationId, userId);
-
+  }
+  
   @Put(':id')
   //  @ApiBearerAuth('Token')
   //  @UseGuards(AuthGuard)
