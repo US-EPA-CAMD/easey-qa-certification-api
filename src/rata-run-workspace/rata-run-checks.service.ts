@@ -57,13 +57,21 @@ export class RataRunChecksService {
 
     // RATA-27 Result C
     error = this.rata27Check(rataRun, testSumRecord);
+    if (error) {
+      errorList.push(error);
+    }
 
     // RATA-29 Result C
-
     error = this.rata29Check(rataRun, testSumRecord);
+    if (error) {
+      errorList.push(error);
+    }
 
     // RATA-33 Result C
     error = this.rata33Check(rataRun, testSumRecord);
+    if (error) {
+      errorList.push(error);
+    }
 
     this.throwIfErrors(errorList, isImport);
 
