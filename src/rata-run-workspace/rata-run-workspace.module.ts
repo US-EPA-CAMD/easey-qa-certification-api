@@ -14,7 +14,6 @@ import { RataRunChecksService } from './rata-run-checks.service';
     TypeOrmModule.forFeature([RataRunWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => RataSummaryWorkspaceModule),
-    forwardRef(() => TestSummaryWorkspaceModule),
     FlowRataRunWorkspaceModule,
   ],
   controllers: [RataRunWorkspaceController],
