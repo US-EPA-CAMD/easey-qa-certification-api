@@ -30,6 +30,8 @@ import { TestQualificationModule } from './test-qualification/test-qualification
 import { TestQualificationWorkspaceModule } from './test-qualification-workspace/test-qualification-workspace.module';
 import { AirEmissionTestingModule } from './air-emission-testing/air-emission-testing.module';
 import { AirEmissionTestingWorkspaceModule } from './air-emission-testing-workspace/air-emission-testing-workspace.module';
+import { FlowRataRunModule } from './flow-rata-run/flow-rata-run.module';
+import { FlowRataRunWorkspaceModule } from './flow-rata-run-workspace/flow-rata-run-workspace.module';
 
 @Module({
   imports: [
@@ -57,6 +59,8 @@ import { AirEmissionTestingWorkspaceModule } from './air-emission-testing-worksp
     RataSummaryModule,
     RataRunModule,
     RataRunWorkspaceModule,
+    FlowRataRunModule,
+    FlowRataRunWorkspaceModule,
     TestQualificationModule,
     TestQualificationWorkspaceModule,
     AirEmissionTestingWorkspaceModule,

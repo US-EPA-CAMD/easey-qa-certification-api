@@ -6,6 +6,7 @@ import { RataRunWorkspaceController } from './rata-run-workspace.controller';
 import { RataRunWorkspaceService } from './rata-run-workspace.service';
 import { RataRunMap } from '../maps/rata-run.map';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
+import { FlowRataRunWorkspaceModule } from '../flow-rata-run-workspace/flow-rata-run-workspace.module';
 import { RataRunChecksService } from './rata-run-checks.service';
 
 @Module({
@@ -14,6 +15,7 @@ import { RataRunChecksService } from './rata-run-checks.service';
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => RataSummaryWorkspaceModule),
     forwardRef(() => TestSummaryWorkspaceModule),
+    FlowRataRunWorkspaceModule,
   ],
   controllers: [RataRunWorkspaceController],
   providers: [RataRunWorkspaceService, RataRunMap, RataRunChecksService],
