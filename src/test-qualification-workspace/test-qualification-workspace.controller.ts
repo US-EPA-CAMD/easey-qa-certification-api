@@ -78,7 +78,7 @@ export class TestQualificationWorkspaceController {
   async deleteTestQualification(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-    @Param('testQualificationId') testQualificationId: string,
+    @Param('id') testQualificationId: string,
   ): Promise<void> {
     return this.service.deleteTestQualification(testSumId, testQualificationId, userId);
   }
