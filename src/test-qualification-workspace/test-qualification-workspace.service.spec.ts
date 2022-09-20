@@ -140,6 +140,12 @@ describe('TestQualificationWorkspaceService', () => {
       let errored = false;
       try {
         await service.deleteTestQualification(testSumId, testQualificationId, userId);
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
+    });
+  });
 
   describe('updateTestQualification', () => {
     it('should update a test qualification record', async () => {
