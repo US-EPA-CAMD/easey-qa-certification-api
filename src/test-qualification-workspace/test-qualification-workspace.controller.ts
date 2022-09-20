@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { 
+  Body, 
+  Controller, 
+  Get, 
+  Param, 
+  Post,
+  Put, 
+  Delete 
+} from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -63,6 +71,18 @@ export class TestQualificationWorkspaceController {
     return this.service.createTestQualification(testSumId, payload, userId);
   }
 
+  @Delete(':id')
+  @ApiOkResponse({
+    description: 'Deletes a test qualification record from the workspace',
+  })
+  async deleteTestQualification(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('testQualificationId') testQualificationId: string,
+  ): Promise<void> {
+    return this.service.deleteTestQualification(testSumId, testQualificationId, userId);
+  }
+  
   @Put(':id')
   //  @ApiBearerAuth('Token')
   //  @UseGuards(AuthGuard)
