@@ -19,6 +19,7 @@ import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
 >>>>>>> cd25b66 (fix: changed rata-run-workspace file names)
 import { FlowRataRunMap } from '../maps/flow-rata-run.map';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
+import { RataTraverseWorkspaceModule } from '../rata-traverse-workspace/rata-traverse-workspace.module';
 
 @Module({
   imports: [
@@ -26,9 +27,15 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => RataRunWorkspaceModule),
 <<<<<<< HEAD
+<<<<<<< HEAD
     forwardRef(() => TestSummaryWorkspaceModule),
 =======
 >>>>>>> cd25b66 (fix: changed rata-run-workspace file names)
+=======
+=======
+    RataTraverseWorkspaceModule,
+>>>>>>> bbdbaaf (add POST RATA Traverse endpoint)
+>>>>>>> af6037d (add POST RATA Traverse endpoint)
   ],
   controllers: [FlowRataRunWorkspaceController],
   providers: [FlowRataRunWorkspaceService, FlowRataRunMap],

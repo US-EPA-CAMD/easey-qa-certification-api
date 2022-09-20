@@ -9,7 +9,11 @@ import {
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { RataRun } from './rata-run.entity';
+<<<<<<< HEAD
 import { RataTraverse } from '../rata-traverse.entity';
+=======
+import { RataTraverse } from './rata-traverse.entity';
+>>>>>>> bbdbaaf (add POST RATA Traverse endpoint)
 
 @Entity({ name: 'camdecmps.flow_rata_run' })
 export class FlowRataRun extends BaseEntity {
@@ -129,8 +133,13 @@ export class FlowRataRun extends BaseEntity {
   RataRun: RataRun;
 
   @OneToMany(
+<<<<<<< HEAD
     () => FlowRataRun,
     fr => fr.RataRun,
+=======
+    () => RataTraverse,
+    rt => rt.FlowRataRun,
+>>>>>>> bbdbaaf (add POST RATA Traverse endpoint)
   )
   @JoinColumn({ name: 'rata_run_id' })
   RataTraverses: RataTraverse[];

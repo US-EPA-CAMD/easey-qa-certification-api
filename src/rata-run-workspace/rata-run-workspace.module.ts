@@ -23,7 +23,6 @@ import { FlowRataRunWorkspaceModule } from '../flow-rata-run-workspace/flow-rata
     TypeOrmModule.forFeature([RataRunWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => RataSummaryWorkspaceModule),
-    forwardRef(() => TestSummaryWorkspaceModule),
     FlowRataRunWorkspaceModule,
   ],
   controllers: [RataRunWorkspaceController],

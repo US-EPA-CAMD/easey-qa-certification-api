@@ -11,10 +11,17 @@ import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 =======
 import { RataRun } from './rata-run.entity';
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> e73bae1 (fix merge conflicts)
+=======
+<<<<<<< HEAD
+>>>>>>> af6037d (add POST RATA Traverse endpoint)
 import { FlowRataRun } from '../flow-rata-run.entity';
 =======
 >>>>>>> 27e4d43 (fix merge conflicts)
+=======
+import { FlowRataRun } from './flow-rata-run.entity';
+>>>>>>> bbdbaaf (add POST RATA Traverse endpoint)
 
 @Entity({ name: 'camdecmpswks.rata_traverse' })
 export class RataTraverse extends BaseEntity {
@@ -156,12 +163,17 @@ export class RataTraverse extends BaseEntity {
 
   @ManyToOne(
 <<<<<<< HEAD
+<<<<<<< HEAD
     () => FlowRataRun,
     fr => fr.RataTraverses,
 =======
     () => RataRun,
     rr => rr.rataTraverses,
 >>>>>>> 27e4d43 (fix merge conflicts)
+=======
+    () => FlowRataRun,
+    fr => fr.RataTraverses,
+>>>>>>> bbdbaaf (add POST RATA Traverse endpoint)
   )
   @JoinColumn({ name: 'flow_rata_run_id' })
   FlowRataRun: FlowRataRun;

@@ -88,7 +88,7 @@ const routes: Routes = [
                         children: [
                           {
                             path: ':flowRataRunId/rata-traverses',
-                            module: RataTraverseModule,
+                            module: RataTraverseWorkspaceModule,
                           },
                         ],
                       },
