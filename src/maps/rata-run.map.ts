@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { RataRunDTO } from '../dto/rata-run.dto';
 import { RataRun } from '../entities/rata-run.entity';
-import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { FlowRataRunMap } from './flow-rata-run.map';
 
 @Injectable()

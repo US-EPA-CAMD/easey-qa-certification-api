@@ -33,6 +33,7 @@ import { AirEmissionTestingWorkspaceModule } from './air-emission-testing-worksp
 import { FlowRataRunModule } from './flow-rata-run/flow-rata-run.module';
 import { FlowRataRunWorkspaceModule } from './flow-rata-run-workspace/flow-rata-run-workspace.module';
 import { RataTraverseWorkspaceModule } from './rata-traverse-workspace/rata-traverse-workspace.module';
+import { RataTraverseModule } from './rata-traverse/rata-traverse.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { RataTraverseWorkspaceModule } from './rata-traverse-workspace/rata-trav
     AirEmissionTestingWorkspaceModule,
     AirEmissionTestingModule,
     RataTraverseWorkspaceModule,
+    RataTraverseModule,
   ],
 })
 export class AppModule {}
