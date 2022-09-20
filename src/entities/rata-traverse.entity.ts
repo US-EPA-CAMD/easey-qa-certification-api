@@ -7,10 +7,6 @@ import {
   PrimaryColumn,
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
-<<<<<<< HEAD
-import { RataRun } from './rata-run.entity';
-=======
->>>>>>> 27e4d43 (fix merge conflicts)
 import { FlowRataRun } from './flow-rata-run.entity';
 
 @Entity({ name: 'camdecmps.rata_traverse' })
