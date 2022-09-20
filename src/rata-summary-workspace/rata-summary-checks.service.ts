@@ -122,14 +122,17 @@ export class RataSummaryChecksService {
         );
       }
 
-      error = this.getMessage('IMPORT-17-A', {
-        fieldname: FIELDNAME,
-        locationID: testSummary.unitId
-          ? testSummary.unitId
-          : testSummary.stackPipeId,
-        testTypeCode: testSummary.testTypeCode,
-        testNumber: testSummary.testNumber,
-      });
+      if (extraneousRataSummaryFields?.length > 0) {
+        error = this.getMessage('IMPORT-17-A', {
+          fieldname: FIELDNAME,
+          locationID: testSummary.unitId
+            ? testSummary.unitId
+            : testSummary.stackPipeId,
+          testTypeCode: testSummary.testTypeCode,
+          testNumber: testSummary.testNumber,
+        })
+      }
+      
     }
     return error;
   }
