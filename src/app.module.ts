@@ -30,30 +30,10 @@ import { TestQualificationModule } from './test-qualification/test-qualification
 import { TestQualificationWorkspaceModule } from './test-qualification-workspace/test-qualification-workspace.module';
 import { AirEmissionTestingModule } from './air-emission-testing/air-emission-testing.module';
 import { AirEmissionTestingWorkspaceModule } from './air-emission-testing-workspace/air-emission-testing-workspace.module';
-<<<<<<< HEAD
-=======
-import { RataTraverseWorkspaceModule } from './rata-traverse-workspace/rata-traverse-workspace.module';
-<<<<<<< HEAD
->>>>>>> af6037d (add POST RATA Traverse endpoint)
 import { FlowRataRunModule } from './flow-rata-run/flow-rata-run.module';
-<<<<<<< HEAD
 import { FlowRataRunWorkspaceModule } from './flow-rata-run-workspace/flow-rata-run-workspace.module';
-import { RataTraverseWorkspaceModule } from './rata-traverse-workspace/rata-traverse-workspace.module';
-=======
-<<<<<<< HEAD
-import { FlowRataRunWorkspaceModule } from './flow-rata-run-workspace/flow-rata-run.module';
->>>>>>> cd25b66 (fix: changed rata-run-workspace file names)
 import { RataTraverseModule } from './rata-traverse/rata-traverse.module';
-=======
-import { FlowRataRunWorkspaceModule } from './flow-rata-run-workspace/flow-rata-run-workspace.module';
-<<<<<<< HEAD
->>>>>>> c75d52f (fix: changed rata-run-workspace file names)
-=======
 import { RataTraverseWorkspaceModule } from './rata-traverse-workspace/rata-traverse-workspace.module';
->>>>>>> 27e4d43 (fix merge conflicts)
-=======
-import { RataTraverseModule } from './rata-traverse/rata-traverse.module';
->>>>>>> bbdbaaf (add POST RATA Traverse endpoint)
 
 @Module({
   imports: [
@@ -87,10 +67,6 @@ import { RataTraverseModule } from './rata-traverse/rata-traverse.module';
     TestQualificationWorkspaceModule,
     AirEmissionTestingWorkspaceModule,
     AirEmissionTestingModule,
-<<<<<<< HEAD
-    RataTraverseModule,
-=======
->>>>>>> 27e4d43 (fix merge conflicts)
     RataTraverseWorkspaceModule,
     RataTraverseModule,
   ],

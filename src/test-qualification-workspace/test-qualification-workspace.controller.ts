@@ -1,16 +1,12 @@
-<<<<<<< HEAD
-import { 
-  Body, 
-  Controller, 
-  Get, 
-  Param, 
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
   Post,
-  Put, 
-  Delete 
+  Put,
+  Delete,
 } from '@nestjs/common';
-=======
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
->>>>>>> 1f0eaef (feat: add EDIT endpoint for test-qualification)
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -75,7 +71,6 @@ export class TestQualificationWorkspaceController {
     return this.service.createTestQualification(testSumId, payload, userId);
   }
 
-<<<<<<< HEAD
   @Delete(':id')
   @ApiOkResponse({
     description: 'Deletes a test qualification record from the workspace',
@@ -85,30 +80,13 @@ export class TestQualificationWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Param('testQualificationId') testQualificationId: string,
   ): Promise<void> {
-    return this.service.deleteTestQualification(testSumId, testQualificationId, userId);
-<<<<<<< HEAD
-=======
-=======
+    return this.service.deleteTestQualification(
+      testSumId,
+      testQualificationId,
+      userId,
+    );
   }
-  
->>>>>>> d879208 (Fix bug from merge conflict resolution)
-  @Put(':id')
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
-  @ApiOkResponse({
-    type: TestQualificationRecordDTO,
-    description: 'Updates a test qualification record in the workspace',
-  })
-  async testQualificationSummary(
-    @Param('locId') locationId: string,
-    @Param('testSumId') testSumId: string,
-    @Body() payload: TestQualificationBaseDTO,
-    //    @CurrentUser() userId: string,
-  ): Promise<TestQualificationRecordDTO> {
-    return this.service.updateTestQualification(testSumId, payload, userId);
->>>>>>> 1f0eaef (feat: add EDIT endpoint for test-qualification)
-  }
-  
+
   @Put(':id')
   //  @ApiBearerAuth('Token')
   //  @UseGuards(AuthGuard)
