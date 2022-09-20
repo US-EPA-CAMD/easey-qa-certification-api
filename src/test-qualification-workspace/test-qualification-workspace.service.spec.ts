@@ -141,7 +141,17 @@ describe('TestQualificationWorkspaceService', () => {
       let errored = false;
       try {
         await service.deleteTestQualification(testSumId, testQualificationId, userId);
+<<<<<<< HEAD
 =======
+=======
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
+    });
+  });
+
+>>>>>>> 316b2db (Fix Broken Unit Tests)
   describe('updateTestQualification', () => {
     it('should update a test qualification record', async () => {
       const result = await service.updateTestQualification(
