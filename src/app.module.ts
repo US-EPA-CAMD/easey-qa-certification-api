@@ -41,7 +41,11 @@ import { FlowRataRunWorkspaceModule } from './flow-rata-run-workspace/flow-rata-
 import { RataTraverseModule } from './rata-traverse/rata-traverse.module';
 =======
 import { FlowRataRunWorkspaceModule } from './flow-rata-run-workspace/flow-rata-run-workspace.module';
+<<<<<<< HEAD
 >>>>>>> c75d52f (fix: changed rata-run-workspace file names)
+=======
+import { RataTraverseWorkspaceModule } from './rata-traverse-workspace/rata-traverse-workspace.module';
+>>>>>>> 27e4d43 (fix merge conflicts)
 
 @Module({
   imports: [
@@ -75,7 +79,10 @@ import { FlowRataRunWorkspaceModule } from './flow-rata-run-workspace/flow-rata-
     TestQualificationWorkspaceModule,
     AirEmissionTestingWorkspaceModule,
     AirEmissionTestingModule,
+<<<<<<< HEAD
     RataTraverseModule,
+=======
+>>>>>>> 27e4d43 (fix merge conflicts)
     RataTraverseWorkspaceModule,
     RataTraverseModule,
   ],
