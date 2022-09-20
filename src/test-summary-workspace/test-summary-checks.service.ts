@@ -86,6 +86,13 @@ export class TestSummaryChecksService {
         errorList.push(error);
       }
 
+      // Import-19 Inappropriate Children Record for RATA
+      error = await this.import19Check(locationId, summary as TestSummaryImportDTO);
+      if (error) {
+        errorList.push(error);
+      }
+      
+
       // IMPORT-33 Inappropriate Test Type For Location
       error = this.import33Check(summary as TestSummaryImportDTO);
       if (error) {
@@ -618,6 +625,31 @@ export class TestSummaryChecksService {
 
     return null;
   }
+
+    // Import-19 Inappropriate children Record for RATA
+    private async import19Check(
+      locationId: string,
+      summary: TestSummaryImportDTO
+    ): Promise<string> {
+      const resultA = this.getMessage('IMPORT-19-A', {
+        locationId: summary.unitId ? summary.unitId : summary.stackPipeId,
+        systemId: summary.monitoringSystemID,
+        testNumber: summary.testNumber,
+      });
+      
+      const monitorSystem = await this.monitorSystemRepository.findOne({
+        where: {
+          monitoringSystemID: summary.monitoringSystemID,
+        },
+      });
+      
+      if (summary.testTypeCode === TestTypeCodes.RATA) {
+        if (summary.flowRataRunData?.length > 0 && monitorSystem.systemTypeCode !== 'FLOW') {
+            return resultA;
+        }
+      }
+      return null;
+    }
 
   // IMPORT-20 Duplicate Test Check
   // LINEAR-31 Duplicate Linearity (Result A)

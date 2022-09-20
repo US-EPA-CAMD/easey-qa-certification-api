@@ -83,6 +83,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       calibrationInjectionData: [],
       linearitySummaryData: linearitySummaries,
       rataData: ratas,
+      flowRataRunData: [],
       flowToLoadReferenceData: [],
       flowToLoadCheckData: [],
       cycleTimeSummaryData: [],

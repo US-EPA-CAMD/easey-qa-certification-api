@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { TestSummaryBaseDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import {
   RataSummaryBaseDTO,
@@ -10,6 +10,7 @@ import {
 } from '../dto/rata-summary.dto';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 const KEY = 'RATA Summary';
 
@@ -61,10 +62,21 @@ export class RataSummaryChecksService {
       errorList.push(error);
     }
 
+   // IMPORT-30 Extraneous RATA Summary Data Check 
+   error = await this.import30Check(
+    locationId,
+    rataSummary,
+    testSumId
+    );
+   if (error) {
+     errorList.push(error);
+   }
+
     this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed RATA Summary Checks');
     return errorList;
   }
+
 
   private rata17Check(
     testSumRecord: TestSummary,
@@ -84,4 +96,49 @@ export class RataSummaryChecksService {
 
     return error;
   }
+
+  private async import30Check(
+    locationId: string,
+    rataSummary: RataSummaryBaseDTO | RataSummaryImportDTO,
+    testSumId: string,
+    testSummary?: TestSummaryImportDTO
+  ): Promise<string> {
+    let error: string = null;
+    let FIELDNAME: string 
+    let testSumRecord: TestSummary;
+    const extraneousRataSummaryFields: string[] = [];
+    
+
+    if (rataSummary.co2OrO2ReferenceMethodCode !== null || 
+      rataSummary.stackDiameter !== null || 
+      rataSummary.stackArea !== null || 
+      rataSummary.numberOfTraversePoints !== null ||
+      rataSummary.calculatedWAF !== null ||
+      rataSummary.defaultWAF !== null
+      ) {
+        if (testSumRecord.system?.systemTypeCode !== "FLOW") {
+          extraneousRataSummaryFields.push(
+            "CO2OrO2ReferenceMethodCode", 
+            "StackDiameter", 
+            "StackArea", 
+            "NumberOfTraversePoints", 
+            "CalculatedWAF", 
+            "DefaultWAF")
+          }
+
+          error = this.getMessage('IMPORT-17-A', {
+            fieldname: FIELDNAME,
+            locationID: testSummary.unitId ? testSummary.unitId : testSummary.stackPipeId,
+            testTypeCode: testSummary.testTypeCode,
+            testNumber: testSummary.testNumber,
+          });
+      
+    }
+    return error;
+}
+
+getMessage(messageKey: string, messageArgs: object): string {
+  return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
+}
+
 }

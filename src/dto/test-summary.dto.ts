@@ -79,6 +79,11 @@ import {
   AppECorrelationTestSummaryDTO,
   AppECorrelationTestSummaryImportDTO,
 } from './app-e-correlation-test-summary.dto';
+import {
+  FlowRataRunDTO,
+  FlowRataRunImportDTO,
+} from './flow-rata-run.dto';
+
 
 import { RequireOne } from '../pipes/require-one.pipe';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
@@ -97,6 +102,8 @@ import {
   VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION,
   VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE,
 } from '../utilities/constants';
+
+
 
 const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -434,6 +441,7 @@ export class TestSummaryImportDTO extends TestSummaryBaseDTO {
   calibrationInjectionData: CalibrationInjectionImportDTO[];
   linearitySummaryData: LinearitySummaryImportDTO[];
   rataData: RataImportDTO[];
+  flowRataRunData: FlowRataRunImportDTO[];
   flowToLoadReferenceData: FlowToLoadReferenceImportDTO[];
   flowToLoadCheckData: FlowToLoadCheckImportDTO[];
   cycleTimeSummaryData: CycleTimeSummaryImportDTO[];
@@ -454,6 +462,7 @@ export class TestSummaryDTO extends TestSummaryRecordDTO {
   calibrationInjectionData: CalibrationInjectionDTO[];
   linearitySummaryData: LinearitySummaryDTO[];
   rataData: RataDTO[];
+  flowRataRunData: FlowRataRunDTO[];
   flowToLoadReferenceData: FlowToLoadReferenceDTO[];
   flowToLoadCheckData: FlowToLoadCheckDTO[];
   cycleTimeSummaryData: CycleTimeSummaryDTO[];
