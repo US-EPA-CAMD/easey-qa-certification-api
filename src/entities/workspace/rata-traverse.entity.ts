@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 import { RataRun } from './rata-run.entity';
 <<<<<<< HEAD
@@ -20,8 +21,9 @@ import { FlowRataRun } from '../flow-rata-run.entity';
 =======
 >>>>>>> 27e4d43 (fix merge conflicts)
 =======
+=======
+>>>>>>> 1996749 (remove merge conflict markers)
 import { FlowRataRun } from './flow-rata-run.entity';
->>>>>>> bbdbaaf (add POST RATA Traverse endpoint)
 
 @Entity({ name: 'camdecmpswks.rata_traverse' })
 export class RataTraverse extends BaseEntity {
@@ -162,18 +164,8 @@ export class RataTraverse extends BaseEntity {
   updateDate: Date;
 
   @ManyToOne(
-<<<<<<< HEAD
-<<<<<<< HEAD
     () => FlowRataRun,
     fr => fr.RataTraverses,
-=======
-    () => RataRun,
-    rr => rr.rataTraverses,
->>>>>>> 27e4d43 (fix merge conflicts)
-=======
-    () => FlowRataRun,
-    fr => fr.RataTraverses,
->>>>>>> bbdbaaf (add POST RATA Traverse endpoint)
   )
   @JoinColumn({ name: 'flow_rata_run_id' })
   FlowRataRun: FlowRataRun;
