@@ -99,4 +99,19 @@ export class RataTraverseWorkspaceService {
 
     return this.map.one(record);
   }
+
+  async deleteRataTraverse(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    await this.repository.delete(id);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+  }
 }
