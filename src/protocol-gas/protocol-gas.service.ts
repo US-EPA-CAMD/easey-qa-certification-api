@@ -38,7 +38,7 @@ export class ProtocolGasService {
 
   async getProtocolGasByTestSumIds(testSumIds: string[]): Promise<ProtocolGasDTO[]> {
     const results = await this.repository.find({
-      where: { rataSumId: In(testSumIds) },
+      where: { testSumId: In(testSumIds) },
     });
     return this.map.many(results);
   }
