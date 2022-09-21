@@ -19,7 +19,7 @@ export class RataTraverseBaseDTO {
 
 export class RataTraverseRecordDTO extends RataTraverseBaseDTO {
   id: string;
-  rataRunId: string;
+  flowRataRunId: string;
   calculatedCalculatedVelocity: number;
   userId: string;
   addDate: string;

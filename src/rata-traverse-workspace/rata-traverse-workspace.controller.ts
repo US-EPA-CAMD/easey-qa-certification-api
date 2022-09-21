@@ -24,14 +24,15 @@ export class RataTraverseWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Param('rataId') _rataId: string,
     @Param('rataSumId') _rataSumId: string,
-    @Param('rataRunId') rataRunId: string,
+    @Param('rataRunId') _rataRunId: string,
+    @Param('flowRataRunId') flowRataRunId: string,
     @Body() payload: RataTraverseBaseDTO,
     //    @CurrentUser() userId: string,
   ) {
     const userId = 'testUser';
     return this.service.createRataTraverse(
       testSumId,
-      rataRunId,
+      flowRataRunId,
       payload,
       userId,
     );
