@@ -122,13 +122,25 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
     endHour: number,
     endMinute: number,
   ) {
-    const query = this.buildBaseQuery()
-      .where('c.componentID = :componentID', { componentID })
-      .andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode })
-      .andWhere('ts.spanScaleCode = :spanScaleCode', { spanScaleCode })
-      .andWhere('ts.endDate = :endDate', { endDate })
-      .andWhere('ts.endHour = :endHour', { endHour })
-      .andWhere('ts.endMinute = :endMinute', { endMinute });
+    const query = this.buildBaseQuery().where(
+      'ts.testTypeCode = :testTypeCode',
+      { testTypeCode },
+    );
+
+    if (componentID) {
+      query.andWhere('c.componentID = :componentID', { componentID });
+    }
+
+    if (spanScaleCode) {
+      query.andWhere('ts.spanScaleCode = :spanScaleCode', { spanScaleCode });
+    }
+    if (endDate) {
+      query
+        .andWhere('ts.endDate = :endDate', { endDate })
+        .andWhere('ts.endHour = :endHour', { endHour })
+        .andWhere('ts.endMinute = :endMinute', { endMinute });
+    }
+
     return query.getOne();
   }
 }

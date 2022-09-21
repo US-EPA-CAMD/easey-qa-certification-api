@@ -21,6 +21,14 @@ export class AirEmissionTestingWorkspaceService {
     private readonly repository: AirEmissionTestingWorkspaceRepository,
   ) {}
 
+  async getAirEmissionTestings(
+    testSumId: string,
+  ): Promise<AirEmissionTestingRecordDTO[]> {
+    const records = await this.repository.find({ where: { testSumId } });
+
+    return this.map.many(records);
+  }
+
   async getAirEmissionTesting(
     id: string,
   ): Promise<AirEmissionTestingRecordDTO> {
@@ -28,7 +36,7 @@ export class AirEmissionTestingWorkspaceService {
 
     if (!entity) {
       throw new LoggingException(
-        `A air emission testing record not found with Record Id [${id}].`,
+        `An Air Emission Testing record not found with Record Id [${id}].`,
         HttpStatus.NOT_FOUND,
       );
     }

@@ -8,7 +8,7 @@ export class RataTraverseMap extends BaseMap<RataTraverse, RataTraverseDTO> {
   public async one(entity: RataTraverse): Promise<RataTraverseDTO> {
     return {
       id: entity.id,
-      rataRunId: entity.flowRataRunId,
+      flowRataRunId: entity.flowRataRunId,
       probeId: entity.probeId,
       probeTypeCode: entity.probeTypeCode,
       pressureMeasureCode: entity.pressureMeasureCode,
