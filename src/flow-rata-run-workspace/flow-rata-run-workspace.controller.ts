@@ -1,13 +1,17 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
+import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { ApiCreatedResponse, ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { FlowRataRunBaseDTO, FlowRataRunDTO, FlowRataRunRecordDTO } from '../dto/flow-rata-run.dto';
 import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
+
+const userId = 'testUser';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Flow Rata Run')
 export class FlowRataRunWorkspaceController {
-  constructor(private readonly service: FlowRataRunWorkspaceService) {}
+  constructor(
+    private readonly service: FlowRataRunWorkspaceService,
+  ) {}
   @Get()
   @ApiOkResponse({
     isArray: true,
@@ -39,5 +43,28 @@ export class FlowRataRunWorkspaceController {
     @Param('id') flowRataRunId: string,
   ): Promise<FlowRataRunDTO> {
     return this.service.getFlowRataRun(flowRataRunId);
+  }
+
+  @Post()
+  @ApiCreatedResponse({
+    isArray: false,
+    type: FlowRataRunRecordDTO,
+    description: 'Creates a Flow Rata Run record in the workspace',
+  })
+  async createFlowRataRun(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('rataId') _rataId: string,
+    @Param('rataSumId') _rataSumId: string,
+    @Param('rataRunId') rataRunId: string,
+    @Body() payload: FlowRataRunBaseDTO,
+    //    @CurrentUser() userId: string,
+  ): Promise<FlowRataRunRecordDTO> {
+    return this.service.createFlowRataRun(
+      testSumId, 
+      rataRunId, 
+      payload, 
+      userId
+    );
   }
 }

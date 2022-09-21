@@ -1,9 +1,12 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, Inject, forwardRef } from '@nestjs/common';
 import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FlowRataRunMap } from '../maps/flow-rata-run.map';
-import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
+import { FlowRataRunBaseDTO, FlowRataRunDTO, FlowRataRunRecordDTO } from '../dto/flow-rata-run.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { currentDateTime } from '../utilities/functions';
+import { v4 as uuid } from 'uuid';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 
 @Injectable()
 export class FlowRataRunWorkspaceService {
@@ -11,6 +14,8 @@ export class FlowRataRunWorkspaceService {
     @InjectRepository(FlowRataRunWorkspaceRepository)
     private readonly repository: FlowRataRunWorkspaceRepository,
     private readonly map: FlowRataRunMap,
+    @Inject(forwardRef(() => TestSummaryWorkspaceService))
+    private readonly testSummaryService: TestSummaryWorkspaceService,
   ) {}
 
   async getFlowRataRuns(rataRunId: string): Promise<FlowRataRunDTO[]> {
@@ -30,5 +35,34 @@ export class FlowRataRunWorkspaceService {
     }
 
     return this.map.one(result);
+  }
+
+  async createFlowRataRun(
+    testSumId: string,
+    rataRunId: string,
+    payload: FlowRataRunBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<FlowRataRunRecordDTO> {
+    const timestamp = currentDateTime();
+
+    let entity = this.repository.create({
+      ...payload,
+      id: uuid(),
+      rataRunId,
+      userId,
+      addDate: timestamp,
+      updateDate: timestamp,
+    });
+
+    await this.repository.save(entity);
+    entity = await this.repository.findOne(entity.id);
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.map.one(entity);
   }
 }
