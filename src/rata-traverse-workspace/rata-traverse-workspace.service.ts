@@ -22,6 +22,27 @@ export class RataTraverseWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
   ) {}
 
+  async getRataTraverses(
+    flowRataRunId: string,
+  ): Promise<RataTraverseRecordDTO[]> {
+    const records = await this.repository.find({ where: { flowRataRunId } });
+
+    return this.map.many(records);
+  }
+
+  async getRataTraverse(id: string): Promise<RataTraverseRecordDTO> {
+    const result = await this.repository.findOne(id);
+
+    if (!result) {
+      throw new LoggingException(
+        `Rata Traverse record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
+
   async createRataTraverse(
     testSumId: string,
     flowRataRunId: string,

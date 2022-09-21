@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -16,6 +24,42 @@ import { RataTraverseWorkspaceService } from './rata-traverse-workspace.service'
 @ApiTags('Rata Traverse')
 export class RataTraverseWorkspaceController {
   constructor(private readonly service: RataTraverseWorkspaceService) {}
+
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: RataTraverseRecordDTO,
+    description:
+      'Retrieves workspace Rata Traverse records by Flow Rata Run ID',
+  })
+  async getRataTraverses(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('rataId') _rataId: string,
+    @Param('rataSumId') _rataSumId: string,
+    @Param('rataRunId') _rataRunId: string,
+    @Param('flowRataRunId') flowRataRunId: string,
+  ): Promise<RataTraverseRecordDTO[]> {
+    return this.service.getRataTraverses(flowRataRunId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: RataTraverseRecordDTO,
+    description: 'Retrieves workspace Rata Traverse record by its Id',
+  })
+  async getRataTraverse(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('rataId') _rataId: string,
+    @Param('rataSumId') _rataSumId: string,
+    @Param('rataRunId') _rataRunId: string,
+    @Param('flowRataRunId') _flowRataRunId: string,
+    @Param('id') id: string,
+  ): Promise<RataTraverseRecordDTO> {
+    return this.service.getRataTraverse(id);
+  }
 
   @Post()
   //  @ApiBearerAuth('Token')
