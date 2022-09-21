@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FlowRataRunMap } from '../maps/flow-rata-run.map';
 import { FlowRataRunBaseDTO, FlowRataRunDTO, FlowRataRunRecordDTO } from '../dto/flow-rata-run.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from 'src/utilities/functions';
+import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
-import { TestSummaryWorkspaceService } from 'src/test-summary-workspace/test-summary.service';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 
 @Injectable()
 export class FlowRataRunWorkspaceService {
@@ -37,7 +37,7 @@ export class FlowRataRunWorkspaceService {
     return this.map.one(result);
   }
 
-  async createRataRun(
+  async createFlowRataRun(
     testSumId: string,
     rataRunId: string,
     payload: FlowRataRunBaseDTO,

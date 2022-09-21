@@ -51,7 +51,7 @@ export class FlowRataRunWorkspaceController {
     type: FlowRataRunRecordDTO,
     description: 'Creates a Flow Rata Run record in the workspace',
   })
-  async createRataRun(
+  async createFlowRataRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('rataId') _rataId: string,
@@ -60,7 +60,7 @@ export class FlowRataRunWorkspaceController {
     @Body() payload: FlowRataRunBaseDTO,
     //    @CurrentUser() userId: string,
   ): Promise<FlowRataRunRecordDTO> {
-    return this.service.createRataRun(
+    return this.service.createFlowRataRun(
       testSumId, 
       rataRunId, 
       payload, 
