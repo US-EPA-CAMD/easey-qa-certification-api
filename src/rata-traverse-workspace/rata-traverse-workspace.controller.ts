@@ -1,5 +1,10 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
-import { ApiCreatedResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Param, Post, Put } from '@nestjs/common';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   RataTraverseBaseDTO,
   RataTraverseRecordDTO,
@@ -28,7 +33,7 @@ export class RataTraverseWorkspaceController {
     @Param('flowRataRunId') flowRataRunId: string,
     @Body() payload: RataTraverseBaseDTO,
     //    @CurrentUser() userId: string,
-  ) {
+  ): Promise<RataTraverseRecordDTO> {
     const userId = 'testUser';
     return this.service.createRataTraverse(
       testSumId,
@@ -36,5 +41,27 @@ export class RataTraverseWorkspaceController {
       payload,
       userId,
     );
+  }
+
+  @Put(':id')
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: RataTraverseRecordDTO,
+    description: 'Updates a RATA Traverse record in the workspace',
+  })
+  async updateRataRun(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('rataId') _rataId: string,
+    @Param('rataSumId') _rataSumId: string,
+    @Param('rataRunId') _rataRunId: string,
+    @Param('flowRataRunId') flowRataRunId: string,
+    @Param('id') id: string,
+    @Body() payload: RataTraverseBaseDTO,
+    //    @CurrentUser() userId: string,
+  ): Promise<RataTraverseRecordDTO> {
+    const userId = 'testUser';
+    return this.service.updateRataTraverse(testSumId, id, payload, userId);
   }
 }

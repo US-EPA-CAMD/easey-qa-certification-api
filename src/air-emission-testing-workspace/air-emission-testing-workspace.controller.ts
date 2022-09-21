@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -7,6 +15,7 @@ import {
 } from '@nestjs/swagger';
 import {
   AirEmissionTestingBaseDTO,
+  AirEmissionTestingDTO,
   AirEmissionTestingRecordDTO,
 } from '../dto/air-emission-test.dto';
 import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
@@ -18,6 +27,34 @@ const userId = 'testUser';
 @ApiTags('Air Emission Testing')
 export class AirEmissionTestingWorkspaceController {
   constructor(private readonly service: AirEmissionTestingWorkspaceService) {}
+
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: AirEmissionTestingRecordDTO,
+    description:
+      'Retrieves official Air Emission Testing records by Rata Summary Id',
+  })
+  async getAirEmissionTestings(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+  ): Promise<AirEmissionTestingDTO[]> {
+    return this.service.getAirEmissionTestings(testSumId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: AirEmissionTestingRecordDTO,
+    description: 'Retrieves official Air Emission Testing record by its Id',
+  })
+  async getAirEmissionsTesting(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('id') id: string,
+  ): Promise<AirEmissionTestingDTO> {
+    return this.service.getAirEmissionTesting(id);
+  }
 
   @Post()
   //  @ApiBearerAuth('Token')
