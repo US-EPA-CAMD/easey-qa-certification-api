@@ -12,6 +12,8 @@ import {
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { RataRunRepository } from '../rata-run/rata-run.repository';
+import { FlowRataRunWorkspaceService } from '../flow-rata-run-workspace/flow-rata-run-workspace.service';
+import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
 
 const rataRunId = 'a1b2c3';
 const testSumId = 'd4e5f6';
@@ -36,6 +38,11 @@ const payload: RataRunBaseDTO = {
 
 const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
+});
+
+const mockFlowRataRunService = () => ({
+  export: jest.fn().mockResolvedValue([new FlowRataRunDTO()]),
+  import: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
@@ -80,6 +87,10 @@ describe('RataRunWorkspaceService', () => {
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSumService,
+        },
+        {
+          provide: FlowRataRunWorkspaceService,
+          useFactory: mockFlowRataRunService,
         },
         {
           provide: RataRunRepository,
