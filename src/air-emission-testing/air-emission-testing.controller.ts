@@ -20,7 +20,7 @@ export class AirEmissionTestingController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
   ): Promise<AirEmissionTestingDTO[]> {
-    return this.service.getAirEmissionsTestings(testSumId);
+    return this.service.getAirEmissionTestings(testSumId);
   }
 
   @Get(':id')
@@ -34,6 +34,6 @@ export class AirEmissionTestingController {
     @Param('testSumId') _testSumId: string,
     @Param('id') id: string,
   ): Promise<AirEmissionTestingDTO> {
-    return this.service.getAirEmissionsTesting(id);
+    return this.service.getAirEmissionTesting(id);
   }
 }

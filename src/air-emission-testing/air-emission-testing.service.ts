@@ -13,7 +13,7 @@ export class AirEmissionTestingService {
     private readonly map: AirEmissionTestingMap,
   ) {}
 
-  async getAirEmissionsTestings(
+  async getAirEmissionTestings(
     testSumId: string,
   ): Promise<AirEmissionTestingDTO[]> {
     const records = await this.repository.find({ where: { testSumId } });
@@ -21,7 +21,7 @@ export class AirEmissionTestingService {
     return this.map.many(records);
   }
 
-  async getAirEmissionsTesting(id: string): Promise<AirEmissionTestingDTO> {
+  async getAirEmissionTesting(id: string): Promise<AirEmissionTestingDTO> {
     const result = await this.repository.findOne(id);
 
     if (!result) {
