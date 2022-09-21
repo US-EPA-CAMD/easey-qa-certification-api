@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { 
+  Body, 
+  Controller, 
+  Get, 
+  Param, 
+  Post,
+  Put, 
+  Delete 
+} from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -61,5 +69,34 @@ export class TestQualificationWorkspaceController {
     //    @CurrentUser() userId: string,
   ): Promise<TestQualificationRecordDTO> {
     return this.service.createTestQualification(testSumId, payload, userId);
+  }
+
+  @Delete(':id')
+  @ApiOkResponse({
+    description: 'Deletes a test qualification record from the workspace',
+  })
+  async deleteTestQualification(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') testQualificationId: string,
+  ): Promise<void> {
+    return this.service.deleteTestQualification(testSumId, testQualificationId, userId);
+  }
+  
+  @Put(':id')
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: TestQualificationRecordDTO,
+    description: 'Updates a test qualification record in the workspace',
+  })
+  async testQualificationSummary(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: TestQualificationBaseDTO,
+    //    @CurrentUser() userId: string,
+  ): Promise<TestQualificationRecordDTO> {
+    return this.service.updateTestQualification(testSumId, id, payload, userId);
   }
 }

@@ -1,4 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
@@ -11,9 +12,9 @@ import { LinearitySummaryChecksService } from '../linearity-summary-workspace/li
 import { LinearityInjectionChecksService } from '../linearity-injection-workspace/linearity-injection-checks.service';
 import { RataChecksService } from '../rata-workspace/rata-checks.service';
 import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary-checks.service';
-import { InjectRepository } from '@nestjs/typeorm';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -25,6 +26,7 @@ export class QACertificationChecksService {
     private readonly linearityInjectionChecksService: LinearityInjectionChecksService,
     private readonly rataChecksService: RataChecksService,
     private readonly rataSummaryChecksService: RataSummaryChecksService,
+    private readonly rataRunChecksService: RataRunChecksService,
     @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
   ) {}
@@ -162,6 +164,23 @@ export class QACertificationChecksService {
               resolve(results);
             }),
           );
+
+          rataSummary.rataRunData?.forEach(rataRun => {
+            promises.push(
+              new Promise(async (resolve, _reject) => {
+                const results = this.rataRunChecksService.runChecks(
+                  locationId,
+                  rataRun,
+                  null,
+                  true,
+                  false,
+                  summary,
+                );
+
+                resolve(results);
+              }),
+            );
+          });
         });
       });
     }

@@ -25,11 +25,15 @@ import { MonitorMethodModule } from './monitor-method/monitor-method.module';
 import { RataSummaryWorkspaceModule } from './rata-summary-workspace/rata-summary-workspace.module';
 import { RataSummaryModule } from './rata-summary/rata-summary.module';
 import { RataRunModule } from './rata-run/rata-run.module';
-import { RataRunWorkspaceModule } from './rata-run-workspace/rata-run.module';
+import { RataRunWorkspaceModule } from './rata-run-workspace/rata-run-workspace.module';
 import { TestQualificationModule } from './test-qualification/test-qualification.module';
 import { TestQualificationWorkspaceModule } from './test-qualification-workspace/test-qualification-workspace.module';
 import { AirEmissionTestingModule } from './air-emission-testing/air-emission-testing.module';
 import { AirEmissionTestingWorkspaceModule } from './air-emission-testing-workspace/air-emission-testing-workspace.module';
+import { FlowRataRunModule } from './flow-rata-run/flow-rata-run.module';
+import { FlowRataRunWorkspaceModule } from './flow-rata-run-workspace/flow-rata-run-workspace.module';
+import { RataTraverseWorkspaceModule } from './rata-traverse-workspace/rata-traverse-workspace.module';
+import { RataTraverseModule } from './rata-traverse/rata-traverse.module';
 
 @Module({
   imports: [
@@ -57,10 +61,14 @@ import { AirEmissionTestingWorkspaceModule } from './air-emission-testing-worksp
     RataSummaryModule,
     RataRunModule,
     RataRunWorkspaceModule,
+    FlowRataRunModule,
+    FlowRataRunWorkspaceModule,
     TestQualificationModule,
     TestQualificationWorkspaceModule,
     AirEmissionTestingWorkspaceModule,
     AirEmissionTestingModule,
+    RataTraverseWorkspaceModule,
+    RataTraverseModule,
   ],
 })
 export class AppModule {}

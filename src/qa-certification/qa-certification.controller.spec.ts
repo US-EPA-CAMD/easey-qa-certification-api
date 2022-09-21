@@ -20,6 +20,12 @@ import { RataSummaryMap } from '../maps/rata-summary.map';
 import { RataRunMap } from '../maps/rata-run.map';
 import { TestQualificationMap } from '../maps/test-qualification.map';
 import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
+import { RataRunService } from '../rata-run/rata-run.service';
+import { RataSummaryService } from '../rata-summary/rata-summary.service';
+import { RataService } from '../rata/rata.service';
+import { RataRepository } from '../rata/rata.repository';
+import { RataSummaryRepository } from '../rata-summary/rata-summary.repository';
+import { RataRunRepository } from '../rata-run/rata-run.repository';
 
 describe('QA Certification Controller Test', () => {
   let controller: QACertificationController;
@@ -43,8 +49,14 @@ describe('QA Certification Controller Test', () => {
         LinearityInjectionMap,
         LinearityInjectionRepository,
         ProtocolGasMap,
+        RataRepository,
+        RataService,
         RataMap,
+        RataSummaryRepository,
+        RataSummaryService,
         RataSummaryMap,
+        RataRunRepository,
+        RataRunService,
         RataRunMap,
         TestQualificationMap,
         AirEmissionTestingMap,

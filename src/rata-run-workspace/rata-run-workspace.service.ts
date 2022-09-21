@@ -1,25 +1,33 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { RataRunWorkspaceRepository } from './rata-run.repository';
+import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RataRunMap } from '../maps/rata-run.map';
 import {
   RataRunBaseDTO,
   RataRunDTO,
+  RataRunImportDTO,
   RataRunRecordDTO,
 } from '../dto/rata-run.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { In } from 'typeorm';
+import { RataRun } from '../entities/rata-run.entity';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { RataRunRepository } from '../rata-run/rata-run.repository';
 
 @Injectable()
 export class RataRunWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     @InjectRepository(RataRunWorkspaceRepository)
     private readonly repository: RataRunWorkspaceRepository,
     private readonly map: RataRunMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
+    @InjectRepository(RataRunRepository)
+    private readonly historicalRepository: RataRunRepository,
   ) {}
 
   async getRataRuns(rataSumId: string): Promise<RataRunDTO[]> {
@@ -47,12 +55,13 @@ export class RataRunWorkspaceService {
     payload: RataRunBaseDTO,
     userId: string,
     isImport: boolean = false,
+    historicalRecordId?: string,
   ): Promise<RataRunRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       rataSumId,
       userId,
       addDate: timestamp,
@@ -124,5 +133,49 @@ export class RataRunWorkspaceService {
       isImport,
     );
     return this.map.one(record);
+  }
+
+  async getRataRunsByRataSumIds(rataSumIds: string[]): Promise<RataRunDTO[]> {
+    const results = await this.repository.find({
+      where: { rataSumId: In(rataSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async import(
+    testSumId: string,
+    rataSumId: string,
+    payload: RataRunImportDTO,
+    userId: string,
+    isHistoricalRecord?: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: RataRun;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepository.findOne({
+        rataSumId: rataSumId,
+        runNumber: payload.runNumber,
+      });
+    }
+
+    const createdRataRun = await this.createRataRun(
+      testSumId,
+      rataSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Rata Run Successfully Imported. Record Id: ${createdRataRun.id}`,
+    );
+
+    return null;
+  }
+
+  async export(rataSumIds: string[]): Promise<RataRunDTO[]> {
+    return this.getRataRunsByRataSumIds(rataSumIds);
   }
 }

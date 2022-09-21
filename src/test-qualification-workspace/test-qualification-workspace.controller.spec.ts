@@ -19,6 +19,7 @@ const mockTestQualificationWorkspaceService = () => ({
   getTestQualifications: jest.fn().mockResolvedValue(testQualifications),
   getTestQualification: jest.fn().mockResolvedValue(testQualificationRecord),
   createTestQualification: jest.fn().mockResolvedValue(testQualificationRecord),
+  deleteTestQualification: jest.fn().mockResolvedValue(null),
 });
 
 const payload: TestQualificationBaseDTO = {
@@ -86,6 +87,18 @@ describe('TestQualificationWorkspaceController', () => {
       );
       expect(result).toEqual(testQualificationRecord);
       expect(service.createTestQualification).toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteTestQualification', () => {
+    it('should call the TestQualification.deleteTestQualification and delete test qualification record', async () => {
+      const result = await controller.deleteTestQualification(
+        locId,
+        testQualificationId,
+        testSumId,
+      );
+      expect(result).toEqual(null);
+      expect(service.deleteTestQualification).toHaveBeenCalled();
     });
   });
 });
