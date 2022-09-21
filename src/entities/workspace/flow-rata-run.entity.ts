@@ -11,7 +11,7 @@ import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { RataRun } from './rata-run.entity';
 import { RataTraverse } from './rata-traverse.entity';
 
-@Entity({ name: 'camdecmps.flow_rata_run' })
+@Entity({ name: 'camdecmpswks.flow_rata_run' })
 export class FlowRataRun extends BaseEntity {
   @PrimaryColumn({ name: 'flow_rata_run_id' })
   id: string;
@@ -123,7 +123,7 @@ export class FlowRataRun extends BaseEntity {
 
   @ManyToOne(
     () => RataRun,
-    r => r.FlowRataRuns,
+    f => f.FlowRataRuns,
   )
   @JoinColumn({ name: 'rata_run_id' })
   RataRun: RataRun;
