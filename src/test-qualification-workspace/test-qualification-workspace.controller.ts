@@ -78,7 +78,7 @@ export class TestQualificationWorkspaceController {
   async deleteTestQualification(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-    @Param('testQualificationId') testQualificationId: string,
+    @Param('id') testQualificationId: string,
   ): Promise<void> {
     return this.service.deleteTestQualification(testSumId, testQualificationId, userId);
   }
@@ -91,11 +91,12 @@ export class TestQualificationWorkspaceController {
     description: 'Updates a test qualification record in the workspace',
   })
   async testQualificationSummary(
-    @Param('locId') locationId: string,
+    @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
     @Body() payload: TestQualificationBaseDTO,
     //    @CurrentUser() userId: string,
   ): Promise<TestQualificationRecordDTO> {
-    return this.service.updateTestQualification(testSumId, payload, userId);
+    return this.service.updateTestQualification(testSumId, id, payload, userId);
   }
 }

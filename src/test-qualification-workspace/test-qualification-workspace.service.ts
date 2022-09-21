@@ -96,16 +96,17 @@ export class TestQualificationWorkspaceService {
   
   async updateTestQualification(
     testSumId: string,
+    id: string,
     payload: TestQualificationBaseDTO,
     userId: string,
     isImport: boolean = false,
   ): Promise<TestQualificationRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOne(testSumId);
+    const record = await this.repository.findOne(id);
 
     if (!record) {
       throw new LoggingException(
-        `A Test Qualification record not found with Record Id [${testSumId}].`,
+        `A Test Qualification record not found with Record Id [${id}].`,
         HttpStatus.NOT_FOUND,
       );
     }
