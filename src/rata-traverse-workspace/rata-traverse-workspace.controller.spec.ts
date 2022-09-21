@@ -11,7 +11,9 @@ describe('RataTraverseWorkspaceController', () => {
       providers: [RataTraverseWorkspaceService],
     }).compile();
 
-    controller = module.get<RataTraverseWorkspaceController>(RataTraverseWorkspaceController);
+    controller = module.get<RataTraverseWorkspaceController>(
+      RataTraverseWorkspaceController,
+    );
   });
 
   it('should be defined', () => {

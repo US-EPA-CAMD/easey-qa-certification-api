@@ -16,6 +16,7 @@ import { In } from 'typeorm';
 import { RataRun } from '../entities/rata-run.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { RataRunRepository } from '../rata-run/rata-run.repository';
+import { FlowRataRunWorkspaceService } from '../flow-rata-run-workspace/flow-rata-run-workspace.service';
 
 @Injectable()
 export class RataRunWorkspaceService {
@@ -26,6 +27,8 @@ export class RataRunWorkspaceService {
     private readonly map: RataRunMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
+    @Inject(forwardRef(() => FlowRataRunWorkspaceService))
+    private readonly flowRataRunService: FlowRataRunWorkspaceService,
     @InjectRepository(RataRunRepository)
     private readonly historicalRepository: RataRunRepository,
   ) {}
@@ -176,6 +179,16 @@ export class RataRunWorkspaceService {
   }
 
   async export(rataSumIds: string[]): Promise<RataRunDTO[]> {
-    return this.getRataRunsByRataSumIds(rataSumIds);
+    const rataRuns = await this.getRataRunsByRataSumIds(rataSumIds);
+
+    const flowRataRuns = await this.flowRataRunService.export(
+      rataRuns.map(i => i.id),
+    );
+
+    rataRuns.forEach(s => {
+      s.flowRataRunData = flowRataRuns.filter(i => i.rataRunId === s.id);
+    });
+
+    return rataRuns;
   }
 }

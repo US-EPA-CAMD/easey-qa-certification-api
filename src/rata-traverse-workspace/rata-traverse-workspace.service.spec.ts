@@ -9,7 +9,9 @@ describe('RataTraverseWorkspaceService', () => {
       providers: [RataTraverseWorkspaceService],
     }).compile();
 
-    service = module.get<RataTraverseWorkspaceService>(RataTraverseWorkspaceService);
+    service = module.get<RataTraverseWorkspaceService>(
+      RataTraverseWorkspaceService,
+    );
   });
 
   it('should be defined', () => {

@@ -93,7 +93,7 @@ export class TestQualificationWorkspaceService {
       isImport,
     );
   }
-  
+
   async updateTestQualification(
     testSumId: string,
     id: string,

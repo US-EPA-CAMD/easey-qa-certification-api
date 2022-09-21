@@ -126,7 +126,11 @@ describe('TestQualificationWorkspaceService', () => {
 
   describe('deleteTestQualification', () => {
     it('Should delete a Test Qualification record', async () => {
-      const result = await service.deleteTestQualification(testSumId, testQualificationId, userId);
+      const result = await service.deleteTestQualification(
+        testSumId,
+        testQualificationId,
+        userId,
+      );
       expect(result).toEqual(undefined);
     });
 
@@ -139,7 +143,11 @@ describe('TestQualificationWorkspaceService', () => {
 
       let errored = false;
       try {
-        await service.deleteTestQualification(testSumId, testQualificationId, userId);
+        await service.deleteTestQualification(
+          testSumId,
+          testQualificationId,
+          userId,
+        );
       } catch (e) {
         errored = true;
       }

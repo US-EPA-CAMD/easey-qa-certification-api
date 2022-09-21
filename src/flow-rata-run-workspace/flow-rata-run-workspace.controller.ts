@@ -12,7 +12,8 @@ export class FlowRataRunWorkspaceController {
   @ApiOkResponse({
     isArray: true,
     type: FlowRataRunDTO,
-    description: 'Retrieves official Flow Rata Run records by Flow Rata Summary Id',
+    description:
+      'Retrieves official Flow Rata Run records by Flow Rata Summary Id',
   })
   async getFlowRataRuns(
     @Param('locId') _locationId: string,

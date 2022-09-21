@@ -40,8 +40,12 @@ describe('FlowRataRunWorkspaceService', () => {
       ],
     }).compile();
 
-    service = module.get<FlowRataRunWorkspaceService>(FlowRataRunWorkspaceService);
-    repository = module.get<FlowRataRunWorkspaceRepository>(FlowRataRunWorkspaceRepository);
+    service = module.get<FlowRataRunWorkspaceService>(
+      FlowRataRunWorkspaceService,
+    );
+    repository = module.get<FlowRataRunWorkspaceRepository>(
+      FlowRataRunWorkspaceRepository,
+    );
   });
 
   it('should be defined', () => {

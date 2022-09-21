@@ -1,11 +1,11 @@
-import { 
-  Body, 
-  Controller, 
-  Get, 
-  Param, 
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
   Post,
-  Put, 
-  Delete 
+  Put,
+  Delete,
 } from '@nestjs/common';
 import {
   ApiCreatedResponse,
@@ -80,9 +80,13 @@ export class TestQualificationWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Param('id') testQualificationId: string,
   ): Promise<void> {
-    return this.service.deleteTestQualification(testSumId, testQualificationId, userId);
+    return this.service.deleteTestQualification(
+      testSumId,
+      testQualificationId,
+      userId,
+    );
   }
-  
+
   @Put(':id')
   //  @ApiBearerAuth('Token')
   //  @UseGuards(AuthGuard)
