@@ -71,6 +71,50 @@ export class FlowRataRunWorkspaceService {
     return this.map.one(entity);
   }
 
+  async updateRataRun(
+    testSumId: string,
+    flowRataRunId: string,
+    payload: FlowRataRunBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<FlowRataRunRecordDTO> {
+    const timestamp = currentDateTime();
+    const record = await this.repository.findOne(flowRataRunId);
+
+    if (!record) {
+      throw new LoggingException(
+        `A Flow Rata Run record not found with Record Id [${flowRataRunId}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    record.numberOfTraversePoints = payload.numberOfTraversePoints;
+    record.barometricPressure = payload.barometricPressure;
+    record.staticStackPressure = payload.staticStackPressure;
+    record.percentCO2 = payload.percentCO2;
+    record.percentO2 = payload.percentO2;
+    record.percentMoisture = payload.percentMoisture;
+    record.dryMolecularWeight = payload.dryMolecularWeight;
+    record.wetMolecularWeight = payload.wetMolecularWeight;
+    record.averageVelocityWithoutWallEffects =
+      payload.averageVelocityWithoutWallEffects;
+    record.averageVelocityWithWallEffects =
+      payload.averageVelocityWithWallEffects;
+    record.calculatedWAF = payload.calculatedWAF;
+    record.averageStackFlowRate = payload.averageStackFlowRate;
+    record.userId = userId;
+    record.updateDate = timestamp;
+
+    await this.repository.save(record);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+    return this.map.one(record);
+  }
+
   async deleteFlowRataRun(
     testSumId: string,
     id: string,
