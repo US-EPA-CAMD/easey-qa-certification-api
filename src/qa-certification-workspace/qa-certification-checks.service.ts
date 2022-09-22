@@ -1,4 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
@@ -11,6 +12,9 @@ import { LinearitySummaryChecksService } from '../linearity-summary-workspace/li
 import { LinearityInjectionChecksService } from '../linearity-injection-workspace/linearity-injection-checks.service';
 import { RataChecksService } from '../rata-workspace/rata-checks.service';
 import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary-checks.service';
+import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
+import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -22,6 +26,9 @@ export class QACertificationChecksService {
     private readonly linearityInjectionChecksService: LinearityInjectionChecksService,
     private readonly rataChecksService: RataChecksService,
     private readonly rataSummaryChecksService: RataSummaryChecksService,
+    private readonly rataRunChecksService: RataRunChecksService,
+    @InjectRepository(QASuppDataWorkspaceRepository)
+    private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
   ) {}
 
   private async extractErrors(
@@ -43,7 +50,7 @@ export class QACertificationChecksService {
 
   async runChecks(
     payload: QACertificationImportDTO,
-  ): Promise<LocationIdentifiers[]> {
+  ): Promise<[LocationIdentifiers[], QASuppData[]]> {
     this.logger.info('Running QA Certification Checks');
 
     const errorList: string[] = [];
@@ -51,17 +58,33 @@ export class QACertificationChecksService {
 
     let errors: string[] = [];
     let locations: LocationIdentifiers[] = [];
+    let duplicateQaSuppRecords: QASuppData[] = [];
 
     [locations, errors] = await this.locationChecksService.runChecks(payload);
     errorList.push(...errors);
     this.throwIfErrors(errorList);
 
-    payload.testSummaryData.forEach(async summary => {
+    for (const summary of payload.testSummaryData) {
       const locationId = locations.find(i => {
         return (
           i.unitId === summary.unitId && i.stackPipeId === summary.stackPipeId
         );
       }).locationId;
+
+      const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
+        locationId,
+        summary.componentID,
+        summary.testTypeCode,
+        summary.testNumber,
+        summary.spanScaleCode,
+        summary.endDate,
+        summary.endHour,
+        summary.endMinute,
+      );
+
+      if (duplicateQaSupp) {
+        duplicateQaSuppRecords.push(duplicateQaSupp);
+      }
 
       promises.push(
         new Promise(async (resolve, _reject) => {
@@ -71,6 +94,7 @@ export class QACertificationChecksService {
             true,
             false,
             payload.testSummaryData,
+            duplicateQaSupp ? duplicateQaSupp.testSumId : null,
           );
 
           resolve(results);
@@ -107,12 +131,12 @@ export class QACertificationChecksService {
         });
       });
 
-      summary.rataData?.forEach(rataData => {
+      summary.rataData?.forEach(rata => {
         promises.push(
           new Promise(async (resolve, _reject) => {
             const results = this.rataChecksService.runChecks(
               locationId,
-              rataData,
+              rata,
               null,
               true,
               false,
@@ -123,27 +147,46 @@ export class QACertificationChecksService {
           }),
         );
 
-        rataData.rataSummaryData?.forEach(rataSummary => {
+        rata.rataSummaryData?.forEach(rataSummary => {
           promises.push(
             new Promise(async (resolve, _reject) => {
               const results = this.rataSummaryChecksService.runChecks(
                 locationId,
                 rataSummary,
-                null,
                 true,
                 false,
+                null,
+                null,
+                rata.rataSummaryData,
                 summary,
               );
 
               resolve(results);
             }),
           );
+
+          rataSummary.rataRunData?.forEach(rataRun => {
+            promises.push(
+              new Promise(async (resolve, _reject) => {
+                const results = this.rataRunChecksService.runChecks(
+                  locationId,
+                  rataRun,
+                  null,
+                  true,
+                  false,
+                  summary,
+                );
+
+                resolve(results);
+              }),
+            );
+          });
         });
       });
-    });
+    }
 
     this.throwIfErrors(await this.extractErrors(promises));
     this.logger.info('Completed QA Certification Checks');
-    return locations;
+    return [locations, duplicateQaSuppRecords];
   }
 }

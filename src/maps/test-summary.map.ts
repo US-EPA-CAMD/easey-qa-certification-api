@@ -8,12 +8,14 @@ import { TestSummaryDTO } from '../dto/test-summary.dto';
 import { ProtocolGasMap } from './protocol-gas.map';
 import { RataMap } from './rata.map';
 import { TestQualificationMap } from './test-qualification.map';
+import { AirEmissionTestingMap } from './air-emission-testing.map';
 
 @Injectable()
 export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
   constructor(
     private readonly linearityMap: LinearitySummaryMap,
     private readonly protocolGasMap: ProtocolGasMap,
+    private readonly airEmissionTestingMap: AirEmissionTestingMap,
     private readonly rataMap: RataMap,
     private readonly testQualificationMap: TestQualificationMap,
   ) {
@@ -29,6 +31,10 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
 
     const protocolGases = entity.protocolGases
       ? await this.protocolGasMap.many(entity.protocolGases)
+      : [];
+
+    const airEmissionTestings = entity.airEmissionTestings
+      ? await this.airEmissionTestingMap.many(entity.airEmissionTestings)
       : [];
 
     const ratas = entity.ratas ? await this.rataMap.many(entity.ratas) : [];
@@ -97,7 +103,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       hgSummaryData: [],
       testQualificationData: testQuals,
       protocolGasData: protocolGases,
-      airEmissionTestData: [],
+      airEmissionTestingData: airEmissionTestings,
     };
   }
 }

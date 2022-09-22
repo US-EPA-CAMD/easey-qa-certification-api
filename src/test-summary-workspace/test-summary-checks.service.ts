@@ -62,10 +62,25 @@ export class TestSummaryChecksService {
     isImport: boolean = false,
     isUpdate: boolean = false,
     summaries?: TestSummaryImportDTO[],
+    historicalTestSumId?: string,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
     this.logger.info('Running Test Summary Checks');
+
+    if (!isImport) {
+      const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
+        locationId,
+        summary.componentID,
+        summary.testTypeCode,
+        summary.testNumber,
+        summary.spanScaleCode,
+        summary.endDate,
+        summary.endHour,
+        summary.endMinute,
+      );
+      historicalTestSumId = duplicateQaSupp?.testSumId;
+    }
 
     if (isImport) {
       // IMPORT-16 Inappropriate Children Records for Test Summary
@@ -122,7 +137,12 @@ export class TestSummaryChecksService {
     }
 
     // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
-    error = await this.linear4Check(locationId, summary, isImport);
+    error = await this.linear4Check(
+      locationId,
+      summary,
+      historicalTestSumId,
+      isImport,
+    );
     if (error) {
       errorList.push(error);
     }
@@ -156,6 +176,7 @@ export class TestSummaryChecksService {
         locationId,
         summary,
         summaries,
+        historicalTestSumId,
         isImport,
       );
       if (error) {
@@ -292,7 +313,7 @@ export class TestSummaryChecksService {
         TestTypeCodes.APPE.toString(),
         TestTypeCodes.UNITDEF.toString(),
       ].includes(summary.testTypeCode) &&
-      summary.airEmissionTestData?.length > 0
+      summary.airEmissionTestingData?.length > 0
     ) {
       invalidChildRecords.push('Air Emission Test');
     }
@@ -664,6 +685,7 @@ export class TestSummaryChecksService {
     locationId: string,
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
     summaries: TestSummaryImportDTO[] = [],
+    historicalTestSumId: string,
     isImport: boolean = false,
   ): Promise<string> {
     let error: string = null;
@@ -703,8 +725,9 @@ export class TestSummaryChecksService {
       // LINEAR-31 Duplicate Linearity (Result A)
       error = this.getMessage('LINEAR-31-A', null);
     } else {
-      duplicate = await this.qaSuppDataRepository.getQASuppDataByLocationId(
+      duplicate = await this.qaSuppDataRepository.getUnassociatedQASuppDataByLocationIdAndTestSum(
         locationId,
+        historicalTestSumId,
         summary.testTypeCode,
         summary.testNumber,
       );
@@ -713,7 +736,6 @@ export class TestSummaryChecksService {
         if (isImport) {
           fields = this.compareFields(duplicate, summary);
         }
-
         // LINEAR-31 Duplicate Linearity (Result B)
         error = this.getMessage('LINEAR-31-B', null);
       }
@@ -1024,25 +1046,26 @@ export class TestSummaryChecksService {
   private async linear4Check(
     locationId: string,
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
+    historicalTestSumId: string,
     _isImport: boolean = false,
   ): Promise<string> {
     let error: string = null;
     let duplicateQaSupp: TestSummary | QASuppData;
     const resultA = this.getMessage('LINEAR-4-A', null);
 
-    const duplicateTestSum = await this.repository.findOne({
-      testTypeCode: summary.testTypeCode,
-      spanScaleCode: summary.spanScaleCode,
-      endDate: summary.endDate,
-      endHour: summary.endHour,
-      endMinute: summary.endMinute,
-    });
+    const duplicateTestSum = await this.repository.getTestSummaryByComponent(
+      summary.componentID,
+      summary.testTypeCode,
+      summary.spanScaleCode,
+      summary.endDate,
+      summary.endHour,
+      summary.endMinute,
+    );
 
     if (duplicateTestSum) {
-      error = resultA;
-      //    error = `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`;
+      error = this.getMessage('LINEAR-4-A', null);
     } else {
-      duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
+      duplicateQaSupp = await this.qaSuppDataRepository.getUnassociatedQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
         summary.componentID,
         summary.testTypeCode,
@@ -1054,32 +1077,36 @@ export class TestSummaryChecksService {
       );
 
       if (duplicateQaSupp) {
-        error = resultA;
-        //      error = `Based on the information in this record, this test has already been submitted with a different test number, or the database already contains the same test with a different test number. This test cannot be submitted.`;
+        error = this.getMessage('LINEAR-4-A', null);
       } else {
-        // TODO: BLOCKED DUE TO COLUMN DOESNOT EXISTS IN DATABASE
-        /* duplicateQaSupp = await this.qaSuppDataRepository.findOne({
-          locationId: locationId,
-          testTypeCode: summary.testTypeCode,
-          testNumber: summary.testNumber,
-        });
+        duplicateQaSupp = await this.qaSuppDataRepository.getUnassociatedQASuppDataByLocationIdAndTestSum(
+          locationId,
+          historicalTestSumId,
+          summary.testTypeCode,
+          summary.testNumber,
+        );
 
         if (duplicateQaSupp) {
-          if (duplicateQaSupp.canSubmit === 'N') {
+          if (
+            ![null, 'GRANTED', 'REQUIRE'].includes(
+              duplicateQaSupp.submissionAvailabilityCode,
+            )
+          ) {
             if (
-              duplicateQaSupp.testSumId !== duplicateTestSum.id &&
               duplicateQaSupp.component.componentID !== summary.componentID &&
               duplicateQaSupp.spanScaleCode !== summary.spanScaleCode &&
               duplicateQaSupp.endDate !== summary.endDate &&
               duplicateQaSupp.endHour !== summary.endHour &&
               duplicateQaSupp.endMinute !== summary.endMinute
             ) {
-              error = `Another [${duplicateQaSupp.testTypeCode}] with this test number [${duplicateQaSupp.testNumber}] has already been submitted for this location. This test cannot be submitted with this test number. If this is a different test, you should assign it a unique test number.`;
+              error = CheckCatalogService.formatResultMessage('LINEAR-4-B', {
+                testtype: duplicateQaSupp.testTypeCode,
+              });
             } else {
-              error = `This test has already been submitted and will not be resubmitted. If you wish to resubmit this test, please contact EPA for approval.`;
+              error = CheckCatalogService.formatResultMessage('LINEAR-4-C');
             }
           }
-        } */
+        }
       }
     }
 

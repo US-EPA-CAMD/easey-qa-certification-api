@@ -5,6 +5,7 @@ import { ProtocolGasDTO } from '../dto/protocol-gas.dto';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { ProtocolGasRepository } from './protocol-gas.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
 
 @Injectable()
 export class ProtocolGasService {
@@ -33,5 +34,18 @@ export class ProtocolGasService {
     }
 
     return this.map.one(result);
+  }
+
+  async getProtocolGasByTestSumIds(
+    testSumIds: string[],
+  ): Promise<ProtocolGasDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<ProtocolGasDTO[]> {
+    return this.getProtocolGasByTestSumIds(testSumIds);
   }
 }

@@ -5,6 +5,7 @@ import { OperatingLevelCode } from '../entities/workspace/operating-level-code.e
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { IsNotEmpty, Min, ValidationArguments } from 'class-validator';
 import { RataRunDTO, RataRunImportDTO } from './rata-run.dto';
+import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 
 const KEY = 'RATA Summary';
 
@@ -24,9 +25,9 @@ export class RataSummaryBaseDTO {
   })
   operatingLevelCode: string;
 
-  @ApiProperty({
-    description: 'averageGrossUnitLoad. ADD TO PROPERTY METADATA',
-  })
+  @ApiProperty(
+    getMetadata(dataDictionary.averageGrossUnitLoad, MetadataKeys.RATA_SUMMARY),
+  )
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return `RATA-23-A: You did not provide [${args.property}], which is required for [${KEY}].`;
@@ -114,9 +115,9 @@ export class RataSummaryBaseDTO {
   })
   tValue: number;
 
-  @ApiProperty({
-    description: 'apsIndicator. ADD TO PROPERTY METADATA',
-  })
+  @ApiProperty(
+    getMetadata(dataDictionary.apsIndicator, MetadataKeys.RATA_SUMMARY),
+  )
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return `RATA-123-A: You did not provide [${args.property}], which is required for [${KEY}].`;
@@ -124,9 +125,7 @@ export class RataSummaryBaseDTO {
   })
   apsIndicator: number;
 
-  @ApiProperty({
-    description: 'apsCode. ADD TO PROPERTY METADATA',
-  })
+  @ApiProperty(getMetadata(dataDictionary.apsCode, MetadataKeys.RATA_SUMMARY))
   @IsValidCode(ApsCode, {
     message: (args: ValidationArguments) => {
       return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;

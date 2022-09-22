@@ -4,10 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryColumn,
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { RataSummary } from './rata-summary.entity';
+import { FlowRataRun } from './flow-rata-run.entity';
 
 @Entity({ name: 'camdecmpswks.rata_run' })
 export class RataRun extends BaseEntity {
@@ -81,4 +83,11 @@ export class RataRun extends BaseEntity {
   )
   @JoinColumn({ name: 'rata_sum_id' })
   RataSummary: RataSummary;
+
+  @OneToMany(
+    () => FlowRataRun,
+    fr => fr.RataRun,
+  )
+  @JoinColumn({ name: 'rata_run_id' })
+  FlowRataRuns: FlowRataRun[];
 }

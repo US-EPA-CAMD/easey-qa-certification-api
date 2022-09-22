@@ -113,4 +113,34 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
 
     return query.getMany();
   }
+
+  async getTestSummaryByComponent(
+    componentID: string,
+    testTypeCode: string,
+    spanScaleCode: string,
+    endDate: Date,
+    endHour: number,
+    endMinute: number,
+  ) {
+    const query = this.buildBaseQuery().where(
+      'ts.testTypeCode = :testTypeCode',
+      { testTypeCode },
+    );
+
+    if (componentID) {
+      query.andWhere('c.componentID = :componentID', { componentID });
+    }
+
+    if (spanScaleCode) {
+      query.andWhere('ts.spanScaleCode = :spanScaleCode', { spanScaleCode });
+    }
+    if (endDate) {
+      query
+        .andWhere('ts.endDate = :endDate', { endDate })
+        .andWhere('ts.endHour = :endHour', { endHour })
+        .andWhere('ts.endMinute = :endMinute', { endMinute });
+    }
+
+    return query.getOne();
+  }
 }

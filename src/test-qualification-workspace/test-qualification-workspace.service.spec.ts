@@ -3,11 +3,14 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import {
   TestQualificationBaseDTO,
   TestQualificationDTO,
+  TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
 import { TestQualification } from '../entities/workspace/test-qualification.entity';
 import { TestQualificationMap } from '../maps/test-qualification.map';
 import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
 import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { HttpStatus } from '@nestjs/common/enums';
 
 const testSumId = '';
 const testQualificationId = 'a1b2c3';
@@ -15,6 +18,7 @@ const userId = 'user';
 const entity = new TestQualification();
 const testQualificationRecord = new TestQualificationDTO();
 const testQualifications = [testQualificationRecord];
+const record = new TestQualificationRecordDTO();
 
 const payload: TestQualificationBaseDTO = {
   testClaimCode: 'SLC',
@@ -30,6 +34,7 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
+  delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
@@ -116,6 +121,60 @@ describe('TestQualificationWorkspaceService', () => {
       const results = await service.getTestQualifications(testSumId);
       expect(results).toEqual(testQualifications);
       expect(repository.find).toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteTestQualification', () => {
+    it('Should delete a Test Qualification record', async () => {
+      const result = await service.deleteTestQualification(
+        testSumId,
+        testQualificationId,
+        userId,
+      );
+      expect(result).toEqual(undefined);
+    });
+
+    it('Should through error while deleting a Test Qualification record', async () => {
+      const error = new LoggingException(
+        `Error deleting Test Qualification with record Id [${testSumId}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+      jest.spyOn(repository, 'delete').mockRejectedValue(error);
+
+      let errored = false;
+      try {
+        await service.deleteTestQualification(
+          testSumId,
+          testQualificationId,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('updateTestQualification', () => {
+    it('should update a test qualification record', async () => {
+      const result = await service.updateTestQualification(
+        testSumId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(record);
+    });
+
+    it('should throw error with invalid test qualification record id', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.updateTestQualification(testSumId, payload, userId);
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
     });
   });
 });

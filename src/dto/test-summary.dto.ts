@@ -24,8 +24,8 @@ import { RataDTO, RataImportDTO } from './rata.dto';
 import { HgSummaryDTO, HgSummaryImportDTO } from './hg-summary.dto';
 import { ProtocolGasDTO, ProtocolGasImportDTO } from './protocol-gas.dto';
 import {
-  AirEmissionTestDTO,
-  AirEmissionTestImportDTO,
+  AirEmissionTestingDTO,
+  AirEmissionTestingImportDTO,
 } from './air-emission-test.dto';
 import {
   UnitDefaultTestDTO,
@@ -97,7 +97,9 @@ import {
   VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION,
   VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION,
   VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE,
+  VALID_CODES_FOR_MON_SYS_ID_VALIDATION,
 } from '../utilities/constants';
+import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 
 const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -163,7 +165,9 @@ export class TestSummaryBaseDTO {
       });
     },
   })
-  // TODO: NEED @ValidateIf decorator if this is only for RATA
+  @ValidateIf(o =>
+    VALID_CODES_FOR_MON_SYS_ID_VALIDATION.includes(o.testTypeCode),
+  )
   monitoringSystemID?: string;
 
   @ApiProperty({
@@ -247,9 +251,7 @@ export class TestSummaryBaseDTO {
   )
   testResultCode?: string;
 
-  @ApiProperty({
-    description: propertyMetadata.beginDate.description,
-  })
+  @ApiProperty(getMetadata(dataDictionary.beginDate, MetadataKeys.TEST_SUMMARY))
   @IsNotEmpty({
     message: `You did not provide [beginDate], which is required for [${KEY}].`,
   })
@@ -449,7 +451,7 @@ export class TestSummaryImportDTO extends TestSummaryBaseDTO {
   hgSummaryData: HgSummaryImportDTO[];
   testQualificationData: TestQualificationImportDTO[];
   protocolGasData: ProtocolGasImportDTO[];
-  airEmissionTestData: AirEmissionTestImportDTO[];
+  airEmissionTestingData: AirEmissionTestingImportDTO[];
 }
 
 export class TestSummaryDTO extends TestSummaryRecordDTO {
@@ -470,5 +472,5 @@ export class TestSummaryDTO extends TestSummaryRecordDTO {
   hgSummaryData: HgSummaryDTO[];
   testQualificationData: TestQualificationDTO[];
   protocolGasData: ProtocolGasDTO[];
-  airEmissionTestData: AirEmissionTestDTO[];
+  airEmissionTestingData: AirEmissionTestingDTO[];
 }

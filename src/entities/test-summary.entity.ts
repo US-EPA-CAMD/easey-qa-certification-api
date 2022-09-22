@@ -18,6 +18,7 @@ import { LinearitySummary } from './linearity-summary.entity';
 import { ProtocolGas } from './protocol-gas.entity';
 import { Rata } from './rata.entity';
 import { TestQualification } from './test-qualification.entity';
+import { AirEmissionTesting } from './air-emission-test.entity';
 
 @Entity({ name: 'camdecmps.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -219,6 +220,13 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   protocolGases: ProtocolGas[];
+
+  @OneToMany(
+    () => AirEmissionTesting,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  airEmissionTestings: AirEmissionTesting[];
 
   @ManyToOne(
     () => ReportingPeriod,

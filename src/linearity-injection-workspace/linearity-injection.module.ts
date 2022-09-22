@@ -8,10 +8,12 @@ import { LinearityInjectionWorkspaceService } from './linearity-injection.servic
 import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { LinearityInjectionChecksService } from './linearity-injection-checks.service';
 import { LinearitySummaryWorkspaceModule } from '../linearity-summary-workspace/linearity-summary.module';
+import { LinearityInjectionModule } from '../linearity-injection/linearity-injection.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([LinearityInjectionWorkspaceRepository]),
+    forwardRef(() => LinearityInjectionModule),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => LinearitySummaryWorkspaceModule),
   ],

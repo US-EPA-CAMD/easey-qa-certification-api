@@ -10,6 +10,7 @@ import {
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 
 @Injectable()
 export class QACertificationWorkspaceService {
@@ -51,13 +52,14 @@ export class QACertificationWorkspaceService {
     locations: LocationIdentifiers[],
     payload: QACertificationImportDTO,
     userId: string,
+    qaSupprecords: QASuppData[],
   ): Promise<any> {
     this.logger.info(
       `Importing QA Certification data for Facility Id/Oris Code [${payload.orisCode}]`,
     );
 
     const promises = [];
-    payload.testSummaryData.forEach(summary => {
+    payload.testSummaryData.forEach((summary, idx) => {
       promises.push(
         new Promise(async (resolve, _reject) => {
           const locationId = locations.find(i => {
@@ -71,6 +73,9 @@ export class QACertificationWorkspaceService {
             locationId,
             summary,
             userId,
+            qaSupprecords[idx] !== undefined
+              ? qaSupprecords[idx]?.testSumId
+              : null,
           );
 
           resolve(results);

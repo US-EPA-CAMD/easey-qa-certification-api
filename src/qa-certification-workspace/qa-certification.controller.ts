@@ -24,6 +24,8 @@ import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { QACertificationWorkspaceService } from './qa-certification.service';
 import { QACertificationChecksService } from './qa-certification-checks.service';
 import { FormatValidationErrorsInterceptor } from '../interceptors/format-validation-errors.interceptor';
+import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
+import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -83,7 +85,10 @@ export class QACertificationWorkspaceController {
     //    @CurrentUser() userId: string,
   ) {
     const userId = 'testUser';
-    const locations = await this.checksService.runChecks(payload);
-    return this.service.import(locations, payload, userId);
+    let qaSuppRecords: QASuppData[] = [];
+    let locations: LocationIdentifiers[] = [];
+
+    [locations, qaSuppRecords] = await this.checksService.runChecks(payload);
+    return this.service.import(locations, payload, userId, qaSuppRecords);
   }
 }

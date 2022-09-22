@@ -1,24 +1,25 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import {
+  LinearityInjectionDTO,
   LinearityInjectionImportDTO,
   LinearityInjectionRecordDTO,
 } from '../dto/linearity-injection.dto';
-import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
 import { LinearityInjectionWorkspaceService } from './linearity-injection.service';
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
 import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
 import { InternalServerErrorException } from '@nestjs/common';
+import { LinearityInjectionRepository } from '../linearity-injection/linearity-injection.repository';
+import { LinearityInjection } from '../entities/workspace/linearity-injection.entity';
 
 const testSumId = '1';
 const linSumId = '1';
 const linInjId = '1';
 const userId = 'testuser';
 
-const lineInjection = new LinearitySummary();
-const lineInjectionDto = new LinearitySummaryDTO();
+const lineInjection = new LinearityInjection();
+const lineInjectionDto = new LinearityInjectionDTO();
 const lineInjectionRecordDto = new LinearityInjectionRecordDTO();
 
 const payload = new LinearityInjectionImportDTO();
@@ -31,6 +32,10 @@ const mockRepository = () => ({
   delete: jest.fn().mockResolvedValue(null),
 });
 
+const mockOfficialRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(new LinearityInjection()),
+});
+
 const mockTestSummaryService = () => ({});
 
 const mockMap = () => ({
@@ -38,7 +43,7 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue([lineInjectionDto]),
 });
 
-describe('TestSummaryWorkspaceService', () => {
+describe('LinearityInjectionWorkspaceService', () => {
   let service: LinearityInjectionWorkspaceService;
   let repository: LinearityInjectionWorkspaceRepository;
 
@@ -54,6 +59,10 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: LinearityInjectionWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: LinearityInjectionRepository,
+          useFactory: mockOfficialRepository,
         },
         {
           provide: LinearityInjectionMap,

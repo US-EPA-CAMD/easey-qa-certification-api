@@ -42,4 +42,8 @@ export default registerAs('app', () => ({
   ),
   version: process.env.EASEY_QA_CERTIFICATION_API_VERSION || 'v0.0.0',
   published: process.env.EASEY_QA_CERTIFICATION_API_PUBLISHED || 'local',
+  enableSecretToken: parseBool(
+    process.env.EASEY_QA_CERTIFICATION_API_ENABLE_SECRET_TOKEN,
+    false,
+  ),
 }));

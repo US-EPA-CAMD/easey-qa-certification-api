@@ -20,6 +20,7 @@ import { RataWorkspaceModule } from '../rata-workspace/rata-workspace.module';
 import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
 import { TestResultCodeModule } from '../test-result-code/test-result-code.module';
 import { TestQualificationWorkspaceModule } from '../test-qualification-workspace/test-qualification-workspace.module';
+import { AirEmissionTestingWorkspaceModule } from '../air-emission-testing-workspace/air-emission-testing-workspace.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { TestQualificationWorkspaceModule } from '../test-qualification-workspac
     forwardRef(() => ProtocolGasWorkspaceModule),
     forwardRef(() => RataWorkspaceModule),
     forwardRef(() => TestQualificationWorkspaceModule),
+    forwardRef(() => AirEmissionTestingWorkspaceModule),
     TestResultCodeModule,
   ],
   controllers: [TestSummaryWorkspaceController],

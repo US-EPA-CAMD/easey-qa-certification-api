@@ -2,20 +2,35 @@ import { v4 as uuid } from 'uuid';
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { currentDateTime } from '../utilities/functions';
-import { RataBaseDTO, RataDTO, RataRecordDTO } from '../dto/rata.dto';
+import {
+  RataBaseDTO,
+  RataDTO,
+  RataImportDTO,
+  RataRecordDTO,
+} from '../dto/rata.dto';
 import { RataMap } from '../maps/rata.map';
 import { RataWorkspaceRepository } from './rata-workspace.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { RataSummaryWorkspaceService } from '../rata-summary-workspace/rata-summary-workspace.service';
+import { In } from 'typeorm';
+import { RataRepository } from '../rata/rata.repository';
+import { Rata } from '../entities/rata.entity';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class RataWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     private readonly map: RataMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(RataWorkspaceRepository)
     private readonly repository: RataWorkspaceRepository,
+    @InjectRepository(RataRepository)
+    private readonly historicalRepository: RataRepository,
+
+    private readonly rataSummaryService: RataSummaryWorkspaceService,
   ) {}
 
   async getRataById(id: string): Promise<RataDTO> {
@@ -45,12 +60,13 @@ export class RataWorkspaceService {
     payload: RataBaseDTO,
     userId: string,
     isImport: boolean = false,
+    historicalRecordId?: string,
   ): Promise<RataRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
       userId,
       addDate: timestamp,
@@ -121,5 +137,81 @@ export class RataWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getRatasByTestSumIds(testSumIds: string[]): Promise<RataDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async import(
+    testSumId: string,
+    payload: RataImportDTO,
+    userId: string,
+    isHistoricalRecord?: boolean,
+  ) {
+    const isImport = true;
+    const promises = [];
+    let historicalRecord: Rata;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepository.findOne({
+        testSumId: testSumId,
+        rataFrequencyCode: payload.rataFrequencyCode,
+      });
+    }
+
+    const createdRata = await this.createRata(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Rata Successfully Imported. Record Id: ${createdRata.id}`,
+    );
+
+    if (payload.rataSummaryData?.length > 0) {
+      for (const rataSummary of payload.rataSummaryData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.rataSummaryService.import(
+                testSumId,
+                createdRata.id,
+                rataSummary,
+                userId,
+                isHistoricalRecord,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    await Promise.all(promises);
+
+    return null;
+  }
+
+  async export(testSumIds: string[]): Promise<RataDTO[]> {
+    const ratas = await this.getRatasByTestSumIds(testSumIds);
+
+    const rataSummaries = await this.rataSummaryService.export(
+      ratas.map(i => i.id),
+    );
+
+    ratas.forEach(s => {
+      s.rataSummaryData = rataSummaries.filter(i => i.rataId === s.id);
+    });
+
+    return ratas;
   }
 }

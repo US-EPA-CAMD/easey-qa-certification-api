@@ -70,7 +70,7 @@ export class TestSummaryRepository extends Repository<TestSummary> {
     unitIds?: string[],
     stackPipeIds?: string[],
     testSummaryIds?: string[],
-    testTypeCode?: string[],
+    testTypeCodes?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummary[]> {
@@ -104,7 +104,7 @@ export class TestSummaryRepository extends Repository<TestSummary> {
       TestSummary
     >;
 
-    query = addTestTypeWhere(query, testTypeCode) as SelectQueryBuilder<
+    query = addTestTypeWhere(query, testTypeCodes) as SelectQueryBuilder<
       TestSummary
     >;
     query = addBeginAndEndDateWhere(

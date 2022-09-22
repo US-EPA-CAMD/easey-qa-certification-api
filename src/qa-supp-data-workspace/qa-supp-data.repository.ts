@@ -16,23 +16,51 @@ export class QASuppDataWorkspaceRepository extends Repository<QASuppData> {
       .leftJoin('sp.plant', 'spp');
   }
 
-  async getQASuppDataByLocationId(
+  async getUnassociatedQASuppDataByLocationIdAndTestSum(
     locationId: string,
-    testTypeCode?: string,
-    testNumber?: string,
+    testSumId: string,
+    testTypeCode: string,
+    testNumber: string,
   ): Promise<QASuppData> {
-    const query = this.buildBaseQuery().where('ts.locationId = :locationId', {
-      locationId,
-    });
+    const query = this.buildBaseQuery()
+      .where('ts.locationId = :locationId', {
+        locationId,
+      })
+      .andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode })
+      .andWhere('ts.testNumber = :testNumber', { testNumber })
+      .andWhere('ts.testSumId != :testSumId', { testSumId });
 
-    if (testTypeCode) {
-      query.andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode });
+    return query.getOne();
+  }
+
+  async getUnassociatedQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
+    locationId: string,
+    componentID: string,
+    testTypeCode: string,
+    testNumber: string,
+    spanScaleCode: string,
+    endDate: Date,
+    endHour: number,
+    endMinute: number,
+  ): Promise<QASuppData> {
+    const query = this.buildBaseQuery()
+      .where('ts.locationId = :locationId', { locationId })
+      .andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode })
+      .andWhere('ts.testNumber != :testNumber', { testNumber });
+
+    if (componentID) {
+      query.andWhere('c.componentID = :componentID', { componentID });
     }
 
-    if (testNumber) {
-      query.andWhere('ts.testNumber = :testNumber', { testNumber });
+    if (spanScaleCode) {
+      query.andWhere('ts.spanScaleCode = :spanScaleCode', { spanScaleCode });
     }
-
+    if (endDate) {
+      query
+        .andWhere('ts.endDate = :endDate', { endDate })
+        .andWhere('ts.endHour = :endHour', { endHour })
+        .andWhere('ts.endMinute = :endMinute', { endMinute });
+    }
     return query.getOne();
   }
 
@@ -47,14 +75,23 @@ export class QASuppDataWorkspaceRepository extends Repository<QASuppData> {
     endMinute: number,
   ): Promise<QASuppData> {
     const query = this.buildBaseQuery()
-      .where('c.componentID = :componentID', { componentID })
-      .andWhere('ts.locationId = :locationId', { locationId })
+      .where('ts.locationId = :locationId', { locationId })
       .andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode })
-      .andWhere('ts.testNumber = :testNumber', { testNumber })
-      .andWhere('ts.spanScaleCode = :spanScaleCode', { spanScaleCode })
-      .andWhere('ts.endDate = :endDate', { endDate })
-      .andWhere('ts.endHour = :endHour', { endHour })
-      .andWhere('ts.endMinute = :endMinute', { endMinute });
+      .andWhere('ts.testNumber = :testNumber', { testNumber });
+
+    if (componentID) {
+      query.andWhere('c.componentID = :componentID', { componentID });
+    }
+
+    if (spanScaleCode) {
+      query.andWhere('ts.spanScaleCode = :spanScaleCode', { spanScaleCode });
+    }
+    if (endDate) {
+      query
+        .andWhere('ts.endDate = :endDate', { endDate })
+        .andWhere('ts.endHour = :endHour', { endHour })
+        .andWhere('ts.endMinute = :endMinute', { endMinute });
+    }
 
     return query.getOne();
   }

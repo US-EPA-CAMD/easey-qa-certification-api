@@ -6,21 +6,32 @@ import { currentDateTime } from '../utilities/functions';
 import {
   RataSummaryBaseDTO,
   RataSummaryDTO,
+  RataSummaryImportDTO,
   RataSummaryRecordDTO,
 } from '../dto/rata-summary.dto';
 import { RataSummaryMap } from '../maps/rata-summary.map';
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
+import { RataRunWorkspaceService } from '../rata-run-workspace/rata-run-workspace.service';
+import { RataSummary } from '../entities/rata-summary.entity';
+import { RataSummaryRepository } from '../rata-summary/rata-summary.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class RataSummaryWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     private readonly map: RataSummaryMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(RataSummaryWorkspaceRepository)
     private readonly repository: RataSummaryWorkspaceRepository,
+    @InjectRepository(RataSummaryRepository)
+    private readonly historicalRepository: RataSummaryRepository,
+    @Inject(forwardRef(() => RataRunWorkspaceService))
+    private readonly rataRunService: RataRunWorkspaceService,
   ) {}
 
   async getRataSummaries(rataId: string): Promise<RataSummaryDTO[]> {
@@ -50,12 +61,13 @@ export class RataSummaryWorkspaceService {
     payload: RataSummaryBaseDTO,
     userId: string,
     isImport: boolean = false,
+    historicalRecordId?: string,
   ): Promise<RataSummaryRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       rataId,
       userId,
       addDate: timestamp,
@@ -141,5 +153,85 @@ export class RataSummaryWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getRataSummariesByRataIds(
+    rataIds: string[],
+  ): Promise<RataSummaryDTO[]> {
+    const results = await this.repository.find({
+      where: { rataId: In(rataIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async import(
+    testSumId: string,
+    rataId: string,
+    payload: RataSummaryImportDTO,
+    userId: string,
+    isHistoricalRecord?: boolean,
+  ) {
+    const isImport = true;
+    const promises = [];
+    let historicalRecord: RataSummary;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepository.findOne({
+        rataId: rataId,
+        operatingLevelCode: payload.operatingLevelCode,
+      });
+    }
+
+    const createdRataSummary = await this.createRataSummary(
+      testSumId,
+      rataId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Rata Summary Successfully Imported. Record Id: ${createdRataSummary.id}`,
+    );
+
+    if (payload.rataRunData?.length > 0) {
+      for (const rataRun of payload.rataRunData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.rataRunService.import(
+                testSumId,
+                createdRataSummary.id,
+                rataRun,
+                userId,
+                isHistoricalRecord,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    await Promise.all(promises);
+
+    return null;
+  }
+
+  async export(rataIds: string[]): Promise<RataSummaryDTO[]> {
+    const rataSummaries = await this.getRataSummariesByRataIds(rataIds);
+
+    const rataRuns = await this.rataRunService.export(
+      rataSummaries.map(i => i.id),
+    );
+
+    rataSummaries.forEach(s => {
+      s.rataRunData = rataRuns.filter(i => i.rataSumId === s.id);
+    });
+
+    return rataSummaries;
   }
 }

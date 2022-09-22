@@ -4,6 +4,8 @@ import { RataRunRepository } from './rata-run.repository';
 import { RataRunService } from './rata-run.service';
 import { RataRun } from '../entities/rata-run.entity';
 import { RataRunDTO } from '../dto/rata-run.dto';
+import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
+import { FlowRataRunService } from '../flow-rata-run/flow-rata-run.service';
 
 const rataRunId = 'a1b2c3';
 const rataSumId = 'd4e5f6';
@@ -18,6 +20,10 @@ const mockMap = () => ({
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([rataRun]),
   findOne: jest.fn().mockResolvedValue(rataRun),
+});
+
+const mockFlowRataRunService = () => ({
+  export: jest.fn().mockResolvedValue([new FlowRataRunDTO()]),
 });
 
 describe('RataRunService', () => {
@@ -37,15 +43,15 @@ describe('RataRunService', () => {
           provide: RataRunMap,
           useFactory: mockMap,
         },
+        {
+          provide: FlowRataRunService,
+          useFactory: mockFlowRataRunService,
+        },
       ],
     }).compile();
 
     service = module.get<RataRunService>(RataRunService);
     repository = module.get<RataRunRepository>(RataRunRepository);
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
   });
 
   describe('getRataRun', () => {
@@ -75,6 +81,23 @@ describe('RataRunService', () => {
       const result = await service.getRataRuns(rataSumId);
       expect(result).toEqual([rataRun]);
       expect(repository.find).toHaveBeenCalled();
+    });
+  });
+
+  describe('getRataRunsByRataSumIds', () => {
+    it('Should get Rata Run records by rata summary ids', async () => {
+      const result = await service.getRataRunsByRataSumIds([rataSumId]);
+      expect(result).toEqual([rataRunDTO]);
+    });
+  });
+
+  describe('Export', () => {
+    it('Should Export Rata Run', async () => {
+      jest
+        .spyOn(service, 'getRataRunsByRataSumIds')
+        .mockResolvedValue([rataRunDTO]);
+      const result = await service.export([rataSumId]);
+      expect(result).toEqual([rataRunDTO]);
     });
   });
 });

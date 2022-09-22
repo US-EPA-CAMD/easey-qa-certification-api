@@ -11,6 +11,8 @@ import {
 
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
+import { RataSummary } from '../entities/workspace/rata-summary.entity';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 const KEY = 'RATA Summary';
@@ -19,6 +21,8 @@ const KEY = 'RATA Summary';
 export class RataSummaryChecksService {
   constructor(
     private readonly logger: Logger,
+    @InjectRepository(RataSummaryWorkspaceRepository)
+    private readonly repository: RataSummaryWorkspaceRepository,
     @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
     @InjectRepository(MonitorSystemRepository)
@@ -34,9 +38,10 @@ export class RataSummaryChecksService {
   async runChecks(
     locationId: string,
     rataSummary: RataSummaryBaseDTO | RataSummaryImportDTO,
-    testSumId?: string,
     isImport: boolean = false,
-    _isUpdate: boolean = false,
+    isUpdate: boolean = false,
+    rataId?: string,
+    testSumId?: string,
     rataSummaries?: RataSummaryImportDTO[],
     testSummary?: TestSummaryImportDTO,
   ): Promise<string[]> {
@@ -69,6 +74,19 @@ export class RataSummaryChecksService {
     if (error) {
       errorList.push(error);
     }
+    
+    if (!isUpdate) {
+      // RATA-107 Duplicate RATA Summary
+      error = await this.rata107Check(
+        rataSummary,
+        isImport,
+        rataId,
+        rataSummaries,
+      );
+      if (error) {
+        errorList.push(error);
+      }
+    }
 
     this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed RATA Summary Checks');
@@ -81,16 +99,57 @@ export class RataSummaryChecksService {
   ): string {
     let error: string = null;
 
-    console.log(testSumRecord);
-
     if (testSumRecord.system?.systemTypeCode === 'HG' && meanCEMValue === 0) {
-      error = `[RATA-17-C] You reported a [meanCEMValue] of zero for [${KEY}]`;
+      error = CheckCatalogService.formatResultMessage('RATA-17-C', {
+        key: KEY,
+        fieldname: 'meanCEMValue',
+      });
     }
 
     if (meanCEMValue < 0) {
-      error = `[RATA-17-B] You defined an invalid [meanCEMValue] for [${KEY}]. This value must be greater than zero and less than 20,000.`;
+      error = CheckCatalogService.formatResultMessage('RATA-17-B', {
+        key: KEY,
+        fieldname: 'meanCEMValue',
+      });
     }
 
+    return error;
+  }
+
+  private async rata107Check(
+    rataSummary: RataSummaryBaseDTO | RataSummaryImportDTO,
+    isImport: boolean,
+    rataId: string,
+    rataSummaries: RataSummaryImportDTO[],
+  ): Promise<string> {
+    let error: string = null;
+    let duplicates: RataSummary[] | RataSummaryBaseDTO[];
+
+    if (rataId && !isImport) {
+      duplicates = await this.repository.find({
+        rataId: rataId,
+        operatingLevelCode: rataSummary.operatingLevelCode,
+      });
+      if (duplicates.length > 0) {
+        error = CheckCatalogService.formatResultMessage('RATA-107-A', {
+          recordtype: KEY,
+          fieldnames: 'operatingLevelCode',
+        });
+      }
+    }
+
+    if (rataSummaries?.length > 1 && isImport) {
+      duplicates = rataSummaries.filter(
+        rs => rs.operatingLevelCode === rataSummary.operatingLevelCode,
+      );
+
+      if (duplicates.length > 1) {
+        error = CheckCatalogService.formatResultMessage('RATA-107-A', {
+          recordtype: KEY,
+          fieldnames: 'operatingLevelCode',
+        });
+      }
+    }
     return error;
   }
 
