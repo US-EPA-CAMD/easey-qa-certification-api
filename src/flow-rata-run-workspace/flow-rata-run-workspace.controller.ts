@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Post, Body, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Body,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
@@ -76,6 +84,31 @@ export class FlowRataRunWorkspaceController {
     );
   }
 
+  @Put(':id')
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: FlowRataRunRecordDTO,
+    description: 'Updates a Flow Rata Run record in the workspace',
+  })
+  async updateRataRun(
+    @Param('locId') locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('rataId') _rataId: string,
+    @Param('rataSumId') _rataSumId: string,
+    @Param('rataRunId') _rataRunId: string,
+    @Param('id') flowRataRunId: string,
+    @Body() payload: FlowRataRunBaseDTO,
+    //    @CurrentUser() userId: string,
+  ): Promise<FlowRataRunRecordDTO> {
+    return this.service.updateRataRun(
+      testSumId,
+      flowRataRunId,
+      payload,
+      userId,
+    );
+  }
+
   @Delete(':id')
   //  @ApiBearerAuth('Token')
   //  @UseGuards(AuthGuard)
@@ -88,9 +121,9 @@ export class FlowRataRunWorkspaceController {
     @Param('rataId') _rataId: string,
     @Param('rataSumId') _rataSumId: string,
     @Param('rataRunId') _rataRunId: string,
-    @Param('id') id: string,
+    @Param('id') flowRataRunId: string,
     //    @CurrentUser() userId: string,
   ): Promise<void> {
-    return this.service.deleteFlowRataRun(testSumId, id, userId);
+    return this.service.deleteFlowRataRun(testSumId, flowRataRunId, userId);
   }
 }
