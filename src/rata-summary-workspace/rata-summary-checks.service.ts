@@ -8,6 +8,7 @@ import {
   RataSummaryBaseDTO,
   RataSummaryImportDTO,
 } from '../dto/rata-summary.dto';
+
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -36,6 +37,7 @@ export class RataSummaryChecksService {
     testSumId?: string,
     isImport: boolean = false,
     _isUpdate: boolean = false,
+    rataSummaries?: RataSummaryImportDTO[],
     testSummary?: TestSummaryImportDTO,
   ): Promise<string[]> {
     let error: string = null;
@@ -130,9 +132,8 @@ export class RataSummaryChecksService {
             : testSummary.stackPipeId,
           testTypeCode: testSummary.testTypeCode,
           testNumber: testSummary.testNumber,
-        })
+        });
       }
-      
     }
     return error;
   }
