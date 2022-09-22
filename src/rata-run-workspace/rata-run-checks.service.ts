@@ -100,11 +100,9 @@ export class RataRunChecksService {
   ): string {
     let error: string = null;
 
-    const resultC = this.getMessage('RATA-29-C', {});
-
     if (rataRun.runStatusCode === 'IGNORED') {
       if (testSumRecord.system?.systemTypeCode !== 'ST') {
-        error = resultC;
+        error = CheckCatalogService.formatResultMessage('RATA-29-C');
       }
     }
 

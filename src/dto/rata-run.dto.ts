@@ -20,14 +20,11 @@ export class RataRunBaseDTO {
   grossUnitLoad: number;
   @IsValidCode(RunStatusCode, {
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        'You reported the value [value], which is not in the list of valid values, in the field [fieldname] for [key]',
-        {
-          value: args.value,
-          fieldname: args.property,
-          key: KEY,
-        },
-      );
+      return CheckCatalogService.formatResultMessage('RATA-29-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   runStatusCode: string;
