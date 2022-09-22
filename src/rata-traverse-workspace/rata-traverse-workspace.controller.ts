@@ -30,7 +30,7 @@ export class RataTraverseWorkspaceController {
     isArray: true,
     type: RataTraverseRecordDTO,
     description:
-      'Retrieves workspace Rata Traverse records by Flow Rata Run ID',
+      'Retrieves a workspace Rata Traverse records by Flow Rata Run ID',
   })
   async getRataTraverses(
     @Param('locId') _locationId: string,
@@ -47,7 +47,7 @@ export class RataTraverseWorkspaceController {
   @ApiOkResponse({
     isArray: false,
     type: RataTraverseRecordDTO,
-    description: 'Retrieves workspace Rata Traverse record by its Id',
+    description: 'Retrieves a workspace Rata Traverse record by its Id',
   })
   async getRataTraverse(
     @Param('locId') _locationId: string,
@@ -66,7 +66,7 @@ export class RataTraverseWorkspaceController {
   //  @UseGuards(AuthGuard)
   @ApiCreatedResponse({
     type: RataTraverseRecordDTO,
-    description: 'Creates a RATA Traverse record in the workspace.',
+    description: 'Creates a workspace RATA Traverse record.',
   })
   async createRataTraverse(
     @Param('locId') _locationId: string,
@@ -100,7 +100,7 @@ export class RataTraverseWorkspaceController {
     @Param('rataId') _rataId: string,
     @Param('rataSumId') _rataSumId: string,
     @Param('rataRunId') _rataRunId: string,
-    @Param('flowRataRunId') flowRataRunId: string,
+    @Param('flowRataRunId') _flowRataRunId: string,
     @Param('id') id: string,
     @Body() payload: RataTraverseBaseDTO,
     //    @CurrentUser() userId: string,
@@ -117,7 +117,9 @@ export class RataTraverseWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('rataId') _rataId: string,
-    @Param('rataSumId') rataSumId: string,
+    @Param('rataSumId') _rataSumId: string,
+    @Param('rataRunId') _rataRunId: string,
+    @Param('flowRataRunId') _flowRataRunId: string,
     @Param('id') id: string,
   ): Promise<void> {
     const userId = 'testUser';
