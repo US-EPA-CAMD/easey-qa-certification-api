@@ -8,6 +8,7 @@ import { ProtocolGasWorkspaceRepository } from '../protocol-gas-workspace/protoc
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 
 const protocolGasId = 'a1b2c3';
+const testSumId = 'd4e5f6';
 const protocolGas = new ProtocolGas();
 const protocolGasDTO = new ProtocolGasDTO();
 
@@ -78,6 +79,16 @@ describe('ProtocolGasService', () => {
       }
 
       expect(errored).toBe(true);
+    });
+  });
+
+  describe('Export', () => {
+    it('Should Export Protocol Gas', async () => {
+      jest
+        .spyOn(service, 'getProtocolGasByTestSumIds')
+        .mockResolvedValue([protocolGasDTO]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([protocolGasDTO]);
     });
   });
 });
