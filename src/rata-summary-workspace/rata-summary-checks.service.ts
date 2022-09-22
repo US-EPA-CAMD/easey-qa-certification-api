@@ -131,7 +131,7 @@ export class RataSummaryChecksService {
       }
     }
 
-    if (rataSummaries.length > 1 && isImport) {
+    if (rataSummaries?.length > 1 && isImport) {
       duplicates = rataSummaries.filter(
         rs => rs.operatingLevelCode === rataSummary.operatingLevelCode,
       );
