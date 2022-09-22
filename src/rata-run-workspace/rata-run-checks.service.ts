@@ -10,6 +10,7 @@ import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 
+const KEY = 'RATA Run';
 @Injectable()
 export class RataRunChecksService {
   constructor(
@@ -19,8 +20,6 @@ export class RataRunChecksService {
     @InjectRepository(MonitorSystemRepository)
     private readonly monitoringSystemRepository: MonitorSystemRepository,
   ) {}
-
-  KEY: 'RATA Run';
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
@@ -90,7 +89,7 @@ export class RataRunChecksService {
         testSumRecord,
         'cemValue',
         'RATA-27-C',
-        rataRun.rataReferenceValue,
+        rataRun.cemValue,
       ) || null
     );
   }
@@ -136,11 +135,11 @@ export class RataRunChecksService {
   ) {
     const error = this.getMessage(checkCode, {
       fieldname,
-      key: this.KEY,
+      key: KEY,
     });
 
     if (rataRun.runStatusCode === 'RUNUSED') {
-      if (rataRun.rataReferenceValue) {
+      if (fieldname) {
         if (
           testSumRecord.system?.systemTypeCode !== null &&
           !['HCL', 'HF', 'HG', 'ST'].includes(
