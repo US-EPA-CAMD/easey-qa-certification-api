@@ -13,6 +13,7 @@ import {
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { In } from 'typeorm';
 
 @Injectable()
 export class ProtocolGasWorkspaceService {
@@ -115,5 +116,18 @@ export class ProtocolGasWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getProtocolGasByTestSumIds(
+    testSumIds: string[],
+  ): Promise<ProtocolGasDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<ProtocolGasDTO[]> {
+    return this.getProtocolGasByTestSumIds(testSumIds);
   }
 }

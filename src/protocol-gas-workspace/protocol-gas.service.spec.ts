@@ -108,4 +108,14 @@ describe('ProtocolGasWorkspaceService', () => {
       expect(repository.create).toHaveBeenCalled();
     });
   });
+
+  describe('Export', () => {
+    it('Should Export Protocol Gas', async () => {
+      jest
+        .spyOn(service, 'getProtocolGasByTestSumIds')
+        .mockResolvedValue([protocolGasDTO]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([protocolGasDTO]);
+    });
+  });
 });

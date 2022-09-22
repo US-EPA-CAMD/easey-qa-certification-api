@@ -1,7 +1,26 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Body,
+  Delete,
+  Put,
+} from '@nestjs/common';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
+import {
+  FlowRataRunBaseDTO,
+  FlowRataRunDTO,
+  FlowRataRunRecordDTO,
+} from '../dto/flow-rata-run.dto';
 import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
+
+const userId = 'testUser';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -40,5 +59,71 @@ export class FlowRataRunWorkspaceController {
     @Param('id') flowRataRunId: string,
   ): Promise<FlowRataRunDTO> {
     return this.service.getFlowRataRun(flowRataRunId);
+  }
+
+  @Post()
+  @ApiCreatedResponse({
+    isArray: false,
+    type: FlowRataRunRecordDTO,
+    description: 'Creates a Flow Rata Run record in the workspace',
+  })
+  async createFlowRataRun(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('rataId') _rataId: string,
+    @Param('rataSumId') _rataSumId: string,
+    @Param('rataRunId') rataRunId: string,
+    @Body() payload: FlowRataRunBaseDTO,
+    //    @CurrentUser() userId: string,
+  ): Promise<FlowRataRunRecordDTO> {
+    return this.service.createFlowRataRun(
+      testSumId,
+      rataRunId,
+      payload,
+      userId,
+    );
+  }
+
+  @Put(':id')
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    type: FlowRataRunRecordDTO,
+    description: 'Updates a Flow Rata Run record in the workspace',
+  })
+  async updateRataRun(
+    @Param('locId') locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('rataId') _rataId: string,
+    @Param('rataSumId') _rataSumId: string,
+    @Param('rataRunId') _rataRunId: string,
+    @Param('id') flowRataRunId: string,
+    @Body() payload: FlowRataRunBaseDTO,
+    //    @CurrentUser() userId: string,
+  ): Promise<FlowRataRunRecordDTO> {
+    return this.service.updateRataRun(
+      testSumId,
+      flowRataRunId,
+      payload,
+      userId,
+    );
+  }
+
+  @Delete(':id')
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    description: 'Deletes a Flow Rata Run record from the workspace',
+  })
+  async deleteFlowRataRun(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('rataId') _rataId: string,
+    @Param('rataSumId') _rataSumId: string,
+    @Param('rataRunId') _rataRunId: string,
+    @Param('id') flowRataRunId: string,
+    //    @CurrentUser() userId: string,
+  ): Promise<void> {
+    return this.service.deleteFlowRataRun(testSumId, flowRataRunId, userId);
   }
 }

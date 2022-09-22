@@ -123,7 +123,7 @@ export class FlowRataRun extends BaseEntity {
 
   @ManyToOne(
     () => RataRun,
-    r => r.FlowRataRuns,
+    f => f.FlowRataRuns,
   )
   @JoinColumn({ name: 'rata_run_id' })
   RataRun: RataRun;
