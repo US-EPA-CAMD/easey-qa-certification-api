@@ -4,6 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryColumn,
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
@@ -83,7 +84,7 @@ export class RataRun extends BaseEntity {
   @JoinColumn({ name: 'rata_sum_id' })
   RataSummary: RataSummary;
 
-  @ManyToOne(
+  @OneToMany(
     () => FlowRataRun,
     r => r.RataRun,
   )

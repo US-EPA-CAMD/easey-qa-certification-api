@@ -4,6 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FlowRataRunMap } from '../maps/flow-rata-run.map';
 import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
+import { RataTraverseService } from '../rata-traverse/rata-traverse.service';
 
 @Injectable()
 export class FlowRataRunService {
@@ -11,6 +13,7 @@ export class FlowRataRunService {
     @InjectRepository(FlowRataRunRepository)
     private readonly repository: FlowRataRunRepository,
     private readonly map: FlowRataRunMap,
+    private readonly rataTravarseService: RataTraverseService,
   ) {}
 
   async getFlowRataRuns(rataRunId: string): Promise<FlowRataRunDTO[]> {
@@ -30,5 +33,28 @@ export class FlowRataRunService {
     }
 
     return this.map.one(result);
+  }
+
+  async getFlowRataRunsByRataRunIds(
+    rataRunIds: string[],
+  ): Promise<FlowRataRunDTO[]> {
+    const results = await this.repository.find({
+      where: { rataRunId: In(rataRunIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(rataRunIds: string[]): Promise<FlowRataRunDTO[]> {
+    const flowRataRuns = await this.getFlowRataRunsByRataRunIds(rataRunIds);
+
+    const rataTravarses = await this.rataTravarseService.export(
+      flowRataRuns.map(i => i.id),
+    );
+
+    flowRataRuns.forEach(s => {
+      s.rataTraverseData = rataTravarses.filter(i => i.flowRataRunId === s.id);
+    });
+
+    return flowRataRuns;
   }
 }

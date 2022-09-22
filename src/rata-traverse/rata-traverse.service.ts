@@ -1,7 +1,11 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { RataTraverseRecordDTO } from '../dto/rata-traverse.dto';
+import { In } from 'typeorm';
+import {
+  RataTraverseDTO,
+  RataTraverseRecordDTO,
+} from '../dto/rata-traverse.dto';
 import { RataTraverseMap } from '../maps/rata-traverse.map';
 import { RataTraverseRepository } from './rata-traverse.repository';
 
@@ -32,5 +36,18 @@ export class RataTraverseService {
     }
 
     return this.map.one(result);
+  }
+
+  async getRatatravarsesByFlowRataRunIds(
+    flowRataRunIds: string[],
+  ): Promise<RataTraverseDTO[]> {
+    const results = await this.repository.find({
+      where: { flowRataRunId: In(flowRataRunIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(flowRataRunIds: string[]): Promise<RataTraverseDTO[]> {
+    return this.getRatatravarsesByFlowRataRunIds(flowRataRunIds);
   }
 }

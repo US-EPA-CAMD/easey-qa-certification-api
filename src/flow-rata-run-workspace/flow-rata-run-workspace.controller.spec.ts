@@ -49,8 +49,12 @@ describe('FlowRataRunWorkspaceController', () => {
       ],
     }).compile();
 
-    controller = module.get<FlowRataRunWorkspaceController>(FlowRataRunWorkspaceController);
-    service = module.get<FlowRataRunWorkspaceService>(FlowRataRunWorkspaceService);
+    controller = module.get<FlowRataRunWorkspaceController>(
+      FlowRataRunWorkspaceController,
+    );
+    service = module.get<FlowRataRunWorkspaceService>(
+      FlowRataRunWorkspaceService,
+    );
   });
 
   describe('getFlowRataRun', () => {

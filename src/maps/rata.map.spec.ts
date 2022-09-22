@@ -26,7 +26,9 @@ entity.rataSummaries = [];
 
 describe('RataMap', () => {
   it('maps an entity to a dto', async () => {
-    const map = new RataMap(new RataSummaryMap(new RataRunMap(new FlowRataRunMap())));
+    const map = new RataMap(
+      new RataSummaryMap(new RataRunMap(new FlowRataRunMap())),
+    );
     const result = await map.one(entity);
     expect(result.id).toEqual(string);
     expect(result.testSumId).toEqual(string);
@@ -48,7 +50,9 @@ describe('RataMap', () => {
     entity.addDate = undefined;
     entity.updateDate = undefined;
 
-    const map = new RataMap(new RataSummaryMap(new RataRunMap(new FlowRataRunMap())));
+    const map = new RataMap(
+      new RataSummaryMap(new RataRunMap(new FlowRataRunMap())),
+    );
     const result = await map.one(entity);
 
     expect(result.addDate).toEqual(null);

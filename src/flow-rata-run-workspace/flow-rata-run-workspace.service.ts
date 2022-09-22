@@ -1,7 +1,9 @@
-import { HttpStatus, Injectable, Inject, forwardRef } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
+import { RataTraverseWorkspaceService } from '../rata-traverse-workspace/rata-traverse-workspace.service';
 
 import { currentDateTime } from '../utilities/functions';
 import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.repository';
@@ -19,6 +21,8 @@ export class FlowRataRunWorkspaceService {
     @InjectRepository(FlowRataRunWorkspaceRepository)
     private readonly repository: FlowRataRunWorkspaceRepository,
     private readonly map: FlowRataRunMap,
+    @Inject(forwardRef(() => RataTraverseWorkspaceService))
+    private readonly rataTravarseService: RataTraverseWorkspaceService,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
   ) {}
@@ -135,5 +139,29 @@ export class FlowRataRunWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getFlowRataRunsByRataRunIds(
+    rataRunIds: string[],
+  ): Promise<FlowRataRunDTO[]> {
+    const results = await this.repository.find({
+      where: { rataRunId: In(rataRunIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(rataRunIds: string[]): Promise<FlowRataRunDTO[]> {
+    const flowRataRuns = await this.getFlowRataRunsByRataRunIds(rataRunIds);
+
+    const rataTravarses = await this.rataTravarseService.export(
+      flowRataRuns.map(i => i.id),
+    );
+
+    flowRataRuns.forEach(s => {
+      s.rataTraverseData = rataTravarses.filter(i => i.flowRataRunId === s.id);
+    });
+
+    return flowRataRuns;
   }
 }

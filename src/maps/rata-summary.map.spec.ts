@@ -1,7 +1,7 @@
 import { RataSummary } from '../entities/rata-summary.entity';
 import { RataRunMap } from './rata-run.map';
 import { RataSummaryMap } from './rata-summary.map';
-import { FlowRataRunMap} from './flow-rata-run.map';
+import { FlowRataRunMap } from './flow-rata-run.map';
 
 const string = '';
 const number = 0;

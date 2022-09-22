@@ -9,8 +9,10 @@ import { RataTraverseMap } from '../maps/rata-traverse.map';
 import { RataTraverseWorkspaceRepository } from './rata-traverse-workspace.repository';
 import {
   RataTraverseBaseDTO,
+  RataTraverseDTO,
   RataTraverseRecordDTO,
 } from '../dto/rata-traverse.dto';
+import { In } from 'typeorm';
 
 @Injectable()
 export class RataTraverseWorkspaceService {
@@ -134,5 +136,18 @@ export class RataTraverseWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getRatatravarsesByFlowRataRunIds(
+    flowRataRunIds: string[],
+  ): Promise<RataTraverseDTO[]> {
+    const results = await this.repository.find({
+      where: { flowRataRunId: In(flowRataRunIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(flowRataRunIds: string[]): Promise<RataTraverseDTO[]> {
+    return this.getRatatravarsesByFlowRataRunIds(flowRataRunIds);
   }
 }

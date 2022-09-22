@@ -4,6 +4,8 @@ import { RataRunRepository } from './rata-run.repository';
 import { RataRunService } from './rata-run.service';
 import { RataRun } from '../entities/rata-run.entity';
 import { RataRunDTO } from '../dto/rata-run.dto';
+import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
+import { FlowRataRunService } from '../flow-rata-run/flow-rata-run.service';
 
 const rataRunId = 'a1b2c3';
 const rataSumId = 'd4e5f6';
@@ -18,6 +20,10 @@ const mockMap = () => ({
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([rataRun]),
   findOne: jest.fn().mockResolvedValue(rataRun),
+});
+
+const mockFlowRataRunService = () => ({
+  export: jest.fn().mockResolvedValue([new FlowRataRunDTO()]),
 });
 
 describe('RataRunService', () => {
@@ -36,6 +42,10 @@ describe('RataRunService', () => {
         {
           provide: RataRunMap,
           useFactory: mockMap,
+        },
+        {
+          provide: FlowRataRunService,
+          useFactory: mockFlowRataRunService,
         },
       ],
     }).compile();

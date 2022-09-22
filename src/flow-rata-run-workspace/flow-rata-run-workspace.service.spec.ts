@@ -4,6 +4,8 @@ import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.reposi
 import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
 import { FlowRataRun } from '../entities/flow-rata-run.entity';
 import { FlowRataRunBaseDTO, FlowRataRunDTO } from '../dto/flow-rata-run.dto';
+import { RataTraverseDTO } from '../dto/rata-traverse.dto';
+import { RataTraverseWorkspaceService } from '../rata-traverse-workspace/rata-traverse-workspace.service';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 
 const flowRataRunId = 'a1b2c3';
@@ -44,6 +46,15 @@ const mockRepository = () => ({
   create: jest.fn().mockResolvedValue(flowRataRun),
 });
 
+const mockRataTraverseService = () => ({
+  export: jest.fn().mockResolvedValue([new RataTraverseDTO()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
+const mockTestSummaryService = () => ({
+  resetToNeedsEvaluation: jest.fn(),
+});
+
 describe('FlowRataRunWorkspaceService', () => {
   let service: FlowRataRunWorkspaceService;
   let repository: FlowRataRunWorkspaceRepository;
@@ -53,10 +64,17 @@ describe('FlowRataRunWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         FlowRataRunWorkspaceService,
-        FlowRataRunMap,
+        {
+          provide: TestSummaryWorkspaceService,
+          useFactory: mockTestSummaryService,
+        },
         {
           provide: FlowRataRunWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: RataTraverseWorkspaceService,
+          useFactory: mockRataTraverseService,
         },
         {
           provide: FlowRataRunMap,
@@ -69,13 +87,15 @@ describe('FlowRataRunWorkspaceService', () => {
       ],
     }).compile();
 
-    service = module.get<FlowRataRunWorkspaceService>(FlowRataRunWorkspaceService);
-    repository = module.get<FlowRataRunWorkspaceRepository>(FlowRataRunWorkspaceRepository,);
-    testSummaryService = module.get<TestSummaryWorkspaceService>(TestSummaryWorkspaceService,);
-  });
-
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+    service = module.get<FlowRataRunWorkspaceService>(
+      FlowRataRunWorkspaceService,
+    );
+    repository = module.get<FlowRataRunWorkspaceRepository>(
+      FlowRataRunWorkspaceRepository,
+    );
+    testSummaryService = module.get<TestSummaryWorkspaceService>(
+      TestSummaryWorkspaceService,
+    );
   });
 
   describe('getFlowRataRun', () => {
@@ -133,6 +153,23 @@ describe('FlowRataRunWorkspaceService', () => {
       );
 
       expect(result).toEqual(flowRataRun);
+    });
+  });
+
+  describe('getRataSummariesByRataIds', () => {
+    it('Should get Rata Travarse records by flow rata run ids', async () => {
+      const result = await service.getFlowRataRunsByRataRunIds([rataRunId]);
+      expect(result).toEqual([flowRataRunDTO]);
+    });
+  });
+
+  describe('Export', () => {
+    it('Should Export Rata Run', async () => {
+      jest
+        .spyOn(service, 'getFlowRataRunsByRataRunIds')
+        .mockResolvedValue([flowRataRunDTO]);
+      const result = await service.export([rataRunId]);
+      expect(result).toEqual([flowRataRunDTO]);
     });
   });
 });

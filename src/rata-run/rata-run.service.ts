@@ -5,6 +5,7 @@ import { RataRunMap } from '../maps/rata-run.map';
 import { RataRunDTO } from '../dto/rata-run.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
+import { FlowRataRunService } from '../flow-rata-run/flow-rata-run.service';
 
 @Injectable()
 export class RataRunService {
@@ -12,6 +13,7 @@ export class RataRunService {
     @InjectRepository(RataRunRepository)
     private readonly repository: RataRunRepository,
     private readonly map: RataRunMap,
+    private readonly flowRataRunService: FlowRataRunService,
   ) {}
 
   async getRataRuns(rataSumId: string): Promise<RataRunDTO[]> {
@@ -41,6 +43,16 @@ export class RataRunService {
   }
 
   async export(rataSumIds: string[]): Promise<RataRunDTO[]> {
-    return this.getRataRunsByRataSumIds(rataSumIds);
+    const rataRuns = await this.getRataRunsByRataSumIds(rataSumIds);
+
+    const flowRataRuns = await this.flowRataRunService.export(
+      rataRuns.map(i => i.id),
+    );
+
+    rataRuns.forEach(s => {
+      s.flowRataRunData = flowRataRuns.filter(i => i.rataRunId === s.id);
+    });
+
+    return rataRuns;
   }
 }

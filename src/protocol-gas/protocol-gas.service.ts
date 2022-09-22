@@ -36,7 +36,9 @@ export class ProtocolGasService {
     return this.map.one(result);
   }
 
-  async getProtocolGasByTestSumIds(testSumIds: string[]): Promise<ProtocolGasDTO[]> {
+  async getProtocolGasByTestSumIds(
+    testSumIds: string[],
+  ): Promise<ProtocolGasDTO[]> {
     const results = await this.repository.find({
       where: { testSumId: In(testSumIds) },
     });
