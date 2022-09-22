@@ -13,7 +13,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { RataRunRepository } from '../rata-run/rata-run.repository';
 import { FlowRataRunWorkspaceService } from '../flow-rata-run-workspace/flow-rata-run-workspace.service';
-import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
+import { FlowRataRunDTO, FlowRataRunImportDTO } from '../dto/flow-rata-run.dto';
 
 const rataRunId = 'a1b2c3';
 const testSumId = 'd4e5f6';
@@ -75,7 +75,6 @@ describe('RataRunWorkspaceService', () => {
       providers: [
         Logger,
         RataRunWorkspaceService,
-        RataRunMap,
         {
           provide: RataRunWorkspaceRepository,
           useFactory: mockRepository,
@@ -232,6 +231,7 @@ describe('RataRunWorkspaceService', () => {
     });
 
     it('Should import Rata with historical data', async () => {
+      importPayload.flowRataRunData = [new FlowRataRunImportDTO()];
       jest.spyOn(service, 'createRataRun').mockResolvedValue(rataRunDTO);
       jest
         .spyOn(officialRepository, 'findOne')

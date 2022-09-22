@@ -159,6 +159,7 @@ describe('TestQualificationWorkspaceService', () => {
     it('should update a test qualification record', async () => {
       const result = await service.updateTestQualification(
         testSumId,
+        'testQualId',
         payload,
         userId,
       );
@@ -170,7 +171,12 @@ describe('TestQualificationWorkspaceService', () => {
 
       let errored = false;
       try {
-        await service.updateTestQualification(testSumId, payload, userId);
+        await service.updateTestQualification(
+          testSumId,
+          'testQualId',
+          payload,
+          userId,
+        );
       } catch (e) {
         errored = true;
       }

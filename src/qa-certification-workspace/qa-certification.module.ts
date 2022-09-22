@@ -12,6 +12,8 @@ import { RataWorkspaceModule } from '../rata-workspace/rata-workspace.module';
 import { RataSummaryWorkspaceModule } from '../rata-summary-workspace/rata-summary-workspace.module';
 import { QASuppDataWorkspaceModule } from '../qa-monitor-plan-workspace/qa-monitor-plan.module';
 import { RataRunWorkspaceModule } from '../rata-run-workspace/rata-run-workspace.module';
+import { FlowRataRunWorkspaceModule } from 'src/flow-rata-run-workspace/flow-rata-run-workspace.module';
+import { RataTraverseWorkspaceModule } from 'src/rata-traverse-workspace/rata-traverse-workspace.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { RataRunWorkspaceModule } from '../rata-run-workspace/rata-run-workspace
     RataWorkspaceModule,
     RataSummaryWorkspaceModule,
     RataRunWorkspaceModule,
+    FlowRataRunWorkspaceModule,
+    RataTraverseWorkspaceModule,
   ],
   controllers: [QACertificationWorkspaceController],
   providers: [QACertificationChecksService, QACertificationWorkspaceService],

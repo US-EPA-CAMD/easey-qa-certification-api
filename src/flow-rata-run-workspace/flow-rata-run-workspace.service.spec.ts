@@ -9,7 +9,10 @@ import {
   FlowRataRunDTO,
   FlowRataRunImportDTO,
 } from '../dto/flow-rata-run.dto';
-import { RataTraverseDTO } from '../dto/rata-traverse.dto';
+import {
+  RataTraverseDTO,
+  RataTraverseImportDTO,
+} from '../dto/rata-traverse.dto';
 import { RataTraverseWorkspaceService } from '../rata-traverse-workspace/rata-traverse-workspace.service';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FlowRataRunRepository } from '../flow-rata-run/flow-rata-run.repository';
@@ -202,6 +205,7 @@ describe('FlowRataRunWorkspaceService', () => {
     });
 
     it('Should import Flow Rata Run with historical data', async () => {
+      importPayload.rataTraverseData = [new RataTraverseImportDTO()];
       jest
         .spyOn(service, 'createFlowRataRun')
         .mockResolvedValue(flowRataRunDTO);
