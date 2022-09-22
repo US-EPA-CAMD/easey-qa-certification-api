@@ -2,11 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { FlowRataRunMap } from '../maps/flow-rata-run.map';
 import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.repository';
 import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
-import { FlowRataRun } from '../entities/flow-rata-run.entity';
-import { FlowRataRunBaseDTO, FlowRataRunDTO } from '../dto/flow-rata-run.dto';
+import { FlowRataRun } from '../entities/workspace/flow-rata-run.entity';
+import { FlowRataRun as FlowRataRunOfficial } from '../entities/flow-rata-run.entity';
+import { FlowRataRunBaseDTO, FlowRataRunDTO, FlowRataRunImportDTO } from '../dto/flow-rata-run.dto';
 import { RataTraverseDTO } from '../dto/rata-traverse.dto';
 import { RataTraverseWorkspaceService } from '../rata-traverse-workspace/rata-traverse-workspace.service';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { FlowRataRunRepository } from '../flow-rata-run/flow-rata-run.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 const flowRataRunId = 'a1b2c3';
 const testSumId = 'd4e5f6';
@@ -55,14 +58,22 @@ const mockTestSummaryService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const officialRecord = new FlowRataRunOfficial();
+officialRecord.id = 'uuid';
+const mockOfficialRepository = () => ({
+  findOne: jest.fn(),
+});
+
 describe('FlowRataRunWorkspaceService', () => {
   let service: FlowRataRunWorkspaceService;
   let repository: FlowRataRunWorkspaceRepository;
   let testSummaryService: TestSummaryWorkspaceService;
+  let officialRepository: FlowRataRunRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        Logger,
         FlowRataRunWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
@@ -84,6 +95,10 @@ describe('FlowRataRunWorkspaceService', () => {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSumService,
         },
+        {
+          provide: FlowRataRunRepository,
+          useFactory: mockOfficialRepository,
+        },
       ],
     }).compile();
 
@@ -96,6 +111,7 @@ describe('FlowRataRunWorkspaceService', () => {
     testSummaryService = module.get<TestSummaryWorkspaceService>(
       TestSummaryWorkspaceService,
     );
+    officialRepository = module.get<FlowRataRunRepository>(FlowRataRunRepository);
   });
 
   describe('getFlowRataRun', () => {
@@ -160,6 +176,36 @@ describe('FlowRataRunWorkspaceService', () => {
     it('Should get Rata Travarse records by flow rata run ids', async () => {
       const result = await service.getFlowRataRunsByRataRunIds([rataRunId]);
       expect(result).toEqual([flowRataRunDTO]);
+    });
+  });
+
+  describe('import', () => {
+    const importPayload = new FlowRataRunImportDTO();
+
+    it('Should import Flow Rata Run', async () => {
+      jest.spyOn(service, 'createFlowRataRun').mockResolvedValue(flowRataRunDTO);
+      const result = await service.import(
+        testSumId,
+        rataRunId,
+        importPayload,
+        userId,
+      );
+      expect(result).toEqual(null);
+    });
+
+    it('Should import Flow Rata Run with historical data', async () => {
+      jest.spyOn(service, 'createFlowRataRun').mockResolvedValue(flowRataRunDTO);
+      jest
+        .spyOn(officialRepository, 'findOne')
+        .mockResolvedValue(officialRecord);
+      const result = await service.import(
+        testSumId,
+        rataRunId,
+        importPayload,
+        userId,
+        true,
+      );
+      expect(result).toEqual(null);
     });
   });
 
