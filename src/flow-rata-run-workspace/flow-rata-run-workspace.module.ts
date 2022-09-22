@@ -7,7 +7,7 @@ import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
 import { FlowRataRunMap } from '../maps/flow-rata-run.map';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { RataTraverseWorkspaceModule } from '../rata-traverse-workspace/rata-traverse-workspace.module';
-import { FlowRataRunModule } from 'src/flow-rata-run/flow-rata-run.module';
+import { FlowRataRunModule } from '../flow-rata-run/flow-rata-run.module';
 
 @Module({
   imports: [

@@ -11,13 +11,18 @@ import { FlowRataRunMap } from '../maps/flow-rata-run.map';
 import {
   FlowRataRunBaseDTO,
   FlowRataRunDTO,
+  FlowRataRunImportDTO,
   FlowRataRunRecordDTO,
 } from '../dto/flow-rata-run.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { FlowRataRun } from '../entities/flow-rata-run.entity';
+import { FlowRataRunRepository } from '../flow-rata-run/flow-rata-run.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class FlowRataRunWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     @InjectRepository(FlowRataRunWorkspaceRepository)
     private readonly repository: FlowRataRunWorkspaceRepository,
     private readonly map: FlowRataRunMap,
@@ -25,6 +30,8 @@ export class FlowRataRunWorkspaceService {
     private readonly rataTravarseService: RataTraverseWorkspaceService,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
+    @InjectRepository(FlowRataRunRepository)
+    private readonly historicalRepository: FlowRataRunRepository,
   ) {}
 
   async getFlowRataRuns(rataRunId: string): Promise<FlowRataRunDTO[]> {
@@ -52,6 +59,7 @@ export class FlowRataRunWorkspaceService {
     payload: FlowRataRunBaseDTO,
     userId: string,
     isImport: boolean = false,
+    historicalRecordId?: string,
   ): Promise<FlowRataRunRecordDTO> {
     const timestamp = currentDateTime();
 
@@ -149,6 +157,39 @@ export class FlowRataRunWorkspaceService {
     });
 
     return this.map.many(results);
+  }
+
+  async import(
+    testSumId: string,
+    rataRunId: string,
+    payload: FlowRataRunImportDTO,
+    userId: string,
+    isHistoricalRecord?: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: FlowRataRun;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepository.findOne({
+        rataRunId: rataRunId,
+        numberOfTraversePoints: payload.numberOfTraversePoints,
+      });
+    }
+
+    const createdRataRun = await this.createFlowRataRun(
+      testSumId,
+      rataRunId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Rata Run Successfully Imported. Record Id: ${createdRataRun.id}`,
+    );
+
+    return null;
   }
 
   async export(rataRunIds: string[]): Promise<FlowRataRunDTO[]> {
