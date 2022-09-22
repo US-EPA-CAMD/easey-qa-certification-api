@@ -1,6 +1,15 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
-import { ApiCreatedResponse, ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { FlowRataRunBaseDTO, FlowRataRunDTO, FlowRataRunRecordDTO } from '../dto/flow-rata-run.dto';
+import { Controller, Get, Param, Post, Body, Delete } from '@nestjs/common';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
+import {
+  FlowRataRunBaseDTO,
+  FlowRataRunDTO,
+  FlowRataRunRecordDTO,
+} from '../dto/flow-rata-run.dto';
 import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
 
 const userId = 'testUser';
@@ -9,14 +18,13 @@ const userId = 'testUser';
 @ApiSecurity('APIKey')
 @ApiTags('Flow Rata Run')
 export class FlowRataRunWorkspaceController {
-  constructor(
-    private readonly service: FlowRataRunWorkspaceService,
-  ) {}
+  constructor(private readonly service: FlowRataRunWorkspaceService) {}
   @Get()
   @ApiOkResponse({
     isArray: true,
     type: FlowRataRunDTO,
-    description: 'Retrieves official Flow Rata Run records by Flow Rata Summary Id',
+    description:
+      'Retrieves official Flow Rata Run records by Flow Rata Summary Id',
   })
   async getFlowRataRuns(
     @Param('locId') _locationId: string,
@@ -61,10 +69,28 @@ export class FlowRataRunWorkspaceController {
     //    @CurrentUser() userId: string,
   ): Promise<FlowRataRunRecordDTO> {
     return this.service.createFlowRataRun(
-      testSumId, 
-      rataRunId, 
-      payload, 
-      userId
+      testSumId,
+      rataRunId,
+      payload,
+      userId,
     );
+  }
+
+  @Delete(':id')
+  //  @ApiBearerAuth('Token')
+  //  @UseGuards(AuthGuard)
+  @ApiOkResponse({
+    description: 'Deletes a Flow Rata Run record from the workspace',
+  })
+  async deleteFlowRataRun(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('rataId') _rataId: string,
+    @Param('rataSumId') _rataSumId: string,
+    @Param('rataRunId') _rataRunId: string,
+    @Param('id') id: string,
+    //    @CurrentUser() userId: string,
+  ): Promise<void> {
+    return this.service.deleteFlowRataRun(testSumId, id, userId);
   }
 }

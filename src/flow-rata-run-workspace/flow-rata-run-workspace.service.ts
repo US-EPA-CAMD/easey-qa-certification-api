@@ -1,11 +1,16 @@
 import { HttpStatus, Injectable, Inject, forwardRef } from '@nestjs/common';
-import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.repository';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FlowRataRunMap } from '../maps/flow-rata-run.map';
-import { FlowRataRunBaseDTO, FlowRataRunDTO, FlowRataRunRecordDTO } from '../dto/flow-rata-run.dto';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+
+import { currentDateTime } from '../utilities/functions';
+import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.repository';
+import { FlowRataRunMap } from '../maps/flow-rata-run.map';
+import {
+  FlowRataRunBaseDTO,
+  FlowRataRunDTO,
+  FlowRataRunRecordDTO,
+} from '../dto/flow-rata-run.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 
 @Injectable()
@@ -64,5 +69,27 @@ export class FlowRataRunWorkspaceService {
     );
 
     return this.map.one(entity);
+  }
+
+  async deleteFlowRataRun(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete(id);
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting Flow Rata Run with record Id [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
   }
 }
