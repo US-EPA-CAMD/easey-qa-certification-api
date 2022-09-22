@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RataRunBaseDTO, RataRunDTO } from '../dto/rata-run.dto';
+import { RataRunChecksService } from './rata-run-checks.service';
 import { RataRunWorkspaceController } from './rata-run-workspace.controller';
 import { RataRunWorkspaceService } from './rata-run-workspace.service';
 
@@ -45,6 +46,12 @@ describe('RataRunWorkspaceController', () => {
         {
           provide: RataRunWorkspaceService,
           useFactory: mockRataRunWorkspaceService,
+        },
+        {
+          provide: RataRunChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn(),
+          }),
         },
       ],
     }).compile();

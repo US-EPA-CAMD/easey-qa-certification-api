@@ -8,7 +8,12 @@ describe('RataTraverseWorkspaceController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [RataTraverseWorkspaceController],
-      providers: [RataTraverseWorkspaceService],
+      providers: [
+        {
+          provide: RataTraverseWorkspaceService,
+          useFactory: () => ({}),
+        },
+      ],
     }).compile();
 
     controller = module.get<RataTraverseWorkspaceController>(

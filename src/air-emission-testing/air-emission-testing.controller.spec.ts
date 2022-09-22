@@ -8,7 +8,12 @@ describe('AirEmissionTestingController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AirEmissionTestingController],
-      providers: [AirEmissionTestingService],
+      providers: [
+        {
+          provide: AirEmissionTestingService,
+          useFactory: () => ({}),
+        },
+      ],
     }).compile();
 
     controller = module.get<AirEmissionTestingController>(

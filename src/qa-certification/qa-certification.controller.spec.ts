@@ -26,6 +26,12 @@ import { RataService } from '../rata/rata.service';
 import { RataRepository } from '../rata/rata.repository';
 import { RataSummaryRepository } from '../rata-summary/rata-summary.repository';
 import { RataRunRepository } from '../rata-run/rata-run.repository';
+import { FlowRataRunService } from '../flow-rata-run/flow-rata-run.service';
+import { RataTraverseService } from '../rata-traverse/rata-traverse.service';
+import { FlowRataRunRepository } from '../flow-rata-run/flow-rata-run.repository';
+import { FlowRataRunMap } from '../maps/flow-rata-run.map';
+import { RataTraverseRepository } from '../rata-traverse/rata-traverse.repository';
+import { RataTraverseMap } from '../maps/rata-traverse.map';
 
 describe('QA Certification Controller Test', () => {
   let controller: QACertificationController;
@@ -37,29 +43,10 @@ describe('QA Certification Controller Test', () => {
       imports: [LoggerModule],
       controllers: [QACertificationController],
       providers: [
-        QACertificationService,
-        ConfigService,
-        TestSummaryService,
-        TestSummaryMap,
-        LinearitySummaryService,
-        TestSummaryRepository,
-        LinearitySummaryMap,
-        LinearitySummaryRepository,
-        LinearityInjectionService,
-        LinearityInjectionMap,
-        LinearityInjectionRepository,
-        ProtocolGasMap,
-        RataRepository,
-        RataService,
-        RataMap,
-        RataSummaryRepository,
-        RataSummaryService,
-        RataSummaryMap,
-        RataRunRepository,
-        RataRunService,
-        RataRunMap,
-        TestQualificationMap,
-        AirEmissionTestingMap,
+        {
+          provide: QACertificationService,
+          useFactory: () => ({}),
+        },
       ],
     }).compile();
 

@@ -14,6 +14,7 @@ import { BadRequestException } from '@nestjs/common';
 import { RataChecksService } from '../rata-workspace/rata-checks.service';
 import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary-checks.service';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
+import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.service';
 
 const returnLocationRunChecks = [
   {
@@ -77,6 +78,12 @@ describe('QA Certification Check Service Test', () => {
         },
         {
           provide: RataSummaryChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
+        {
+          provide: RataRunChecksService,
           useFactory: () => ({
             runChecks: jest.fn().mockResolvedValue([]),
           }),

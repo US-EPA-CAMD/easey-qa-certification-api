@@ -2,6 +2,7 @@ import { RataSummary } from '../entities/rata-summary.entity';
 import { RataRunMap } from './rata-run.map';
 import { RataSummaryMap } from './rata-summary.map';
 import { FlowRataRunMap } from './flow-rata-run.map';
+import { RataTraverseMap } from './rata-traverse.map';
 
 const string = '';
 const number = 0;
@@ -50,7 +51,9 @@ entity.updateDate = date;
 
 describe('RataSummaryMap', () => {
   it('should map an entity to a dto', async () => {
-    const map = new RataSummaryMap(new RataRunMap(new FlowRataRunMap()));
+    const map = new RataSummaryMap(
+      new RataRunMap(new FlowRataRunMap(new RataTraverseMap())),
+    );
     const result = await map.one(entity);
     expect(result.id).toEqual(string);
     expect(result.rataId).toEqual(string);
@@ -97,7 +100,9 @@ describe('RataSummaryMap', () => {
     entity.addDate = undefined;
     entity.updateDate = undefined;
 
-    const map = new RataSummaryMap(new RataRunMap(new FlowRataRunMap()));
+    const map = new RataSummaryMap(
+      new RataRunMap(new FlowRataRunMap(new RataTraverseMap())),
+    );
     const result = await map.one(entity);
 
     expect(result.addDate).toEqual(null);
