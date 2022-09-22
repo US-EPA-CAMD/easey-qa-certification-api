@@ -167,6 +167,7 @@ export class FlowRataRunWorkspaceService {
     isHistoricalRecord?: boolean,
   ) {
     const isImport = true;
+    const promises = [];
     let historicalRecord: FlowRataRun;
 
     if (isHistoricalRecord) {
@@ -176,7 +177,7 @@ export class FlowRataRunWorkspaceService {
       });
     }
 
-    const createdRataRun = await this.createFlowRataRun(
+    const createdFlowRataRun = await this.createFlowRataRun(
       testSumId,
       rataRunId,
       payload,
@@ -186,8 +187,31 @@ export class FlowRataRunWorkspaceService {
     );
 
     this.logger.info(
-      `Rata Run Successfully Imported. Record Id: ${createdRataRun.id}`,
+      `Flow Rata Run Successfully Imported. Record Id: ${createdFlowRataRun.id}`,
     );
+
+    if (payload.rataTraverseData?.length > 0) {
+      for (const rataTraverse of payload.rataTraverseData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.rataTravarseService.import(
+                testSumId,
+                createdFlowRataRun.id,
+                rataTraverse,
+                userId,
+                isHistoricalRecord,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    await Promise.all(promises);
 
     return null;
   }

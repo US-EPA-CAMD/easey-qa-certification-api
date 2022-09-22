@@ -10,18 +10,25 @@ import { RataTraverseWorkspaceRepository } from './rata-traverse-workspace.repos
 import {
   RataTraverseBaseDTO,
   RataTraverseDTO,
+  RataTraverseImportDTO,
   RataTraverseRecordDTO,
 } from '../dto/rata-traverse.dto';
 import { In } from 'typeorm';
+import { RataTraverse } from '../entities/rata-traverse.entity';
+import { RataTraverseRepository } from '../rata-traverse/rata-traverse.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class RataTraverseWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     @InjectRepository(RataTraverseWorkspaceRepository)
     private readonly repository: RataTraverseWorkspaceRepository,
     private readonly map: RataTraverseMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
+    @InjectRepository(RataTraverseRepository)
+    private readonly historicalRepository: RataTraverseRepository,
   ) {}
 
   async getRataTraverses(
@@ -51,12 +58,13 @@ export class RataTraverseWorkspaceService {
     payload: RataTraverseBaseDTO,
     userId: string,
     isImport: boolean = false,
+    historicalRecordId?: string,
   ): Promise<RataTraverseRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       flowRataRunId,
       userId,
       addDate: timestamp,
@@ -145,6 +153,39 @@ export class RataTraverseWorkspaceService {
       where: { flowRataRunId: In(flowRataRunIds) },
     });
     return this.map.many(results);
+  }
+
+  async import(
+    testSumId: string,
+    flowRataRunId: string,
+    payload: RataTraverseImportDTO,
+    userId: string,
+    isHistoricalRecord?: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: RataTraverse;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepository.findOne({
+        flowRataRunId: flowRataRunId,
+        methodTraversePointId: payload.methodTraversePointId,
+      });
+    }
+
+    const createdRataRun = await this.createRataTraverse(
+      testSumId,
+      flowRataRunId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Rata Traverse Successfully Imported. Record Id: ${createdRataRun.id}`,
+    );
+
+    return null;
   }
 
   async export(flowRataRunIds: string[]): Promise<RataTraverseDTO[]> {

@@ -4,7 +4,11 @@ import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.reposi
 import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
 import { FlowRataRun } from '../entities/workspace/flow-rata-run.entity';
 import { FlowRataRun as FlowRataRunOfficial } from '../entities/flow-rata-run.entity';
-import { FlowRataRunBaseDTO, FlowRataRunDTO, FlowRataRunImportDTO } from '../dto/flow-rata-run.dto';
+import {
+  FlowRataRunBaseDTO,
+  FlowRataRunDTO,
+  FlowRataRunImportDTO,
+} from '../dto/flow-rata-run.dto';
 import { RataTraverseDTO } from '../dto/rata-traverse.dto';
 import { RataTraverseWorkspaceService } from '../rata-traverse-workspace/rata-traverse-workspace.service';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -111,7 +115,9 @@ describe('FlowRataRunWorkspaceService', () => {
     testSummaryService = module.get<TestSummaryWorkspaceService>(
       TestSummaryWorkspaceService,
     );
-    officialRepository = module.get<FlowRataRunRepository>(FlowRataRunRepository);
+    officialRepository = module.get<FlowRataRunRepository>(
+      FlowRataRunRepository,
+    );
   });
 
   describe('getFlowRataRun', () => {
@@ -183,7 +189,9 @@ describe('FlowRataRunWorkspaceService', () => {
     const importPayload = new FlowRataRunImportDTO();
 
     it('Should import Flow Rata Run', async () => {
-      jest.spyOn(service, 'createFlowRataRun').mockResolvedValue(flowRataRunDTO);
+      jest
+        .spyOn(service, 'createFlowRataRun')
+        .mockResolvedValue(flowRataRunDTO);
       const result = await service.import(
         testSumId,
         rataRunId,
@@ -194,7 +202,9 @@ describe('FlowRataRunWorkspaceService', () => {
     });
 
     it('Should import Flow Rata Run with historical data', async () => {
-      jest.spyOn(service, 'createFlowRataRun').mockResolvedValue(flowRataRunDTO);
+      jest
+        .spyOn(service, 'createFlowRataRun')
+        .mockResolvedValue(flowRataRunDTO);
       jest
         .spyOn(officialRepository, 'findOne')
         .mockResolvedValue(officialRecord);

@@ -153,6 +153,7 @@ export class RataRunWorkspaceService {
     isHistoricalRecord?: boolean,
   ) {
     const isImport = true;
+    const promises = [];
     let historicalRecord: RataRun;
 
     if (isHistoricalRecord) {
@@ -174,6 +175,29 @@ export class RataRunWorkspaceService {
     this.logger.info(
       `Rata Run Successfully Imported. Record Id: ${createdRataRun.id}`,
     );
+
+    if (payload.flowRataRunData?.length > 0) {
+      for (const flowRataRun of payload.flowRataRunData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.flowRataRunService.import(
+                testSumId,
+                createdRataRun.id,
+                flowRataRun,
+                userId,
+                isHistoricalRecord,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    await Promise.all(promises);
 
     return null;
   }
