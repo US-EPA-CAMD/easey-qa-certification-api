@@ -6,6 +6,7 @@ import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { IsNotEmpty, Min, ValidationArguments } from 'class-validator';
 import { RataRunDTO, RataRunImportDTO } from './rata-run.dto';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 const KEY = 'RATA Summary';
 
@@ -43,9 +44,21 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'referenceMethodCode. ADD TO PROPERTY METADATA',
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-16-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsValidCode(ReferenceMethodCode, {
     message: (args: ValidationArguments) => {
-      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('RATA-16-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   referenceMethodCode: string;
