@@ -79,6 +79,7 @@ import {
   AppECorrelationTestSummaryDTO,
   AppECorrelationTestSummaryImportDTO,
 } from './app-e-correlation-test-summary.dto';
+import { FlowRataRunDTO, FlowRataRunImportDTO } from './flow-rata-run.dto';
 
 import { RequireOne } from '../pipes/require-one.pipe';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
@@ -436,6 +437,7 @@ export class TestSummaryImportDTO extends TestSummaryBaseDTO {
   calibrationInjectionData: CalibrationInjectionImportDTO[];
   linearitySummaryData: LinearitySummaryImportDTO[];
   rataData: RataImportDTO[];
+  flowRataRunData: FlowRataRunImportDTO[];
   flowToLoadReferenceData: FlowToLoadReferenceImportDTO[];
   flowToLoadCheckData: FlowToLoadCheckImportDTO[];
   cycleTimeSummaryData: CycleTimeSummaryImportDTO[];
@@ -456,6 +458,7 @@ export class TestSummaryDTO extends TestSummaryRecordDTO {
   calibrationInjectionData: CalibrationInjectionDTO[];
   linearitySummaryData: LinearitySummaryDTO[];
   rataData: RataDTO[];
+  flowRataRunData: FlowRataRunDTO[];
   flowToLoadReferenceData: FlowToLoadReferenceDTO[];
   flowToLoadCheckData: FlowToLoadCheckDTO[];
   cycleTimeSummaryData: CycleTimeSummaryDTO[];

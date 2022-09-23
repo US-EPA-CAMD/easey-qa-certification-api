@@ -140,7 +140,7 @@ export class QACertificationChecksService {
               null,
               true,
               false,
-              summary,
+              // summary,
             );
 
             resolve(results);

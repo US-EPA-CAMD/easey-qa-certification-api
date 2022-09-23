@@ -8,6 +8,7 @@ import {
   RataSummaryBaseDTO,
   RataSummaryImportDTO,
 } from '../dto/rata-summary.dto';
+
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
@@ -68,6 +69,12 @@ export class RataSummaryChecksService {
       errorList.push(error);
     }
 
+    // IMPORT-30 Extraneous RATA Summary Data Check
+    error = await this.import30Check(locationId, rataSummary, testSumId);
+    if (error) {
+      errorList.push(error);
+    }
+    
     if (!isUpdate) {
       // RATA-107 Duplicate RATA Summary
       error = await this.rata107Check(
@@ -144,5 +151,53 @@ export class RataSummaryChecksService {
       }
     }
     return error;
+  }
+
+  private async import30Check(
+    locationId: string,
+    rataSummary: RataSummaryBaseDTO | RataSummaryImportDTO,
+    testSumId: string,
+    testSummary?: TestSummaryImportDTO,
+  ): Promise<string> {
+    let error: string = null;
+    let FIELDNAME: string;
+    let testSumRecord: TestSummary;
+    const extraneousRataSummaryFields: string[] = [];
+
+    if (
+      rataSummary.co2OrO2ReferenceMethodCode !== null ||
+      rataSummary.stackDiameter !== null ||
+      rataSummary.stackArea !== null ||
+      rataSummary.numberOfTraversePoints !== null ||
+      rataSummary.calculatedWAF !== null ||
+      rataSummary.defaultWAF !== null
+    ) {
+      if (testSumRecord.system?.systemTypeCode !== 'FLOW') {
+        extraneousRataSummaryFields.push(
+          'CO2OrO2ReferenceMethodCode',
+          'StackDiameter',
+          'StackArea',
+          'NumberOfTraversePoints',
+          'CalculatedWAF',
+          'DefaultWAF',
+        );
+      }
+
+      if (extraneousRataSummaryFields?.length > 0) {
+        error = this.getMessage('IMPORT-17-A', {
+          fieldname: FIELDNAME,
+          locationID: testSummary.unitId
+            ? testSummary.unitId
+            : testSummary.stackPipeId,
+          testTypeCode: testSummary.testTypeCode,
+          testNumber: testSummary.testNumber,
+        });
+      }
+    }
+    return error;
+  }
+
+  getMessage(messageKey: string, messageArgs: object): string {
+    return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
   }
 }
