@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
+import { ProtocolGasModule } from '../protocol-gas/protocol-gas.module';
 import { ProtocolGasWorkspaceService } from './protocol-gas.service';
 import { ProtocolGasWorkspaceController } from './protocol-gas.controller';
 import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
@@ -11,6 +12,7 @@ import { ProtocolGasMap } from '../maps/protocol-gas.map';
   imports: [
     TypeOrmModule.forFeature([ProtocolGasWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
+    forwardRef(() => ProtocolGasModule),
   ],
   controllers: [ProtocolGasWorkspaceController],
   providers: [ProtocolGasWorkspaceService, ProtocolGasMap],

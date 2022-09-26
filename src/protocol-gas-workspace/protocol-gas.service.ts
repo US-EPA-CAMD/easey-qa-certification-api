@@ -8,21 +8,28 @@ import { currentDateTime } from '../utilities/functions';
 import {
   ProtocolGasBaseDTO,
   ProtocolGasDTO,
+  ProtocolGasImportDTO,
   ProtocolGasRecordDTO,
 } from '../dto/protocol-gas.dto';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
+import { ProtocolGasRepository } from '../protocol-gas/protocol-gas.repository';
 import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { In } from 'typeorm';
+import { ProtocolGas } from '../entities/protocol-gas.entity';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class ProtocolGasWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     @InjectRepository(ProtocolGasWorkspaceRepository)
     private readonly repository: ProtocolGasWorkspaceRepository,
     private readonly map: ProtocolGasMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
+    @InjectRepository(ProtocolGasRepository)
+    private readonly historicalRepo: ProtocolGasRepository,
   ) {}
 
   async getProtocolGas(id: string): Promise<ProtocolGasDTO> {
@@ -51,12 +58,13 @@ export class ProtocolGasWorkspaceService {
     payload: ProtocolGasBaseDTO,
     userId: string,
     isImport: boolean = false,
+    historicalRecordId?: string,
   ): Promise<ProtocolGasRecordDTO> {
     const timestamp = currentDateTime().toLocaleDateString();
 
     let entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
       userId,
       addDate: timestamp,
@@ -129,5 +137,34 @@ export class ProtocolGasWorkspaceService {
 
   async export(testSumIds: string[]): Promise<ProtocolGasDTO[]> {
     return this.getProtocolGasByTestSumIds(testSumIds);
+  }
+
+  async import(
+    testSumId: string,
+    payload: ProtocolGasImportDTO,
+    userId: string,
+    isHistoricalRecord: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: ProtocolGas;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepo.findOne({
+        testSumId: testSumId,
+        cylinderID: payload.cylinderID,
+      });
+    }
+
+    const createdProtocolGas = await this.createProtocolGas(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Protocol Gas Successfully Imported.  Record Id: ${createdProtocolGas.id}`,
+    );
   }
 }
