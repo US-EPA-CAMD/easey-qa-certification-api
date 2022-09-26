@@ -34,6 +34,7 @@ import { MonitorLocation } from './../entities/workspace/monitor-location.entity
 import { ReportingPeriod } from './../entities/workspace/reporting-period.entity';
 import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -46,6 +47,8 @@ export class TestSummaryWorkspaceService {
     private readonly repository: TestSummaryWorkspaceRepository,
     @Inject(forwardRef(() => RataWorkspaceService))
     private readonly rataService: RataWorkspaceService,
+    @Inject(forwardRef(() => ProtocolGasWorkspaceService))
+    private readonly protocolGasService: ProtocolGasWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -143,7 +146,7 @@ export class TestSummaryWorkspaceService {
     promises.push(
       new Promise(async (resolve, _reject) => {
         let linearitySummaryData,
-          rataData = null;
+          rataData, protocolGasData = null;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
@@ -155,11 +158,13 @@ export class TestSummaryWorkspaceService {
         if (testSumIds) {
           linearitySummaryData = await this.linearityService.export(testSumIds);
           rataData = await this.rataService.export(testSumIds);
+          protocolGasData = await this.protocolGasService.export(testSumIds);
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
             );
             s.rataData = rataData.filter(i => i.testSumId === s.id);
+            s.protocolGasData = protocolGasData.filter(i => i.testSumId === s.id)
           });
         }
 

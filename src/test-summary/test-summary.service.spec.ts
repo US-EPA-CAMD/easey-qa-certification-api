@@ -10,6 +10,8 @@ import { TestSummaryMap } from '../maps/test-summary.map';
 import { TestSummaryRepository } from './test-summary.repository';
 
 import { TestSummaryService } from './test-summary.service';
+import { ProtocolGas } from '../entities/protocol-gas.entity';
+import { ProtocolGasService } from '../protocol-gas/protocol-gas.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -42,6 +44,11 @@ const mockRataService = () => ({
   import: jest.fn().mockResolvedValue(null),
 });
 
+const mockProtocolGasService = () => ({
+  export: jest.fn().mockResolvedValue([new ProtocolGas()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
 describe('TestSummaryService', () => {
   let service: TestSummaryService;
   let repository: TestSummaryRepository;
@@ -66,6 +73,10 @@ describe('TestSummaryService', () => {
         {
           provide: RataService,
           useFactory: mockRataService,
+        },
+        {
+          provide: ProtocolGasService,
+          useFactory: mockProtocolGasService,
         },
       ],
     }).compile();
