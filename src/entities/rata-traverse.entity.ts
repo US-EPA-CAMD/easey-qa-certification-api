@@ -55,8 +55,7 @@ export class RataTraverse extends BaseEntity {
   velocityCalibrationCoefficient: number;
 
   @Column({
-    type: 'numeric',
-    transformer: new NumericColumnTransformer(),
+    type: 'date',
     name: 'last_probe_date',
   })
   lastProbeDate: Date;
@@ -138,11 +137,13 @@ export class RataTraverse extends BaseEntity {
   userId: string;
 
   @Column({
+    type: 'date',
     name: 'add_date',
   })
   addDate: Date;
 
   @Column({
+    type: 'date',
     name: 'update_date',
   })
   updateDate: Date;
