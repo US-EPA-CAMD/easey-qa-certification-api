@@ -74,7 +74,7 @@ export class RataSummaryChecksService {
     if (error) {
       errorList.push(error);
     }
-    
+
     if (!isUpdate) {
       // RATA-107 Duplicate RATA Summary
       error = await this.rata107Check(
