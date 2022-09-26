@@ -9,6 +9,7 @@ import { TestSummaryRepository } from './test-summary.repository';
 import { LinearitySummaryService } from '../linearity-summary/linearity-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { RataService } from '../rata/rata.service';
+import { ProtocolGasService } from '../protocol-gas/protocol-gas.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -21,6 +22,8 @@ export class TestSummaryService {
     private readonly rataService: RataService,
     @InjectRepository(TestSummaryRepository)
     private readonly repository: TestSummaryRepository,
+    @Inject(forwardRef(() => ProtocolGasService))
+    private readonly protocolGasService: ProtocolGasService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -118,7 +121,7 @@ export class TestSummaryService {
     promises.push(
       new Promise(async (resolve, _reject) => {
         let linearitySummaryData,
-          rataData = null;
+          rataData, protocolGasData = null;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
@@ -130,11 +133,13 @@ export class TestSummaryService {
         if (testSumIds) {
           linearitySummaryData = await this.linearityService.export(testSumIds);
           rataData = await this.rataService.export(testSumIds);
+          protocolGasData = await this.protocolGasService.export(testSumIds);
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
             );
             s.rataData = rataData.filter(i => i.testSumId === s.id);
+            s.protocolGasData = protocolGasData.filter(i => i.testSumId === s.id)
           });
         }
 

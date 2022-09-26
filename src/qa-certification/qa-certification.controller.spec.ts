@@ -15,6 +15,8 @@ import { TestSummaryRepository } from '../test-summary/test-summary.repository';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { QACertificationDTO } from '../dto/qa-certification.dto';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
+import { ProtocolGasService } from 'src/protocol-gas/protocol-gas.service';
+import { ProtocolGasRepository } from 'src/protocol-gas/protocol-gas.repository';
 import { RataMap } from '../maps/rata.map';
 import { RataSummaryMap } from '../maps/rata-summary.map';
 import { RataRunMap } from '../maps/rata-run.map';
