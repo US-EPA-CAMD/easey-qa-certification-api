@@ -57,6 +57,13 @@ export class RataSummaryChecksService {
         monitoringSystemID: testSummary.monitoringSystemID,
         locationId,
       });
+
+      // IMPORT-30 Extraneous RATA Summary Data Check
+      error = await this.import30Check(locationId, rataSummary, testSumId);
+      if (error) {
+        errorList.push(error);
+      }
+      
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
@@ -65,12 +72,6 @@ export class RataSummaryChecksService {
 
     // RATA-17 Mean CEM Value Valid
     error = this.rata17Check(testSumRecord, rataSummary.meanCEMValue);
-    if (error) {
-      errorList.push(error);
-    }
-
-    // IMPORT-30 Extraneous RATA Summary Data Check
-    error = await this.import30Check(locationId, rataSummary, testSumId);
     if (error) {
       errorList.push(error);
     }
