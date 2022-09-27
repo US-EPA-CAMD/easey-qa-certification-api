@@ -16,6 +16,8 @@ import { Unit } from '../entities/workspace/unit.entity';
 import { InternalServerErrorException } from '@nestjs/common';
 import { Rata } from '../entities/workspace/rata.entity';
 import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
+import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
+import { ProtocolGas } from '../entities/workspace/protocol-gas.entity';
 
 const locationId = '121';
 const facilityId = 1;
@@ -57,6 +59,11 @@ const mockRataService = () => ({
   import: jest.fn().mockResolvedValue(null),
 });
 
+const mockProtocolGasService = () => ({
+  export: jest.fn().mockResolvedValue([new ProtocolGas()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(testSummaryDto),
   many: jest.fn().mockResolvedValue([testSummaryDto]),
@@ -87,6 +94,10 @@ describe('TestSummaryWorkspaceService', () => {
           provide: RataWorkspaceService,
           useFactory: mockRataService,
         },
+        {
+          provide: ProtocolGasWorkspaceService,
+          useFactory: mockProtocolGasService,
+        }
       ],
     }).compile();
 

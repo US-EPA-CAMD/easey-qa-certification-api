@@ -36,6 +36,7 @@ import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 
 import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -147,7 +148,7 @@ export class TestSummaryWorkspaceService {
     promises.push(
       new Promise(async (resolve, _reject) => {
         let linearitySummaryData,
-          rataData = null;
+          rataData, protocolGasData = null;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
@@ -159,11 +160,13 @@ export class TestSummaryWorkspaceService {
         if (testSumIds) {
           linearitySummaryData = await this.linearityService.export(testSumIds);
           rataData = await this.rataService.export(testSumIds);
+          protocolGasData = await this.protocolGasService.export(testSumIds);
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
             );
             s.rataData = rataData.filter(i => i.testSumId === s.id);
+            s.protocolGasData = protocolGasData.filter(i => i.testSumId === s.id)
           });
         }
 
