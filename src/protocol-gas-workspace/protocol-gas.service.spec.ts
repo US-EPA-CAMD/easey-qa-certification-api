@@ -1,10 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { ProtocolGasBaseDTO, ProtocolGasDTO } from '../dto/protocol-gas.dto';
+import { ProtocolGasBaseDTO, ProtocolGasDTO, ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
 import { ProtocolGas } from '../entities/workspace/protocol-gas.entity';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
 import { ProtocolGasWorkspaceService } from './protocol-gas.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 const protocolGasId = 'a1b2c3';
 const testSumId = '1';
@@ -31,6 +32,10 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(protocolGas),
 });
 
+const mockHistoricalRepo = () => ({
+  findOne: jest.fn().mockResolvedValue(protocolGas),
+});
+
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(protocolGasDTO),
   many: jest.fn().mockResolvedValue([protocolGasDTO]),
@@ -43,6 +48,7 @@ describe('ProtocolGasWorkspaceService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        Logger,
         ProtocolGasWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
@@ -118,4 +124,12 @@ describe('ProtocolGasWorkspaceService', () => {
       expect(result).toEqual([protocolGasDTO]);
     });
   });
+
+  describe('Import', () => {
+    it('Should Import Protocol Gas', async () => {
+      jest.spyOn(service, 'createProtocolGas').mockResolvedValue(protocolGasDTO);
+
+      await service.import(testSumId, new ProtocolGasImportDTO(), userId, true);
+    })
+  })
 });
