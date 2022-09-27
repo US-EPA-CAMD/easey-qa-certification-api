@@ -33,6 +33,7 @@ import { MonitorSystem } from './../entities/workspace/monitor-system.entity';
 import { MonitorLocation } from './../entities/workspace/monitor-location.entity';
 import { ReportingPeriod } from './../entities/workspace/reporting-period.entity';
 import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
+
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 
@@ -240,6 +241,26 @@ export class TestSummaryWorkspaceService {
               this.rataService.import(
                 createdTestSummary.id,
                 rata,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (payload.protocolGasData?.length > 0) {
+      for (const protocolGas of payload.protocolGasData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.protocolGasService.import(
+                createdTestSummary.id,
+                protocolGas,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),
