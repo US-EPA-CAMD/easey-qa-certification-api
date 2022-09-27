@@ -33,7 +33,6 @@ import { MonitorSystem } from './../entities/workspace/monitor-system.entity';
 import { MonitorLocation } from './../entities/workspace/monitor-location.entity';
 import { ReportingPeriod } from './../entities/workspace/reporting-period.entity';
 import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
-import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
