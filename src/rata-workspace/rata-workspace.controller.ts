@@ -6,18 +6,21 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
+import { User } from '@us-epa-camd/easey-common/decorators';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { RataBaseDTO, RataRecordDTO } from '../dto/rata.dto';
 import { RataChecksService } from './rata-checks.service';
 import { RataWorkspaceService } from './rata-workspace.service';
-
-const userId = 'testUser';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -55,8 +58,8 @@ export class RataWorkspaceController {
   }
 
   @Post()
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiCreatedResponse({
     type: RataRecordDTO,
     description: 'Creates a Rata record in the workspace',
@@ -65,15 +68,15 @@ export class RataWorkspaceController {
     @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: RataBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<RataRecordDTO> {
     await this.checksService.runChecks(locationId, payload, testSumId);
-    return this.service.createRata(testSumId, payload, userId);
+    return this.service.createRata(testSumId, payload, user.userId);
   }
 
   @Put(':id')
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: RataRecordDTO,
     description: 'Updates a Rata record in the workspace',
@@ -83,7 +86,7 @@ export class RataWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
     @Body() payload: RataBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<RataRecordDTO> {
     await this.checksService.runChecks(
       locationId,
@@ -92,12 +95,12 @@ export class RataWorkspaceController {
       false,
       true,
     );
-    return this.service.updateRata(testSumId, id, payload, userId);
+    return this.service.updateRata(testSumId, id, payload, user.userId);
   }
 
   @Delete(':id')
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     description: 'Deletes a RATA record from the workspace',
   })
@@ -105,8 +108,8 @@ export class RataWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<void> {
-    return this.service.deleteRata(testSumId, id, userId);
+    return this.service.deleteRata(testSumId, id, user.userId);
   }
 }

@@ -6,6 +6,7 @@ import {
   Delete,
   Controller,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -13,10 +14,12 @@ import {
   ApiOkResponse,
   ApiCreatedResponse,
   ApiSecurity,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
-//import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-//import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { User } from '@us-epa-camd/easey-common/decorators';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
   LinearitySummaryBaseDTO,
@@ -62,8 +65,8 @@ export class LinearitySummaryWorkspaceController {
   }
 
   @Post()
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiCreatedResponse({
     type: LinearitySummaryRecordDTO,
     description: 'Creates a Linearity Summary record in the workspace',
@@ -72,16 +75,15 @@ export class LinearitySummaryWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: LinearitySummaryBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<LinearitySummaryRecordDTO> {
-    const userId = 'testUser';
     await this.checksService.runChecks(testSumId, payload);
-    return this.service.createSummary(testSumId, payload, userId);
+    return this.service.createSummary(testSumId, payload, user.userId);
   }
 
   @Put(':id')
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: LinearitySummaryRecordDTO,
     description: 'Updates a Linearity Summary record in the workspace',
@@ -91,16 +93,15 @@ export class LinearitySummaryWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
     @Body() payload: LinearitySummaryBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<LinearitySummaryRecordDTO> {
-    const userId = 'testUser';
     await this.checksService.runChecks(testSumId, payload, false, true);
-    return this.service.updateSummary(testSumId, id, payload, userId);
+    return this.service.updateSummary(testSumId, id, payload, user.userId);
   }
 
   @Delete(':id')
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     description: 'Deletes a Linearity Summary record from the workspace',
   })
@@ -108,9 +109,8 @@ export class LinearitySummaryWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<void> {
-    const userId = 'testUser';
-    return this.service.deleteSummary(testSumId, id, userId);
+    return this.service.deleteSummary(testSumId, id, user.userId);
   }
 }

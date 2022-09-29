@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.repository';
@@ -16,6 +17,7 @@ import { FlowRataRunModule } from '../flow-rata-run/flow-rata-run.module';
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => RataRunWorkspaceModule),
     RataTraverseWorkspaceModule,
+    HttpModule,
   ],
   controllers: [FlowRataRunWorkspaceController],
   providers: [FlowRataRunWorkspaceService, FlowRataRunMap],

@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -20,6 +21,7 @@ import { LinearitySummaryModule } from '../linearity-summary/linearity-summary.m
     forwardRef(() => LinearitySummaryModule),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),
+    HttpModule,
   ],
   controllers: [LinearitySummaryWorkspaceController],
   providers: [

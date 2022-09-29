@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 
 import { LocationWorkspaceModule } from '../location-workspace/location.module';
@@ -17,6 +18,7 @@ import { RataTraverseWorkspaceModule } from 'src/rata-traverse-workspace/rata-tr
 
 @Module({
   imports: [
+    HttpModule,
     QASuppDataWorkspaceModule,
     LocationWorkspaceModule,
     TestSummaryWorkspaceModule,

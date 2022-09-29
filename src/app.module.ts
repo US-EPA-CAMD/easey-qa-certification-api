@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { RouterModule } from 'nest-router';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 
 import { dbConfig } from '@us-epa-camd/easey-common/config';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
@@ -47,6 +48,7 @@ import { FuelFlowToLoadTestWorkspaceModule } from './fuel-flow-to-load-test-work
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
+    HttpModule,
     LoggerModule,
     CorsOptionsModule,
     QACertificationModule,

@@ -6,13 +6,19 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
+
+import { User } from '@us-epa-camd/easey-common/decorators';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
   ProtocolGasBaseDTO,
@@ -20,9 +26,9 @@ import {
 } from '../dto/protocol-gas.dto';
 import { ProtocolGasWorkspaceService } from './protocol-gas.service';
 
-@ApiTags('Protocol Gas')
-@ApiSecurity('APIKey')
 @Controller()
+@ApiSecurity('APIKey')
+@ApiTags('Protocol Gas')
 export class ProtocolGasWorkspaceController {
   constructor(private readonly service: ProtocolGasWorkspaceService) {}
 
@@ -54,8 +60,8 @@ export class ProtocolGasWorkspaceController {
   }
 
   @Post()
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiCreatedResponse({
     type: ProtocolGasRecordDTO,
     description: 'Creates a Protocol Gas record in the workspace',
@@ -64,13 +70,14 @@ export class ProtocolGasWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: ProtocolGasBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<ProtocolGasRecordDTO> {
-    const userId = 'testUser';
-    return this.service.createProtocolGas(testSumId, payload, userId);
+    return this.service.createProtocolGas(testSumId, payload, user.userId);
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: ProtocolGasRecordDTO,
     description: 'Updates a Protocol Gas record in the workspace',
@@ -80,12 +87,14 @@ export class ProtocolGasWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
     @Body() payload: ProtocolGasBaseDTO,
+    @User() user: CurrentUser,
   ) {
-    const userId = 'testUser';
-    return this.service.updateProtocolGas(testSumId, id, payload, userId);
+    return this.service.updateProtocolGas(testSumId, id, payload, user.userId);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     description: 'Deletes a Protocol Gas record from the workspace',
   })
@@ -93,8 +102,8 @@ export class ProtocolGasWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
+    @User() user: CurrentUser,
   ): Promise<void> {
-    const userId = 'testUser';
-    return this.service.deleteProtocolGas(testSumId, id, userId);
+    return this.service.deleteProtocolGas(testSumId, id, user.userId);
   }
 }
