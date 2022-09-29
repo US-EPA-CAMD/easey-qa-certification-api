@@ -1,9 +1,4 @@
-import {
-  BaseEntity,
-  Entity,
-  Column,
-  PrimaryColumn,
-} from 'typeorm';
+import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
@@ -63,7 +58,7 @@ export class AppECorrelationTestRun extends BaseEntity {
 
   @Column({
     type: 'date',
-    name: 'begin_date'
+    name: 'begin_date',
   })
   beginDate: Date;
 
@@ -81,7 +76,7 @@ export class AppECorrelationTestRun extends BaseEntity {
 
   @Column({
     type: 'date',
-    name: 'end_date'
+    name: 'end_date',
   })
   endDate: Date;
 

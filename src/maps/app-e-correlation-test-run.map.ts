@@ -8,7 +8,9 @@ export class AppECorrelationTestRunMap extends BaseMap<
   AppECorrelationTestRun,
   AppECorrelationTestRunDTO
 > {
-  public async one(entity: AppECorrelationTestRun): Promise<AppECorrelationTestRunDTO> {
+  public async one(
+    entity: AppECorrelationTestRun,
+  ): Promise<AppECorrelationTestRunDTO> {
     return {
       id: entity.id,
       appECorrTestSumId: entity.appECorrTestSumId,
@@ -26,13 +28,11 @@ export class AppECorrelationTestRunMap extends BaseMap<
       endDate: entity.endDate,
       endHour: entity.endHour,
       endMinute: entity.endMinute,
-
-      appECorrelationHeatInputFromOilData: [],
-      appECorrelationHeatInputFromGasData: [],
-      
       userId: entity.userId,
       addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
+      appECorrelationHeatInputFromOilData: [],
+      appECorrelationHeatInputFromGasData: [],
     };
   }
 }
