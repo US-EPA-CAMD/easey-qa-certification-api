@@ -54,10 +54,6 @@ describe('TestQualificationWorkspaceController', () => {
     );
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-
   describe('getTestQualifications', () => {
     it('Calls service to get all Test Qualification records for a given Test Summary ID', async () => {
       const results = await controller.getTestQualifications(locId, testSumId);

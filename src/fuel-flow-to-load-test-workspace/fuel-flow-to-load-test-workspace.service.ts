@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   FuelFlowToLoadTestBaseDTO,
   FuelFlowToLoadTestRecordDTO,
-} from 'src/dto/fuel-flow-to-load-test.dto';
-import { FuelFlowToLoadTestMap } from 'src/maps/fuel-flow-to-load-test.map';
-import { TestSummaryWorkspaceService } from 'src/test-summary-workspace/test-summary.service';
+} from '../dto/fuel-flow-to-load-test.dto';
+import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FuelFlowToLoadTestWorkspaceRepository } from './fuel-flow-to-load-test-workspace.repository';
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';

@@ -5,8 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FuelFlowToLoadTestWorkspaceRepository } from './fuel-flow-to-load-test-workspace.repository';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
-import { TestQualificationMap } from '../maps/test-qualification.map';
-import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
 
 @Module({
   imports: [

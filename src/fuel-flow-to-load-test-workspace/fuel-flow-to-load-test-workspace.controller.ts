@@ -3,7 +3,7 @@ import { ApiCreatedResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import {
   FuelFlowToLoadTestBaseDTO,
   FuelFlowToLoadTestRecordDTO,
-} from 'src/dto/fuel-flow-to-load-test.dto';
+} from '../dto/fuel-flow-to-load-test.dto';
 import { FuelFlowToLoadTestWorkspaceService } from './fuel-flow-to-load-test-workspace.service';
 
 const userId = 'testUser';
