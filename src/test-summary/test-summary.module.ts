@@ -12,6 +12,7 @@ import { TestSummaryMap } from '../maps/test-summary.map';
 import { RataModule } from '../rata/rata.module';
 import { TestQualificationModule } from '../test-qualification/test-qualification.module';
 import { AirEmissionTestingModule } from '../air-emission-testing/air-emission-testing.module';
+import { FuelFlowToLoadTestModule } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AirEmissionTestingModule } from '../air-emission-testing/air-emission-t
     ProtocolGasModule,
     RataModule,
     TestQualificationModule,
+    FuelFlowToLoadTestModule,
     AirEmissionTestingModule,
   ],
   controllers: [TestSummaryController],

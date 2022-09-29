@@ -147,7 +147,8 @@ export class TestSummaryWorkspaceService {
     promises.push(
       new Promise(async (resolve, _reject) => {
         let linearitySummaryData,
-          rataData, protocolGasData = null;
+          rataData,
+          protocolGasData = null;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
@@ -165,7 +166,9 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.rataData = rataData.filter(i => i.testSumId === s.id);
-            s.protocolGasData = protocolGasData.filter(i => i.testSumId === s.id)
+            s.protocolGasData = protocolGasData.filter(
+              i => i.testSumId === s.id,
+            );
           });
         }
 

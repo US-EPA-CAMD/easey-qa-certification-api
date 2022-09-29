@@ -1,6 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { ProtocolGasBaseDTO, ProtocolGasDTO, ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
+import {
+  ProtocolGasBaseDTO,
+  ProtocolGasDTO,
+  ProtocolGasImportDTO,
+} from '../dto/protocol-gas.dto';
 import { ProtocolGas } from '../entities/workspace/protocol-gas.entity';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
@@ -127,9 +131,11 @@ describe('ProtocolGasWorkspaceService', () => {
 
   describe('Import', () => {
     it('Should Import Protocol Gas', async () => {
-      jest.spyOn(service, 'createProtocolGas').mockResolvedValue(protocolGasDTO);
+      jest
+        .spyOn(service, 'createProtocolGas')
+        .mockResolvedValue(protocolGasDTO);
 
       await service.import(testSumId, new ProtocolGasImportDTO(), userId, true);
-    })
-  })
+    });
+  });
 });

@@ -34,6 +34,8 @@ import { FlowRataRunModule } from './flow-rata-run/flow-rata-run.module';
 import { FlowRataRunWorkspaceModule } from './flow-rata-run-workspace/flow-rata-run-workspace.module';
 import { RataTraverseWorkspaceModule } from './rata-traverse-workspace/rata-traverse-workspace.module';
 import { RataTraverseModule } from './rata-traverse/rata-traverse.module';
+import { FuelFlowToLoadTestModule } from './fuel-flow-to-load-test/fuel-flow-to-load-test.module';
+import { FuelFlowToLoadTestWorkspaceModule } from './fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.module';
 
 @Module({
   imports: [
@@ -69,6 +71,8 @@ import { RataTraverseModule } from './rata-traverse/rata-traverse.module';
     AirEmissionTestingModule,
     RataTraverseWorkspaceModule,
     RataTraverseModule,
+    FuelFlowToLoadTestModule,
+    FuelFlowToLoadTestWorkspaceModule,
   ],
 })
 export class AppModule {}
