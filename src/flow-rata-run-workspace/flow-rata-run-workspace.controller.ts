@@ -6,21 +6,24 @@ import {
   Body,
   Delete,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
+import { User } from '@us-epa-camd/easey-common/decorators';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   FlowRataRunBaseDTO,
   FlowRataRunDTO,
   FlowRataRunRecordDTO,
 } from '../dto/flow-rata-run.dto';
 import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
-
-const userId = 'testUser';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -62,6 +65,8 @@ export class FlowRataRunWorkspaceController {
   }
 
   @Post()
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiCreatedResponse({
     isArray: false,
     type: FlowRataRunRecordDTO,
@@ -74,19 +79,19 @@ export class FlowRataRunWorkspaceController {
     @Param('rataSumId') _rataSumId: string,
     @Param('rataRunId') rataRunId: string,
     @Body() payload: FlowRataRunBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<FlowRataRunRecordDTO> {
     return this.service.createFlowRataRun(
       testSumId,
       rataRunId,
       payload,
-      userId,
+      user.userId,
     );
   }
 
   @Put(':id')
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: FlowRataRunRecordDTO,
     description: 'Updates a Flow Rata Run record in the workspace',
@@ -99,19 +104,19 @@ export class FlowRataRunWorkspaceController {
     @Param('rataRunId') _rataRunId: string,
     @Param('id') flowRataRunId: string,
     @Body() payload: FlowRataRunBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<FlowRataRunRecordDTO> {
     return this.service.updateRataRun(
       testSumId,
       flowRataRunId,
       payload,
-      userId,
+      user.userId,
     );
   }
 
   @Delete(':id')
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     description: 'Deletes a Flow Rata Run record from the workspace',
   })
@@ -122,8 +127,8 @@ export class FlowRataRunWorkspaceController {
     @Param('rataSumId') _rataSumId: string,
     @Param('rataRunId') _rataRunId: string,
     @Param('id') flowRataRunId: string,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<void> {
-    return this.service.deleteFlowRataRun(testSumId, flowRataRunId, userId);
+    return this.service.deleteFlowRataRun(testSumId, flowRataRunId, user.userId);
   }
 }

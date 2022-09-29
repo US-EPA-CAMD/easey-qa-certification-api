@@ -4,6 +4,7 @@ import {
   Post,
   Query,
   Controller,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 
@@ -14,6 +15,10 @@ import {
   ApiSecurity,
   ApiQuery,
 } from '@nestjs/swagger';
+
+import { User } from '@us-epa-camd/easey-common/decorators';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
   QACertificationImportDTO,
@@ -72,8 +77,8 @@ export class QACertificationWorkspaceController {
   }
 
   @Post('import')
+  @UseGuards(AuthGuard)
   @ApiBearerAuth('Token')
-  //@UseGuards(AuthGuard)
   @ApiOkResponse({
     type: QACertificationDTO,
     description:
@@ -82,13 +87,12 @@ export class QACertificationWorkspaceController {
   @UseInterceptors(FormatValidationErrorsInterceptor)
   async import(
     @Body() payload: QACertificationImportDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ) {
-    const userId = 'testUser';
     let qaSuppRecords: QASuppData[] = [];
     let locations: LocationIdentifiers[] = [];
 
     [locations, qaSuppRecords] = await this.checksService.runChecks(payload);
-    return this.service.import(locations, payload, userId, qaSuppRecords);
+    return this.service.import(locations, payload, user.userId, qaSuppRecords);
   }
 }

@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { RataWorkspaceService } from './rata-workspace.service';
 import { RataWorkspaceController } from './rata-workspace.controller';
@@ -17,6 +18,7 @@ import { RataModule } from '../rata/rata.module';
     forwardRef(() => RataSummaryWorkspaceModule),
     forwardRef(() => RataModule),
     RataFrequencyCodeModule,
+    HttpModule,
   ],
   controllers: [RataWorkspaceController],
   providers: [RataMap, RataChecksService, RataWorkspaceService],

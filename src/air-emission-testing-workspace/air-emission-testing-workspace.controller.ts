@@ -6,21 +6,24 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
+import { User } from '@us-epa-camd/easey-common/decorators';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   AirEmissionTestingBaseDTO,
   AirEmissionTestingDTO,
   AirEmissionTestingRecordDTO,
 } from '../dto/air-emission-test.dto';
 import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
-
-const userId = 'testUser';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -57,8 +60,8 @@ export class AirEmissionTestingWorkspaceController {
   }
 
   @Post()
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiCreatedResponse({
     type: AirEmissionTestingRecordDTO,
     description: 'Creates a workspace Air Emission Testing record.',
@@ -67,14 +70,14 @@ export class AirEmissionTestingWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: AirEmissionTestingBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<AirEmissionTestingRecordDTO> {
-    return this.service.createAirEmissionTesting(testSumId, payload, userId);
+    return this.service.createAirEmissionTesting(testSumId, payload, user.userId);
   }
 
   @Put(':id')
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: AirEmissionTestingRecordDTO,
     description: 'Updates a workspace Air Emission Testing record',
@@ -84,19 +87,19 @@ export class AirEmissionTestingWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
     @Body() payload: AirEmissionTestingBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ) {
     return this.service.updateAirEmissionTesting(
       testSumId,
       id,
       payload,
-      userId,
+      user.userId,
     );
   }
 
   @Delete(':id')
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     description: 'Deletes a workspace Air Emission Testing record',
   })
@@ -104,8 +107,8 @@ export class AirEmissionTestingWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<void> {
-    return this.service.deleteAirEmissionTesting(testSumId, id, userId);
+    return this.service.deleteAirEmissionTesting(testSumId, id, user.userId);
   }
 }

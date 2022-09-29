@@ -6,20 +6,23 @@ import {
   Post,
   Put,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
+import { User } from '@us-epa-camd/easey-common/decorators';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   TestQualificationBaseDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
 import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
-
-const userId = 'testUser';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -56,8 +59,8 @@ export class TestQualificationWorkspaceController {
   }
 
   @Post()
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiCreatedResponse({
     type: TestQualificationRecordDTO,
     description: 'Creates a workspace Test Qualification record.',
@@ -66,12 +69,14 @@ export class TestQualificationWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: TestQualificationBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<TestQualificationRecordDTO> {
-    return this.service.createTestQualification(testSumId, payload, userId);
+    return this.service.createTestQualification(testSumId, payload, user.userId);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     description: 'Deletes a test qualification record from the workspace',
   })
@@ -79,17 +84,18 @@ export class TestQualificationWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') testQualificationId: string,
+    @User() user: CurrentUser,
   ): Promise<void> {
     return this.service.deleteTestQualification(
       testSumId,
       testQualificationId,
-      userId,
+      user.userId,
     );
   }
 
   @Put(':id')
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: TestQualificationRecordDTO,
     description: 'Updates a test qualification record in the workspace',
@@ -99,8 +105,8 @@ export class TestQualificationWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
     @Body() payload: TestQualificationBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<TestQualificationRecordDTO> {
-    return this.service.updateTestQualification(testSumId, id, payload, userId);
+    return this.service.updateTestQualification(testSumId, id, payload, user.userId);
   }
 }

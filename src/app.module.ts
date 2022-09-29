@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { RouterModule } from 'nest-router';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 
 import { dbConfig } from '@us-epa-camd/easey-common/config';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
@@ -45,6 +46,7 @@ import { RataTraverseModule } from './rata-traverse/rata-traverse.module';
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
     }),
+    HttpModule,
     LoggerModule,
     CorsOptionsModule,
     QACertificationModule,

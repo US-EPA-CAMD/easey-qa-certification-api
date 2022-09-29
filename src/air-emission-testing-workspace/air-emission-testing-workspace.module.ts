@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
 import { AirEmissionTestingWorkspaceController } from './air-emission-testing-workspace.controller';
@@ -10,6 +11,7 @@ import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
   imports: [
     TypeOrmModule.forFeature([AirEmissionTestingWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
+    HttpModule,
   ],
   controllers: [AirEmissionTestingWorkspaceController],
   providers: [AirEmissionTestingMap, AirEmissionTestingWorkspaceService],

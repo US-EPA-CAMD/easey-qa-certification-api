@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -13,6 +14,7 @@ import { ProtocolGasMap } from '../maps/protocol-gas.map';
     TypeOrmModule.forFeature([ProtocolGasWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => ProtocolGasModule),
+    HttpModule,
   ],
   controllers: [ProtocolGasWorkspaceController],
   providers: [ProtocolGasWorkspaceService, ProtocolGasMap],

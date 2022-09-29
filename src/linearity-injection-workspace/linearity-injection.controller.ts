@@ -6,6 +6,7 @@ import {
   Delete,
   Controller,
   Param,
+  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -13,10 +14,12 @@ import {
   ApiOkResponse,
   ApiCreatedResponse,
   ApiSecurity,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 
-//import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-//import { CurrentUser } from '@us-epa-camd/easey-common/decorators';
+import { User } from '@us-epa-camd/easey-common/decorators';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
   LinearityInjectionBaseDTO,
@@ -65,8 +68,8 @@ export class LinearityInjectionWorkspaceController {
   }
 
   @Post()
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiCreatedResponse({
     type: LinearityInjectionRecordDTO,
     description: 'Creates a Linearity Injection record in the workspace',
@@ -76,16 +79,15 @@ export class LinearityInjectionWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Param('linSumId') linSumId: string,
     @Body() payload: LinearityInjectionBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<LinearityInjectionRecordDTO> {
-    const userId = 'testUser';
     await this.checksService.runChecks(linSumId, payload);
-    return this.service.createInjection(testSumId, linSumId, payload, userId);
+    return this.service.createInjection(testSumId, linSumId, payload, user.userId);
   }
 
   @Put(':id')
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: LinearityInjectionRecordDTO,
     description: 'Updates a Linearity Injection record in the workspace',
@@ -96,16 +98,15 @@ export class LinearityInjectionWorkspaceController {
     @Param('linSumId') linSumId: string,
     @Param('id') id: string,
     @Body() payload: LinearityInjectionBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<LinearityInjectionRecordDTO> {
-    const userId = 'testUser';
     await this.checksService.runChecks(linSumId, payload, false, true);
-    return this.service.updateInjection(testSumId, id, payload, userId);
+    return this.service.updateInjection(testSumId, id, payload, user.userId);
   }
 
   @Delete(':id')
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     description: 'Deletes a Linearity Injection record from the workspace',
   })
@@ -114,9 +115,8 @@ export class LinearityInjectionWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Param('linSumId') _linSumId: string,
     @Param('id') id: string,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<void> {
-    const userId = 'testUser';
-    return this.service.deleteInjection(testSumId, id, userId);
+    return this.service.deleteInjection(testSumId, id, user.userId);
   }
 }

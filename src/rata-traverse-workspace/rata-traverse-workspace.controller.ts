@@ -6,13 +6,18 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import {
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
+import { User } from '@us-epa-camd/easey-common/decorators';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   RataTraverseBaseDTO,
   RataTraverseRecordDTO,
@@ -62,8 +67,8 @@ export class RataTraverseWorkspaceController {
   }
 
   @Post()
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiCreatedResponse({
     type: RataTraverseRecordDTO,
     description: 'Creates a workspace RATA Traverse record.',
@@ -76,20 +81,19 @@ export class RataTraverseWorkspaceController {
     @Param('rataRunId') _rataRunId: string,
     @Param('flowRataRunId') flowRataRunId: string,
     @Body() payload: RataTraverseBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<RataTraverseRecordDTO> {
-    const userId = 'testUser';
     return this.service.createRataTraverse(
       testSumId,
       flowRataRunId,
       payload,
-      userId,
+      user.userId,
     );
   }
 
   @Put(':id')
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: RataTraverseRecordDTO,
     description: 'Updates a RATA Traverse record in the workspace',
@@ -103,13 +107,14 @@ export class RataTraverseWorkspaceController {
     @Param('flowRataRunId') _flowRataRunId: string,
     @Param('id') id: string,
     @Body() payload: RataTraverseBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<RataTraverseRecordDTO> {
-    const userId = 'testUser';
-    return this.service.updateRataTraverse(testSumId, id, payload, userId);
+    return this.service.updateRataTraverse(testSumId, id, payload, user.userId);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiOkResponse({
     description: 'Deletes a RATA Traverse record from the workspace',
   })
@@ -121,8 +126,8 @@ export class RataTraverseWorkspaceController {
     @Param('rataRunId') _rataRunId: string,
     @Param('flowRataRunId') _flowRataRunId: string,
     @Param('id') id: string,
+    @User() user: CurrentUser,
   ): Promise<void> {
-    const userId = 'testUser';
-    return this.service.deleteRataTraverse(testSumId, id, userId);
+    return this.service.deleteRataTraverse(testSumId, id, user.userId);
   }
 }

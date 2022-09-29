@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
 import { TestQualificationWorkspaceController } from './test-qualification-workspace.controller';
@@ -10,6 +11,7 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
   imports: [
     TypeOrmModule.forFeature([TestQualificationWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
+    HttpModule,
   ],
   controllers: [TestQualificationWorkspaceController],
   providers: [TestQualificationMap, TestQualificationWorkspaceService],
