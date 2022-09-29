@@ -1,3 +1,4 @@
+import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { FuelFlowToLoadTestWorkspaceService } from './fuel-flow-to-load-test-workspace.service';
 import { FuelFlowToLoadTestWorkspaceController } from './fuel-flow-to-load-test-workspace.controller';
@@ -10,6 +11,7 @@ import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
   imports: [
     TypeOrmModule.forFeature([FuelFlowToLoadTestWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
+    HttpModule,
   ],
   controllers: [FuelFlowToLoadTestWorkspaceController],
   providers: [FuelFlowToLoadTestMap, FuelFlowToLoadTestWorkspaceService],
