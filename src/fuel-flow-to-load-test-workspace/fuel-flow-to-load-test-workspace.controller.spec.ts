@@ -1,4 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { HttpModule } from '@nestjs/axios';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ConfigService } from '@nestjs/config';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   FuelFlowToLoadTestBaseDTO,
   FuelFlowToLoadTestDTO,
@@ -8,8 +12,14 @@ import { FuelFlowToLoadTestWorkspaceService } from './fuel-flow-to-load-test-wor
 
 const locId = '';
 const testSumId = '';
-const testQualificationId = 'g7h8i9';
-const testUser = 'testUser';
+const user: CurrentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 const fuelFlowToLoadTest = new FuelFlowToLoadTestDTO();
 const fuelFlowToLoadTests = [fuelFlowToLoadTest];
@@ -22,12 +32,14 @@ const payload = new FuelFlowToLoadTestBaseDTO();
 
 describe('FuelFlowToLoadTestWorkspaceController', () => {
   let controller: FuelFlowToLoadTestWorkspaceController;
-  let service: FuelFlowToLoadTestWorkspaceService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [HttpModule],
       controllers: [FuelFlowToLoadTestWorkspaceController],
       providers: [
+        ConfigService,
+        AuthGuard,
         {
           provide: FuelFlowToLoadTestWorkspaceService,
           useFactory: mockService,
@@ -46,6 +58,7 @@ describe('FuelFlowToLoadTestWorkspaceController', () => {
         locId,
         testSumId,
         payload,
+        user,
       );
       expect(result).toEqual(fuelFlowToLoadTest);
     });
