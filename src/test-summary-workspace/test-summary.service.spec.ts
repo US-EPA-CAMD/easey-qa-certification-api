@@ -97,7 +97,7 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: ProtocolGasWorkspaceService,
           useFactory: mockProtocolGasService,
-        }
+        },
       ],
     }).compile();
 

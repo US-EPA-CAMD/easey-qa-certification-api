@@ -43,16 +43,15 @@ export default registerAs('app', () => ({
   version: process.env.EASEY_QA_CERTIFICATION_API_VERSION || 'v0.0.0',
   published: process.env.EASEY_QA_CERTIFICATION_API_PUBLISHED || 'local',
   authApi: {
-    uri: process.env.EASEY_AUTH_API || 'https://api.epa.gov/easey/dev/auth-mgmt',
+    uri:
+      process.env.EASEY_AUTH_API || 'https://api.epa.gov/easey/dev/auth-mgmt',
   },
   reqSizeLimit: process.env.EASEY_QA_CERTIFICATION_API_REQ_SIZE_LIMIT || '1mb',
   enableSecretToken: parseBool(
     process.env.EASEY_QA_CERTIFICATION_API_ENABLE_SECRET_TOKEN,
   ),
   // ENABLES DEBUG CONSOLE LOGS
-  enableDebug: parseBool(
-    process.env.EASEY_QA_CERTIFICATION_API_ENABLE_DEBUG,
-  ),
+  enableDebug: parseBool(process.env.EASEY_QA_CERTIFICATION_API_ENABLE_DEBUG),
   // NEEDS TO BE SET IN .ENV FILE FOR LOCAL DEVELOPMENT
   // FORMAT: { "userId": "", "roles": [ { "orisCode": 3, "role": "P" } ] }
   currentUser: process.env.EASEY_QA_CERTIFICATION_API_CURRENT_USER,

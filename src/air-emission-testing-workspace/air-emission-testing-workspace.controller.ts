@@ -72,7 +72,11 @@ export class AirEmissionTestingWorkspaceController {
     @Body() payload: AirEmissionTestingBaseDTO,
     @User() user: CurrentUser,
   ): Promise<AirEmissionTestingRecordDTO> {
-    return this.service.createAirEmissionTesting(testSumId, payload, user.userId);
+    return this.service.createAirEmissionTesting(
+      testSumId,
+      payload,
+      user.userId,
+    );
   }
 
   @Put(':id')

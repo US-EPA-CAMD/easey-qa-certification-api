@@ -19,6 +19,7 @@ import { ProtocolGas } from './protocol-gas.entity';
 import { Rata } from './rata.entity';
 import { TestQualification } from './test-qualification.entity';
 import { AirEmissionTesting } from './air-emission-test.entity';
+import { FuelFlowToLoadTest } from './fuel-flow-to-load-test.entity';
 
 @Entity({ name: 'camdecmps.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -213,6 +214,13 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   testQualifications: TestQualification[];
+
+  @OneToMany(
+    () => FuelFlowToLoadTest,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  fuelFlowToLoadTests: FuelFlowToLoadTest[];
 
   @OneToMany(
     () => ProtocolGas,
