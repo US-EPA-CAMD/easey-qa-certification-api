@@ -71,4 +71,32 @@ export class FuelFlowToLoadTestWorkspaceService {
     );
     return this.map.one(entity);
   }
+
+  async editFuelFlowToLoadTest(
+    testSumId: string,
+    id: string,
+    payload: FuelFlowToLoadTestBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ) {
+    const entity = await this.repository.findOne(id);
+
+    entity.testBasisCode = payload.testBasisCode;
+    entity.averageDifference = payload.averageDifference;
+    entity.numberOfHoursUsed = payload.numberOfHoursExcludedCofiring;
+
+    entity.numberOfHoursExcludedRamping = payload.numberOfHoursExcludedRamping;
+    entity.numberOfHoursExcludedLowRange =
+      payload.numberOfHoursExcludedLowRange;
+
+    await this.repository.save(entity);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.getFuelFlowToLoadTest(id);
+  }
 }
