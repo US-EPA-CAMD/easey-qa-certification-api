@@ -12,6 +12,7 @@ import { TestSummaryMap } from '../maps/test-summary.map';
 import { RataModule } from '../rata/rata.module';
 import { TestQualificationModule } from '../test-qualification/test-qualification.module';
 import { AirEmissionTestingModule } from '../air-emission-testing/air-emission-testing.module';
+import { AppECorrelationTestSummaryModule } from 'src/app-e-correlation-test-summary/app-e-correlation-test-summary.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { AirEmissionTestingModule } from '../air-emission-testing/air-emission-t
     RataModule,
     TestQualificationModule,
     AirEmissionTestingModule,
+    AppECorrelationTestSummaryModule,
   ],
   controllers: [TestSummaryController],
   providers: [TestSummaryMap, TestSummaryService],

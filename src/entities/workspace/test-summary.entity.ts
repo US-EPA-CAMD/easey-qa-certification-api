@@ -19,6 +19,8 @@ import { ProtocolGas } from './protocol-gas.entity';
 import { Rata } from './rata.entity';
 import { TestQualification } from './test-qualification.entity';
 import { AirEmissionTesting } from './air-emission-test.entity';
+import { AeCorrelationSummaryTest } from './ae-correlation-summary.entity';
+
 
 @Entity({ name: 'camdecmpswks.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -237,4 +239,11 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'rpt_period_id' })
   reportingPeriod: ReportingPeriod;
+
+  @ManyToOne(
+    () => AeCorrelationSummaryTest,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  appECorrelationTests: AeCorrelationSummaryTest[];
 }
