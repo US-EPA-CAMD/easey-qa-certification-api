@@ -20,7 +20,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
     private readonly airEmissionTestingMap: AirEmissionTestingMap,
     private readonly rataMap: RataMap,
     private readonly testQualificationMap: TestQualificationMap,
-    //  private readonly aeCorrelationSummaryMap: AeCorrelationSummaryMap,
+    private readonly aeCorrelationSummaryMap: AeCorrelationSummaryMap,
     private readonly fuelFlowToLoadTestMap: FuelFlowToLoadTestMap,
   ) {
     super();
@@ -45,11 +45,11 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
     const testQuals = entity.testQualifications
       ? await this.testQualificationMap.many(entity.testQualifications)
       : [];
-    //
-    //    const aeCorrelationSummaryTest = entity.appECorrelationTests
-    //    ? await this.aeCorrelationSummaryMap.many(entity.appECorrelationTests)
-    //    : [];
-    //
+
+    const aeCorrelationSummaryTest = entity.appECorrelationTests
+      ? await this.aeCorrelationSummaryMap.many(entity.appECorrelationTests)
+      : [];
+
     const fuelFlowToloadTest = entity.fuelFlowToLoadTests
       ? await this.fuelFlowToLoadTestMap.many(entity.fuelFlowToLoadTests)
       : [];
@@ -109,7 +109,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       fuelFlowmeterAccuracyData: [],
       transmitterTransducerData: [],
       fuelFlowToLoadBaselineData: [],
-      //    appECorrelationTestSummaryData: aeCorrelationSummaryTest,
+      appECorrelationTestSummaryData: aeCorrelationSummaryTest,
       fuelFlowToLoadTestData: fuelFlowToloadTest,
 
       unitDefaultTestData: [],

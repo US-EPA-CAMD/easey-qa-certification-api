@@ -468,7 +468,7 @@ export class TestSummaryDTO extends TestSummaryRecordDTO {
   transmitterTransducerData: TransmitterTransducerDTO[];
   fuelFlowToLoadBaselineData: FuelFlowToLoadBaselineDTO[];
   fuelFlowToLoadTestData: FuelFlowToLoadTestDTO[];
-  //  appECorrelationTestSummaryData: AppECorrelationTestSummaryDTO[];
+  appECorrelationTestSummaryData: AppECorrelationTestSummaryDTO[];
   unitDefaultTestData: UnitDefaultTestDTO[];
   hgSummaryData: HgSummaryDTO[];
   testQualificationData: TestQualificationDTO[];
