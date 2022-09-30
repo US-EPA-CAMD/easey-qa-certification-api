@@ -1,5 +1,8 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { v4 as uuid } from 'uuid';
+
 import {
   FuelFlowToLoadTestBaseDTO,
   FuelFlowToLoadTestRecordDTO,
@@ -8,7 +11,6 @@ import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FuelFlowToLoadTestWorkspaceRepository } from './fuel-flow-to-load-test-workspace.repository';
 import { currentDateTime } from '../utilities/functions';
-import { v4 as uuid } from 'uuid';
 
 @Injectable()
 export class FuelFlowToLoadTestWorkspaceService {
@@ -19,6 +21,29 @@ export class FuelFlowToLoadTestWorkspaceService {
     @InjectRepository(FuelFlowToLoadTestWorkspaceRepository)
     private readonly repository: FuelFlowToLoadTestWorkspaceRepository,
   ) {}
+
+  async getFuelFlowToLoadTests(
+    testSumId: string,
+  ): Promise<FuelFlowToLoadTestRecordDTO[]> {
+    const records = await this.repository.find({ where: { testSumId } });
+
+    return this.map.many(records);
+  }
+
+  async getFuelFlowToLoadTest(
+    id: string,
+  ): Promise<FuelFlowToLoadTestRecordDTO> {
+    const result = await this.repository.findOne(id);
+
+    if (!result) {
+      throw new LoggingException(
+        `Fuel Flow To Load Test record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
 
   async createFuelFlowToLoadTest(
     testSumId: string,
