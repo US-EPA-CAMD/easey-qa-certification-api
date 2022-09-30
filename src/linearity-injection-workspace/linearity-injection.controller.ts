@@ -82,7 +82,12 @@ export class LinearityInjectionWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<LinearityInjectionRecordDTO> {
     await this.checksService.runChecks(linSumId, payload);
-    return this.service.createInjection(testSumId, linSumId, payload, user.userId);
+    return this.service.createInjection(
+      testSumId,
+      linSumId,
+      payload,
+      user.userId,
+    );
   }
 
   @Put(':id')

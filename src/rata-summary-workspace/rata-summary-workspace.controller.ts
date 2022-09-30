@@ -85,7 +85,12 @@ export class RataSummaryWorkspaceController {
       rataId,
       testSumId,
     );
-    return this.service.createRataSummary(testSumId, rataId, payload, user.userId);
+    return this.service.createRataSummary(
+      testSumId,
+      rataId,
+      payload,
+      user.userId,
+    );
   }
 
   @Put(':id')

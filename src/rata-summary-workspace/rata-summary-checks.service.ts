@@ -63,7 +63,6 @@ export class RataSummaryChecksService {
       if (error) {
         errorList.push(error);
       }
-      
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,

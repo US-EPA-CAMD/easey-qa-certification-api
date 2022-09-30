@@ -89,7 +89,12 @@ export class RataRunWorkspaceController {
       false,
       true,
     );
-    return this.service.createRataRun(testSumId, rataSumId, payload, user.userId);
+    return this.service.createRataRun(
+      testSumId,
+      rataSumId,
+      payload,
+      user.userId,
+    );
   }
 
   @Delete(':id')

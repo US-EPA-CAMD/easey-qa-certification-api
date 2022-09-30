@@ -10,6 +10,7 @@ import { RataMap } from './rata.map';
 import { TestQualificationMap } from './test-qualification.map';
 import { AirEmissionTestingMap } from './air-emission-testing.map';
 import { AeCorrelationSummaryMap } from './ae-correlation-summary.map';
+import { FuelFlowToLoadTestMap } from './fuel-flow-to-load-test.map';
 
 
 @Injectable()
@@ -21,6 +22,8 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
     private readonly rataMap: RataMap,
     private readonly testQualificationMap: TestQualificationMap,
     private readonly aeCorrelationSummaryMap: AeCorrelationSummaryMap,
+    private readonly fuelFlowToLoadTestMap: FuelFlowToLoadTestMap,
+
   ) {
     super();
   }
@@ -49,6 +52,10 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       ? await this.aeCorrelationSummaryMap.many(entity.aeCorrelationSummaries)
       : [];
     
+    const fuelFlowToloadTest = entity.fuelFlowToLoadTests
+      ? await this.fuelFlowToLoadTestMap.many(entity.fuelFlowToLoadTests)
+      : [];
+
     if (entity['evalStatusCode']) {
       evalStatusCode = entity['evalStatusCode'];
     }
@@ -106,6 +113,9 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       fuelFlowToLoadBaselineData: [],
       fuelFlowToLoadTestData: [],
       appECorrelationTestSummaryData: aeCorrelationSummaryTest,
+      fuelFlowToLoadTestData: fuelFlowToloadTest,
+      appECorrelationTestSummaryData: [],
+
       unitDefaultTestData: [],
       hgSummaryData: [],
       testQualificationData: testQuals,
