@@ -100,7 +100,6 @@ import {
   VALID_CODES_FOR_MON_SYS_ID_VALIDATION,
 } from '../utilities/constants';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
-import { AeCorrelationSummaryTest } from 'src/entities/ae-correlation-test-summary.entity';
 
 const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';

@@ -35,7 +35,6 @@ import { AppECorrelationTestSummaryWorkspaceModule } from './app-e-correlation-t
 import { FuelFlowToLoadTestModule } from './fuel-flow-to-load-test/fuel-flow-to-load-test.module';
 import { FuelFlowToLoadTestWorkspaceModule } from './fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.module';
 
-
 const routes: Routes = [
   {
     path: '/',
@@ -79,9 +78,9 @@ const routes: Routes = [
             path: ':testSumId/air-emission-testings',
             module: AirEmissionTestingModule,
           },
-         {
-              path: ':testSumId/app-e-correlation-tests',
-              module: AppECorrelationTestSummaryModule,
+          {
+            path: ':testSumId/app-e-correlation-tests',
+            module: AppECorrelationTestSummaryModule,
           },
           {
             path: ':testSumId/rata',
