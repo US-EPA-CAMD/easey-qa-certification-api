@@ -20,11 +20,14 @@ const user: CurrentUser = {
   isAdmin: false,
   roles: [],
 };
+const fuelFlowToLoadTestId = 'fuelFlowToLoadTestId';
 
 const fuelFlowToLoadTest = new FuelFlowToLoadTestDTO();
 const fuelFlowToLoadTests = [fuelFlowToLoadTest];
 
 const mockService = () => ({
+  getFuelFlowToLoadTests: jest.fn().mockResolvedValue(fuelFlowToLoadTests),
+  getFuelFlowToLoadTest: jest.fn().mockResolvedValue(fuelFlowToLoadTest),
   createFuelFlowToLoadTest: jest.fn().mockResolvedValue(fuelFlowToLoadTest),
 });
 
@@ -50,6 +53,23 @@ describe('FuelFlowToLoadTestWorkspaceController', () => {
     controller = module.get<FuelFlowToLoadTestWorkspaceController>(
       FuelFlowToLoadTestWorkspaceController,
     );
+  });
+
+  describe('getFuelFlowToLoadTests', () => {
+    it('Calls the repository to get all Fuel Flow To Load Test records by Test Summary Id', async () => {
+      const result = await controller.getFuelFlowToLoadTests(locId, testSumId);
+      expect(result).toEqual(fuelFlowToLoadTests);
+    });
+  });
+
+  describe('getFuelFlowToLoadTest', () => {
+    it('Calls the repository to get one Fuel Flow To Load Test record by Id', async () => {
+      const result = await controller.getFuelFlowToLoadTest(
+        locId,
+        fuelFlowToLoadTestId,
+      );
+      expect(result).toEqual(fuelFlowToLoadTest);
+    });
   });
 
   describe('createFuelFlowToLoadTest', () => {
