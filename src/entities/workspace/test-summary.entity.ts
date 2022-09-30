@@ -20,6 +20,7 @@ import { Rata } from './rata.entity';
 import { TestQualification } from './test-qualification.entity';
 import { AirEmissionTesting } from './air-emission-test.entity';
 import { AeCorrelationSummaryTest } from './ae-correlation-summary.entity';
+import { FuelFlowToLoadTest } from './fuel-flow-to-load-test.entity';
 
 
 @Entity({ name: 'camdecmpswks.test_summary' })
@@ -232,6 +233,13 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   testQualifications: TestQualification[];
+
+  @OneToMany(
+    () => FuelFlowToLoadTest,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  fuelFlowToLoadTests: FuelFlowToLoadTest[];
 
   @ManyToOne(
     () => ReportingPeriod,

@@ -129,6 +129,10 @@ export class FlowRataRunWorkspaceController {
     @Param('id') flowRataRunId: string,
     @User() user: CurrentUser,
   ): Promise<void> {
-    return this.service.deleteFlowRataRun(testSumId, flowRataRunId, user.userId);
+    return this.service.deleteFlowRataRun(
+      testSumId,
+      flowRataRunId,
+      user.userId,
+    );
   }
 }

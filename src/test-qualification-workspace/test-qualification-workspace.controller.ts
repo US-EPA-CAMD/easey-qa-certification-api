@@ -71,7 +71,11 @@ export class TestQualificationWorkspaceController {
     @Body() payload: TestQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<TestQualificationRecordDTO> {
-    return this.service.createTestQualification(testSumId, payload, user.userId);
+    return this.service.createTestQualification(
+      testSumId,
+      payload,
+      user.userId,
+    );
   }
 
   @Delete(':id')
@@ -107,6 +111,11 @@ export class TestQualificationWorkspaceController {
     @Body() payload: TestQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<TestQualificationRecordDTO> {
-    return this.service.updateTestQualification(testSumId, id, payload, user.userId);
+    return this.service.updateTestQualification(
+      testSumId,
+      id,
+      payload,
+      user.userId,
+    );
   }
 }

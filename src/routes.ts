@@ -32,6 +32,9 @@ import { RataTraverseWorkspaceModule } from './rata-traverse-workspace/rata-trav
 import { RataTraverseModule } from './rata-traverse/rata-traverse.module';
 import { AppECorrelationTestSummaryModule } from './app-e-correlation-test-summary/app-e-correlation-test-summary.module';
 import { AppECorrelationTestSummaryWorkspaceModule } from './app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.module';
+import { FuelFlowToLoadTestModule } from './fuel-flow-to-load-test/fuel-flow-to-load-test.module';
+import { FuelFlowToLoadTestWorkspaceModule } from './fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.module';
+
 
 const routes: Routes = [
   {
@@ -67,6 +70,10 @@ const routes: Routes = [
           {
             path: ':testSumId/test-qualifications',
             module: TestQualificationModule,
+          },
+          {
+            path: ':testSumId/fuel-flow-to-load-tests',
+            module: FuelFlowToLoadTestModule,
           },
           {
             path: ':testSumId/air-emission-testings',
@@ -141,7 +148,10 @@ const routes: Routes = [
           {
             path: ':testSumId/app-e-correlation-tests',
             module: AppECorrelationTestSummaryWorkspaceModule,
-        },
+          },
+            path: ':testSumId/fuel-flow-to-load-tests',
+            module: FuelFlowToLoadTestWorkspaceModule,
+          },
           {
             path: ':testSumId/rata',
             module: RataWorkspaceModule,
