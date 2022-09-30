@@ -24,6 +24,7 @@ export class AeCorrelationSummaryMap extends BaseMap<
       userId: entity.userId,
       addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
+      appECorrelationTestRunData: []
     };
   }
 }

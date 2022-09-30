@@ -6,6 +6,7 @@ import {
   } from '@nestjs/common';
 import {
     ApiBearerAuth,
+    ApiBearerAuth,
     ApiCreatedResponse,
     ApiSecurity,
     ApiTags,
@@ -16,8 +17,9 @@ import {
     AppECorrelationTestSummaryRecordDTO
   } from '../dto/app-e-correlation-test-summary.dto';
 import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-test-summary-workspace.service';
-
-const userId = 'testUser';
+import { User } from '@us-epa-camd/easey-common/decorators';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -26,8 +28,8 @@ export class AppendixETestSummaryWorkspaceController {
   constructor(private readonly service: AppECorrelationTestSummaryWorkspaceService) {}
 
   @Post()
-  //  @ApiBearerAuth('Token')
-  //  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
   @ApiCreatedResponse({
     type: AppECorrelationTestSummaryRecordDTO,
     description: 'Creates a workspace Appendix E Test Summary record.',
@@ -36,8 +38,8 @@ export class AppendixETestSummaryWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: AppECorrelationTestSummaryBaseDTO,
-    //    @CurrentUser() userId: string,
+    @User() user: CurrentUser,
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
-    return this.service.createAppECorrelation(_locationId, testSumId, payload, userId);
+    return this.service.createAppECorrelation(_locationId, testSumId, payload, user.userId);
   }
 }

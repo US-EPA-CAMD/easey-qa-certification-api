@@ -79,7 +79,7 @@ const routes: Routes = [
             module: AirEmissionTestingModule,
           },
           {
-            path: ':testSumId/app-e-correlation-tests',
+            path: ':testSumId/appexdix-e-correlation-test-summaries',
             module: AppECorrelationTestSummaryModule,
           },
           {
@@ -145,7 +145,7 @@ const routes: Routes = [
             module: TestQualificationWorkspaceModule,
           },
           {
-            path: ':testSumId/app-e-correlation-tests',
+            path: ':testSumId/appexdix-e-correlation-test-summaries',
             module: AppECorrelationTestSummaryWorkspaceModule,
           },
           {
