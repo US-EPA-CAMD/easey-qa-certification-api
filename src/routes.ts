@@ -149,6 +149,7 @@ const routes: Routes = [
             path: ':testSumId/app-e-correlation-tests',
             module: AppECorrelationTestSummaryWorkspaceModule,
           },
+          {
             path: ':testSumId/fuel-flow-to-load-tests',
             module: FuelFlowToLoadTestWorkspaceModule,
           },

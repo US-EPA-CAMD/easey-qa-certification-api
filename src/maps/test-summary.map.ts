@@ -111,10 +111,9 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       fuelFlowmeterAccuracyData: [],
       transmitterTransducerData: [],
       fuelFlowToLoadBaselineData: [],
-      fuelFlowToLoadTestData: [],
       appECorrelationTestSummaryData: aeCorrelationSummaryTest,
       fuelFlowToLoadTestData: fuelFlowToloadTest,
-      appECorrelationTestSummaryData: [],
+      
 
       unitDefaultTestData: [],
       hgSummaryData: [],
