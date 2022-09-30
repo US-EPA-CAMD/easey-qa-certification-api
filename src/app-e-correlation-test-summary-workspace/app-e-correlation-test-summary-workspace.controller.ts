@@ -5,6 +5,7 @@ import {
     Body,
   } from '@nestjs/common';
 import {
+    ApiBearerAuth,
     ApiCreatedResponse,
     ApiSecurity,
     ApiTags,
