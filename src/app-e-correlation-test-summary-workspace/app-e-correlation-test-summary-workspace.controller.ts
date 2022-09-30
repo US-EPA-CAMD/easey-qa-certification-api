@@ -7,6 +7,7 @@ import {
 import {
     ApiBearerAuth,
     ApiBearerAuth,
+    ApiBearerAuth,
     ApiCreatedResponse,
     ApiSecurity,
     ApiTags,
