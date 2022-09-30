@@ -30,6 +30,8 @@ import { FlowRataRunModule } from './flow-rata-run/flow-rata-run.module';
 import { FlowRataRunWorkspaceModule } from './flow-rata-run-workspace/flow-rata-run-workspace.module';
 import { RataTraverseWorkspaceModule } from './rata-traverse-workspace/rata-traverse-workspace.module';
 import { RataTraverseModule } from './rata-traverse/rata-traverse.module';
+import { AppECorrelationTestSummaryModule } from './app-e-correlation-test-summary/app-e-correlation-test-summary.module';
+import { AppECorrelationTestSummaryWorkspaceModule } from './app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.module';
 import { FuelFlowToLoadTestModule } from './fuel-flow-to-load-test/fuel-flow-to-load-test.module';
 import { FuelFlowToLoadTestWorkspaceModule } from './fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.module';
 
@@ -75,6 +77,10 @@ const routes: Routes = [
           {
             path: ':testSumId/air-emission-testings',
             module: AirEmissionTestingModule,
+          },
+          {
+            path: ':testSumId/appexdix-e-correlation-test-summaries',
+            module: AppECorrelationTestSummaryModule,
           },
           {
             path: ':testSumId/rata',
@@ -137,6 +143,10 @@ const routes: Routes = [
           {
             path: ':testSumId/test-qualifications',
             module: TestQualificationWorkspaceModule,
+          },
+          {
+            path: ':testSumId/appexdix-e-correlation-test-summaries',
+            module: AppECorrelationTestSummaryWorkspaceModule,
           },
           {
             path: ':testSumId/fuel-flow-to-load-tests',
