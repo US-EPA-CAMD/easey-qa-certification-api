@@ -100,6 +100,6 @@ export class LinearitySummary extends BaseEntity {
     () => LinearityInjection,
     li => li.linearitySummary,
   )
-  @JoinColumn({ name: 'lin_sum_id' }) 
+  @JoinColumn({ name: 'lin_sum_id' })
   injections: LinearityInjection[];
 }

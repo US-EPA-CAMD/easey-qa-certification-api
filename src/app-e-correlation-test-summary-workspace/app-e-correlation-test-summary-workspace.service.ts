@@ -3,11 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '../utilities/functions';
 import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
-import { AeCorrelationSummaryMap } from 'src/maps/ae-correlation-summary.map';
-import { 
-    AppECorrelationTestSummaryBaseDTO,
-    AppECorrelationTestSummaryRecordDTO
-  } from '../dto/app-e-correlation-test-summary.dto';
+import { AeCorrelationSummaryMap } from 'src/maps/app-e-correlation-summary.map';
+import {
+  AppECorrelationTestSummaryBaseDTO,
+  AppECorrelationTestSummaryRecordDTO,
+} from '../dto/app-e-correlation-test-summary.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 
 @Injectable()
@@ -19,10 +19,9 @@ export class AppECorrelationTestSummaryWorkspaceService {
     @InjectRepository(AppendixETestSummaryWorkspaceRepository)
     private readonly repository: AppendixETestSummaryWorkspaceRepository,
   ) {}
-  
+
   async createAppECorrelation(
     testSumId: string,
-    aeCorrTestSumId: string,
     payload: AppECorrelationTestSummaryBaseDTO,
     userId: string,
     isImport: boolean = false,
@@ -42,7 +41,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
     entity = await this.repository.findOne(entity.id);
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
-      aeCorrTestSumId,
+      userId,
       isImport,
     );
 

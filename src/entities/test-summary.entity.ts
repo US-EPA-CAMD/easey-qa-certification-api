@@ -19,7 +19,7 @@ import { ProtocolGas } from './protocol-gas.entity';
 import { Rata } from './rata.entity';
 import { TestQualification } from './test-qualification.entity';
 import { AirEmissionTesting } from './air-emission-test.entity';
-import { AeCorrelationSummaryTest } from './ae-correlation-test-summary.entity';
+import { AeCorrelationSummaryTest } from './app-e-correlation-test-summary.entity';
 import { FuelFlowToLoadTest } from './fuel-flow-to-load-test.entity';
 
 @Entity({ name: 'camdecmps.test_summary' })

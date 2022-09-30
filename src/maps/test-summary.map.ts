@@ -9,7 +9,7 @@ import { ProtocolGasMap } from './protocol-gas.map';
 import { RataMap } from './rata.map';
 import { TestQualificationMap } from './test-qualification.map';
 import { AirEmissionTestingMap } from './air-emission-testing.map';
-import { AeCorrelationSummaryMap } from './ae-correlation-summary.map';
+import { AeCorrelationSummaryMap } from './app-e-correlation-summary.map';
 import { FuelFlowToLoadTestMap } from './fuel-flow-to-load-test.map';
 
 @Injectable()

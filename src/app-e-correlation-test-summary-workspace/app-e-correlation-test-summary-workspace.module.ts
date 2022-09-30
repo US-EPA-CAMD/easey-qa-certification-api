@@ -3,15 +3,21 @@ import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { AppendixETestSummaryWorkspaceController } from './app-e-correlation-test-summary-workspace.controller';
-import { AeCorrelationSummaryMap } from 'src/maps/ae-correlation-summary.map';
+import { AeCorrelationSummaryMap } from '../maps/app-e-correlation-summary.map';
+import { HttpModule } from '@nestjs/axios';
+import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([AppECorrelationTestSummaryWorkspaceService]),
+    TypeOrmModule.forFeature([AppendixETestSummaryWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
+    HttpModule,
   ],
   controllers: [AppendixETestSummaryWorkspaceController],
-  providers: [AeCorrelationSummaryMap, AppECorrelationTestSummaryWorkspaceService],
+  providers: [
+    AeCorrelationSummaryMap,
+    AppECorrelationTestSummaryWorkspaceService,
+  ],
   exports: [
     TypeOrmModule,
     AeCorrelationSummaryMap,
