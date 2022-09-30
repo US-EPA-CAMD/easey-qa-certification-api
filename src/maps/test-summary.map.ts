@@ -45,8 +45,8 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       ? await this.testQualificationMap.many(entity.testQualifications)
       : [];
 
-      const aeCorrelationSummaryTest = entity.aeCorrelationSummaries
-      ? await this.aeCorrelationSummaryMap.many(entity.aeCorrelationSummaries)
+      const aeCorrelationSummaryTest = entity.appECorrelationTests
+      ? await this.aeCorrelationSummaryMap.many(entity.appECorrelationTests)
       : [];
     
     if (entity['evalStatusCode']) {
