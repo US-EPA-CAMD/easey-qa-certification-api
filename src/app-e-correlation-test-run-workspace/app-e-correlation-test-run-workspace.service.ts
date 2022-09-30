@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   AppECorrelationTestRunBaseDTO,
@@ -9,6 +9,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { AppECorrelationTestRunWorkspaceRepository } from './app-e-correlation-test-run-workspace.repository';
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class AppECorrelationTestRunWorkspaceService {
@@ -19,6 +20,31 @@ export class AppECorrelationTestRunWorkspaceService {
     @InjectRepository(AppECorrelationTestRunWorkspaceRepository)
     private readonly repository: AppECorrelationTestRunWorkspaceRepository,
   ) {}
+
+  async getAppECorrelationTestRuns(
+    appECorrTestSumId: string,
+  ): Promise<AppECorrelationTestRunBaseDTO[]> {
+    const records = await this.repository.find({
+      where: { appECorrTestSumId },
+    });
+
+    return this.map.many(records);
+  }
+
+  async getAppECorrelationTestRun(
+    id: string,
+  ): Promise<AppECorrelationTestRunBaseDTO> {
+    const result = await this.repository.findOne(id);
+
+    if (!result) {
+      throw new LoggingException(
+        `Appendix E Correlation Test Run record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
 
   async createAppECorrelationTestRun(
     testSumId: string,

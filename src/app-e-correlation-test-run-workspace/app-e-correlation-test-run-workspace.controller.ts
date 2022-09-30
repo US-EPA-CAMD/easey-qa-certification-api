@@ -1,7 +1,8 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -21,6 +22,37 @@ export class AppECorrelationTestRunWorkspaceController {
   constructor(
     private readonly service: AppECorrelationTestRunWorkspaceService,
   ) {}
+
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: AppECorrelationTestRunRecordDTO,
+    description:
+      'Retrieves aworkspace Appendix E Correlation Test Run records by Appendix E Correlation Test Summary Id',
+  })
+  async getAppECorrelationTestRuns(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('appECorrTestSumId') appECorrTestSumId: string,
+  ) {
+    return this.service.getAppECorrelationTestRuns(appECorrTestSumId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: AppECorrelationTestRunRecordDTO,
+    description:
+      'Retrieves aworkspace Appendix E Correlation Test Run record by its unique Id',
+  })
+  async getAppECorrelationTestRun(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('appECorrTestSumId') _appECorrTestSumId: string,
+    @Param('id') id: string,
+  ) {
+    return this.service.getAppECorrelationTestRun(id);
+  }
 
   @Post()
   @ApiBearerAuth('Token')
