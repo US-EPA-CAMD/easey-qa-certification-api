@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -63,6 +71,28 @@ export class FuelFlowToLoadTestWorkspaceController {
   ): Promise<FuelFlowToLoadTestRecordDTO> {
     return this.service.createFuelFlowToLoadTest(
       testSumId,
+      payload,
+      user.userId,
+    );
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: FuelFlowToLoadTestRecordDTO,
+    description: 'Updates a Fuel Flow To Load Test record from the workspace',
+  })
+  editFuelFlowToLoadTest(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: FuelFlowToLoadTestBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<FuelFlowToLoadTestRecordDTO> {
+    return this.service.editFuelFlowToLoadTest(
+      testSumId,
+      id,
       payload,
       user.userId,
     );
