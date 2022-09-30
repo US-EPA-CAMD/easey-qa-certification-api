@@ -20,7 +20,6 @@ export class AppECorrelationTestSummaryRecordDTO extends AppECorrelationTestSumm
 export class AppECorrelationTestSummaryImportDTO extends AppECorrelationTestSummaryBaseDTO {
   appECorrelationTestRunData: [];
 }
-
 export class AppECorrelationTestSummaryDTO extends AppECorrelationTestSummaryRecordDTO {
   appECorrelationTestRunData: [];
 }
