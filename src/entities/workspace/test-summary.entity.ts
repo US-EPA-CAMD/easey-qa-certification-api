@@ -248,7 +248,7 @@ export class TestSummary extends BaseEntity {
   @JoinColumn({ name: 'rpt_period_id' })
   reportingPeriod: ReportingPeriod;
 
-  @ManyToOne(
+  @OneToMany(
     () => AeCorrelationSummaryTest,
     o => o.testSummary,
   )

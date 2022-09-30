@@ -1,3 +1,5 @@
+const KEY = 'Appendix E Test Summary';
+
 export class AppECorrelationTestSummaryBaseDTO {
     operatingLevelForRun: number;
     meanReferenceValue: number;

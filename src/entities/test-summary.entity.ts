@@ -237,17 +237,17 @@ export class TestSummary extends BaseEntity {
   @JoinColumn({ name: 'test_sum_id' })
   airEmissionTestings: AirEmissionTesting[];
 
+  @OneToMany(
+    () => AeCorrelationSummaryTest,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  appECorrelationTests: AeCorrelationSummaryTest[];
+
   @ManyToOne(
     () => ReportingPeriod,
     rp => rp.testSummaries,
   )
   @JoinColumn({ name: 'rpt_period_id' })
   reportingPeriod: ReportingPeriod;
-
-  @ManyToOne(
-    () => AeCorrelationSummaryTest,
-    o => o.testSummary,
-  )
-  @JoinColumn({ name: 'test_sum_id' })
-  appECorrelationTests: AeCorrelationSummaryTest[];
 }

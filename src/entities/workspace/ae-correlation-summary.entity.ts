@@ -1,33 +1,29 @@
 import {
-    BaseEntity,
-    Column,
-    Entity,
-    JoinColumn,
-    ManyToOne,
-    OneToMany,
-    PrimaryColumn,
-  } from 'typeorm';
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
 
-  import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
-  import { TestSummary } from './test-summary.entity';
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
+import { TestSummary } from './test-summary.entity';
 
-  @Entity({ name: 'camdecmpswks.ae_correlation_test_sum' })
-
+@Entity({ name: 'camdecmpswks.ae_correlation_test_sum' })
 export class AeCorrelationSummaryTest extends BaseEntity {
-  @PrimaryColumn({ 
+  @PrimaryColumn({
     type: 'varchar',
-    name: 'ae_corr_test_sum_id' 
+    name: 'ae_corr_test_sum_id',
   })
   id: string;
 
-
-  @Column({ 
+  @Column({
     type: 'varchar',
-    name: 'test_sum_id' 
+    name: 'test_sum_id',
   })
   testSumId: string;
 
-  
   @Column({
     type: 'varchar',
     name: 'userid',
@@ -89,7 +85,3 @@ export class AeCorrelationSummaryTest extends BaseEntity {
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
 }
-  
-
-
-
