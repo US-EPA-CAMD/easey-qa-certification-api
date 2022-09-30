@@ -11,7 +11,7 @@ import {
   import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
   import { TestSummary } from './test-summary.entity';
 
-  @Entity({ name: 'camdecmps.ae_correlation_test_sum' })
+  @Entity({ name: 'camdecmpswks.ae_correlation_test_sum' })
 
 export class AeCorrelationSummaryTest extends BaseEntity {
   @PrimaryColumn({ 
