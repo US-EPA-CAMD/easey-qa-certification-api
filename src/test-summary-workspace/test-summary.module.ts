@@ -22,6 +22,7 @@ import { MonitorMethodRepository } from '../monitor-method/monitor-method.reposi
 import { TestResultCodeModule } from '../test-result-code/test-result-code.module';
 import { TestQualificationWorkspaceModule } from '../test-qualification-workspace/test-qualification-workspace.module';
 import { AirEmissionTestingWorkspaceModule } from '../air-emission-testing-workspace/air-emission-testing-workspace.module';
+import { AppECorrelationTestSummaryWorkspaceModule } from 'src/app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.module';
 import { FuelFlowToLoadTestWorkspaceModule } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.module';
 
 @Module({
@@ -41,6 +42,7 @@ import { FuelFlowToLoadTestWorkspaceModule } from '../fuel-flow-to-load-test-wor
     forwardRef(() => ProtocolGasWorkspaceModule),
     forwardRef(() => RataWorkspaceModule),
     forwardRef(() => TestQualificationWorkspaceModule),
+    forwardRef(() => AppECorrelationTestSummaryWorkspaceModule),
     forwardRef(() => FuelFlowToLoadTestWorkspaceModule),
     forwardRef(() => AirEmissionTestingWorkspaceModule),
     TestResultCodeModule,

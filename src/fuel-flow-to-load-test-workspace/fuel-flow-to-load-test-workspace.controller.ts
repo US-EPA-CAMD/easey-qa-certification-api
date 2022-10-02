@@ -1,7 +1,16 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -20,6 +29,33 @@ import { FuelFlowToLoadTestWorkspaceService } from './fuel-flow-to-load-test-wor
 export class FuelFlowToLoadTestWorkspaceController {
   constructor(private readonly service: FuelFlowToLoadTestWorkspaceService) {}
 
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: FuelFlowToLoadTestRecordDTO,
+    description:
+      'Retrieves workspace Fuel Flow To Load Test records by Test Summary Id',
+  })
+  async getFuelFlowToLoadTests(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+  ): Promise<FuelFlowToLoadTestRecordDTO[]> {
+    return this.service.getFuelFlowToLoadTests(testSumId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: FuelFlowToLoadTestRecordDTO,
+    description: 'Retrieves workspace Fuel Flow To Load Test record by its Id',
+  })
+  async getFuelFlowToLoadTest(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+  ): Promise<FuelFlowToLoadTestRecordDTO> {
+    return this.service.getFuelFlowToLoadTest(testSumId);
+  }
+
   @Post()
   @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
@@ -35,6 +71,28 @@ export class FuelFlowToLoadTestWorkspaceController {
   ): Promise<FuelFlowToLoadTestRecordDTO> {
     return this.service.createFuelFlowToLoadTest(
       testSumId,
+      payload,
+      user.userId,
+    );
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: FuelFlowToLoadTestRecordDTO,
+    description: 'Updates a Fuel Flow To Load Test record from the workspace',
+  })
+  editFuelFlowToLoadTest(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: FuelFlowToLoadTestBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<FuelFlowToLoadTestRecordDTO> {
+    return this.service.editFuelFlowToLoadTest(
+      testSumId,
+      id,
       payload,
       user.userId,
     );

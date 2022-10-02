@@ -12,6 +12,7 @@ import { TestSummaryMap } from '../maps/test-summary.map';
 import { RataModule } from '../rata/rata.module';
 import { TestQualificationModule } from '../test-qualification/test-qualification.module';
 import { AirEmissionTestingModule } from '../air-emission-testing/air-emission-testing.module';
+import { AppECorrelationTestSummaryModule } from 'src/app-e-correlation-test-summary/app-e-correlation-test-summary.module';
 import { FuelFlowToLoadTestModule } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.module';
 
 @Module({
@@ -24,6 +25,7 @@ import { FuelFlowToLoadTestModule } from '../fuel-flow-to-load-test/fuel-flow-to
     TestQualificationModule,
     FuelFlowToLoadTestModule,
     AirEmissionTestingModule,
+    AppECorrelationTestSummaryModule,
   ],
   controllers: [TestSummaryController],
   providers: [TestSummaryMap, TestSummaryService],
