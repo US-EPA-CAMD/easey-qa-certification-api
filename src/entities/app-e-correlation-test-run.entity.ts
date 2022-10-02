@@ -1,6 +1,14 @@
-import { BaseEntity, Entity, Column, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Entity,
+  Column,
+  PrimaryColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
+import { AppECorrelationTestSummary } from './app-e-correlation-test-summary.entity';
 
 @Entity({ name: 'camdecmps.ae_correlation_test_run' })
 export class AppECorrelationTestRun extends BaseEntity {
@@ -105,20 +113,12 @@ export class AppECorrelationTestRun extends BaseEntity {
   })
   updateDate: Date;
 
-  // @ManyToOne(
-  //   () => AppECorrelationTestSummary,
-  //   apcts => apcts.appECorrelationTestRuns,
-  // )
-  // @JoinColumn({ name: 'ae_corr_test_sum_id' })
-  // appECorrelationTestSummary: AppECorrelationTestSummary;
-
-  // TODO: Need to Join Columns for Appendix E Correlation Test Summary (Add this to entity)
-  // @OneToMany(
-  //   () => AppECorrelationTestRun,
-  //   aectr => aectr.appECorrelationTestSummary,
-  // )
-  // @JoinColumn({ name: 'ae_corr_test_sum_id' })
-  // appECorrelationTestRuns: AppECorrelationTestRun[];
+  @ManyToOne(
+    () => AppECorrelationTestSummary,
+    aects => aects.appECorrelationTestRuns,
+  )
+  @JoinColumn({ name: 'ae_corr_test_sum_id' })
+  appECorrelationTestSummary: AppECorrelationTestSummary;
 
   // TODO: Need to Join Columns for Appendix E Heat Input From Oil
   // TODO: Need to Join Columns for Appendix E Heat Input From Gas

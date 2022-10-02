@@ -35,6 +35,7 @@ import { AppECorrelationTestSummaryWorkspaceModule } from './app-e-correlation-t
 import { FuelFlowToLoadTestModule } from './fuel-flow-to-load-test/fuel-flow-to-load-test.module';
 import { FuelFlowToLoadTestWorkspaceModule } from './fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.module';
 import { AppECorrelationTestRunWorkspaceModule } from './app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.module';
+import { AppECorrelationTestRunModule } from './app-e-correlation-test-run/app-e-correlation-test-run.module';
 
 const routes: Routes = [
   {
@@ -82,6 +83,12 @@ const routes: Routes = [
           {
             path: ':testSumId/appexdix-e-correlation-test-summaries',
             module: AppECorrelationTestSummaryModule,
+            children: [
+              {
+                path: ':appECorrTestSumId/appendix-e-correlation-test-runs',
+                module: AppECorrelationTestRunModule,
+              },
+            ],
           },
           {
             path: ':testSumId/rata',
@@ -148,15 +155,16 @@ const routes: Routes = [
           {
             path: ':testSumId/appexdix-e-correlation-test-summaries',
             module: AppECorrelationTestSummaryWorkspaceModule,
+            children: [
+              {
+                path: ':appECorrTestSumId/appendix-e-correlation-test-runs',
+                module: AppECorrelationTestRunWorkspaceModule,
+              },
+            ],
           },
           {
             path: ':testSumId/fuel-flow-to-load-tests',
             module: FuelFlowToLoadTestWorkspaceModule,
-          },
-          {
-            path:
-              ':testSumId/appendix-e-correlation-test-summaries/:appECorrTestSumId/appendix-e-correlation-test-runs',
-            module: AppECorrelationTestRunWorkspaceModule,
           },
           {
             path: ':testSumId/rata',

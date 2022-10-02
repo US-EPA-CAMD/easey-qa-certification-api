@@ -8,7 +8,12 @@ describe('AppendixETestSummaryWorkspaceController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AppendixETestSummaryWorkspaceController],
-      providers: [AppECorrelationTestSummaryWorkspaceService],
+      providers: [
+        {
+          provide: AppECorrelationTestSummaryWorkspaceService,
+          useFactory: () => ({}),
+        },
+      ],
     }).compile();
 
     controller = module.get<AppendixETestSummaryWorkspaceController>(

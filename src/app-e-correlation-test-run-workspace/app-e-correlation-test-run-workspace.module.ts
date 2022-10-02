@@ -6,11 +6,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { AppECorrelationTestRunMap } from '../maps/app-e-correlation-test-run.map';
 import { HttpModule } from '@nestjs/axios';
+import { AppECorrelationTestSummaryWorkspaceModule } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AppECorrelationTestRunWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
+    forwardRef(() => AppECorrelationTestSummaryWorkspaceModule),
     HttpModule,
   ],
   controllers: [AppECorrelationTestRunWorkspaceController],
