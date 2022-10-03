@@ -4,7 +4,7 @@ import { AppendixETestSummaryRepository } from './app-e-correlation-test-summary
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
 import { AppECorrelationTestSummaryRecordDTO } from '../dto/app-e-correlation-test-summary.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { TestSummaryService } from 'src/test-summary/test-summary.service';
+import { TestSummaryService } from '../test-summary/test-summary.service';
 
 @Injectable()
 export class AppECorrelationTestSummaryService {

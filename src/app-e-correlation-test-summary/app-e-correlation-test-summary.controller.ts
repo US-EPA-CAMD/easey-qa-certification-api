@@ -1,6 +1,6 @@
 import { Controller, Param, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { AppECorrelationTestSummaryRecordDTO } from 'src/dto/app-e-correlation-test-summary.dto';
+import { AppECorrelationTestSummaryRecordDTO } from '../dto/app-e-correlation-test-summary.dto';
 import { AppECorrelationTestSummaryService } from './app-e-correlation-test-summary.service';
 
 @Controller()
