@@ -74,12 +74,10 @@ Database credentials are injected into the cloud.gov environments as part of the
     - USE AUTH API TO SIGNI  N & GET AUTH TOKEN TO USE AS A BEARER TOKEN
   - IF ABOVE IS FALSE THEN SET
     - EASEY_QA_CERTIFICATION_API_CURRENT_USER={see below}
+    - FORMAT: { "userId": "testuser", "roles": [ { "orisCode": 3, "role": "P" } ] }
 - EASEY_QA_CERTIFICATION_API_ENABLE_SECRET_TOKEN=true|false
   - IF ABOVE IS TRUE THEN SET
     - EASEY_QA_CERTIFICATION_  API_SECRET_TOKEN={ask project dev/tech lead}
-
-**Current User object format:  **
-{ "userId": "testuser", "roles": [ { "orisCode": 3, "role": "P" } ] }
 
 **Please refer to our [Getting Started](https://github.com/US-EPA-CAMD/devops/blob/master/GETTING-STARTED.md) instructions on how to configure the following environment variables & connect to the database.**
 - EASEY_DB_HOST
