@@ -1,7 +1,7 @@
-import { AeCorrelationSummaryTest } from 'src/entities/workspace/app-e-correlation-summary.entity';
+import { AppECorrelationTestSummary } from '../entities/workspace/app-e-correlation-summary.entity';
 import { EntityRepository, Repository } from 'typeorm';
 
-@EntityRepository(AeCorrelationSummaryTest)
+@EntityRepository(AppECorrelationTestSummary)
 export class AppendixETestSummaryWorkspaceRepository extends Repository<
-  AeCorrelationSummaryTest
+  AppECorrelationTestSummary
 > {}

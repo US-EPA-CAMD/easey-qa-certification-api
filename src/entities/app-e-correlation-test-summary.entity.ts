@@ -4,14 +4,16 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryColumn,
 } from 'typeorm';
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { TestSummary } from './test-summary.entity';
+import { AppECorrelationTestRun } from './app-e-correlation-test-run.entity';
 
 @Entity({ name: 'camdecmps.ae_correlation_test_sum' })
-export class AeCorrelationSummaryTest extends BaseEntity {
+export class AppECorrelationTestSummary extends BaseEntity {
   @PrimaryColumn({
     type: 'varchar',
     name: 'ae_corr_test_sum_id',
@@ -81,8 +83,15 @@ export class AeCorrelationSummaryTest extends BaseEntity {
 
   @ManyToOne(
     () => TestSummary,
-    o => o.appECorrelationTests,
+    o => o.appECorrelationTestSummaries,
   )
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
+
+  @OneToMany(
+    () => AppECorrelationTestRun,
+    aectr => aectr.appECorrelationTestSummary,
+  )
+  @JoinColumn({ name: 'ae_corr_test_sum_id' })
+  appECorrelationTestRuns: AppECorrelationTestRun[];
 }
