@@ -1,3 +1,4 @@
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppECorrelationTestSummaryMap } from 'src/maps/app-e-correlation-summary.map';
 import { AppECorrelationTestSummaryService } from './app-e-correlation-test-summary.service';
