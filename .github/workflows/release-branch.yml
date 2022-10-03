@@ -10,8 +10,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Checkout devops repo
         uses: actions/checkout@v2
         with:
@@ -43,6 +41,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.ARTIFACTS_STORAGE_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ARTIFACTS_STORAGE_SECRET_ACCESS_KEY }}
+
   Test-Deployment:
     needs: Build-Test-Package
     runs-on: ubuntu-latest
@@ -52,8 +51,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Checkout devops repo
         uses: actions/checkout@v2
         with:
@@ -78,11 +75,13 @@ jobs:
       - name: Init Application
         run: devops/scripts/cf-app-init.sh
       - name: Configure Env Vars (secrets)
-        run: devops/scripts/$APP_NAME/configure-env-vars-secrets.sh
+        run: scripts/environment-variables-secrets.sh
         env:
+          QA_CERTIFICATION_API_KEY: ${{ secrets.API_KEY }}
           QA_CERTIFICATION_API_SECRET_TOKEN: ${{ secrets.API_SECRET_TOKEN }}
       - name: Deploy
         run: devops/scripts/deploy.sh
+
   Beta-Deployment:
     needs: Build-Test-Package
     runs-on: ubuntu-latest
@@ -92,8 +91,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Checkout devops repo
         uses: actions/checkout@v2
         with:
@@ -118,11 +115,13 @@ jobs:
       - name: Init Application
         run: devops/scripts/cf-app-init.sh
       - name: Configure Env Vars (secrets)
-        run: devops/scripts/$APP_NAME/configure-env-vars-secrets.sh
+        run: scripts/environment-variables-secrets.sh
         env:
+          QA_CERTIFICATION_API_KEY: ${{ secrets.API_KEY }}
           QA_CERTIFICATION_API_SECRET_TOKEN: ${{ secrets.API_SECRET_TOKEN }}
       - name: Deploy
         run: devops/scripts/deploy.sh
+
   Stage-Deployment:
     needs: Build-Test-Package
     runs-on: ubuntu-latest
@@ -132,8 +131,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Checkout devops repo
         uses: actions/checkout@v2
         with:
@@ -158,11 +155,13 @@ jobs:
       - name: Init Application
         run: devops/scripts/cf-app-init.sh
       - name: Configure Env Vars (secrets)
-        run: devops/scripts/$APP_NAME/configure-env-vars-secrets.sh
+        run: scripts/environment-variables-secrets.sh
         env:
+          QA_CERTIFICATION_API_KEY: ${{ secrets.API_KEY }}
           QA_CERTIFICATION_API_SECRET_TOKEN: ${{ secrets.API_SECRET_TOKEN }}
       - name: Deploy
         run: devops/scripts/deploy.sh
+
   Performance-Deployment:
     needs: Build-Test-Package
     runs-on: ubuntu-latest
@@ -172,8 +171,6 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - name: Checkout devops repo
         uses: actions/checkout@v2
         with:
@@ -195,12 +192,10 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.ARTIFACTS_STORAGE_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ARTIFACTS_STORAGE_SECRET_ACCESS_KEY }}
-      - name: Init Application
-        run: devops/scripts/cf-app-init.sh
       - name: Configure Env Vars (secrets)
-        run: devops/scripts/$APP_NAME/configure-env-vars-secrets.sh
+        run: scripts/environment-variables-secrets.sh
         env:
+          QA_CERTIFICATION_API_KEY: ${{ secrets.API_KEY }}
           QA_CERTIFICATION_API_SECRET_TOKEN: ${{ secrets.API_SECRET_TOKEN }}
       - name: Deploy
         run: devops/scripts/deploy.sh
-
