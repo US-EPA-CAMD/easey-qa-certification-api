@@ -37,6 +37,8 @@ import { RataTraverseWorkspaceModule } from './rata-traverse-workspace/rata-trav
 import { RataTraverseModule } from './rata-traverse/rata-traverse.module';
 import { FuelFlowToLoadTestModule } from './fuel-flow-to-load-test/fuel-flow-to-load-test.module';
 import { FuelFlowToLoadTestWorkspaceModule } from './fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.module';
+import { AppECorrelationTestRunModule } from './app-e-correlation-test-run/app-e-correlation-test-run.module';
+import { AppECorrelationTestRunWorkspaceModule } from './app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.module';
 
 @Module({
   imports: [
@@ -75,6 +77,8 @@ import { FuelFlowToLoadTestWorkspaceModule } from './fuel-flow-to-load-test-work
     RataTraverseModule,
     FuelFlowToLoadTestModule,
     FuelFlowToLoadTestWorkspaceModule,
+    AppECorrelationTestRunModule,
+    AppECorrelationTestRunWorkspaceModule,
   ],
 })
 export class AppModule {}

@@ -27,7 +27,6 @@ describe('TestQualificationService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         TestQualificationService,
-        TestQualificationMap,
         {
           provide: TestQualificationRepository,
           useFactory: mockRepository,

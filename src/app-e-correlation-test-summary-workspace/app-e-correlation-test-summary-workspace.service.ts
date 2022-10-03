@@ -4,7 +4,7 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '../utilities/functions';
 import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
-import { AeCorrelationSummaryMap } from '../maps/app-e-correlation-summary.map';
+import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
 import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryRecordDTO,
@@ -14,7 +14,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 @Injectable()
 export class AppECorrelationTestSummaryWorkspaceService {
   constructor(
-    private readonly map: AeCorrelationSummaryMap,
+    private readonly map: AppECorrelationTestSummaryMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(AppendixETestSummaryWorkspaceRepository)
