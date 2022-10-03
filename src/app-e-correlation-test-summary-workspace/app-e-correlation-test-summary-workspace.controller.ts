@@ -22,6 +22,34 @@ export class AppendixETestSummaryWorkspaceController {
     private readonly service: AppECorrelationTestSummaryWorkspaceService,
   ) {}
 
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: AppECorrelationTestSummaryRecordDTO,
+    description:
+      'Retrieves workspace Appendix E Correlation Test Summary records by Test Summary Id',
+  })
+  async getAppECorrelations(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+  ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
+    return this.service.getAppECorrelations(testSumId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: AppECorrelationTestSummaryRecordDTO,
+    description:
+      'Retrieves a workspace Appendix E Correlation Test Summary record by its Id',
+  })
+  async getAppECorrelation(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+  ): Promise<AppECorrelationTestSummaryRecordDTO> {
+    return this.service.getAppECorrelation(testSumId);
+  }
+
   @Post()
   @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
