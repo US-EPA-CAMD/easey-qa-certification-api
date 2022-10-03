@@ -9,7 +9,7 @@ import { ProtocolGasMap } from './protocol-gas.map';
 import { RataMap } from './rata.map';
 import { TestQualificationMap } from './test-qualification.map';
 import { AirEmissionTestingMap } from './air-emission-testing.map';
-import { AeCorrelationSummaryMap } from './app-e-correlation-summary.map';
+import { AppECorrelationTestSummaryMap } from './app-e-correlation-summary.map';
 import { FuelFlowToLoadTestMap } from './fuel-flow-to-load-test.map';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
     private readonly airEmissionTestingMap: AirEmissionTestingMap,
     private readonly rataMap: RataMap,
     private readonly testQualificationMap: TestQualificationMap,
-    private readonly aeCorrelationSummaryMap: AeCorrelationSummaryMap,
+    private readonly appECorrelationTestSummaryMap: AppECorrelationTestSummaryMap,
     private readonly fuelFlowToLoadTestMap: FuelFlowToLoadTestMap,
   ) {
     super();
@@ -46,8 +46,10 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       ? await this.testQualificationMap.many(entity.testQualifications)
       : [];
 
-    const aeCorrelationSummaryTest = entity.appECorrelationTests
-      ? await this.aeCorrelationSummaryMap.many(entity.appECorrelationTests)
+    const appECorrelationTestSummaries = entity.appECorrelationTestSummaries
+      ? await this.appECorrelationTestSummaryMap.many(
+          entity.appECorrelationTestSummaries,
+        )
       : [];
 
     const fuelFlowToloadTest = entity.fuelFlowToLoadTests
@@ -109,7 +111,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       fuelFlowmeterAccuracyData: [],
       transmitterTransducerData: [],
       fuelFlowToLoadBaselineData: [],
-      appECorrelationTestSummaryData: aeCorrelationSummaryTest,
+      appECorrelationTestSummaryData: appECorrelationTestSummaries,
       fuelFlowToLoadTestData: fuelFlowToloadTest,
 
       unitDefaultTestData: [],

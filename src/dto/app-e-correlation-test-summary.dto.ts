@@ -1,3 +1,8 @@
+import {
+  AppECorrelationTestRunDTO,
+  AppECorrelationTestRunImportDTO,
+} from './app-e-correlation-test-run.dto';
+
 const KEY = 'Appendix E Correlation Test Summary';
 
 export class AppECorrelationTestSummaryBaseDTO {
@@ -17,5 +22,10 @@ export class AppECorrelationTestSummaryRecordDTO extends AppECorrelationTestSumm
   updateDate: string;
 }
 
-export class AppECorrelationTestSummaryImportDTO extends AppECorrelationTestSummaryBaseDTO {}
-export class AppECorrelationTestSummaryDTO extends AppECorrelationTestSummaryRecordDTO {}
+export class AppECorrelationTestSummaryImportDTO extends AppECorrelationTestSummaryBaseDTO {
+  appECorrelationTestRunData: AppECorrelationTestRunImportDTO[];
+}
+
+export class AppECorrelationTestSummaryDTO extends AppECorrelationTestSummaryRecordDTO {
+  appECorrelationTestRunData: AppECorrelationTestRunDTO[];
+}
