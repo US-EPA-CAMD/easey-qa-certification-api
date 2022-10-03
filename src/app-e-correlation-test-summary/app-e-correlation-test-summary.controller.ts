@@ -14,7 +14,7 @@ export class AppendixETestSummaryController {
     isArray: true,
     type: AppECorrelationTestSummaryRecordDTO,
     description:
-      'Retrieves workspace Appendix E Correlation Test Summary records by Test Summary Id',
+      'Retrieves Appendix E Correlation Test Summary records by Test Summary Id',
   })
   async getAppECorrelations(
     @Param('locId') _locationId: string,
@@ -28,7 +28,7 @@ export class AppendixETestSummaryController {
     isArray: false,
     type: AppECorrelationTestSummaryRecordDTO,
     description:
-      'Retrieves a workspace Appendix E Correlation Test Summary record by its Id',
+      'Retrieves an Appendix E Correlation Test Summary record by its Id',
   })
   async getAppECorrelation(
     @Param('locId') _locationId: string,
