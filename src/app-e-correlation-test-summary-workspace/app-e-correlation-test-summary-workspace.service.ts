@@ -1,9 +1,10 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '../utilities/functions';
 import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
-import { AeCorrelationSummaryMap } from 'src/maps/app-e-correlation-summary.map';
+import { AeCorrelationSummaryMap } from '../maps/app-e-correlation-summary.map';
 import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryRecordDTO,
@@ -19,6 +20,29 @@ export class AppECorrelationTestSummaryWorkspaceService {
     @InjectRepository(AppendixETestSummaryWorkspaceRepository)
     private readonly repository: AppendixETestSummaryWorkspaceRepository,
   ) {}
+
+  async getAppECorrelations(
+    testSumId: string,
+  ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
+    const records = await this.repository.find({ where: { testSumId } });
+
+    return this.map.many(records);
+  }
+
+  async getAppECorrelation(
+    id: string,
+  ): Promise<AppECorrelationTestSummaryRecordDTO> {
+    const result = await this.repository.findOne(id);
+
+    if (!result) {
+      throw new LoggingException(
+        `Appendix E Correlation Test Summary record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
 
   async createAppECorrelation(
     testSumId: string,
