@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -96,5 +97,20 @@ export class FuelFlowToLoadTestWorkspaceController {
       payload,
       user.userId,
     );
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Deletes a Fuel Flow To Load Test record from the workspace',
+  })
+  deleteProtolGas(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteFuelFlowToLoadTest(testSumId, id, user.userId);
   }
 }
