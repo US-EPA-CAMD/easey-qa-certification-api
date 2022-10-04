@@ -53,8 +53,9 @@ export class FuelFlowToLoadTestWorkspaceController {
   async getFuelFlowToLoadTest(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
   ): Promise<FuelFlowToLoadTestRecordDTO> {
-    return this.service.getFuelFlowToLoadTest(testSumId);
+    return this.service.getFuelFlowToLoadTest(id);
   }
 
   @Post()
