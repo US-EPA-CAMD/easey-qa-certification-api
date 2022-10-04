@@ -34,6 +34,8 @@ import { AppECorrelationTestRunWorkspaceModule } from './app-e-correlation-test-
 import { AppECorrelationTestRunModule } from './app-e-correlation-test-run/app-e-correlation-test-run.module';
 import { AppEHeatInputFromGasModule } from './app-e-heat-input-from-gas/app-e-heat-input-from-gas.module';
 import { AppEHeatInputFromGasWorkspaceModule } from './app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
+import { AppEHeatInputOilModule } from './app-e-heat-input-oil/app-e-heat-input-oil.module';
+import { AppEHeatInputOilWorkspaceModule } from './app-e-heat-input-oil-workspace/app-e-heat-input-oil.module';
 
 const routes: Routes = [
   {
@@ -89,6 +91,10 @@ const routes: Routes = [
                   {
                     path: ':appECorrTestRunId/appendix-e-heat-input-from-gas',
                     module: AppEHeatInputFromGasModule,
+                  },
+                  {
+                    path: ':appECorrTestRunId/appendix-e-heat-input-from-oil',
+                    module: AppEHeatInputOilModule,
                   },
                 ],
               },
@@ -157,7 +163,7 @@ const routes: Routes = [
             module: TestQualificationWorkspaceModule,
           },
           {
-            path: ':testSumId/appexdix-e-correlation-test-summaries',
+            path: ':testSumId/appendix-e-correlation-test-summaries',
             module: AppECorrelationTestSummaryWorkspaceModule,
             children: [
               {
@@ -167,6 +173,10 @@ const routes: Routes = [
                   {
                     path: ':appECorrTestRunId/appendix-e-heat-input-from-gas',
                     module: AppEHeatInputFromGasWorkspaceModule,
+                  },
+                  {
+                    path: ':appECorrTestRunId/appendix-e-heat-input-from-oil',
+                    module: AppEHeatInputOilWorkspaceModule,
                   },
                 ],
               },
