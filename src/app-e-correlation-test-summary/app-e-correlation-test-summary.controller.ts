@@ -1,9 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { AppECorrelationTestSummaryService } from './app-e-correlation-test-summary.service';
 
-@Controller('app-e-correlation-test')
+@Controller()
 export class AppendixETestSummaryController {
-  constructor(
-    private readonly AppECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryService,
-  ) {}
+  constructor(private readonly service: AppECorrelationTestSummaryService) {}
 }
