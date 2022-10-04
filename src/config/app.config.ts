@@ -7,15 +7,17 @@ import {
 
 require('dotenv').config();
 
-const path = getConfigValue('EASEY_QA_CERTIFICATION_API_PATH', 'qa-certification-mgmt');
 const host = getConfigValue('EASEY_QA_CERTIFICATION_API_HOST', 'localhost');
 const port = getConfigValueNumber('EASEY_QA_CERTIFICATION_API_PORT', 8070);
+const path = getConfigValue('EASEY_QA_CERTIFICATION_API_PATH', 'qa-certification-mgmt');
 
 let uri = `https://${host}/${path}`;
 
 if (host === 'localhost') {
   uri = `http://localhost:${port}/${path}`;
 }
+
+const apiHost = getConfigValue('EASEY_API_GATEWAY_HOST', 'api.epa.gov/easey/dev');
 
 export default registerAs('app', () => ({
   name: 'qa-certification-api',
@@ -24,23 +26,26 @@ export default registerAs('app', () => ({
     'EASEY_QA_CERTIFICATION_API_TITLE', 'QA Certification Management',
   ),
   description: getConfigValue(
-    'EASEY_QA_CERTIFICATION_API',
-    '',
-  ),
-  apiHost: getConfigValue(
-    'EASEY_API_GATEWAY_HOST', 'api.epa.gov/easey/dev',
-  ),
-  apiKey: getConfigValue(
-    'EASEY_QA_CERTIFICATION_API_KEY',
+    'EASEY_QA_CERTIFICATION_API_DESCRIPTION',
+    'QA & Certification management API endpoints for qa test data, qa cert events, and test extension & exemption data',
   ),
   env: getConfigValue(
     'EASEY_QA_CERTIFICATION_API_ENV', 'local-dev',
   ),
-  enableCors: getConfigValueBoolean(
-    'EASEY_QA_CERTIFICATION_API_ENABLE_CORS', true,
+  apiKey: getConfigValue(
+    'EASEY_QA_CERTIFICATION_API_KEY',
   ),
   enableApiKey: getConfigValueBoolean(
     'EASEY_QA_CERTIFICATION_API_ENABLE_API_KEY',
+  ),
+  secretToken: getConfigValue(
+    'EASEY_QA_CERTIFICATION_API_SECRET_TOKEN',
+  ),
+  enableSecretToken: getConfigValueBoolean(
+    'EASEY_QA_CERTIFICATION_API_ENABLE_SECRET_TOKEN',
+  ),
+  enableCors: getConfigValueBoolean(
+    'EASEY_QA_CERTIFICATION_API_ENABLE_CORS', true,
   ),
   enableAuthToken: getConfigValueBoolean(
     'EASEY_QA_CERTIFICATION_API_ENABLE_AUTH_TOKEN',
@@ -54,19 +59,8 @@ export default registerAs('app', () => ({
   published: getConfigValue(
     'EASEY_QA_CERTIFICATION_API_PUBLISHED', 'local',
   ),
-  authApi: {
-    uri: getConfigValue(
-      'EASEY_AUTH_API', 'https://api.epa.gov/easey/dev/auth-mgmt',
-    ),
-  },
   reqSizeLimit: getConfigValue(
     'EASEY_QA_CERTIFICATION_API_REQ_SIZE_LIMIT', '1mb',
-  ),
-  secretToken: getConfigValue(
-    'EASEY_QA_CERTIFICATION_API_SECRET_TOKEN',
-  ),
-  enableSecretToken: getConfigValueBoolean(
-    'EASEY_QA_CERTIFICATION_API_ENABLE_SECRET_TOKEN',
   ),
   // ENABLES DEBUG CONSOLE LOGS
   enableDebug: getConfigValueBoolean(
@@ -77,4 +71,10 @@ export default registerAs('app', () => ({
   currentUser: getConfigValue(
     'EASEY_QA_CERTIFICATION_API_CURRENT_USER',
   ),
+  apiHost: apiHost,
+  authApi: {
+    uri: getConfigValue(
+      'EASEY_AUTH_API', `https://${apiHost}/auth-mgmt`,
+    ),
+  },
 }));
