@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import {
   RataSummaryBaseDTO,
@@ -14,6 +14,7 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 
 const KEY = 'RATA Summary';
 
@@ -59,7 +60,7 @@ export class RataSummaryChecksService {
       });
 
       // IMPORT-30 Extraneous RATA Summary Data Check
-      error = await this.import30Check(locationId, rataSummary, testSumId);
+      error = await this.import30Check(rataSummary, testSumRecord);
       if (error) {
         errorList.push(error);
       }
@@ -154,14 +155,10 @@ export class RataSummaryChecksService {
   }
 
   private async import30Check(
-    locationId: string,
     rataSummary: RataSummaryBaseDTO | RataSummaryImportDTO,
-    testSumId: string,
-    testSummary?: TestSummaryImportDTO,
+    testSummary: any,
   ): Promise<string> {
     let error: string = null;
-    let FIELDNAME: string;
-    let testSumRecord: TestSummary;
     const extraneousRataSummaryFields: string[] = [];
 
     if (
@@ -172,20 +169,35 @@ export class RataSummaryChecksService {
       rataSummary.calculatedWAF !== null ||
       rataSummary.defaultWAF !== null
     ) {
-      if (testSumRecord.system?.systemTypeCode !== 'FLOW') {
-        extraneousRataSummaryFields.push(
-          'CO2OrO2ReferenceMethodCode',
-          'StackDiameter',
-          'StackArea',
-          'NumberOfTraversePoints',
-          'CalculatedWAF',
-          'DefaultWAF',
-        );
+      if (testSummary.system?.systemTypeCode !== 'FLOW') {
+        if (rataSummary.co2OrO2ReferenceMethodCode !== null) {
+          extraneousRataSummaryFields.push('CO2 or O2 Reference Method Code');
+        }
+
+        if (rataSummary.stackDiameter !== null) {
+          extraneousRataSummaryFields.push('Stack Diameter');
+        }
+
+        if (rataSummary.stackArea !== null) {
+          extraneousRataSummaryFields.push('Stack Area');
+        }
+
+        if (rataSummary.numberOfTraversePoints !== null) {
+          extraneousRataSummaryFields.push('Number Of Traverse Points');
+        }
+
+        if (rataSummary.calculatedWAF !== null) {
+          extraneousRataSummaryFields.push('Calculated WAF');
+        }
+
+        if (rataSummary.defaultWAF !== null) {
+          extraneousRataSummaryFields.push('Default WAF');
+        }
       }
 
       if (extraneousRataSummaryFields?.length > 0) {
         error = this.getMessage('IMPORT-17-A', {
-          fieldname: FIELDNAME,
+          fieldname: extraneousRataSummaryFields,
           locationID: testSummary.unitId
             ? testSummary.unitId
             : testSummary.stackPipeId,
