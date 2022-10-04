@@ -8,6 +8,7 @@ import { AppECorrelationTestRun } from '../entities/app-e-correlation-test-run.e
 import { AppECorrelationTestRunWorkspaceRepository } from './app-e-correlation-test-run-workspace.repository';
 import { AppECorrelationTestRunWorkspaceService } from './app-e-correlation-test-run-workspace.service';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { InternalServerErrorException } from '@nestjs/common';
 
 const userId = 'testUser';
 const testSumId = 'g7h8i9';
@@ -24,6 +25,7 @@ const mockMap = () => ({
 });
 
 const mockRepository = () => ({
+  delete: jest.fn().mockResolvedValue(null),
   save: jest.fn().mockResolvedValue(appECorrelationTestRunEntity),
   create: jest.fn().mockResolvedValue(appECorrelationTestRunEntity),
   find: jest.fn().mockResolvedValue([appECorrelationTestRunEntity]),
@@ -101,8 +103,8 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
     });
   });
 
-  describe('createFuelFlowToLoadTest', () => {
-    it('Should create and return a new Fuel Flow To Load Test record', async () => {
+  describe('createAppECorrelationTestRun', () => {
+    it('Should create and return a new Appendix E Correlation Test Run record', async () => {
       const result = await service.createAppECorrelationTestRun(
         testSumId,
         appECorrTestSumId,
@@ -112,6 +114,69 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
 
       expect(result).toEqual(appECorrelationTestRunRecord);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateAppECorrelationTestRun', () => {
+    it('Should update a Appendix E Correlation Test Run record', async () => {
+      const result = await service.updateAppECorrelationTestRun(
+        testSumId,
+        appECorrTestSumId,
+        appECorrTestRunId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(appECorrelationTestRunRecord);
+    });
+
+    it('Should through error while updating a Appendix E Correlation Test Run record', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.updateAppECorrelationTestRun(
+          testSumId,
+          appECorrTestSumId,
+          appECorrTestRunId,
+          payload,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteAppECorrelationTestRun', () => {
+    it('Should delete a Appendix E Correlation Test Run record', async () => {
+      const result = await service.deleteAppECorrelationTestRun(
+        testSumId,
+        appECorrTestSumId,
+        appECorrTestRunId,
+        userId,
+      );
+      expect(result).toEqual(undefined);
+    });
+
+    it('Should through error while deleting a Appendix E Correlation Test Run record', async () => {
+      const error = new InternalServerErrorException(
+        `Error deleting Appendix E Correlation Test Run record Id [${appECorrTestRunId}]`,
+      );
+      jest.spyOn(repository, 'delete').mockRejectedValue(error);
+
+      let errored = false;
+      try {
+        await service.deleteAppECorrelationTestRun(
+          testSumId,
+          appECorrTestSumId,
+          appECorrTestRunId,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
     });
   });
 });

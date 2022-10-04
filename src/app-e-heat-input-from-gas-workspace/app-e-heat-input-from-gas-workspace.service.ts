@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -10,6 +10,7 @@ import {
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas.repository';
 import { TestSummaryWorkspaceService } from 'src/test-summary-workspace/test-summary.service';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class AppEHeatInputFromGasWorkspaceService {
@@ -20,6 +21,31 @@ export class AppEHeatInputFromGasWorkspaceService {
     @InjectRepository(AppEHeatInputFromGasWorkspaceRepository)
     private readonly repository: AppEHeatInputFromGasWorkspaceRepository,
   ) {}
+
+  async getAppEHeatInputFromGases(
+    appEHeatInputFromGasId: string,
+  ): Promise<AppEHeatInputFromGasRecordDTO[]> {
+    const records = await this.repository.find({
+      where: { appEHeatInputFromGasId },
+    });
+
+    return this.map.many(records);
+  }
+
+  async getAppEHeatInputFromGas(
+    id: string,
+  ): Promise<AppEHeatInputFromGasRecordDTO> {
+    const result = await this.repository.findOne(id);
+
+    if (!result) {
+      throw new LoggingException(
+        `Appendix E Heat Input From Gas record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
 
   async createAppEHeatInputFromGas(
     testSumId: string,
@@ -42,6 +68,42 @@ export class AppEHeatInputFromGasWorkspaceService {
     await this.repository.save(entity);
 
     entity = await this.repository.findOne(entity.id);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.map.one(entity);
+  }
+
+  async updateAppEHeatInputFromGas(
+    testSumId: string,
+    id: string,
+    payload: AppEHeatInputFromGasBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<AppEHeatInputFromGasRecordDTO> {
+    const timestamp = currentDateTime();
+
+    const entity = await this.repository.findOne(id);
+
+    if (!entity) {
+      throw new LoggingException(
+        `Appendix E Heat Input From Gas record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    entity.gasVolume = payload.gasVolume;
+    entity.gasGCV = payload.gasGCV;
+    entity.gasHeatInput = payload.gasHeatInput;
+    entity.monitoringSystemId = payload.monitoringSystemId;
+    entity.userId = userId;
+    entity.updateDate = timestamp;
+
+    await this.repository.save(entity);
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,

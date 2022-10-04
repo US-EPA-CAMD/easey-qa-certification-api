@@ -14,7 +14,7 @@ export class AppECorrelationTestRunController {
     isArray: true,
     type: AppECorrelationTestRunRecordDTO,
     description:
-      'Retrieves aworkspace Appendix E Correlation Test Run records by Appendix E Correlation Test Summary Id',
+      'Retrieves an official Appendix E Correlation Test Run records by Appendix E Correlation Test Summary Id',
   })
   async getAppECorrelationTestRuns(
     @Param('locId') _locationId: string,
@@ -29,7 +29,7 @@ export class AppECorrelationTestRunController {
     isArray: false,
     type: AppECorrelationTestRunRecordDTO,
     description:
-      'Retrieves aworkspace Appendix E Correlation Test Run record by its unique Id',
+      'Retrieves an official Appendix E Correlation Test Run record by its unique Id',
   })
   async getAppECorrelationTestRun(
     @Param('locId') _locationId: string,

@@ -7,10 +7,12 @@ import {
   Param,
   Delete,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -30,11 +32,43 @@ import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-ga
 export class AppEHeatInputFromGasWorkspaceController {
   constructor(private readonly service: AppEHeatInputFromGasWorkspaceService) {}
 
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: AppEHeatInputFromGasRecordDTO,
+    description:
+      'Retrieves a workspace Appendix E Heat Input From Gas records by Appendix E Correlation Test Run Id',
+  })
+  async getAppECorrelationTestRuns(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('appECorrTestSumId') _appECorrTestSumId: string,
+    @Param('appECorrTestRunId') appECorrTestRunId: string,
+  ) {
+    return this.service.getAppEHeatInputFromGases(appECorrTestRunId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: AppEHeatInputFromGasRecordDTO,
+    description: `Retrieves a workspace Appendix E Heat Input From Gas record by it's Id`,
+  })
+  async getAppECorrelationTestRun(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('appECorrTestSumId') _appECorrTestSumId: string,
+    @Param('appECorrTestRunId') _appECorrTestRunId: string,
+    @Param('id') id: string,
+  ) {
+    return this.service.getAppEHeatInputFromGas(id);
+  }
+
   @Post()
   @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
   @ApiCreatedResponse({
-    type: AppEHeatInputFromGasDTO,
+    type: AppEHeatInputFromGasRecordDTO,
     description: 'Creates a workspace Appendix E Heat Input From Gas record.',
   })
   async createAppEHeatInputFromGas(
@@ -47,6 +81,29 @@ export class AppEHeatInputFromGasWorkspaceController {
     return this.service.createAppEHeatInputFromGas(
       testSumId,
       appEHeatInputFromGasId,
+      payload,
+      user.userId,
+    );
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: AppEHeatInputFromGasRecordDTO,
+    description: 'Updates a workspace Appendix E Heat Input From Gas record.',
+  })
+  async updateAppECorrelationTestRun(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('appECorrTestSumId') appECorrTestSumId: string,
+    @Param('id') id: string,
+    @Body() payload: AppEHeatInputFromGasBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<AppEHeatInputFromGasRecordDTO> {
+    return this.service.updateAppEHeatInputFromGas(
+      testSumId,
+      id,
       payload,
       user.userId,
     );
