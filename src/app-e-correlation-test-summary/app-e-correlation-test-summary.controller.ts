@@ -33,7 +33,8 @@ export class AppendixETestSummaryController {
   async getAppECorrelation(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
-    return this.service.getAppECorrelation(testSumId);
+    return this.service.getAppECorrelation(id);
   }
 }
