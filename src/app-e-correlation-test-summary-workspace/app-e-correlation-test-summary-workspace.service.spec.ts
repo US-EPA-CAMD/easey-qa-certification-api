@@ -6,11 +6,11 @@ import {
 import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AppendixETestSummaryRepository } from './app-e-correlation-test-summary.repository';
-import { AppECorrelationTestSummaryService } from './app-e-correlation-test-summary.service';
+import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
+import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-test-summary-workspace.service';
 
 const testSumId = '';
-
+const userId = 'user';
 const entity = new AppECorrelationTestSummary();
 const appECorrelationTest = new AppECorrelationTestSummaryDTO();
 const appECorrelationTests = [appECorrelationTest];
@@ -34,20 +34,20 @@ const mockTestSumService = () => ({
 });
 
 describe('AppECorrelationTestSummaryWorkspaceService', () => {
-  let service: AppECorrelationTestSummaryService;
+  let service: AppECorrelationTestSummaryWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
-  let repository: AppendixETestSummaryRepository;
+  let repository: AppendixETestSummaryWorkspaceRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AppECorrelationTestSummaryService,
+        AppECorrelationTestSummaryWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSumService,
         },
         {
-          provide: AppendixETestSummaryRepository,
+          provide: AppendixETestSummaryWorkspaceRepository,
           useFactory: mockRepository,
         },
         {
@@ -57,20 +57,25 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
       ],
     }).compile();
 
-    service = module.get<AppECorrelationTestSummaryService>(
-      AppECorrelationTestSummaryService,
+    service = module.get<AppECorrelationTestSummaryWorkspaceService>(
+      AppECorrelationTestSummaryWorkspaceService,
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
       TestSummaryWorkspaceService,
     );
-    repository = module.get<AppendixETestSummaryRepository>(
-      AppendixETestSummaryRepository,
+    repository = module.get<AppendixETestSummaryWorkspaceRepository>(
+      AppendixETestSummaryWorkspaceRepository,
     );
   });
 
   describe('createAppECorrelation', () => {
     it('Calls the service to create a new Appendix E Correlation Test Summary record', async () => {
-      const result = await service.getAppECorrelation(testSumId);
+      const result = await service.createAppECorrelation(
+        testSumId,
+        payload,
+        userId,
+      );
+
       expect(result).toEqual(appECorrelationTest);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
