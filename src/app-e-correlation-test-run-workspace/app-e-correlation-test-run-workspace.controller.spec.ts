@@ -38,6 +38,10 @@ const mockService = () => ({
   createAppECorrelationTestRun: jest
     .fn()
     .mockResolvedValue(appECorrelationTestRun),
+  updateAppECorrelationTestRun: jest
+    .fn()
+    .mockResolvedValue(appECorrelationTestRun),
+  deleteAppECorrelationTestRun: jest.fn().mockResolvedValue(null),
 });
 
 describe('AppECorrelationTestRunWorkspaceController', () => {
@@ -79,7 +83,7 @@ describe('AppECorrelationTestRunWorkspaceController', () => {
   });
 
   describe('getAppECorrelationTestRun', () => {
-    it('Calls service to get one Appendix E Correlation Test Run record by its ID', async () => {
+    it('Calls service to get an Appendix E Correlation Test Run record by its ID', async () => {
       const results = await controller.getAppECorrelationTestRun(
         locId,
         testSumId,
@@ -92,7 +96,7 @@ describe('AppECorrelationTestRunWorkspaceController', () => {
   });
 
   describe('createAppECorrelationTestRun', () => {
-    it('Calls service and create a Appendix E Correlation Test Run record', async () => {
+    it('Calls service and create an Appendix E Correlation Test Run record', async () => {
       const results = await controller.createAppECorrelationTestRun(
         locId,
         testSumId,
@@ -102,6 +106,34 @@ describe('AppECorrelationTestRunWorkspaceController', () => {
       );
       expect(results).toEqual(appECorrelationTestRun);
       expect(service.createAppECorrelationTestRun).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateAppECorrelationTestRun', () => {
+    it('should update an Appendix E Correlation Test Run record', async () => {
+      const result = await controller.updateAppECorrelationTestRun(
+        locId,
+        testSumId,
+        appECorrTestSumId,
+        appECorrTestRunId,
+        payload,
+        user,
+      );
+      expect(result).toEqual(appECorrelationTestRun);
+      expect(service.updateAppECorrelationTestRun).toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteAppECorrelationTestRun', () => {
+    it('should delete an Appendix E Correlation Test Run record', async () => {
+      const result = await controller.deleteAppECorrelationTestRun(
+        locId,
+        testSumId,
+        appECorrTestSumId,
+        appECorrTestRunId,
+        user,
+      );
+      expect(result).toEqual(null);
     });
   });
 });
