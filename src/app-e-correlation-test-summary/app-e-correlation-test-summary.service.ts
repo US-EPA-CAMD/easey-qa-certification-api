@@ -10,8 +10,6 @@ import { TestSummaryService } from '../test-summary/test-summary.service';
 export class AppECorrelationTestSummaryService {
   constructor(
     private readonly map: AppECorrelationTestSummaryMap,
-    @Inject(forwardRef(() => TestSummaryService))
-    private readonly testSummaryService: TestSummaryService,
     @InjectRepository(AppendixETestSummaryRepository)
     private readonly repository: AppendixETestSummaryRepository,
   ) {}
