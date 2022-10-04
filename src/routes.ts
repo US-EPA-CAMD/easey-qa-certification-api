@@ -87,7 +87,7 @@ const routes: Routes = [
                 module: AppECorrelationTestRunModule,
                 children: [
                   {
-                    path: 'appECorrTestRunId/appendix-e-heat-input-from-gas',
+                    path: ':appECorrTestRunId/appendix-e-heat-input-from-gas',
                     module: AppEHeatInputFromGasModule,
                   },
                 ],
@@ -165,7 +165,7 @@ const routes: Routes = [
                 module: AppECorrelationTestRunWorkspaceModule,
                 children: [
                   {
-                    path: 'appECorrTestRunId/appendix-e-heat-input-from-gas',
+                    path: ':appECorrTestRunId/appendix-e-heat-input-from-gas',
                     module: AppEHeatInputFromGasWorkspaceModule,
                   },
                 ],
