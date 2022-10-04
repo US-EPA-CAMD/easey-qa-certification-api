@@ -3,6 +3,10 @@ name: Release Branch Workflow
 on:
   push:
     branches: [ release/* ]
+    paths-ignore:
+    - '**/*.md'
+    - 'LICENSE'
+    - '.gitignore'
 
 jobs:
   Build-Test-Package:
