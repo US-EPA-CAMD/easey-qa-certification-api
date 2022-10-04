@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -7,7 +7,6 @@ import { LinearitySummaryWorkspaceRepository } from '../linearity-summary-worksp
 import {
   LinearityInjectionBaseDTO,
   LinearityInjectionImportDTO,
-  LinearityInjectionRecordDTO,
 } from '../dto/linearity-injection.dto';
 import { LinearityInjection } from '../entities/workspace/linearity-injection.entity';
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
