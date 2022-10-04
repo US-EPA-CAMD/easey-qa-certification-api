@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import {
   RataSummaryBaseDTO,
@@ -14,7 +14,6 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 
 const KEY = 'RATA Summary';
 
