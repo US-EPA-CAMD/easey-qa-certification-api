@@ -116,7 +116,7 @@ $ yarn start
 
 ## API Endpoints
 Please refer to the QA Certification Management API Swagger Documentation for descriptions of the endpoints.<br>
-[Dev Environment](https://api.epa.gov/easey/dev/qa-certification-mgmt/swagger/) | [Test Environment](https://api.epa.gov/easey/test/qa-certification-mgmt/swagger/) [Performance Environment](https://api.epa.gov/easey/perf/qa-certification-mgmt/swagger/) | [Beta Environment](https://api.epa.gov/easey/beta/qa-certification-mgmt/swagger/) | [Staging Environment](https://api.epa.gov/easey/staging/qa-certification-mgmt/swagger/)
+[Dev Environment](https://api.epa.gov/easey/dev/qa-certification-mgmt/swagger/) | [Test Environment](https://api.epa.gov/easey/test/qa-certification-mgmt/swagger/) |  [Performance Environment](https://api.epa.gov/easey/perf/qa-certification-mgmt/swagger/) | [Beta Environment](https://api.epa.gov/easey/beta/qa-certification-mgmt/swagger/) | [Staging Environment](https://api.epa.gov/easey/staging/qa-certification-mgmt/swagger/)
 
 ## License & Contributing
 This project is licensed under the MIT License. We encourage you to read this project’s [License](LICENSE), [Contributing Guidelines](CONTRIBUTING.md), and [Code of Conduct](CODE-OF-CONDUCT.md).
