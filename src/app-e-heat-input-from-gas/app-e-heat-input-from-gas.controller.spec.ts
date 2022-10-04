@@ -11,7 +11,9 @@ describe('AppEHeatInputFromGasController', () => {
       providers: [AppEHeatInputFromGasService],
     }).compile();
 
-    controller = module.get<AppEHeatInputFromGasController>(AppEHeatInputFromGasController);
+    controller = module.get<AppEHeatInputFromGasController>(
+      AppEHeatInputFromGasController,
+    );
   });
 
   it('should be defined', () => {

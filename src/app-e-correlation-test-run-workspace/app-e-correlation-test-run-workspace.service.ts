@@ -73,4 +73,73 @@ export class AppECorrelationTestRunWorkspaceService {
     );
     return this.map.one(entity);
   }
+
+  async updateAppECorrelationTestRun(
+    testSumId: string,
+    appECorrTestSumId: string,
+    id: string,
+    payload: AppECorrelationTestRunBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<AppECorrelationTestRunRecordDTO> {
+    const timestamp = currentDateTime();
+    const entity = await this.repository.findOne({
+      id,
+      appECorrTestSumId,
+    });
+
+    if (!entity) {
+      throw new LoggingException(
+        `Appendix E Correlation Test Run record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    entity.referenceValue = payload.referenceValue;
+    entity.hourlyHeatInputRate = payload.hourlyHeatInputRate;
+    entity.totalHeatInput = payload.totalHeatInput;
+    entity.responseTime = payload.responseTime;
+
+    entity.beginDate = payload.beginDate;
+    entity.beginHour = payload.beginHour;
+    entity.beginMinute = payload.beginMinute;
+
+    entity.endDate = payload.endDate;
+    entity.endHour = payload.endHour;
+    entity.endMinute = payload.endMinute;
+
+    entity.userId = userId;
+    entity.updateDate = timestamp;
+
+    await this.repository.save(entity);
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+    return this.map.one(entity);
+  }
+
+  async deleteAppECorrelationTestRun(
+    testSumId: string,
+    appECorrTestSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete({ id, appECorrTestSumId });
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting Appendix E Correlation Test Run record Id [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+  }
 }

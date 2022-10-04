@@ -11,7 +11,9 @@ describe('AppEHeatInputFromGasWorkspaceController', () => {
       providers: [AppEHeatInputFromGasWorkspaceService],
     }).compile();
 
-    controller = module.get<AppEHeatInputFromGasWorkspaceController>(AppEHeatInputFromGasWorkspaceController);
+    controller = module.get<AppEHeatInputFromGasWorkspaceController>(
+      AppEHeatInputFromGasWorkspaceController,
+    );
   });
 
   it('should be defined', () => {

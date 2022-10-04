@@ -9,7 +9,9 @@ describe('AppEHeatInputFromGasService', () => {
       providers: [AppEHeatInputFromGasService],
     }).compile();
 
-    service = module.get<AppEHeatInputFromGasService>(AppEHeatInputFromGasService);
+    service = module.get<AppEHeatInputFromGasService>(
+      AppEHeatInputFromGasService,
+    );
   });
 
   it('should be defined', () => {
