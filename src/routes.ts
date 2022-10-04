@@ -2,16 +2,12 @@ import { Routes } from 'nest-router';
 
 import { QACertificationModule } from './qa-certification/qa-certification.module';
 import { QACertificationWorkspaceModule } from './qa-certification-workspace/qa-certification.module';
-
 import { LocationModule } from './location/location.module';
 import { LocationWorkspaceModule } from './location-workspace/location.module';
-
 import { TestSummaryModule } from './test-summary/test-summary.module';
 import { TestSummaryWorkspaceModule } from './test-summary-workspace/test-summary.module';
-
 import { LinearitySummaryModule } from './linearity-summary/linearity-summary.module';
 import { LinearitySummaryWorkspaceModule } from './linearity-summary-workspace/linearity-summary.module';
-
 import { LinearityInjectionModule } from './linearity-injection/linearity-injection.module';
 import { LinearityInjectionWorkspaceModule } from './linearity-injection-workspace/linearity-injection.module';
 import { ProtocolGasModule } from './protocol-gas/protocol-gas.module';
@@ -36,6 +32,8 @@ import { FuelFlowToLoadTestModule } from './fuel-flow-to-load-test/fuel-flow-to-
 import { FuelFlowToLoadTestWorkspaceModule } from './fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.module';
 import { AppECorrelationTestRunWorkspaceModule } from './app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.module';
 import { AppECorrelationTestRunModule } from './app-e-correlation-test-run/app-e-correlation-test-run.module';
+import { AppEHeatInputFromGasModule } from './app-e-heat-input-from-gas/app-e-heat-input-from-gas.module';
+import { AppEHeatInputFromGasWorkspaceModule } from './app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
 
 const routes: Routes = [
   {
@@ -81,12 +79,18 @@ const routes: Routes = [
             module: AirEmissionTestingModule,
           },
           {
-            path: ':testSumId/appexdix-e-correlation-test-summaries',
+            path: ':testSumId/appendix-e-correlation-test-summaries',
             module: AppECorrelationTestSummaryModule,
             children: [
               {
                 path: ':appECorrTestSumId/appendix-e-correlation-test-runs',
                 module: AppECorrelationTestRunModule,
+                children: [
+                  {
+                    path: ':appECorrTestRunId/appendix-e-heat-input-from-gas',
+                    module: AppEHeatInputFromGasModule,
+                  },
+                ],
               },
             ],
           },
@@ -159,6 +163,12 @@ const routes: Routes = [
               {
                 path: ':appECorrTestSumId/appendix-e-correlation-test-runs',
                 module: AppECorrelationTestRunWorkspaceModule,
+                children: [
+                  {
+                    path: ':appECorrTestRunId/appendix-e-heat-input-from-gas',
+                    module: AppEHeatInputFromGasWorkspaceModule,
+                  },
+                ],
               },
             ],
           },

@@ -1,11 +1,12 @@
 #THIS FILE SHOULD CONTAIN DEV SETTINGS AND CI/CD WORKFLOW WILL CHANGE SETTINGS BASED ON ENV
-name: qa-certification-api
-title: QA Certification Management
-path: qa-certification-mgmt
-port: 8080
-memory: 1024
 disk: 1024
+memory: 1024
 instances: 1
-environment: development
+name: qa-certification-api
 host: api-easey-dev.app.cloud.gov
+port: 8080
+path: qa-certification-mgmt
+title: QA Certification Management
+description: QA & Certification management API endpoints for qa test data, qa cert events, and test extension & exemption data
+environment: development
 apiHost: api.epa.gov/easey/dev

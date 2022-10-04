@@ -36,7 +36,7 @@ Follow these [instructions](https://github.com/US-EPA-CAMD/devops/blob/master/GE
     ```
 
 ## Configuration
-The Monitor Plan API uses a number of environment variables to properly configure the api. The following is the list of configureble values and their default setting.
+The QA Certification API uses a number of environment variables to properly configure the api. The following is the list of configureble values and their default setting.
 
 | Typescript Var Name | Environment Var Name | Default Value | Comment |
 | :------------------ | :------------------- | :------------ | :------ |
@@ -44,37 +44,40 @@ The Monitor Plan API uses a number of environment variables to properly configur
 | host | EASEY_QA_CERTIFICATION_API_HOST | localhost | Configurable
 | port | EASEY_QA_CERTIFICATION_API_PORT | 8070 | Configurable |
 | path | EASEY_QA_CERTIFICATION_API_PATH | qa-certification-mgmt | Configurable |
-| uri | N/A | N/A | Determined by host, port, & path |
 | title | EASEY_QA_CERTIFICATION_API_TITLE | QA Certification Management | Configurable |
-| description | EASEY_QA_CERTIFICATION_API_DESCRIPTION | ??? | Configurable |
-| apiHost | EASEY_API_GATEWAY_HOST | api.epa.gov/easey/dev | Configurable |
-| apiKey | EASEY_QA_CERTIFICATION_API_KEY | N/A | Dynamically set by CI/CD workflow |
+| description | EASEY_QA_CERTIFICATION_API_DESCRIPTION | QA & Certification management API endpoints for qa test data, qa cert events, and test extension & exemption data | Configurable |
 | env | EASEY_QA_CERTIFICATION_API_ENV | local-dev | Configurable |
-| enableCors | EASEY_QA_CERTIFICATION_API_ENABLE_CORS | true | Configurable |
+| apiKey | EASEY_QA_CERTIFICATION_API_KEY | *** | Dynamically set by CI/CD workflow |
 | enableApiKey | EASEY_QA_CERTIFICATION_API_ENABLE_API_KEY | false | Configurable |
+| secretToken | EASEY_QA_CERTIFICATION_API_SECRET_TOKEN | *** | Dynamically set by CI/CD workflow |
+| enableSecretToken | EASEY_QA_CERTIFICATION_API_ENABLE_SECRET_TOKEN | false | Configurable |
+| enableCors | EASEY_QA_CERTIFICATION_API_ENABLE_CORS | true | Configurable |
 | enableAuthToken | EASEY_QA_CERTIFICATION_API_ENABLE_AUTH_TOKEN | false | Configurable |
 | enableGlobalValidationPipes | EASEY_QA_CERTIFICATION_API_ENABLE_GLOBAL_VALIDATION_PIPE | true | Configurable |
 | version | EASEY_QA_CERTIFICATION_API_VERSION | v0.0.0 | Dynamically set by CI/CD workflow |
 | published | EASEY_QA_CERTIFICATION_API_PUBLISHED | local | Dynamically set by CI/CD workflow |
-| authApi.uri | EASEY_QA_CERTIFICATION_API | https://api.epa.gov/easey/dev/auth-mgmt | Configurable |
 | reqSizeLimit | EASEY_QA_CERTIFICATION_API_REQ_SIZE_LIMIT | 1mb | Configurable |
-| secretToken | EASEY_QA_CERTIFICATION_API_SECRET_TOKEN | N/A | Dynamically set by CI/CD workflow |
-| enableSecretToken | EASEY_QA_CERTIFICATION_API_ENABLE_SECRET_TOKEN | false | Configurable |
 | enableDebug | EASEY_QA_CERTIFICATION_API_ENABLE_DEBUG | false | Configurable |
+| currentUser | EASEY_QA_CERTIFICATION_API_CURRENT_USER | {} | Configurable |
+| apiHost | EASEY_API_GATEWAY_HOST | api.epa.gov/easey/dev | Configurable |
+| authApi.uri | EASEY_AUTH_API | https://api.epa.gov/easey/dev/auth-mgmt | Configurable |
 
 ## Environment Variables File
 Database credentials are injected into the cloud.gov environments as part of the CI/CD deployment process therefore they do not need to be configured. However, when running locally for local development the following environment variables are required to be configured using a local .env file in the root of the project. **PLEASE DO NOT commit the .env file to source control.**
 
 - EASEY_QA_CERTIFICATION_API_ENABLE_DEBUG=true|false
 - EASEY_QA_CERTIFICATION_API_ENABLE_API_KEY=true|false
-  - IF ABOVE IS TRUE
-  - EASEY_QA_CERTIFICATION_API_KEY={ask project dev/tech lead}
+  - IF ABOVE IS TRUE THEN SET
+    - EASEY_QA_CERTIFICATION_  API_KEY={ask project dev/tech lead}
 - EASEY_QA_CERTIFICATION_API_ENABLE_AUTH_TOKEN=true|false
-  - IF ABOVE IS TRUE
-  - EASEY_QA_CERTIFICATION_API_CURRENT_USER={ "userId": "testuser", "roles": [ { "orisCode": 3, "role": "P" } ] }
+  - IF ABOVE IS TRUE THEN
+    - USE AUTH API TO SIGNI  N & GET AUTH TOKEN TO USE AS A BEARER TOKEN
+  - IF ABOVE IS FALSE THEN SET
+    - EASEY_QA_CERTIFICATION_API_CURRENT_USER={see below}
+    - FORMAT: { "userId": "testuser", "roles": [ { "orisCode": 3, "role": "P" } ] }
 - EASEY_QA_CERTIFICATION_API_ENABLE_SECRET_TOKEN=true|false
-  - IF ABOVE IS TRUE
-  - EASEY_QA_CERTIFICATION_API_SECRET_TOKEN={ask project dev/tech lead}
+  - IF ABOVE IS TRUE THEN SET
+    - EASEY_QA_CERTIFICATION_  API_SECRET_TOKEN={ask project dev/tech lead}
 
 **Please refer to our [Getting Started](https://github.com/US-EPA-CAMD/devops/blob/master/GETTING-STARTED.md) instructions on how to configure the following environment variables & connect to the database.**
 - EASEY_DB_HOST
