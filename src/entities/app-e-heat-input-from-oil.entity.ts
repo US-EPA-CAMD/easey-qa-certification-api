@@ -7,7 +7,7 @@ import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 @Entity({
   name: 'camdecmps.ae_hi_oil',
 })
-export class AppEHeatInputOil extends BaseEntity {
+export class AppEHeatInputFromOil extends BaseEntity {
   @PrimaryColumn({
     type: 'varchar',
     name: 'ae_hi_oil_id',

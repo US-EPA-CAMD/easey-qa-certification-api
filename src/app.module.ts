@@ -41,8 +41,8 @@ import { AppECorrelationTestRunModule } from './app-e-correlation-test-run/app-e
 import { AppECorrelationTestRunWorkspaceModule } from './app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.module';
 import { AppEHeatInputFromGasModule } from './app-e-heat-input-from-gas/app-e-heat-input-from-gas.module';
 import { AppEHeatInputFromGasWorkspaceModule } from './app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
-import { AppEHeatInputOilModule } from './app-e-heat-input-oil/app-e-heat-input-oil.module';
-import { AppEHeatInputOilWorkspaceModule} from './app-e-heat-input-oil-workspace/app-e-heat-input-oil.module';
+import { AppEHeatInputFromOilModule } from './app-e-heat-input-from-oil/app-e-heat-input-from-oil.module';
+import { AppEHeatInputFromOilWorkspaceModule} from './app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.module';
 
 @Module({
   imports: [
@@ -85,8 +85,8 @@ import { AppEHeatInputOilWorkspaceModule} from './app-e-heat-input-oil-workspace
     AppECorrelationTestRunWorkspaceModule,
     AppEHeatInputFromGasModule,
     AppEHeatInputFromGasWorkspaceModule,
-    AppEHeatInputOilModule,
-    AppEHeatInputOilWorkspaceModule,
+    AppEHeatInputFromOilModule,
+    AppEHeatInputFromOilWorkspaceModule,
   ],
 })
 export class AppModule {}

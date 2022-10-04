@@ -1,4 +1,4 @@
-export class AppEHeatInputOilBaseDTO {
+export class AppEHeatInputFromOilBaseDTO {
   oilMass: number;
   calculatedOilMass: number;
   oilHeatInput: number;
@@ -12,7 +12,7 @@ export class AppEHeatInputOilBaseDTO {
   monitoringSystemId: string;
 }
 
-export class AppEHeatInputOilRecordDTO extends AppEHeatInputOilBaseDTO {
+export class AppEHeatInputFromOilRecordDTO extends AppEHeatInputFromOilBaseDTO {
   id: string;
   appECorrelationTestId: string;
   userId: string;
@@ -20,6 +20,6 @@ export class AppEHeatInputOilRecordDTO extends AppEHeatInputOilBaseDTO {
   updateDate: string;
 }
 
-export class AppEHeatInputOilImportDTO extends AppEHeatInputOilBaseDTO {}
+export class AppEHeatInputFromOilImportDTO extends AppEHeatInputFromOilBaseDTO {}
 
-export class AppEHeatInputOilDTO extends AppEHeatInputOilRecordDTO {}
+export class AppEHeatInputFromOilDto extends AppEHeatInputFromOilRecordDTO {}
