@@ -39,6 +39,8 @@ import { FuelFlowToLoadTestModule } from './fuel-flow-to-load-test/fuel-flow-to-
 import { FuelFlowToLoadTestWorkspaceModule } from './fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.module';
 import { AppECorrelationTestRunModule } from './app-e-correlation-test-run/app-e-correlation-test-run.module';
 import { AppECorrelationTestRunWorkspaceModule } from './app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.module';
+import { AppEHeatInputFromGasModule } from './app-e-heat-input-from-gas/app-e-heat-input-from-gas.module';
+import { AppEHeatInputFromGasWorkspaceModule } from './app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
 
 @Module({
   imports: [
@@ -79,6 +81,8 @@ import { AppECorrelationTestRunWorkspaceModule } from './app-e-correlation-test-
     FuelFlowToLoadTestWorkspaceModule,
     AppECorrelationTestRunModule,
     AppECorrelationTestRunWorkspaceModule,
+    AppEHeatInputFromGasModule,
+    AppEHeatInputFromGasWorkspaceModule,
   ],
 })
 export class AppModule {}

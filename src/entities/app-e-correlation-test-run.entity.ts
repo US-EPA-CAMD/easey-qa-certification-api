@@ -5,10 +5,12 @@ import {
   PrimaryColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { AppECorrelationTestSummary } from './app-e-correlation-test-summary.entity';
+import { AppEHeatInputFromGas } from './app-e-heat-input-from-gas.entity';
 
 @Entity({ name: 'camdecmps.ae_correlation_test_run' })
 export class AppECorrelationTestRun extends BaseEntity {
@@ -120,6 +122,12 @@ export class AppECorrelationTestRun extends BaseEntity {
   @JoinColumn({ name: 'ae_corr_test_sum_id' })
   appECorrelationTestSummary: AppECorrelationTestSummary;
 
+  @OneToMany(
+    () => AppEHeatInputFromGas,
+    aehi => aehi.appECorrelationTestRun,
+  )
+  @JoinColumn({ name: 'ae_corr_test_sum_id' })
+  appEHeatInputFromGases: AppEHeatInputFromGas[];
+
   // TODO: Need to Join Columns for Appendix E Heat Input From Oil
-  // TODO: Need to Join Columns for Appendix E Heat Input From Gas
 }
