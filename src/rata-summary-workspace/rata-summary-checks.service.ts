@@ -195,7 +195,7 @@ export class RataSummaryChecksService {
       }
 
       if (extraneousRataSummaryFields?.length > 0) {
-        error = this.getMessage('IMPORT-17-A', {
+        error = this.getMessage('IMPORT-30-A', {
           fieldname: extraneousRataSummaryFields,
           locationID: testSummary.unitId
             ? testSummary.unitId

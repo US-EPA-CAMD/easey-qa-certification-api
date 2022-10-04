@@ -676,10 +676,10 @@ export class TestSummaryChecksService {
                     monitorSystem.systemTypeCode !== 'FLOW'
                   ) {
                     return this.getMessage('IMPORT-19-A', {
-                      locationId: summary.unitId
+                      locationID: summary.unitId
                         ? summary.unitId
                         : summary.stackPipeId,
-                      systemId: summary.monitoringSystemID,
+                      systemID: summary.monitoringSystemID,
                       testNumber: summary.testNumber,
                     });
                   }
