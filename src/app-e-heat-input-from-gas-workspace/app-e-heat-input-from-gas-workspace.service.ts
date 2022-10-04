@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
@@ -10,6 +10,7 @@ import {
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas.repository';
 import { TestSummaryWorkspaceService } from 'src/test-summary-workspace/test-summary.service';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class AppEHeatInputFromGasWorkspaceService {
@@ -20,6 +21,31 @@ export class AppEHeatInputFromGasWorkspaceService {
     @InjectRepository(AppEHeatInputFromGasWorkspaceRepository)
     private readonly repository: AppEHeatInputFromGasWorkspaceRepository,
   ) {}
+
+  async getAppEHeatInputFromGases(
+    appEHeatInputFromGasId: string,
+  ): Promise<AppEHeatInputFromGasBaseDTO[]> {
+    const records = await this.repository.find({
+      where: { appEHeatInputFromGasId },
+    });
+
+    return this.map.many(records);
+  }
+
+  async getAppEHeatInputFromGas(
+    id: string,
+  ): Promise<AppEHeatInputFromGasBaseDTO> {
+    const result = await this.repository.findOne(id);
+
+    if (!result) {
+      throw new LoggingException(
+        `Appendix E Heat Input From Gas record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
 
   async createAppEHeatInputFromGas(
     testSumId: string,

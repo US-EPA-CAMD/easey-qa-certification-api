@@ -11,6 +11,7 @@ import {
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -29,6 +30,38 @@ import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-ga
 @ApiTags('Appendix E Heat Input From Gas')
 export class AppEHeatInputFromGasWorkspaceController {
   constructor(private readonly service: AppEHeatInputFromGasWorkspaceService) {}
+
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: AppEHeatInputFromGasRecordDTO,
+    description:
+      'Retrieves a workspace Appendix E Heat Input From Gas records by Appendix E Correlation Test Run Id',
+  })
+  async getAppECorrelationTestRuns(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('appECorrTestSumId') _appECorrTestSumId: string,
+    @Param('appECorrTestRunId') appECorrTestRunId: string,
+  ) {
+    return this.service.getAppEHeatInputFromGases(appECorrTestRunId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: AppEHeatInputFromGasRecordDTO,
+    description: `Retrieves a workspace Appendix E Heat Input From Gas record by it's Id`,
+  })
+  async getAppECorrelationTestRun(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('appECorrTestSumId') _appECorrTestSumId: string,
+    @Param('appECorrTestRunId') _appECorrTestRunId: string,
+    @Param('id') id: string,
+  ) {
+    return this.service.getAppEHeatInputFromGas(id);
+  }
 
   @Post()
   @ApiBearerAuth('Token')
