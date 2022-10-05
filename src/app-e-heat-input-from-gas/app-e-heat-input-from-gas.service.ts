@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { AppEHeatInputFromGasBaseDTO } from '../dto/app-e-heat-input-from-gas.dto';
+import { AppEHeatInputFromGasRecordDTO } from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { AppEHeatInputFromGasRepository } from './app-e-heat-input-from-gas.repository';
 
@@ -15,7 +15,7 @@ export class AppEHeatInputFromGasService {
 
   async getAppEHeatInputFromGases(
     appEHeatInputFromGasId: string,
-  ): Promise<AppEHeatInputFromGasBaseDTO[]> {
+  ): Promise<AppEHeatInputFromGasRecordDTO[]> {
     const records = await this.repository.find({
       where: { appEHeatInputFromGasId },
     });
@@ -25,7 +25,7 @@ export class AppEHeatInputFromGasService {
 
   async getAppEHeatInputFromGas(
     id: string,
-  ): Promise<AppEHeatInputFromGasBaseDTO> {
+  ): Promise<AppEHeatInputFromGasRecordDTO> {
     const result = await this.repository.findOne(id);
 
     if (!result) {

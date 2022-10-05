@@ -89,11 +89,11 @@ const routes: Routes = [
                 module: AppECorrelationTestRunModule,
                 children: [
                   {
-                    path: ':appECorrTestRunId/appendix-e-heat-input-from-gas',
+                    path: ':appECorrTestRunId/appendix-e-heat-input-from-gases',
                     module: AppEHeatInputFromGasModule,
                   },
                   {
-                    path: ':appECorrTestRunId/appendix-e-heat-input-from-oil',
+                    path: ':appECorrTestRunId/appendix-e-heat-input-from-oils',
                     module: AppEHeatInputFromOilModule,
                   },
                 ],
@@ -171,11 +171,11 @@ const routes: Routes = [
                 module: AppECorrelationTestRunWorkspaceModule,
                 children: [
                   {
-                    path: ':appECorrTestRunId/appendix-e-heat-input-from-gas',
+                    path: ':appECorrTestRunId/appendix-e-heat-input-from-gases',
                     module: AppEHeatInputFromGasWorkspaceModule,
                   },
                   {
-                    path: ':appECorrTestRunId/appendix-e-heat-input-from-oil',
+                    path: ':appECorrTestRunId/appendix-e-heat-input-from-oils',
                     module: AppEHeatInputFromOilWorkspaceModule,
                   },
                 ],

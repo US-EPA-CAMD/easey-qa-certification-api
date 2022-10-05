@@ -74,13 +74,14 @@ export class AppEHeatInputFromGasWorkspaceController {
   async createAppEHeatInputFromGas(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-    @Param('appEHeatInputFromGasId') appEHeatInputFromGasId: string,
+    @Param('appECorrTestSumId') _appECorrTestSumId: string,
+    @Param('appECorrTestRunId') appECorrTestRunId: string,
     @Body() payload: AppEHeatInputFromGasBaseDTO,
     @User() user: CurrentUser,
   ): Promise<AppEHeatInputFromGasRecordDTO> {
     return this.service.createAppEHeatInputFromGas(
       testSumId,
-      appEHeatInputFromGasId,
+      appECorrTestRunId,
       payload,
       user.userId,
     );

@@ -7,12 +7,16 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
 import { AppECorrelationTestRunMap } from '../maps/app-e-correlation-test-run.map';
 import { HttpModule } from '@nestjs/axios';
 import { AppECorrelationTestSummaryWorkspaceModule } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.module';
+import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.module';
+import { AppEHeatInputFromGasWorkspaceModule } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AppECorrelationTestRunWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => AppECorrelationTestSummaryWorkspaceModule),
+    AppEHeatInputFromOilWorkspaceModule,
+    AppEHeatInputFromGasWorkspaceModule,
     HttpModule,
   ],
   controllers: [AppECorrelationTestRunWorkspaceController],

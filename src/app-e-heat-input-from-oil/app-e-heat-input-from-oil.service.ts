@@ -3,8 +3,8 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AppEHeatInputFromOilRepository } from './app-e-heat-input-from-oil.repository';
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
-import { AppEHeatInputFromOilDTO } from '../dto/app-e-heat-input-from-oil.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { AppEHeatInputFromOilDTO } from '../dto/app-e-heat-input-from-oil.dto';
 
 @Injectable()
 export class AppEHeatInputFromOilService {
@@ -15,10 +15,10 @@ export class AppEHeatInputFromOilService {
   ) {}
 
   async getAppEHeatInputFromOilRecords(
-    aeCorrTestRunId: string,
+    appECorrTestRunId: string,
   ): Promise<AppEHeatInputFromOilDTO[]> {
     const records = await this.repository.find({
-      where: { aeCorrTestRunId },
+      where: { appECorrTestRunId },
     });
 
     return this.map.many(records);

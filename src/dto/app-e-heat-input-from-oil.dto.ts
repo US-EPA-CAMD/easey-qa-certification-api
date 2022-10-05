@@ -1,20 +1,22 @@
+const KEY = 'Appendix E Heat Input From Oil';
+
 export class AppEHeatInputFromOilBaseDTO {
+  monitoringSystemID: string;
   oilMass: number;
-  calculatedOilMass: number;
-  oilHeatInput: number;
-  calculatedOilHeatInput: number;
   oilGCV: number;
   oilGCVUnitsOfMeasureCode: string;
+  oilHeatInput: number;
   oilVolume: number;
   oilVolumeUnitsOfMeasureCode: string;
   oilDensity: number;
   oilDensityUnitsOfMeasureCode: string;
-  monitoringSystemId: string;
 }
 
 export class AppEHeatInputFromOilRecordDTO extends AppEHeatInputFromOilBaseDTO {
   id: string;
-  appECorrelationTestId: string;
+  appECorrTestRunId: string;
+  calculatedOilMass: number;
+  calculatedOilHeatInput: number;
   userId: string;
   addDate: string;
   updateDate: string;

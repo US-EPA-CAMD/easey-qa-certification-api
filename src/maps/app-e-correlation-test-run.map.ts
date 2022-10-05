@@ -2,15 +2,32 @@ import { Injectable } from '@nestjs/common';
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { AppECorrelationTestRun } from '../entities/app-e-correlation-test-run.entity';
 import { AppECorrelationTestRunDTO } from '../dto/app-e-correlation-test-run.dto';
+import { AppEHeatInputFromOilMap } from './app-e-heat-input-from-oil.map';
+import { AppEHeatInputFromGasMap } from './app-e-heat-input-from-gas.map';
 
 @Injectable()
 export class AppECorrelationTestRunMap extends BaseMap<
   AppECorrelationTestRun,
   AppECorrelationTestRunDTO
 > {
+  constructor(
+    private readonly appEHeatInputFromOilMap: AppEHeatInputFromOilMap,
+    private readonly appEHeatInputFromGasMap: AppEHeatInputFromGasMap,
+  ) {
+    super();
+  }
+
   public async one(
     entity: AppECorrelationTestRun,
   ): Promise<AppECorrelationTestRunDTO> {
+    const appEHeatInputFromOils = entity.appEHeatInputFromOils
+      ? await this.appEHeatInputFromOilMap.many(entity.appEHeatInputFromOils)
+      : [];
+
+    const appEHeatInputFromGases = entity.appEHeatInputFromGases
+      ? await this.appEHeatInputFromGasMap.many(entity.appEHeatInputFromGases)
+      : [];
+
     return {
       id: entity.id,
       appECorrTestSumId: entity.appECorrTestSumId,
@@ -31,8 +48,8 @@ export class AppECorrelationTestRunMap extends BaseMap<
       userId: entity.userId,
       addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
-      appECorrelationHeatInputFromOilData: [],
-      appECorrelationHeatInputFromGasData: [],
+      appEHeatInputFromOilData: appEHeatInputFromOils,
+      appEHeatInputFromGasData: appEHeatInputFromGases,
     };
   }
 }

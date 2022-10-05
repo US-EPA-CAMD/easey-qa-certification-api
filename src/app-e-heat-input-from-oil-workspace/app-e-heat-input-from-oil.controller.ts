@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -18,7 +10,6 @@ import {
 import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-
 import {
   AppEHeatInputFromOilBaseDTO,
   AppEHeatInputFromOilRecordDTO,
@@ -27,7 +18,7 @@ import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oi
 
 @Controller()
 @ApiSecurity('APIKey')
-@ApiTags('Appendix E Heat Input Oil')
+@ApiTags('Appendix E Heat Input From Oil')
 export class AppEHeatInputFromOilWorkspaceController {
   constructor(private readonly service: AppEHeatInputFromOilWorkspaceService) {}
 
@@ -65,8 +56,8 @@ export class AppEHeatInputFromOilWorkspaceController {
   }
 
   @Post()
-  //@UseGuards(AuthGuard)
-  //@ApiBearerAuth('Token')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
   @ApiCreatedResponse({
     type: AppEHeatInputFromOilRecordDTO,
     description:
@@ -78,13 +69,13 @@ export class AppEHeatInputFromOilWorkspaceController {
     @Param('appECorrTestSumId') _aeCorrTestSumId: string,
     @Param('appECorrTestRunId') aeCorrTestRunId: string,
     @Body() payload: AppEHeatInputFromOilBaseDTO,
-    //@User() user: CurrentUser,
+    @User() user: CurrentUser,
   ): Promise<AppEHeatInputFromOilRecordDTO> {
     return this.service.createAppEHeatInputFromOilRecord(
       testSumId,
       aeCorrTestRunId,
       payload,
-      'fred',
-    ); //user.userId);
+      user.userId,
+    );
   }
 }

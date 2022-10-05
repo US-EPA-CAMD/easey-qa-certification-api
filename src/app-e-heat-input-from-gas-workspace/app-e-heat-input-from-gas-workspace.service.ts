@@ -3,14 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { currentDateTime } from '../utilities/functions';
-import {
-  AppEHeatInputFromGasBaseDTO,
-  AppEHeatInputFromGasRecordDTO,
-} from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas.repository';
 import { TestSummaryWorkspaceService } from 'src/test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import {
+  AppEHeatInputFromGasBaseDTO,
+  AppEHeatInputFromGasRecordDTO,
+} from '../dto/app-e-heat-input-from-gas.dto';
 
 @Injectable()
 export class AppEHeatInputFromGasWorkspaceService {
@@ -23,10 +23,10 @@ export class AppEHeatInputFromGasWorkspaceService {
   ) {}
 
   async getAppEHeatInputFromGases(
-    appEHeatInputFromGasId: string,
+    appECorrTestRunId: string,
   ): Promise<AppEHeatInputFromGasRecordDTO[]> {
     const records = await this.repository.find({
-      where: { appEHeatInputFromGasId },
+      where: { appECorrTestRunId },
     });
 
     return this.map.many(records);
@@ -49,7 +49,7 @@ export class AppEHeatInputFromGasWorkspaceService {
 
   async createAppEHeatInputFromGas(
     testSumId: string,
-    appECorrelationTestRunId: string,
+    appECorrTestRunId: string,
     payload: AppEHeatInputFromGasBaseDTO,
     userId: string,
     isImport: boolean = false,
@@ -58,7 +58,7 @@ export class AppEHeatInputFromGasWorkspaceService {
 
     let entity = this.repository.create({
       id: uuid(),
-      appECorrelationTestRunId,
+      appECorrTestRunId,
       ...payload,
       userId,
       addDate: timestamp,
@@ -99,7 +99,7 @@ export class AppEHeatInputFromGasWorkspaceService {
     entity.gasVolume = payload.gasVolume;
     entity.gasGCV = payload.gasGCV;
     entity.gasHeatInput = payload.gasHeatInput;
-    entity.monitoringSystemId = payload.monitoringSystemId;
+    entity.monitoringSystemID = payload.monitoringSystemID;
     entity.userId = userId;
     entity.updateDate = timestamp;
 

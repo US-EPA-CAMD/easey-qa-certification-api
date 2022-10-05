@@ -1,5 +1,13 @@
-import { Entity, BaseEntity, PrimaryColumn, Column } from 'typeorm';
+import {
+  Entity,
+  BaseEntity,
+  PrimaryColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
+import { AppECorrelationTestRun } from './app-e-correlation-test-run.entity';
 
 @Entity({
   name: 'camdecmps.ae_hi_oil',
@@ -16,7 +24,7 @@ export class AppEHeatInputFromOil extends BaseEntity {
     nullable: false,
     name: 'ae_corr_test_run_id',
   })
-  aeCorrTestRunId: string;
+  appECorrTestRunId: string;
 
   @Column({
     name: 'oil_mass',
@@ -78,16 +86,16 @@ export class AppEHeatInputFromOil extends BaseEntity {
   @Column({
     name: 'mon_sys_id',
   })
-  monitoringSystemId: string;
+  monitoringSystemID: string;
 
   @Column({
-    type: 'time without time zone',
+    type: 'timestamp',
     name: 'add_date',
   })
   addDate: string;
 
   @Column({
-    type: 'time without time zone',
+    type: 'timestamp',
     name: 'update_date',
   })
   updateDate: string;
@@ -97,4 +105,11 @@ export class AppEHeatInputFromOil extends BaseEntity {
     name: 'userid',
   })
   userId: string;
+
+  @ManyToOne(
+    () => AppECorrelationTestRun,
+    aectr => aectr.appEHeatInputFromOils,
+  )
+  @JoinColumn({ name: 'ae_corr_test_run_id' })
+  appECorrelationTestRun: AppECorrelationTestRun;
 }
