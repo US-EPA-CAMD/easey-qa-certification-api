@@ -99,7 +99,7 @@ export class AppEHeatInputFromGasWorkspaceService {
     entity.gasVolume = payload.gasVolume;
     entity.gasGCV = payload.gasGCV;
     entity.gasHeatInput = payload.gasHeatInput;
-    entity.monitoringSystemId = payload.monitoringSystemId;
+    entity.monitoringSystemID = payload.monitoringSystemID;
     entity.userId = userId;
     entity.updateDate = timestamp;
 
