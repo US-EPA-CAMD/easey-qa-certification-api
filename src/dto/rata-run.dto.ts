@@ -1,14 +1,38 @@
-import { ValidationArguments } from 'class-validator';
+import { IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 import { RunStatusCode } from '../entities/run-status-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { FlowRataRunDTO, FlowRataRunImportDTO } from './flow-rata-run.dto';
+import { IsNotNegative } from '../pipes/is-not-negative.pipe';
+import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 
 const KEY = 'RATA Run';
+const MIN_RUN_NUMBER = 1;
+const MAX_RUN_NUMBER = 99;
 
 export class RataRunBaseDTO {
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-113-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_RUN_NUMBER, MAX_RUN_NUMBER, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-113-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+        minvalue: MIN_RUN_NUMBER,
+        maxvalue: MAX_RUN_NUMBER,
+      });
+    },
+  })
   runNumber: number;
+
   beginDate: Date;
   beginHour: number;
   beginMinute: number;
@@ -16,8 +40,29 @@ export class RataRunBaseDTO {
   endHour: number;
   endMinute: number;
   cemValue: number;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-33-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsNotNegative({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-33-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @ValidateIf(o => o.runStatusCode === 'RUNUSED')
   rataReferenceValue: number;
+
   grossUnitLoad: number;
+
   @IsValidCode(RunStatusCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-29-B', {
