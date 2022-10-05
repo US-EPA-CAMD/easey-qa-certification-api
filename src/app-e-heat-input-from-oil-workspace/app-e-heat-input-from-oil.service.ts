@@ -23,10 +23,10 @@ export class AppEHeatInputFromOilWorkspaceService {
   ) {}
 
   async getAppEHeatInputFromOilRecords(
-    aeCorrTestRunId: string,
+    appECorrTestRunId: string,
   ): Promise<AppEHeatInputFromOilRecordDTO[]> {
     const records = await this.repository.find({
-      where: { aeCorrTestRunId },
+      where: { appECorrTestRunId },
     });
 
     return this.map.many(records);
