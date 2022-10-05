@@ -1,4 +1,6 @@
+import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryDTO,
@@ -11,6 +13,7 @@ import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-
 
 const testSumId = '';
 const userId = 'user';
+const appendixECorrelationTestSummaryId = '';
 const entity = new AppECorrelationTestSummary();
 const appECorrelationTest = new AppECorrelationTestSummaryDTO();
 const appECorrelationTests = [appECorrelationTest];
@@ -22,6 +25,7 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
+  delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
@@ -78,6 +82,37 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
 
       expect(result).toEqual(appECorrelationTest);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteAppECorrelation', () => {
+    it('Should delete an Appendix E Correlation Test Summary record', async () => {
+      const result = await service.deleteAppECorrelation(
+        testSumId,
+        appendixECorrelationTestSummaryId,
+        userId,
+      );
+      expect(result).toEqual(undefined);
+    });
+
+    it('Should throw error while deleting an Appendix E Correlation Test Summary record', async () => {
+      const error = new LoggingException(
+        `Error Appendix E Correlation Test Summary with record Id [${appendixECorrelationTestSummaryId}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+      jest.spyOn(repository, 'delete').mockRejectedValue(error);
+
+      let errored = false;
+      try {
+        await service.deleteAppECorrelation(
+          testSumId,
+          appendixECorrelationTestSummaryId,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
     });
   });
 });
