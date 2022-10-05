@@ -68,16 +68,16 @@ Database credentials are injected into the cloud.gov environments as part of the
 - EASEY_QA_CERTIFICATION_API_ENABLE_DEBUG=true|false
 - EASEY_QA_CERTIFICATION_API_ENABLE_API_KEY=true|false
   - IF ABOVE IS TRUE THEN SET
-    - EASEY_QA_CERTIFICATION_  API_KEY={ask project dev/tech lead}
+    - EASEY_QA_CERTIFICATION_API_KEY={ask project dev/tech lead}
 - EASEY_QA_CERTIFICATION_API_ENABLE_AUTH_TOKEN=true|false
   - IF ABOVE IS TRUE THEN
-    - USE AUTH API TO SIGNI  N & GET AUTH TOKEN TO USE AS A BEARER TOKEN
+    - USE AUTH API TO SIGNIN & GET AUTH TOKEN TO USE AS A BEARER TOKEN
   - IF ABOVE IS FALSE THEN SET
     - EASEY_QA_CERTIFICATION_API_CURRENT_USER={see below}
     - FORMAT: { "userId": "testuser", "roles": [ { "orisCode": 3, "role": "P" } ] }
 - EASEY_QA_CERTIFICATION_API_ENABLE_SECRET_TOKEN=true|false
   - IF ABOVE IS TRUE THEN SET
-    - EASEY_QA_CERTIFICATION_  API_SECRET_TOKEN={ask project dev/tech lead}
+    - EASEY_QA_CERTIFICATION_API_SECRET_TOKEN={ask project dev/tech lead}
 
 **Please refer to our [Getting Started](https://github.com/US-EPA-CAMD/devops/blob/master/GETTING-STARTED.md) instructions on how to configure the following environment variables & connect to the database.**
 - EASEY_DB_HOST
@@ -116,7 +116,7 @@ $ yarn start
 
 ## API Endpoints
 Please refer to the QA Certification Management API Swagger Documentation for descriptions of the endpoints.<br>
-[Dev Environment](https://api.epa.gov/easey/dev/qa-certification-mgmt/swagger/) | [Test Environment](https://api.epa.gov/easey/test/qa-certification-mgmt/swagger/) | [Beta Environment](https://api.epa.gov/easey/beta/qa-certification-mgmt/swagger/) | [Staging Environment](https://api.epa.gov/easey/staging/qa-certification-mgmt/swagger/)
+[Dev Environment](https://api.epa.gov/easey/dev/qa-certification-mgmt/swagger/) | [Test Environment](https://api.epa.gov/easey/test/qa-certification-mgmt/swagger/) |  [Performance Environment](https://api.epa.gov/easey/perf/qa-certification-mgmt/swagger/) | [Beta Environment](https://api.epa.gov/easey/beta/qa-certification-mgmt/swagger/) | [Staging Environment](https://api.epa.gov/easey/staging/qa-certification-mgmt/swagger/)
 
 ## License & Contributing
 This project is licensed under the MIT License. We encourage you to read this project’s [License](LICENSE), [Contributing Guidelines](CONTRIBUTING.md), and [Code of Conduct](CODE-OF-CONDUCT.md).

@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Put,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -67,7 +68,7 @@ export class AppEHeatInputFromGasWorkspaceController {
   @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
   @ApiCreatedResponse({
-    type: AppEHeatInputFromGasDTO,
+    type: AppEHeatInputFromGasRecordDTO,
     description: 'Creates a workspace Appendix E Heat Input From Gas record.',
   })
   async createAppEHeatInputFromGas(
@@ -81,6 +82,29 @@ export class AppEHeatInputFromGasWorkspaceController {
     return this.service.createAppEHeatInputFromGas(
       testSumId,
       appECorrTestRunId,
+      payload,
+      user.userId,
+    );
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: AppEHeatInputFromGasRecordDTO,
+    description: 'Updates a workspace Appendix E Heat Input From Gas record.',
+  })
+  async updateAppECorrelationTestRun(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('appECorrTestSumId') appECorrTestSumId: string,
+    @Param('id') id: string,
+    @Body() payload: AppEHeatInputFromGasBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<AppEHeatInputFromGasRecordDTO> {
+    return this.service.updateAppEHeatInputFromGas(
+      testSumId,
+      id,
       payload,
       user.userId,
     );
