@@ -11,6 +11,7 @@ import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-
 
 const testSumId = '';
 const userId = 'user';
+const appendixECorrelationTestSummaryId = '';
 const entity = new AppECorrelationTestSummary();
 const appECorrelationTest = new AppECorrelationTestSummaryDTO();
 const appECorrelationTests = [appECorrelationTest];
@@ -78,6 +79,35 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
 
       expect(result).toEqual(appECorrelationTest);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    describe('editAppECorrelation', () => {
+      it('should update an Appendix E Correlation Test Summary record', async () => {
+        const result = await service.editAppECorrelation(
+          testSumId,
+          appendixECorrelationTestSummaryId,
+          payload,
+          userId,
+        );
+        expect(result).toEqual(appECorrelationTest);
+      });
+
+      it('should throw error with invalid Appendix E Correlation Test Summary', async () => {
+        jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+        let errored = false;
+        try {
+          await service.editAppECorrelation(
+            testSumId,
+            appendixECorrelationTestSummaryId,
+            payload,
+            userId,
+          );
+        } catch (e) {
+          errored = true;
+        }
+        expect(errored).toEqual(true);
+      });
     });
   });
 });

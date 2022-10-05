@@ -17,7 +17,7 @@ const user: CurrentUser = {
   isAdmin: false,
   roles: [],
 };
-const appendixECorrelationTestSummaryId = 'appendixECorrelationTestSummaryId';
+const appendixECorrelationTestSummaryId = '';
 const appECorrelationTest = new AppECorrelationTestSummaryBaseDTO();
 const appECorrelationTests = [appECorrelationTest];
 
@@ -25,6 +25,7 @@ const mockService = () => ({
   getAppECorrelations: jest.fn().mockResolvedValue(appECorrelationTests),
   getAppECorrelation: jest.fn().mockResolvedValue(appECorrelationTest),
   createAppECorrelation: jest.fn().mockResolvedValue(appECorrelationTest),
+  editAppECorrelation: jest.fn().mockResolvedValue(appECorrelationTest),
 });
 
 const payload = new AppECorrelationTestSummaryBaseDTO();
@@ -62,6 +63,7 @@ describe('AppendixETestSummaryWorkspaceController', () => {
     it('Calls the repository to get one Appendix E Correlation Test Summary record by Id', async () => {
       const result = await controller.getAppECorrelation(
         locId,
+        testSumId,
         appendixECorrelationTestSummaryId,
       );
       expect(result).toEqual(appECorrelationTest);
@@ -77,6 +79,20 @@ describe('AppendixETestSummaryWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(appECorrelationTest);
+    });
+  });
+
+  describe('editAppECorrelation', () => {
+    it('should call the Appendix E Correlation Test Summary record', async () => {
+      expect(
+        await controller.editAppECorrelation(
+          locId,
+          testSumId,
+          appendixECorrelationTestSummaryId,
+          payload,
+          user,
+        ),
+      ).toEqual(appECorrelationTest);
     });
   });
 });
