@@ -35,7 +35,8 @@ export class AppEHeatInputFromOilWorkspaceController {
   @ApiOkResponse({
     isArray: true,
     type: AppEHeatInputFromOilRecordDTO,
-    description: 'Retrieves workspace Appendix E Heat Input from Oil records by Appendix E CorrelationTestRun Id',
+    description:
+      'Retrieves workspace Appendix E Heat Input from Oil records by Appendix E CorrelationTestRun Id',
   })
   getAppEHeatInputFromOilRecords(
     @Param('locId') _locationId: string,
@@ -50,7 +51,8 @@ export class AppEHeatInputFromOilWorkspaceController {
   @ApiOkResponse({
     isArray: false,
     type: AppEHeatInputFromOilRecordDTO,
-    description: 'Retrieves workspace Appendix E Heat Input from Oil record by its Id',
+    description:
+      'Retrieves workspace Appendix E Heat Input from Oil record by its Id',
   })
   getAppEHeatInputFromOilRecord(
     @Param('locId') _locationId: string,
@@ -67,7 +69,8 @@ export class AppEHeatInputFromOilWorkspaceController {
   //@ApiBearerAuth('Token')
   @ApiCreatedResponse({
     type: AppEHeatInputFromOilRecordDTO,
-    description: 'Creates an Appendix E Heat Input from Oil record in the workspace',
+    description:
+      'Creates an Appendix E Heat Input from Oil record in the workspace',
   })
   async createAppEHeatInputFromOilRecord(
     @Param('locId') _locationId: string,
@@ -77,7 +80,11 @@ export class AppEHeatInputFromOilWorkspaceController {
     @Body() payload: AppEHeatInputFromOilBaseDTO,
     //@User() user: CurrentUser,
   ): Promise<AppEHeatInputFromOilRecordDTO> {
-    return this.service.createAppEHeatInputFromOilRecord(testSumId, aeCorrTestRunId, payload, 'fred');//user.userId);
+    return this.service.createAppEHeatInputFromOilRecord(
+      testSumId,
+      aeCorrTestRunId,
+      payload,
+      'fred',
+    ); //user.userId);
   }
-
 }

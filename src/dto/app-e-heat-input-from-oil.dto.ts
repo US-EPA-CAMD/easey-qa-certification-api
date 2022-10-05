@@ -7,7 +7,7 @@ export class AppEHeatInputFromOilBaseDTO {
   oilGCVUnitsOfMeasureCode: string;
   oilVolume: number;
   oilVolumeUnitsOfMeasureCode: string;
-  oilDensity: number
+  oilDensity: number;
   oilDensityUnitsOfMeasureCode: string;
   monitoringSystemId: string;
 }
@@ -22,4 +22,4 @@ export class AppEHeatInputFromOilRecordDTO extends AppEHeatInputFromOilBaseDTO {
 
 export class AppEHeatInputFromOilImportDTO extends AppEHeatInputFromOilBaseDTO {}
 
-export class AppEHeatInputFromOilDto extends AppEHeatInputFromOilRecordDTO {}
+export class AppEHeatInputFromOilDTO extends AppEHeatInputFromOilRecordDTO {}

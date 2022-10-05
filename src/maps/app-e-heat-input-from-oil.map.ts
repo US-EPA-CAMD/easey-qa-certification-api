@@ -2,12 +2,17 @@ import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 
-import { AppEHeatInputFromOilDto } from '../dto/app-e-heat-input-from-oil.dto';
-import { AppEHeatInputFromOil } from '../entities/app-e-heat-input-from-oil.entity'
+import { AppEHeatInputFromOilDTO } from '../dto/app-e-heat-input-from-oil.dto';
+import { AppEHeatInputFromOil } from '../entities/app-e-heat-input-from-oil.entity';
 
 @Injectable()
-export class AppEHeatInputFromOilMap extends BaseMap<AppEHeatInputFromOil, AppEHeatInputFromOilDto> {
-  public async one(entity: AppEHeatInputFromOil): Promise<AppEHeatInputFromOilDto> {
+export class AppEHeatInputFromOilMap extends BaseMap<
+  AppEHeatInputFromOil,
+  AppEHeatInputFromOilDTO
+> {
+  public async one(
+    entity: AppEHeatInputFromOil,
+  ): Promise<AppEHeatInputFromOilDTO> {
     return {
       id: entity.id,
       appECorrelationTestId: entity.aeCorrTestRunId,
@@ -25,6 +30,6 @@ export class AppEHeatInputFromOilMap extends BaseMap<AppEHeatInputFromOil, AppEH
       userId: entity.userId,
       addDate: entity.addDate,
       updateDate: entity.updateDate,
-    }
+    };
   }
 }

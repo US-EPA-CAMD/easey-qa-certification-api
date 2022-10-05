@@ -3,9 +3,11 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
-import { AppEHeatInputFromOilBaseDTO,
-         AppEHeatInputFromOilDto,
-         AppEHeatInputFromOilRecordDTO } from '../dto/app-e-heat-input-from-oil.dto';
+import {
+  AppEHeatInputFromOilDTO,
+  AppEHeatInputFromOilBaseDTO,
+  AppEHeatInputFromOilRecordDTO,
+} from '../dto/app-e-heat-input-from-oil.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
@@ -18,10 +20,12 @@ export class AppEHeatInputFromOilWorkspaceService {
     private readonly repository: AppEHeatInputFromOilWorkspaceRepository,
     private readonly map: AppEHeatInputFromOilMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
-    private readonly testSummaryService: TestSummaryWorkspaceService
+    private readonly testSummaryService: TestSummaryWorkspaceService,
   ) {}
 
-  async getAppEHeatInputFromOilRecords(aeCorrTestRunId: string): Promise<AppEHeatInputFromOilDto[]> {
+  async getAppEHeatInputFromOilRecords(
+    aeCorrTestRunId: string,
+  ): Promise<AppEHeatInputFromOilDTO[]> {
     const records = await this.repository.find({
       where: { aeCorrTestRunId },
     });
@@ -29,7 +33,9 @@ export class AppEHeatInputFromOilWorkspaceService {
     return this.map.many(records);
   }
 
-  async getAppEHeatInputFromOilRecord(id: string): Promise<AppEHeatInputFromOilDto> {
+  async getAppEHeatInputFromOilRecord(
+    id: string,
+  ): Promise<AppEHeatInputFromOilDTO> {
     const result = await this.repository.findOne(id);
 
     if (!result) {

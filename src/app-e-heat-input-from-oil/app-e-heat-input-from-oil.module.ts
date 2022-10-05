@@ -13,6 +13,10 @@ import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
   ],
   controllers: [AppEHeatInputFromOilController],
   providers: [AppEHeatInputFromOilService, AppEHeatInputFromOilMap],
-  exports: [TypeOrmModule, AppEHeatInputFromOilMap, AppEHeatInputFromOilService],
+  exports: [
+    TypeOrmModule,
+    AppEHeatInputFromOilMap,
+    AppEHeatInputFromOilService,
+  ],
 })
 export class AppEHeatInputFromOilModule {}
