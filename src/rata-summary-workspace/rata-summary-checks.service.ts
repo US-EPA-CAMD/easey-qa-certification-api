@@ -59,7 +59,7 @@ export class RataSummaryChecksService {
       });
 
       // IMPORT-30 Extraneous RATA Summary Data Check
-      error = await this.import30Check(locationId, rataSummary, testSumId);
+      error = await this.import30Check(rataSummary, testSumRecord);
       if (error) {
         errorList.push(error);
       }
@@ -154,14 +154,10 @@ export class RataSummaryChecksService {
   }
 
   private async import30Check(
-    locationId: string,
     rataSummary: RataSummaryBaseDTO | RataSummaryImportDTO,
-    testSumId: string,
-    testSummary?: TestSummaryImportDTO,
+    testSummary: any,
   ): Promise<string> {
     let error: string = null;
-    let FIELDNAME: string;
-    let testSumRecord: TestSummary;
     const extraneousRataSummaryFields: string[] = [];
 
     if (
@@ -172,20 +168,35 @@ export class RataSummaryChecksService {
       rataSummary.calculatedWAF !== null ||
       rataSummary.defaultWAF !== null
     ) {
-      if (testSumRecord.system?.systemTypeCode !== 'FLOW') {
-        extraneousRataSummaryFields.push(
-          'CO2OrO2ReferenceMethodCode',
-          'StackDiameter',
-          'StackArea',
-          'NumberOfTraversePoints',
-          'CalculatedWAF',
-          'DefaultWAF',
-        );
+      if (testSummary.system?.systemTypeCode !== 'FLOW') {
+        if (rataSummary.co2OrO2ReferenceMethodCode !== null) {
+          extraneousRataSummaryFields.push('CO2 or O2 Reference Method Code');
+        }
+
+        if (rataSummary.stackDiameter !== null) {
+          extraneousRataSummaryFields.push('Stack Diameter');
+        }
+
+        if (rataSummary.stackArea !== null) {
+          extraneousRataSummaryFields.push('Stack Area');
+        }
+
+        if (rataSummary.numberOfTraversePoints !== null) {
+          extraneousRataSummaryFields.push('Number Of Traverse Points');
+        }
+
+        if (rataSummary.calculatedWAF !== null) {
+          extraneousRataSummaryFields.push('Calculated WAF');
+        }
+
+        if (rataSummary.defaultWAF !== null) {
+          extraneousRataSummaryFields.push('Default WAF');
+        }
       }
 
       if (extraneousRataSummaryFields?.length > 0) {
-        error = this.getMessage('IMPORT-17-A', {
-          fieldname: FIELDNAME,
+        error = this.getMessage('IMPORT-30-A', {
+          fieldname: extraneousRataSummaryFields,
           locationID: testSummary.unitId
             ? testSummary.unitId
             : testSummary.stackPipeId,

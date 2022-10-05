@@ -654,24 +654,40 @@ export class TestSummaryChecksService {
     locationId: string,
     summary: TestSummaryImportDTO,
   ): Promise<string> {
-    const resultA = this.getMessage('IMPORT-19-A', {
-      locationId: summary.unitId ? summary.unitId : summary.stackPipeId,
-      systemId: summary.monitoringSystemID,
-      testNumber: summary.testNumber,
-    });
+    if (
+      summary.testTypeCode === TestTypeCodes.RATA &&
+      summary.rataData?.length > 0
+    ) {
+      for (const rata of summary.rataData) {
+        if (rata.rataSummaryData?.length > 0) {
+          for (const rataSummary of rata.rataSummaryData) {
+            if (rataSummary.rataRunData?.length > 0) {
+              for (const rataRun of rataSummary.rataRunData) {
+                if (rataRun.flowRataRunData?.length > 0) {
+                  const monitorSystem = await this.monitorSystemRepository.findOne(
+                    {
+                      locationId,
+                      monitoringSystemID: summary.monitoringSystemID,
+                    },
+                  );
 
-    const monitorSystem = await this.monitorSystemRepository.findOne({
-      where: {
-        monitoringSystemID: summary.monitoringSystemID,
-      },
-    });
-
-    if (summary.testTypeCode === TestTypeCodes.RATA) {
-      if (
-        summary.flowRataRunData?.length > 0 &&
-        monitorSystem.systemTypeCode !== 'FLOW'
-      ) {
-        return resultA;
+                  if (
+                    monitorSystem &&
+                    monitorSystem.systemTypeCode !== 'FLOW'
+                  ) {
+                    return this.getMessage('IMPORT-19-A', {
+                      locationID: summary.unitId
+                        ? summary.unitId
+                        : summary.stackPipeId,
+                      systemID: summary.monitoringSystemID,
+                      testNumber: summary.testNumber,
+                    });
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
     return null;

@@ -77,4 +77,40 @@ export class AppEHeatInputFromGasWorkspaceService {
 
     return this.map.one(entity);
   }
+
+  async updateAppEHeatInputFromGas(
+    testSumId: string,
+    id: string,
+    payload: AppEHeatInputFromGasBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<AppEHeatInputFromGasRecordDTO> {
+    const timestamp = currentDateTime();
+
+    const entity = await this.repository.findOne(id);
+
+    if (!entity) {
+      throw new LoggingException(
+        `Appendix E Heat Input From Gas record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    entity.gasVolume = payload.gasVolume;
+    entity.gasGCV = payload.gasGCV;
+    entity.gasHeatInput = payload.gasHeatInput;
+    entity.monitoringSystemId = payload.monitoringSystemId;
+    entity.userId = userId;
+    entity.updateDate = timestamp;
+
+    await this.repository.save(entity);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.map.one(entity);
+  }
 }
