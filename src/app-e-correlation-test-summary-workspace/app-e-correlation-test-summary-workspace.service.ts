@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, HttpStatus } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '../utilities/functions';
@@ -70,5 +70,34 @@ export class AppECorrelationTestSummaryWorkspaceService {
     );
 
     return this.map.one(entity);
+  }
+
+  async editAppECorrelation(
+    testSumId: string,
+    id: string,
+    payload: AppECorrelationTestSummaryBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<AppECorrelationTestSummaryRecordDTO> {
+    const timestamp = currentDateTime().toLocaleString();
+
+    const entity = await this.getAppECorrelation(id);
+
+    entity.operatingLevelForRun = payload.operatingLevelForRun;
+    entity.meanReferenceValue = payload.meanReferenceValue;
+    entity.averageHourlyHeatInputRate = payload.averageHourlyHeatInputRate;
+    entity.fFactor = payload.fFactor;
+    entity.userId = userId;
+    entity.updateDate = timestamp;
+
+    await this.repository.save(entity);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.getAppECorrelation(id);
   }
 }
