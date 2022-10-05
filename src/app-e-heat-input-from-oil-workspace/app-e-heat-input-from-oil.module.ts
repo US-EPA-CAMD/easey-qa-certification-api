@@ -18,6 +18,10 @@ import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
   ],
   controllers: [AppEHeatInputFromOilWorkspaceController],
   providers: [AppEHeatInputFromOilWorkspaceService, AppEHeatInputFromOilMap],
-  exports: [TypeOrmModule, AppEHeatInputFromOilMap, AppEHeatInputFromOilWorkspaceService],
+  exports: [
+    TypeOrmModule,
+    AppEHeatInputFromOilMap,
+    AppEHeatInputFromOilWorkspaceService,
+  ],
 })
 export class AppEHeatInputFromOilWorkspaceModule {}

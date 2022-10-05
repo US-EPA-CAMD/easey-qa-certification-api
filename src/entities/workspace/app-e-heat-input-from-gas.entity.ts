@@ -21,7 +21,7 @@ export class AppEHeatInputFromGas extends BaseEntity {
     type: 'varchar',
     name: 'ae_corr_test_run_id',
   })
-  appECorrelationTestRunId: string;
+  appECorrTestRunId: string;
 
   @Column({
     type: 'numeric',
@@ -55,7 +55,7 @@ export class AppEHeatInputFromGas extends BaseEntity {
     type: 'varchar',
     name: 'mon_sys_id',
   })
-  monitoringSystemId: string;
+  monitoringSystemID: string;
 
   @Column({
     type: 'varchar',
@@ -64,13 +64,13 @@ export class AppEHeatInputFromGas extends BaseEntity {
   userId: string;
 
   @Column({
-    type: 'time without time zone',
+    type: 'timestamp',
     name: 'add_date',
   })
   addDate: Date;
 
   @Column({
-    type: 'time without time zone',
+    type: 'timestamp',
     name: 'update_date',
   })
   updateDate: Date;

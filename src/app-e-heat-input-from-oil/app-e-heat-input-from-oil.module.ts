@@ -7,12 +7,13 @@ import { TestSummaryModule } from '../test-summary/test-summary.module';
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([AppEHeatInputFromOilRepository]),
-    forwardRef(() => TestSummaryModule),
-  ],
+  imports: [TypeOrmModule.forFeature([AppEHeatInputFromOilRepository])],
   controllers: [AppEHeatInputFromOilController],
   providers: [AppEHeatInputFromOilService, AppEHeatInputFromOilMap],
-  exports: [TypeOrmModule, AppEHeatInputFromOilMap, AppEHeatInputFromOilService],
+  exports: [
+    TypeOrmModule,
+    AppEHeatInputFromOilMap,
+    AppEHeatInputFromOilService,
+  ],
 })
 export class AppEHeatInputFromOilModule {}

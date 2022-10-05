@@ -70,13 +70,13 @@ export class AppECorrelationTestSummary extends BaseEntity {
   fFactor: number;
 
   @Column({
-    type: 'time without time zone',
+    type: 'timestamp',
     name: 'add_date',
   })
   addDate: Date;
 
   @Column({
-    type: 'time without time zone',
+    type: 'timestamp',
     name: 'update_date',
   })
   updateDate: Date;

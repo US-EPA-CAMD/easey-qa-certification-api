@@ -3,14 +3,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { currentDateTime } from '../utilities/functions';
-import {
-  AppEHeatInputFromGasBaseDTO,
-  AppEHeatInputFromGasRecordDTO,
-} from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas.repository';
 import { TestSummaryWorkspaceService } from 'src/test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import {
+  AppEHeatInputFromGasBaseDTO,
+  AppEHeatInputFromGasRecordDTO,
+} from '../dto/app-e-heat-input-from-gas.dto';
 
 @Injectable()
 export class AppEHeatInputFromGasWorkspaceService {
@@ -49,7 +49,7 @@ export class AppEHeatInputFromGasWorkspaceService {
 
   async createAppEHeatInputFromGas(
     testSumId: string,
-    appECorrelationTestRunId: string,
+    appECorrTestRunId: string,
     payload: AppEHeatInputFromGasBaseDTO,
     userId: string,
     isImport: boolean = false,
@@ -58,7 +58,7 @@ export class AppEHeatInputFromGasWorkspaceService {
 
     let entity = this.repository.create({
       id: uuid(),
-      appECorrelationTestRunId,
+      appECorrTestRunId,
       ...payload,
       userId,
       addDate: timestamp,

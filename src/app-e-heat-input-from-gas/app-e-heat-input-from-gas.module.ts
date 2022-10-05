@@ -7,10 +7,7 @@ import { AppEHeatInputFromGasRepository } from './app-e-heat-input-from-gas.repo
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([AppEHeatInputFromGasRepository]),
-    HttpModule,
-  ],
+  imports: [TypeOrmModule.forFeature([AppEHeatInputFromGasRepository])],
   controllers: [AppEHeatInputFromGasController],
   providers: [AppEHeatInputFromGasService, AppEHeatInputFromGasMap],
   exports: [

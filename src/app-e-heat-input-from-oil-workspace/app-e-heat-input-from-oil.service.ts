@@ -3,13 +3,14 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
-import { AppEHeatInputFromOilBaseDTO,
-         AppEHeatInputFromOilDto,
-         AppEHeatInputFromOilRecordDTO } from '../dto/app-e-heat-input-from-oil.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import {
+  AppEHeatInputFromOilBaseDTO,
+  AppEHeatInputFromOilRecordDTO,
+} from 'src/dto/app-e-heat-input-from-oil.dto';
 
 @Injectable()
 export class AppEHeatInputFromOilWorkspaceService {
@@ -18,10 +19,12 @@ export class AppEHeatInputFromOilWorkspaceService {
     private readonly repository: AppEHeatInputFromOilWorkspaceRepository,
     private readonly map: AppEHeatInputFromOilMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
-    private readonly testSummaryService: TestSummaryWorkspaceService
+    private readonly testSummaryService: TestSummaryWorkspaceService,
   ) {}
 
-  async getAppEHeatInputFromOilRecords(aeCorrTestRunId: string): Promise<AppEHeatInputFromOilDto[]> {
+  async getAppEHeatInputFromOilRecords(
+    aeCorrTestRunId: string,
+  ): Promise<AppEHeatInputFromOilRecordDTO[]> {
     const records = await this.repository.find({
       where: { aeCorrTestRunId },
     });
@@ -29,7 +32,9 @@ export class AppEHeatInputFromOilWorkspaceService {
     return this.map.many(records);
   }
 
-  async getAppEHeatInputFromOilRecord(id: string): Promise<AppEHeatInputFromOilDto> {
+  async getAppEHeatInputFromOilRecord(
+    id: string,
+  ): Promise<AppEHeatInputFromOilRecordDTO> {
     const result = await this.repository.findOne(id);
 
     if (!result) {
@@ -44,7 +49,7 @@ export class AppEHeatInputFromOilWorkspaceService {
 
   async createAppEHeatInputFromOilRecord(
     testSumId: string,
-    aeCorrTestRunId: string,
+    appECorrTestRunId: string,
     payload: AppEHeatInputFromOilBaseDTO,
     userId: string,
     isImport: boolean = false,
@@ -55,7 +60,7 @@ export class AppEHeatInputFromOilWorkspaceService {
     let entity = this.repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
-      aeCorrTestRunId,
+      appECorrTestRunId,
       userId,
       addDate: timestamp,
       updateDate: timestamp,

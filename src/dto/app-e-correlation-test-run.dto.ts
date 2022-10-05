@@ -1,11 +1,11 @@
 import {
-  AppECorrelationHeatInputFromOilDTO,
-  AppECorrelationHeatInputFromOilImportDTO,
-} from './app-e-correlation-heat-input-from-oil.dto';
+  AppEHeatInputFromOilDTO,
+  AppEHeatInputFromOilImportDTO,
+} from './app-e-heat-input-from-oil.dto';
 import {
-  AppECorrelationHeatInputFromGasDTO,
-  AppECorrelationHeatInputFromGasImportDTO,
-} from './app-e-correlation-heat-input-from-gas.dto';
+  AppEHeatInputFromGasDTO,
+  AppEHeatInputFromGasImportDTO,
+} from './app-e-heat-input-from-gas.dto';
 
 const KEY = 'Appendix E Correlation Test Run';
 
@@ -34,11 +34,11 @@ export class AppECorrelationTestRunRecordDTO extends AppECorrelationTestRunBaseD
 }
 
 export class AppECorrelationTestRunImportDTO extends AppECorrelationTestRunBaseDTO {
-  appECorrelationHeatInputFromOilData: AppECorrelationHeatInputFromOilImportDTO[];
-  appECorrelationHeatInputFromGasData: AppECorrelationHeatInputFromGasImportDTO[];
+  appEHeatInputFromOilData: AppEHeatInputFromOilImportDTO[];
+  appEHeatInputFromGasData: AppEHeatInputFromGasImportDTO[];
 }
 
 export class AppECorrelationTestRunDTO extends AppECorrelationTestRunRecordDTO {
-  appECorrelationHeatInputFromOilData: AppECorrelationHeatInputFromOilDTO[];
-  appECorrelationHeatInputFromGasData: AppECorrelationHeatInputFromGasDTO[];
+  appEHeatInputFromOilData: AppEHeatInputFromOilDTO[];
+  appEHeatInputFromGasData: AppEHeatInputFromGasDTO[];
 }

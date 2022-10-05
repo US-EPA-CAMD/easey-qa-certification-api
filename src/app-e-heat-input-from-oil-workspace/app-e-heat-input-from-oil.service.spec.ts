@@ -69,9 +69,10 @@ describe('AppEHeatInputOilWorkspaceService', () => {
   });
 
   describe('getAppEHeatInputFromOilRecords', () => {
-    it('calls the repository.find() to get Appendix E Heat Input from Oil records by Appendix E Correlation Test Run Id',
-      async () => {
-      const result = await service.getAppEHeatInputFromOilRecords(appECorrTestRunId);
+    it('calls the repository.find() to get Appendix E Heat Input from Oil records by Appendix E Correlation Test Run Id', async () => {
+      const result = await service.getAppEHeatInputFromOilRecords(
+        appECorrTestRunId,
+      );
       expect(result).toEqual([mockAeHiFromOilDTO]);
       expect(repository.find).toHaveBeenCalled();
     });
@@ -100,8 +101,7 @@ describe('AppEHeatInputOilWorkspaceService', () => {
   });
 
   describe('createAppEHeatInputFromOilRecord', () => {
-    it('calls the repository.create() and insert an Appendix E Heat Input from Oil record',
-      async () => {
+    it('calls the repository.create() and insert an Appendix E Heat Input from Oil record', async () => {
       const result = await service.createAppEHeatInputFromOilRecord(
         testSumId,
         appECorrTestRunId,
@@ -112,5 +112,4 @@ describe('AppEHeatInputOilWorkspaceService', () => {
       expect(repository.create).toHaveBeenCalled();
     });
   });
-
 });
