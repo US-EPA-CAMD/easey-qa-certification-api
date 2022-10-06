@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -77,5 +85,22 @@ export class AppEHeatInputFromOilWorkspaceController {
       payload,
       user.userId,
     );
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Deletes a workspace Appendix E Correlation Test Run record.',
+  })
+  async deleteAppEHeatInputFromOil(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('appECorrTestSumId') _appECorrTestSumId: string,
+    @Param('appECorrTestRunId') _appECorrTestRunId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteAppEHeatInputFromOil(testSumId, id, user.userId);
   }
 }

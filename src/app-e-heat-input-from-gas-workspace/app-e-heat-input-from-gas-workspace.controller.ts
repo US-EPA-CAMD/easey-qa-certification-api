@@ -115,7 +115,7 @@ export class AppEHeatInputFromGasWorkspaceController {
   @ApiOkResponse({
     description: 'Deletes a workspace Appendix E Correlation Test Run record.',
   })
-  async deleteAppECorrelationTestRun(
+  async deleteAppEHeatInputFromGas(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('appECorrTestSumId') _appECorrTestSumId: string,
