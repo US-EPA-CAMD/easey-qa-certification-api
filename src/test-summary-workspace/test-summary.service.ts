@@ -36,6 +36,7 @@ import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
 
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
+import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -50,6 +51,8 @@ export class TestSummaryWorkspaceService {
     private readonly rataService: RataWorkspaceService,
     @Inject(forwardRef(() => ProtocolGasWorkspaceService))
     private readonly protocolGasService: ProtocolGasWorkspaceService,
+    @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
+    private readonly appECorrelationTestSummaryService: AppECorrelationTestSummaryWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -148,7 +151,8 @@ export class TestSummaryWorkspaceService {
       new Promise(async (resolve, _reject) => {
         let linearitySummaryData,
           rataData,
-          protocolGasData = null;
+          protocolGasData,
+          appECorrelationTestSummaryData = null;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
@@ -161,12 +165,16 @@ export class TestSummaryWorkspaceService {
           linearitySummaryData = await this.linearityService.export(testSumIds);
           rataData = await this.rataService.export(testSumIds);
           protocolGasData = await this.protocolGasService.export(testSumIds);
+          appECorrelationTestSummaryData = await this.appECorrelationTestSummaryService.export(testSumIds)
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
             );
             s.rataData = rataData.filter(i => i.testSumId === s.id);
             s.protocolGasData = protocolGasData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
               i => i.testSumId === s.id,
             );
           });

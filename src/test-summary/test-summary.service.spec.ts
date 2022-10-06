@@ -12,6 +12,8 @@ import { TestSummaryRepository } from './test-summary.repository';
 import { TestSummaryService } from './test-summary.service';
 import { ProtocolGas } from '../entities/protocol-gas.entity';
 import { ProtocolGasService } from '../protocol-gas/protocol-gas.service';
+import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
+import { AppECorrelationTestSummaryService } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -49,6 +51,11 @@ const mockProtocolGasService = () => ({
   import: jest.fn().mockResolvedValue(null),
 });
 
+const mockAppECorrelationTestSummaryService = () => ({
+  export: jest.fn().mockResolvedValue([new AppECorrelationTestSummary()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
 describe('TestSummaryService', () => {
   let service: TestSummaryService;
   let repository: TestSummaryRepository;
@@ -77,6 +84,10 @@ describe('TestSummaryService', () => {
         {
           provide: ProtocolGasService,
           useFactory: mockProtocolGasService,
+        },
+        {
+          provide: AppECorrelationTestSummaryService,
+          useFactory: mockAppECorrelationTestSummaryService,
         },
       ],
     }).compile();
