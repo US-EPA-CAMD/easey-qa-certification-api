@@ -18,6 +18,8 @@ import { Rata } from '../entities/workspace/rata.entity';
 import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 import { ProtocolGas } from '../entities/workspace/protocol-gas.entity';
+import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
+import { AppECorrelationTestSummary } from '../entities/workspace/app-e-correlation-test-summary.entity';
 
 const locationId = '121';
 const facilityId = 1;
@@ -69,6 +71,11 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue([testSummaryDto]),
 });
 
+const mockAppECorrelationTestSummaryService = () => ({
+  export: jest.fn().mockResolvedValue([new AppECorrelationTestSummary()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
 describe('TestSummaryWorkspaceService', () => {
   let service: TestSummaryWorkspaceService;
   let repository: TestSummaryWorkspaceRepository;
@@ -97,6 +104,10 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: ProtocolGasWorkspaceService,
           useFactory: mockProtocolGasService,
+        },
+        {
+          provide: AppECorrelationTestSummaryWorkspaceService,
+          useFactory: mockAppECorrelationTestSummaryService,
         },
       ],
     }).compile();
