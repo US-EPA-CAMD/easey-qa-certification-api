@@ -43,6 +43,10 @@ import { AppEHeatInputFromGasModule } from './app-e-heat-input-from-gas/app-e-he
 import { AppEHeatInputFromGasWorkspaceModule } from './app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
 import { AppEHeatInputFromOilModule } from './app-e-heat-input-from-oil/app-e-heat-input-from-oil.module';
 import { AppEHeatInputFromOilWorkspaceModule } from './app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.module';
+import { AppECorrelationTestSummaryWorkspaceModule } from './app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.module';
+import { AppECorrelationTestSummaryModule } from './app-e-correlation-test-summary/app-e-correlation-test-summary.module';
+import { FlowToLoadCheckWorkspaceModule } from './flow-to-load-check-workspace/flow-to-load-check-workspace.module';
+import { FlowToLoadCheckModule } from './flow-to-load-check/flow-to-load-check.module';
 
 @Module({
   imports: [
@@ -79,10 +83,14 @@ import { AppEHeatInputFromOilWorkspaceModule } from './app-e-heat-input-from-oil
     AirEmissionTestingModule,
     RataTraverseWorkspaceModule,
     RataTraverseModule,
+    FlowToLoadCheckModule,
+    FlowToLoadCheckWorkspaceModule,
     FuelFlowToLoadTestModule,
     FuelFlowToLoadTestWorkspaceModule,
     AppECorrelationTestRunModule,
     AppECorrelationTestRunWorkspaceModule,
+    AppECorrelationTestSummaryModule,
+    AppECorrelationTestSummaryWorkspaceModule,
     AppEHeatInputFromGasModule,
     AppEHeatInputFromGasWorkspaceModule,
     AppEHeatInputFromOilModule,

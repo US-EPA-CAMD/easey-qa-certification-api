@@ -36,6 +36,8 @@ import { AppEHeatInputFromGasModule } from './app-e-heat-input-from-gas/app-e-he
 import { AppEHeatInputFromGasWorkspaceModule } from './app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
 import { AppEHeatInputFromOilModule } from './app-e-heat-input-from-oil/app-e-heat-input-from-oil.module';
 import { AppEHeatInputFromOilWorkspaceModule } from './app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.module';
+import { FlowToLoadCheckWorkspaceModule } from './flow-to-load-check-workspace/flow-to-load-check-workspace.module';
+import { FlowToLoadCheckModule } from './flow-to-load-check/flow-to-load-check.module';
 
 const routes: Routes = [
   {
@@ -71,6 +73,10 @@ const routes: Routes = [
           {
             path: ':testSumId/test-qualifications',
             module: TestQualificationModule,
+          },
+          {
+            path: ':testSumId/flow-to-load-checks',
+            module: FlowToLoadCheckModule,
           },
           {
             path: ':testSumId/fuel-flow-to-load-tests',
@@ -181,6 +187,10 @@ const routes: Routes = [
                 ],
               },
             ],
+          },
+          {
+            path: ':testSumId/flow-to-load-checks',
+            module: FlowToLoadCheckWorkspaceModule,
           },
           {
             path: ':testSumId/fuel-flow-to-load-tests',
