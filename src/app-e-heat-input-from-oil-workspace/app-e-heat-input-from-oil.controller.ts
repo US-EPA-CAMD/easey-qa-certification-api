@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Put,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -15,6 +23,10 @@ import {
   AppEHeatInputFromOilRecordDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oil.service';
+import {
+  ProtocolGasBaseDTO,
+  ProtocolGasRecordDTO,
+} from '../dto/protocol-gas.dto';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -74,6 +86,31 @@ export class AppEHeatInputFromOilWorkspaceController {
     return this.service.createAppEHeatInputFromOilRecord(
       testSumId,
       aeCorrTestRunId,
+      payload,
+      user.userId,
+    );
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: AppEHeatInputFromOilRecordDTO,
+    description:
+      'Updates an Appendix E Heat Input from Oil record in the workspace',
+  })
+  editAppEHeatInputFromOil(
+    @Param('locid') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('appECorrTestSumId') _aeCorrTestSumId: string,
+    @Param('appECorrTestRunId') aeCorrTestRunId: string,
+    @Param('id') id: string,
+    @Body() payload: AppEHeatInputFromOilBaseDTO,
+    @User() user: CurrentUser,
+  ) {
+    return this.service.updateAppEHeatInputFromOilRecord(
+      testSumId,
+      id,
       payload,
       user.userId,
     );
