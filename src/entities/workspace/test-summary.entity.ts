@@ -21,6 +21,7 @@ import { TestQualification } from './test-qualification.entity';
 import { AirEmissionTesting } from './air-emission-test.entity';
 import { AppECorrelationTestSummary } from './app-e-correlation-test-summary.entity';
 import { FuelFlowToLoadTest } from './fuel-flow-to-load-test.entity';
+import { FlowToLoadCheck } from './flow-to-load-check.entity';
 
 @Entity({ name: 'camdecmpswks.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -253,4 +254,11 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   appECorrelationTestSummaries: AppECorrelationTestSummary[];
+
+  @OneToMany(
+    () => FlowToLoadCheck,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  flowToLoadCheck: FlowToLoadCheck[];
 }
