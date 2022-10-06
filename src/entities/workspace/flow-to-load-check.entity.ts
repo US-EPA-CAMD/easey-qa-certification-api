@@ -36,6 +36,12 @@ export class FlowToLoadCheck extends BaseEntity {
   testBasisCode: string;
 
   @Column({
+    type: 'varchar',
+    name: 'op_level_cd',
+  })
+  operatingLevelCode: string;
+
+  @Column({
     name: 'bias_adjusted_ind',
     transformer: new NumericColumnTransformer(),
   })
@@ -88,12 +94,6 @@ export class FlowToLoadCheck extends BaseEntity {
     transformer: new NumericColumnTransformer(),
   })
   numberOfHoursExcludedForMainAndBypass: number;
-
-  @Column({
-    name: 'op_level_cd',
-    transformer: new NumericColumnTransformer(),
-  })
-  operatingLevelCode: number;
 
   @Column({
     type: 'timestamp',

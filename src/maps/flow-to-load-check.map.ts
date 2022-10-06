@@ -4,7 +4,7 @@ import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
 import { FlowToLoadCheckDTO } from '../dto/flow-to-load-check.dto';
 
 @Injectable()
-export class FuelFlowToLoadTestMap extends BaseMap<
+export class FlowToLoadCheckMap extends BaseMap<
   FlowToLoadCheck,
   FlowToLoadCheckDTO
 > {

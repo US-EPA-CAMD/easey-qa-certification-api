@@ -9,7 +9,7 @@ import {
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { TestSummary } from './test-summary.entity';
 
-@Entity({ name: 'camdecmpswks.flow_to_load_check' })
+@Entity({ name: 'camdecmps.flow_to_load_check' })
 export class FlowToLoadCheck extends BaseEntity {
   @PrimaryColumn({
     type: 'varchar',
