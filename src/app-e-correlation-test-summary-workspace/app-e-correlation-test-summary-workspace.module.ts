@@ -6,8 +6,9 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
 import { AppendixETestSummaryWorkspaceController } from './app-e-correlation-test-summary-workspace.controller';
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
 import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
-import { AppECorrelationTestSummaryModule } from 'src/app-e-correlation-test-summary/app-e-correlation-test-summary.module';
-import { AppECorrelationTestRunModule } from 'src/app-e-correlation-test-run/app-e-correlation-test-run.module';
+import { AppECorrelationTestSummaryModule } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.module';
+import { AppECorrelationTestRunModule } from '../app-e-correlation-test-run/app-e-correlation-test-run.module';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AppECorrelationTestRunModule } from 'src/app-e-correlation-test-run/app
     forwardRef(() => AppECorrelationTestSummaryModule),
     forwardRef(() => AppECorrelationTestRunModule),
     HttpModule,
+    Logger,
   ],
   controllers: [AppendixETestSummaryWorkspaceController],
   providers: [
