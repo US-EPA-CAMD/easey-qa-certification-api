@@ -10,6 +10,7 @@ import {
 } from '../dto/app-e-correlation-test-summary.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
 
 @Injectable()
 export class AppECorrelationTestSummaryWorkspaceService {
@@ -99,5 +100,18 @@ export class AppECorrelationTestSummaryWorkspaceService {
     );
 
     return this.getAppECorrelation(id);
+  }
+
+  async getAppECorrelationsByTestSumIds(
+    testSumIds: string[],
+  ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(TestSumIds: string[]): Promise<AppECorrelationTestSummaryRecordDTO[]> {
+    return await this.getAppECorrelationsByTestSumIds(TestSumIds);
   }
 }

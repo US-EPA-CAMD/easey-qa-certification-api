@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid';
 
 import { currentDateTime } from '../utilities/functions';
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
-import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas.repository';
+import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
 import { TestSummaryWorkspaceService } from 'src/test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
@@ -112,5 +112,27 @@ export class AppEHeatInputFromGasWorkspaceService {
     );
 
     return this.map.one(entity);
+  }
+
+  async deleteAppEHeatInputFromGas(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete({ id });
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting Appendix E Heat Input From Gas record Id [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
   }
 }

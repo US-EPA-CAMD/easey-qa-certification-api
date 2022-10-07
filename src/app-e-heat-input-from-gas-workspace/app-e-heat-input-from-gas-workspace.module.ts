@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-gas-workspace.service';
 import { AppEHeatInputFromGasWorkspaceController } from './app-e-heat-input-from-gas-workspace.controller';
-import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas.repository';
+import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { AppECorrelationTestSummaryWorkspaceModule } from 'src/app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.module';

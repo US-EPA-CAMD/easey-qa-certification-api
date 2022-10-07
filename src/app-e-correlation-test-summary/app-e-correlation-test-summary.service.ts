@@ -4,6 +4,7 @@ import { AppendixETestSummaryRepository } from './app-e-correlation-test-summary
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
 import { AppECorrelationTestSummaryRecordDTO } from '../dto/app-e-correlation-test-summary.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
 
 @Injectable()
 export class AppECorrelationTestSummaryService {
@@ -34,5 +35,18 @@ export class AppECorrelationTestSummaryService {
     }
 
     return this.map.one(result);
+  }
+
+  async getAppECorrelationsByTestSumIds(
+    testSumIds: string[],
+  ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(TestSumIds: string[]): Promise<AppECorrelationTestSummaryRecordDTO[]> {
+    return await this.getAppECorrelationsByTestSumIds(TestSumIds);
   }
 }

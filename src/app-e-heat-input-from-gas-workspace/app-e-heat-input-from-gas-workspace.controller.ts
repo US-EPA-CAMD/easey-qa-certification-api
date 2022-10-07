@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   UseGuards,
@@ -97,7 +96,8 @@ export class AppEHeatInputFromGasWorkspaceController {
   async updateAppECorrelationTestRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-    @Param('appECorrTestSumId') appECorrTestSumId: string,
+    @Param('appECorrTestSumId') _appECorrTestSumId: string,
+    @Param('appECorrTestRunId') _appECorrTestRunId: string,
     @Param('id') id: string,
     @Body() payload: AppEHeatInputFromGasBaseDTO,
     @User() user: CurrentUser,
@@ -108,5 +108,22 @@ export class AppEHeatInputFromGasWorkspaceController {
       payload,
       user.userId,
     );
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Deletes a workspace Appendix E Correlation Test Run record.',
+  })
+  async deleteAppEHeatInputFromGas(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('appECorrTestSumId') _appECorrTestSumId: string,
+    @Param('appECorrTestRunId') _appECorrTestRunId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteAppEHeatInputFromGas(testSumId, id, user.userId);
   }
 }

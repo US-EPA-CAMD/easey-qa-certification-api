@@ -110,4 +110,20 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
       });
     });
   });
+  describe('getAppECorrelationsByTestSumIds', () => {
+    it('Should get Appendix E Correlation Test Summary records by test sum ids', async () => {
+      const result = await service.getAppECorrelationsByTestSumIds([testSumId]);
+      expect(result).toEqual([appECorrelationTest]);
+    });
+  });
+
+  describe('Export', () => {
+    it('Should Export Appendix E Correlation Test Summary', async () => {
+      jest
+        .spyOn(service, 'getAppECorrelationsByTestSumIds')
+        .mockResolvedValue([appECorrelationTest]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([appECorrelationTest]);
+    });
+  });
 });
