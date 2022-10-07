@@ -1,9 +1,12 @@
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { AppendixETestSummaryRepository } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.repository';
 import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryDTO,
+  AppECorrelationTestSummaryImportDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
 import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
@@ -37,14 +40,20 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockOfficialRepository = () => ({
+  findOne: jest.fn(),
+});
+
 describe('AppECorrelationTestSummaryWorkspaceService', () => {
   let service: AppECorrelationTestSummaryWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
   let repository: AppendixETestSummaryWorkspaceRepository;
+  let officialRepository: AppendixETestSummaryRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        Logger,
         AppECorrelationTestSummaryWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
@@ -58,6 +67,10 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
           provide: AppECorrelationTestSummaryMap,
           useFactory: mockMap,
         },
+        {
+          provide: AppendixETestSummaryRepository,
+          useFactory: mockOfficialRepository,
+        },
       ],
     }).compile();
 
@@ -69,6 +82,9 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
     );
     repository = module.get<AppendixETestSummaryWorkspaceRepository>(
       AppendixETestSummaryWorkspaceRepository,
+    );
+    officialRepository = module.get<AppendixETestSummaryRepository>(
+      AppendixETestSummaryRepository,
     );
   });
 
@@ -113,6 +129,17 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
       });
     });
   });
+  
+  describe('Import', () => {
+    it('Should Import Appendix E Correlation Test Summary', async () => {
+      jest
+        .spyOn(service, 'createAppECorrelation')
+        .mockResolvedValue(appECorrelationTest);
+
+      await service.import(testSumId, new AppECorrelationTestSummaryImportDTO(), userId, true);
+    });
+  });
+
   describe('getAppECorrelationsByTestSumIds', () => {
     it('Should get Appendix E Correlation Test Summary records by test sum ids', async () => {
       const result = await service.getAppECorrelationsByTestSumIds([testSumId]);
