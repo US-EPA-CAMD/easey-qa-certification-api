@@ -53,12 +53,6 @@ export class FlowRataRunChecksService {
       rataRunRecord = await this.rataRunRepository.findOne(rataRunId);
     }
 
-    // RATA-64 Static Stack Pressure Valid
-    error = this.rata64Check(flowRataRun.staticStackPressure);
-    if (error) {
-      errorList.push(error);
-    }
-
     /* // RATA-85 Number of Traverse Points Valid
     error = this.rata85Check(flowRataRun, rataSummaryRecord);
     if (error) {
@@ -76,23 +70,6 @@ export class FlowRataRunChecksService {
     this.throwIfErrors(errorList);
     this.logger.info('Completed Flow Rata Run Checks');
     return errorList;
-  }
-
-  // RATA-64 Static Stack Pressure Valid
-  private rata64Check(staticStackPressure: number): string {
-    let error: string = null;
-
-    if (
-      (staticStackPressure >= -30 && staticStackPressure < -10) ||
-      (staticStackPressure > 10 && staticStackPressure <= 30)
-    ) {
-      error = CheckCatalogService.formatResultMessage('RATA-64-C', {
-        value: staticStackPressure,
-        key: 'Flow RATA Run',
-      });
-    }
-
-    return error;
   }
 
   /* // RATA-85 Number of Traverse Points Valid
