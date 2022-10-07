@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryDTO,
+  AppECorrelationTestSummaryImportDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
 import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
@@ -108,6 +109,16 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
         }
         expect(errored).toEqual(true);
       });
+    });
+  });
+  
+  describe('Import', () => {
+    it('Should Import Protocol Gas', async () => {
+      jest
+        .spyOn(service, 'createAppECorrelation')
+        .mockResolvedValue(appECorrelationTest);
+
+      await service.import(testSumId, new AppECorrelationTestSummaryImportDTO(), userId, true);
     });
   });
 });

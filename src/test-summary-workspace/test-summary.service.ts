@@ -36,6 +36,7 @@ import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
 
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
+import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -50,6 +51,8 @@ export class TestSummaryWorkspaceService {
     private readonly rataService: RataWorkspaceService,
     @Inject(forwardRef(() => ProtocolGasWorkspaceService))
     private readonly protocolGasService: ProtocolGasWorkspaceService,
+    @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
+    private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -81,6 +84,7 @@ export class TestSummaryWorkspaceService {
     delete dto.testQualificationData;
     delete dto.protocolGasData;
     delete dto.airEmissionTestingData;
+    delete dto.appECorrelationTestSummaryData
 
     return dto;
   }
@@ -264,6 +268,29 @@ export class TestSummaryWorkspaceService {
               this.protocolGasService.import(
                 createdTestSummary.id,
                 protocolGas,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.appECorrelationTestSummaryData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.RATA
+    ) {
+      for (const appECorrelationTestSummary of payload.appECorrelationTestSummaryData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.appECorrelationTestSummaryWorkspaceService.import(
+                createdTestSummary.id,
+                appECorrelationTestSummary,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),

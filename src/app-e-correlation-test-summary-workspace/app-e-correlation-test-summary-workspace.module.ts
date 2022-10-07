@@ -6,13 +6,15 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
 import { AppendixETestSummaryWorkspaceController } from './app-e-correlation-test-summary-workspace.controller';
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
 import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
-import { AppECorrelationTestRunWorkspaceModule } from 'src/app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.module';
+import { AppECorrelationTestSummaryModule } from 'src/app-e-correlation-test-summary/app-e-correlation-test-summary.module';
+import { AppECorrelationTestRunModule } from 'src/app-e-correlation-test-run/app-e-correlation-test-run.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AppendixETestSummaryWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
-    forwardRef(() => AppECorrelationTestRunWorkspaceModule),
+    forwardRef(() => AppECorrelationTestSummaryModule),
+    forwardRef(() => AppECorrelationTestRunModule),
     HttpModule,
   ],
   controllers: [AppendixETestSummaryWorkspaceController],

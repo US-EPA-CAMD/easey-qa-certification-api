@@ -6,10 +6,14 @@ import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-tes
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
 import {
   AppECorrelationTestSummaryBaseDTO,
+  AppECorrelationTestSummaryImportDTO,
   AppECorrelationTestSummaryRecordDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { AppendixETestSummaryRepository } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.repository';
+import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class AppECorrelationTestSummaryWorkspaceService {
@@ -19,6 +23,9 @@ export class AppECorrelationTestSummaryWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(AppendixETestSummaryWorkspaceRepository)
     private readonly repository: AppendixETestSummaryWorkspaceRepository,
+    @InjectRepository(AppendixETestSummaryRepository)
+    private readonly historicalRepo: AppendixETestSummaryRepository,
+    private readonly logger: Logger,
   ) {}
 
   async getAppECorrelations(
@@ -49,12 +56,13 @@ export class AppECorrelationTestSummaryWorkspaceService {
     payload: AppECorrelationTestSummaryBaseDTO,
     userId: string,
     isImport: boolean = false,
+    historicalRecordId?: string,
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
       userId,
       addDate: timestamp,
@@ -99,5 +107,34 @@ export class AppECorrelationTestSummaryWorkspaceService {
     );
 
     return this.getAppECorrelation(id);
+  }
+
+  async import(
+    testSumId: string,
+    payload: AppECorrelationTestSummaryImportDTO,
+    userId: string,
+    isHistoricalRecord: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: AppECorrelationTestSummary;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepo.findOne({
+        testSumId: testSumId,
+        operatingLevelForRun: payload.operatingLevelForRun,
+      });
+    }
+
+    const createdProtocolGas = await this.createAppECorrelation(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Protocol Gas Successfully Imported.  Record Id: ${createdProtocolGas.id}`,
+    );
   }
 }
