@@ -126,7 +126,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
       });
     }
 
-    const createdProtocolGas = await this.createAppECorrelation(
+    const createdAppECorrelation = await this.createAppECorrelation(
       testSumId,
       payload,
       userId,
@@ -135,7 +135,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
     );
 
     this.logger.info(
-      `Protocol Gas Successfully Imported.  Record Id: ${createdProtocolGas.id}`,
+      `Appendix E Correlation Test Summary Successfully Imported.  Record Id: ${createdAppECorrelation.id}`,
     );
   }
   
