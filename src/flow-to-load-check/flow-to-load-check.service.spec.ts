@@ -13,8 +13,6 @@ const flowToLoadCheck = new FlowToLoadCheckDTO();
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
   findOne: jest.fn().mockResolvedValue(entity),
-  save: jest.fn().mockResolvedValue(entity),
-  create: jest.fn().mockResolvedValue(entity),
 });
 
 const mockMap = () => ({
