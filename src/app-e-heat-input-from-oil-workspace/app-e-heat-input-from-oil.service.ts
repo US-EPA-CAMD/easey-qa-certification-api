@@ -76,6 +76,41 @@ export class AppEHeatInputFromOilWorkspaceService {
     return this.map.one(entity);
   }
 
+  async updateAppEHeatInputFromOilRecord(
+    testSumId: string,
+    id: string,
+    payload: AppEHeatInputFromOilBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<AppEHeatInputFromOilRecordDTO> {
+    const timestamp = currentDateTime().toLocaleString();
+
+    const entity = await this.repository.findOne(id);
+
+    entity.oilMass = payload.oilMass;
+    entity.oilHeatInput = payload.oilHeatInput;
+    entity.oilGCV = payload.oilGCV;
+    entity.oilGCVUomCode = payload.oilGCVUomCode;
+    entity.oilVolume = payload.oilVolume;
+    entity.oilVolumeUomCode = payload.oilVolumeUomCode;
+    entity.oilDensity = payload.oilDensity;
+    entity.oilDensityUomCode = payload.oilDensityUomCode;
+    entity.monitoringSystemID = payload.monitoringSystemId;
+
+    entity.userId = userId;
+    entity.updateDate = timestamp;
+
+    await this.repository.save(entity);
+    
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.getAppEHeatInputFromOilRecord(id);
+  }
+  
   async deleteAppEHeatInputFromOil(
     testSumId: string,
     id: string,
