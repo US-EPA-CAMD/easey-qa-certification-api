@@ -1,4 +1,6 @@
+import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryDTO,
@@ -23,6 +25,7 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
+  delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
@@ -124,6 +127,37 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
         .mockResolvedValue([appECorrelationTest]);
       const result = await service.export([testSumId]);
       expect(result).toEqual([appECorrelationTest]);
+    });
+  });
+
+  describe('deleteAppECorrelation', () => {
+    it('Should delete an Appendix E Correlation Test Summary record', async () => {
+      const result = await service.deleteAppECorrelation(
+        testSumId,
+        appendixECorrelationTestSummaryId,
+        userId,
+      );
+      expect(result).toEqual(undefined);
+    });
+
+    it('Should throw error while deleting an Appendix E Correlation Test Summary record', async () => {
+      const error = new LoggingException(
+        `Error Appendix E Correlation Test Summary with record Id [${appendixECorrelationTestSummaryId}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+      jest.spyOn(repository, 'delete').mockRejectedValue(error);
+
+      let errored = false;
+      try {
+        await service.deleteAppECorrelation(
+          testSumId,
+          appendixECorrelationTestSummaryId,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
     });
   });
 });

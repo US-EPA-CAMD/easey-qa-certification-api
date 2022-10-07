@@ -102,6 +102,25 @@ export class AppECorrelationTestSummaryWorkspaceService {
     return this.getAppECorrelation(id);
   }
 
+  async deleteAppECorrelation(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete({
+        id,
+        testSumId,
+      });
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting Appendix E Correlation Test Summary with record Id [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+  
   async getAppECorrelationsByTestSumIds(
     testSumIds: string[],
   ): Promise<AppECorrelationTestSummaryRecordDTO[]> {

@@ -1,11 +1,12 @@
 import {
   Controller,
   Param,
+  Get,
   Post,
+  Put,
+  Delete,
   Body,
   UseGuards,
-  Put,
-  Get,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -65,7 +66,8 @@ export class AppendixETestSummaryWorkspaceController {
   @UseGuards(AuthGuard)
   @ApiCreatedResponse({
     type: AppECorrelationTestSummaryRecordDTO,
-    description: 'Creates a workspace Appendix E Test Summary record.',
+    description:
+      'Creates a workspace Appendix E Correlation Test Summary record.',
   })
   async createAppECorrelation(
     @Param('locId') _locationId: string,
@@ -96,5 +98,21 @@ export class AppendixETestSummaryWorkspaceController {
       payload,
       user.userId,
     );
+  }
+  
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description:
+      'Deletes a workspace Appendix E Correlation Test Summary record',
+  })
+  async deleteAppECorrelation(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteAppECorrelation(testSumId, id, user.userId);
   }
 }
