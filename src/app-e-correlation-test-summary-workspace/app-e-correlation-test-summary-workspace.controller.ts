@@ -3,6 +3,7 @@ import {
   Param,
   Get,
   Post,
+  Put,
   Delete,
   Body,
   UseGuards,
@@ -54,7 +55,7 @@ export class AppendixETestSummaryWorkspaceController {
   })
   async getAppECorrelation(
     @Param('locId') _locationId: string,
-    @Param('testSumId') testSumId: string,
+    @Param('testSumId') _testSumId: string,
     @Param('id') id: string,
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
     return this.service.getAppECorrelation(id);
@@ -77,6 +78,28 @@ export class AppendixETestSummaryWorkspaceController {
     return this.service.createAppECorrelation(testSumId, payload, user.userId);
   }
 
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: AppECorrelationTestSummaryRecordDTO,
+    description: 'Updates a workspace Appendix E Test Summary record',
+  })
+  editAppECorrelation(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: AppECorrelationTestSummaryBaseDTO,
+    @User() user: CurrentUser,
+  ) {
+    return this.service.editAppECorrelation(
+      testSumId,
+      id,
+      payload,
+      user.userId,
+    );
+  }
+  
   @Delete(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth('Token')

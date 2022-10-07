@@ -34,6 +34,8 @@ import { AppECorrelationTestRunWorkspaceModule } from './app-e-correlation-test-
 import { AppECorrelationTestRunModule } from './app-e-correlation-test-run/app-e-correlation-test-run.module';
 import { AppEHeatInputFromGasModule } from './app-e-heat-input-from-gas/app-e-heat-input-from-gas.module';
 import { AppEHeatInputFromGasWorkspaceModule } from './app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
+import { AppEHeatInputFromOilModule } from './app-e-heat-input-from-oil/app-e-heat-input-from-oil.module';
+import { AppEHeatInputFromOilWorkspaceModule } from './app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.module';
 
 const routes: Routes = [
   {
@@ -87,8 +89,12 @@ const routes: Routes = [
                 module: AppECorrelationTestRunModule,
                 children: [
                   {
-                    path: ':appECorrTestRunId/appendix-e-heat-input-from-gas',
+                    path: ':appECorrTestRunId/appendix-e-heat-input-from-gases',
                     module: AppEHeatInputFromGasModule,
+                  },
+                  {
+                    path: ':appECorrTestRunId/appendix-e-heat-input-from-oils',
+                    module: AppEHeatInputFromOilModule,
                   },
                 ],
               },
@@ -157,7 +163,7 @@ const routes: Routes = [
             module: TestQualificationWorkspaceModule,
           },
           {
-            path: ':testSumId/appexdix-e-correlation-test-summaries',
+            path: ':testSumId/appendix-e-correlation-test-summaries',
             module: AppECorrelationTestSummaryWorkspaceModule,
             children: [
               {
@@ -165,8 +171,12 @@ const routes: Routes = [
                 module: AppECorrelationTestRunWorkspaceModule,
                 children: [
                   {
-                    path: ':appECorrTestRunId/appendix-e-heat-input-from-gas',
+                    path: ':appECorrTestRunId/appendix-e-heat-input-from-gases',
                     module: AppEHeatInputFromGasWorkspaceModule,
+                  },
+                  {
+                    path: ':appECorrTestRunId/appendix-e-heat-input-from-oils',
+                    module: AppEHeatInputFromOilWorkspaceModule,
                   },
                 ],
               },

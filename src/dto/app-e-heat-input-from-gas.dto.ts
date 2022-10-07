@@ -1,15 +1,15 @@
 const KEY = 'Appendix E Heat Input From Gas';
 
 export class AppEHeatInputFromGasBaseDTO {
-  gasVolume: number;
+  monitoringSystemID: string;
   gasGCV: number;
+  gasVolume: number;
   gasHeatInput: number;
-  monitoringSystemId: string;
 }
 
 export class AppEHeatInputFromGasRecordDTO extends AppEHeatInputFromGasBaseDTO {
   id: string;
-  appECorrelationTestRunId: string;
+  appECorrTestRunId: string;
   calculatedGasHeatInput: number;
   userId: string;
   addDate: string;

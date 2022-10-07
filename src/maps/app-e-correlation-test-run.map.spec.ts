@@ -1,5 +1,7 @@
 import { AppECorrelationTestRun } from '../entities/app-e-correlation-test-run.entity';
 import { AppECorrelationTestRunMap } from './app-e-correlation-test-run.map';
+import { AppEHeatInputFromGasMap } from './app-e-heat-input-from-gas.map';
+import { AppEHeatInputFromOilMap } from './app-e-heat-input-from-oil.map';
 
 const string = '';
 const number = 0;
@@ -29,7 +31,10 @@ entity.updateDate = date;
 
 describe('AppECorrelationTestRunMap', () => {
   it('should map an entity to a dto', async () => {
-    const map = new AppECorrelationTestRunMap();
+    const map = new AppECorrelationTestRunMap(
+      new AppEHeatInputFromOilMap(),
+      new AppEHeatInputFromGasMap(),
+    );
     const result = await map.one(entity);
     expect(result.id).toEqual(string);
     expect(result.appECorrTestSumId).toEqual(string);
@@ -57,7 +62,10 @@ describe('AppECorrelationTestRunMap', () => {
     entity.addDate = undefined;
     entity.updateDate = undefined;
 
-    const map = new AppECorrelationTestRunMap();
+    const map = new AppECorrelationTestRunMap(
+      new AppEHeatInputFromOilMap(),
+      new AppEHeatInputFromGasMap(),
+    );
     const result = await map.one(entity);
 
     expect(result.addDate).toEqual(null);

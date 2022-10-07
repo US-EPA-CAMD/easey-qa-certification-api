@@ -83,6 +83,51 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
       expect(result).toEqual(appECorrelationTest);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
+
+    describe('editAppECorrelation', () => {
+      it('should update an Appendix E Correlation Test Summary record', async () => {
+        const result = await service.editAppECorrelation(
+          testSumId,
+          appendixECorrelationTestSummaryId,
+          payload,
+          userId,
+        );
+        expect(result).toEqual(appECorrelationTest);
+      });
+
+      it('should throw error with invalid Appendix E Correlation Test Summary', async () => {
+        jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+        let errored = false;
+        try {
+          await service.editAppECorrelation(
+            testSumId,
+            appendixECorrelationTestSummaryId,
+            payload,
+            userId,
+          );
+        } catch (e) {
+          errored = true;
+        }
+        expect(errored).toEqual(true);
+      });
+    });
+  });
+  describe('getAppECorrelationsByTestSumIds', () => {
+    it('Should get Appendix E Correlation Test Summary records by test sum ids', async () => {
+      const result = await service.getAppECorrelationsByTestSumIds([testSumId]);
+      expect(result).toEqual([appECorrelationTest]);
+    });
+  });
+
+  describe('Export', () => {
+    it('Should Export Appendix E Correlation Test Summary', async () => {
+      jest
+        .spyOn(service, 'getAppECorrelationsByTestSumIds')
+        .mockResolvedValue([appECorrelationTest]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([appECorrelationTest]);
+    });
   });
 
   describe('deleteAppECorrelation', () => {

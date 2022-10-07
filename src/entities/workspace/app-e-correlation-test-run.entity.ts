@@ -9,8 +9,9 @@ import {
 } from 'typeorm';
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
-import { AppECorrelationTestSummary } from './app-e-correlation-summary.entity';
+import { AppECorrelationTestSummary } from './app-e-correlation-test-summary.entity';
 import { AppEHeatInputFromGas } from './app-e-heat-input-from-gas.entity';
+import { AppEHeatInputFromOil } from './app-e-heat-input-from-oil.entity';
 
 @Entity({ name: 'camdecmpswks.ae_correlation_test_run' })
 export class AppECorrelationTestRun extends BaseEntity {
@@ -106,11 +107,13 @@ export class AppECorrelationTestRun extends BaseEntity {
   userId: string;
 
   @Column({
+    type: 'timestamp',
     name: 'add_date',
   })
   addDate: Date;
 
   @Column({
+    type: 'timestamp',
     name: 'update_date',
   })
   updateDate: Date;
@@ -124,10 +127,15 @@ export class AppECorrelationTestRun extends BaseEntity {
 
   @OneToMany(
     () => AppEHeatInputFromGas,
-    aehi => aehi.appECorrelationTestRun,
+    aehifg => aehifg.appECorrelationTestRun,
   )
   @JoinColumn({ name: 'ae_corr_test_run_id' })
   appEHeatInputFromGases: AppEHeatInputFromGas[];
 
-  // TODO: Need to Join Columns for Appendix E Heat Input From Oil
+  @OneToMany(
+    () => AppEHeatInputFromOil,
+    aehifo => aehifo.appECorrelationTestRun,
+  )
+  @JoinColumn({ name: 'ae_corr_test_run_id' })
+  appEHeatInputFromOils: AppEHeatInputFromOil[];
 }
