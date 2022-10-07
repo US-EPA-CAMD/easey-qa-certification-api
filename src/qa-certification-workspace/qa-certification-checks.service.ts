@@ -15,6 +15,7 @@ import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.service';
+import { FlowRataRunChecksService } from '../flow-rata-run-workspace/flow-rata-run-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -27,6 +28,7 @@ export class QACertificationChecksService {
     private readonly rataChecksService: RataChecksService,
     private readonly rataSummaryChecksService: RataSummaryChecksService,
     private readonly rataRunChecksService: RataRunChecksService,
+    private readonly flowRataRunChecksService: FlowRataRunChecksService,
     @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
   ) {}
@@ -180,6 +182,24 @@ export class QACertificationChecksService {
                 resolve(results);
               }),
             );
+
+            rataRun.flowRataRunData?.forEach(flowRataRun => {
+              promises.push(
+                new Promise(async (resolve, _reject) => {
+                  const results = this.flowRataRunChecksService.runChecks(
+                    flowRataRun,
+                    true,
+                    false,
+                    null,
+                    rataSummary,
+                    null,
+                    rataRun,
+                  );
+
+                  resolve(results);
+                }),
+              );
+            });
           });
         });
       });

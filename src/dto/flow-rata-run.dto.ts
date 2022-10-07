@@ -1,10 +1,35 @@
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { IsInRange } from '@us-epa-camd/easey-common/pipes';
+import { IsNotEmpty, ValidationArguments } from 'class-validator';
 import { RataTraverseDTO, RataTraverseImportDTO } from './rata-traverse.dto';
 
 const KEY = 'Flow RATA Run';
+const MIN_STATIC_STACK_PRESSURE = -30;
+const MAX_STATIC_STACK_PRESSURE = 30;
 
 export class FlowRataRunBaseDTO {
   numberOfTraversePoints: number;
   barometricPressure: number;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-64-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_STATIC_STACK_PRESSURE, MAX_STATIC_STACK_PRESSURE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-64-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+        minvalue: MIN_STATIC_STACK_PRESSURE,
+        maxvalue: MAX_STATIC_STACK_PRESSURE,
+      });
+    },
+  })
   staticStackPressure: number;
   percentCO2: number;
   percentO2: number;
