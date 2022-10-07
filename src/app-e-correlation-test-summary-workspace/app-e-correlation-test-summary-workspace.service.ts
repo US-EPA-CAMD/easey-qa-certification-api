@@ -14,6 +14,7 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { AppendixETestSummaryRepository } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.repository';
 import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { In } from 'typeorm';
 
 @Injectable()
 export class AppECorrelationTestSummaryWorkspaceService {
@@ -136,5 +137,37 @@ export class AppECorrelationTestSummaryWorkspaceService {
     this.logger.info(
       `Protocol Gas Successfully Imported.  Record Id: ${createdProtocolGas.id}`,
     );
+  }
+  
+  async deleteAppECorrelation(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete({
+        id,
+        testSumId,
+      });
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting Appendix E Correlation Test Summary with record Id [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+  
+  async getAppECorrelationsByTestSumIds(
+    testSumIds: string[],
+  ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(TestSumIds: string[]): Promise<AppECorrelationTestSummaryRecordDTO[]> {
+    return await this.getAppECorrelationsByTestSumIds(TestSumIds);
   }
 }

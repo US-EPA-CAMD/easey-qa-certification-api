@@ -96,7 +96,8 @@ export class AppEHeatInputFromGasWorkspaceController {
   async updateAppECorrelationTestRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-    @Param('appECorrTestSumId') appECorrTestSumId: string,
+    @Param('appECorrTestSumId') _appECorrTestSumId: string,
+    @Param('appECorrTestRunId') _appECorrTestRunId: string,
     @Param('id') id: string,
     @Body() payload: AppEHeatInputFromGasBaseDTO,
     @User() user: CurrentUser,

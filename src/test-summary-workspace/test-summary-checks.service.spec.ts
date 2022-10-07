@@ -31,6 +31,8 @@ import { TestQualificationImportDTO } from '../dto/test-qualification.dto';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { AnalyzerRange } from '../entities/workspace/analyzerRange.entity';
 import { AirEmissionTestingImportDTO } from '../dto/air-emission-test.dto';
+import { AppECorrelationTestSummaryImportDTO } from '../dto/app-e-correlation-test-summary.dto';
+import { FuelFlowToLoadTestImportDTO } from '../dto/fuel-flow-to-load-test.dto';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -334,8 +336,8 @@ describe('Test Summary Check Service Test', () => {
       importPayload.fuelFlowmeterAccuracyData = [{}];
       importPayload.transmitterTransducerData = [{}];
       importPayload.fuelFlowToLoadBaselineData = [{}];
-      importPayload.fuelFlowToLoadTestData = [{}];
-      importPayload.appECorrelationTestSummaryData = [{}];
+      importPayload.fuelFlowToLoadTestData = [new FuelFlowToLoadTestImportDTO()];
+      importPayload.appECorrelationTestSummaryData = [new AppECorrelationTestSummaryImportDTO()];
       importPayload.unitDefaultTestData = [{}];
       importPayload.airEmissionTestingData = [
         new AirEmissionTestingImportDTO(),

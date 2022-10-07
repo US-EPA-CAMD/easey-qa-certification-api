@@ -152,7 +152,8 @@ export class TestSummaryWorkspaceService {
       new Promise(async (resolve, _reject) => {
         let linearitySummaryData,
           rataData,
-          protocolGasData = null;
+          protocolGasData,
+          appECorrelationTestSummaryData = null;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
@@ -165,12 +166,16 @@ export class TestSummaryWorkspaceService {
           linearitySummaryData = await this.linearityService.export(testSumIds);
           rataData = await this.rataService.export(testSumIds);
           protocolGasData = await this.protocolGasService.export(testSumIds);
+          appECorrelationTestSummaryData = await this.appECorrelationTestSummaryWorkspaceService.export(testSumIds)
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
             );
             s.rataData = rataData.filter(i => i.testSumId === s.id);
             s.protocolGasData = protocolGasData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
               i => i.testSumId === s.id,
             );
           });

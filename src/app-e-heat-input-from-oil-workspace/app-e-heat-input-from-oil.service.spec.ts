@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import {
   AppEHeatInputFromOilBaseDTO,
-  AppEHeatInputFromOilDto,
+  AppEHeatInputFromOilDTO,
   AppEHeatInputFromOilImportDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOil } from '../entities/workspace/app-e-heat-input-from-oil.entity';
@@ -16,9 +16,9 @@ const appECorrTestRunId = 'd4e6f7';
 const testSumId = '1';
 const userId = 'testuser';
 const mockAeHiFromOil = new AppEHeatInputFromOil();
-const mockAeHiFromOilDTO = new AppEHeatInputFromOilDto();
+const mockAeHiFromOilDTO = new AppEHeatInputFromOilDTO();
 
-const payload = new AppEHeatInputFromOilDto();
+const payload = new AppEHeatInputFromOilDTO();
 
 const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
@@ -110,6 +110,19 @@ describe('AppEHeatInputOilWorkspaceService', () => {
       );
       expect(result).toEqual(mockAeHiFromOilDTO);
       expect(repository.create).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateAppEHeatInputFromOilRecord', () => {
+    it('Copies input values onto an existing Appendix E Heat Input from Oil record and saves it', async () => {
+      const result = await service.updateAppEHeatInputFromOilRecord(
+        testSumId,
+        appECorrTestRunId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(mockAeHiFromOilDTO);
+      expect(repository.save).toHaveBeenCalled();
     });
   });
 });

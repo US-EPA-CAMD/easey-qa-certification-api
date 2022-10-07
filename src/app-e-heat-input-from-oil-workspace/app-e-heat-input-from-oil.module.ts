@@ -1,4 +1,4 @@
-import { HttpModule } from '@nestjs/axios';
+import { HttpModule, HttpService } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -8,6 +8,7 @@ import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oi
 import { AppEHeatInputFromOilWorkspaceController } from './app-e-heat-input-from-oil.controller';
 import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 @Module({
   imports: [

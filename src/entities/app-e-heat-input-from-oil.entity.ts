@@ -59,7 +59,7 @@ export class AppEHeatInputFromOil extends BaseEntity {
   @Column({
     name: 'oil_gcv_uom_cd',
   })
-  oilGcvUomCode: string;
+  oilGCVUomCode: string;
 
   @Column({
     name: 'oil_volume',
