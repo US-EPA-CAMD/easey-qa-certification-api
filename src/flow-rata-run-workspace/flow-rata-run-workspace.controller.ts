@@ -23,13 +23,17 @@ import {
   FlowRataRunDTO,
   FlowRataRunRecordDTO,
 } from '../dto/flow-rata-run.dto';
+import { FlowRataRunChecksService } from './flow-rata-run-checks.service';
 import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Flow Rata Run')
 export class FlowRataRunWorkspaceController {
-  constructor(private readonly service: FlowRataRunWorkspaceService) {}
+  constructor(
+    private readonly service: FlowRataRunWorkspaceService,
+    private readonly checksService: FlowRataRunChecksService,
+  ) {}
   @Get()
   @ApiOkResponse({
     isArray: true,
@@ -76,11 +80,20 @@ export class FlowRataRunWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('rataId') _rataId: string,
-    @Param('rataSumId') _rataSumId: string,
+    @Param('rataSumId') rataSumId: string,
     @Param('rataRunId') rataRunId: string,
     @Body() payload: FlowRataRunBaseDTO,
     @User() user: CurrentUser,
   ): Promise<FlowRataRunRecordDTO> {
+    await this.checksService.runChecks(
+      payload,
+      false,
+      false,
+      rataSumId,
+      null,
+      rataRunId,
+      null,
+    );
     return this.service.createFlowRataRun(
       testSumId,
       rataRunId,
@@ -100,12 +113,21 @@ export class FlowRataRunWorkspaceController {
     @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('rataId') _rataId: string,
-    @Param('rataSumId') _rataSumId: string,
-    @Param('rataRunId') _rataRunId: string,
+    @Param('rataSumId') rataSumId: string,
+    @Param('rataRunId') rataRunId: string,
     @Param('id') flowRataRunId: string,
     @Body() payload: FlowRataRunBaseDTO,
     @User() user: CurrentUser,
   ): Promise<FlowRataRunRecordDTO> {
+    await this.checksService.runChecks(
+      payload,
+      false,
+      true,
+      rataSumId,
+      null,
+      rataRunId,
+      null,
+    );
     return this.service.updateRataRun(
       testSumId,
       flowRataRunId,

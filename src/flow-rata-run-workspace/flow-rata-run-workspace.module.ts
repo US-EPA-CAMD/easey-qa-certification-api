@@ -9,18 +9,30 @@ import { FlowRataRunMap } from '../maps/flow-rata-run.map';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { RataTraverseWorkspaceModule } from '../rata-traverse-workspace/rata-traverse-workspace.module';
 import { FlowRataRunModule } from '../flow-rata-run/flow-rata-run.module';
+import { FlowRataRunChecksService } from './flow-rata-run-checks.service';
+import { RataSummaryWorkspaceModule } from '../rata-summary-workspace/rata-summary-workspace.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([FlowRataRunWorkspaceRepository]),
     forwardRef(() => FlowRataRunModule),
     forwardRef(() => TestSummaryWorkspaceModule),
+    forwardRef(() => RataSummaryWorkspaceModule),
     forwardRef(() => RataRunWorkspaceModule),
     RataTraverseWorkspaceModule,
     HttpModule,
   ],
   controllers: [FlowRataRunWorkspaceController],
-  providers: [FlowRataRunWorkspaceService, FlowRataRunMap],
-  exports: [TypeOrmModule, FlowRataRunMap, FlowRataRunWorkspaceService],
+  providers: [
+    FlowRataRunWorkspaceService,
+    FlowRataRunMap,
+    FlowRataRunChecksService,
+  ],
+  exports: [
+    TypeOrmModule,
+    FlowRataRunMap,
+    FlowRataRunWorkspaceService,
+    FlowRataRunChecksService,
+  ],
 })
 export class FlowRataRunWorkspaceModule {}
