@@ -17,7 +17,7 @@ import {
 
 @Controller()
 @ApiSecurity('APIKey')
-@ApiTags('Appendix E Correlation Test Summary')
+@ApiTags('Flow To Load Check')
 export class FlowToLoadCheckWorkspaceController {
   constructor(private readonly service: FlowToLoadCheckWorkspaceService) {}
 
