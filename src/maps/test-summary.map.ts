@@ -11,6 +11,7 @@ import { TestQualificationMap } from './test-qualification.map';
 import { AirEmissionTestingMap } from './air-emission-testing.map';
 import { AppECorrelationTestSummaryMap } from './app-e-correlation-summary.map';
 import { FuelFlowToLoadTestMap } from './fuel-flow-to-load-test.map';
+import { FlowToLoadCheckMap } from './flow-to-load-check.map';
 
 @Injectable()
 export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
@@ -22,6 +23,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
     private readonly testQualificationMap: TestQualificationMap,
     private readonly appECorrelationTestSummaryMap: AppECorrelationTestSummaryMap,
     private readonly fuelFlowToLoadTestMap: FuelFlowToLoadTestMap,
+    private readonly flowToLoadCheckMap: FlowToLoadCheckMap,
   ) {
     super();
   }
@@ -50,6 +52,10 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       ? await this.appECorrelationTestSummaryMap.many(
           entity.appECorrelationTestSummaries,
         )
+      : [];
+
+    const flowToloadCheck = entity.flowToLoadCheck
+      ? await this.flowToLoadCheckMap.many(entity.flowToLoadCheck)
       : [];
 
     const fuelFlowToloadTest = entity.fuelFlowToLoadTests
@@ -105,7 +111,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       rataData: ratas,
       flowRataRunData: [],
       flowToLoadReferenceData: [],
-      flowToLoadCheckData: [],
+      flowToLoadCheckData: flowToloadCheck,
       cycleTimeSummaryData: [],
       onlineOfflineCalibrationData: [],
       fuelFlowmeterAccuracyData: [],
