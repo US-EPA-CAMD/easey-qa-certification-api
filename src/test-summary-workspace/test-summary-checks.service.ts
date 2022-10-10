@@ -23,6 +23,7 @@ import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-mas
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
 import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
+import { VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE } from 'src/utilities/constants';
 
 const KEY = 'Test Summary';
 
@@ -166,9 +167,11 @@ export class TestSummaryChecksService {
     }
 
     // RATA-100 Test Result Code Valid
-    error = await this.rata100check(summary);
-    if (error) {
-      errorList.push(error);
+    if (VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE.includes(summary.testResultCode)){
+      error = await this.rata100check(summary);
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     if (!isUpdate) {
