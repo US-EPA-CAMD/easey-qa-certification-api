@@ -5,7 +5,7 @@ import { FlowToLoadCheckRecordDTO } from '../dto/flow-to-load-check.dto';
 
 @Controller()
 @ApiSecurity('APIKey')
-@ApiTags('Appendix E Correlation Test Summary')
+@ApiTags('Flow To Load Check')
 export class FlowToLoadCheckController {
   constructor(private readonly service: FlowToLoadCheckService) {}
 
