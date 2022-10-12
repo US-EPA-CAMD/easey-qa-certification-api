@@ -15,6 +15,8 @@ import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.service';
+import { FlowRataRunChecksService } from '../flow-rata-run-workspace/flow-rata-run-checks.service';
+import { TestTypeCodes } from 'src/enums/test-type-code.enum';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -27,6 +29,7 @@ export class QACertificationChecksService {
     private readonly rataChecksService: RataChecksService,
     private readonly rataSummaryChecksService: RataSummaryChecksService,
     private readonly rataRunChecksService: RataRunChecksService,
+    private readonly flowRataRunChecksService: FlowRataRunChecksService,
     @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
   ) {}
@@ -101,63 +104,48 @@ export class QACertificationChecksService {
         }),
       );
 
-      summary.linearitySummaryData?.forEach(linearitySummary => {
-        promises.push(
-          new Promise(async (resolve, _reject) => {
-            const results = this.linearitySummaryChecksService.runChecks(
-              locationId,
-              linearitySummary,
-              true,
-            );
-
-            resolve(results);
-          }),
-        );
-
-        linearitySummary.linearityInjectionData?.forEach(linearityInjection => {
+      if (summary.testTypeCode === TestTypeCodes.LINE) {
+        summary.linearitySummaryData?.forEach(linearitySummary => {
           promises.push(
             new Promise(async (resolve, _reject) => {
-              const results = this.linearityInjectionChecksService.runChecks(
+              const results = this.linearitySummaryChecksService.runChecks(
                 locationId,
-                linearityInjection,
+                linearitySummary,
                 true,
-                false,
-                linearitySummary.linearityInjectionData,
               );
-
+  
               resolve(results);
             }),
           );
-        });
-      });
-
-      summary.rataData?.forEach(rata => {
-        promises.push(
-          new Promise(async (resolve, _reject) => {
-            const results = this.rataChecksService.runChecks(
-              locationId,
-              rata,
-              null,
-              true,
-              false,
-              summary,
+  
+          linearitySummary.linearityInjectionData?.forEach(linearityInjection => {
+            promises.push(
+              new Promise(async (resolve, _reject) => {
+                const results = this.linearityInjectionChecksService.runChecks(
+                  locationId,
+                  linearityInjection,
+                  true,
+                  false,
+                  linearitySummary.linearityInjectionData,
+                );
+  
+                resolve(results);
+              }),
             );
+          });
+        });
+      }
 
-            resolve(results);
-          }),
-        );
-
-        rata.rataSummaryData?.forEach(rataSummary => {
+      if (summary.testTypeCode === TestTypeCodes.RATA) {
+        summary.rataData?.forEach(rata => {
           promises.push(
             new Promise(async (resolve, _reject) => {
-              const results = this.rataSummaryChecksService.runChecks(
+              const results = this.rataChecksService.runChecks(
                 locationId,
-                rataSummary,
+                rata,
+                null,
                 true,
                 false,
-                null,
-                null,
-                rata.rataSummaryData,
                 summary,
               );
 
@@ -165,24 +153,61 @@ export class QACertificationChecksService {
             }),
           );
 
-          rataSummary.rataRunData?.forEach(rataRun => {
+          rata.rataSummaryData?.forEach(rataSummary => {
             promises.push(
               new Promise(async (resolve, _reject) => {
-                const results = this.rataRunChecksService.runChecks(
+                const results = this.rataSummaryChecksService.runChecks(
                   locationId,
-                  rataRun,
-                  null,
+                  rataSummary,
                   true,
                   false,
+                  null,
+                  null,
+                  rata.rataSummaryData,
                   summary,
                 );
 
                 resolve(results);
               }),
             );
+
+            rataSummary.rataRunData?.forEach(rataRun => {
+              promises.push(
+                new Promise(async (resolve, _reject) => {
+                  const results = this.rataRunChecksService.runChecks(
+                    locationId,
+                    rataRun,
+                    null,
+                    true,
+                    false,
+                    summary,
+                  );
+
+                  resolve(results);
+                }),
+              );
+
+              rataRun.flowRataRunData?.forEach(flowRataRun => {
+                promises.push(
+                  new Promise(async (resolve, _reject) => {
+                    const results = this.flowRataRunChecksService.runChecks(
+                      flowRataRun,
+                      true,
+                      false,
+                      null,
+                      rataSummary,
+                      null,
+                      rataRun,
+                    );
+
+                    resolve(results);
+                  }),
+                );
+              });
+            });
           });
         });
-      });
+      }
     }
 
     this.throwIfErrors(await this.extractErrors(promises));

@@ -136,22 +136,25 @@ export class TestSummaryChecksService {
       errorList.push(error);
     }
 
-    // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
-    error = await this.linear4Check(
-      locationId,
-      summary,
-      historicalTestSumId,
-      isImport,
-    );
-    if (error) {
-      errorList.push(error);
+    if (summary.testResultCode === TestTypeCodes.LINE){
+      // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
+      error = await this.linear4Check(
+        locationId,
+        summary,
+        historicalTestSumId,
+        isImport,
+      );
+      if (error) {
+        errorList.push(error);
+      }
+  
+      // LINEAR-10 Linearity Test Result Code Valid
+      error = await this.linear10Check(summary);
+      if (error) {
+        errorList.push(error);
+      }
     }
 
-    // LINEAR-10 Linearity Test Result Code Valid
-    error = await this.linear10Check(summary);
-    if (error) {
-      errorList.push(error);
-    }
 
     // TEST-8 Test Span Scale Valid
     error = await this.test8Check(locationId, summary);
@@ -165,10 +168,12 @@ export class TestSummaryChecksService {
       errorList.push(error);
     }
 
-    // RATA-100 Test Result Code Valid
-    error = await this.rata100check(summary);
-    if (error) {
-      errorList.push(error);
+    if (summary.testResultCode === TestTypeCodes.RATA){
+      // RATA-100 Test Result Code Valid
+      error = await this.rata100check(summary);
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     if (!isUpdate) {
@@ -738,8 +743,10 @@ export class TestSummaryChecksService {
         fields = this.compareFields(duplicate, summary);
       }
 
-      // LINEAR-31 Duplicate Linearity (Result A)
-      error = this.getMessage('LINEAR-31-A', null);
+      if (summary.testResultCode === TestTypeCodes.LINE) {
+        // LINEAR-31 Duplicate Linearity (Result A)
+        error = this.getMessage('LINEAR-31-A', null);
+      }
     } else {
       duplicate = await this.qaSuppDataRepository.getUnassociatedQASuppDataByLocationIdAndTestSum(
         locationId,
@@ -752,8 +759,10 @@ export class TestSummaryChecksService {
         if (isImport) {
           fields = this.compareFields(duplicate, summary);
         }
-        // LINEAR-31 Duplicate Linearity (Result B)
-        error = this.getMessage('LINEAR-31-B', null);
+        if (summary.testResultCode === TestTypeCodes.LINE) {
+          // LINEAR-31 Duplicate Linearity (Result B)
+          error = this.getMessage('LINEAR-31-B', null);
+        }
       }
     }
 
@@ -765,11 +774,6 @@ export class TestSummaryChecksService {
         testNumber: summary.testNumber,
         fieldname: FIELDNAME,
       });
-      //      error = `The database contains another Test Summary record for Unit/Stack [${
-      //        summary.unitId ? summary.unitId : summary.stackPipeId
-      //      }], Test Type Code [${summary.testTypeCode}], and Test Number [${
-      //        summary.testNumber
-      //      }]. However, the values reported for [${fields}] are different between the two tests.`;
     }
 
     return error;

@@ -57,6 +57,7 @@ describe('AppendixETestSummaryController', () => {
     it('Calls the repository to get one Appendix E Correlation Test Summary record by Id', async () => {
       const result = await controller.getAppECorrelation(
         locId,
+        testSumId,
         appendixECorrelationTestSummaryId,
       );
       expect(result).toEqual(appECorrelationTest);
