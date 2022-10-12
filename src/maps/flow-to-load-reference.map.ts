@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
-import { FlowToLoadReferenceDTO } from 'src/dto/flow-to-load-reference.dto';
-import { FlowToLoadReference } from 'src/entities/flow-to-load-reference.entity';
+import { FlowToLoadReferenceDTO } from '../dto/flow-to-load-reference.dto';
+import { FlowToLoadReference } from '../entities/flow-to-load-reference.entity';
 
 @Injectable()
 export class FlowToLoadReferenceMap extends BaseMap<
