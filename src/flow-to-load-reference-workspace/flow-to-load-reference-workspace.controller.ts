@@ -1,8 +1,7 @@
-import { Controller, Param, Post, Body, UseGuards, Get } from '@nestjs/common';
+import { Controller, Param, Post, Body, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
-  ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -14,12 +13,13 @@ import {
   FlowToLoadReferenceBaseDTO,
   FlowToLoadReferenceRecordDTO,
 } from '../dto/flow-to-load-reference.dto';
+import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Flow To Load Reference')
 export class FlowToLoadReferenceWorkspaceController {
-  constructor(private readonly service: FlowToLoadCheckWorkspaceService) {}
+  constructor(private readonly service: FlowToLoadReferenceWorkspaceService) {}
 
   @Post()
   @ApiBearerAuth('Token')
