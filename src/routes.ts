@@ -38,6 +38,8 @@ import { AppEHeatInputFromOilModule } from './app-e-heat-input-from-oil/app-e-he
 import { AppEHeatInputFromOilWorkspaceModule } from './app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.module';
 import { FlowToLoadCheckWorkspaceModule } from './flow-to-load-check-workspace/flow-to-load-check-workspace.module';
 import { FlowToLoadCheckModule } from './flow-to-load-check/flow-to-load-check.module';
+import { FuelFlowToLoadBaselineWorkspaceModule } from './fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.module';
+import { FuelFlowToLoadBaselineModule } from './fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.module';
 
 const routes: Routes = [
   {
@@ -81,6 +83,10 @@ const routes: Routes = [
           {
             path: ':testSumId/fuel-flow-to-load-tests',
             module: FuelFlowToLoadTestModule,
+          },
+          {
+            path: ':testSumId/fuel-flow-to-load-baselines',
+            module: FuelFlowToLoadBaselineModule,
           },
           {
             path: ':testSumId/air-emission-testings',
@@ -195,6 +201,10 @@ const routes: Routes = [
           {
             path: ':testSumId/fuel-flow-to-load-tests',
             module: FuelFlowToLoadTestWorkspaceModule,
+          },
+          {
+            path: ':testSumId/fuel-flow-to-load-baselines',
+            module: FuelFlowToLoadBaselineWorkspaceModule,
           },
           {
             path: ':testSumId/rata',

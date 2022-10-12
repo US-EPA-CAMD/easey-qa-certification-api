@@ -101,7 +101,7 @@ export class AppEHeatInputFromOilWorkspaceService {
     entity.updateDate = timestamp;
 
     await this.repository.save(entity);
-    
+
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -110,7 +110,7 @@ export class AppEHeatInputFromOilWorkspaceService {
 
     return this.getAppEHeatInputFromOilRecord(id);
   }
-  
+
   async deleteAppEHeatInputFromOil(
     testSumId: string,
     id: string,

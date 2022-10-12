@@ -116,7 +116,7 @@ export class AppEHeatInputFromOilWorkspaceController {
       user.userId,
     );
   }
-  
+
   @Delete(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth('Token')

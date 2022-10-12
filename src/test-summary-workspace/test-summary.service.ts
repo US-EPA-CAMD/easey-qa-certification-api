@@ -84,7 +84,7 @@ export class TestSummaryWorkspaceService {
     delete dto.testQualificationData;
     delete dto.protocolGasData;
     delete dto.airEmissionTestingData;
-    delete dto.appECorrelationTestSummaryData
+    delete dto.appECorrelationTestSummaryData;
 
     return dto;
   }
@@ -166,7 +166,9 @@ export class TestSummaryWorkspaceService {
           linearitySummaryData = await this.linearityService.export(testSumIds);
           rataData = await this.rataService.export(testSumIds);
           protocolGasData = await this.protocolGasService.export(testSumIds);
-          appECorrelationTestSummaryData = await this.appECorrelationTestSummaryWorkspaceService.export(testSumIds)
+          appECorrelationTestSummaryData = await this.appECorrelationTestSummaryWorkspaceService.export(
+            testSumIds,
+          );
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -264,7 +266,15 @@ export class TestSummaryWorkspaceService {
       }
     }
 
-    if (payload.protocolGasData?.length > 0) {
+    if (
+      payload.protocolGasData?.length > 0 &&
+      [
+        TestTypeCodes.RATA.toString(),
+        TestTypeCodes.LINE.toString(),
+        TestTypeCodes.APPE.toString(),
+        TestTypeCodes.UNITDEF.toString(),
+      ].includes(payload.testTypeCode)
+    ) {
       for (const protocolGas of payload.protocolGasData) {
         promises.push(
           new Promise(async (resolve, _reject) => {
@@ -286,7 +296,7 @@ export class TestSummaryWorkspaceService {
 
     if (
       payload.appECorrelationTestSummaryData?.length > 0 &&
-      payload.testTypeCode === TestTypeCodes.RATA
+      payload.testTypeCode === TestTypeCodes.APPE
     ) {
       for (const appECorrelationTestSummary of payload.appECorrelationTestSummaryData) {
         promises.push(

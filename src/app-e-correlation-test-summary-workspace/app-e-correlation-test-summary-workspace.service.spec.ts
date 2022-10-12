@@ -129,14 +129,19 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
       });
     });
   });
-  
+
   describe('Import', () => {
     it('Should Import Appendix E Correlation Test Summary', async () => {
       jest
         .spyOn(service, 'createAppECorrelation')
         .mockResolvedValue(appECorrelationTest);
 
-      await service.import(testSumId, new AppECorrelationTestSummaryImportDTO(), userId, true);
+      await service.import(
+        testSumId,
+        new AppECorrelationTestSummaryImportDTO(),
+        userId,
+        true,
+      );
     });
   });
 
