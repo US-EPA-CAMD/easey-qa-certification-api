@@ -9,6 +9,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { FuelFlowToLoadBaselineWorkspaceRepository } from './fuel-flow-to-load-baseline-workspace.repository';
 import { FuelFlowToLoadBaselineWorkspaceService } from './fuel-flow-to-load-baseline-workspace.service';
 
+const id = '';
 const testSumId = '';
 const userId = 'user';
 const entity = new FuelFlowToLoadBaseline();
@@ -66,6 +67,35 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
     repository = module.get<FuelFlowToLoadBaselineWorkspaceRepository>(
       FuelFlowToLoadBaselineWorkspaceRepository,
     );
+  });
+
+  describe('getFuelFlowToLoadBaselines', () => {
+    it('Should return Fuel Flow To Load Baseline records by Test Summary id', async () => {
+      const result = await service.getFuelFlowToLoadBaselines(testSumId);
+
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('getFuelFlowToLoadBaseline', () => {
+    it('Should return a Fuel Flow To Load Baseline record', async () => {
+      const result = await service.getFuelFlowToLoadBaseline(id, testSumId);
+
+      expect(result).toEqual(dto);
+    });
+
+    it('Should throw error when a Fuel Flow To Load Baseline record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.getFuelFlowToLoadBaseline(id, testSumId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
   });
 
   describe('createFuelFlowToLoadBaseline', () => {

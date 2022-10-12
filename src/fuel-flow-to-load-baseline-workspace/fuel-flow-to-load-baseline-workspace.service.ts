@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FuelFlowToLoadBaselineBaseDTO,
@@ -9,6 +9,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { FuelFlowToLoadBaselineWorkspaceRepository } from './fuel-flow-to-load-baseline-workspace.repository';
 import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '../utilities/functions';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class FuelFlowToLoadBaselineWorkspaceService {
@@ -19,6 +20,33 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     @InjectRepository(FuelFlowToLoadBaselineWorkspaceRepository)
     private readonly repository: FuelFlowToLoadBaselineWorkspaceRepository,
   ) {}
+
+  async getFuelFlowToLoadBaselines(
+    testSumId: string,
+  ): Promise<FuelFlowToLoadBaselineDTO[]> {
+    const records = await this.repository.find({ where: { testSumId } });
+
+    return this.map.many(records);
+  }
+
+  async getFuelFlowToLoadBaseline(
+    id: string,
+    testSumId: string,
+  ): Promise<FuelFlowToLoadBaselineDTO> {
+    const result = await this.repository.findOne({
+      id,
+      testSumId,
+    });
+
+    if (!result) {
+      throw new LoggingException(
+        `Fuel Flow To Load Baseline record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
 
   async createFuelFlowToLoadBaseline(
     testSumId: string,

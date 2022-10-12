@@ -12,6 +12,7 @@ import { FuelFlowToLoadBaselineWorkspaceService } from './fuel-flow-to-load-base
 
 const locId = '';
 const testSumId = '';
+const id = '';
 const user: CurrentUser = {
   userId: 'testUser',
   sessionId: '',
@@ -26,6 +27,8 @@ const payload = new FuelFlowToLoadBaselineBaseDTO();
 
 const mockService = () => ({
   createFuelFlowToLoadBaseline: jest.fn().mockResolvedValue(dto),
+  getFuelFlowToLoadBaseline: jest.fn().mockResolvedValue(dto),
+  getFuelFlowToLoadBaselines: jest.fn().mockResolvedValue([dto]),
 });
 
 describe('FuelFlowToLoadBaselineWorkspaceController', () => {
@@ -50,8 +53,29 @@ describe('FuelFlowToLoadBaselineWorkspaceController', () => {
     );
   });
 
+  describe('getFuelFlowToLoadBaseline', () => {
+    it('Calls the service to get a fuel Flow To Load Baseline record', async () => {
+      const result = await controller.getFuelFlowToLoadBaseline(
+        locId,
+        testSumId,
+        id,
+      );
+      expect(result).toEqual(dto);
+    });
+  });
+
+  describe('getFuelFlowToLoadBaselines', () => {
+    it('Calls the service to many fuel Flow To Load Baseline records', async () => {
+      const result = await controller.getFuelFlowToLoadBaselines(
+        locId,
+        testSumId,
+      );
+      expect(result).toEqual([dto]);
+    });
+  });
+
   describe('createFuelFlowToLoadBaseline', () => {
-    it('Calls the service to create a new fuel Flow To Load Baseline record', async () => {
+    it('Calls the service and create a new fuel Flow To Load Baseline record', async () => {
       const result = await controller.createFuelFlowToLoadBaseline(
         locId,
         testSumId,

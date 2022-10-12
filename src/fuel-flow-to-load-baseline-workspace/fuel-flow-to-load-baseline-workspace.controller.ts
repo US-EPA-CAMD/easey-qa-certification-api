@@ -1,7 +1,8 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -21,6 +22,35 @@ export class FuelFlowToLoadBaselineWorkspaceController {
   constructor(
     private readonly service: FuelFlowToLoadBaselineWorkspaceService,
   ) {}
+
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: FuelFlowToLoadBaselineDTO,
+    description:
+      'Retrieves workspace Fuel Flow To Load Baseline records by Test Summary Id',
+  })
+  async getFuelFlowToLoadBaselines(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+  ): Promise<FuelFlowToLoadBaselineDTO[]> {
+    return this.service.getFuelFlowToLoadBaselines(testSumId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: FuelFlowToLoadBaselineDTO,
+    description:
+      'Retrieves workspace Fuel Flow To Load Baseline record by its Id',
+  })
+  async getFuelFlowToLoadBaseline(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+  ): Promise<FuelFlowToLoadBaselineDTO> {
+    return this.service.getFuelFlowToLoadBaseline(id, testSumId);
+  }
 
   @Post()
   @ApiBearerAuth('Token')
