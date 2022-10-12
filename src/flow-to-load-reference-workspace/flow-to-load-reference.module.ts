@@ -4,9 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 
 import { HttpModule } from '@nestjs/axios';
-import { FlowToLoadReferenceWorkspaceRepository } from './flow-to-load-reference.repository';
+import { FlowToLoadReferenceWorkspaceRepository } from './flow-to-load-reference-workspace.repository';
 import { FlowToLoadReferenceWorkspaceController } from './flow-to-load-reference-workspace.controller';
-import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference.service';
+import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference-workspace.service';
+import { FlowToLoadReferenceMap } from '../maps/flow-to-load-reference.map';
 
 @Module({
   imports: [
@@ -15,10 +16,10 @@ import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference.se
     HttpModule,
   ],
   controllers: [FlowToLoadReferenceWorkspaceController],
-  providers: [AeCorrelationSummaryMap, FlowToLoadReferenceWorkspaceService],
+  providers: [FlowToLoadReferenceMap, FlowToLoadReferenceWorkspaceService],
   exports: [
     TypeOrmModule,
-    AeCorrelationSummaryMap,
+    FlowToLoadReferenceMap,
     FlowToLoadReferenceWorkspaceService,
   ],
 })

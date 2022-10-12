@@ -13,7 +13,7 @@ import {
   FlowToLoadReferenceBaseDTO,
   FlowToLoadReferenceRecordDTO,
 } from '../dto/flow-to-load-reference.dto';
-import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference.service';
+import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference-workspace.service';
 
 @Controller()
 @ApiSecurity('APIKey')

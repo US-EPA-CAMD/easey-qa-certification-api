@@ -21,7 +21,8 @@ import { TestQualification } from './test-qualification.entity';
 import { AirEmissionTesting } from './air-emission-test.entity';
 import { AppECorrelationTestSummary } from './app-e-correlation-test-summary.entity';
 import { FuelFlowToLoadTest } from './fuel-flow-to-load-test.entity';
-import { FlowToLoadCheck } from './workspace/flow-to-load-check.entity';
+import { FlowToLoadCheck } from './flow-to-load-check.entity';
+import { FlowToLoadReference } from './flow-to-load-reference.entity';
 
 @Entity({ name: 'camdecmps.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -251,6 +252,13 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   flowToLoadCheck: FlowToLoadCheck[];
+
+  @OneToMany(
+    () => FlowToLoadReference,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  flowToLoadReference: FlowToLoadReference[];
 
   @ManyToOne(
     () => ReportingPeriod,

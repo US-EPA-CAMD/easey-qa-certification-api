@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FlowToLoadReferenceWorkspaceController } from './flow-to-load-reference-workspace.controller';
-import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference.service';
+import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference-workspace.service';
 
 describe('AppendixETestSummaryWorkspaceController', () => {
   let controller: FlowToLoadReferenceWorkspaceController;

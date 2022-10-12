@@ -2,16 +2,20 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '../utilities/functions';
-import {
-
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { FlowToLoadReferenceWorkspaceRepository } from './flow-to-load-reference.repository';
-import { FlowToLoadReferenceBaseDTO, FlowToLoadReferenceRecordDTO } from 'src/dto/flow-to-load-reference.dto';
+import { FlowToLoadReferenceMap } from '../maps/flow-to-load-reference.map';
+import { FlowToLoadReferenceWorkspaceRepository } from './flow-to-load-reference-workspace.repository';
+import {
+  FlowToLoadReferenceBaseDTO,
+  FlowToLoadReferenceDTO,
+  FlowToLoadReferenceRecordDTO,
+} from '../dto/flow-to-load-reference.dto';
+import { In } from 'typeorm';
 
 @Injectable()
 export class FlowToLoadReferenceWorkspaceService {
   constructor(
-    private readonly map: AeCorrelationSummaryMap, /* ADD THE CORRECT MAP HERE: FLOW TO LOAD REFERENCE */
+    private readonly map: FlowToLoadReferenceMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(FlowToLoadReferenceWorkspaceRepository)
@@ -44,5 +48,18 @@ export class FlowToLoadReferenceWorkspaceService {
     );
 
     return this.map.one(entity);
+  }
+
+  async getFlowToLoadReferenceBySumIds(
+    testSumIds: string[],
+  ): Promise<FlowToLoadReferenceDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<FlowToLoadReferenceDTO[]> {
+    return this.getFlowToLoadReferenceBySumIds(testSumIds);
   }
 }
