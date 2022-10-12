@@ -10,7 +10,7 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   FuelFlowToLoadBaselineBaseDTO,
-  FuelFlowToLoadBaselineRecordDTO,
+  FuelFlowToLoadBaselineDTO,
 } from '../dto/fuel-flow-to-load-baseline.dto';
 import { FuelFlowToLoadBaselineWorkspaceService } from './fuel-flow-to-load-baseline-workspace.service';
 
@@ -26,15 +26,15 @@ export class FuelFlowToLoadBaselineWorkspaceController {
   @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
   @ApiCreatedResponse({
-    type: FuelFlowToLoadBaselineRecordDTO,
+    type: FuelFlowToLoadBaselineDTO,
     description: 'Creates a workspace Fuel Flow To Load Baseline record.',
   })
-  async createFuelFlowToLoadTest(
+  async createFuelFlowToLoadBaseline(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: FuelFlowToLoadBaselineBaseDTO,
     @User() user: CurrentUser,
-  ): Promise<FuelFlowToLoadBaselineRecordDTO> {
+  ): Promise<FuelFlowToLoadBaselineDTO> {
     return this.service.createFuelFlowToLoadBaseline(
       testSumId,
       payload,

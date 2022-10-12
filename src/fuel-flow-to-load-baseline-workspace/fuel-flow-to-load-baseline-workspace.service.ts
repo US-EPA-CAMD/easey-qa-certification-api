@@ -2,7 +2,7 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FuelFlowToLoadBaselineBaseDTO,
-  FuelFlowToLoadBaselineRecordDTO,
+  FuelFlowToLoadBaselineDTO,
 } from '../dto/fuel-flow-to-load-baseline.dto';
 import { FuelFlowToLoadBaselineMap } from '../maps/fuel-flow-to-load-baseline.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -25,7 +25,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     payload: FuelFlowToLoadBaselineBaseDTO,
     userId: string,
     isImport: boolean = false,
-  ): Promise<FuelFlowToLoadBaselineRecordDTO> {
+  ): Promise<FuelFlowToLoadBaselineDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
