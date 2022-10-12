@@ -47,6 +47,7 @@ import { AppECorrelationTestSummaryWorkspaceModule } from './app-e-correlation-t
 import { AppECorrelationTestSummaryModule } from './app-e-correlation-test-summary/app-e-correlation-test-summary.module';
 import { FlowToLoadCheckWorkspaceModule } from './flow-to-load-check-workspace/flow-to-load-check-workspace.module';
 import { FlowToLoadCheckModule } from './flow-to-load-check/flow-to-load-check.module';
+import { FuelFlowToLoadBaselineWorkspaceModule } from './fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.module';
 
 @Module({
   imports: [
@@ -95,6 +96,7 @@ import { FlowToLoadCheckModule } from './flow-to-load-check/flow-to-load-check.m
     AppEHeatInputFromGasWorkspaceModule,
     AppEHeatInputFromOilModule,
     AppEHeatInputFromOilWorkspaceModule,
+    FuelFlowToLoadBaselineWorkspaceModule,
   ],
 })
 export class AppModule {}
