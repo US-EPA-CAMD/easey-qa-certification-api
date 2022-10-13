@@ -37,7 +37,7 @@ const rataFreqCdRecord = new RataFrequencyCode();
 
 const importPayload = new FlowRataRunImportDTO();
 importPayload.averageVelocityWithWallEffects = 1;
-const testSummaryImportPayload = new TestSummaryImportDTO();
+const rataSummaryImportPayload = new RataSummaryImportDTO();
 
 const mockRataSummaryRepository = () => ({
   findOne: jest.fn().mockResolvedValue(rataSumRecord),
@@ -109,7 +109,7 @@ describe('Flow Rata Run Check Service Test', () => {
         .mockResolvedValue(rataSumRec);
 
       try {
-        await service.runChecks(importPayload, rataSumId);
+        await service.runChecks(importPayload, false, false, rataSumId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -122,7 +122,7 @@ describe('Flow Rata Run Check Service Test', () => {
         .mockResolvedValue(null);
 
       try {
-        await service.runChecks(importPayload, rataSumId);
+        await service.runChecks(importPayload, false, false, rataSumId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -138,7 +138,7 @@ describe('Flow Rata Run Check Service Test', () => {
         .mockResolvedValue(rataSumRec);
 
       try {
-        await service.runChecks(importPayload, rataSumId);
+        await service.runChecks(importPayload, false, false, rataSumId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -147,7 +147,7 @@ describe('Flow Rata Run Check Service Test', () => {
   describe('RATA-124 Flow RATA Record Valid', () => {
     it('Should get [RATA-124-A] error', async () => {
       importPayload.averageVelocityWithWallEffects = null;
-      
+
       let rataSumRec = new RataSummary();
       rataSumRec.referenceMethodCode = "A";
 
@@ -156,7 +156,7 @@ describe('Flow Rata Run Check Service Test', () => {
         .mockResolvedValue(rataSumRec);
 
       try {
-        await service.runChecks(importPayload, rataSumId, rataRunId);
+        await service.runChecks(importPayload, false, false, rataSumId, rataSummaryImportPayload, rataRunId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -172,7 +172,7 @@ describe('Flow Rata Run Check Service Test', () => {
         .mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(importPayload, rataSumId, rataRunId);
+        await service.runChecks(importPayload, false, false, rataSumId, rataSummaryImportPayload, rataRunId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
