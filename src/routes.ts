@@ -39,6 +39,7 @@ import { AppEHeatInputFromOilWorkspaceModule } from './app-e-heat-input-from-oil
 import { FlowToLoadCheckWorkspaceModule } from './flow-to-load-check-workspace/flow-to-load-check-workspace.module';
 import { FlowToLoadCheckModule } from './flow-to-load-check/flow-to-load-check.module';
 import { FlowToLoadReferenceWorkspaceModule } from './flow-to-load-reference-workspace/flow-to-load-reference-workspace.module';
+import { FlowToLoadReferenceModule } from './flow-to-load-reference/flow-to-load-reference.module';
 
 const routes: Routes = [
   {
@@ -78,6 +79,10 @@ const routes: Routes = [
           {
             path: ':testSumId/flow-to-load-checks',
             module: FlowToLoadCheckModule,
+          },
+          {
+            path: ':testSumId/flow-to-load-references',
+            module: FlowToLoadReferenceModule,
           },
           {
             path: ':testSumId/fuel-flow-to-load-tests',

@@ -48,6 +48,7 @@ import { AppECorrelationTestSummaryModule } from './app-e-correlation-test-summa
 import { FlowToLoadCheckWorkspaceModule } from './flow-to-load-check-workspace/flow-to-load-check-workspace.module';
 import { FlowToLoadCheckModule } from './flow-to-load-check/flow-to-load-check.module';
 import { FlowToLoadReferenceWorkspaceModule } from './flow-to-load-reference-workspace/flow-to-load-reference-workspace.module';
+import { FlowToLoadReferenceModule } from './flow-to-load-reference/flow-to-load-reference.module';
 
 @Module({
   imports: [
@@ -86,6 +87,7 @@ import { FlowToLoadReferenceWorkspaceModule } from './flow-to-load-reference-wor
     RataTraverseModule,
     FlowToLoadCheckModule,
     FlowToLoadCheckWorkspaceModule,
+    FlowToLoadReferenceModule,
     FlowToLoadReferenceWorkspaceModule,
     FuelFlowToLoadTestModule,
     FuelFlowToLoadTestWorkspaceModule,

@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
-
 import { LinearitySummaryMap } from './linearity-summary.map';
 import { TestSummary } from '../entities/test-summary.entity';
 import { TestSummaryDTO } from '../dto/test-summary.dto';
