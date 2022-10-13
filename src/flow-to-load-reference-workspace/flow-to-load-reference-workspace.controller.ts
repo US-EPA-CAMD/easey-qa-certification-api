@@ -1,4 +1,12 @@
-import { Controller, Param, Post, Body, UseGuards, Get } from '@nestjs/common';
+import {
+  Controller,
+  Param,
+  Post,
+  Body,
+  UseGuards,
+  Get,
+  Put,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -66,6 +74,28 @@ export class FlowToLoadReferenceWorkspaceController {
   ): Promise<FlowToLoadReferenceRecordDTO> {
     return this.service.createFlowToLoadReference(
       testSumId,
+      payload,
+      user.userId,
+    );
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: FlowToLoadReferenceRecordDTO,
+    description: 'Updates a workspace Flow To Load Reference record',
+  })
+  editFlowToLoadReference(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: FlowToLoadReferenceBaseDTO,
+    @User() user: CurrentUser,
+  ) {
+    return this.service.editFlowToLoadReference(
+      testSumId,
+      id,
       payload,
       user.userId,
     );

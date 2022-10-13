@@ -74,6 +74,39 @@ export class FlowToLoadReferenceWorkspaceService {
     return this.map.one(entity);
   }
 
+  async editFlowToLoadReference(
+    testSumId: string,
+    id: string,
+    payload: FlowToLoadReferenceBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<FlowToLoadReferenceRecordDTO> {
+    const timestamp = currentDateTime().toLocaleString();
+
+    const entity = await this.getFlowToLoadReference(id);
+
+    entity.rataTestNumber = payload.rataTestNumber;
+    entity.averageGrossUnitLoad = payload.averageGrossUnitLoad;
+    entity.averageReferenceMethodFlow = payload.averageReferenceMethodFlow;
+    entity.referenceFlowToLoadRatio = payload.referenceFlowToLoadRatio;
+    entity.averageHourlyHeatInputRate = payload.averageHourlyHeatInputRate;
+    entity.referenceGrossHeatRate = payload.referenceGrossHeatRate;
+    entity.calculatedSeparateReferenceIndicator =
+      payload.calculatedSeparateReferenceIndicator;
+    entity.userId = userId;
+    entity.updateDate = timestamp;
+
+    await this.repository.save(entity);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.getFlowToLoadReference(id);
+  }
+
   async getFlowToLoadReferenceBySumIds(
     testSumIds: string[],
   ): Promise<FlowToLoadReferenceDTO[]> {

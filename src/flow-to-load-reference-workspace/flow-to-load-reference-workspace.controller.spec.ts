@@ -25,6 +25,7 @@ const mockService = () => ({
   getFlowToLoadReferences: jest.fn().mockResolvedValue(flowToLoadReferences),
   getFlowToLoadReference: jest.fn().mockResolvedValue(flowToLoadReference),
   createFlowToLoadReference: jest.fn().mockResolvedValue(flowToLoadReference),
+  editFlowToLoadReference: jest.fn().mockResolvedValue(flowToLoadReference),
 });
 
 const payload = new FlowToLoadReferenceBaseDTO();
@@ -78,6 +79,20 @@ describe('FlowToLoadReferenceWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(flowToLoadReference);
+    });
+  });
+
+  describe('editFlowToLoadReference', () => {
+    it('should call the Flow To Load Reference record', async () => {
+      expect(
+        await controller.editFlowToLoadReference(
+          locId,
+          testSumId,
+          flowToLoadReferenceId,
+          payload,
+          user,
+        ),
+      ).toEqual(flowToLoadReference);
     });
   });
 });
