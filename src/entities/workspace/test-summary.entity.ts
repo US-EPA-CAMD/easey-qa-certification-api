@@ -273,7 +273,7 @@ export class TestSummary extends BaseEntity {
 
   @OneToMany(
     () => FlowToLoadReference,
-    o => o.testSummary,
+    ftlrf => ftlrf.testSummary,
   )
   @JoinColumn({ name: 'test_sum_id' })
   flowToLoadReference: FlowToLoadReference[];

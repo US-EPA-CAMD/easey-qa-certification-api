@@ -14,13 +14,19 @@ export class FlowToLoadReferenceMap extends BaseMap<
     return {
       id: entity.id,
       testSumId: entity.testSumId,
-      operatingLevelCode: entity.operatingLevelCode,
       rataTestNumber: entity.rataTestNumber,
+      operatingLevelCode: entity.operatingLevelCode,
       averageGrossUnitLoad: entity.averageGrossUnitLoad,
+      calculatedAverageGrossUnitLoad: entity.calculatedAverageGrossUnitLoad,
       averageReferenceMethodFlow: entity.averageReferenceMethodFlow,
+      calculatedAverageReferenceMethodFlow:
+        entity.calculatedAverageReferenceMethodFlow,
       referenceFlowToLoadRatio: entity.referenceFlowToLoadRatio,
+      calculatedReferenceFlowToLoadRatio:
+        entity.calculatedReferenceFlowToLoadRatio,
       averageHourlyHeatInputRate: entity.averageHourlyHeatInputRate,
       referenceGrossHeatRate: entity.referenceGrossHeatRate,
+      calculatedReferenceGrossHeatRate: entity.calculatedReferenceGrossHeatRate,
       calculatedSeparateReferenceIndicator:
         entity.calculatedSeparateReferenceIndicator,
       userId: entity.userId,
