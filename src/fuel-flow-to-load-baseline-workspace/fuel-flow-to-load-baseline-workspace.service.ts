@@ -74,4 +74,50 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     );
     return this.map.one(entity);
   }
+
+  async updateFuelFlowToLoadBaseline(
+    testSumId: string,
+    id: string,
+    payload: FuelFlowToLoadBaselineBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<FuelFlowToLoadBaselineDTO> {
+    const entity = await this.repository.findOne({
+      id,
+      testSumId,
+    });
+
+    if (!entity) {
+      throw new LoggingException(
+        `Fuel Flow To Load Baseline record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    entity.accuracyTestNumber = payload.accuracyTestNumber;
+    entity.peiTestNumber = payload.peiTestNumber;
+    entity.averageFuelFlowRate = payload.averageFuelFlowRate;
+    entity.averageLoad = payload.averageLoad;
+    entity.baselineFuelFlowToLoadRatio = payload.baselineFuelFlowToLoadRatio;
+    entity.fuelFlowToLoadUOMCode = payload.fuelFlowToLoadUOMCode;
+    entity.averageHourlyHeatInputRate = payload.averageHourlyHeatInputRate;
+    entity.baselineGHR = payload.baselineGHR;
+    entity.ghrUnitsOfMeasureCode = payload.ghrUnitsOfMeasureCode;
+
+    entity.numberOfHoursExcludedCofiring =
+      payload.numberOfHoursExcludedCofiring;
+    entity.numberOfHoursExcludedRamping = payload.numberOfHoursExcludedRamping;
+    entity.numberOfHoursExcludedLowRange =
+      payload.numberOfHoursExcludedLowRange;
+
+    await this.repository.save(entity);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.map.one(entity);
+  }
 }

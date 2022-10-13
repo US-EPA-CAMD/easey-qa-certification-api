@@ -110,4 +110,36 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
   });
+
+  describe('updateFuelFlowToLoadBaseline', () => {
+    it('Should update and return a new Fuel Flow To Load Baseline record', async () => {
+      const result = await service.updateFuelFlowToLoadBaseline(
+        testSumId,
+        id,
+        payload,
+        userId,
+      );
+
+      expect(result).toEqual(dto);
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should throw error when a Fuel Flow To Load Baseline record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.updateFuelFlowToLoadBaseline(
+          testSumId,
+          id,
+          payload,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
 });
