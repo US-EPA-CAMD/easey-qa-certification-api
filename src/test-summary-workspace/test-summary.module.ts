@@ -25,6 +25,7 @@ import { AirEmissionTestingWorkspaceModule } from '../air-emission-testing-works
 import { AppECorrelationTestSummaryWorkspaceModule } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.module';
 import { FuelFlowToLoadTestWorkspaceModule } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.module';
 import { FlowToLoadCheckWorkspaceModule } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.module';
+import { FlowToLoadReferenceWorkspaceModule } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { FlowToLoadCheckWorkspaceModule } from '../flow-to-load-check-workspace/
     forwardRef(() => RataWorkspaceModule),
     forwardRef(() => TestQualificationWorkspaceModule),
     forwardRef(() => AppECorrelationTestSummaryWorkspaceModule),
+    forwardRef(() => FlowToLoadReferenceWorkspaceModule),
     forwardRef(() => FuelFlowToLoadTestWorkspaceModule),
     forwardRef(() => FlowToLoadCheckWorkspaceModule),
     forwardRef(() => AirEmissionTestingWorkspaceModule),

@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
-
 import { LinearitySummaryMap } from './linearity-summary.map';
 import { TestSummary } from '../entities/test-summary.entity';
 import { TestSummaryDTO } from '../dto/test-summary.dto';
@@ -12,6 +10,7 @@ import { AirEmissionTestingMap } from './air-emission-testing.map';
 import { AppECorrelationTestSummaryMap } from './app-e-correlation-summary.map';
 import { FuelFlowToLoadTestMap } from './fuel-flow-to-load-test.map';
 import { FlowToLoadCheckMap } from './flow-to-load-check.map';
+import { FlowToLoadReferenceMap } from './flow-to-load-reference.map';
 
 @Injectable()
 export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
@@ -24,6 +23,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
     private readonly appECorrelationTestSummaryMap: AppECorrelationTestSummaryMap,
     private readonly fuelFlowToLoadTestMap: FuelFlowToLoadTestMap,
     private readonly flowToLoadCheckMap: FlowToLoadCheckMap,
+    private readonly flowToLoadReferenceMap: FlowToLoadReferenceMap,
   ) {
     super();
   }
@@ -56,6 +56,10 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
 
     const flowToloadCheck = entity.flowToLoadCheck
       ? await this.flowToLoadCheckMap.many(entity.flowToLoadCheck)
+      : [];
+
+    const flowToloadReference = entity.flowToLoadReference
+      ? await this.flowToLoadReferenceMap.many(entity.flowToLoadReference)
       : [];
 
     const fuelFlowToloadTest = entity.fuelFlowToLoadTests
@@ -110,7 +114,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       linearitySummaryData: linearitySummaries,
       rataData: ratas,
       flowRataRunData: [],
-      flowToLoadReferenceData: [],
+      flowToLoadReferenceData: flowToloadReference,
       flowToLoadCheckData: flowToloadCheck,
       cycleTimeSummaryData: [],
       onlineOfflineCalibrationData: [],
