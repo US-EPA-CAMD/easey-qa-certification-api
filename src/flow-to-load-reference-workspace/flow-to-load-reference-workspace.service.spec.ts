@@ -113,4 +113,33 @@ describe('FlowToLoadReferenceWorkspaceService', () => {
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
   });
+
+  describe('editFlowToLoadReference', () => {
+    it('should update an Flow To Load Reference record', async () => {
+      const result = await service.editFlowToLoadReference(
+        testSumId,
+        flowToLoadReferenceId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(flowToLoadReference);
+    });
+
+    it('should throw error with invalid Flow To Load Reference', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.editFlowToLoadReference(
+          testSumId,
+          flowToLoadReferenceId,
+          payload,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
+    });
+  });
 });
