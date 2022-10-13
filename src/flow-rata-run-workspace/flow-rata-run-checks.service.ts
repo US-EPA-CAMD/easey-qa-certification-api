@@ -35,12 +35,12 @@ export class FlowRataRunChecksService {
 
   async runChecks(
     flowRataRun: FlowRataRunBaseDTO | FlowRataRunImportDTO,
-    isImport: boolean = false,
-    isUpdate: boolean = false,
     rataSumId?: string,
-    rataSummary?: RataSummaryImportDTO,
     rataRunId?: string,
+    rataSummary?: RataSummaryImportDTO,
     rataRun?: RataRunImportDTO,
+    isImport: boolean = false,
+    _isUpdate: boolean = false,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
