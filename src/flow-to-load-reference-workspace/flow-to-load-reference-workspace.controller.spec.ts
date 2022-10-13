@@ -17,10 +17,14 @@ const user: CurrentUser = {
   isAdmin: false,
   roles: [],
 };
-const flowToLoadCheck = new FlowToLoadReferenceBaseDTO();
+const flowToLoadReferenceId = '';
+const flowToLoadReference = new FlowToLoadReferenceBaseDTO();
+const flowToLoadReferences = [flowToLoadReference];
 
 const mockService = () => ({
-  createFlowToLoadReference: jest.fn().mockResolvedValue(flowToLoadCheck),
+  getFlowToLoadReferences: jest.fn().mockResolvedValue(flowToLoadReferences),
+  getFlowToLoadReference: jest.fn().mockResolvedValue(flowToLoadReference),
+  createFlowToLoadReference: jest.fn().mockResolvedValue(flowToLoadReference),
 });
 
 const payload = new FlowToLoadReferenceBaseDTO();
@@ -47,15 +51,33 @@ describe('FlowToLoadReferenceWorkspaceController', () => {
     );
   });
 
-  describe('createFlowToLoadCheck', () => {
-    it('Calls the service to create a new Flow To Load Check record', async () => {
+  describe('getFlowToLoadReferences', () => {
+    it('Calls the repository to get all Flow To Load Reference records by Test Summary Id', async () => {
+      const result = await controller.getFlowToLoadReferences(locId, testSumId);
+      expect(result).toEqual(flowToLoadReferences);
+    });
+  });
+
+  describe('getFlowToLoadReference', () => {
+    it('Calls the repository to get one Flow To Load Reference record by Id', async () => {
+      const result = await controller.getFlowToLoadReference(
+        locId,
+        testSumId,
+        flowToLoadReferenceId,
+      );
+      expect(result).toEqual(flowToLoadReference);
+    });
+  });
+
+  describe('createFlowToLoadReference', () => {
+    it('Calls the service to create a new Flow To Load Reference record', async () => {
       const result = await controller.createFlowToLoadReference(
         locId,
         testSumId,
         payload,
         user,
       );
-      expect(result).toEqual(flowToLoadCheck);
+      expect(result).toEqual(flowToLoadReference);
     });
   });
 });
