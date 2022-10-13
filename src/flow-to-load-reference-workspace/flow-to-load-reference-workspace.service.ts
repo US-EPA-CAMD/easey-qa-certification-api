@@ -8,7 +8,6 @@ import { FlowToLoadReferenceWorkspaceRepository } from './flow-to-load-reference
 import {
   FlowToLoadReferenceBaseDTO,
   FlowToLoadReferenceDTO,
-  FlowToLoadReferenceRecordDTO,
 } from '../dto/flow-to-load-reference.dto';
 import { In } from 'typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
@@ -25,15 +24,13 @@ export class FlowToLoadReferenceWorkspaceService {
 
   async getFlowToLoadReferences(
     testSumId: string,
-  ): Promise<FlowToLoadReferenceRecordDTO[]> {
+  ): Promise<FlowToLoadReferenceDTO[]> {
     const records = await this.repository.find({ where: { testSumId } });
 
     return this.map.many(records);
   }
 
-  async getFlowToLoadReference(
-    id: string,
-  ): Promise<FlowToLoadReferenceRecordDTO> {
+  async getFlowToLoadReference(id: string): Promise<FlowToLoadReferenceDTO> {
     const result = await this.repository.findOne(id);
 
     if (!result) {
@@ -51,7 +48,7 @@ export class FlowToLoadReferenceWorkspaceService {
     payload: FlowToLoadReferenceBaseDTO,
     userId: string,
     isImport: boolean = false,
-  ): Promise<FlowToLoadReferenceRecordDTO> {
+  ): Promise<FlowToLoadReferenceDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
@@ -80,12 +77,13 @@ export class FlowToLoadReferenceWorkspaceService {
     payload: FlowToLoadReferenceBaseDTO,
     userId: string,
     isImport: boolean = false,
-  ): Promise<FlowToLoadReferenceRecordDTO> {
+  ): Promise<FlowToLoadReferenceDTO> {
     const timestamp = currentDateTime().toLocaleString();
 
     const entity = await this.getFlowToLoadReference(id);
 
     entity.rataTestNumber = payload.rataTestNumber;
+    entity.operatingLevelCode = payload.operatingLevelCode;
     entity.averageGrossUnitLoad = payload.averageGrossUnitLoad;
     entity.averageReferenceMethodFlow = payload.averageReferenceMethodFlow;
     entity.referenceFlowToLoadRatio = payload.referenceFlowToLoadRatio;

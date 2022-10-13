@@ -20,7 +20,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
   FlowToLoadReferenceBaseDTO,
-  FlowToLoadReferenceRecordDTO,
+  FlowToLoadReferenceDTO,
 } from '../dto/flow-to-load-reference.dto';
 import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference-workspace.service';
 
@@ -33,21 +33,21 @@ export class FlowToLoadReferenceWorkspaceController {
   @Get()
   @ApiOkResponse({
     isArray: true,
-    type: FlowToLoadReferenceRecordDTO,
+    type: FlowToLoadReferenceDTO,
     description:
       'Retrieves workspace Flow To Load Reference records by Test Summary Id',
   })
   async getFlowToLoadReferences(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<FlowToLoadReferenceRecordDTO[]> {
+  ): Promise<FlowToLoadReferenceDTO[]> {
     return this.service.getFlowToLoadReferences(testSumId);
   }
 
   @Get(':id')
   @ApiOkResponse({
     isArray: false,
-    type: FlowToLoadReferenceRecordDTO,
+    type: FlowToLoadReferenceDTO,
     description:
       'Retrieves a workspace Flow To Load Reference record by its Id',
   })
@@ -55,7 +55,7 @@ export class FlowToLoadReferenceWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('id') id: string,
-  ): Promise<FlowToLoadReferenceRecordDTO> {
+  ): Promise<FlowToLoadReferenceDTO> {
     return this.service.getFlowToLoadReference(id);
   }
 
@@ -63,7 +63,7 @@ export class FlowToLoadReferenceWorkspaceController {
   @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
   @ApiCreatedResponse({
-    type: FlowToLoadReferenceRecordDTO,
+    type: FlowToLoadReferenceDTO,
     description: 'Creates a workspace Flow To Load Reference record.',
   })
   async createFlowToLoadReference(
@@ -71,7 +71,7 @@ export class FlowToLoadReferenceWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Body() payload: FlowToLoadReferenceBaseDTO,
     @User() user: CurrentUser,
-  ): Promise<FlowToLoadReferenceRecordDTO> {
+  ): Promise<FlowToLoadReferenceDTO> {
     return this.service.createFlowToLoadReference(
       testSumId,
       payload,
@@ -83,7 +83,7 @@ export class FlowToLoadReferenceWorkspaceController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('Token')
   @ApiOkResponse({
-    type: FlowToLoadReferenceRecordDTO,
+    type: FlowToLoadReferenceDTO,
     description: 'Updates a workspace Flow To Load Reference record',
   })
   editFlowToLoadReference(
@@ -92,7 +92,7 @@ export class FlowToLoadReferenceWorkspaceController {
     @Param('id') id: string,
     @Body() payload: FlowToLoadReferenceBaseDTO,
     @User() user: CurrentUser,
-  ) {
+  ): Promise<FlowToLoadReferenceDTO> {
     return this.service.editFlowToLoadReference(
       testSumId,
       id,
