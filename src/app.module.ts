@@ -49,6 +49,9 @@ import { FlowToLoadCheckWorkspaceModule } from './flow-to-load-check-workspace/f
 import { FlowToLoadCheckModule } from './flow-to-load-check/flow-to-load-check.module';
 import { FlowToLoadReferenceWorkspaceModule } from './flow-to-load-reference-workspace/flow-to-load-reference-workspace.module';
 import { FlowToLoadReferenceModule } from './flow-to-load-reference/flow-to-load-reference.module';
+import { FuelFlowToLoadBaselineWorkspaceModule } from './fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.module';
+import { FuelFlowToLoadBaselineModule } from './fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.module';
+
 
 @Module({
   imports: [
@@ -99,6 +102,8 @@ import { FlowToLoadReferenceModule } from './flow-to-load-reference/flow-to-load
     AppEHeatInputFromGasWorkspaceModule,
     AppEHeatInputFromOilModule,
     AppEHeatInputFromOilWorkspaceModule,
+    FuelFlowToLoadBaselineWorkspaceModule,
+    FuelFlowToLoadBaselineModule,
   ],
 })
 export class AppModule {}

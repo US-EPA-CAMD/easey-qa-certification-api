@@ -136,7 +136,7 @@ export class TestSummaryChecksService {
       errorList.push(error);
     }
 
-    if (summary.testResultCode === TestTypeCodes.LINE){
+    if (summary.testResultCode === TestTypeCodes.LINE) {
       // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
       error = await this.linear4Check(
         locationId,
@@ -147,14 +147,13 @@ export class TestSummaryChecksService {
       if (error) {
         errorList.push(error);
       }
-  
+
       // LINEAR-10 Linearity Test Result Code Valid
       error = await this.linear10Check(summary);
       if (error) {
         errorList.push(error);
       }
     }
-
 
     // TEST-8 Test Span Scale Valid
     error = await this.test8Check(locationId, summary);
@@ -168,7 +167,7 @@ export class TestSummaryChecksService {
       errorList.push(error);
     }
 
-    if (summary.testResultCode === TestTypeCodes.RATA){
+    if (summary.testResultCode === TestTypeCodes.RATA) {
       // RATA-100 Test Result Code Valid
       error = await this.rata100check(summary);
       if (error) {
