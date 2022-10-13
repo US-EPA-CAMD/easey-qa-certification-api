@@ -1,4 +1,6 @@
+import { HttpStatus, InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
   FuelFlowToLoadBaselineBaseDTO,
   FuelFlowToLoadBaselineDTO,
@@ -135,6 +137,34 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
           payload,
           userId,
         );
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteFuelFlowToLoadBaseline', () => {
+    it('Should delete a Fuel Flow To Load Baseline record', async () => {
+      const result = await service.deleteFuelFlowToLoadBaseline(
+        testSumId,
+        id,
+        userId,
+      );
+
+      expect(result).toEqual(undefined);
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should throw error when database throws an error while deleting a Fuel Flow To Load Baseline record', async () => {
+      jest
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+      let errored = false;
+
+      try {
+        await service.deleteFuelFlowToLoadBaseline(testSumId, id, userId);
       } catch (e) {
         errored = true;
       }

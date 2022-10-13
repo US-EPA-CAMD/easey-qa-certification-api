@@ -26,6 +26,7 @@ const dto = new FuelFlowToLoadBaselineDTO();
 const payload = new FuelFlowToLoadBaselineBaseDTO();
 
 const mockService = () => ({
+  deleteFuelFlowToLoadBaseline: jest.fn().mockResolvedValue(undefined),
   updateFuelFlowToLoadBaseline: jest.fn().mockResolvedValue(dto),
   createFuelFlowToLoadBaseline: jest.fn().mockResolvedValue(dto),
   getFuelFlowToLoadBaseline: jest.fn().mockResolvedValue(dto),
@@ -97,6 +98,18 @@ describe('FuelFlowToLoadBaselineWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(dto);
+    });
+  });
+
+  describe('deleteFuelFlowToLoadBaseline', () => {
+    it('Calls the service and delete a fuel Flow To Load Baseline record', async () => {
+      const result = await controller.deleteFuelFlowToLoadBaseline(
+        locId,
+        testSumId,
+        id,
+        user,
+      );
+      expect(result).toEqual(undefined);
     });
   });
 });

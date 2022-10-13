@@ -120,4 +120,30 @@ export class FuelFlowToLoadBaselineWorkspaceService {
 
     return this.map.one(entity);
   }
+
+  async deleteFuelFlowToLoadBaseline(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete({
+        id,
+        testSumId,
+      });
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting Fuel Flow To Load Baseline record Id [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
+      );
+    }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+  }
 }
