@@ -25,9 +25,9 @@ export class FlowToLoadReference extends BaseEntity {
 
   @Column({
     type: 'varchar',
-    name: 'userid',
+    name: 'rata_test_num',
   })
-  userId: string;
+  rataTestNumber: string;
 
   @Column({
     type: 'varchar',
@@ -36,16 +36,16 @@ export class FlowToLoadReference extends BaseEntity {
   operatingLevelCode: string;
 
   @Column({
-    type: 'varchar',
-    name: 'rata_test_num',
-  })
-  rataTestNumber: string;
-
-  @Column({
     name: 'avg_gross_unit_load',
     transformer: new NumericColumnTransformer(),
   })
   averageGrossUnitLoad: number;
+
+  @Column({
+    name: 'calc_avg_gross_unit_load',
+    transformer: new NumericColumnTransformer(),
+  })
+  calculatedAverageGrossUnitLoad: number;
 
   @Column({
     name: 'avg_ref_method_flow',
@@ -54,10 +54,22 @@ export class FlowToLoadReference extends BaseEntity {
   averageReferenceMethodFlow: number;
 
   @Column({
+    name: 'calc_avg_ref_method_flow',
+    transformer: new NumericColumnTransformer(),
+  })
+  calculatedAverageReferenceMethodFlow: number;
+
+  @Column({
     name: 'ref_flow_load_ratio',
     transformer: new NumericColumnTransformer(),
   })
   referenceFlowToLoadRatio: number;
+
+  @Column({
+    name: 'calc_ref_flow_load_ratio',
+    transformer: new NumericColumnTransformer(),
+  })
+  calculatedReferenceFlowToLoadRatio: number;
 
   @Column({
     name: 'avg_hrly_hi_rate',
@@ -72,10 +84,22 @@ export class FlowToLoadReference extends BaseEntity {
   referenceGrossHeatRate: number;
 
   @Column({
+    name: 'calc_ref_ghr',
+    transformer: new NumericColumnTransformer(),
+  })
+  calculatedReferenceGrossHeatRate: number;
+
+  @Column({
     name: 'calc_sep_ref_ind',
     transformer: new NumericColumnTransformer(),
   })
   calculatedSeparateReferenceIndicator: number;
+
+  @Column({
+    type: 'varchar',
+    name: 'userid',
+  })
+  userId: string;
 
   @Column({
     type: 'timestamp',
@@ -91,7 +115,7 @@ export class FlowToLoadReference extends BaseEntity {
 
   @ManyToOne(
     () => TestSummary,
-    o => o.flowToLoadReference,
+    ts => ts.flowToLoadReference,
   )
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
