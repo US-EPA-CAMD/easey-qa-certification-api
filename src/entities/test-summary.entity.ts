@@ -23,6 +23,7 @@ import { AppECorrelationTestSummary } from './app-e-correlation-test-summary.ent
 import { FuelFlowToLoadTest } from './fuel-flow-to-load-test.entity';
 import { FlowToLoadReference } from './flow-to-load-reference.entity';
 import { FlowToLoadCheck } from './flow-to-load-check.entity';
+import { FuelFlowToLoadBaseline } from './fuel-flow-to-load-baseline.entity';
 
 @Entity({ name: 'camdecmps.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -259,6 +260,13 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   flowToLoadReference: FlowToLoadReference[];
+
+  @OneToMany(
+    () => FuelFlowToLoadBaseline,
+    fftlb => fftlb.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  fuelFlowToLoadBaseline: FuelFlowToLoadBaseline[];
 
   @ManyToOne(
     () => ReportingPeriod,
