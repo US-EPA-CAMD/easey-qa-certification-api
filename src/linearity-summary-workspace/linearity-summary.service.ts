@@ -1,12 +1,7 @@
 import { In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-import {
-  forwardRef,
-  HttpStatus,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 

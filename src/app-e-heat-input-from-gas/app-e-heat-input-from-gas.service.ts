@@ -14,10 +14,10 @@ export class AppEHeatInputFromGasService {
   ) {}
 
   async getAppEHeatInputFromGases(
-    appEHeatInputFromGasId: string,
+    appECorrTestRunId: string,
   ): Promise<AppEHeatInputFromGasRecordDTO[]> {
     const records = await this.repository.find({
-      where: { appEHeatInputFromGasId },
+      where: { appECorrTestRunId },
     });
 
     return this.map.many(records);

@@ -37,7 +37,6 @@ const mockTestSumService = () => ({
 describe('FuelFlowToLoadTestWorkspaceService', () => {
   let service: FuelFlowToLoadTestWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
-  let repository: FuelFlowToLoadTestWorkspaceRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -63,9 +62,6 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
       TestSummaryWorkspaceService,
-    );
-    repository = module.get<FuelFlowToLoadTestWorkspaceRepository>(
-      FuelFlowToLoadTestWorkspaceRepository,
     );
   });
 

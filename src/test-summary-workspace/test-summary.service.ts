@@ -37,6 +37,7 @@ import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
+import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -53,6 +54,8 @@ export class TestSummaryWorkspaceService {
     private readonly protocolGasService: ProtocolGasWorkspaceService,
     @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
     private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
+    @Inject(forwardRef(() => FlowToLoadReferenceWorkspaceService))
+    private readonly flowToLoadReferenceWorkspaceService: FlowToLoadReferenceWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -153,6 +156,7 @@ export class TestSummaryWorkspaceService {
         let linearitySummaryData,
           rataData,
           protocolGasData,
+          flowToLoadReferenceData,
           appECorrelationTestSummaryData = null;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
@@ -166,6 +170,9 @@ export class TestSummaryWorkspaceService {
           linearitySummaryData = await this.linearityService.export(testSumIds);
           rataData = await this.rataService.export(testSumIds);
           protocolGasData = await this.protocolGasService.export(testSumIds);
+          flowToLoadReferenceData = await this.flowToLoadReferenceWorkspaceService.export(
+            testSumIds,
+          );
           appECorrelationTestSummaryData = await this.appECorrelationTestSummaryWorkspaceService.export(
             testSumIds,
           );
@@ -178,6 +185,9 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
               i => i.testSumId === s.id,
             );
           });
