@@ -336,8 +336,12 @@ describe('Test Summary Check Service Test', () => {
       importPayload.fuelFlowmeterAccuracyData = [{}];
       importPayload.transmitterTransducerData = [{}];
       importPayload.fuelFlowToLoadBaselineData = [{}];
-      importPayload.fuelFlowToLoadTestData = [new FuelFlowToLoadTestImportDTO()];
-      importPayload.appECorrelationTestSummaryData = [new AppECorrelationTestSummaryImportDTO()];
+      importPayload.fuelFlowToLoadTestData = [
+        new FuelFlowToLoadTestImportDTO(),
+      ];
+      importPayload.appECorrelationTestSummaryData = [
+        new AppECorrelationTestSummaryImportDTO(),
+      ];
       importPayload.unitDefaultTestData = [{}];
       importPayload.airEmissionTestingData = [
         new AirEmissionTestingImportDTO(),

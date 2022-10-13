@@ -276,7 +276,15 @@ export class TestSummaryWorkspaceService {
       }
     }
 
-    if (payload.protocolGasData?.length > 0) {
+    if (
+      payload.protocolGasData?.length > 0 &&
+      [
+        TestTypeCodes.RATA.toString(),
+        TestTypeCodes.LINE.toString(),
+        TestTypeCodes.APPE.toString(),
+        TestTypeCodes.UNITDEF.toString(),
+      ].includes(payload.testTypeCode)
+    ) {
       for (const protocolGas of payload.protocolGasData) {
         promises.push(
           new Promise(async (resolve, _reject) => {
@@ -298,7 +306,7 @@ export class TestSummaryWorkspaceService {
 
     if (
       payload.appECorrelationTestSummaryData?.length > 0 &&
-      payload.testTypeCode === TestTypeCodes.RATA
+      payload.testTypeCode === TestTypeCodes.APPE
     ) {
       for (const appECorrelationTestSummary of payload.appECorrelationTestSummaryData) {
         promises.push(

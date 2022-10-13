@@ -99,7 +99,7 @@ export class AppendixETestSummaryWorkspaceController {
       user.userId,
     );
   }
-  
+
   @Delete(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth('Token')

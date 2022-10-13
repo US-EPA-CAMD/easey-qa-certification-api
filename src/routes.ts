@@ -40,6 +40,8 @@ import { FlowToLoadCheckWorkspaceModule } from './flow-to-load-check-workspace/f
 import { FlowToLoadCheckModule } from './flow-to-load-check/flow-to-load-check.module';
 import { FlowToLoadReferenceWorkspaceModule } from './flow-to-load-reference-workspace/flow-to-load-reference-workspace.module';
 import { FlowToLoadReferenceModule } from './flow-to-load-reference/flow-to-load-reference.module';
+import { FuelFlowToLoadBaselineWorkspaceModule } from './fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.module';
+import { FuelFlowToLoadBaselineModule } from './fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.module';
 
 const routes: Routes = [
   {
@@ -87,6 +89,10 @@ const routes: Routes = [
           {
             path: ':testSumId/fuel-flow-to-load-tests',
             module: FuelFlowToLoadTestModule,
+          },
+          {
+            path: ':testSumId/fuel-flow-to-load-baselines',
+            module: FuelFlowToLoadBaselineModule,
           },
           {
             path: ':testSumId/air-emission-testings',
@@ -205,6 +211,10 @@ const routes: Routes = [
           {
             path: ':testSumId/fuel-flow-to-load-tests',
             module: FuelFlowToLoadTestWorkspaceModule,
+          },
+          {
+            path: ':testSumId/fuel-flow-to-load-baselines',
+            module: FuelFlowToLoadBaselineWorkspaceModule,
           },
           {
             path: ':testSumId/rata',

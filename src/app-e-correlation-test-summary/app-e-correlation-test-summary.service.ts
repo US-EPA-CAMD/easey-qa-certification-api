@@ -46,7 +46,9 @@ export class AppECorrelationTestSummaryService {
     return this.map.many(results);
   }
 
-  async export(TestSumIds: string[]): Promise<AppECorrelationTestSummaryRecordDTO[]> {
+  async export(
+    TestSumIds: string[],
+  ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
     return await this.getAppECorrelationsByTestSumIds(TestSumIds);
   }
 }

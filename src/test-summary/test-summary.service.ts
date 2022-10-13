@@ -139,7 +139,9 @@ export class TestSummaryService {
           linearitySummaryData = await this.linearityService.export(testSumIds);
           rataData = await this.rataService.export(testSumIds);
           protocolGasData = await this.protocolGasService.export(testSumIds);
-          appECorrelationTestSummaryData = await this.appECorrelationTestSummaryService.export(testSumIds)
+          appECorrelationTestSummaryData = await this.appECorrelationTestSummaryService.export(
+            testSumIds,
+          );
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
