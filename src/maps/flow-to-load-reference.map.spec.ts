@@ -18,6 +18,11 @@ entity.averageHourlyHeatInputRate = number;
 entity.referenceGrossHeatRate = number;
 entity.calculatedSeparateReferenceIndicator = number;
 
+entity.calculatedAverageGrossUnitLoad = number;
+entity.calculatedAverageReferenceMethodFlow = number;
+entity.calculatedReferenceFlowToLoadRatio = number;
+entity.calculatedReferenceGrossHeatRate = number;
+
 entity.userId = string;
 entity.addDate = date;
 entity.updateDate = date;
@@ -36,6 +41,10 @@ describe('FlowToLoadReferenceMap', () => {
     expect(result.averageHourlyHeatInputRate).toEqual(number);
     expect(result.referenceGrossHeatRate).toEqual(number);
     expect(result.calculatedSeparateReferenceIndicator).toEqual(number);
+    expect(result.calculatedAverageGrossUnitLoad).toEqual(number);
+    expect(result.calculatedAverageReferenceMethodFlow).toEqual(number);
+    expect(result.calculatedReferenceFlowToLoadRatio).toEqual(number);
+    expect(result.calculatedReferenceGrossHeatRate).toEqual(number);
     expect(result.userId).toEqual(string);
     expect(result.addDate).toEqual(date.toLocaleString());
     expect(result.updateDate).toEqual(date.toLocaleString());

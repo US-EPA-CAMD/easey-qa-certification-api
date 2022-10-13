@@ -1,4 +1,6 @@
+import { HttpStatus, InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
   FuelFlowToLoadBaselineBaseDTO,
   FuelFlowToLoadBaselineDTO,
@@ -108,6 +110,66 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
 
       expect(result).toEqual(dto);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateFuelFlowToLoadBaseline', () => {
+    it('Should update and return a new Fuel Flow To Load Baseline record', async () => {
+      const result = await service.updateFuelFlowToLoadBaseline(
+        testSumId,
+        id,
+        payload,
+        userId,
+      );
+
+      expect(result).toEqual(dto);
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should throw error when a Fuel Flow To Load Baseline record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.updateFuelFlowToLoadBaseline(
+          testSumId,
+          id,
+          payload,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteFuelFlowToLoadBaseline', () => {
+    it('Should delete a Fuel Flow To Load Baseline record', async () => {
+      const result = await service.deleteFuelFlowToLoadBaseline(
+        testSumId,
+        id,
+        userId,
+      );
+
+      expect(result).toEqual(undefined);
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should throw error when database throws an error while deleting a Fuel Flow To Load Baseline record', async () => {
+      jest
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+      let errored = false;
+
+      try {
+        await service.deleteFuelFlowToLoadBaseline(testSumId, id, userId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
     });
   });
 });
