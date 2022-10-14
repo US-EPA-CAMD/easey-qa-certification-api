@@ -14,6 +14,7 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 const KEY = 'RATA Summary';
 
@@ -25,8 +26,6 @@ export class RataSummaryChecksService {
     private readonly repository: RataSummaryWorkspaceRepository,
     @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
-    @InjectRepository(MonitorSystemRepository)
-    private readonly monitoringSystemRepository: MonitorSystemRepository,
   ) {}
 
   private throwIfErrors(errorList: string[]) {
@@ -36,7 +35,6 @@ export class RataSummaryChecksService {
   }
 
   async runChecks(
-    locationId: string,
     rataSummary: RataSummaryBaseDTO | RataSummaryImportDTO,
     isImport: boolean = false,
     isUpdate: boolean = false,
@@ -53,11 +51,6 @@ export class RataSummaryChecksService {
     if (isImport) {
       testSumRecord = testSummary;
 
-      testSumRecord.system = await this.monitoringSystemRepository.findOne({
-        monitoringSystemID: testSummary.monitoringSystemID,
-        locationId,
-      });
-
       // IMPORT-30 Extraneous RATA Summary Data Check
       error = await this.import30Check(rataSummary, testSumRecord);
       if (error) {
@@ -69,22 +62,24 @@ export class RataSummaryChecksService {
       );
     }
 
-    // RATA-17 Mean CEM Value Valid
-    error = this.rata17Check(testSumRecord, rataSummary.meanCEMValue);
-    if (error) {
-      errorList.push(error);
-    }
-
-    if (!isUpdate) {
-      // RATA-107 Duplicate RATA Summary
-      error = await this.rata107Check(
-        rataSummary,
-        isImport,
-        rataId,
-        rataSummaries,
-      );
+    if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
+      // RATA-17 Mean CEM Value Valid
+      error = this.rata17Check(testSumRecord, rataSummary.meanCEMValue);
       if (error) {
         errorList.push(error);
+      }
+
+      if (!isUpdate) {
+        // RATA-107 Duplicate RATA Summary
+        error = await this.rata107Check(
+          rataSummary,
+          isImport,
+          rataId,
+          rataSummaries,
+        );
+        if (error) {
+          errorList.push(error);
+        }
       }
     }
 

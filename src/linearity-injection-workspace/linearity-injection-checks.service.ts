@@ -7,12 +7,14 @@ import { LinearitySummaryWorkspaceRepository } from '../linearity-summary-worksp
 import {
   LinearityInjectionBaseDTO,
   LinearityInjectionImportDTO,
-  LinearityInjectionRecordDTO,
 } from '../dto/linearity-injection.dto';
 import { LinearityInjection } from '../entities/workspace/linearity-injection.entity';
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { TestSummaryImportDTO } from 'src/dto/test-summary.dto';
+import { TestTypeCodes } from 'src/enums/test-type-code.enum';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 
 @Injectable()
 export class LinearityInjectionChecksService {
@@ -21,6 +23,8 @@ export class LinearityInjectionChecksService {
     @InjectRepository(LinearityInjectionWorkspaceRepository)
     private readonly linearityInjectionRepository: LinearityInjectionWorkspaceRepository,
     private readonly linearitySummaryRepository: LinearitySummaryWorkspaceRepository,
+    @InjectRepository(TestSummaryWorkspaceRepository)
+    private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -30,26 +34,38 @@ export class LinearityInjectionChecksService {
   }
 
   async runChecks(
-    linSumId: string,
     linearityInjection: LinearityInjectionBaseDTO | LinearityInjectionImportDTO,
+    linSumId: string,
+    testSumId: string,
     isImport: boolean = false,
     isUpdate: boolean = false,
     linearityInjections?: LinearityInjectionImportDTO[],
+    testSummary?: TestSummaryImportDTO,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
+    let testSumRecord;
     this.logger.info('Running Linearity Injection Checks');
 
-    if (!isUpdate) {
-      error = await this.duplicateTestCheck(
-        linSumId,
-        linearityInjection,
-        isImport,
+    if (isImport) {
+      testSumRecord = testSummary;
+    } else {
+      testSumRecord = await this.testSummaryRepository.getTestSummaryById(
+        testSumId,
       );
-      if (error) {
-        errorList.push(error);
-      }
+    }
 
+    if (testSumRecord.testTypeCode === TestTypeCodes.LINE) {
+      if (!isUpdate) {
+        error = await this.duplicateTestCheck(
+          linSumId,
+          linearityInjection,
+          isImport,
+        );
+        if (error) {
+          errorList.push(error);
+        }
+      }
       error = await this.linear34Check(linSumId, linearityInjections, isImport);
       if (error) {
         errorList.push(error);

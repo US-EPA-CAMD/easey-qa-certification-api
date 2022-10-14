@@ -11,7 +11,7 @@ import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-s
 import { RataBaseDTO, RataImportDTO } from '../dto/rata.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
-import { Check } from 'typeorm';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 const KEY = 'RATA';
 
@@ -57,28 +57,33 @@ export class RataChecksService {
       );
     }
 
-    // RATA-102 Number of Load Levels Valid
-    error = this.rata102Check(testSumRecord, rata.numberOfLoadLevels);
-    if (error) {
-      errorList.push(error);
-    }
+    if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
+      // RATA-102 Number of Load Levels Valid
+      error = this.rata102Check(testSumRecord, rata.numberOfLoadLevels);
+      if (error) {
+        errorList.push(error);
+      }
 
-    // RATA-103 Overall Relative Accuracy Valid
-    error = this.rata103Check(testSumRecord, rata.relativeAccuracy);
-    if (error) {
-      errorList.push(error);
-    }
+      // RATA-103 Overall Relative Accuracy Valid
+      error = this.rata103Check(testSumRecord, rata.relativeAccuracy);
+      if (error) {
+        errorList.push(error);
+      }
 
-    // RATA-104 Overall BAF Valid
-    error = this.rata104Check(testSumRecord, rata.overallBiasAdjustmentFactor);
-    if (error) {
-      errorList.push(error);
-    }
+      // RATA-104 Overall BAF Valid
+      error = this.rata104Check(
+        testSumRecord,
+        rata.overallBiasAdjustmentFactor,
+      );
+      if (error) {
+        errorList.push(error);
+      }
 
-    // RATA-105 RATA Frequency Valid
-    error = await this.rata105Check(testSumRecord, rata.rataFrequencyCode);
-    if (error) {
-      errorList.push(error);
+      // RATA-105 RATA Frequency Valid
+      error = await this.rata105Check(testSumRecord, rata.rataFrequencyCode);
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     this.throwIfErrors(errorList, isImport);
