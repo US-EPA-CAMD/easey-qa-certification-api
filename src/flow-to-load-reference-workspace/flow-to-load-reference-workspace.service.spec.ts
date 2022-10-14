@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FlowToLoadReferenceMap } from '../maps/flow-to-load-reference.map';
 import {
@@ -8,7 +9,6 @@ import { FlowToLoadReference } from '../entities/flow-to-load-reference.entity';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FlowToLoadReferenceWorkspaceRepository } from './flow-to-load-reference-workspace.repository';
 import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference-workspace.service';
-import { FlowToLoadCheckWorkspaceRepository } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.repository';
 
 const testSumId = '';
 const userId = 'user';
@@ -22,6 +22,7 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
+  delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
@@ -139,6 +140,38 @@ describe('FlowToLoadReferenceWorkspaceService', () => {
       } catch (e) {
         errored = true;
       }
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteFlowToLoadReference', () => {
+    it('Should delete a Flow To Load Reference record', async () => {
+      const result = await service.deleteFlowToLoadReference(
+        testSumId,
+        flowToLoadReferenceId,
+        userId,
+      );
+
+      expect(result).toEqual(undefined);
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should throw error when database throws an error while deleting a Flow To Load Reference record', async () => {
+      jest
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+      let errored = false;
+
+      try {
+        await service.deleteFlowToLoadReference(
+          testSumId,
+          flowToLoadReferenceId,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+
       expect(errored).toEqual(true);
     });
   });
