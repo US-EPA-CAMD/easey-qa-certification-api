@@ -54,10 +54,12 @@ export class FlowRataRunChecksService {
     } else {
       rataSummaryRecord = await this.rataSummaryRepository.findOne(rataSumId);
       rataRunRecord = await this.rataRunRepository.findOne(rataRunId);
-      
     }
 
-    error = this.rata114Check(rataSummaryRecord, flowRataRun.averageVelocityWithWallEffects);
+    error = this.rata114Check(
+      rataSummaryRecord,
+      flowRataRun.averageVelocityWithWallEffects,
+    );
     if (error) {
       errorList.push(error);
     }
@@ -66,7 +68,6 @@ export class FlowRataRunChecksService {
     if (error) {
       errorList.push(error);
     }
-
 
     /* // RATA-85 Number of Traverse Points Valid
     error = this.rata85Check(flowRataRun, rataSummaryRecord);
@@ -120,15 +121,19 @@ export class FlowRataRunChecksService {
   ): string {
     let error: string = null;
     let FIELDNAME: string = 'averageVelocityWithWallEffects;' + '';
-    if (averageVelocityWithWallEffects){
-      if(['2F', '2G', '2FJ', '2GJ'].includes(rataSummaryRecord.referenceMethodCode)){
+    if (averageVelocityWithWallEffects) {
+      if (
+        ['2F', '2G', '2FJ', '2GJ'].includes(
+          rataSummaryRecord.referenceMethodCode,
+        )
+      ) {
         error = this.getMessage('RATA-114-A', {
           fieldname: FIELDNAME,
           key: KEY,
         });
       } else if (
-        averageVelocityWithWallEffects <= 0
-        || averageVelocityWithWallEffects >= 20000
+        averageVelocityWithWallEffects <= 0 ||
+        averageVelocityWithWallEffects >= 20000
       ) {
         error = this.getMessage('RATA-114-B', {
           fieldname: FIELDNAME,
@@ -145,7 +150,7 @@ export class FlowRataRunChecksService {
       });
     }
 
-    return error
+    return error;
   }
 
   private rata124Check(
@@ -153,19 +158,17 @@ export class FlowRataRunChecksService {
     rataRunRecord: RataRun,
   ): string {
     let error: string = null;
-    
-    if(
-      rataSummaryRecord.referenceMethodCode
-      && !rataSummaryRecord.referenceMethodCode.match('(2F|2G|M2H).*')
+
+    if (
+      rataSummaryRecord.referenceMethodCode &&
+      !rataSummaryRecord.referenceMethodCode.match('(2F|2G|M2H).*')
     ) {
       error = this.getMessage('RATA-124-A', {});
-    } else if (
-      rataRunRecord.runStatusCode === 'NOTUSED'
-    ) {
+    } else if (rataRunRecord.runStatusCode === 'NOTUSED') {
       error = this.getMessage('RATA-124-B', {});
     }
 
-    return error
+    return error;
   }
 
   getMessage(messageKey: string, messageArgs: object): string {
