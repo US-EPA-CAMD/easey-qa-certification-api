@@ -53,7 +53,7 @@ const mockRataRunWorkspaceRepository = () => ({
 });
 const mockFlowRataRunWorkspaceRepository = () => ({
   findOne: jest.fn().mockResolvedValue(flowRataRunId),
-})
+});
 
 describe('Flow Rata Run Check Service Test', () => {
   let service: FlowRataRunChecksService;
@@ -85,7 +85,7 @@ describe('Flow Rata Run Check Service Test', () => {
         {
           provide: FlowRataRunWorkspaceRepository,
           useFactory: mockFlowRataRunWorkspaceRepository,
-        }
+        },
       ],
     }).compile();
 
@@ -102,7 +102,7 @@ describe('Flow Rata Run Check Service Test', () => {
       importPayload.averageVelocityWithWallEffects = 1;
 
       let rataSumRec = new RataSummary();
-      rataSumRec.referenceMethodCode = "2F";
+      rataSumRec.referenceMethodCode = '2F';
 
       jest
         .spyOn(rataSummaryRepository, 'findOne')
@@ -117,9 +117,7 @@ describe('Flow Rata Run Check Service Test', () => {
     it('Should get [RATA-114-B] error', async () => {
       importPayload.averageVelocityWithWallEffects = -1;
 
-      jest
-        .spyOn(repository, 'findOne')
-        .mockResolvedValue(null);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       try {
         await service.runChecks(importPayload, false, false, rataSumId);
@@ -131,7 +129,7 @@ describe('Flow Rata Run Check Service Test', () => {
       importPayload.calculatedWAF = 1;
 
       let rataSumRec = new RataSummary();
-      rataSumRec.referenceMethodCode = "M2H";
+      rataSumRec.referenceMethodCode = 'M2H';
 
       jest
         .spyOn(rataSummaryRepository, 'findOne')
@@ -149,14 +147,21 @@ describe('Flow Rata Run Check Service Test', () => {
       importPayload.averageVelocityWithWallEffects = null;
 
       let rataSumRec = new RataSummary();
-      rataSumRec.referenceMethodCode = "A";
+      rataSumRec.referenceMethodCode = 'A';
 
       jest
         .spyOn(rataSummaryRepository, 'findOne')
         .mockResolvedValue(rataSumRec);
 
       try {
-        await service.runChecks(importPayload, false, false, rataSumId, rataSummaryImportPayload, rataRunId);
+        await service.runChecks(
+          importPayload,
+          false,
+          false,
+          rataSumId,
+          rataSummaryImportPayload,
+          rataRunId,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -165,14 +170,19 @@ describe('Flow Rata Run Check Service Test', () => {
       importPayload.averageVelocityWithWallEffects = null;
 
       let testSumRec = new RataRun();
-      testSumRec.runStatusCode = "NOTUSED";
+      testSumRec.runStatusCode = 'NOTUSED';
 
-      jest
-        .spyOn(rataRunRepository, 'findOne')
-        .mockResolvedValue(testSumRec);
+      jest.spyOn(rataRunRepository, 'findOne').mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(importPayload, false, false, rataSumId, rataSummaryImportPayload, rataRunId);
+        await service.runChecks(
+          importPayload,
+          false,
+          false,
+          rataSumId,
+          rataSummaryImportPayload,
+          rataRunId,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
