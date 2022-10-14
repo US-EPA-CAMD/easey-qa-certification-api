@@ -8,7 +8,6 @@ import { TestSummary } from '../entities/test-summary.entity';
 import { RataRunBaseDTO, RataRunImportDTO } from '../dto/rata-run.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 const KEY = 'RATA Run';
@@ -20,8 +19,8 @@ export class RataRunChecksService {
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
   ) {}
 
-  private throwIfErrors(errorList: string[], isImport: boolean = false) {
-    if (!isImport && errorList.length > 0) {
+  private throwIfErrors(errorList: string[]) {
+    if (errorList.length > 0) {
       throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }
@@ -67,8 +66,7 @@ export class RataRunChecksService {
       }
     }
 
-    this.throwIfErrors(errorList, isImport);
-    63;
+    this.throwIfErrors(errorList);
     this.logger.info('Completed RATA Run Checks');
     return errorList;
   }

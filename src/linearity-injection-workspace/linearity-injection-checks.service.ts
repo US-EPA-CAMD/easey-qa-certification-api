@@ -12,8 +12,8 @@ import { LinearityInjection } from '../entities/workspace/linearity-injection.en
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { TestSummaryImportDTO } from 'src/dto/test-summary.dto';
-import { TestTypeCodes } from 'src/enums/test-type-code.enum';
+import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 
 @Injectable()

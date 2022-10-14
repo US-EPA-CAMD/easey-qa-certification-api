@@ -79,7 +79,6 @@ import {
   AppECorrelationTestSummaryDTO,
   AppECorrelationTestSummaryImportDTO,
 } from './app-e-correlation-test-summary.dto';
-import { FlowRataRunDTO, FlowRataRunImportDTO } from './flow-rata-run.dto';
 
 import { RequireOne } from '../pipes/require-one.pipe';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
@@ -102,7 +101,7 @@ import {
   VALID_CODES_FOR_END_DATE_VALIDATION,
 } from '../utilities/constants';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
-import { TestTypeCodes } from 'src/enums/test-type-code.enum';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';

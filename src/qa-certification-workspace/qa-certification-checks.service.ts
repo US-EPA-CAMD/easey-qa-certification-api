@@ -16,7 +16,6 @@ import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.service';
 import { FlowRataRunChecksService } from '../flow-rata-run-workspace/flow-rata-run-checks.service';
-import { TestTypeCodes } from 'src/enums/test-type-code.enum';
 
 @Injectable()
 export class QACertificationChecksService {

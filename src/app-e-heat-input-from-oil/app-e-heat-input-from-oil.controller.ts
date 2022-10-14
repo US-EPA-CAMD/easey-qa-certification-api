@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { AppEHeatInputFromOilRecordDTO } from 'src/dto/app-e-heat-input-from-oil.dto';
+import { AppEHeatInputFromOilRecordDTO } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOilService } from './app-e-heat-input-from-oil.service';
 
 @ApiTags('Appendix E Heat Input From Oil')

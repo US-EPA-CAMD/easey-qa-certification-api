@@ -6,7 +6,7 @@ import { AppEHeatInputFromGasWorkspaceController } from './app-e-heat-input-from
 import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
-import { AppECorrelationTestSummaryWorkspaceModule } from 'src/app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.module';
+import { AppECorrelationTestSummaryWorkspaceModule } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.module';
 
 @Module({
   imports: [

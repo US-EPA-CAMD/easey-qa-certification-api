@@ -10,7 +10,6 @@ import {
 } from '../dto/rata-summary.dto';
 
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
