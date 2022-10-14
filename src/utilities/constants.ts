@@ -1,20 +1,42 @@
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 
-export const VALID_CODES_FOR_MON_SYS_ID_VALIDATION = [TestTypeCodes.RATA];
+export const VALID_CODES_FOR_MON_SYS_ID_VALIDATION = [
+  TestTypeCodes.RATA,
+  TestTypeCodes.F2LREF,
+  TestTypeCodes.F2LCHK,
+  TestTypeCodes.APPE,
+  TestTypeCodes.FF2LBAS,
+  TestTypeCodes.FF2LTST,
+  // TODO:  Needs to Add Misc Test Type Codes Where Monitoring System ID is required.
+];
+
+export const YEAR_QUARTER_TEST_TYPE_CODES = [
+  TestTypeCodes.F2LCHK,
+  TestTypeCodes.FF2LTST,
+];
+
+export const GRACE_PERIOD_IND_TEST_TYPE_CODES = [
+  TestTypeCodes.LINE,
+  TestTypeCodes.HGLINE,
+  TestTypeCodes.HGSI3,
+  TestTypeCodes.RATA,
+  TestTypeCodes.LEAK,
+];
 
 export const BEGIN_DATE_TEST_TYPE_CODES = [
+  TestTypeCodes.UNITDEF,
+  TestTypeCodes.FF2LBAS,
   TestTypeCodes.APPE,
+  TestTypeCodes.ONOFF,
   TestTypeCodes.RATA,
+  TestTypeCodes.HGSI3,
+  TestTypeCodes.HGLINE,
   TestTypeCodes.LINE,
   TestTypeCodes.CYCLE,
-  TestTypeCodes.ONOFF,
-  TestTypeCodes.FF2LBAS,
-  TestTypeCodes.UNITDEF,
   TestTypeCodes.SEVENDAY,
 ];
 
 export const VALID_CODES_FOR_COMPONENT_ID_VALIDATION = [
-  TestTypeCodes.TSCAL,
   TestTypeCodes.FFACCTT,
   TestTypeCodes.FFACC,
   TestTypeCodes.ONOFF,
@@ -23,6 +45,7 @@ export const VALID_CODES_FOR_COMPONENT_ID_VALIDATION = [
   TestTypeCodes.LINE,
   TestTypeCodes.CYCLE,
   TestTypeCodes.SEVENDAY,
+  // TODO:  Needs to Add Misc Test Type Codes Where Component ID is required.
 ];
 
 export const VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION = [
@@ -44,6 +67,7 @@ export const VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION = [
   TestTypeCodes.ONOFF,
   TestTypeCodes.F2LCHK,
   TestTypeCodes.RATA,
+  TestTypeCodes.HGSI3,
   TestTypeCodes.HGLINE,
   TestTypeCodes.LINE,
   TestTypeCodes.CYCLE,
@@ -59,7 +83,7 @@ export const VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION = [
   TestTypeCodes.ONOFF.toString(),
 ];
 
-export const VALID_CODES_FOR_END_HOUR_VALIDATION = [
+export const VALID_CODES_FOR_END_DATE_VALIDATION = [
   TestTypeCodes.SEVENDAY,
   TestTypeCodes.CYCLE,
   TestTypeCodes.LINE,
