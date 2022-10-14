@@ -365,6 +365,7 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(1993, new Date().getFullYear(), {
     message: (args: ValidationArguments) => {
+      console.log(args)
       return `Year must be greater than or equal to 1993 and less than or equal to ${new Date().getFullYear()}. You reported an invalid year of [${
         args.value
       }] in Test Summary record for Unit/Stack [${
@@ -376,6 +377,7 @@ export class TestSummaryBaseDTO {
       }]`;
     },
   })
+  @IsOptional()
   year?: number;
 
   @ApiProperty({
@@ -383,6 +385,7 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(1, 4, {
     message: (args: ValidationArguments) => {
+      console.log(args)
       return `Quarter must be a numeric number from 1 to 4. You reported an invalid quarter of [${
         args.value
       }] in Test Summary record for Unit/Stack [${
@@ -394,6 +397,7 @@ export class TestSummaryBaseDTO {
       }]`;
     },
   })
+  @IsOptional()
   quarter?: number;
 
   @ApiProperty({
