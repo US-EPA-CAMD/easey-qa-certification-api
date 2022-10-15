@@ -115,7 +115,6 @@ export class RataChecksService {
       fieldname: FIELDNAME,
       key: KEY,
     });
-    //  const resultC = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type, in the field, in the field [testResultCode] for [Test Summary]`;
 
     if (
       !['PASSED', 'PASSAPS', 'FAILED', 'ABORTED'].includes(
