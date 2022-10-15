@@ -1,13 +1,7 @@
 import { In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-import {
-  forwardRef,
-  HttpStatus,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -216,9 +210,10 @@ export class LinearitySummaryWorkspaceService {
     try {
       await this.repository.delete(id);
     } catch (e) {
-      throw new InternalServerErrorException(
+      throw new LoggingException(
         `Error deleting Linearity Summary record Id [${id}]`,
-        e.message,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
 

@@ -15,6 +15,8 @@ import { RataRunImportDTO } from '../dto/rata-run.dto';
 import { RataRunWorkspaceRepository } from '../rata-run-workspace/rata-run-workspace.repository';
 import { RataRun } from '../entities/workspace/rata-run.entity';
 
+const KEY = 'Flow RATA Run';
+
 @Injectable()
 export class FlowRataRunChecksService {
   constructor(
@@ -34,7 +36,7 @@ export class FlowRataRunChecksService {
   async runChecks(
     flowRataRun: FlowRataRunBaseDTO | FlowRataRunImportDTO,
     isImport: boolean = false,
-    isUpdate: boolean = false,
+    _isUpdate: boolean = false,
     rataSumId?: string,
     rataSummary?: RataSummaryImportDTO,
     rataRunId?: string,
@@ -43,6 +45,7 @@ export class FlowRataRunChecksService {
     let error: string = null;
     const errorList: string[] = [];
     let rataSummaryRecord, rataRunRecord;
+
     this.logger.info('Running Flow Rata Run Checks');
 
     if (isImport) {
@@ -51,6 +54,19 @@ export class FlowRataRunChecksService {
     } else {
       rataSummaryRecord = await this.rataSummaryRepository.findOne(rataSumId);
       rataRunRecord = await this.rataRunRepository.findOne(rataRunId);
+    }
+
+    error = this.rata114Check(
+      rataSummaryRecord,
+      flowRataRun.averageVelocityWithWallEffects,
+    );
+    if (error) {
+      errorList.push(error);
+    }
+
+    error = this.rata124Check(rataSummaryRecord, rataRunRecord);
+    if (error) {
+      errorList.push(error);
     }
 
     /* // RATA-85 Number of Traverse Points Valid
@@ -98,4 +114,64 @@ export class FlowRataRunChecksService {
 
     return error;
   } */
+
+  private rata114Check(
+    rataSummaryRecord: RataSummary,
+    averageVelocityWithWallEffects: number,
+  ): string {
+    let error: string = null;
+    let FIELDNAME: string = 'averageVelocityWithWallEffects;' + '';
+    if (averageVelocityWithWallEffects) {
+      if (
+        ['2F', '2G', '2FJ', '2GJ'].includes(
+          rataSummaryRecord.referenceMethodCode,
+        )
+      ) {
+        error = this.getMessage('RATA-114-A', {
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
+      } else if (
+        averageVelocityWithWallEffects <= 0 ||
+        averageVelocityWithWallEffects >= 20000
+      ) {
+        error = this.getMessage('RATA-114-B', {
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
+      }
+    } else if (
+      rataSummaryRecord.referenceMethodCode === 'M2H' ||
+      rataSummaryRecord.calculatedWAF
+    ) {
+      error = this.getMessage('RATA-114-C', {
+        fieldname: FIELDNAME,
+        key: KEY,
+      });
+    }
+
+    return error;
+  }
+
+  private rata124Check(
+    rataSummaryRecord: RataSummary,
+    rataRunRecord: RataRun,
+  ): string {
+    let error: string = null;
+
+    if (
+      rataSummaryRecord.referenceMethodCode &&
+      !rataSummaryRecord.referenceMethodCode.match('(2F|2G|M2H).*')
+    ) {
+      error = this.getMessage('RATA-124-A', {});
+    } else if (rataRunRecord.runStatusCode === 'NOTUSED') {
+      error = this.getMessage('RATA-124-B', {});
+    }
+
+    return error;
+  }
+
+  getMessage(messageKey: string, messageArgs: object): string {
+    return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
+  }
 }

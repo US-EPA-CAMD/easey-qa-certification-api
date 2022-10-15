@@ -47,6 +47,10 @@ import { AppECorrelationTestSummaryWorkspaceModule } from './app-e-correlation-t
 import { AppECorrelationTestSummaryModule } from './app-e-correlation-test-summary/app-e-correlation-test-summary.module';
 import { FlowToLoadCheckWorkspaceModule } from './flow-to-load-check-workspace/flow-to-load-check-workspace.module';
 import { FlowToLoadCheckModule } from './flow-to-load-check/flow-to-load-check.module';
+import { FlowToLoadReferenceWorkspaceModule } from './flow-to-load-reference-workspace/flow-to-load-reference-workspace.module';
+import { FlowToLoadReferenceModule } from './flow-to-load-reference/flow-to-load-reference.module';
+import { FuelFlowToLoadBaselineWorkspaceModule } from './fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.module';
+import { FuelFlowToLoadBaselineModule } from './fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.module';
 
 @Module({
   imports: [
@@ -85,6 +89,8 @@ import { FlowToLoadCheckModule } from './flow-to-load-check/flow-to-load-check.m
     RataTraverseModule,
     FlowToLoadCheckModule,
     FlowToLoadCheckWorkspaceModule,
+    FlowToLoadReferenceModule,
+    FlowToLoadReferenceWorkspaceModule,
     FuelFlowToLoadTestModule,
     FuelFlowToLoadTestWorkspaceModule,
     AppECorrelationTestRunModule,
@@ -95,6 +101,8 @@ import { FlowToLoadCheckModule } from './flow-to-load-check/flow-to-load-check.m
     AppEHeatInputFromGasWorkspaceModule,
     AppEHeatInputFromOilModule,
     AppEHeatInputFromOilWorkspaceModule,
+    FuelFlowToLoadBaselineWorkspaceModule,
+    FuelFlowToLoadBaselineModule,
   ],
 })
 export class AppModule {}

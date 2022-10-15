@@ -138,7 +138,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
       `Appendix E Correlation Test Summary Successfully Imported.  Record Id: ${createdAppECorrelation.id}`,
     );
   }
-  
+
   async deleteAppECorrelation(
     testSumId: string,
     id: string,
@@ -157,7 +157,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
       );
     }
   }
-  
+
   async getAppECorrelationsByTestSumIds(
     testSumIds: string[],
   ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
@@ -167,7 +167,9 @@ export class AppECorrelationTestSummaryWorkspaceService {
     return this.map.many(results);
   }
 
-  async export(TestSumIds: string[]): Promise<AppECorrelationTestSummaryRecordDTO[]> {
+  async export(
+    TestSumIds: string[],
+  ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
     return await this.getAppECorrelationsByTestSumIds(TestSumIds);
   }
 }

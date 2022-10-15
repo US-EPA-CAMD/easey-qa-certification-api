@@ -113,26 +113,28 @@ export class QACertificationChecksService {
                 linearitySummary,
                 true,
               );
-  
+
               resolve(results);
             }),
           );
-  
-          linearitySummary.linearityInjectionData?.forEach(linearityInjection => {
-            promises.push(
-              new Promise(async (resolve, _reject) => {
-                const results = this.linearityInjectionChecksService.runChecks(
-                  locationId,
-                  linearityInjection,
-                  true,
-                  false,
-                  linearitySummary.linearityInjectionData,
-                );
-  
-                resolve(results);
-              }),
-            );
-          });
+
+          linearitySummary.linearityInjectionData?.forEach(
+            linearityInjection => {
+              promises.push(
+                new Promise(async (resolve, _reject) => {
+                  const results = this.linearityInjectionChecksService.runChecks(
+                    locationId,
+                    linearityInjection,
+                    true,
+                    false,
+                    linearitySummary.linearityInjectionData,
+                  );
+
+                  resolve(results);
+                }),
+              );
+            },
+          );
         });
       }
 

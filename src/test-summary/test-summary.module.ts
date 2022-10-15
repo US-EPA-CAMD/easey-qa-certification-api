@@ -15,6 +15,7 @@ import { AirEmissionTestingModule } from '../air-emission-testing/air-emission-t
 import { AppECorrelationTestSummaryModule } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.module';
 import { FuelFlowToLoadTestModule } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.module';
 import { FlowToLoadCheckModule } from '../flow-to-load-check/flow-to-load-check.module';
+import { FlowToLoadReferenceModule } from '../flow-to-load-reference/flow-to-load-reference.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { FlowToLoadCheckModule } from '../flow-to-load-check/flow-to-load-check.
     TestQualificationModule,
     FuelFlowToLoadTestModule,
     FlowToLoadCheckModule,
+    FlowToLoadReferenceModule,
     AirEmissionTestingModule,
     AppECorrelationTestSummaryModule,
   ],
