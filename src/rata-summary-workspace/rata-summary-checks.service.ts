@@ -14,6 +14,7 @@ import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.reposit
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 
 const KEY = 'RATA Summary';
 
@@ -25,6 +26,8 @@ export class RataSummaryChecksService {
     private readonly repository: RataSummaryWorkspaceRepository,
     @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
+    @InjectRepository(MonitorSystemRepository)
+    private readonly monitorSystemRepository: MonitorSystemRepository,
   ) {}
 
   private throwIfErrors(errorList: string[]) {
@@ -34,6 +37,7 @@ export class RataSummaryChecksService {
   }
 
   async runChecks(
+    locationId: string,
     rataSummary: RataSummaryBaseDTO | RataSummaryImportDTO,
     isImport: boolean = false,
     isUpdate: boolean = false,
@@ -49,6 +53,10 @@ export class RataSummaryChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
+      testSumRecord.system = await this.monitorSystemRepository.findOne({
+        monitoringSystemID: testSummary.monitoringSystemID,
+        locationId: locationId,
+      });
 
       // IMPORT-30 Extraneous RATA Summary Data Check
       error = await this.import30Check(rataSummary, testSumRecord);

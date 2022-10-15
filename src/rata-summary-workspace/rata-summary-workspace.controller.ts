@@ -78,6 +78,7 @@ export class RataSummaryWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<RataSummaryRecordDTO> {
     await this.checksService.runChecks(
+      locationId,
       payload,
       false,
       false,
@@ -107,7 +108,14 @@ export class RataSummaryWorkspaceController {
     @Body() payload: RataSummaryBaseDTO,
     @User() user: CurrentUser,
   ): Promise<RataSummaryRecordDTO> {
-    await this.checksService.runChecks(payload, false, true, rataId, testSumId);
+    await this.checksService.runChecks(
+      locationId,
+      payload,
+      false,
+      true,
+      rataId,
+      testSumId,
+    );
     return this.service.updateRataSummary(testSumId, id, payload, user.userId);
   }
 
