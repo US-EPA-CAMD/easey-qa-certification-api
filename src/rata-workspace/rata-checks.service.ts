@@ -9,9 +9,13 @@ import { TestResultCodes } from '../enums/test-result-code.enum';
 import { RataFrequencyCodeRepository } from '../rata-frequency-code/rata-frequency-code.repository';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { RataBaseDTO, RataImportDTO } from '../dto/rata.dto';
-import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import {
+  TestSummaryBaseDTO,
+  TestSummaryImportDTO,
+} from '../dto/test-summary.dto';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
 
 const KEY = 'RATA';
 
@@ -24,6 +28,8 @@ export class RataChecksService {
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
     @InjectRepository(MonitorSystemRepository)
     private readonly monitorSystemRepository: MonitorSystemRepository,
+    @InjectRepository(TestResultCodeRepository)
+    private readonly testResultCodeRepository: TestResultCodeRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -58,6 +64,12 @@ export class RataChecksService {
     }
 
     if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
+      // RATA-100 Test Result Code Valid
+      error = await this.rata100check(testSumRecord);
+      if (error) {
+        errorList.push(error);
+      }
+
       // RATA-102 Number of Load Levels Valid
       error = this.rata102Check(testSumRecord, rata.numberOfLoadLevels);
       if (error) {
@@ -89,6 +101,37 @@ export class RataChecksService {
     this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed RATA Checks');
     return errorList;
+  }
+
+  // RATA-100 Test Result Code Valid
+  private async rata100check(
+    summary: TestSummaryBaseDTO | TestSummaryImportDTO,
+  ): Promise<string> {
+    let error: string = null;
+    let FIELDNAME: string = 'testResultCode';
+    let KEY: 'Test Summary';
+    const resultC = this.getMessage('RATA-100-C', {
+      value: summary.testResultCode,
+      fieldname: FIELDNAME,
+      key: KEY,
+    });
+    //  const resultC = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type, in the field, in the field [testResultCode] for [Test Summary]`;
+
+    if (
+      !['PASSED', 'PASSAPS', 'FAILED', 'ABORTED'].includes(
+        summary.testResultCode,
+      )
+    ) {
+      const record = await this.testResultCodeRepository.findOne(
+        summary.testResultCode,
+      );
+
+      if (record) {
+        error = resultC;
+      }
+
+      return error;
+    }
   }
 
   private rata102Check(

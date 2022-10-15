@@ -78,7 +78,6 @@ export class LinearityInjectionChecksService {
   }
 
   // LINEAR-33 Duplicate Linearity Injection (Result A)
-
   private async duplicateTestCheck(
     linSumId: string,
     linearityInjection: LinearityInjectionBaseDTO | LinearityInjectionImportDTO,
