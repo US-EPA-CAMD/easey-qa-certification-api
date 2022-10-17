@@ -38,6 +38,7 @@ import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
 import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
+import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -56,6 +57,8 @@ export class TestSummaryWorkspaceService {
     private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
     @Inject(forwardRef(() => FlowToLoadReferenceWorkspaceService))
     private readonly flowToLoadReferenceWorkspaceService: FlowToLoadReferenceWorkspaceService,
+    @Inject(forwardRef(() => FuelFlowToLoadTestWorkspaceService))
+    private readonly fuelFlowToLoadTestWorkspaceService: FuelFlowToLoadTestWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -157,6 +160,7 @@ export class TestSummaryWorkspaceService {
           rataData,
           protocolGasData,
           flowToLoadReferenceData,
+          fuelFlowToLoadTestData,
           appECorrelationTestSummaryData = null;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
@@ -176,6 +180,9 @@ export class TestSummaryWorkspaceService {
           appECorrelationTestSummaryData = await this.appECorrelationTestSummaryWorkspaceService.export(
             testSumIds,
           );
+          fuelFlowToLoadTestData = await this.fuelFlowToLoadTestWorkspaceService.export(
+            testSumIds,
+          );
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -188,6 +195,9 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
               i => i.testSumId === s.id,
             );
           });

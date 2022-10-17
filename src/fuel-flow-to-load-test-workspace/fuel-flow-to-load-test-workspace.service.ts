@@ -5,12 +5,14 @@ import { v4 as uuid } from 'uuid';
 
 import {
   FuelFlowToLoadTestBaseDTO,
+  FuelFlowToLoadTestDTO,
   FuelFlowToLoadTestRecordDTO,
 } from '../dto/fuel-flow-to-load-test.dto';
 import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FuelFlowToLoadTestWorkspaceRepository } from './fuel-flow-to-load-test-workspace.repository';
 import { currentDateTime } from '../utilities/functions';
+import { In } from 'typeorm';
 
 @Injectable()
 export class FuelFlowToLoadTestWorkspaceService {
@@ -113,5 +115,19 @@ export class FuelFlowToLoadTestWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getFuelFlowToLoadTestBySumIds(
+    testSumIds: string[],
+  ): Promise<FuelFlowToLoadTestDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<FuelFlowToLoadTestDTO[]> {
+    return this.getFuelFlowToLoadTestBySumIds(testSumIds);
   }
 }
