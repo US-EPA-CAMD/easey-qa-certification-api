@@ -2,21 +2,21 @@ const KEY = 'Calibration Injection';
 
 export class CalibrationInjectionBaseDTO {
   onLineOffLineIndicator: number;
-  zeroReferenceValue: number;
-  zeroCalibrationError: number;
-  zeroAPSIndicator: number;
+  upscaleGasLevelCode: string;
   zeroInjectionDate: Date;
   zeroInjectionHour: number;
   zeroInjectionMinute: number;
-  upscaleReferenceValue: number;
-  zeroMeasuredValue: number;
-  upscaleGasLevelCode: string;
-  upscaleMeasuredValue: number;
-  upscaleCalibrationError: number;
-  upscaleAPSIndicator: number;
   upscaleInjectionDate: Date;
   upscaleInjectionHour: number;
   upscaleInjectionMinute: number;
+  zeroMeasuredValue: number;
+  upscaleMeasuredValue: number;
+  zeroAPSIndicator: number;
+  upscaleAPSIndicator: number;
+  zeroCalibrationError: number;
+  upscaleCalibrationError: number;
+  zeroReferenceValue: number;
+  upscaleReferenceValue: number;
 }
 
 export class CalibrationInjectionRecordDTO extends CalibrationInjectionBaseDTO {

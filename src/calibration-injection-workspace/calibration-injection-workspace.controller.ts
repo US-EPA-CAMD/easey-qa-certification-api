@@ -11,7 +11,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   CalibrationInjectionBaseDTO,
   CalibrationInjectionDTO,
-} from 'src/dto/calibration-injection.dto';
+} from '../dto/calibration-injection.dto';
 import { CalibrationInjectionWorkspaceService } from './calibration-injection-workspace.service';
 
 @Controller()
