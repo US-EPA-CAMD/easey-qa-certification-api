@@ -1,5 +1,6 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { IsNotEmpty, IsEmail, ValidationArguments } from 'class-validator';
+import { IsEmail } from '@us-epa-camd/easey-common/pipes';
+import { IsNotEmpty, ValidationArguments } from 'class-validator';
 
 const KEY = 'Air Emission Testing';
 
