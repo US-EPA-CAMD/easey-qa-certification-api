@@ -320,7 +320,7 @@ export class TestSummaryBaseDTO {
         ? args.object['unitId']
         : args.object['stackPipeId'];
       return `You reported an invalid EndDate in the Test Summary record for Location [${args.object['locationId']}], TestTypeCode [${args.object['testTypeCode']}] and TestNumber [${args.object['testNumber']}].`;
-    }
+    },
   })
   @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
   endDate?: Date;
