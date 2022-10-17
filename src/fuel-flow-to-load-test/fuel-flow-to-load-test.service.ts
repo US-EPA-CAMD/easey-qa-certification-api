@@ -20,8 +20,14 @@ export class FuelFlowToLoadTestService {
     return this.map.many(records);
   }
 
-  async getFuelFlowToLoadTest(id: string): Promise<FuelFlowToLoadTestDTO> {
-    const result = await this.repository.findOne(id);
+  async getFuelFlowToLoadTest(
+    id: string,
+    testSumId: string,
+  ): Promise<FuelFlowToLoadTestDTO> {
+    const result = await this.repository.findOne({
+      id,
+      testSumId,
+    });
 
     if (!result) {
       throw new LoggingException(
