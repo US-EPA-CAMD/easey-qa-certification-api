@@ -12,6 +12,7 @@ import { FuelFlowToLoadTestWorkspaceRepository } from './fuel-flow-to-load-test-
 import { FuelFlowToLoadTestWorkspaceService } from './fuel-flow-to-load-test-workspace.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
+const id = '';
 const testSumId = '';
 const userId = 'user';
 const entity = new FuelFlowToLoadTest();
@@ -44,6 +45,7 @@ const mockOfficialRepository = () => ({
 describe('FuelFlowToLoadTestWorkspaceService', () => {
   let service: FuelFlowToLoadTestWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
+  let repository: FuelFlowToLoadTestWorkspaceRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -75,6 +77,9 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
     testSummaryService = module.get<TestSummaryWorkspaceService>(
       TestSummaryWorkspaceService,
     );
+    repository = module.get<FuelFlowToLoadTestWorkspaceRepository>(
+      FuelFlowToLoadTestWorkspaceRepository,
+    );
   });
 
   describe('Import', () => {
@@ -89,6 +94,35 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
         userId,
         true,
       );
+    });
+  });
+
+  describe('getFuelFlowToLoadTests', () => {
+    it('Should return Fuel Flow To Load Test records by Test Summary id', async () => {
+      const result = await service.getFuelFlowToLoadTests(testSumId);
+
+      expect(result).toEqual([fuelFlowToLoadTestRecord]);
+    });
+  });
+
+  describe('getFuelFlowToLoadBaseline', () => {
+    it('Should return a Fuel Flow To Load Test record', async () => {
+      const result = await service.getFuelFlowToLoadTest(id, testSumId);
+
+      expect(result).toEqual(fuelFlowToLoadTestRecord);
+    });
+
+    it('Should throw error when a Fuel Flow To Load Test record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.getFuelFlowToLoadTest(id, testSumId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
     });
   });
 

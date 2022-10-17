@@ -39,8 +39,12 @@ export class FuelFlowToLoadTestWorkspaceService {
 
   async getFuelFlowToLoadTest(
     id: string,
+    testSumId: string,
   ): Promise<FuelFlowToLoadTestRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOne({
+      id,
+      testSumId,
+    });
 
     if (!result) {
       throw new LoggingException(
@@ -87,7 +91,10 @@ export class FuelFlowToLoadTestWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ) {
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOne({
+      id,
+      testSumId,
+    });
 
     entity.testBasisCode = payload.testBasisCode;
     entity.averageDifference = payload.averageDifference;
@@ -105,7 +112,7 @@ export class FuelFlowToLoadTestWorkspaceService {
       isImport,
     );
 
-    return this.getFuelFlowToLoadTest(id);
+    return this.map.one(entity);
   }
 
   async deleteFuelFlowToLoadTest(
