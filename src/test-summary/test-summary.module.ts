@@ -16,6 +16,7 @@ import { AppECorrelationTestSummaryModule } from '../app-e-correlation-test-summ
 import { FuelFlowToLoadTestModule } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.module';
 import { FlowToLoadCheckModule } from '../flow-to-load-check/flow-to-load-check.module';
 import { FlowToLoadReferenceModule } from '../flow-to-load-reference/flow-to-load-reference.module';
+import { CalibrationInjectionModule } from 'src/calibration-injection/calibration-injection.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { FlowToLoadReferenceModule } from '../flow-to-load-reference/flow-to-loa
     FlowToLoadReferenceModule,
     AirEmissionTestingModule,
     AppECorrelationTestSummaryModule,
+    CalibrationInjectionModule,
   ],
   controllers: [TestSummaryController],
   providers: [TestSummaryMap, TestSummaryService],

@@ -79,7 +79,6 @@ import {
   AppECorrelationTestSummaryDTO,
   AppECorrelationTestSummaryImportDTO,
 } from './app-e-correlation-test-summary.dto';
-import { FlowRataRunDTO, FlowRataRunImportDTO } from './flow-rata-run.dto';
 
 import { RequireOne } from '../pipes/require-one.pipe';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
@@ -320,7 +319,7 @@ export class TestSummaryBaseDTO {
         ? args.object['unitId']
         : args.object['stackPipeId'];
       return `You reported an invalid EndDate in the Test Summary record for Location [${args.object['locationId']}], TestTypeCode [${args.object['testTypeCode']}] and TestNumber [${args.object['testNumber']}].`;
-    }
+    },
   })
   @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
   endDate?: Date;
@@ -454,7 +453,6 @@ export class TestSummaryImportDTO extends TestSummaryBaseDTO {
   calibrationInjectionData: CalibrationInjectionImportDTO[];
   linearitySummaryData: LinearitySummaryImportDTO[];
   rataData: RataImportDTO[];
-  flowRataRunData: FlowRataRunImportDTO[];
   flowToLoadReferenceData: FlowToLoadReferenceImportDTO[];
   flowToLoadCheckData: FlowToLoadCheckImportDTO[];
   cycleTimeSummaryData: CycleTimeSummaryImportDTO[];
@@ -475,7 +473,6 @@ export class TestSummaryDTO extends TestSummaryRecordDTO {
   calibrationInjectionData: CalibrationInjectionDTO[];
   linearitySummaryData: LinearitySummaryDTO[];
   rataData: RataDTO[];
-  flowRataRunData: FlowRataRunDTO[];
   flowToLoadReferenceData: FlowToLoadReferenceDTO[];
   flowToLoadCheckData: FlowToLoadCheckDTO[];
   cycleTimeSummaryData: CycleTimeSummaryDTO[];
