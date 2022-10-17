@@ -31,9 +31,9 @@ export class FuelFlowToLoadTestController {
   })
   async getFuelFlowToLoadTest(
     @Param('locId') _locationId: string,
-    @Param('testSumId') _testSumId: string,
+    @Param('testSumId') testSumId: string,
     @Param('id') id: string,
   ): Promise<FuelFlowToLoadTestDTO> {
-    return this.service.getFuelFlowToLoadTest(id);
+    return this.service.getFuelFlowToLoadTest(id, testSumId);
   }
 }
