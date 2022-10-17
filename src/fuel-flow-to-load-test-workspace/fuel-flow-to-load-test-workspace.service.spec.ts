@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { InternalServerErrorException } from '@nestjs/common';
 import { FuelFlowToLoadTestRepository } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.repository';
 import {
   FuelFlowToLoadTestBaseDTO,
@@ -136,6 +137,61 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
 
       expect(result).toEqual(fuelFlowToLoadTestRecord);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+  });
+
+  describe('editFuelFlowToLoadTest', () => {
+    it('Should update and return a new Fuel Flow To Load Test record', async () => {
+      const result = await service.editFuelFlowToLoadTest(
+        testSumId,
+        id,
+        payload,
+        userId,
+      );
+
+      expect(result).toEqual(fuelFlowToLoadTestRecord);
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should throw error when a Fuel Flow To Load Test record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.editFuelFlowToLoadTest(testSumId, id, payload, userId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteFuelFlowToLoadTest', () => {
+    it('Should delete a Fuel Flow To Load Test record', async () => {
+      const result = await service.deleteFuelFlowToLoadTest(
+        testSumId,
+        id,
+        userId,
+      );
+
+      expect(result).toEqual(undefined);
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should throw error when database throws an error while deleting a Fuel Flow To Load Test record', async () => {
+      jest
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+      let errored = false;
+
+      try {
+        await service.deleteFuelFlowToLoadTest(testSumId, id, userId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
     });
   });
 });

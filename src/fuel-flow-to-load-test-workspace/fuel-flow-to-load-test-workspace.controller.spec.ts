@@ -28,6 +28,8 @@ const mockService = () => ({
   getFuelFlowToLoadTests: jest.fn().mockResolvedValue(fuelFlowToLoadTests),
   getFuelFlowToLoadTest: jest.fn().mockResolvedValue(fuelFlowToLoadTest),
   createFuelFlowToLoadTest: jest.fn().mockResolvedValue(fuelFlowToLoadTest),
+  deleteFuelFlowToLoadTest: jest.fn().mockResolvedValue(undefined),
+  editFuelFlowToLoadTest: jest.fn().mockResolvedValue(fuelFlowToLoadTest),
 });
 
 const payload = new FuelFlowToLoadTestBaseDTO();
@@ -72,6 +74,19 @@ describe('FuelFlowToLoadTestWorkspaceController', () => {
     });
   });
 
+  describe('editFuelFlowToLoadTest', () => {
+    it('Calls the service and update a existing fuel Flow To Load Test record', async () => {
+      const result = await controller.editFuelFlowToLoadTest(
+        locId,
+        testSumId,
+        fuelFlowToLoadTestId,
+        payload,
+        user,
+      );
+      expect(result).toEqual(fuelFlowToLoadTest);
+    });
+  });
+
   describe('createFuelFlowToLoadTest', () => {
     it('Calls the service to create a new fuel Flow To Load Test record', async () => {
       const result = await controller.createFuelFlowToLoadTest(
@@ -81,6 +96,18 @@ describe('FuelFlowToLoadTestWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(fuelFlowToLoadTest);
+    });
+  });
+
+  describe('deleteFuelFlowToLoadTest', () => {
+    it('Calls the service and delete a fuel Flow To Load Test record', async () => {
+      const result = await controller.deleteFuelFlowToLoadTest(
+        locId,
+        testSumId,
+        fuelFlowToLoadTestId,
+        user,
+      );
+      expect(result).toEqual(undefined);
     });
   });
 });

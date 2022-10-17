@@ -106,7 +106,7 @@ export class FuelFlowToLoadTestWorkspaceController {
   @ApiOkResponse({
     description: 'Deletes a Fuel Flow To Load Test record from the workspace',
   })
-  deleteProtolGas(
+  deleteFuelFlowToLoadTest(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
