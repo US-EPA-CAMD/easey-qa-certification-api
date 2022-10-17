@@ -6,6 +6,7 @@ import { AirEmissionTestingWorkspaceRepository } from './air-emission-testing-wo
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
+import { AirEmissionTestingChecksService } from './air-emission-testing-checks.service';
 
 @Module({
   imports: [
@@ -14,11 +15,16 @@ import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
     HttpModule,
   ],
   controllers: [AirEmissionTestingWorkspaceController],
-  providers: [AirEmissionTestingMap, AirEmissionTestingWorkspaceService],
+  providers: [
+    AirEmissionTestingMap,
+    AirEmissionTestingWorkspaceService,
+    AirEmissionTestingChecksService,
+  ],
   exports: [
     TypeOrmModule,
     AirEmissionTestingMap,
     AirEmissionTestingWorkspaceService,
+    AirEmissionTestingChecksService,
   ],
 })
 export class AirEmissionTestingWorkspaceModule {}

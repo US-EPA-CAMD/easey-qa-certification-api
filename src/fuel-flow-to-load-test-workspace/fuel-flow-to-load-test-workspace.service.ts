@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 
 import {
   FuelFlowToLoadTestBaseDTO,
+  FuelFlowToLoadTestDTO,
   FuelFlowToLoadTestImportDTO,
   FuelFlowToLoadTestRecordDTO,
 } from '../dto/fuel-flow-to-load-test.dto';
@@ -12,9 +13,10 @@ import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FuelFlowToLoadTestWorkspaceRepository } from './fuel-flow-to-load-test-workspace.repository';
 import { currentDateTime } from '../utilities/functions';
-import { FuelFlowToLoadTest } from '../entities/fuel-flow-to-load-test.entity';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { FuelFlowToLoadTestRepository } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { FuelFlowToLoadTest } from 'src/entities/fuel-flow-to-load-test.entity';
+import { In } from 'typeorm';
 
 @Injectable()
 export class FuelFlowToLoadTestWorkspaceService {
@@ -128,6 +130,20 @@ export class FuelFlowToLoadTestWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getFuelFlowToLoadTestBySumIds(
+    testSumIds: string[],
+  ): Promise<FuelFlowToLoadTestDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<FuelFlowToLoadTestDTO[]> {
+    return this.getFuelFlowToLoadTestBySumIds(testSumIds);
   }
 
   async import(
