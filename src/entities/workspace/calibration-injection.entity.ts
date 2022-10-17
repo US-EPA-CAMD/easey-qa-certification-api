@@ -10,7 +10,7 @@ import {
 import { TestSummary } from './test-summary.entity';
 
 @Entity({
-  name: 'camdecmps.calibration_injection',
+  name: 'camdecmpswks.calibration_injection',
 })
 export class CalibrationInjection extends BaseEntity {
   @PrimaryColumn({
@@ -129,7 +129,7 @@ export class CalibrationInjection extends BaseEntity {
   calculatedUpscaleAPSIndicator: number;
 
   @Column({
-    name: 'zero_injection_date',
+    name: 'upscale_injection_date',
     type: 'date',
   })
   upscaleInjectionDate: Date;

@@ -24,7 +24,7 @@ import { FuelFlowToLoadTest } from './fuel-flow-to-load-test.entity';
 import { FlowToLoadReference } from './flow-to-load-reference.entity';
 import { FlowToLoadCheck } from './flow-to-load-check.entity';
 import { FuelFlowToLoadBaseline } from './fuel-flow-to-load-baseline.entity';
-import { CalibrationInjection } from './workspace/calibration-injection.entty';
+import { CalibrationInjection } from './workspace/calibration-injection.entity';
 
 @Entity({ name: 'camdecmps.test_summary' })
 export class TestSummary extends BaseEntity {

@@ -42,6 +42,8 @@ import { FlowToLoadReferenceWorkspaceModule } from './flow-to-load-reference-wor
 import { FlowToLoadReferenceModule } from './flow-to-load-reference/flow-to-load-reference.module';
 import { FuelFlowToLoadBaselineWorkspaceModule } from './fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.module';
 import { FuelFlowToLoadBaselineModule } from './fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.module';
+import { CalibrationInjectionWorkspaceModule } from './calibration-injection-workspace/calibration-injection-workspace.module';
+import { CalibrationInjectionModule } from './calibration-injection/calibration-injection.module';
 
 const routes: Routes = [
   {
@@ -93,6 +95,10 @@ const routes: Routes = [
           {
             path: ':testSumId/fuel-flow-to-load-baselines',
             module: FuelFlowToLoadBaselineModule,
+          },
+          {
+            path: ':testSumId/calibration-injections',
+            module: CalibrationInjectionModule,
           },
           {
             path: ':testSumId/air-emission-testings',
@@ -215,6 +221,10 @@ const routes: Routes = [
           {
             path: ':testSumId/fuel-flow-to-load-baselines',
             module: FuelFlowToLoadBaselineWorkspaceModule,
+          },
+          {
+            path: ':testSumId/calibration-injections',
+            module: CalibrationInjectionWorkspaceModule,
           },
           {
             path: ':testSumId/rata',

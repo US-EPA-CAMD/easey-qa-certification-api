@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { CalibrationInjectionDTO } from '../dto/calibration-injection.dto';
-import { CalibrationInjection } from '../entities/calibration-injection.entty';
+import { CalibrationInjection } from '../entities/calibration-injection.entity';
 
 @Injectable()
 export class CalibrationInjectionMap extends BaseMap<
