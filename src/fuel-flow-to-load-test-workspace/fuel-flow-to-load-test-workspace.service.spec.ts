@@ -47,6 +47,7 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
   let service: FuelFlowToLoadTestWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
   let repository: FuelFlowToLoadTestWorkspaceRepository;
+  let officialRepository: FuelFlowToLoadTestRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -80,6 +81,9 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
     );
     repository = module.get<FuelFlowToLoadTestWorkspaceRepository>(
       FuelFlowToLoadTestWorkspaceRepository,
+    );
+    officialRepository = module.get<FuelFlowToLoadTestRepository>(
+      FuelFlowToLoadTestRepository,
     );
   });
 
