@@ -55,8 +55,6 @@ export class TestSummaryWorkspaceService {
     private readonly protocolGasService: ProtocolGasWorkspaceService,
     @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
     private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
-    @Inject(forwardRef(() => FlowToLoadReferenceWorkspaceService))
-    private readonly flowToLoadReferenceWorkspaceService: FlowToLoadReferenceWorkspaceService,
     @Inject(forwardRef(() => FuelFlowToLoadTestWorkspaceService))
     private readonly fuelFlowToLoadTestWorkspaceService: FuelFlowToLoadTestWorkspaceService,
   ) {}
@@ -159,7 +157,6 @@ export class TestSummaryWorkspaceService {
         let linearitySummaryData,
           rataData,
           protocolGasData,
-          flowToLoadReferenceData,
           appECorrelationTestSummaryData = null;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
@@ -173,9 +170,6 @@ export class TestSummaryWorkspaceService {
           linearitySummaryData = await this.linearityService.export(testSumIds);
           rataData = await this.rataService.export(testSumIds);
           protocolGasData = await this.protocolGasService.export(testSumIds);
-          flowToLoadReferenceData = await this.flowToLoadReferenceWorkspaceService.export(
-            testSumIds,
-          );
           appECorrelationTestSummaryData = await this.appECorrelationTestSummaryWorkspaceService.export(
             testSumIds,
           );
@@ -188,9 +182,6 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
               i => i.testSumId === s.id,
             );
           });

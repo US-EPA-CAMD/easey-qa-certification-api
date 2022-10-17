@@ -11,6 +11,7 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { RataService } from '../rata/rata.service';
 import { ProtocolGasService } from '../protocol-gas/protocol-gas.service';
 import { AppECorrelationTestSummaryService } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.service';
+import { FuelFlowToLoadTestService } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -27,6 +28,8 @@ export class TestSummaryService {
     private readonly protocolGasService: ProtocolGasService,
     @Inject(forwardRef(() => AppECorrelationTestSummaryService))
     private readonly appECorrelationTestSummaryService: AppECorrelationTestSummaryService,
+    @Inject(forwardRef(() => FuelFlowToLoadTestService))
+    private readonly fuelFlowToLoadTestService: FuelFlowToLoadTestService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {

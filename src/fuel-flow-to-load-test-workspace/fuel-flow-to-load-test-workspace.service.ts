@@ -146,7 +146,7 @@ export class FuelFlowToLoadTestWorkspaceService {
       });
     }
 
-    const createdAppECorrelation = await this.createFuelFlowToLoadTest(
+    const createdFuelFlowToLoadTest = await this.createFuelFlowToLoadTest(
       testSumId,
       payload,
       userId,
@@ -155,7 +155,7 @@ export class FuelFlowToLoadTestWorkspaceService {
     );
 
     this.logger.info(
-      `Fuel FLow To Load Test Successfully Imported.  Record Id: ${createdAppECorrelation.id}`,
+      `Fuel FLow To Load Test Successfully Imported.  Record Id: ${createdFuelFlowToLoadTest.id}`,
     );
   }
 }
