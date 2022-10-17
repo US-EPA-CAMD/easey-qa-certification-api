@@ -55,7 +55,7 @@ export class FuelFlowToLoadTestWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
   ): Promise<FuelFlowToLoadTestRecordDTO> {
-    return this.service.getFuelFlowToLoadTest(id);
+    return this.service.getFuelFlowToLoadTest(id, testSumId);
   }
 
   @Post()
