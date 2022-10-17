@@ -21,7 +21,6 @@ const user: CurrentUser = {
   roles: [],
 };
 const fuelFlowToLoadTestId = 'fuelFlowToLoadTestId';
-
 const fuelFlowToLoadTest = new FuelFlowToLoadTestDTO();
 const fuelFlowToLoadTests = [fuelFlowToLoadTest];
 
@@ -66,6 +65,7 @@ describe('FuelFlowToLoadTestWorkspaceController', () => {
     it('Calls the repository to get one Fuel Flow To Load Test record by Id', async () => {
       const result = await controller.getFuelFlowToLoadTest(
         locId,
+        testSumId,
         fuelFlowToLoadTestId,
       );
       expect(result).toEqual(fuelFlowToLoadTest);
