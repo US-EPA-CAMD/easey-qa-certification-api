@@ -5,6 +5,7 @@ import { AppEHeatInputFromOilRepository } from './app-e-heat-input-from-oil.repo
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { AppEHeatInputFromOilDTO } from '../dto/app-e-heat-input-from-oil.dto';
+import { In } from 'typeorm';
 
 @Injectable()
 export class AppEHeatInputFromOilService {
@@ -37,5 +38,18 @@ export class AppEHeatInputFromOilService {
     }
 
     return this.map.one(result);
+  }
+
+  async getAppEHeatInputFromOilRecordsByTestSumIds(
+    testSumIds: string[],
+  ): Promise<AppEHeatInputFromOilDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<AppEHeatInputFromOilDTO[]> {
+    return this.getAppEHeatInputFromOilRecordsByTestSumIds(testSumIds);
   }
 }

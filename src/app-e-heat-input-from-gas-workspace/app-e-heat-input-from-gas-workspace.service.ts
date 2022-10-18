@@ -138,7 +138,7 @@ export class AppEHeatInputFromGasWorkspaceService {
     );
   }
 
-  async getAppECorrelationsByTestSumIds(
+  async getAppEHeatInputFromGasByTestSumIds(
     testSumIds: string[],
   ): Promise<AppEHeatInputFromGasDTO[]> {
     const results = await this.repository.find({
@@ -148,6 +148,6 @@ export class AppEHeatInputFromGasWorkspaceService {
   }
 
   async export(testSumIds: string[]): Promise<AppEHeatInputFromGasDTO[]> {
-    return this.getAppECorrelationsByTestSumIds(testSumIds);
+    return this.getAppEHeatInputFromGasByTestSumIds(testSumIds);
   }
 }

@@ -42,7 +42,7 @@ export class AppECorrelationTestRunService {
     return this.map.one(result);
   }
 
-  async getAppECorrelationTestRunByTestSumIds(
+  async getAppECorrelationTestRunsByTestSumIds(
     testSumIds: string[],
   ): Promise<AppECorrelationTestRunDTO[]> {
     const results = await this.repository.find({
@@ -52,6 +52,6 @@ export class AppECorrelationTestRunService {
   }
 
   async export(testSumIds: string[]): Promise<AppECorrelationTestRunDTO[]> {
-    return this.getAppECorrelationTestRunByTestSumIds(testSumIds);
+    return this.getAppECorrelationTestRunsByTestSumIds(testSumIds);
   }
 }

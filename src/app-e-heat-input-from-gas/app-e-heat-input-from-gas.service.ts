@@ -42,7 +42,7 @@ export class AppEHeatInputFromGasService {
     return this.map.one(result);
   }
 
-  async getAppECorrelationsByTestSumIds(
+  async getAppEHeatInputFromGasByTestSumIds(
     testSumIds: string[],
   ): Promise<AppEHeatInputFromGasDTO[]> {
     const results = await this.repository.find({
@@ -52,6 +52,6 @@ export class AppEHeatInputFromGasService {
   }
 
   async export(testSumIds: string[]): Promise<AppEHeatInputFromGasDTO[]> {
-    return this.getAppECorrelationsByTestSumIds(testSumIds);
+    return this.getAppEHeatInputFromGasByTestSumIds(testSumIds);
   }
 }

@@ -9,8 +9,10 @@ import { v4 as uuid } from 'uuid';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import {
   AppEHeatInputFromOilBaseDTO,
+  AppEHeatInputFromOilDTO,
   AppEHeatInputFromOilRecordDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
+import { In } from 'typeorm';
 
 @Injectable()
 export class AppEHeatInputFromOilWorkspaceService {
@@ -131,5 +133,18 @@ export class AppEHeatInputFromOilWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getAppEHeatInputFromOilRecordsByTestSumIds(
+    testSumIds: string[],
+  ): Promise<AppEHeatInputFromOilDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<AppEHeatInputFromOilDTO[]> {
+    return this.getAppEHeatInputFromOilRecordsByTestSumIds(testSumIds);
   }
 }
