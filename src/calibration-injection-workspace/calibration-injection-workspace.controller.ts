@@ -1,7 +1,8 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -19,6 +20,34 @@ import { CalibrationInjectionWorkspaceService } from './calibration-injection-wo
 @ApiTags('Calibration Injection')
 export class CalibrationInjectionWorkspaceController {
   constructor(private readonly service: CalibrationInjectionWorkspaceService) {}
+
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: CalibrationInjectionDTO,
+    description:
+      'Retrieves workspace Calibration Injection records by Test Summary Id',
+  })
+  async getFuelFlowToLoadBaselines(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+  ): Promise<CalibrationInjectionDTO[]> {
+    return this.service.getCalibrationInjections(testSumId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: CalibrationInjectionDTO,
+    description: 'Retrieves workspace Calibration Injection record by its Id',
+  })
+  async getFuelFlowToLoadBaseline(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+  ): Promise<CalibrationInjectionDTO> {
+    return this.service.getCalibrationInjection(id, testSumId);
+  }
 
   @Post()
   @UseGuards(AuthGuard)
