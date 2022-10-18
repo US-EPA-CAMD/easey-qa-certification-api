@@ -10,7 +10,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import {
   AppEHeatInputFromOilBaseDTO,
   AppEHeatInputFromOilRecordDTO,
-} from 'src/dto/app-e-heat-input-from-oil.dto';
+} from '../dto/app-e-heat-input-from-oil.dto';
 
 @Injectable()
 export class AppEHeatInputFromOilWorkspaceService {

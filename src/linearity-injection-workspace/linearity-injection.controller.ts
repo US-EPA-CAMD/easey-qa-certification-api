@@ -81,7 +81,7 @@ export class LinearityInjectionWorkspaceController {
     @Body() payload: LinearityInjectionBaseDTO,
     @User() user: CurrentUser,
   ): Promise<LinearityInjectionRecordDTO> {
-    await this.checksService.runChecks(linSumId, payload);
+    await this.checksService.runChecks(payload, linSumId, testSumId);
     return this.service.createInjection(
       testSumId,
       linSumId,
@@ -105,7 +105,13 @@ export class LinearityInjectionWorkspaceController {
     @Body() payload: LinearityInjectionBaseDTO,
     @User() user: CurrentUser,
   ): Promise<LinearityInjectionRecordDTO> {
-    await this.checksService.runChecks(linSumId, payload, false, true);
+    await this.checksService.runChecks(
+      payload,
+      linSumId,
+      testSumId,
+      false,
+      true,
+    );
     return this.service.updateInjection(testSumId, id, payload, user.userId);
   }
 
