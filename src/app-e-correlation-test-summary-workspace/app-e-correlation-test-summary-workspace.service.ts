@@ -6,6 +6,7 @@ import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-tes
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
 import {
   AppECorrelationTestSummaryBaseDTO,
+  AppECorrelationTestSummaryDTO,
   AppECorrelationTestSummaryImportDTO,
   AppECorrelationTestSummaryRecordDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
@@ -160,16 +161,14 @@ export class AppECorrelationTestSummaryWorkspaceService {
 
   async getAppECorrelationsByTestSumIds(
     testSumIds: string[],
-  ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
+  ): Promise<AppECorrelationTestSummaryDTO[]> {
     const results = await this.repository.find({
       where: { testSumId: In(testSumIds) },
     });
     return this.map.many(results);
   }
 
-  async export(
-    TestSumIds: string[],
-  ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
-    return await this.getAppECorrelationsByTestSumIds(TestSumIds);
+  async export(testSumIds: string[]): Promise<AppECorrelationTestSummaryDTO[]> {
+    return this.getAppECorrelationsByTestSumIds(testSumIds);
   }
 }
