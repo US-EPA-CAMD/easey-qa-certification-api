@@ -9,8 +9,10 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
   AppEHeatInputFromGasBaseDTO,
+  AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasRecordDTO,
 } from '../dto/app-e-heat-input-from-gas.dto';
+import { In } from 'typeorm';
 
 @Injectable()
 export class AppEHeatInputFromGasWorkspaceService {
@@ -134,5 +136,18 @@ export class AppEHeatInputFromGasWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getAppECorrelationsByTestSumIds(
+    testSumIds: string[],
+  ): Promise<AppEHeatInputFromGasDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<AppEHeatInputFromGasDTO[]> {
+    return this.getAppECorrelationsByTestSumIds(testSumIds);
   }
 }
