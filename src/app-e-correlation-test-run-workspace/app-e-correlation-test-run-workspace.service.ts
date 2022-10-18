@@ -2,6 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   AppECorrelationTestRunBaseDTO,
+  AppECorrelationTestRunDTO,
   AppECorrelationTestRunRecordDTO,
 } from '../dto/app-e-correlation-test-run.dto';
 import { AppECorrelationTestRunMap } from '../maps/app-e-correlation-test-run.map';
@@ -10,6 +11,7 @@ import { AppECorrelationTestRunWorkspaceRepository } from './app-e-correlation-t
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
 
 @Injectable()
 export class AppECorrelationTestRunWorkspaceService {
@@ -141,5 +143,18 @@ export class AppECorrelationTestRunWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getAppECorrelationTestRunByTestSumIds(
+    testSumIds: string[],
+  ): Promise<AppECorrelationTestRunDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<AppECorrelationTestRunDTO[]> {
+    return this.getAppECorrelationTestRunByTestSumIds(testSumIds);
   }
 }
