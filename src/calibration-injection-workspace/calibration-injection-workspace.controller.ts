@@ -28,7 +28,7 @@ export class CalibrationInjectionWorkspaceController {
     description:
       'Retrieves workspace Calibration Injection records by Test Summary Id',
   })
-  async getFuelFlowToLoadBaselines(
+  async getCalibrationInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
   ): Promise<CalibrationInjectionDTO[]> {
@@ -41,7 +41,7 @@ export class CalibrationInjectionWorkspaceController {
     type: CalibrationInjectionDTO,
     description: 'Retrieves workspace Calibration Injection record by its Id',
   })
-  async getFuelFlowToLoadBaseline(
+  async getCalibrationInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,

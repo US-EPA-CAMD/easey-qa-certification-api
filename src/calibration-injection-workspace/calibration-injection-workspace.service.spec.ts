@@ -69,6 +69,35 @@ describe('CalibrationInjectionWorkspaceService', () => {
     );
   });
 
+  describe('getCalibrationInjections', () => {
+    it('Should return Calibration Injection records by Test Summary id', async () => {
+      const result = await service.getCalibrationInjections(testSumId);
+
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('getCalibrationInjection', () => {
+    it('Should return a Calibration Injection record', async () => {
+      const result = await service.getCalibrationInjection(id, testSumId);
+
+      expect(result).toEqual(dto);
+    });
+
+    it('Should throw error when a Calibration Injection record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.getCalibrationInjection(id, testSumId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
+
   describe('createCalibrationInjection', () => {
     it('Should create and return a new Calibration Injection record', async () => {
       const result = await service.createCalibrationInjection(
