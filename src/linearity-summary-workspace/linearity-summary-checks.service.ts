@@ -13,6 +13,8 @@ import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-mas
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 
 @Injectable()
 export class LinearitySummaryChecksService {
@@ -22,6 +24,8 @@ export class LinearitySummaryChecksService {
     private readonly repository: LinearitySummaryWorkspaceRepository,
     @InjectRepository(TestSummaryMasterDataRelationshipRepository)
     private readonly testSummaryMDRepository: TestSummaryMasterDataRelationshipRepository,
+    @InjectRepository(TestSummaryWorkspaceRepository)
+    private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -31,29 +35,41 @@ export class LinearitySummaryChecksService {
   }
 
   async runChecks(
-    testSumId: string,
     linearitySummary: LinearitySummaryBaseDTO | LinearitySummaryImportDTO,
+    testSumId: string,
     isImport: boolean = false,
     isUpdate: boolean = false,
+    testSummary?: TestSummaryImportDTO,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
+    let testSumRecord;
     this.logger.info('Running Linearity Summary Checks');
 
-    if (!isUpdate) {
-      error = await this.duplicateTestCheck(
+    if (isImport) {
+      testSumRecord = testSummary;
+    } else {
+      testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
-        linearitySummary,
-        isImport,
       );
+    }
+
+    if (testSumRecord.testTypeCode === TestTypeCodes.LINE) {
+      if (!isUpdate) {
+        error = await this.duplicateTestCheck(
+          testSumId,
+          linearitySummary,
+          isImport,
+        );
+        if (error) {
+          errorList.push(error);
+        }
+      }
+
+      error = await this.linear15Check(linearitySummary);
       if (error) {
         errorList.push(error);
       }
-    }
-
-    error = await this.gasLevelCodeCheck(linearitySummary);
-    if (error) {
-      errorList.push(error);
     }
 
     this.throwIfErrors(errorList, isImport);
@@ -62,7 +78,7 @@ export class LinearitySummaryChecksService {
   }
 
   // LINEAR-15
-  private async gasLevelCodeCheck(
+  private async linear15Check(
     linearitySummary: LinearitySummaryBaseDTO | LinearitySummaryImportDTO,
   ) {
     let error: string = null;

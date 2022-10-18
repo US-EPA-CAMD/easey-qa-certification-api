@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '../utilities/functions';
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
-import { TestSummaryWorkspaceService } from 'src/test-summary-workspace/test-summary.service';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
   AppEHeatInputFromGasBaseDTO,

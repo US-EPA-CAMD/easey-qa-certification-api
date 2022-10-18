@@ -167,14 +167,6 @@ export class TestSummaryChecksService {
       errorList.push(error);
     }
 
-    if (summary.testResultCode === TestTypeCodes.RATA) {
-      // RATA-100 Test Result Code Valid
-      error = await this.rata100check(summary);
-      if (error) {
-        errorList.push(error);
-      }
-    }
-
     if (!isUpdate) {
       error = await this.duplicateTestCheck(
         locationId,
@@ -1251,37 +1243,6 @@ export class TestSummaryChecksService {
       }
     }
     return error;
-  }
-
-  // RATA-100 Test Result Code Valid
-  async rata100check(
-    summary: TestSummaryBaseDTO | TestSummaryImportDTO,
-  ): Promise<string> {
-    let error: string = null;
-    let FIELDNAME: string = 'testResultCode';
-    let KEY: 'Test Summary';
-    const resultC = this.getMessage('RATA-100-C', {
-      value: summary.testResultCode,
-      fieldname: FIELDNAME,
-      key: KEY,
-    });
-    //  const resultC = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type, in the field, in the field [testResultCode] for [Test Summary]`;
-
-    if (
-      !['PASSED', 'PASSAPS', 'FAILED', 'ABORTED'].includes(
-        summary.testResultCode,
-      )
-    ) {
-      const record = this.testResultCodeRepository.findOne(
-        summary.testResultCode,
-      );
-
-      if (record) {
-        error = resultC;
-      }
-
-      return error;
-    }
   }
 
   getMessage(messageKey: string, messageArgs: object): string {
