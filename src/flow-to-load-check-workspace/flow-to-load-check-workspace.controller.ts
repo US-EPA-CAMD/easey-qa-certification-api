@@ -82,7 +82,7 @@ export class FlowToLoadCheckWorkspaceController {
     type: FlowToLoadCheckDTO,
     description: 'Updates a workspace Flow To Load Check record',
   })
-  editFlowToLoadReference(
+  editFlowToLoadCheck(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,

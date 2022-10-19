@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common/exceptions';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   CalibrationInjectionBaseDTO,
@@ -121,6 +122,66 @@ describe('CalibrationInjectionWorkspaceService', () => {
 
       expect(result).toEqual(dto);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateCalibrationInjection', () => {
+    it('Should update and return the Calibration Injection record', async () => {
+      const result = await service.updateCalibrationInjection(
+        testSumId,
+        id,
+        payload,
+        userId,
+      );
+
+      expect(result).toEqual(dto);
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should throw error when a Calibration Injection record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.updateCalibrationInjection(
+          testSumId,
+          id,
+          payload,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteCalibrationInjection', () => {
+    it('Should delete a Fuel Flow To Load Baseline record', async () => {
+      const result = await service.deleteCalibrationInjection(
+        testSumId,
+        id,
+        userId,
+      );
+
+      expect(result).toEqual(undefined);
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should throw error when database throws an error while deleting a Fuel Flow To Load Baseline record', async () => {
+      jest
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+      let errored = false;
+
+      try {
+        await service.deleteCalibrationInjection(testSumId, id, userId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
     });
   });
 });

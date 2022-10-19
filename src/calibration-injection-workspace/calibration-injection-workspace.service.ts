@@ -75,4 +75,77 @@ export class CalibrationInjectionWorkspaceService {
     );
     return this.map.one(entity);
   }
+
+  async updateCalibrationInjection(
+    testSumId: string,
+    id: string,
+    payload: CalibrationInjectionBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<CalibrationInjectionDTO> {
+    const entity = await this.repository.findOne({
+      id,
+      testSumId,
+    });
+
+    if (!entity) {
+      throw new LoggingException(
+        `Calibration Injection record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    entity.onLineOffLineIndicator = payload.onLineOffLineIndicator;
+    entity.upscaleGasLevelCode = payload.upscaleGasLevelCode;
+    entity.zeroInjectionDate = payload.zeroInjectionDate;
+    entity.zeroInjectionHour = payload.zeroInjectionHour;
+    entity.zeroInjectionMinute = payload.zeroInjectionMinute;
+    entity.upscaleInjectionDate = payload.upscaleInjectionDate;
+    entity.upscaleInjectionHour = payload.upscaleInjectionHour;
+    entity.upscaleInjectionMinute = payload.upscaleInjectionMinute;
+    entity.zeroMeasuredValue = payload.zeroMeasuredValue;
+    entity.upscaleMeasuredValue = payload.upscaleMeasuredValue;
+    entity.zeroAPSIndicator = payload.zeroAPSIndicator;
+    entity.upscaleAPSIndicator = payload.upscaleAPSIndicator;
+    entity.zeroCalibrationError = payload.zeroCalibrationError;
+    entity.upscaleCalibrationError = payload.upscaleCalibrationError;
+    entity.zeroReferenceValue = payload.zeroReferenceValue;
+    entity.upscaleReferenceValue = payload.upscaleReferenceValue;
+
+    await this.repository.save(entity);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.map.one(entity);
+  }
+
+  async deleteCalibrationInjection(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete({
+        id,
+        testSumId,
+      });
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting Calibration Injection record [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
+      );
+    }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+  }
 }
