@@ -122,4 +122,30 @@ export class CalibrationInjectionWorkspaceService {
 
     return this.map.one(entity);
   }
+
+  async deleteCalibrationInjection(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete({
+        id,
+        testSumId,
+      });
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting Calibration Injection record [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
+      );
+    }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+  }
 }
