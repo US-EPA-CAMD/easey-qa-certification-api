@@ -27,6 +27,8 @@ const payload = new CalibrationInjectionBaseDTO();
 
 const mockService = () => ({
   createCalibrationInjection: jest.fn().mockResolvedValue(dto),
+  getCalibrationInjection: jest.fn().mockResolvedValue(dto),
+  getCalibrationInjections: jest.fn().mockResolvedValue([dto]),
 });
 
 describe('CalibrationInjectionWorkspaceController', () => {
@@ -49,6 +51,27 @@ describe('CalibrationInjectionWorkspaceController', () => {
     controller = module.get<CalibrationInjectionWorkspaceController>(
       CalibrationInjectionWorkspaceController,
     );
+  });
+
+  describe('getCalibrationInjection', () => {
+    it('Calls the service to get a Calibration Injection record', async () => {
+      const result = await controller.getCalibrationInjection(
+        locId,
+        testSumId,
+        id,
+      );
+      expect(result).toEqual(dto);
+    });
+  });
+
+  describe('getCalibrationInjections', () => {
+    it('Calls the service to many Calibration Injection records', async () => {
+      const result = await controller.getCalibrationInjections(
+        locId,
+        testSumId,
+      );
+      expect(result).toEqual([dto]);
+    });
   });
 
   describe('createCalibrationInjection', () => {
