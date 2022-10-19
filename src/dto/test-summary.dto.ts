@@ -106,6 +106,10 @@ import {
   AppECorrelationTestRunDTO,
   AppECorrelationTestRunImportDTO,
 } from './app-e-correlation-test-run.dto';
+import {
+  AppEHeatInputFromGasDTO,
+  AppEHeatInputFromGasImportDTO,
+} from './app-e-heat-input-from-gas.dto';
 
 const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -472,6 +476,7 @@ export class TestSummaryImportDTO extends TestSummaryBaseDTO {
   protocolGasData: ProtocolGasImportDTO[];
   airEmissionTestingData: AirEmissionTestingImportDTO[];
   appECorrelationTestRunData: AppECorrelationTestRunImportDTO[];
+  appEHeatInputFromGasData: AppEHeatInputFromGasImportDTO[];
 }
 
 export class TestSummaryDTO extends TestSummaryRecordDTO {
@@ -493,4 +498,5 @@ export class TestSummaryDTO extends TestSummaryRecordDTO {
   protocolGasData: ProtocolGasDTO[];
   airEmissionTestingData: AirEmissionTestingDTO[];
   appECorrelationTestRunData: AppECorrelationTestRunDTO[];
+  appEHeatInputFromGasData: AppEHeatInputFromGasDTO[];
 }
