@@ -8,6 +8,7 @@ import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
 import { FlowToLoadCheckWorkspaceRepository } from './flow-to-load-check-workspace.repository';
 import {
   FlowToLoadCheckBaseDTO,
+  FlowToLoadCheckDTO,
   FlowToLoadCheckRecordDTO,
 } from '../dto/flow-to-load-check.dto';
 
@@ -68,6 +69,46 @@ export class FlowToLoadCheckWorkspaceService {
     );
 
     return this.map.one(entity);
+  }
+
+  async editFlowToLoadCheck(
+    testSumId: string,
+    id: string,
+    payload: FlowToLoadCheckBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<FlowToLoadCheckDTO> {
+    const timestamp = currentDateTime().toLocaleString();
+
+    const entity = await this.getFlowToLoadCheck(id);
+
+    entity.testBasisCode = payload.testBasisCode;
+    entity.biasAdjustedIndicator = payload.biasAdjustedIndicator;
+    entity.averageAbsolutePercentDifference =
+      payload.averageAbsolutePercentDifference;
+    entity.numberOfHours = payload.numberOfHours;
+    entity.numberOfHoursExcludedForFuel = payload.numberOfHoursExcludedForFuel;
+    entity.numberOfHoursExcludedForRamping =
+      payload.numberOfHoursExcludedForRamping;
+    entity.numberOfHoursExcludedForBypass =
+      payload.numberOfHoursExcludedForBypass;
+    entity.numberOfHoursExcludedPreRata = payload.numberOfHoursExcludedPreRata;
+    entity.numberOfHoursExcludedTest = payload.numberOfHoursExcludedTest;
+    entity.numberOfHoursExcludedForMainAndBypass =
+      payload.numberOfHoursExcludedForMainAndBypass;
+    entity.operatingLevelCode = payload.operatingLevelCode;
+    entity.userId = userId;
+    entity.updateDate = timestamp;
+
+    await this.repository.save(entity);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.getFlowToLoadCheck(id);
   }
 
   async deleteFlowToLoadCheck(
