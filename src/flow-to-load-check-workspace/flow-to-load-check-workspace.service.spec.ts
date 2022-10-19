@@ -111,6 +111,35 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
     });
   });
 
+  describe('editFlowToLoadCheck', () => {
+    it('should update an Flow To Load Check record', async () => {
+      const result = await service.editFlowToLoadCheck(
+        testSumId,
+        flowToLoadCheckId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(flowToLoadCheck);
+    });
+
+    it('should throw error with invalid Flow To Load Check', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.editFlowToLoadCheck(
+          testSumId,
+          flowToLoadCheckId,
+          payload,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
+    });
+  });
+
   describe('deleteFlowToLoadCheck', () => {
     it('Should delete a Flow To Load Check record', async () => {
       const result = await service.deleteFlowToLoadCheck(

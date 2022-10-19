@@ -6,6 +6,7 @@ import {
   UseGuards,
   Get,
   Delete,
+  Put,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -20,6 +21,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { FlowToLoadCheckWorkspaceService } from './flow-to-load-check-workspace.service';
 import {
   FlowToLoadCheckBaseDTO,
+  FlowToLoadCheckDTO,
   FlowToLoadCheckRecordDTO,
 } from '../dto/flow-to-load-check.dto';
 
@@ -71,6 +73,28 @@ export class FlowToLoadCheckWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<FlowToLoadCheckRecordDTO> {
     return this.service.createFlowToLoadCheck(testSumId, payload, user.userId);
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: FlowToLoadCheckDTO,
+    description: 'Updates a workspace Flow To Load Check record',
+  })
+  editFlowToLoadReference(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: FlowToLoadCheckBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<FlowToLoadCheckDTO> {
+    return this.service.editFlowToLoadCheck(
+      testSumId,
+      id,
+      payload,
+      user.userId,
+    );
   }
 
   @Delete(':id')
