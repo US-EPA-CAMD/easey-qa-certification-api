@@ -81,15 +81,17 @@ describe('FlowToLoadCheckWorkspaceController', () => {
     });
   });
 
-  describe('createFlowToLoadCheck', () => {
-    it('Calls the service to create a new Flow To Load Check record', async () => {
-      const result = await controller.createFlowToLoadCheck(
-        locId,
-        testSumId,
-        payload,
-        user,
-      );
-      expect(result).toEqual(flowToLoadCheck);
+  describe('editFlowToLoadCheck', () => {
+    it('Calls the service and edits a Flow To Load Check record', async () => {
+      expect(
+        await controller.editFlowToLoadCheck(
+          locId,
+          testSumId,
+          flowToLoadCheckId,
+          payload,
+          user,
+        ),
+      ).toEqual(flowToLoadCheck);
     });
   });
 
