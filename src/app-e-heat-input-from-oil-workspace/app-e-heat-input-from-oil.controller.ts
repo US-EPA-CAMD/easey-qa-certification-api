@@ -24,10 +24,6 @@ import {
   AppEHeatInputFromOilRecordDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oil.service';
-import {
-  ProtocolGasBaseDTO,
-  ProtocolGasRecordDTO,
-} from '../dto/protocol-gas.dto';
 
 @Controller()
 @ApiSecurity('APIKey')

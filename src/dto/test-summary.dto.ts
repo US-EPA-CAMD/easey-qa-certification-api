@@ -102,14 +102,6 @@ import {
 } from '../utilities/constants';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
-import {
-  AppECorrelationTestRunDTO,
-  AppECorrelationTestRunImportDTO,
-} from './app-e-correlation-test-run.dto';
-import {
-  AppEHeatInputFromGasDTO,
-  AppEHeatInputFromGasImportDTO,
-} from './app-e-heat-input-from-gas.dto';
 
 const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -475,8 +467,6 @@ export class TestSummaryImportDTO extends TestSummaryBaseDTO {
   testQualificationData: TestQualificationImportDTO[];
   protocolGasData: ProtocolGasImportDTO[];
   airEmissionTestingData: AirEmissionTestingImportDTO[];
-  appECorrelationTestRunData: AppECorrelationTestRunImportDTO[];
-  appEHeatInputFromGasData: AppEHeatInputFromGasImportDTO[];
 }
 
 export class TestSummaryDTO extends TestSummaryRecordDTO {
@@ -497,6 +487,4 @@ export class TestSummaryDTO extends TestSummaryRecordDTO {
   testQualificationData: TestQualificationDTO[];
   protocolGasData: ProtocolGasDTO[];
   airEmissionTestingData: AirEmissionTestingDTO[];
-  appECorrelationTestRunData: AppECorrelationTestRunDTO[];
-  appEHeatInputFromGasData: AppEHeatInputFromGasDTO[];
 }

@@ -38,8 +38,6 @@ import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
 import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
-import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
-import { AppEHeatInputFromGasWorkspaceService } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -58,10 +56,6 @@ export class TestSummaryWorkspaceService {
     private readonly fuelFlowToLoadTestWorkspaceService: FuelFlowToLoadTestWorkspaceService,
     @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
     private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
-    @Inject(forwardRef(() => AppECorrelationTestRunWorkspaceService))
-    private readonly appECorrelationTestRunWorkspaceService: AppECorrelationTestRunWorkspaceService,
-    @Inject(forwardRef(() => AppEHeatInputFromGasWorkspaceService))
-    private readonly appEHeatInputFromGasWorkspaceService: AppEHeatInputFromGasWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -93,8 +87,6 @@ export class TestSummaryWorkspaceService {
     delete dto.protocolGasData;
     delete dto.airEmissionTestingData;
     delete dto.appECorrelationTestSummaryData;
-    delete dto.appECorrelationTestRunData;
-    delete dto.appEHeatInputFromGasData;
 
     return dto;
   }
@@ -164,8 +156,6 @@ export class TestSummaryWorkspaceService {
           rataData,
           protocolGasData,
           fuelFlowToLoadTestData,
-          appECorrelationTestRunData,
-          appEHeatInputFromGasData,
           appECorrelationTestSummaryData;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
@@ -180,12 +170,6 @@ export class TestSummaryWorkspaceService {
           rataData = await this.rataService.export(testSumIds);
           protocolGasData = await this.protocolGasService.export(testSumIds);
           appECorrelationTestSummaryData = await this.appECorrelationTestSummaryWorkspaceService.export(
-            testSumIds,
-          );
-          appECorrelationTestRunData = await this.appECorrelationTestRunWorkspaceService.export(
-            testSumIds,
-          );
-          appEHeatInputFromGasData = await this.appEHeatInputFromGasWorkspaceService.export(
             testSumIds,
           );
           fuelFlowToLoadTestData = await this.fuelFlowToLoadTestWorkspaceService.export(
@@ -203,12 +187,6 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.appECorrelationTestRunData = appECorrelationTestRunData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.appEHeatInputFromGasData = appEHeatInputFromGasData.filter(
               i => i.testSumId === s.id,
             );
           });
@@ -450,8 +428,6 @@ export class TestSummaryWorkspaceService {
     delete dto.testQualificationData;
     delete dto.protocolGasData;
     delete dto.airEmissionTestingData;
-    delete dto.appECorrelationTestRunData;
-    delete dto.appEHeatInputFromGasData;
 
     return dto;
   }

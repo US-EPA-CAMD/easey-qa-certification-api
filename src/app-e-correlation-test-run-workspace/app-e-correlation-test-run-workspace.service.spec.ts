@@ -179,4 +179,13 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
       expect(errored).toEqual(true);
     });
   });
+  describe('Export', () => {
+    it('Should Export Appendix E Correlation Test Run', async () => {
+      jest
+        .spyOn(service, 'getAppECorrelationTestRunsByTestSumIds')
+        .mockResolvedValue([appECorrelationTestRunRecord]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([appECorrelationTestRunRecord]);
+    });
+  });
 });
