@@ -1,4 +1,12 @@
-import { Controller, Param, Post, Body, UseGuards, Get } from '@nestjs/common';
+import {
+  Controller,
+  Param,
+  Post,
+  Body,
+  UseGuards,
+  Get,
+  Delete,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -63,5 +71,20 @@ export class FlowToLoadCheckWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<FlowToLoadCheckRecordDTO> {
     return this.service.createFlowToLoadCheck(testSumId, payload, user.userId);
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Deletes a Flow To Load Check record from the workspace',
+  })
+  async deleteFlowToLoadCheck(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteFlowToLoadCheck(testSumId, id, user.userId);
   }
 }
