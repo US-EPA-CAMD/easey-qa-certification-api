@@ -84,12 +84,12 @@ export class TestSummaryWorkspaceService {
     delete dto.transmitterTransducerData;
     delete dto.fuelFlowToLoadBaselineData;
     delete dto.fuelFlowToLoadTestData;
-    delete dto.appECorrelationTestSummaryData;
     delete dto.unitDefaultTestData;
     delete dto.hgSummaryData;
     delete dto.testQualificationData;
     delete dto.protocolGasData;
     delete dto.airEmissionTestingData;
+    delete dto.appECorrelationTestSummaryData;
     delete dto.appECorrelationTestRunData;
 
     return dto;
@@ -161,7 +161,7 @@ export class TestSummaryWorkspaceService {
           protocolGasData,
           fuelFlowToLoadTestData,
           appECorrelationTestRunData,
-          appECorrelationTestSummaryData = null;
+          appECorrelationTestSummaryData;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
