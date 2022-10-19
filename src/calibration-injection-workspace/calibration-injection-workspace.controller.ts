@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -64,6 +72,28 @@ export class CalibrationInjectionWorkspaceController {
   ): Promise<CalibrationInjectionDTO> {
     return this.service.createCalibrationInjection(
       testSumId,
+      payload,
+      user.userId,
+    );
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: CalibrationInjectionDTO,
+    description: 'Updates a workspace Fuel Flow To Load Baseline record.',
+  })
+  updateCalibrationInjection(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: CalibrationInjectionBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<CalibrationInjectionDTO> {
+    return this.service.updateCalibrationInjection(
+      testSumId,
+      id,
       payload,
       user.userId,
     );
