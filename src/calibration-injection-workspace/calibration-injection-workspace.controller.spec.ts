@@ -87,16 +87,16 @@ describe('CalibrationInjectionWorkspaceController', () => {
     });
   });
 
-    describe('updateCalibrationInjection', () => {
-      it('Calls the service and update a existing Calibration Injection record', async () => {
-        const result = await controller.updateCalibrationInjection(
-          locId,
-          testSumId,
-          id,
-          payload,
-          user,
-        );
-        expect(result).toEqual(dto);
-      });
+  describe('updateCalibrationInjection', () => {
+    it('Calls the service and update a existing Calibration Injection record', async () => {
+      const result = await controller.updateCalibrationInjection(
+        locId,
+        testSumId,
+        id,
+        payload,
+        user,
+      );
+      expect(result).toEqual(dto);
     });
+  });
 });
