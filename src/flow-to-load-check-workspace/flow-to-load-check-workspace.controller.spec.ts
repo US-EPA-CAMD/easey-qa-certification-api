@@ -82,7 +82,7 @@ describe('FlowToLoadCheckWorkspaceController', () => {
   });
 
   describe('editFlowToLoadCheck', () => {
-    it('should call the Flow To Load Check record', async () => {
+    it('Calls the service and edits a Flow To Load Check record', async () => {
       expect(
         await controller.editFlowToLoadCheck(
           locId,
