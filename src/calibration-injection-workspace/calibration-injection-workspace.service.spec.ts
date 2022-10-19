@@ -123,4 +123,36 @@ describe('CalibrationInjectionWorkspaceService', () => {
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
   });
+
+  describe('updateCalibrationInjection', () => {
+    it('Should update and return the Calibration Injection record', async () => {
+      const result = await service.updateCalibrationInjection(
+        testSumId,
+        id,
+        payload,
+        userId,
+      );
+
+      expect(result).toEqual(dto);
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should throw error when a Calibration Injection record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.updateCalibrationInjection(
+          testSumId,
+          id,
+          payload,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
 });
