@@ -134,7 +134,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
       });
     } catch (e) {
       throw new LoggingException(
-        `Error deleting Fuel Flow To Load Baseline record Id [${id}]`,
+        `Error deleting Fuel Flow To Load Baseline record [${id}]`,
         HttpStatus.INTERNAL_SERVER_ERROR,
         e,
       );
