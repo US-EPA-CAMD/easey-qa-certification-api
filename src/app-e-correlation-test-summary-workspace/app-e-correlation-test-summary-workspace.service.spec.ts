@@ -7,12 +7,15 @@ import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryDTO,
   AppECorrelationTestSummaryImportDTO,
+  AppECorrelationTestSummaryRecordDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
 import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
 import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-test-summary-workspace.service';
+import { AppECorrelationTestRunDTO } from '../dto/app-e-correlation-test-run.dto';
+import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
 
 const testSumId = '';
 const userId = 'user';
@@ -40,6 +43,10 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockTestRunService = () => ({
+  import: jest.fn(),
+});
+
 const mockOfficialRepository = () => ({
   findOne: jest.fn(),
 });
@@ -58,6 +65,10 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSumService,
+        },
+        {
+          provide: AppECorrelationTestRunWorkspaceService,
+          useFactory: mockTestRunService,
         },
         {
           provide: AppendixETestSummaryWorkspaceRepository,
@@ -130,18 +141,22 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
     });
   });
 
-  describe('Import', () => {
-    it('Should Import Appendix E Correlation Test Summary', async () => {
-      jest
-        .spyOn(service, 'createAppECorrelation')
-        .mockResolvedValue(appECorrelationTest);
+  describe('import', () => {
+    const importDTO = new AppECorrelationTestSummaryDTO();
+    const recordDTO = new AppECorrelationTestSummaryRecordDTO();
 
-      await service.import(
-        testSumId,
-        new AppECorrelationTestSummaryImportDTO(),
-        userId,
-        true,
-      );
+    it('Should Import Appendix E Correlation Test Summary', async () => {
+      jest.spyOn(service, 'createAppECorrelation').mockResolvedValue(recordDTO);
+
+      await service.import(testSumId, importDTO, userId, false);
+    });
+
+    it('Should Import Appendix E Correlation Test Summary from Historical Record', async () => {
+      importDTO.appECorrelationTestRunData = [new AppECorrelationTestRunDTO()];
+
+      jest.spyOn(service, 'createAppECorrelation').mockResolvedValue(recordDTO);
+
+      await service.import(testSumId, importDTO, userId, true);
     });
   });
 

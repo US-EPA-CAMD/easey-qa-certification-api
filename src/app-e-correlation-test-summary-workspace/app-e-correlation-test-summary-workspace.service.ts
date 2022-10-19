@@ -10,6 +10,7 @@ import {
   AppECorrelationTestSummaryRecordDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { AppendixETestSummaryRepository } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.repository';
 import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
@@ -26,6 +27,8 @@ export class AppECorrelationTestSummaryWorkspaceService {
     private readonly repository: AppendixETestSummaryWorkspaceRepository,
     @InjectRepository(AppendixETestSummaryRepository)
     private readonly historicalRepo: AppendixETestSummaryRepository,
+    @Inject(forwardRef(() => AppECorrelationTestRunWorkspaceService))
+    private readonly appECorrTestRunService: AppECorrelationTestRunWorkspaceService,
     private readonly logger: Logger,
   ) {}
 
@@ -117,6 +120,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
     isHistoricalRecord: boolean,
   ) {
     const isImport = true;
+    const promises = [];
     let historicalRecord: AppECorrelationTestSummary;
 
     if (isHistoricalRecord) {
@@ -137,6 +141,29 @@ export class AppECorrelationTestSummaryWorkspaceService {
     this.logger.info(
       `Appendix E Correlation Test Summary Successfully Imported.  Record Id: ${createdAppECorrelation.id}`,
     );
+
+    if (payload.appECorrelationTestRunData?.length > 0) {
+      for (const testRun of payload.appECorrelationTestRunData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.appECorrTestRunService.import(
+                testSumId,
+                createdAppECorrelation.id,
+                testRun,
+                userId,
+                isHistoricalRecord,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    await Promise.all(promises);
   }
 
   async deleteAppECorrelation(

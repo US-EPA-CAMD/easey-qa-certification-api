@@ -4,22 +4,29 @@ import { v4 as uuid } from 'uuid';
 
 import { currentDateTime } from '../utilities/functions';
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
+import { AppEHeatInputFromGasRepository } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.repository';
 import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
   AppEHeatInputFromGasBaseDTO,
+  AppEHeatInputFromGasImportDTO,
   AppEHeatInputFromGasRecordDTO,
 } from '../dto/app-e-heat-input-from-gas.dto';
+import { AppEHeatInputFromGas } from '../entities/app-e-heat-input-from-gas.entity';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class AppEHeatInputFromGasWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     private readonly map: AppEHeatInputFromGasMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(AppEHeatInputFromGasWorkspaceRepository)
     private readonly repository: AppEHeatInputFromGasWorkspaceRepository,
+    @InjectRepository(AppEHeatInputFromGasRepository)
+    private readonly historicalRepo: AppEHeatInputFromGasRepository,
   ) {}
 
   async getAppEHeatInputFromGases(
@@ -53,11 +60,12 @@ export class AppEHeatInputFromGasWorkspaceService {
     payload: AppEHeatInputFromGasBaseDTO,
     userId: string,
     isImport: boolean = false,
+    historicalRecordId?: string,
   ): Promise<AppEHeatInputFromGasRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       appECorrTestRunId,
       ...payload,
       userId,
@@ -133,6 +141,37 @@ export class AppEHeatInputFromGasWorkspaceService {
       testSumId,
       userId,
       isImport,
+    );
+  }
+
+  async import(
+    testSumId: string,
+    appECorrTestRunId: string,
+    payload: AppEHeatInputFromGasImportDTO,
+    userId: string,
+    isHistoricalRecord: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: AppEHeatInputFromGas;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepo.findOne({
+        appECorrTestRunId: appECorrTestRunId,
+        monitoringSystemID: payload.monitoringSystemID,
+      });
+    }
+
+    const createdHeatInputFromGas = await this.createAppEHeatInputFromGas(
+      testSumId,
+      appECorrTestRunId,
+      payload,
+      userId,
+      isImport,
+      isHistoricalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Appendix E Heat Input from Gas Successfully Imported.  Record Id: ${createdHeatInputFromGas.id}`,
     );
   }
 }

@@ -1,8 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  AppECorrelationTestSummaryBaseDTO,
-  AppECorrelationTestSummaryDTO,
-} from '../dto/app-e-correlation-test-summary.dto';
+import { AppECorrelationTestSummaryDTO } from '../dto/app-e-correlation-test-summary.dto';
 import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -10,12 +7,9 @@ import { AppendixETestSummaryRepository } from './app-e-correlation-test-summary
 import { AppECorrelationTestSummaryService } from './app-e-correlation-test-summary.service';
 
 const testSumId = '';
-
 const entity = new AppECorrelationTestSummary();
 const appECorrelationTest = new AppECorrelationTestSummaryDTO();
 const appECorrelationTests = [appECorrelationTest];
-
-const payload = new AppECorrelationTestSummaryBaseDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),

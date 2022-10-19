@@ -3,12 +3,22 @@ import { AppECorrelationTestRunMap } from '../maps/app-e-correlation-test-run.ma
 import {
   AppECorrelationTestRunBaseDTO,
   AppECorrelationTestRunDTO,
+  AppECorrelationTestRunImportDTO,
+  AppECorrelationTestRunRecordDTO,
 } from '../dto/app-e-correlation-test-run.dto';
 import { AppECorrelationTestRun } from '../entities/app-e-correlation-test-run.entity';
 import { AppECorrelationTestRunWorkspaceRepository } from './app-e-correlation-test-run-workspace.repository';
 import { AppECorrelationTestRunWorkspaceService } from './app-e-correlation-test-run-workspace.service';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { InternalServerErrorException } from '@nestjs/common';
+import { AppECorrelationTestRunRepository } from '../app-e-correlation-test-run/app-e-correlation-test-run.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { AppEHeatInputFromGasWorkspaceService } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.service';
+import { AppEHeatInputFromOilWorkspaceService } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.service';
+import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
+import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
+import { AppEHeatInputFromGasImportDTO } from '../dto/app-e-heat-input-from-gas.dto';
+import { AppEHeatInputFromOilImportDTO } from '../dto/app-e-heat-input-from-oil.dto';
 
 const userId = 'testUser';
 const testSumId = 'g7h8i9';
@@ -32,22 +42,40 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(appECorrelationTestRunEntity),
 });
 
+const mockHistoricalRepo = () => ({
+  findOne: jest.fn().mockResolvedValue(appECorrelationTestRunRecord),
+});
+
 const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
+});
+
+const mockHeatInputGasService = () => ({
+  import: jest.fn(),
+});
+
+const mockHeatInputOilService = () => ({
+  import: jest.fn(),
 });
 
 describe('AppECorrelationTestRunWorkspaceService', () => {
   let service: AppECorrelationTestRunWorkspaceService;
   let repository: AppECorrelationTestRunWorkspaceRepository;
+  let historicalRepo: AppECorrelationTestRunRepository;
   let testSummaryService: TestSummaryWorkspaceService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        Logger,
         AppECorrelationTestRunWorkspaceService,
         {
           provide: AppECorrelationTestRunWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: AppECorrelationTestRunRepository,
+          useFactory: mockHistoricalRepo,
         },
         {
           provide: AppECorrelationTestRunMap,
@@ -57,6 +85,14 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSumService,
         },
+        {
+          provide: AppEHeatInputFromGasWorkspaceService,
+          useFactory: mockHeatInputGasService,
+        },
+        {
+          provide: AppEHeatInputFromOilWorkspaceService,
+          useFactory: mockHeatInputOilService,
+        },
       ],
     }).compile();
 
@@ -65,6 +101,9 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
     );
     repository = module.get<AppECorrelationTestRunWorkspaceRepository>(
       AppECorrelationTestRunWorkspaceRepository,
+    );
+    historicalRepo = module.get<AppECorrelationTestRunRepository>(
+      AppECorrelationTestRunRepository,
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
       TestSummaryWorkspaceService,
@@ -110,6 +149,8 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
         appECorrTestSumId,
         payload,
         userId,
+        false,
+        null,
       );
 
       expect(result).toEqual(appECorrelationTestRunRecord);
@@ -177,6 +218,46 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
         errored = true;
       }
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('import', () => {
+    const importDTO = new AppECorrelationTestRunImportDTO();
+    const recordDTO = new AppECorrelationTestRunRecordDTO();
+
+    it('Should Import Appendix E Corrleation Test Run', async () => {
+      jest
+        .spyOn(service, 'createAppECorrelationTestRun')
+        .mockResolvedValue(recordDTO);
+
+      await service.import(
+        testSumId,
+        appECorrTestSumId,
+        importDTO,
+        userId,
+        false,
+      );
+    });
+
+    it('Should Import Appendix E Corrleation Test Run from Historical Record', async () => {
+      importDTO.appEHeatInputFromGasData = [
+        new AppEHeatInputFromGasImportDTO(),
+      ];
+      importDTO.appEHeatInputFromOilData = [
+        new AppEHeatInputFromOilImportDTO(),
+      ];
+
+      jest
+        .spyOn(service, 'createAppECorrelationTestRun')
+        .mockResolvedValue(recordDTO);
+
+      await service.import(
+        testSumId,
+        appECorrTestSumId,
+        importDTO,
+        userId,
+        false,
+      );
     });
   });
 });
