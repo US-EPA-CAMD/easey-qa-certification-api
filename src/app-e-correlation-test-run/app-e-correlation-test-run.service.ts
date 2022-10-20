@@ -1,11 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
-import {
-  AppECorrelationTestRunBaseDTO,
-  AppECorrelationTestRunDTO,
-} from '../dto/app-e-correlation-test-run.dto';
+import { AppECorrelationTestRunBaseDTO } from '../dto/app-e-correlation-test-run.dto';
 import { AppECorrelationTestRunMap } from '../maps/app-e-correlation-test-run.map';
 import { AppECorrelationTestRunRepository } from './app-e-correlation-test-run.repository';
 
