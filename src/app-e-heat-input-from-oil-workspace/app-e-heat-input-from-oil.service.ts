@@ -135,16 +135,18 @@ export class AppEHeatInputFromOilWorkspaceService {
     );
   }
 
-  async getAppEHeatInputFromOilRecordsByTestSumIds(
-    testSumIds: string[],
+  async getAppEHeatInputFromOilRecordsByTestRunIds(
+    appECorrTestRunIds: string[],
   ): Promise<AppEHeatInputFromOilDTO[]> {
     const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
+      where: { appECorrTestRunId: In(appECorrTestRunIds) },
     });
     return this.map.many(results);
   }
 
-  async export(testSumIds: string[]): Promise<AppEHeatInputFromOilDTO[]> {
-    return this.getAppEHeatInputFromOilRecordsByTestSumIds(testSumIds);
+  async export(
+    appECorrTestRunIds: string[],
+  ): Promise<AppEHeatInputFromOilDTO[]> {
+    return this.getAppEHeatInputFromOilRecordsByTestRunIds(appECorrTestRunIds);
   }
 }

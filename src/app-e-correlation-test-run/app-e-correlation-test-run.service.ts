@@ -38,20 +38,6 @@ export class AppECorrelationTestRunService {
         HttpStatus.NOT_FOUND,
       );
     }
-
     return this.map.one(result);
-  }
-
-  async getAppECorrelationTestRunsByTestSumIds(
-    testSumIds: string[],
-  ): Promise<AppECorrelationTestRunDTO[]> {
-    const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
-    });
-    return this.map.many(results);
-  }
-
-  async export(testSumIds: string[]): Promise<AppECorrelationTestRunDTO[]> {
-    return this.getAppECorrelationTestRunsByTestSumIds(testSumIds);
   }
 }

@@ -121,4 +121,24 @@ describe('AppEHeatInputOilWorkspaceService', () => {
       expect(repository.save).toHaveBeenCalled();
     });
   });
+
+  describe('getAppEHeatInputFromGasByTestRunIds', () => {
+    it('Should get Appendix E Heat Input From Oil records by test sum ids', async () => {
+      const result = await service.getAppEHeatInputFromOilRecordsByTestRunIds([
+        appECorrTestRunId,
+      ]);
+      expect(result).toEqual([mockAeHiFromOil]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Appendix E Heat Input From Oil Record', async () => {
+      jest
+        .spyOn(service, 'getAppEHeatInputFromOilRecordsByTestRunIds')
+        .mockResolvedValue([]);
+
+      const result = await service.export([appECorrTestRunId]);
+      expect(result).toEqual([]);
+    });
+  });
 });

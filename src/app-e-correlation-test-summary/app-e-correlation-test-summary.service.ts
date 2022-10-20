@@ -48,8 +48,4 @@ export class AppECorrelationTestSummaryService {
     });
     return this.map.many(results);
   }
-
-  async export(testSumIds: string[]): Promise<AppECorrelationTestSummaryDTO[]> {
-    return this.getAppECorrelationsByTestSumIds(testSumIds);
-  }
 }

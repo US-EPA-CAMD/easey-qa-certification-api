@@ -9,6 +9,10 @@ import { AppECorrelationTestRunWorkspaceRepository } from './app-e-correlation-t
 import { AppECorrelationTestRunWorkspaceService } from './app-e-correlation-test-run-workspace.service';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { InternalServerErrorException } from '@nestjs/common';
+import { AppEHeatInputFromGasWorkspaceService } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.service';
+import { AppEHeatInputFromOilWorkspaceService } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.service';
+import { AppEHeatInputFromGasDTO } from '../dto/app-e-heat-input-from-gas.dto';
+import { AppEHeatInputFromOilDTO } from '../dto/app-e-heat-input-from-oil.dto';
 
 const userId = 'testUser';
 const testSumId = 'g7h8i9';
@@ -35,6 +39,12 @@ const mockRepository = () => ({
 const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
+const mockAppEHeatInputFromGasService = () => ({
+  export: jest.fn().mockResolvedValue([new AppEHeatInputFromGasDTO()]),
+});
+const mockAppEHeatInputFromOilService = () => ({
+  export: jest.fn().mockResolvedValue([new AppEHeatInputFromOilDTO()]),
+});
 
 describe('AppECorrelationTestRunWorkspaceService', () => {
   let service: AppECorrelationTestRunWorkspaceService;
@@ -56,6 +66,14 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSumService,
+        },
+        {
+          provide: AppEHeatInputFromGasWorkspaceService,
+          useFactory: mockAppEHeatInputFromGasService,
+        },
+        {
+          provide: AppEHeatInputFromOilWorkspaceService,
+          useFactory: mockAppEHeatInputFromOilService,
         },
       ],
     }).compile();
@@ -179,10 +197,20 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
       expect(errored).toEqual(true);
     });
   });
+
+  describe('getAppECorrelationTestRunsByAppECorrelationTestSumId', () => {
+    it('Should get Appendix E Correlation Test Sum ids', async () => {
+      const result = await service.getAppECorrelationTestRunsByAppECorrelationTestSumId(
+        [testSumId],
+      );
+      expect(result).toEqual([appECorrelationTestRunRecord]);
+    });
+  });
+
   describe('Export', () => {
     it('Should Export Appendix E Correlation Test Run', async () => {
       jest
-        .spyOn(service, 'getAppECorrelationTestRunsByTestSumIds')
+        .spyOn(service, 'getAppECorrelationTestRunsByAppECorrelationTestSumId')
         .mockResolvedValue([appECorrelationTestRunRecord]);
       const result = await service.export([testSumId]);
       expect(result).toEqual([appECorrelationTestRunRecord]);
