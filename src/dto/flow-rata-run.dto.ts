@@ -1,6 +1,11 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
-import { IsNotEmpty, ValidationArguments } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  ValidateNested,
+  ValidationArguments,
+} from 'class-validator';
 import { RataTraverseDTO, RataTraverseImportDTO } from './rata-traverse.dto';
 
 const KEY = 'Flow RATA Run';
@@ -56,9 +61,13 @@ export class FlowRataRunRecordDTO extends FlowRataRunBaseDTO {
 }
 
 export class FlowRataRunImportDTO extends FlowRataRunBaseDTO {
+  @ValidateNested({ each: true })
+  @Type(() => RataTraverseImportDTO)
   rataTraverseData: RataTraverseImportDTO[];
 }
 
 export class FlowRataRunDTO extends FlowRataRunRecordDTO {
+  @ValidateNested({ each: true })
+  @Type(() => RataTraverseDTO)
   rataTraverseData: RataTraverseDTO[];
 }
