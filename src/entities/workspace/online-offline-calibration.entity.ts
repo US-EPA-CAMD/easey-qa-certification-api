@@ -46,37 +46,37 @@ export class OnlineOfflineCalibration extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'online_zero_cal_error'
+    name: 'online_zero_cal_error',
   })
   onlineZeroCalibrationError: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'calc_online_zero_cal_error'
+    name: 'calc_online_zero_cal_error',
   })
   calculatedOnlineZeroCalibrationError: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'online_zero_measured_value'
+    name: 'online_zero_measured_value',
   })
   onlineZeroMeasuredValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'online_zero_ref_value'
+    name: 'online_zero_ref_value',
   })
   onlineZeroReferenceValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'online_upscale_cal_error'
+    name: 'online_upscale_cal_error',
   })
   onlineUpscaleCalibrationError: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'calc_online_upscale_cal_error'
+    name: 'calc_online_upscale_cal_error',
   })
   calculatedOnlineUpscaleCalibrationError: number;
 
@@ -94,13 +94,13 @@ export class OnlineOfflineCalibration extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'online_upscale_measured_value'
+    name: 'online_upscale_measured_value',
   })
   onlineUpscaleMeasuredValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'online_upscale_ref_value'
+    name: 'online_upscale_ref_value',
   })
   onlineUpscaleReferenceValue: number;
 
@@ -118,37 +118,37 @@ export class OnlineOfflineCalibration extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'offline_zero_cal_error'
+    name: 'offline_zero_cal_error',
   })
   offlineZeroCalibrationError: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'calc_offline_zero_cal_error'
+    name: 'calc_offline_zero_cal_error',
   })
   calculatedOfflineZeroCalibrationError: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'offline_zero_measured_value'
+    name: 'offline_zero_measured_value',
   })
   offlineZeroMeasuredValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'offline_zero_ref_value'
+    name: 'offline_zero_ref_value',
   })
   offlineZeroReferenceValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'offline_upscale_cal_error'
+    name: 'offline_upscale_cal_error',
   })
   offlineUpscaleCalibrationError: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'calc_offline_upscale_cal_error'
+    name: 'calc_offline_upscale_cal_error',
   })
   calculatedOfflineUpscaleCalibrationError: number;
 
@@ -166,27 +166,25 @@ export class OnlineOfflineCalibration extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'offline_upscale_measured_value'
+    name: 'offline_upscale_measured_value',
   })
   offlineUpscaleMeasuredValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'offline_upscale_ref_value'
+    name: 'offline_upscale_ref_value',
   })
   offlineUpscaleReferenceValue: number;
 
   @Column({
-    type: 'time without time zone',
     name: 'add_date',
   })
-  addDate: string;
+  addDate: Date;
 
   @Column({
-    type: 'time without time zone',
     name: 'update_date',
   })
-  updateDate: string;
+  updateDate: Date;
 
   @Column({
     type: 'varchar',

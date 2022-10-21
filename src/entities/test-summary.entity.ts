@@ -25,7 +25,7 @@ import { FlowToLoadReference } from './flow-to-load-reference.entity';
 import { FlowToLoadCheck } from './flow-to-load-check.entity';
 import { FuelFlowToLoadBaseline } from './fuel-flow-to-load-baseline.entity';
 import { CalibrationInjection } from './workspace/calibration-injection.entity';
-import { OnlineOfflineCalibration} from './online-offline-calibration.entity';
+import { OnlineOfflineCalibration } from './online-offline-calibration.entity';
 
 @Entity({ name: 'camdecmps.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -290,5 +290,4 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'rpt_period_id' })
   reportingPeriod: ReportingPeriod;
-
 }
