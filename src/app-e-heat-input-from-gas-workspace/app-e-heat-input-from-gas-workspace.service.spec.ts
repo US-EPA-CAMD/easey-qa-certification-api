@@ -1,5 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { AppEHeatInputFromGasDTO } from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromGas } from '../entities/app-e-heat-input-from-gas.entity';
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
@@ -16,10 +18,16 @@ const mockTestSumService = () => ({
 });
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue([mockAeHiFromGas]),
+  getAppEHeatInputFromGasesByTestRunIds: jest
+    .fn()
+    .mockResolvedValue([mockAeHiFromGas]),
   create: jest.fn().mockResolvedValue(mockAeHiFromGas),
   save: jest.fn().mockResolvedValue(mockAeHiFromGas),
   findOne: jest.fn().mockResolvedValue(mockAeHiFromGas),
+});
+
+const mockMonSysRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
 });
 
 const mockMap = () => ({
@@ -43,6 +51,10 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
         {
           provide: AppEHeatInputFromGasWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: MonitorSystemRepository,
+          useFactory: mockMonSysRepository,
         },
         {
           provide: AppEHeatInputFromGasMap,
