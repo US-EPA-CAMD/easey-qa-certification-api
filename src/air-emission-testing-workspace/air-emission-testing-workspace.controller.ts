@@ -23,13 +23,17 @@ import {
   AirEmissionTestingDTO,
   AirEmissionTestingRecordDTO,
 } from '../dto/air-emission-test.dto';
+import { AirEmissionTestingChecksService } from './air-emission-testing-checks.service';
 import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Air Emission Testing')
 export class AirEmissionTestingWorkspaceController {
-  constructor(private readonly service: AirEmissionTestingWorkspaceService) {}
+  constructor(
+    private readonly service: AirEmissionTestingWorkspaceService,
+    private readonly checksService: AirEmissionTestingChecksService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -66,12 +70,13 @@ export class AirEmissionTestingWorkspaceController {
     type: AirEmissionTestingRecordDTO,
     description: 'Creates a workspace Air Emission Testing record.',
   })
-  createAirEmissionTesting(
+  async createAirEmissionTesting(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: AirEmissionTestingBaseDTO,
     @User() user: CurrentUser,
   ): Promise<AirEmissionTestingRecordDTO> {
+    await this.checksService.runChecks(payload, testSumId, false, true);
     return this.service.createAirEmissionTesting(
       testSumId,
       payload,
@@ -86,13 +91,14 @@ export class AirEmissionTestingWorkspaceController {
     type: AirEmissionTestingRecordDTO,
     description: 'Updates a workspace Air Emission Testing record',
   })
-  updateAirEmissionTesting(
+  async updateAirEmissionTesting(
     @Param('locid') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
     @Body() payload: AirEmissionTestingBaseDTO,
     @User() user: CurrentUser,
   ) {
+    await this.checksService.runChecks(payload, testSumId, false, true);
     return this.service.updateAirEmissionTesting(
       testSumId,
       id,
