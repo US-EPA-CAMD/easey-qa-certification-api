@@ -16,9 +16,9 @@ export class AppEHeatInputFromGasService {
   async getAppEHeatInputFromGases(
     appECorrTestRunId: string,
   ): Promise<AppEHeatInputFromGasRecordDTO[]> {
-    const records = await this.repository.find({
-      where: { appECorrTestRunId },
-    });
+    const records = await this.repository.getAppEHeatInputFromGasByTestRunId(
+      appECorrTestRunId,
+    );
 
     return this.map.many(records);
   }
@@ -26,7 +26,7 @@ export class AppEHeatInputFromGasService {
   async getAppEHeatInputFromGas(
     id: string,
   ): Promise<AppEHeatInputFromGasRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.getAppEHeatInputFromGasById(id);
 
     if (!result) {
       throw new LoggingException(

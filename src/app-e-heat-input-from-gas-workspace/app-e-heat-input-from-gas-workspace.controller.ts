@@ -71,7 +71,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     description: 'Creates a workspace Appendix E Heat Input From Gas record.',
   })
   async createAppEHeatInputFromGas(
-    @Param('locId') _locationId: string,
+    @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('appECorrTestSumId') _appECorrTestSumId: string,
     @Param('appECorrTestRunId') appECorrTestRunId: string,
@@ -79,6 +79,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<AppEHeatInputFromGasRecordDTO> {
     return this.service.createAppEHeatInputFromGas(
+      locationId,
       testSumId,
       appECorrTestRunId,
       payload,
