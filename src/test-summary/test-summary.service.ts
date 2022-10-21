@@ -129,6 +129,7 @@ export class TestSummaryService {
         let linearitySummaryData,
           rataData,
           protocolGasData,
+          fuelFlowToLoadTestData,
           appECorrelationTestSummaryData = null;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
@@ -145,6 +146,9 @@ export class TestSummaryService {
           appECorrelationTestSummaryData = await this.appECorrelationTestSummaryService.export(
             testSumIds,
           );
+          fuelFlowToLoadTestData = await this.fuelFlowToLoadTestService.export(
+            testSumIds,
+          );
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -154,6 +158,9 @@ export class TestSummaryService {
               i => i.testSumId === s.id,
             );
             s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
               i => i.testSumId === s.id,
             );
           });
