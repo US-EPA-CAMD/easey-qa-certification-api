@@ -40,7 +40,7 @@ export class AppEHeatInputFromOilService {
     return this.map.one(result);
   }
 
-  async getAppEHeatInputFromOilRecordsByTestSumIds(
+  async getAppEHeatInputFromOilRecordsByTestRunIds(
     testSumIds: string[],
   ): Promise<AppEHeatInputFromOilDTO[]> {
     const results = await this.repository.find({
@@ -50,6 +50,6 @@ export class AppEHeatInputFromOilService {
   }
 
   async export(testSumIds: string[]): Promise<AppEHeatInputFromOilDTO[]> {
-    return this.getAppEHeatInputFromOilRecordsByTestSumIds(testSumIds);
+    return this.getAppEHeatInputFromOilRecordsByTestRunIds(testSumIds);
   }
 }
