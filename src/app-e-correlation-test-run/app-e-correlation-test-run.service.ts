@@ -34,7 +34,6 @@ export class AppECorrelationTestRunService {
         HttpStatus.NOT_FOUND,
       );
     }
-
     return this.map.one(result);
   }
 }

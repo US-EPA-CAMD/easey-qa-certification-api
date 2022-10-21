@@ -4,23 +4,24 @@ import { v4 as uuid } from 'uuid';
 
 import { currentDateTime } from '../utilities/functions';
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
-import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
   AppEHeatInputFromGasBaseDTO,
+  AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasRecordDTO,
 } from '../dto/app-e-heat-input-from-gas.dto';
+import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 
 @Injectable()
 export class AppEHeatInputFromGasWorkspaceService {
   constructor(
+    @InjectRepository(AppEHeatInputFromGasWorkspaceRepository)
+    private readonly repository: AppEHeatInputFromGasWorkspaceRepository,
     private readonly map: AppEHeatInputFromGasMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(AppEHeatInputFromGasWorkspaceRepository)
-    private readonly repository: AppEHeatInputFromGasWorkspaceRepository,
     @InjectRepository(MonitorSystemRepository)
     private readonly monSysRepository: MonitorSystemRepository,
   ) {}
@@ -152,5 +153,20 @@ export class AppEHeatInputFromGasWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getAppEHeatInputFromGasByTestRunIds(
+    appECorrTestRunId: string[],
+  ): Promise<AppEHeatInputFromGasDTO[]> {
+    const results = await this.repository.getAppEHeatInputFromGasesByTestRunIds(
+      appECorrTestRunId,
+    );
+    return this.map.many(results);
+  }
+
+  async export(
+    appECorrTestRunId: string[],
+  ): Promise<AppEHeatInputFromGasDTO[]> {
+    return this.getAppEHeatInputFromGasByTestRunIds(appECorrTestRunId);
   }
 }

@@ -5,6 +5,7 @@ import { AppECorrelationTestRunMap } from '../maps/app-e-correlation-test-run.ma
 import { AppECorrelationTestRunRepository } from './app-e-correlation-test-run.repository';
 import { AppECorrelationTestRunService } from './app-e-correlation-test-run.service';
 
+const testSumId = '1';
 const appECorrTestSumId = 'g7h8i9';
 const appECorrTestRunId = 'g7h8i9';
 const appECorrelationTestRunRecord = new AppECorrelationTestRunDTO();
@@ -76,6 +77,16 @@ describe('AppECorrelationTestRunService', () => {
       );
       expect(results).toEqual([appECorrelationTestRunRecord]);
       expect(repository.find).toHaveBeenCalled();
+    });
+  });
+
+  describe('Export', () => {
+    it('Should Export Appendix E Correlation Test Run', async () => {
+      jest
+        .spyOn(service, 'getAppECorrelationTestRunsByTestSumIds')
+        .mockResolvedValue([appECorrelationTestRunRecord]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([appECorrelationTestRunRecord]);
     });
   });
 });

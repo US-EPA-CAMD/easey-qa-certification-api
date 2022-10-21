@@ -143,9 +143,6 @@ export class TestSummaryService {
           linearitySummaryData = await this.linearityService.export(testSumIds);
           rataData = await this.rataService.export(testSumIds);
           protocolGasData = await this.protocolGasService.export(testSumIds);
-          appECorrelationTestSummaryData = await this.appECorrelationTestSummaryService.export(
-            testSumIds,
-          );
           fuelFlowToLoadTestData = await this.fuelFlowToLoadTestService.export(
             testSumIds,
           );
@@ -155,9 +152,6 @@ export class TestSummaryService {
             );
             s.rataData = rataData.filter(i => i.testSumId === s.id);
             s.protocolGasData = protocolGasData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
               i => i.testSumId === s.id,
             );
             s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(

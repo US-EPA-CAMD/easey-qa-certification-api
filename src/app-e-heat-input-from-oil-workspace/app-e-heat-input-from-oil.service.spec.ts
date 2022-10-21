@@ -1,10 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import {
-  AppEHeatInputFromOilBaseDTO,
-  AppEHeatInputFromOilDTO,
-  AppEHeatInputFromOilImportDTO,
-} from '../dto/app-e-heat-input-from-oil.dto';
+import { AppEHeatInputFromOilDTO } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOil } from '../entities/workspace/app-e-heat-input-from-oil.entity';
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
 import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
@@ -123,6 +119,26 @@ describe('AppEHeatInputOilWorkspaceService', () => {
       );
       expect(result).toEqual(mockAeHiFromOilDTO);
       expect(repository.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('getAppEHeatInputFromGasByTestRunIds', () => {
+    it('Should get Appendix E Heat Input From Oil records by test sum ids', async () => {
+      const result = await service.getAppEHeatInputFromOilRecordsByTestRunIds([
+        appECorrTestRunId,
+      ]);
+      expect(result).toEqual([mockAeHiFromOil]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Appendix E Heat Input From Oil Record', async () => {
+      jest
+        .spyOn(service, 'getAppEHeatInputFromOilRecordsByTestRunIds')
+        .mockResolvedValue([]);
+
+      const result = await service.export([appECorrTestRunId]);
+      expect(result).toEqual([]);
     });
   });
 });

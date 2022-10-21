@@ -2,6 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   AppECorrelationTestRunBaseDTO,
+  AppECorrelationTestRunDTO,
   AppECorrelationTestRunRecordDTO,
 } from '../dto/app-e-correlation-test-run.dto';
 import { AppECorrelationTestRunMap } from '../maps/app-e-correlation-test-run.map';
@@ -10,15 +11,22 @@ import { AppECorrelationTestRunWorkspaceRepository } from './app-e-correlation-t
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
+import { AppEHeatInputFromGasWorkspaceService } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.service';
+import { AppEHeatInputFromOilWorkspaceService } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.service';
 
 @Injectable()
 export class AppECorrelationTestRunWorkspaceService {
   constructor(
-    private readonly map: AppECorrelationTestRunMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(AppECorrelationTestRunWorkspaceRepository)
     private readonly repository: AppECorrelationTestRunWorkspaceRepository,
+    private readonly map: AppECorrelationTestRunMap,
+    @Inject(forwardRef(() => AppEHeatInputFromGasWorkspaceService))
+    private readonly appEHeatInputFromGasService: AppEHeatInputFromGasWorkspaceService,
+    @Inject(forwardRef(() => AppEHeatInputFromOilWorkspaceService))
+    private readonly appEHeatInputFromOilService: AppEHeatInputFromOilWorkspaceService,
   ) {}
 
   async getAppECorrelationTestRuns(
@@ -141,5 +149,39 @@ export class AppECorrelationTestRunWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getAppECorrelationTestRunsByAppECorrelationTestSumId(
+    appECorrTestSumIds: string[],
+  ): Promise<AppECorrelationTestRunDTO[]> {
+    const results = await this.repository.find({
+      where: { appECorrTestSumId: In(appECorrTestSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(
+    appECorrTestSumIds: string[],
+  ): Promise<AppECorrelationTestRunDTO[]> {
+    const appECorrelationTestRuns = await this.getAppECorrelationTestRunsByAppECorrelationTestSumId(
+      appECorrTestSumIds,
+    );
+
+    const hIGas = await this.appEHeatInputFromGasService.export(
+      appECorrelationTestRuns.map(i => i.id),
+    );
+    const hIOil = await this.appEHeatInputFromOilService.export(
+      appECorrelationTestRuns.map(i => i.id),
+    );
+
+    appECorrelationTestRuns.forEach(s => {
+      s.appEHeatInputFromGasData = hIGas.filter(
+        i => i.appECorrTestRunId === s.id,
+      );
+      s.appEHeatInputFromOilData = hIOil.filter(
+        i => i.appECorrTestRunId === s.id,
+      );
+    });
+    return appECorrelationTestRuns;
   }
 }

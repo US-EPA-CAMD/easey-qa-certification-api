@@ -1,7 +1,11 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { AppEHeatInputFromGasRecordDTO } from '../dto/app-e-heat-input-from-gas.dto';
+import { In } from 'typeorm';
+import {
+  AppEHeatInputFromGasDTO,
+  AppEHeatInputFromGasRecordDTO,
+} from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { AppEHeatInputFromGasRepository } from './app-e-heat-input-from-gas.repository';
 
@@ -36,5 +40,18 @@ export class AppEHeatInputFromGasService {
     }
 
     return this.map.one(result);
+  }
+
+  async getAppEHeatInputFromGasByTestRunIds(
+    testSumIds: string[],
+  ): Promise<AppEHeatInputFromGasDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<AppEHeatInputFromGasDTO[]> {
+    return this.getAppEHeatInputFromGasByTestRunIds(testSumIds);
   }
 }

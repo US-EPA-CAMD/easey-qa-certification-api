@@ -2,6 +2,8 @@ import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { AppECorrelationTestRunDTO } from '../dto/app-e-correlation-test-run.dto';
+import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
 import { AppendixETestSummaryRepository } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.repository';
 import {
   AppECorrelationTestSummaryBaseDTO,
@@ -39,6 +41,9 @@ const mockMap = () => ({
 const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
+const mockAppECorrelationTestRunService = () => ({
+  export: jest.fn().mockResolvedValue([new AppECorrelationTestRunDTO()]),
+});
 
 const mockOfficialRepository = () => ({
   findOne: jest.fn(),
@@ -57,6 +62,14 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
         AppECorrelationTestSummaryWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
+          useFactory: mockTestSumService,
+        },
+        {
+          provide: AppECorrelationTestRunWorkspaceService,
+          useFactory: mockAppECorrelationTestRunService,
+        },
+        {
+          provide: AppendixETestSummaryRepository,
           useFactory: mockTestSumService,
         },
         {
