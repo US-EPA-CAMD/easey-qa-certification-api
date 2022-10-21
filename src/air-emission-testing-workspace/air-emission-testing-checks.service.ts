@@ -29,12 +29,10 @@ export class AirEmissionTestingChecksService {
   }
 
   async runChecks(
-    locationID: string,
     aetb: AirEmissionTestingBaseDTO | AirEmissionTestingImportDTO,
+    testSumId: string,
     isImport: boolean = false,
     isUpdate: boolean = false,
-    testSumId?: string,
-    airEmissionTestings?: AirEmissionTestingImportDTO[],
     testSummary?: TestSummaryImportDTO,
   ): Promise<string[]> {
     let error: string = null;
@@ -55,6 +53,9 @@ export class AirEmissionTestingChecksService {
 
     // AETB-9-B
     error = this.aetb9Check(testSumRecord, aetb.examDate);
+    if (error) {
+      errorList.push(error);
+    }
 
     this.throwIfErrors(errorList);
 
@@ -64,7 +65,7 @@ export class AirEmissionTestingChecksService {
   }
 
   // AETB-9 Exam Date Valid
-  private aetb9Check(testSumRecord: TestSummary, examDate: Date) {
+  private aetb9Check(testSumRecord: TestSummary, examDate: Date): string {
     if (examDate > testSumRecord.beginDate) {
       let error: string = null;
 
