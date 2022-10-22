@@ -73,7 +73,7 @@ export class AppEHeatInputFromOilWorkspaceController {
       'Creates an Appendix E Heat Input from Oil record in the workspace',
   })
   async createAppEHeatInputFromOilRecord(
-    @Param('locId') _locationId: string,
+    @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('appECorrTestSumId') _aeCorrTestSumId: string,
     @Param('appECorrTestRunId') aeCorrTestRunId: string,
@@ -81,6 +81,7 @@ export class AppEHeatInputFromOilWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<AppEHeatInputFromOilRecordDTO> {
     return this.service.createAppEHeatInputFromOilRecord(
+      locationId,
       testSumId,
       aeCorrTestRunId,
       payload,

@@ -44,13 +44,13 @@ describe('AppEHeatInputFromGasWorkspaceRepository', () => {
     });
   });
 
-  describe('getAppEHeatInputFromGasByTestRunId', () => {
+  describe('getAppEHeatInputFromGasesByTestRunId', () => {
     it('calls buildBaseQuery and get one Appendix E Heat Input From Gases from the repository with appECorrTestRunId', async () => {
       queryBuilder.leftJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([appEHeatInputFromGas]);
 
-      const result = await repository.getAppEHeatInputFromGasByTestRunId('1');
+      const result = await repository.getAppEHeatInputFromGasesByTestRunId('1');
 
       expect(result).toEqual([appEHeatInputFromGas]);
     });
@@ -62,7 +62,9 @@ describe('AppEHeatInputFromGasWorkspaceRepository', () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([appEHeatInputFromGas]);
 
-      const result = await repository.getAppEHeatInputFromGasesByTestRunIds(['1']);
+      const result = await repository.getAppEHeatInputFromGasesByTestRunIds([
+        '1',
+      ]);
 
       expect(result).toEqual([appEHeatInputFromGas]);
     });

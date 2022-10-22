@@ -13,6 +13,7 @@ import {
   AppEHeatInputFromOilRecordDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
 import { In } from 'typeorm';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 
 @Injectable()
 export class AppEHeatInputFromOilWorkspaceService {
@@ -22,14 +23,16 @@ export class AppEHeatInputFromOilWorkspaceService {
     private readonly map: AppEHeatInputFromOilMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
+    @InjectRepository(MonitorSystemRepository)
+    private readonly monSysRepository: MonitorSystemRepository,
   ) {}
 
   async getAppEHeatInputFromOilRecords(
     appECorrTestRunId: string,
   ): Promise<AppEHeatInputFromOilRecordDTO[]> {
-    const records = await this.repository.find({
-      where: { appECorrTestRunId },
-    });
+    const records = await this.repository.getAppEHeatInputFromOilsByTestRunId(
+      appECorrTestRunId,
+    );
 
     return this.map.many(records);
   }
@@ -37,7 +40,7 @@ export class AppEHeatInputFromOilWorkspaceService {
   async getAppEHeatInputFromOilRecord(
     id: string,
   ): Promise<AppEHeatInputFromOilRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.getAppEHeatInputFromOilById(id);
 
     if (!result) {
       throw new LoggingException(
@@ -50,6 +53,7 @@ export class AppEHeatInputFromOilWorkspaceService {
   }
 
   async createAppEHeatInputFromOilRecord(
+    locationId: string,
     testSumId: string,
     appECorrTestRunId: string,
     payload: AppEHeatInputFromOilBaseDTO,
@@ -59,9 +63,29 @@ export class AppEHeatInputFromOilWorkspaceService {
   ): Promise<AppEHeatInputFromOilRecordDTO> {
     const timestamp = currentDateTime().toLocaleDateString();
 
+    const system = await this.monSysRepository.findOne({
+      locationId: locationId,
+      monitoringSystemID: payload.monitoringSystemID,
+    });
+
+    if (!system) {
+      throw new LoggingException(
+        `Monitor System Identifier is invalid for this location [${locationId}].`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     let entity = this.repository.create({
-      ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
+      monitoringSystemId: system.id,
+      oilMass: payload.oilMass,
+      oilGCV: payload.oilGCV,
+      oilGCVUnitsOfMeasureCode: payload.oilGCVUnitsOfMeasureCode,
+      oilHeatInput: payload.oilHeatInput,
+      oilVolume: payload.oilVolume,
+      oilVolumeUnitsOfMeasureCode: payload.oilVolumeUnitsOfMeasureCode,
+      oilDensity: payload.oilDensity,
+      oilDensityUnitsOfMeasureCode: payload.oilDensityUnitsOfMeasureCode,
       appECorrTestRunId,
       userId,
       addDate: timestamp,
@@ -69,7 +93,7 @@ export class AppEHeatInputFromOilWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.getAppEHeatInputFromOilById(entity.id);
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -87,17 +111,23 @@ export class AppEHeatInputFromOilWorkspaceService {
   ): Promise<AppEHeatInputFromOilRecordDTO> {
     const timestamp = currentDateTime().toLocaleString();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.getAppEHeatInputFromOilById(id);
+
+    if (!entity) {
+      throw new LoggingException(
+        `Appendix E Heat Input From Oil record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     entity.oilMass = payload.oilMass;
     entity.oilHeatInput = payload.oilHeatInput;
     entity.oilGCV = payload.oilGCV;
-    entity.oilGCVUomCode = payload.oilGCVUomCode;
+    entity.oilGCVUnitsOfMeasureCode = payload.oilGCVUnitsOfMeasureCode;
     entity.oilVolume = payload.oilVolume;
-    entity.oilVolumeUomCode = payload.oilVolumeUomCode;
+    entity.oilVolumeUnitsOfMeasureCode = payload.oilVolumeUnitsOfMeasureCode;
     entity.oilDensity = payload.oilDensity;
-    entity.oilDensityUomCode = payload.oilDensityUomCode;
-    entity.monitoringSystemID = payload.monitoringSystemId;
+    entity.oilDensityUnitsOfMeasureCode = payload.oilDensityUnitsOfMeasureCode;
 
     entity.userId = userId;
     entity.updateDate = timestamp;
@@ -110,7 +140,7 @@ export class AppEHeatInputFromOilWorkspaceService {
       isImport,
     );
 
-    return this.getAppEHeatInputFromOilRecord(id);
+    return this.map.one(entity);
   }
 
   async deleteAppEHeatInputFromOil(
@@ -138,9 +168,9 @@ export class AppEHeatInputFromOilWorkspaceService {
   async getAppEHeatInputFromOilRecordsByTestRunIds(
     appECorrTestRunIds: string[],
   ): Promise<AppEHeatInputFromOilDTO[]> {
-    const results = await this.repository.find({
-      where: { appECorrTestRunId: In(appECorrTestRunIds) },
-    });
+    const results = await this.repository.getAppEHeatInputFromOilsByTestRunIds(
+      appECorrTestRunIds,
+    );
     return this.map.many(results);
   }
 
