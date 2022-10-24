@@ -1,4 +1,3 @@
-import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
@@ -13,11 +12,15 @@ import { TestSummaryChecksService } from './test-summary-checks.service';
 import { TestSummaryWorkspaceController } from './test-summary.controller';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryWorkspaceService } from './test-summary.service';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 const testSummaryDto = new TestSummaryDTO();
 const testSummary = new TestSummaryRecordDTO();
 
 const payload = new TestSummaryBaseDTO();
+const user: CurrentUser = {
+  clientIp: '', expiration: '', isAdmin: false, roles: [], sessionId: '', userId: ''
+};
 
 const mockTestSummaryWorkspaceService = () => ({
   getTestSummaryById: jest.fn().mockResolvedValue(testSummaryDto),
@@ -81,7 +84,7 @@ describe('Test Summary Controller', () => {
     it('should create test summary record', async () => {
       const spyCheckService = jest.spyOn(checkService, 'runChecks');
       const spyService = jest.spyOn(service, 'createTestSummary');
-      const result = await controller.createTestSummary('1', payload);
+      const result = await controller.createTestSummary('1', payload, user);
       expect(result).toEqual(testSummary);
       expect(spyCheckService).toHaveBeenCalled();
       expect(spyService).toHaveBeenCalled();
@@ -92,7 +95,7 @@ describe('Test Summary Controller', () => {
     it('should update test summary record', async () => {
       const spyCheckService = jest.spyOn(checkService, 'runChecks');
       const spyService = jest.spyOn(service, 'updateTestSummary');
-      const result = await controller.updateTestSummary('1', '1', payload);
+      const result = await controller.updateTestSummary('1', '1', payload, user);
       expect(result).toEqual(testSummary);
       expect(spyCheckService).toHaveBeenCalled();
       expect(spyService).toHaveBeenCalled();
@@ -102,7 +105,7 @@ describe('Test Summary Controller', () => {
   describe('deleteTestSummary', () => {
     it('should delete test summary record', async () => {
       const spyService = jest.spyOn(service, 'deleteTestSummary');
-      const result = await controller.deleteTestSummary('1', '1');
+      const result = await controller.deleteTestSummary('1', '1', user);
       expect(result).toEqual('');
       expect(spyService).toHaveBeenCalled();
     });

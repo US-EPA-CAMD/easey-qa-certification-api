@@ -26,6 +26,7 @@ import {
   AppEHeatInputFromOilImportDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
 
+const locationId = 'testLocation';
 const userId = 'testUser';
 const locationId = '5';
 const testSumId = 'g7h8i9';
@@ -266,24 +267,24 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
         false,
       );
     });
-  });
 
-  describe('getAppECorrelationTestRunsByAppECorrelationTestSumId', () => {
-    it('Should get Appendix E Correlation Test Sum ids', async () => {
-      const result = await service.getAppECorrelationTestRunsByAppECorrelationTestSumId(
-        [testSumId],
-      );
-      expect(result).toEqual([appECorrelationTestRunRecord]);
+    describe('getAppECorrelationTestRunsByAppECorrelationTestSumId', () => {
+      it('Should get Appendix E Correlation Test Sum ids', async () => {
+        const result = await service.getAppECorrelationTestRunsByAppECorrelationTestSumId(
+          [testSumId],
+        );
+        expect(result).toEqual([appECorrelationTestRunRecord]);
+      });
     });
-  });
 
-  describe('Export', () => {
-    it('Should Export Appendix E Correlation Test Run', async () => {
-      jest
-        .spyOn(service, 'getAppECorrelationTestRunsByAppECorrelationTestSumId')
-        .mockResolvedValue([appECorrelationTestRunRecord]);
-      const result = await service.export([testSumId]);
-      expect(result).toEqual([appECorrelationTestRunRecord]);
+    describe('Export', () => {
+      it('Should Export Appendix E Correlation Test Run', async () => {
+        jest
+          .spyOn(service, 'getAppECorrelationTestRunsByAppECorrelationTestSumId')
+          .mockResolvedValue([appECorrelationTestRunRecord]);
+        const result = await service.export([testSumId]);
+        expect(result).toEqual([appECorrelationTestRunRecord]);
+      });
     });
   });
 });
