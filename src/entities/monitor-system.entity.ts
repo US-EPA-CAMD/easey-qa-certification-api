@@ -11,6 +11,7 @@ import {
 import { TestSummary } from './test-summary.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { AppEHeatInputFromGas } from './app-e-heat-input-from-gas.entity';
+import { AppEHeatInputFromOil } from './app-e-heat-input-from-oil.entity';
 
 @Entity({ name: 'camdecmps.monitor_system' })
 export class MonitorSystem extends BaseEntity {
@@ -60,4 +61,11 @@ export class MonitorSystem extends BaseEntity {
   )
   @JoinColumn({ name: 'mon_sys_id' })
   appEHeatInputFromGases: AppEHeatInputFromGas[];
+
+  @OneToMany(
+    () => AppEHeatInputFromOil,
+    aehig => aehig.system,
+  )
+  @JoinColumn({ name: 'mon_sys_id' })
+  appEHeatInputFromOils: AppEHeatInputFromOil[];
 }

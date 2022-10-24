@@ -15,7 +15,7 @@ export class AppEHeatInputFromGasWorkspaceRepository extends Repository<
     return query.getOne();
   }
 
-  async getAppEHeatInputFromGasByTestRunId(
+  async getAppEHeatInputFromGasesByTestRunId(
     appECorrTestRunId: string,
   ): Promise<AppEHeatInputFromGas[]> {
     const query = this.createQueryBuilder('aehig')

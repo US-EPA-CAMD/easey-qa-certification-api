@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { AppECorrelationTestRun } from './app-e-correlation-test-run.entity';
+import { MonitorSystem } from './monitor-system.entity';
 
 @Entity({
   name: 'camdecmpswks.ae_hi_oil',
@@ -25,6 +26,11 @@ export class AppEHeatInputFromOil extends BaseEntity {
     name: 'ae_corr_test_run_id',
   })
   appECorrTestRunId: string;
+
+  @Column({
+    name: 'mon_sys_id',
+  })
+  monitoringSystemId: string;
 
   @Column({
     name: 'oil_mass',
@@ -59,7 +65,7 @@ export class AppEHeatInputFromOil extends BaseEntity {
   @Column({
     name: 'oil_gcv_uom_cd',
   })
-  oilGCVUomCode: string;
+  oilGCVUnitsOfMeasureCode: string;
 
   @Column({
     name: 'oil_volume',
@@ -70,7 +76,7 @@ export class AppEHeatInputFromOil extends BaseEntity {
   @Column({
     name: 'oil_volume_uom_cd',
   })
-  oilVolumeUomCode: string;
+  oilVolumeUnitsOfMeasureCode: string;
 
   @Column({
     name: 'oil_density',
@@ -81,12 +87,7 @@ export class AppEHeatInputFromOil extends BaseEntity {
   @Column({
     name: 'oil_density_uom_cd',
   })
-  oilDensityUomCode: string;
-
-  @Column({
-    name: 'mon_sys_id',
-  })
-  monitoringSystemID: string;
+  oilDensityUnitsOfMeasureCode: string;
 
   @Column({
     type: 'timestamp',
@@ -112,4 +113,11 @@ export class AppEHeatInputFromOil extends BaseEntity {
   )
   @JoinColumn({ name: 'ae_corr_test_run_id' })
   appECorrelationTestRun: AppECorrelationTestRun;
+
+  @ManyToOne(
+    () => MonitorSystem,
+    ms => ms.appEHeatInputFromOils,
+  )
+  @JoinColumn({ name: 'mon_sys_id' })
+  system: MonitorSystem;
 }

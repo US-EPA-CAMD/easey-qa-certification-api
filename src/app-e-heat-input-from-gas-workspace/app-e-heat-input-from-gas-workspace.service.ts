@@ -36,7 +36,7 @@ export class AppEHeatInputFromGasWorkspaceService {
   async getAppEHeatInputFromGases(
     appECorrTestRunId: string,
   ): Promise<AppEHeatInputFromGasRecordDTO[]> {
-    const records = await this.repository.getAppEHeatInputFromGasByTestRunId(
+    const records = await this.repository.getAppEHeatInputFromGasesByTestRunId(
       appECorrTestRunId,
     );
 

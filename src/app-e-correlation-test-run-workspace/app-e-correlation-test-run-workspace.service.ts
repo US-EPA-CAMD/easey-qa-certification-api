@@ -220,6 +220,7 @@ export class AppECorrelationTestRunWorkspaceService {
             const innerPromises = [];
             innerPromises.push(
               this.appEHeatInputFromOilService.import(
+                locationId,
                 testSumId,
                 createdTestRun.id,
                 appEHeatInputFromOil,

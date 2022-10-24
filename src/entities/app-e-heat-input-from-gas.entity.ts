@@ -86,7 +86,7 @@ export class AppEHeatInputFromGas extends BaseEntity {
 
   @ManyToOne(
     () => MonitorSystem,
-    aectr => aectr.appEHeatInputFromGases,
+    ms => ms.appEHeatInputFromGases,
   )
   @JoinColumn({ name: 'mon_sys_id' })
   system: MonitorSystem;
