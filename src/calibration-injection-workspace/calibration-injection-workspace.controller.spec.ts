@@ -26,6 +26,8 @@ const dto = new CalibrationInjectionDTO();
 const payload = new CalibrationInjectionBaseDTO();
 
 const mockService = () => ({
+  deleteCalibrationInjection: jest.fn().mockResolvedValue(undefined),
+  updateCalibrationInjection: jest.fn().mockResolvedValue(dto),
   createCalibrationInjection: jest.fn().mockResolvedValue(dto),
   getCalibrationInjection: jest.fn().mockResolvedValue(dto),
   getCalibrationInjections: jest.fn().mockResolvedValue([dto]),
@@ -83,6 +85,31 @@ describe('CalibrationInjectionWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(dto);
+    });
+  });
+
+  describe('updateCalibrationInjection', () => {
+    it('Calls the service and update a existing Calibration Injection record', async () => {
+      const result = await controller.updateCalibrationInjection(
+        locId,
+        testSumId,
+        id,
+        payload,
+        user,
+      );
+      expect(result).toEqual(dto);
+    });
+  });
+
+  describe('deleteCalibrationInjection', () => {
+    it('Calls the service and delete a Calibration Injection record', async () => {
+      const result = await controller.deleteCalibrationInjection(
+        locId,
+        testSumId,
+        id,
+        user,
+      );
+      expect(result).toEqual(undefined);
     });
   });
 });

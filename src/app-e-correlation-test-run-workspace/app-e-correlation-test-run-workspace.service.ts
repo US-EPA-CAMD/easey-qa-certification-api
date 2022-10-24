@@ -2,7 +2,9 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   AppECorrelationTestRunBaseDTO,
+  AppECorrelationTestRunDTO,
   AppECorrelationTestRunRecordDTO,
+  AppECorrelationTestRunImportDTO,
 } from '../dto/app-e-correlation-test-run.dto';
 import { AppECorrelationTestRunMap } from '../maps/app-e-correlation-test-run.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -13,9 +15,9 @@ import { AppECorrelationTestRunRepository } from '../app-e-correlation-test-run/
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { AppECorrelationTestRunImportDTO } from '../dto/app-e-correlation-test-run.dto';
 import { AppECorrelationTestRun } from '../entities/app-e-correlation-test-run.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { In } from 'typeorm';
 
 @Injectable()
 export class AppECorrelationTestRunWorkspaceService {
@@ -233,5 +235,39 @@ export class AppECorrelationTestRunWorkspaceService {
     await Promise.all(promises);
 
     return null;
+  }
+
+  async getAppECorrelationTestRunsByAppECorrelationTestSumId(
+    appECorrTestSumIds: string[],
+  ): Promise<AppECorrelationTestRunDTO[]> {
+    const results = await this.repository.find({
+      where: { appECorrTestSumId: In(appECorrTestSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(
+    appECorrTestSumIds: string[],
+  ): Promise<AppECorrelationTestRunDTO[]> {
+    const appECorrelationTestRuns = await this.getAppECorrelationTestRunsByAppECorrelationTestSumId(
+      appECorrTestSumIds,
+    );
+
+    const hIGas = await this.appEHeatInputFromGasService.export(
+      appECorrelationTestRuns.map(i => i.id),
+    );
+    const hIOil = await this.appEHeatInputFromOilService.export(
+      appECorrelationTestRuns.map(i => i.id),
+    );
+
+    appECorrelationTestRuns.forEach(s => {
+      s.appEHeatInputFromGasData = hIGas.filter(
+        i => i.appECorrTestRunId === s.id,
+      );
+      s.appEHeatInputFromOilData = hIOil.filter(
+        i => i.appECorrTestRunId === s.id,
+      );
+    });
+    return appECorrelationTestRuns;
   }
 }

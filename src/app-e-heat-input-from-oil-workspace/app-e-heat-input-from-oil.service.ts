@@ -9,12 +9,14 @@ import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import {
+  AppEHeatInputFromOilDTO,
   AppEHeatInputFromOilBaseDTO,
   AppEHeatInputFromOilImportDTO,
   AppEHeatInputFromOilRecordDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOil } from '../entities/app-e-heat-input-from-oil.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { In } from 'typeorm';
 
 @Injectable()
 export class AppEHeatInputFromOilWorkspaceService {
@@ -169,5 +171,20 @@ export class AppEHeatInputFromOilWorkspaceService {
     this.logger.info(
       `Appendix E Heat Input from Oil Successfully Imported.  Record Id: ${createdHeatInputFromOil.id}`,
     );
+  }
+
+  async getAppEHeatInputFromOilRecordsByTestRunIds(
+    appECorrTestRunIds: string[],
+  ): Promise<AppEHeatInputFromOilDTO[]> {
+    const results = await this.repository.find({
+      where: { appECorrTestRunId: In(appECorrTestRunIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(
+    appECorrTestRunIds: string[],
+  ): Promise<AppEHeatInputFromOilDTO[]> {
+    return this.getAppEHeatInputFromOilRecordsByTestRunIds(appECorrTestRunIds);
   }
 }

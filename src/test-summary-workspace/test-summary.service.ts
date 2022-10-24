@@ -52,10 +52,10 @@ export class TestSummaryWorkspaceService {
     private readonly rataService: RataWorkspaceService,
     @Inject(forwardRef(() => ProtocolGasWorkspaceService))
     private readonly protocolGasService: ProtocolGasWorkspaceService,
-    @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
-    private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
     @Inject(forwardRef(() => FuelFlowToLoadTestWorkspaceService))
     private readonly fuelFlowToLoadTestWorkspaceService: FuelFlowToLoadTestWorkspaceService,
+    @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
+    private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -81,7 +81,6 @@ export class TestSummaryWorkspaceService {
     delete dto.transmitterTransducerData;
     delete dto.fuelFlowToLoadBaselineData;
     delete dto.fuelFlowToLoadTestData;
-    delete dto.appECorrelationTestSummaryData;
     delete dto.unitDefaultTestData;
     delete dto.hgSummaryData;
     delete dto.testQualificationData;
@@ -157,7 +156,7 @@ export class TestSummaryWorkspaceService {
           rataData,
           protocolGasData,
           fuelFlowToLoadTestData,
-          appECorrelationTestSummaryData = null;
+          appECorrelationTestSummaryData;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>

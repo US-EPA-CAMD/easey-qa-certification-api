@@ -53,6 +53,7 @@ import { FuelFlowToLoadBaselineWorkspaceModule } from './fuel-flow-to-load-basel
 import { FuelFlowToLoadBaselineModule } from './fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.module';
 import { CalibrationInjectionWorkspaceModule } from './calibration-injection-workspace/calibration-injection-workspace.module';
 import { CalibrationInjectionModule } from './calibration-injection/calibration-injection.module';
+import { OnlineOfflineCalibrationWorkspaceModule } from './online-offline-calibration-workspace/online-offline-calibration.module';
 
 @Module({
   imports: [
@@ -107,6 +108,7 @@ import { CalibrationInjectionModule } from './calibration-injection/calibration-
     FuelFlowToLoadBaselineModule,
     CalibrationInjectionWorkspaceModule,
     CalibrationInjectionModule,
+    OnlineOfflineCalibrationWorkspaceModule,
   ],
 })
 export class AppModule {}

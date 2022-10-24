@@ -38,4 +38,18 @@ export class FuelFlowToLoadTestService {
 
     return this.map.one(result);
   }
+
+  async getFuelFlowToLoadTestBySumIds(
+    testSumIds: string[],
+  ): Promise<FuelFlowToLoadTestDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<FuelFlowToLoadTestDTO[]> {
+    return this.getFuelFlowToLoadTestBySumIds(testSumIds);
+  }
 }

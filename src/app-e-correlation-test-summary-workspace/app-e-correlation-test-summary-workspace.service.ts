@@ -6,6 +6,7 @@ import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-tes
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
 import {
   AppECorrelationTestSummaryBaseDTO,
+  AppECorrelationTestSummaryDTO,
   AppECorrelationTestSummaryImportDTO,
   AppECorrelationTestSummaryRecordDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
@@ -16,15 +17,18 @@ import { AppendixETestSummaryRepository } from '../app-e-correlation-test-summar
 import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { In } from 'typeorm';
+import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
 
 @Injectable()
 export class AppECorrelationTestSummaryWorkspaceService {
   constructor(
-    private readonly map: AppECorrelationTestSummaryMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(AppendixETestSummaryWorkspaceRepository)
     private readonly repository: AppendixETestSummaryWorkspaceRepository,
+    private readonly map: AppECorrelationTestSummaryMap,
+    @Inject(forwardRef(() => AppECorrelationTestRunWorkspaceService))
+    private readonly appECorrelationTestRunService: AppECorrelationTestRunWorkspaceService,
     @InjectRepository(AppendixETestSummaryRepository)
     private readonly historicalRepo: AppendixETestSummaryRepository,
     @Inject(forwardRef(() => AppECorrelationTestRunWorkspaceService))
@@ -80,8 +84,9 @@ export class AppECorrelationTestSummaryWorkspaceService {
       userId,
       isImport,
     );
-
-    return this.map.one(entity);
+    const dto = await this.map.one(entity);
+    delete dto.appECorrelationTestRunData;
+    return dto;
   }
 
   async editAppECorrelation(
@@ -187,16 +192,27 @@ export class AppECorrelationTestSummaryWorkspaceService {
 
   async getAppECorrelationsByTestSumIds(
     testSumIds: string[],
-  ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
+  ): Promise<AppECorrelationTestSummaryDTO[]> {
     const results = await this.repository.find({
       where: { testSumId: In(testSumIds) },
     });
     return this.map.many(results);
   }
 
-  async export(
-    TestSumIds: string[],
-  ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
-    return await this.getAppECorrelationsByTestSumIds(TestSumIds);
+  async export(testSumIds: string[]): Promise<AppECorrelationTestSummaryDTO[]> {
+    const appECorrelationTests = await this.getAppECorrelationsByTestSumIds(
+      testSumIds,
+    );
+
+    const testRuns = await this.appECorrelationTestRunService.export(
+      appECorrelationTests.map(i => i.id),
+    );
+
+    appECorrelationTests.forEach(s => {
+      s.appECorrelationTestRunData = testRuns.filter(
+        i => i.appECorrTestSumId === s.id,
+      );
+    });
+    return appECorrelationTests;
   }
 }

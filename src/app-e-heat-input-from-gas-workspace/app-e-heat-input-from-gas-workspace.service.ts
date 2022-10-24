@@ -11,10 +11,12 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
   AppEHeatInputFromGasBaseDTO,
   AppEHeatInputFromGasImportDTO,
+  AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasRecordDTO,
 } from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromGas } from '../entities/app-e-heat-input-from-gas.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 
 @Injectable()
 export class AppEHeatInputFromGasWorkspaceService {
@@ -27,14 +29,16 @@ export class AppEHeatInputFromGasWorkspaceService {
     private readonly repository: AppEHeatInputFromGasWorkspaceRepository,
     @InjectRepository(AppEHeatInputFromGasRepository)
     private readonly historicalRepo: AppEHeatInputFromGasRepository,
+    @InjectRepository(MonitorSystemRepository)
+    private readonly monSysRepository: MonitorSystemRepository,
   ) {}
 
   async getAppEHeatInputFromGases(
     appECorrTestRunId: string,
   ): Promise<AppEHeatInputFromGasRecordDTO[]> {
-    const records = await this.repository.find({
-      where: { appECorrTestRunId },
-    });
+    const records = await this.repository.getAppEHeatInputFromGasByTestRunId(
+      appECorrTestRunId,
+    );
 
     return this.map.many(records);
   }
@@ -42,7 +46,7 @@ export class AppEHeatInputFromGasWorkspaceService {
   async getAppEHeatInputFromGas(
     id: string,
   ): Promise<AppEHeatInputFromGasRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.getAppEHeatInputFromGasById(id);
 
     if (!result) {
       throw new LoggingException(
@@ -55,6 +59,7 @@ export class AppEHeatInputFromGasWorkspaceService {
   }
 
   async createAppEHeatInputFromGas(
+    locationId: string,
     testSumId: string,
     appECorrTestRunId: string,
     payload: AppEHeatInputFromGasBaseDTO,
@@ -64,10 +69,25 @@ export class AppEHeatInputFromGasWorkspaceService {
   ): Promise<AppEHeatInputFromGasRecordDTO> {
     const timestamp = currentDateTime();
 
+    const system = await this.monSysRepository.findOne({
+      locationId: locationId,
+      monitoringSystemID: payload.monitoringSystemID,
+    });
+
+    if (!system) {
+      throw new LoggingException(
+        `Monitor System Identifier is invalid for this location [${locationId}].`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     let entity = this.repository.create({
       id: historicalRecordId ? historicalRecordId : uuid(),
       appECorrTestRunId,
-      ...payload,
+      monitoringSystemId: system.id,
+      gasVolume: payload.gasVolume,
+      gasGCV: payload.gasGCV,
+      gasHeatInput: payload.gasHeatInput,
       userId,
       addDate: timestamp,
       updateDate: timestamp,
@@ -75,7 +95,7 @@ export class AppEHeatInputFromGasWorkspaceService {
 
     await this.repository.save(entity);
 
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.getAppEHeatInputFromGasById(entity.id);
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
@@ -95,7 +115,7 @@ export class AppEHeatInputFromGasWorkspaceService {
   ): Promise<AppEHeatInputFromGasRecordDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.getAppEHeatInputFromGasById(id);
 
     if (!entity) {
       throw new LoggingException(
@@ -107,7 +127,6 @@ export class AppEHeatInputFromGasWorkspaceService {
     entity.gasVolume = payload.gasVolume;
     entity.gasGCV = payload.gasGCV;
     entity.gasHeatInput = payload.gasHeatInput;
-    entity.monitoringSystemID = payload.monitoringSystemID;
     entity.userId = userId;
     entity.updateDate = timestamp;
 
@@ -173,5 +192,20 @@ export class AppEHeatInputFromGasWorkspaceService {
     this.logger.info(
       `Appendix E Heat Input from Gas Successfully Imported.  Record Id: ${createdHeatInputFromGas.id}`,
     );
+  }
+  
+  async getAppEHeatInputFromGasByTestRunIds(
+    appECorrTestRunId: string[],
+  ): Promise<AppEHeatInputFromGasDTO[]> {
+    const results = await this.repository.getAppEHeatInputFromGasesByTestRunIds(
+      appECorrTestRunId,
+    );
+    return this.map.many(results);
+  }
+
+  async export(
+    appECorrTestRunId: string[],
+  ): Promise<AppEHeatInputFromGasDTO[]> {
+    return this.getAppEHeatInputFromGasByTestRunIds(appECorrTestRunId);
   }
 }

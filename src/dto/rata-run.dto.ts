@@ -1,4 +1,9 @@
-import { IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator';
+import {
+  IsNotEmpty,
+  ValidateIf,
+  ValidateNested,
+  ValidationArguments,
+} from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 import { RunStatusCode } from '../entities/run-status-code.entity';
@@ -6,6 +11,7 @@ import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { FlowRataRunDTO, FlowRataRunImportDTO } from './flow-rata-run.dto';
 import { IsNotNegative } from '../pipes/is-not-negative.pipe';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
+import { Type } from 'class-transformer';
 
 const KEY = 'RATA Run';
 const MIN_RUN_NUMBER = 1;
@@ -85,9 +91,13 @@ export class RataRunRecordDTO extends RataRunBaseDTO {
 }
 
 export class RataRunImportDTO extends RataRunBaseDTO {
+  @ValidateNested({ each: true })
+  @Type(() => FlowRataRunImportDTO)
   flowRataRunData: FlowRataRunImportDTO[];
 }
 
 export class RataRunDTO extends RataRunRecordDTO {
+  @ValidateNested({ each: true })
+  @Type(() => FlowRataRunDTO)
   flowRataRunData: FlowRataRunDTO[];
 }

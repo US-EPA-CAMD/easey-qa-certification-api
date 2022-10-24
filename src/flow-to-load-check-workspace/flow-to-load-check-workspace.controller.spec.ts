@@ -80,4 +80,30 @@ describe('FlowToLoadCheckWorkspaceController', () => {
       expect(result).toEqual(flowToLoadCheck);
     });
   });
+
+  describe('editFlowToLoadCheck', () => {
+    it('Calls the service and edits a Flow To Load Check record', async () => {
+      expect(
+        await controller.editFlowToLoadCheck(
+          locId,
+          testSumId,
+          flowToLoadCheckId,
+          payload,
+          user,
+        ),
+      ).toEqual(flowToLoadCheck);
+    });
+  });
+
+  describe('deleteFlowToLoadCheck', () => {
+    it('Calls the service and delete a Flow To Load Check record', async () => {
+      const result = await controller.deleteFlowToLoadCheck(
+        locId,
+        testSumId,
+        flowToLoadCheckId,
+        user,
+      );
+      expect(result).toEqual(undefined);
+    });
+  });
 });
