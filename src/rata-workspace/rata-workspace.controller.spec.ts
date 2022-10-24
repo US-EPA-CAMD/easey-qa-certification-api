@@ -1,9 +1,12 @@
+import { HttpModule } from '@nestjs/axios';
 import { Test, TestingModule } from '@nestjs/testing';
 import { RataBaseDTO, RataRecordDTO } from '../dto/rata.dto';
 import { RataChecksService } from './rata-checks.service';
 import { RataWorkspaceController } from './rata-workspace.controller';
 import { RataWorkspaceService } from './rata-workspace.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ConfigService } from '@nestjs/config';
 
 const locId = '';
 const testSumId = '';
@@ -39,8 +42,11 @@ describe('RataWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [HttpModule],
       controllers: [RataWorkspaceController],
       providers: [
+        ConfigService,
+        AuthGuard,
         {
           provide: RataWorkspaceService,
           useFactory: mockService,

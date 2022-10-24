@@ -3,13 +3,24 @@ import { RataRunBaseDTO, RataRunDTO } from '../dto/rata-run.dto';
 import { RataRunChecksService } from './rata-run-checks.service';
 import { RataRunWorkspaceController } from './rata-run-workspace.controller';
 import { RataRunWorkspaceService } from './rata-run-workspace.service';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 const locId = 'a1b2c3';
 const testSumId = 'd4e5f6';
 const rataId = 'g7h8i9';
 const rataSumId = 'j0k1l2';
 const rataRunId = 'm3n4o5';
-
+const user: CurrentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 const payload: RataRunBaseDTO = {
   runNumber: 1,
   beginDate: new Date(),
@@ -41,8 +52,11 @@ describe('RataRunWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [HttpModule],
       controllers: [RataRunWorkspaceController],
       providers: [
+        ConfigService,
+        AuthGuard,
         {
           provide: RataRunWorkspaceService,
           useFactory: mockRataRunWorkspaceService,
@@ -97,6 +111,7 @@ describe('RataRunWorkspaceController', () => {
         rataId,
         rataSumId,
         payload,
+        user,
       );
       expect(result).toEqual(rataRunDTO);
       expect(service.createRataRun).toHaveBeenCalled();
@@ -111,6 +126,7 @@ describe('RataRunWorkspaceController', () => {
         rataId,
         rataSumId,
         rataRunId,
+        user,
       );
       expect(result).toEqual('');
       expect(service.deleteRataRun).toHaveBeenCalled();
@@ -127,6 +143,7 @@ describe('RataRunWorkspaceController', () => {
           rataSumId,
           rataRunId,
           payload,
+          user,
         ),
       ).toEqual(rataRunDTO);
       expect(service.updateRataRun).toHaveBeenCalled();

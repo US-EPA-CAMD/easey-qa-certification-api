@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { HttpModule } from '@nestjs/axios';
 import {
   RataSummaryBaseDTO,
   RataSummaryRecordDTO,
@@ -6,6 +7,18 @@ import {
 import { RataSummaryChecksService } from './rata-summary-checks.service';
 import { RataSummaryWorkspaceController } from './rata-summary-workspace.controller';
 import { RataSummaryWorkspaceService } from './rata-summary-workspace.service';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ConfigService } from '@nestjs/config';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
+const user: CurrentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 const locId = '';
 const testSumId = '';
@@ -51,8 +64,11 @@ describe('RataSummaryWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [HttpModule],
       controllers: [RataSummaryWorkspaceController],
       providers: [
+        ConfigService,
+        AuthGuard,
         {
           provide: RataSummaryWorkspaceService,
           useFactory: mockService,
@@ -75,7 +91,13 @@ describe('RataSummaryWorkspaceController', () => {
   describe('createRataSummary', () => {
     it('should call the RataService.createRataSummary and insert a rata-summary record', async () => {
       expect(
-        await controller.createRataSummary(locId, testSumId, rataId, payload),
+        await controller.createRataSummary(
+          locId,
+          testSumId,
+          rataId,
+          payload,
+          user,
+        ),
       ).toEqual(record);
       expect(service.createRataSummary).toHaveBeenCalled();
     });
@@ -90,6 +112,7 @@ describe('RataSummaryWorkspaceController', () => {
           rataId,
           rataSumId,
           payload,
+          user,
         ),
       ).toEqual(record);
       expect(service.updateRataSummary).toHaveBeenCalled();
@@ -103,6 +126,7 @@ describe('RataSummaryWorkspaceController', () => {
         testSumId,
         rataId,
         rataSumId,
+        user,
       );
       expect(result).toEqual(null);
       expect(service.deleteRataSummary).toHaveBeenCalled();
