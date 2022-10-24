@@ -2,24 +2,31 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
+import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import {
-  AppEHeatInputFromOilBaseDTO,
   AppEHeatInputFromOilDTO,
+  AppEHeatInputFromOilBaseDTO,
+  AppEHeatInputFromOilImportDTO,
   AppEHeatInputFromOilRecordDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
+import { AppEHeatInputFromOil } from '../entities/app-e-heat-input-from-oil.entity';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { In } from 'typeorm';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 
 @Injectable()
 export class AppEHeatInputFromOilWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     @InjectRepository(AppEHeatInputFromOilWorkspaceRepository)
     private readonly repository: AppEHeatInputFromOilWorkspaceRepository,
+    @InjectRepository(AppEHeatInputFromOilRepository)
+    private readonly historicalRepo,
     private readonly map: AppEHeatInputFromOilMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
@@ -162,6 +169,39 @@ export class AppEHeatInputFromOilWorkspaceService {
       testSumId,
       userId,
       isImport,
+    );
+  }
+
+  async import(
+    locationId: string,
+    testSumId: string,
+    appECorrTestRunId: string,
+    payload: AppEHeatInputFromOilImportDTO,
+    userId: string,
+    isHistoricalRecord: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: AppEHeatInputFromOil;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepo.findOne({
+        appECorrTestRunId: appECorrTestRunId,
+        monitoringSystemID: payload.monitoringSystemID,
+      });
+    }
+
+    const createdHeatInputFromOil = await this.createAppEHeatInputFromOilRecord(
+      locationId,
+      testSumId,
+      appECorrTestRunId,
+      payload,
+      userId,
+      isImport,
+      isHistoricalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Appendix E Heat Input from Oil Successfully Imported.  Record Id: ${createdHeatInputFromOil.id}`,
     );
   }
 

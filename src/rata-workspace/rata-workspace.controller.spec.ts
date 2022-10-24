@@ -3,11 +3,20 @@ import { RataBaseDTO, RataRecordDTO } from '../dto/rata.dto';
 import { RataChecksService } from './rata-checks.service';
 import { RataWorkspaceController } from './rata-workspace.controller';
 import { RataWorkspaceService } from './rata-workspace.service';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 const locId = '';
 const testSumId = '';
 const rataId = '';
 const rataRecord = new RataRecordDTO();
+const user: CurrentUser = {
+  clientIp: '',
+  expiration: '',
+  isAdmin: false,
+  roles: [],
+  sessionId: '',
+  userId: '',
+};
 
 const payload: RataBaseDTO = {
   rataFrequencyCode: 'OS',
@@ -67,9 +76,9 @@ describe('RataWorkspaceController', () => {
 
   describe('createRata', () => {
     it('should call the RataService.createRata and insert a rata record', async () => {
-      expect(await controller.createRata(locId, testSumId, payload)).toEqual(
-        rataRecord,
-      );
+      expect(
+        await controller.createRata(locId, testSumId, payload, user),
+      ).toEqual(rataRecord);
       expect(service.createRata).toHaveBeenCalled();
     });
   });
@@ -77,7 +86,7 @@ describe('RataWorkspaceController', () => {
   describe('updateRata', () => {
     it('should call the RataService.updateRata and update rata record', async () => {
       expect(
-        await controller.updateRata(locId, testSumId, rataId, payload),
+        await controller.updateRata(locId, testSumId, rataId, payload, user),
       ).toEqual(rataRecord);
       expect(service.updateRata).toHaveBeenCalled();
     });
@@ -85,7 +94,12 @@ describe('RataWorkspaceController', () => {
 
   describe('deleteRata', () => {
     it('should call the RataService.deleteRata and delete rata record', async () => {
-      const result = await controller.deleteRata(locId, testSumId, rataId);
+      const result = await controller.deleteRata(
+        locId,
+        testSumId,
+        rataId,
+        user,
+      );
       expect(result).toEqual(null);
       expect(service.deleteRata).toHaveBeenCalled();
     });

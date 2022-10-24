@@ -1130,8 +1130,8 @@ export class TestSummaryChecksService {
   ): string {
     let error: string = null;
     const resultA = this.getMessage('IMPORT-33-A', {
-      'test type': summary.testTypeCode,
-      'location type': summary.stackPipeId,
+      testType: summary.testTypeCode,
+      locationType: summary.stackPipeId,
     });
 
     const INVALID_TEST_TYPE_CODES_FOR_CS_AND_MS = [
