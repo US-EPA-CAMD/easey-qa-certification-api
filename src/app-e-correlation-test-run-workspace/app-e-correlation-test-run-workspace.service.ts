@@ -67,7 +67,7 @@ export class AppECorrelationTestRunWorkspaceService {
     payload: AppECorrelationTestRunBaseDTO,
     userId: string,
     isImport: boolean = false,
-    historicalId: string,
+    historicalId?: string,
   ): Promise<AppECorrelationTestRunRecordDTO> {
     const timestamp = currentDateTime();
 
