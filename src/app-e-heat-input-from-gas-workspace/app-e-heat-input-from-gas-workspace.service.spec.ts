@@ -2,15 +2,15 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
-import { AppEHeatInputFromGasDTO } from '../dto/app-e-heat-input-from-gas.dto';
+import {
+  AppEHeatInputFromGasDTO,
+  AppEHeatInputFromGasImportDTO,
+  AppEHeatInputFromGasRecordDTO,
+} from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
 import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-gas-workspace.service';
-import {
-  AppEHeatInputFromGasImportDTO,
-  AppEHeatInputFromGasRecordDTO,
-} from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromGas } from '../entities/workspace/app-e-heat-input-from-gas.entity';
 import { AppEHeatInputFromGasRepository } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.repository';
 
@@ -103,7 +103,14 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
         .spyOn(service, 'createAppEHeatInputFromGas')
         .mockResolvedValue(recordDTO);
 
-      await service.import(locationId, testSumId, corrTestRunId, importDTO, userId, false);
+      await service.import(
+        locationId,
+        testSumId,
+        corrTestRunId,
+        importDTO,
+        userId,
+        false,
+      );
     });
 
     it('Should Import Appendix E Heat Input from Gas from Historical Record', async () => {
@@ -111,7 +118,14 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
         .spyOn(service, 'createAppEHeatInputFromGas')
         .mockResolvedValue(recordDTO);
 
-      await service.import(locationId, testSumId, corrTestRunId, importDTO, userId, true);
+      await service.import(
+        locationId,
+        testSumId,
+        corrTestRunId,
+        importDTO,
+        userId,
+        true,
+      );
     });
   });
 

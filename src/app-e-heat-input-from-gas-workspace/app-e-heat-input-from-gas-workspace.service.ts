@@ -182,7 +182,7 @@ export class AppEHeatInputFromGasWorkspaceService {
     }
 
     const createdHeatInputFromGas = await this.createAppEHeatInputFromGas(
-      locationId, 
+      locationId,
       testSumId,
       appECorrTestRunId,
       payload,
@@ -195,7 +195,7 @@ export class AppEHeatInputFromGasWorkspaceService {
       `Appendix E Heat Input from Gas Successfully Imported.  Record Id: ${createdHeatInputFromGas.id}`,
     );
   }
-  
+
   async getAppEHeatInputFromGasByTestRunIds(
     appECorrTestRunId: string[],
   ): Promise<AppEHeatInputFromGasDTO[]> {

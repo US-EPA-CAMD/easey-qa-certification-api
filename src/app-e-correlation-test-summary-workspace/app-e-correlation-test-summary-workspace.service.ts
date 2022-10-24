@@ -118,6 +118,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
   }
 
   async import(
+    locationId: string,
     testSumId: string,
     payload: AppECorrelationTestSummaryImportDTO,
     userId: string,
@@ -153,6 +154,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
             const innerPromises = [];
             innerPromises.push(
               this.appECorrTestRunService.import(
+                locationId,
                 testSumId,
                 createdAppECorrelation.id,
                 testRun,

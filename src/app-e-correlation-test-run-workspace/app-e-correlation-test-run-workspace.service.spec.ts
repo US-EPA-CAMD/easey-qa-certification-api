@@ -17,10 +17,17 @@ import { AppEHeatInputFromGasWorkspaceService } from '../app-e-heat-input-from-g
 import { AppEHeatInputFromOilWorkspaceService } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.service';
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
-import { AppEHeatInputFromGasDTO, AppEHeatInputFromGasImportDTO } from '../dto/app-e-heat-input-from-gas.dto';
-import { AppEHeatInputFromOilDTO, AppEHeatInputFromOilImportDTO } from '../dto/app-e-heat-input-from-oil.dto';
+import {
+  AppEHeatInputFromGasDTO,
+  AppEHeatInputFromGasImportDTO,
+} from '../dto/app-e-heat-input-from-gas.dto';
+import {
+  AppEHeatInputFromOilDTO,
+  AppEHeatInputFromOilImportDTO,
+} from '../dto/app-e-heat-input-from-oil.dto';
 
 const userId = 'testUser';
+const locationId = '5';
 const testSumId = 'g7h8i9';
 const appECorrTestSumId = 'g7h8i9';
 const appECorrTestRunId = 'g7h8i9';
@@ -229,6 +236,7 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
         .mockResolvedValue(recordDTO);
 
       await service.import(
+        locationId,
         testSumId,
         appECorrTestSumId,
         importDTO,
@@ -250,12 +258,14 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
         .mockResolvedValue(recordDTO);
 
       await service.import(
+        locationId,
         testSumId,
         appECorrTestSumId,
         importDTO,
         userId,
         false,
       );
+    });
   });
 
   describe('getAppECorrelationTestRunsByAppECorrelationTestSumId', () => {

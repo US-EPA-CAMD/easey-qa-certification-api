@@ -27,13 +27,13 @@ export class AppECorrelationTestRunWorkspaceService {
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @Inject(forwardRef(() => AppEHeatInputFromGasWorkspaceService))
-    private readonly appEHeatInputFromGasService,
+    private readonly appEHeatInputFromGasService: AppEHeatInputFromGasWorkspaceService,
     @Inject(forwardRef(() => AppEHeatInputFromOilWorkspaceService))
-    private readonly appEHeatInputFromOilService,
+    private readonly appEHeatInputFromOilService: AppEHeatInputFromOilWorkspaceService,
     @InjectRepository(AppECorrelationTestRunWorkspaceRepository)
     private readonly repository: AppECorrelationTestRunWorkspaceRepository,
     @InjectRepository(AppECorrelationTestRunRepository)
-    private readonly historicalRepo,
+    private readonly historicalRepo: AppECorrelationTestRunRepository,
   ) {}
 
   async getAppECorrelationTestRuns(
@@ -160,6 +160,7 @@ export class AppECorrelationTestRunWorkspaceService {
   }
 
   async import(
+    locationId: string,
     testSumId: string,
     appECorrTestSumId: string,
     payload: AppECorrelationTestRunImportDTO,
@@ -197,6 +198,7 @@ export class AppECorrelationTestRunWorkspaceService {
             const innerPromises = [];
             innerPromises.push(
               this.appEHeatInputFromGasService.import(
+                locationId,
                 testSumId,
                 createdTestRun.id,
                 appEHeatInputFromGas,

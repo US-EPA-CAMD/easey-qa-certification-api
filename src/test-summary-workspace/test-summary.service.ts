@@ -336,6 +336,7 @@ export class TestSummaryWorkspaceService {
             const innerPromises = [];
             innerPromises.push(
               this.appECorrelationTestSummaryWorkspaceService.import(
+                locationId,
                 createdTestSummary.id,
                 appECorrelationTestSummary,
                 userId,

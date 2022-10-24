@@ -10,8 +10,6 @@ import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
 import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
 import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oil.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { RataTraverseImportDTO } from '../dto/rata-traverse.dto';
-import { AppEHeatInputFromGas } from '../entities/workspace/app-e-heat-input-from-gas.entity';
 import { AppEHeatInputFromGasRecordDTO } from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
 
