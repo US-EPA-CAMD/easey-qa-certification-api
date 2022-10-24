@@ -14,6 +14,8 @@ import { ProtocolGas } from '../entities/protocol-gas.entity';
 import { ProtocolGasService } from '../protocol-gas/protocol-gas.service';
 import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
 import { AppECorrelationTestSummaryService } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.service';
+import { FuelFlowToLoadTestService } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.service';
+import { FuelFlowToLoadTest } from '../entities/fuel-flow-to-load-test.entity';
 
 const locationId = '121';
 const facilityId = 1;
@@ -56,6 +58,10 @@ const mockAppECorrelationTestSummaryService = () => ({
   import: jest.fn().mockResolvedValue(null),
 });
 
+const mockFuelFlowToLoadTestService = () => ({
+  export: jest.fn().mockResolvedValue([new FuelFlowToLoadTest()])
+});
+
 describe('TestSummaryService', () => {
   let service: TestSummaryService;
   let repository: TestSummaryRepository;
@@ -89,6 +95,10 @@ describe('TestSummaryService', () => {
           provide: AppECorrelationTestSummaryService,
           useFactory: mockAppECorrelationTestSummaryService,
         },
+        {
+          provide: FuelFlowToLoadTestService,
+          useFactory: mockFuelFlowToLoadTestService,
+        }
       ],
     }).compile();
 

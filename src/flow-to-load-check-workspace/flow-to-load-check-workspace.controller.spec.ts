@@ -25,6 +25,8 @@ const mockService = () => ({
   getFlowToLoadChecks: jest.fn().mockResolvedValue(flowToLoadChecks),
   getFlowToLoadCheck: jest.fn().mockResolvedValue(flowToLoadCheck),
   createFlowToLoadCheck: jest.fn().mockResolvedValue(flowToLoadCheck),
+  editFlowToLoadCheck: jest.fn().mockResolvedValue(flowToLoadCheck),
+  deleteFlowToLoadCheck: jest.fn(),
 });
 
 const payload = new FlowToLoadCheckBaseDTO();
