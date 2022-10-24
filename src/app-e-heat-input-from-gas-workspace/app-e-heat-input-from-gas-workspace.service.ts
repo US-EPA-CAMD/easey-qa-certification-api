@@ -176,7 +176,7 @@ export class AppEHeatInputFromGasWorkspaceService {
     if (isHistoricalRecord) {
       historicalRecord = await this.historicalRepo.findOne({
         appECorrTestRunId: appECorrTestRunId,
-        monitoringSystemID: payload.monitoringSystemID,
+        monitoringSystemId: payload.monitoringSystemID,
       });
     }
 
