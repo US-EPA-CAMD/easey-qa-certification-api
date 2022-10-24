@@ -11,6 +11,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { AirEmissionTestingWorkspaceRepository } from './air-emission-testing-workspace.repository';
 import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
 
+const id = '';
 const testSumId = '';
 const airEmissiontestingId = '';
 const historicalRecordId = '1';
@@ -21,6 +22,7 @@ const airEmissionTestingRecord = new AirEmissionTestingDTO();
 const payload: AirEmissionTestingBaseDTO = new AirEmissionTestingBaseDTO();
 
 const mockRepository = () => ({
+  find: jest.fn().mockResolvedValue([entity]),
   findOne: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
@@ -71,6 +73,35 @@ describe('AirEmissionTestingWorkspaceService', () => {
     );
   });
 
+  describe('getAirEmissionTestings', () => {
+    it('Should return Calibration Injection records by Test Summary id', async () => {
+      const result = await service.getAirEmissionTestings(testSumId);
+
+      expect(result).toEqual([airEmissionTestingRecord]);
+    });
+  });
+
+  describe('getAirEmissionTesting', () => {
+    it('Should return a Calibration Injection record', async () => {
+      const result = await service.getAirEmissionTesting(id);
+
+      expect(result).toEqual(airEmissionTestingRecord);
+    });
+
+    it('Should throw error when a Calibration Injection record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.getAirEmissionTesting(id);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
+
   describe('createAirEmissionTesting', () => {
     it('Should create and return a new Air Emission Test record', async () => {
       const result = await service.createAirEmissionTesting(
@@ -108,7 +139,7 @@ describe('AirEmissionTestingWorkspaceService', () => {
     });
 
     it('should throw error with invalid Air Emission Testing', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(service, 'getAirEmissionTesting').mockResolvedValue(undefined);
 
       let errored = false;
       try {
