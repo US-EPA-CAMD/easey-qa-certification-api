@@ -3,7 +3,6 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { AppEHeatInputFromGasDTO } from '../dto/app-e-heat-input-from-gas.dto';
-import { AppEHeatInputFromGas } from '../entities/app-e-heat-input-from-gas.entity';
 import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
@@ -12,13 +11,10 @@ import {
   AppEHeatInputFromGasImportDTO,
   AppEHeatInputFromGasRecordDTO,
 } from '../dto/app-e-heat-input-from-gas.dto';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
 import { AppEHeatInputFromGas } from '../entities/workspace/app-e-heat-input-from-gas.entity';
 import { AppEHeatInputFromGasRepository } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.repository';
 
+const locationId = 'LOCATION-ID';
 const testSumId = 'TEST-SUM-ID';
 const corrTestRunId = 'APP-E-CORR-TEST-RUN-ID';
 const userId = 'USER-ID';
@@ -107,7 +103,7 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
         .spyOn(service, 'createAppEHeatInputFromGas')
         .mockResolvedValue(recordDTO);
 
-      await service.import(testSumId, corrTestRunId, importDTO, userId, false);
+      await service.import(locationId, testSumId, corrTestRunId, importDTO, userId, false);
     });
 
     it('Should Import Appendix E Heat Input from Gas from Historical Record', async () => {
@@ -115,7 +111,7 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
         .spyOn(service, 'createAppEHeatInputFromGas')
         .mockResolvedValue(recordDTO);
 
-      await service.import(testSumId, corrTestRunId, importDTO, userId, true);
+      await service.import(locationId, testSumId, corrTestRunId, importDTO, userId, true);
     });
   });
 
