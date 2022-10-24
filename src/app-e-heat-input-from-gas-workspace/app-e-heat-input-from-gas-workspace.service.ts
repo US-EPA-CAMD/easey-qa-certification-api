@@ -164,6 +164,7 @@ export class AppEHeatInputFromGasWorkspaceService {
   }
 
   async import(
+    locationId: string,
     testSumId: string,
     appECorrTestRunId: string,
     payload: AppEHeatInputFromGasImportDTO,
@@ -181,6 +182,7 @@ export class AppEHeatInputFromGasWorkspaceService {
     }
 
     const createdHeatInputFromGas = await this.createAppEHeatInputFromGas(
+      locationId, 
       testSumId,
       appECorrTestRunId,
       payload,
