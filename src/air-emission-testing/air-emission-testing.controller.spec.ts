@@ -13,7 +13,7 @@ const mockService = () => ({
   getAirEmissionTestings: jest
     .fn()
     .mockResolvedValue([airEmissionTestingRecord]),
-  getAirEmissionTesting: jest.fn().mockResolvedValue(airEmissionTestingRecord)
+  getAirEmissionTesting: jest.fn().mockResolvedValue(airEmissionTestingRecord),
 });
 
 describe('AirEmissionTestingController', () => {
@@ -35,24 +35,21 @@ describe('AirEmissionTestingController', () => {
     );
   });
 
-    describe('getAirEmissionTestings', () => {
-      it('should get Air Emission Testing records by Linearity Summary Id', async () => {
-        const result = await controller.getAirEmissionsTestings(
-          locId,
-          testSumId,
-        );
-        expect(result).toEqual([airEmissionTestingRecord]);
-      });
+  describe('getAirEmissionTestings', () => {
+    it('should get Air Emission Testing records by Linearity Summary Id', async () => {
+      const result = await controller.getAirEmissionsTestings(locId, testSumId);
+      expect(result).toEqual([airEmissionTestingRecord]);
     });
+  });
 
-    describe('getAirEmissionTesting', () => {
-      it('should get Air Emission Testing record', async () => {
-        const result = await controller.getAirEmissionsTesting(
-          locId,
-          testSumId,
-          airEmissiontestingId,
-        );
-        expect(result).toEqual(airEmissionTestingRecord);
-      });
+  describe('getAirEmissionTesting', () => {
+    it('should get Air Emission Testing record', async () => {
+      const result = await controller.getAirEmissionsTesting(
+        locId,
+        testSumId,
+        airEmissiontestingId,
+      );
+      expect(result).toEqual(airEmissionTestingRecord);
     });
+  });
 });
