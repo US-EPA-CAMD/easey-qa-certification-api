@@ -1,22 +1,31 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { HttpModule } from '@nestjs/axios';
 import {
   LinearityInjectionBaseDTO,
   LinearityInjectionDTO,
 } from '../dto/linearity-injection.dto';
 import { LinearityInjectionChecksService } from './linearity-injection-checks.service';
-
 import { LinearityInjectionWorkspaceController } from './linearity-injection.controller';
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
 import { LinearityInjectionWorkspaceService } from './linearity-injection.service';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 const locId = '';
 const testSumId = '';
 const linSumId = '';
 const linInjId = '';
 const linInjDto = new LinearityInjectionDTO();
+
+const user: CurrentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 const payload: LinearityInjectionBaseDTO = {
   injectionDate: new Date(),
@@ -45,9 +54,11 @@ describe('Linearity Injection Controller', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [HttpModule],
       controllers: [LinearityInjectionWorkspaceController],
       providers: [
+        ConfigService,
+        AuthGuard,
         LinearityInjectionWorkspaceRepository,
         {
           provide: LinearityInjectionWorkspaceService,
@@ -93,6 +104,7 @@ describe('Linearity Injection Controller', () => {
         testSumId,
         linSumId,
         payload,
+        user,
       );
       expect(result).toEqual(linInjDto);
       expect(spyCheckService).toHaveBeenCalled();
@@ -108,6 +120,7 @@ describe('Linearity Injection Controller', () => {
         linSumId,
         linInjId,
         payload,
+        user,
       );
       expect(result).toEqual(linInjDto);
       expect(spyCheckService).toHaveBeenCalled();
@@ -121,6 +134,7 @@ describe('Linearity Injection Controller', () => {
         testSumId,
         linSumId,
         linInjId,
+        user,
       );
       expect(result).toEqual(null);
     });

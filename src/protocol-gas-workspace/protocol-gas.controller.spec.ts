@@ -7,6 +7,10 @@ import {
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { ProtocolGasWorkspaceController } from './protocol-gas.controller';
 import { ProtocolGasWorkspaceService } from './protocol-gas.service';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ConfigService } from '@nestjs/config';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { HttpModule } from '@nestjs/axios';
 
 const locId = '';
 const testSumId = '';
@@ -28,6 +32,14 @@ const payload: ProtocolGasBaseDTO = {
   cylinderID: '',
   expirationDate: new Date(),
 };
+const user: CurrentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 describe('Protocol Gas Workspace Controller', () => {
   let controller: ProtocolGasWorkspaceController;
@@ -35,8 +47,11 @@ describe('Protocol Gas Workspace Controller', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [HttpModule],
       controllers: [ProtocolGasWorkspaceController],
       providers: [
+        ConfigService,
+        AuthGuard,
         TestSummaryWorkspaceModule,
         {
           provide: ProtocolGasWorkspaceService,
@@ -80,7 +95,7 @@ describe('Protocol Gas Workspace Controller', () => {
         .spyOn(service, 'createProtocolGas')
         .mockResolvedValue(protocolGasRecord);
       expect(
-        await controller.createProtocolGas(locId, testSumId, payload),
+        await controller.createProtocolGas(locId, testSumId, payload, user),
       ).toEqual(protocolGasRecord);
     });
   });

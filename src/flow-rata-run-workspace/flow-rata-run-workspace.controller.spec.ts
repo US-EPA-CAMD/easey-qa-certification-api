@@ -1,7 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { HttpModule } from '@nestjs/axios';
 import { FlowRataRunBaseDTO, FlowRataRunDTO } from '../dto/flow-rata-run.dto';
 import { FlowRataRunWorkspaceController } from './flow-rata-run-workspace.controller';
 import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ConfigService } from '@nestjs/config';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { FlowRataRunChecksService } from './flow-rata-run-checks.service';
 
 const locId = 'a1b2c3';
 const testSumId = 'd4e5f6';
@@ -9,6 +14,15 @@ const rataId = 'g7h8i9';
 const rataSumId = 'j0k1l2';
 const rataRunId = 'm3n4o5';
 const flowRataRunId = 'p6q7r8';
+
+const user: CurrentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 const payload: FlowRataRunBaseDTO = {
   numberOfTraversePoints: 1,
@@ -34,17 +48,28 @@ const mockFlowRataRunService = () => ({
   createFlowRataRun: jest.fn().mockResolvedValue(flowRataRunDTO),
 });
 
+const mockCheckService = () => ({
+  runChecks: jest.fn().mockResolvedValue(null),
+});
+
 describe('FlowRataRunWorkspaceController', () => {
   let controller: FlowRataRunWorkspaceController;
   let service: FlowRataRunWorkspaceService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [HttpModule],
       controllers: [FlowRataRunWorkspaceController],
       providers: [
+        ConfigService,
+        AuthGuard,
         {
           provide: FlowRataRunWorkspaceService,
           useFactory: mockFlowRataRunService,
+        },
+        {
+          provide: FlowRataRunChecksService,
+          useFactory: mockCheckService,
         },
       ],
     }).compile();
@@ -95,6 +120,7 @@ describe('FlowRataRunWorkspaceController', () => {
         rataSumId,
         rataRunId,
         payload,
+        user,
       );
       expect(result).toEqual(flowRataRunDTO);
       expect(service.createFlowRataRun).toHaveBeenCalled();
