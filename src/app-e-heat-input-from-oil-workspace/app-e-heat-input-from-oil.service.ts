@@ -16,7 +16,6 @@ import {
 } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOil } from '../entities/app-e-heat-input-from-oil.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { In } from 'typeorm';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 
 @Injectable()
