@@ -17,7 +17,6 @@ import { AppendixETestSummaryRepository } from '../app-e-correlation-test-summar
 import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { In } from 'typeorm';
-import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
 
 @Injectable()
 export class AppECorrelationTestSummaryWorkspaceService {
