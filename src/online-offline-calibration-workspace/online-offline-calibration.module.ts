@@ -11,6 +11,7 @@ import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.
   imports: [
     TypeOrmModule.forFeature([OnlineOfflineCalibrationWorkspaceRepository]),
     HttpModule,
+    forwardRef(() => TestSummaryWorkspaceModule),
   ],
   providers: [
     OnlineOfflineCalibrationWorkspaceService,

@@ -62,7 +62,9 @@ describe('AppEHeatInputFromGasWorkspaceRepository', () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([appEHeatInputFromGas]);
 
-      const result = await repository.getAppEHeatInputFromGasesByTestRunIds(['1']);
+      const result = await repository.getAppEHeatInputFromGasesByTestRunIds([
+        '1',
+      ]);
 
       expect(result).toEqual([appEHeatInputFromGas]);
     });
