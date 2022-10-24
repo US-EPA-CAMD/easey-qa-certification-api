@@ -74,7 +74,7 @@ describe('AirEmissionTestingWorkspaceService', () => {
   });
 
   describe('getAirEmissionTestings', () => {
-    it('Should return Calibration Injection records by Test Summary id', async () => {
+    it('Should return Air Emission Testing records by Test Summary id', async () => {
       const result = await service.getAirEmissionTestings(testSumId);
 
       expect(result).toEqual([airEmissionTestingRecord]);
@@ -82,13 +82,13 @@ describe('AirEmissionTestingWorkspaceService', () => {
   });
 
   describe('getAirEmissionTesting', () => {
-    it('Should return a Calibration Injection record', async () => {
+    it('Should return a Air Emission Testing record', async () => {
       const result = await service.getAirEmissionTesting(id);
 
       expect(result).toEqual(airEmissionTestingRecord);
     });
 
-    it('Should throw error when a Calibration Injection record not found', async () => {
+    it('Should throw error when a Air Emission Testing record not found', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
       let errored = false;
 

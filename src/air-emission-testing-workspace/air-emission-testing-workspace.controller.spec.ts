@@ -73,14 +73,14 @@ describe('AirEmissionTestingWorkspaceController', () => {
   });
 
   describe('getAirEmissionTestings', () => {
-    it('should get Linearity injection records by Linearity Summary Id', async () => {
+    it('should get Air Emission Testing records by Linearity Summary Id', async () => {
       const result = await controller.getAirEmissionTestings(locId, testSumId);
       expect(result).toEqual([airEmissionTestingRecord]);
     });
   });
 
   describe('getAirEmissionTesting', () => {
-    it('should get Linearity injection record', async () => {
+    it('should get Air Emission Testing record', async () => {
       const result = await controller.getAirEmissionsTesting(
         locId,
         testSumId,
