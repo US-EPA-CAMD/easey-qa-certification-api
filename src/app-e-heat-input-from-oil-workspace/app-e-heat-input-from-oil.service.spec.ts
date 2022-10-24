@@ -1,11 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AppEHeatInputFromOilDTO } from '../dto/app-e-heat-input-from-oil.dto';
+import {
+  AppEHeatInputFromOilDTO,
+  AppEHeatInputFromOilImportDTO,
+  AppEHeatInputFromOilRecordDTO,
+} from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOil } from '../entities/workspace/app-e-heat-input-from-oil.entity';
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
 import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
 import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oil.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { AppEHeatInputFromGasRecordDTO } from '../dto/app-e-heat-input-from-gas.dto';
+import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
 
 const aeHiOilId = 'a1b2c3';
 const appECorrTestRunId = 'd4e6f7';
@@ -32,6 +38,10 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue([mockAeHiFromOilDTO]),
 });
 
+const mockHistoricalRepo = () => ({
+  findOne: jest.fn().mockResolvedValue(new AppEHeatInputFromGasRecordDTO()),
+});
+
 describe('AppEHeatInputOilWorkspaceService', () => {
   let service: AppEHeatInputFromOilWorkspaceService;
   let repository: AppEHeatInputFromOilWorkspaceRepository;
@@ -52,6 +62,10 @@ describe('AppEHeatInputOilWorkspaceService', () => {
         {
           provide: AppEHeatInputFromOilMap,
           useFactory: mockMap,
+        },
+        {
+          provide: AppEHeatInputFromOilRepository,
+          useFactory: mockHistoricalRepo,
         },
       ],
     }).compile();
@@ -119,6 +133,43 @@ describe('AppEHeatInputOilWorkspaceService', () => {
       );
       expect(result).toEqual(mockAeHiFromOilDTO);
       expect(repository.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('import', () => {
+    const importDTO = new AppEHeatInputFromOilImportDTO();
+    const recordDTO = new AppEHeatInputFromOilRecordDTO();
+
+    it('Should import Appendix E Heat Input from Oil', async () => {
+      jest
+        .spyOn(service, 'createAppEHeatInputFromOilRecord')
+        .mockResolvedValue(recordDTO);
+
+      const result = await service.import(
+        testSumId,
+        appECorrTestRunId,
+        importDTO,
+        userId,
+        false,
+      );
+
+      expect(result).toBeUndefined();
+    });
+
+    it('Should import Appendix E Heat Input from Oil with historical data', async () => {
+      jest
+        .spyOn(service, 'createAppEHeatInputFromOilRecord')
+        .mockResolvedValue(recordDTO);
+
+      const result = await service.import(
+        testSumId,
+        appECorrTestRunId,
+        importDTO,
+        userId,
+        true,
+      );
+
+      expect(result).toBeUndefined();
     });
   });
 
