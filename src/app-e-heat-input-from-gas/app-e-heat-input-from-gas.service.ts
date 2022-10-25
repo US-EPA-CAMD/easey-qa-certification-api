@@ -1,7 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
 import {
   AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasRecordDTO,
