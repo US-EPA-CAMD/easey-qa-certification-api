@@ -19,6 +19,7 @@ jest.mock('@us-epa-camd/easey-common/check-catalog');
 
 const locationId = '';
 const testSumId = '';
+const rataSumId = '';
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 const monitorSystemRecord = new MonitorSystem();
@@ -98,9 +99,15 @@ describe('Rata Summary Check Service Test', () => {
       }
 
       try {
-        await service.runChecks(locationId, payload, testSumId, false, false, [
+        await service.runChecks(
+          locationId,
           payload,
-        ]);
+          false,
+          false,
+          rataSumId,
+          testSumId,
+          [payload],
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
