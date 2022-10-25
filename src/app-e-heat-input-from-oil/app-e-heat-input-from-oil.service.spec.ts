@@ -17,10 +17,15 @@ const mockTestSumService = () => ({
 });
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue([mockAeHiFromOil]),
+  getAppEHeatInputFromOilsByTestRunId: jest
+    .fn()
+    .mockResolvedValue([mockAeHiFromOil]),
+  getAppEHeatInputFromOilsByTestRunIds: jest
+    .fn()
+    .mockResolvedValue([mockAeHiFromOil]),
   create: jest.fn().mockResolvedValue(mockAeHiFromOil),
   save: jest.fn().mockResolvedValue(mockAeHiFromOil),
-  findOne: jest.fn().mockResolvedValue(mockAeHiFromOil),
+  getAppEHeatInputFromOilById: jest.fn().mockResolvedValue(mockAeHiFromOil),
 });
 
 const mockMap = () => ({
@@ -66,7 +71,6 @@ describe('AppEHeatInputOilWorkspaceService', () => {
         appECorrTestRunId,
       );
       expect(result).toEqual([mockAeHiFromOilDTO]);
-      expect(repository.find).toHaveBeenCalled();
     });
   });
 
@@ -74,11 +78,12 @@ describe('AppEHeatInputOilWorkspaceService', () => {
     it('Calls repository.findOne({id}) to get a Appendix E Heat Input from Oil record', async () => {
       const result = await service.getAppEHeatInputFromOilRecord(aeHiOilId);
       expect(result).toEqual(mockAeHiFromOilDTO);
-      expect(repository.findOne).toHaveBeenCalled();
     });
 
     it('Should throw error when record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(repository, 'getAppEHeatInputFromOilById')
+        .mockResolvedValue(null);
 
       let errored = false;
 
