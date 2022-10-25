@@ -19,9 +19,11 @@ import { RataRunWorkspaceRepository } from '../rata-run-workspace/rata-run-works
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
 import { RataSummaryRepository } from '../rata-summary/rata-summary.repository';
 import { RataRun } from '../entities/workspace/rata-run.entity';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
+const testSumId = '';
 const rataRunId = '';
 const rataSumId = '';
 const flowRataRunId = '';
@@ -29,6 +31,11 @@ const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 const monitorSystemRecord = new MonitorSystem();
 let rataSumRecord = {
+  system: {
+    systemTypeCode: 'FLOW',
+  },
+};
+let testSumRecord = {
   system: {
     systemTypeCode: 'FLOW',
   },
@@ -54,6 +61,9 @@ const mockRataRunWorkspaceRepository = () => ({
 const mockFlowRataRunWorkspaceRepository = () => ({
   findOne: jest.fn().mockResolvedValue(flowRataRunId),
 });
+const mockTestSummaryRepository = () => ({
+  getTestSummaryById: jest.fn().mockResolvedValue(testSumRecord),
+});
 
 describe('Flow Rata Run Check Service Test', () => {
   let service: FlowRataRunChecksService;
@@ -69,6 +79,10 @@ describe('Flow Rata Run Check Service Test', () => {
         {
           provide: MonitorSystemRepository,
           useFactory: mockMonitorSystemRepository,
+        },
+        {
+          provide: TestSummaryWorkspaceRepository,
+          useFactory: mockTestSummaryRepository,
         },
         {
           provide: RataSummaryRepository,
@@ -111,6 +125,7 @@ describe('Flow Rata Run Check Service Test', () => {
       try {
         await service.runChecks(importPayload, false, false, rataSumId);
       } catch (err) {
+        console.log("REEEE", err)
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
