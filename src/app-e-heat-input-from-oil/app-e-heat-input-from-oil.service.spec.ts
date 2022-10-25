@@ -92,7 +92,7 @@ describe('AppEHeatInputOilWorkspaceService', () => {
     });
   });
 
-  describe('getAppEHeatInputFromGasByTestRunIds', () => {
+  describe('getAppEHeatInputFromOilByTestRunIds', () => {
     it('Should get Appendix E Heat Input From Oil records by test sum ids', async () => {
       const result = await service.getAppEHeatInputFromOilRecordsByTestRunIds([
         appECorrTestRunId,
