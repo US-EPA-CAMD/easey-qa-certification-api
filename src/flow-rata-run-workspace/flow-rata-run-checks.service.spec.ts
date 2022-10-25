@@ -115,7 +115,6 @@ describe('Flow Rata Run Check Service Test', () => {
       try {
         await service.runChecks(importPayload, false, false, rataSumId);
       } catch (err) {
-        console.log("REEEE", err)
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
