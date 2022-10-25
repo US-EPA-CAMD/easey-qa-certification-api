@@ -45,9 +45,9 @@ export class AppEHeatInputFromGasService {
   async getAppEHeatInputFromGasByTestRunIds(
     testSumIds: string[],
   ): Promise<AppEHeatInputFromGasDTO[]> {
-    const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
-    });
+    const results = await this.repository.getAppEHeatInputFromGasesByTestRunIds(
+      testSumIds,
+    );
     return this.map.many(results);
   }
 

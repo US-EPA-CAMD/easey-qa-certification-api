@@ -17,7 +17,7 @@ const mockTestSumService = () => ({
 });
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(appEHIGasRecords),
+  testSumIds: jest.fn().mockResolvedValue(appEHIGasRecords),
   create: jest.fn().mockResolvedValue(appEHIGasRecord),
   save: jest.fn().mockResolvedValue(appEHIGasRecord),
   findOne: jest.fn().mockResolvedValue(appEHIGasRecord),
