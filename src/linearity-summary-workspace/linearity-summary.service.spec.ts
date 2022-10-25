@@ -2,7 +2,10 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { LinearitySummary } from '../entities/linearity-summary.entity';
 import { LinearitySummaryRepository } from '../linearity-summary/linearity-summary.repository';
-import { LinearityInjectionDTO, LinearityInjectionImportDTO } from '../dto/linearity-injection.dto';
+import {
+  LinearityInjectionDTO,
+  LinearityInjectionImportDTO,
+} from '../dto/linearity-injection.dto';
 import {
   LinearitySummaryDTO,
   LinearitySummaryImportDTO,
@@ -26,7 +29,6 @@ const lineSummaryRecordDto = new LinearitySummaryRecordDTO();
 lineInjectionDto.linSumId = linSumId;
 
 const payload = new LinearitySummaryImportDTO();
-payload.linearityInjectionData = [new LinearityInjectionImportDTO()];
 
 const mockRepository = () => ({
   getSummaryById: jest.fn().mockResolvedValue(lineSummary),
@@ -37,8 +39,11 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(lineSummary),
   delete: jest.fn().mockResolvedValue(null),
 });
+
+const historicalLinSum = new LinearitySummary();
+historicalLinSum.id = 'HISTORICAL-ID';
 const mockOfficialRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(new LinearitySummary()),
+  findOne: jest.fn().mockResolvedValue(historicalLinSum),
 });
 
 const mockTestSummaryService = () => ({});
@@ -130,29 +135,58 @@ describe('LinearitySummaryWorkspaceService', () => {
 
   describe('export', () => {
     it('Should export Linearity Summaries', async () => {
-      jest.spyOn(service, 'getSummariesByTestSumIds').mockResolvedValue([]);
+      jest
+        .spyOn(service, 'getSummariesByTestSumIds')
+        .mockResolvedValue([lineSummaryDto]);
 
       const result = await service.export([testSumId]);
-      expect(result).toEqual([]);
+      expect(result).toEqual([lineSummaryDto]);
     });
   });
 
   describe('import', () => {
+    const importPayload = payload;
+    importPayload.gasLevelCode = 'CODE';
+
     it('Should import Linearity Summary', async () => {
       jest
         .spyOn(service, 'createSummary')
         .mockResolvedValue(lineSummaryRecordDto);
-      const result = await service.import(testSumId, payload, userId);
+      const result = await service.import(testSumId, importPayload, userId);
+      expect(result).toEqual(null);
+    });
+
+    it('Should import Linearity Summary when its a historical recored', async () => {
+      jest
+        .spyOn(service, 'createSummary')
+        .mockResolvedValue(lineSummaryRecordDto);
+      importPayload.linearityInjectionData = [
+        new LinearityInjectionImportDTO(),
+      ];
+
+      const result = await service.import(
+        testSumId,
+        importPayload,
+        userId,
+        true,
+      );
       expect(result).toEqual(null);
     });
   });
 
   describe('createSummary', () => {
     it('Should insert a Linearity Summary record', async () => {
+      const result = await service.createSummary(testSumId, payload, userId);
+      expect(result).toEqual(lineSummaryDto);
+    });
+
+    it('Should insert a Linearity Summary record with historical Id', async () => {
       const result = await service.createSummary(
         testSumId,
         payload,
         userId,
+        true,
+        'HISTORICAL-ID',
       );
       expect(result).toEqual(lineSummaryDto);
     });
