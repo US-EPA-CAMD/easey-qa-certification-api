@@ -6,7 +6,6 @@ import { LinearitySummary } from '../entities/linearity-summary.entity';
 import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
 import { LinearityInjectionService } from '../linearity-injection/linearity-injection.service';
 import { LinearityInjectionDTO } from '../dto/linearity-injection.dto';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 
 const linSumId = 'a1b2c3';
 const testSumId = 'd4e5f6';
