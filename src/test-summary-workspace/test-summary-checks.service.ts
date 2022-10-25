@@ -118,15 +118,17 @@ export class TestSummaryChecksService {
     }
 
     // TEST-3 Test Begin Minute Valid
-    error = await this.testMinuteField(summary, locationId, 'beginMinute');
-    if (error) {
-      errorList.push(error);
-    }
+    if (summary.testResultCode === TestTypeCodes.FF2LTST) {
+      error = await this.testMinuteField(summary, locationId, 'beginMinute');
+      if (error) {
+        errorList.push(error);
+      }
 
-    // TEST-6 Test End Minute Valid
-    error = await this.testMinuteField(summary, locationId, 'endMinute');
-    if (error) {
-      errorList.push(error);
+      // TEST-6 Test End Minute Valid
+      error = await this.testMinuteField(summary, locationId, 'endMinute');
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     // TEST-7 Test Dates Consistent
@@ -798,7 +800,7 @@ export class TestSummaryChecksService {
         TestTypeCodes.LINE,
         TestTypeCodes.RATA,
         TestTypeCodes.CYCLE,
-        TestTypeCodes.F2LREF,
+        TestTypeCodes.FF2LTST,
         TestTypeCodes.APPE,
         TestTypeCodes.UNITDEF,
       ];
