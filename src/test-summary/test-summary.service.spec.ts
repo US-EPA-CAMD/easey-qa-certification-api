@@ -59,7 +59,7 @@ const mockAppECorrelationTestSummaryService = () => ({
 });
 
 const mockFuelFlowToLoadTestService = () => ({
-  export: jest.fn().mockResolvedValue([new FuelFlowToLoadTest()])
+  export: jest.fn().mockResolvedValue([new FuelFlowToLoadTest()]),
 });
 
 describe('TestSummaryService', () => {
@@ -98,7 +98,7 @@ describe('TestSummaryService', () => {
         {
           provide: FuelFlowToLoadTestService,
           useFactory: mockFuelFlowToLoadTestService,
-        }
+        },
       ],
     }).compile();
 

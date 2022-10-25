@@ -280,7 +280,10 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
     describe('Export', () => {
       it('Should Export Appendix E Correlation Test Run', async () => {
         jest
-          .spyOn(service, 'getAppECorrelationTestRunsByAppECorrelationTestSumId')
+          .spyOn(
+            service,
+            'getAppECorrelationTestRunsByAppECorrelationTestSumId',
+          )
           .mockResolvedValue([appECorrelationTestRunRecord]);
         const result = await service.export([testSumId]);
         expect(result).toEqual([appECorrelationTestRunRecord]);
