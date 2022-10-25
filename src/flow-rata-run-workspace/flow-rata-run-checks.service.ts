@@ -133,8 +133,8 @@ export class FlowRataRunChecksService {
     averageVelocityWithWallEffects: number,
   ): string {
     let error: string = null;
-    let FIELDNAME: string = 'averageVelocityWithWallEffects;' + '';
-    if (averageVelocityWithWallEffects) {
+    let FIELDNAME: string = 'averageVelocityWithWallEffects';
+    if (averageVelocityWithWallEffects !== null) {
       if (
         ['2F', '2G', '2FJ', '2GJ'].includes(
           rataSummaryRecord.referenceMethodCode,
@@ -153,14 +153,16 @@ export class FlowRataRunChecksService {
           key: KEY,
         });
       }
-    } else if (
-      rataSummaryRecord.referenceMethodCode === 'M2H' ||
-      rataSummaryRecord.calculatedWAF
-    ) {
-      error = this.getMessage('RATA-114-C', {
-        fieldname: FIELDNAME,
-        key: KEY,
-      });
+    } else {
+      if (
+        rataSummaryRecord.referenceMethodCode === 'M2H' ||
+        rataSummaryRecord.calculatedWAF
+      ) {
+        error = this.getMessage('RATA-114-C', {
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
+      }
     }
 
     return error;
