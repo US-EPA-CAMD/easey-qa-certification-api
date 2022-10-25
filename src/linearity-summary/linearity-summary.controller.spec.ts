@@ -1,8 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-
+import { HttpModule } from '@nestjs/axios';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { LinearitySummaryController } from './linearity-summary.controller';
 import { LinearitySummaryService } from './linearity-summary.service';
 
@@ -12,14 +11,15 @@ describe('Linearity Summary Controller', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [HttpModule],
       controllers: [LinearitySummaryController],
       providers: [
+        ConfigService,
+        AuthGuard,
         {
           provide: LinearitySummaryService,
           useFactory: () => ({}),
         },
-        ConfigService,
       ],
     }).compile();
 

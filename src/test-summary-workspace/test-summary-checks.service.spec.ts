@@ -33,6 +33,11 @@ import { AnalyzerRange } from '../entities/workspace/analyzerRange.entity';
 import { AirEmissionTestingImportDTO } from '../dto/air-emission-test.dto';
 import { AppECorrelationTestSummaryImportDTO } from '../dto/app-e-correlation-test-summary.dto';
 import { FuelFlowToLoadTestImportDTO } from '../dto/fuel-flow-to-load-test.dto';
+import { FuelFlowToLoadBaselineImportDTO } from '../dto/fuel-flow-to-load-baseline.dto';
+import { CalibrationInjectionImportDTO } from '../dto/calibration-injection.dto';
+import { FlowToLoadReferenceImportDTO } from '../dto/flow-to-load-reference.dto';
+import { FlowToLoadCheckImportDTO } from '../dto/flow-to-load-check.dto';
+import { OnlineOfflineCalibrationImportDTO } from '../dto/online-offline-calibration.dto';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -327,15 +332,23 @@ describe('Test Summary Check Service Test', () => {
       importPayload.testTypeCode = TestTypeCodes.LINE;
       importPayload.rataData = [new RataImportDTO()];
       importPayload.testQualificationData = [new TestQualificationImportDTO()];
-      importPayload.calibrationInjectionData = [{}];
+      importPayload.calibrationInjectionData = [
+        new CalibrationInjectionImportDTO(),
+      ];
       importPayload.hgSummaryData = [{}];
-      importPayload.flowToLoadReferenceData = [{}];
-      importPayload.flowToLoadCheckData = [{}];
+      importPayload.flowToLoadReferenceData = [
+        new FlowToLoadReferenceImportDTO(),
+      ];
+      importPayload.flowToLoadCheckData = [new FlowToLoadCheckImportDTO()];
       importPayload.cycleTimeSummaryData = [{}];
-      importPayload.onlineOfflineCalibrationData = [{}];
+      importPayload.onlineOfflineCalibrationData = [
+        new OnlineOfflineCalibrationImportDTO(),
+      ];
       importPayload.fuelFlowmeterAccuracyData = [{}];
       importPayload.transmitterTransducerData = [{}];
-      importPayload.fuelFlowToLoadBaselineData = [{}];
+      importPayload.fuelFlowToLoadBaselineData = [
+        new FuelFlowToLoadBaselineImportDTO(),
+      ];
       importPayload.fuelFlowToLoadTestData = [
         new FuelFlowToLoadTestImportDTO(),
       ];

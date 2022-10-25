@@ -15,8 +15,6 @@ import { AppECorrelationTestRunRepository } from '../app-e-correlation-test-run/
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { AppEHeatInputFromGasWorkspaceService } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.service';
 import { AppEHeatInputFromOilWorkspaceService } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.service';
-import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
-import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
 import {
   AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasImportDTO,
@@ -26,7 +24,6 @@ import {
   AppEHeatInputFromOilImportDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
 
-const locationId = 'testLocation';
 const userId = 'testUser';
 const locationId = '5';
 const testSumId = 'g7h8i9';
@@ -58,16 +55,17 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 const mockAppEHeatInputFromGasService = () => ({
+  import: jest.fn().mockResolvedValue(null),
   export: jest.fn().mockResolvedValue([new AppEHeatInputFromGasDTO()]),
 });
 const mockAppEHeatInputFromOilService = () => ({
+  import: jest.fn().mockResolvedValue(null),
   export: jest.fn().mockResolvedValue([new AppEHeatInputFromOilDTO()]),
 });
 
 describe('AppECorrelationTestRunWorkspaceService', () => {
   let service: AppECorrelationTestRunWorkspaceService;
   let repository: AppECorrelationTestRunWorkspaceRepository;
-  let historicalRepo: AppECorrelationTestRunRepository;
   let testSummaryService: TestSummaryWorkspaceService;
 
   beforeEach(async () => {
@@ -107,9 +105,6 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
     );
     repository = module.get<AppECorrelationTestRunWorkspaceRepository>(
       AppECorrelationTestRunWorkspaceRepository,
-    );
-    historicalRepo = module.get<AppECorrelationTestRunRepository>(
-      AppECorrelationTestRunRepository,
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
       TestSummaryWorkspaceService,
@@ -264,7 +259,7 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
         appECorrTestSumId,
         importDTO,
         userId,
-        false,
+        true,
       );
     });
 

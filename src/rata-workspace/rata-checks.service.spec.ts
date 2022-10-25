@@ -11,6 +11,8 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import { RataFrequencyCodeRepository } from '../rata-frequency-code/rata-frequency-code.repository';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { RataChecksService } from './rata-checks.service';
+import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
+import { TestResultCode } from '../entities/test-result-code.entity';
 
 const locationId = '';
 const testSumId = '';
@@ -37,6 +39,9 @@ const mockTestSummaryRepository = () => ({
 const mockRataFrequencyCodeRepository = () => ({
   getRataFrequencyCode: jest.fn().mockResolvedValue(rataFreqCdRecord),
 });
+const mockTestResultCodeRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(new TestResultCode()),
+});
 const mockMonitorSystemRepository = () => ({
   findOne: jest.fn().mockResolvedValue(monitorSystemRecord),
 });
@@ -51,6 +56,10 @@ describe('Rata Checks Service Test', () => {
       imports: [LoggerModule, LoggingException],
       providers: [
         RataChecksService,
+        {
+          provide: TestResultCodeRepository,
+          useFactory: mockTestResultCodeRepository,
+        },
         {
           provide: RataFrequencyCodeRepository,
           useFactory: mockRataFrequencyCodeRepository,
