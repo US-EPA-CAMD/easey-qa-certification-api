@@ -8,7 +8,7 @@ import { TestSummary } from '../entities/test-summary.entity';
 import { RataRunBaseDTO, RataRunImportDTO } from '../dto/rata-run.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 const KEY = 'RATA Run';
 @Injectable()
@@ -17,18 +17,15 @@ export class RataRunChecksService {
     private readonly logger: Logger,
     @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
-    @InjectRepository(MonitorSystemRepository)
-    private readonly monitoringSystemRepository: MonitorSystemRepository,
   ) {}
 
-  private throwIfErrors(errorList: string[], isImport: boolean = false) {
-    if (!isImport && errorList.length > 0) {
+  private throwIfErrors(errorList: string[]) {
+    if (errorList.length > 0) {
       throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }
 
   async runChecks(
-    locationId: string,
     rataRun: RataRunBaseDTO | RataRunImportDTO,
     testSumId?: string,
     isImport: boolean = false,
@@ -43,39 +40,34 @@ export class RataRunChecksService {
 
     if (isImport) {
       testSumRecord = TestSummary;
-
-      testSumRecord.system = await this.monitoringSystemRepository.findOne({
-        monitoringSystemID: testSummary.monitoringSystemID,
-        locationId,
-      });
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
       );
     }
 
-    // RATA-27 Result C
-    error = this.rata27Check(rataRun, testSumRecord);
-    if (error) {
-      errorList.push(error);
+    if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
+      // RATA-27 Result C
+      error = this.rata27Check(rataRun, testSumRecord);
+      if (error) {
+        errorList.push(error);
+      }
+
+      // RATA-29 Result C
+      error = this.rata29Check(rataRun, testSumRecord);
+      if (error) {
+        errorList.push(error);
+      }
+
+      // RATA-33 Result C
+      error = this.rata33Check(rataRun, testSumRecord);
+      if (error) {
+        errorList.push(error);
+      }
     }
 
-    // RATA-29 Result C
-    error = this.rata29Check(rataRun, testSumRecord);
-    if (error) {
-      errorList.push(error);
-    }
-
-    // RATA-33 Result C
-    error = this.rata33Check(rataRun, testSumRecord);
-    if (error) {
-      errorList.push(error);
-    }
-
-    this.throwIfErrors(errorList, isImport);
-
+    this.throwIfErrors(errorList);
     this.logger.info('Completed RATA Run Checks');
-
     return errorList;
   }
 

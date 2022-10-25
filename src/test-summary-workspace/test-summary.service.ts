@@ -37,7 +37,7 @@ import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
-import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
+import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -52,10 +52,10 @@ export class TestSummaryWorkspaceService {
     private readonly rataService: RataWorkspaceService,
     @Inject(forwardRef(() => ProtocolGasWorkspaceService))
     private readonly protocolGasService: ProtocolGasWorkspaceService,
+    @Inject(forwardRef(() => FuelFlowToLoadTestWorkspaceService))
+    private readonly fuelFlowToLoadTestWorkspaceService: FuelFlowToLoadTestWorkspaceService,
     @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
     private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
-    @Inject(forwardRef(() => FlowToLoadReferenceWorkspaceService))
-    private readonly flowToLoadReferenceWorkspaceService: FlowToLoadReferenceWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -81,7 +81,6 @@ export class TestSummaryWorkspaceService {
     delete dto.transmitterTransducerData;
     delete dto.fuelFlowToLoadBaselineData;
     delete dto.fuelFlowToLoadTestData;
-    delete dto.appECorrelationTestSummaryData;
     delete dto.unitDefaultTestData;
     delete dto.hgSummaryData;
     delete dto.testQualificationData;
@@ -156,8 +155,8 @@ export class TestSummaryWorkspaceService {
         let linearitySummaryData,
           rataData,
           protocolGasData,
-          flowToLoadReferenceData,
-          appECorrelationTestSummaryData = null;
+          fuelFlowToLoadTestData,
+          appECorrelationTestSummaryData;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
@@ -170,10 +169,10 @@ export class TestSummaryWorkspaceService {
           linearitySummaryData = await this.linearityService.export(testSumIds);
           rataData = await this.rataService.export(testSumIds);
           protocolGasData = await this.protocolGasService.export(testSumIds);
-          flowToLoadReferenceData = await this.flowToLoadReferenceWorkspaceService.export(
+          appECorrelationTestSummaryData = await this.appECorrelationTestSummaryWorkspaceService.export(
             testSumIds,
           );
-          appECorrelationTestSummaryData = await this.appECorrelationTestSummaryWorkspaceService.export(
+          fuelFlowToLoadTestData = await this.fuelFlowToLoadTestWorkspaceService.export(
             testSumIds,
           );
           testSummaries.forEach(s => {
@@ -187,7 +186,7 @@ export class TestSummaryWorkspaceService {
             s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
               i => i.testSumId === s.id,
             );
-            s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
+            s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
               i => i.testSumId === s.id,
             );
           });
@@ -305,6 +304,29 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
+      payload.fuelFlowToLoadTestData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.FF2LTST
+    ) {
+      for (const fuelFlowToLoadTest of payload.fuelFlowToLoadTestData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.fuelFlowToLoadTestWorkspaceService.import(
+                createdTestSummary.id,
+                fuelFlowToLoadTest,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
       payload.appECorrelationTestSummaryData?.length > 0 &&
       payload.testTypeCode === TestTypeCodes.APPE
     ) {
@@ -314,6 +336,7 @@ export class TestSummaryWorkspaceService {
             const innerPromises = [];
             innerPromises.push(
               this.appECorrelationTestSummaryWorkspaceService.import(
+                locationId,
                 createdTestSummary.id,
                 appECorrelationTestSummary,
                 userId,

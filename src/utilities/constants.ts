@@ -1,20 +1,42 @@
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 
-export const VALID_CODES_FOR_MON_SYS_ID_VALIDATION = [TestTypeCodes.RATA];
+export const VALID_CODES_FOR_MON_SYS_ID_VALIDATION = [
+  TestTypeCodes.RATA,
+  TestTypeCodes.F2LREF,
+  TestTypeCodes.F2LCHK,
+  TestTypeCodes.APPE,
+  TestTypeCodes.FF2LBAS,
+  TestTypeCodes.FF2LTST,
+  // TODO:  Needs to Add Misc Test Type Codes Where Monitoring System ID is required.
+];
+
+export const YEAR_QUARTER_TEST_TYPE_CODES = [
+  TestTypeCodes.F2LCHK,
+  TestTypeCodes.FF2LTST,
+];
+
+export const GRACE_PERIOD_IND_TEST_TYPE_CODES = [
+  TestTypeCodes.LINE,
+  TestTypeCodes.HGLINE,
+  TestTypeCodes.HGSI3,
+  TestTypeCodes.RATA,
+  TestTypeCodes.LEAK,
+];
 
 export const BEGIN_DATE_TEST_TYPE_CODES = [
-  TestTypeCodes.APPE,
-  TestTypeCodes.RATA,
-  TestTypeCodes.LINE,
-  TestTypeCodes.CYCLE,
-  TestTypeCodes.ONOFF,
-  TestTypeCodes.FF2LBAS,
-  TestTypeCodes.UNITDEF,
-  TestTypeCodes.SEVENDAY,
+  TestTypeCodes.UNITDEF.toString(),
+  TestTypeCodes.FF2LBAS.toString(),
+  TestTypeCodes.APPE.toString(),
+  TestTypeCodes.ONOFF.toString(),
+  TestTypeCodes.RATA.toString(),
+  TestTypeCodes.HGSI3.toString(),
+  TestTypeCodes.HGLINE.toString(),
+  TestTypeCodes.LINE.toString(),
+  TestTypeCodes.CYCLE.toString(),
+  TestTypeCodes.SEVENDAY.toString(),
 ];
 
 export const VALID_CODES_FOR_COMPONENT_ID_VALIDATION = [
-  TestTypeCodes.TSCAL,
   TestTypeCodes.FFACCTT,
   TestTypeCodes.FFACC,
   TestTypeCodes.ONOFF,
@@ -23,6 +45,7 @@ export const VALID_CODES_FOR_COMPONENT_ID_VALIDATION = [
   TestTypeCodes.LINE,
   TestTypeCodes.CYCLE,
   TestTypeCodes.SEVENDAY,
+  // TODO:  Needs to Add Misc Test Type Codes Where Component ID is required.
 ];
 
 export const VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION = [
@@ -44,6 +67,7 @@ export const VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION = [
   TestTypeCodes.ONOFF,
   TestTypeCodes.F2LCHK,
   TestTypeCodes.RATA,
+  TestTypeCodes.HGSI3,
   TestTypeCodes.HGLINE,
   TestTypeCodes.LINE,
   TestTypeCodes.CYCLE,
@@ -59,7 +83,7 @@ export const VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION = [
   TestTypeCodes.ONOFF.toString(),
 ];
 
-export const VALID_CODES_FOR_END_HOUR_VALIDATION = [
+export const VALID_CODES_FOR_END_DATE_VALIDATION = [
   TestTypeCodes.SEVENDAY,
   TestTypeCodes.CYCLE,
   TestTypeCodes.LINE,
@@ -86,27 +110,27 @@ export const VALID_CODES_FOR_END_HOUR_VALIDATION = [
 ];
 
 export const VALID_CODES_FOR_END_MINUTE_VALIDATION = [
-  TestTypeCodes.SEVENDAY,
-  TestTypeCodes.CYCLE,
-  TestTypeCodes.LINE,
-  TestTypeCodes.HGLINE,
-  TestTypeCodes.HGSI3,
-  TestTypeCodes.RATA,
-  TestTypeCodes.F2LREF,
-  TestTypeCodes.APPE,
-  TestTypeCodes.FFACC,
-  TestTypeCodes.FFACCTT,
-  TestTypeCodes.UNITDEF,
-  TestTypeCodes.DAHS,
-  TestTypeCodes.DGFMCAL,
-  TestTypeCodes.MFMCAL,
-  TestTypeCodes.TSCAL,
-  TestTypeCodes.BCAL,
-  TestTypeCodes.QGA,
-  TestTypeCodes.LEAK,
-  TestTypeCodes.OTHER,
-  TestTypeCodes.PEI,
-  TestTypeCodes.PEMSACC,
+  TestTypeCodes.SEVENDAY.toString(),
+  TestTypeCodes.CYCLE.toString(),
+  TestTypeCodes.LINE.toString(),
+  TestTypeCodes.HGLINE.toString(),
+  TestTypeCodes.HGSI3.toString(),
+  TestTypeCodes.RATA.toString(),
+  TestTypeCodes.F2LREF.toString(),
+  TestTypeCodes.APPE.toString(),
+  TestTypeCodes.FFACC.toString(),
+  TestTypeCodes.FFACCTT.toString(),
+  TestTypeCodes.UNITDEF.toString(),
+  TestTypeCodes.DAHS.toString(),
+  TestTypeCodes.DGFMCAL.toString(),
+  TestTypeCodes.MFMCAL.toString(),
+  TestTypeCodes.TSCAL.toString(),
+  TestTypeCodes.BCAL.toString(),
+  TestTypeCodes.QGA.toString(),
+  TestTypeCodes.LEAK.toString(),
+  TestTypeCodes.OTHER.toString(),
+  TestTypeCodes.PEI.toString(),
+  TestTypeCodes.PEMSACC.toString(),
 ];
 
 export const VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE = [

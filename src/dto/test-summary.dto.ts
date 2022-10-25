@@ -3,6 +3,7 @@ import {
   ValidationArguments,
   IsNotEmpty,
   IsOptional,
+  ValidateNested,
 } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
@@ -79,7 +80,6 @@ import {
   AppECorrelationTestSummaryDTO,
   AppECorrelationTestSummaryImportDTO,
 } from './app-e-correlation-test-summary.dto';
-import { FlowRataRunDTO, FlowRataRunImportDTO } from './flow-rata-run.dto';
 
 import { RequireOne } from '../pipes/require-one.pipe';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
@@ -92,14 +92,18 @@ import { InjectionProtocolCode } from '../entities/injection-protocol-code.entit
 import {
   BEGIN_DATE_TEST_TYPE_CODES,
   VALID_CODES_FOR_COMPONENT_ID_VALIDATION,
-  VALID_CODES_FOR_END_HOUR_VALIDATION,
   VALID_CODES_FOR_END_MINUTE_VALIDATION,
   VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION,
   VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION,
   VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE,
   VALID_CODES_FOR_MON_SYS_ID_VALIDATION,
+  YEAR_QUARTER_TEST_TYPE_CODES,
+  GRACE_PERIOD_IND_TEST_TYPE_CODES,
+  VALID_CODES_FOR_END_DATE_VALIDATION,
 } from '../utilities/constants';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { Type } from 'class-transformer';
 
 const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -233,6 +237,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Test Description. ADD TO PROPERTY METADATA',
   })
+  @ValidateIf(o => [TestTypeCodes.OTHER].includes(o.testTypeCode))
   testDescription?: string;
 
   @ApiProperty({
@@ -304,7 +309,6 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.endDate.description,
   })
-  @IsOptional()
   @IsValidDate({
     message: ErrorMessages.DateValidity(),
   })
@@ -312,9 +316,14 @@ export class TestSummaryBaseDTO {
     message: ErrorMessages.SingleFormat('endDate', 'YYYY-MM-DD format'),
   })
   @IsInDateRange(MIN_DATE, new Date(Date.now()).toISOString(), {
-    message: (args: ValidationArguments) =>
-      `You reported an invalid EndDate in the Test Summary record for Location [${args.object['locationId']}], TestTypeCode [${args.object['testTypeCode']}] and TestNumber [${args.object['testNumber']}].`,
+    message: (args: ValidationArguments) => {
+      args.object['locationId'] = args.object['unitId']
+        ? args.object['unitId']
+        : args.object['stackPipeId'];
+      return `You reported an invalid EndDate in the Test Summary record for Location [${args.object['locationId']}], TestTypeCode [${args.object['testTypeCode']}] and TestNumber [${args.object['testNumber']}].`;
+    },
   })
+  @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
   endDate?: Date;
 
   @ApiProperty({
@@ -327,7 +336,7 @@ export class TestSummaryBaseDTO {
   @IsNotEmpty({
     message: `You did not provide [endHour], which is required for [${KEY}].`,
   })
-  @ValidateIf(o => VALID_CODES_FOR_END_HOUR_VALIDATION.includes(o.testTypeCode))
+  @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
   endHour?: number;
 
   @ApiProperty({
@@ -358,6 +367,7 @@ export class TestSummaryBaseDTO {
       }]`;
     },
   })
+  @ValidateIf(o => GRACE_PERIOD_IND_TEST_TYPE_CODES.includes(o.testTypeCode))
   gracePeriodIndicator?: number;
 
   @ApiProperty({
@@ -365,6 +375,7 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(1993, new Date().getFullYear(), {
     message: (args: ValidationArguments) => {
+      console.log(args);
       return `Year must be greater than or equal to 1993 and less than or equal to ${new Date().getFullYear()}. You reported an invalid year of [${
         args.value
       }] in Test Summary record for Unit/Stack [${
@@ -376,6 +387,7 @@ export class TestSummaryBaseDTO {
       }]`;
     },
   })
+  @ValidateIf(o => YEAR_QUARTER_TEST_TYPE_CODES.includes(o.testTypeCode))
   year?: number;
 
   @ApiProperty({
@@ -383,6 +395,7 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(1, 4, {
     message: (args: ValidationArguments) => {
+      console.log(args);
       return `Quarter must be a numeric number from 1 to 4. You reported an invalid quarter of [${
         args.value
       }] in Test Summary record for Unit/Stack [${
@@ -394,11 +407,13 @@ export class TestSummaryBaseDTO {
       }]`;
     },
   })
+  @ValidateIf(o => YEAR_QUARTER_TEST_TYPE_CODES.includes(o.testTypeCode))
   quarter?: number;
 
   @ApiProperty({
     description: 'Test Comment. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   testComment?: string;
 
   @ApiProperty({
@@ -417,6 +432,9 @@ export class TestSummaryBaseDTO {
       }]`;
     },
   })
+  @ValidateIf(o =>
+    [TestTypeCodes.SEVENDAY, TestTypeCodes.CYCLE].includes(o.testTypeCode),
+  )
   injectionProtocolCode?: string;
 }
 
@@ -434,43 +452,141 @@ export class TestSummaryRecordDTO extends TestSummaryBaseDTO {
 }
 
 export class TestSummaryImportDTO extends TestSummaryBaseDTO {
+  @ValidateNested({ each: true })
+  @Type(() => CalibrationInjectionImportDTO)
   calibrationInjectionData: CalibrationInjectionImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => LinearitySummaryImportDTO)
   linearitySummaryData: LinearitySummaryImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => RataImportDTO)
   rataData: RataImportDTO[];
-  flowRataRunData: FlowRataRunImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => FlowToLoadReferenceImportDTO)
   flowToLoadReferenceData: FlowToLoadReferenceImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => FlowToLoadCheckImportDTO)
   flowToLoadCheckData: FlowToLoadCheckImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => CycleTimeSummaryImportDTO)
   cycleTimeSummaryData: CycleTimeSummaryImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => OnlineOfflineCalibrationImportDTO)
   onlineOfflineCalibrationData: OnlineOfflineCalibrationImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => FuelFlowmeterAccuracyImportDTO)
   fuelFlowmeterAccuracyData: FuelFlowmeterAccuracyImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => TransmitterTransducerImportDTO)
   transmitterTransducerData: TransmitterTransducerImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => FuelFlowToLoadTestImportDTO)
   fuelFlowToLoadBaselineData: FuelFlowToLoadBaselineImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => FuelFlowToLoadTestImportDTO)
   fuelFlowToLoadTestData: FuelFlowToLoadTestImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => AppECorrelationTestSummaryImportDTO)
   appECorrelationTestSummaryData: AppECorrelationTestSummaryImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => UnitDefaultTestImportDTO)
   unitDefaultTestData: UnitDefaultTestImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => HgSummaryImportDTO)
   hgSummaryData: HgSummaryImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => TestQualificationImportDTO)
   testQualificationData: TestQualificationImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => ProtocolGasImportDTO)
   protocolGasData: ProtocolGasImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => AirEmissionTestingImportDTO)
   airEmissionTestingData: AirEmissionTestingImportDTO[];
 }
 
 export class TestSummaryDTO extends TestSummaryRecordDTO {
+  @ValidateNested({ each: true })
+  @Type(() => CalibrationInjectionDTO)
   calibrationInjectionData: CalibrationInjectionDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => LinearitySummaryDTO)
   linearitySummaryData: LinearitySummaryDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => RataDTO)
   rataData: RataDTO[];
-  flowRataRunData: FlowRataRunDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => FlowToLoadReferenceDTO)
   flowToLoadReferenceData: FlowToLoadReferenceDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => FlowToLoadCheckDTO)
   flowToLoadCheckData: FlowToLoadCheckDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => CycleTimeSummaryDTO)
   cycleTimeSummaryData: CycleTimeSummaryDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => OnlineOfflineCalibrationDTO)
   onlineOfflineCalibrationData: OnlineOfflineCalibrationDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => FuelFlowmeterAccuracyDTO)
   fuelFlowmeterAccuracyData: FuelFlowmeterAccuracyDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => TransmitterTransducerDTO)
   transmitterTransducerData: TransmitterTransducerDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => FuelFlowToLoadBaselineDTO)
   fuelFlowToLoadBaselineData: FuelFlowToLoadBaselineDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => FuelFlowToLoadTestDTO)
   fuelFlowToLoadTestData: FuelFlowToLoadTestDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => AppECorrelationTestSummaryDTO)
   appECorrelationTestSummaryData: AppECorrelationTestSummaryDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => UnitDefaultTestDTO)
   unitDefaultTestData: UnitDefaultTestDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => HgSummaryDTO)
   hgSummaryData: HgSummaryDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => TestQualificationDTO)
   testQualificationData: TestQualificationDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => ProtocolGasDTO)
   protocolGasData: ProtocolGasDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => AirEmissionTestingDTO)
   airEmissionTestingData: AirEmissionTestingDTO[];
 }

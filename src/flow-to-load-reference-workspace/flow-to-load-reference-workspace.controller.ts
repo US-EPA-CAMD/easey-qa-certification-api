@@ -6,6 +6,7 @@ import {
   UseGuards,
   Get,
   Put,
+  Delete,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -99,5 +100,20 @@ export class FlowToLoadReferenceWorkspaceController {
       payload,
       user.userId,
     );
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Deletes a Flow To Load Reference record from the workspace',
+  })
+  async deleteFlowToLoadReference(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteFlowToLoadReference(testSumId, id, user.userId);
   }
 }

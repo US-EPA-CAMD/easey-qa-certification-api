@@ -114,7 +114,7 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
   });
 
   describe('updateFuelFlowToLoadBaseline', () => {
-    it('Should update and return a new Fuel Flow To Load Baseline record', async () => {
+    it('Should update and return the Fuel Flow To Load Baseline record', async () => {
       const result = await service.updateFuelFlowToLoadBaseline(
         testSumId,
         id,

@@ -24,6 +24,8 @@ import { FuelFlowToLoadTest } from './fuel-flow-to-load-test.entity';
 import { FlowToLoadCheck } from './flow-to-load-check.entity';
 import { FlowToLoadReference } from './flow-to-load-reference.entity';
 import { FuelFlowToLoadBaseline } from './fuel-flow-to-load-baseline.entity';
+import { CalibrationInjection } from './calibration-injection.entity';
+import { OnlineOfflineCalibration } from './online-offline-calibration.entity';
 
 @Entity({ name: 'camdecmpswks.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -258,6 +260,13 @@ export class TestSummary extends BaseEntity {
   appECorrelationTestSummaries: AppECorrelationTestSummary[];
 
   @OneToMany(
+    () => CalibrationInjection,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  calibrationInjections: CalibrationInjection[];
+
+  @OneToMany(
     () => FuelFlowToLoadBaseline,
     fftlb => fftlb.testSummary,
   )
@@ -277,4 +286,11 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   flowToLoadReference: FlowToLoadReference[];
+
+  @OneToMany(
+    () => OnlineOfflineCalibration,
+    onOffCal => onOffCal.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  onlineOfflineCalibrations: OnlineOfflineCalibration[];
 }

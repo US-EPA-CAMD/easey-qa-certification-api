@@ -105,6 +105,32 @@ export class FlowToLoadReferenceWorkspaceService {
     return this.getFlowToLoadReference(id);
   }
 
+  async deleteFlowToLoadReference(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete({
+        id,
+        testSumId,
+      });
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting Flow To Load Reference record Id [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
+      );
+    }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+  }
+
   async getFlowToLoadReferenceBySumIds(
     testSumIds: string[],
   ): Promise<FlowToLoadReferenceDTO[]> {

@@ -24,7 +24,7 @@ export class AppEHeatInputFromGasController {
     description:
       'Retrieves a workspace Appendix E Heat Input From Gas records by Appendix E Correlation Test Run Id',
   })
-  async getAppECorrelationTestRuns(
+  async getAppEHeatInputFromGases(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('appECorrTestSumId') _appECorrTestSumId: string,
@@ -39,7 +39,7 @@ export class AppEHeatInputFromGasController {
     type: AppEHeatInputFromGasRecordDTO,
     description: `Retrieves a workspace Appendix E Heat Input From Gas record by it's Id`,
   })
-  async getAppECorrelationTestRun(
+  async getAppEHeatInputFromGas(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('appECorrTestSumId') _appECorrTestSumId: string,

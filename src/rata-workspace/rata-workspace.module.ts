@@ -10,6 +10,7 @@ import { RataSummaryWorkspaceModule } from '../rata-summary-workspace/rata-summa
 import { RataChecksService } from './rata-checks.service';
 import { RataFrequencyCodeModule } from '../rata-frequency-code/rata-frequency-code.module';
 import { RataModule } from '../rata/rata.module';
+import { TestResultCodeModule } from '../test-result-code/test-result-code.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { RataModule } from '../rata/rata.module';
     forwardRef(() => RataSummaryWorkspaceModule),
     forwardRef(() => RataModule),
     RataFrequencyCodeModule,
+    TestResultCodeModule,
     HttpModule,
   ],
   controllers: [RataWorkspaceController],

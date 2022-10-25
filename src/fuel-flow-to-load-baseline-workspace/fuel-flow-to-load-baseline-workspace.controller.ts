@@ -107,7 +107,8 @@ export class FuelFlowToLoadBaselineWorkspaceController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('Token')
   @ApiOkResponse({
-    description: 'Deletes a Linearity Summary record from the workspace',
+    description:
+      'Deletes a Fuel Flow To Load Baseline record from the workspace',
   })
   async deleteFuelFlowToLoadBaseline(
     @Param('locId') _locationId: string,

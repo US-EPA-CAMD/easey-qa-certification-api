@@ -3,10 +3,16 @@ import { ApsCode } from '../entities/workspace/aps-code.entity';
 import { ReferenceMethodCode } from '../entities/workspace/reference-method-code.entity';
 import { OperatingLevelCode } from '../entities/workspace/operating-level-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
-import { IsNotEmpty, Min, ValidationArguments } from 'class-validator';
+import {
+  IsNotEmpty,
+  Min,
+  ValidateNested,
+  ValidationArguments,
+} from 'class-validator';
 import { RataRunDTO, RataRunImportDTO } from './rata-run.dto';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { Type } from 'class-transformer';
 
 const KEY = 'RATA Summary';
 
@@ -223,8 +229,12 @@ export class RataSummaryRecordDTO extends RataSummaryBaseDTO {
 }
 
 export class RataSummaryImportDTO extends RataSummaryBaseDTO {
+  @ValidateNested({ each: true })
+  @Type(() => RataRunImportDTO)
   rataRunData: RataRunImportDTO[];
 }
 export class RataSummaryDTO extends RataSummaryRecordDTO {
+  @ValidateNested({ each: true })
+  @Type(() => RataRunDTO)
   rataRunData: RataRunDTO[];
 }

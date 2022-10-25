@@ -8,6 +8,7 @@ import {
 import { FlowToLoadCheckWorkspaceRepository } from './flow-to-load-check-workspace.repository';
 import { FlowToLoadCheckWorkspaceService } from './flow-to-load-check-workspace.service';
 import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
+import { InternalServerErrorException } from '@nestjs/common';
 
 const testSumId = '';
 const userId = 'user';
@@ -107,6 +108,67 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
       );
       expect(result).toEqual(flowToLoadCheck);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+  });
+
+  describe('editFlowToLoadCheck', () => {
+    it('should update an Flow To Load Check record', async () => {
+      const result = await service.editFlowToLoadCheck(
+        testSumId,
+        flowToLoadCheckId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(flowToLoadCheck);
+    });
+
+    it('should throw error with invalid Flow To Load Check', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.editFlowToLoadCheck(
+          testSumId,
+          flowToLoadCheckId,
+          payload,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteFlowToLoadCheck', () => {
+    it('Should delete a Flow To Load Check record', async () => {
+      const result = await service.deleteFlowToLoadCheck(
+        testSumId,
+        flowToLoadCheckId,
+        userId,
+      );
+
+      expect(result).toEqual(undefined);
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should throw error when database throws an error while deleting a Flow To Load Check record', async () => {
+      jest
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+      let errored = false;
+
+      try {
+        await service.deleteFlowToLoadCheck(
+          testSumId,
+          flowToLoadCheckId,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
     });
   });
 });

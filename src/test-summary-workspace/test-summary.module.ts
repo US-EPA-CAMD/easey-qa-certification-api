@@ -26,6 +26,9 @@ import { AppECorrelationTestSummaryWorkspaceModule } from '../app-e-correlation-
 import { FuelFlowToLoadTestWorkspaceModule } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.module';
 import { FlowToLoadCheckWorkspaceModule } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.module';
 import { FlowToLoadReferenceWorkspaceModule } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.module';
+import { CalibrationInjectionWorkspaceModule } from '../calibration-injection-workspace/calibration-injection-workspace.module';
+import { AppEHeatInputFromGasWorkspaceModule } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
+import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.module';
 
 @Module({
   imports: [
@@ -49,6 +52,9 @@ import { FlowToLoadReferenceWorkspaceModule } from '../flow-to-load-reference-wo
     forwardRef(() => FuelFlowToLoadTestWorkspaceModule),
     forwardRef(() => FlowToLoadCheckWorkspaceModule),
     forwardRef(() => AirEmissionTestingWorkspaceModule),
+    forwardRef(() => AppEHeatInputFromGasWorkspaceModule),
+    forwardRef(() => AppEHeatInputFromOilWorkspaceModule),
+    forwardRef(() => CalibrationInjectionWorkspaceModule),
     TestResultCodeModule,
     HttpModule,
   ],

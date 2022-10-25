@@ -9,12 +9,14 @@ import { HttpModule } from '@nestjs/axios';
 import { AppECorrelationTestSummaryWorkspaceModule } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.module';
 import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.module';
 import { AppEHeatInputFromGasWorkspaceModule } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
+import { AppECorrelationTestRunModule } from '../app-e-correlation-test-run/app-e-correlation-test-run.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AppECorrelationTestRunWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => AppECorrelationTestSummaryWorkspaceModule),
+    forwardRef(() => AppECorrelationTestRunModule),
     AppEHeatInputFromOilWorkspaceModule,
     AppEHeatInputFromGasWorkspaceModule,
     HttpModule,

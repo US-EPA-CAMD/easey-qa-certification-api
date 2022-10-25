@@ -1,24 +1,21 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import {
-  RataSummaryBaseDTO,
-  RataSummaryImportDTO,
-} from '../dto/rata-summary.dto';
+import { RataSummaryImportDTO } from '../dto/rata-summary.dto';
 
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { FlowRataRunChecksService } from './flow-rata-run-checks.service';
 import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.repository';
 import { RataFrequencyCode } from '../entities/workspace/rata-frequency-code.entity';
 import { FlowRataRunImportDTO } from '../dto/flow-rata-run.dto';
-import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { RataSummaryWorkspaceRepository } from '../rata-summary-workspace/rata-summary-workspace.repository';
 import { RataRunWorkspaceRepository } from '../rata-run-workspace/rata-run-workspace.repository';
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
 import { RataSummaryRepository } from '../rata-summary/rata-summary.repository';
 import { RataRun } from '../entities/workspace/rata-run.entity';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -33,11 +30,14 @@ let rataSumRecord = {
     systemTypeCode: 'FLOW',
   },
 };
-const rataFreqCdRecord = new RataFrequencyCode();
 
 const importPayload = new FlowRataRunImportDTO();
 importPayload.averageVelocityWithWallEffects = 1;
 const rataSummaryImportPayload = new RataSummaryImportDTO();
+
+const mockTestSumRepository = () => ({
+  getTestSummaryById: jest.fn().mockResolvedValue(new TestSummary()),
+});
 
 const mockRataSummaryRepository = () => ({
   findOne: jest.fn().mockResolvedValue(rataSumRecord),
@@ -53,7 +53,7 @@ const mockRataRunWorkspaceRepository = () => ({
 });
 const mockFlowRataRunWorkspaceRepository = () => ({
   findOne: jest.fn().mockResolvedValue(flowRataRunId),
-})
+});
 
 describe('Flow Rata Run Check Service Test', () => {
   let service: FlowRataRunChecksService;
@@ -66,6 +66,10 @@ describe('Flow Rata Run Check Service Test', () => {
       imports: [LoggerModule, LoggingException],
       providers: [
         FlowRataRunChecksService,
+        {
+          provide: TestSummaryWorkspaceRepository,
+          useFactory: mockTestSumRepository,
+        },
         {
           provide: MonitorSystemRepository,
           useFactory: mockMonitorSystemRepository,
@@ -85,7 +89,7 @@ describe('Flow Rata Run Check Service Test', () => {
         {
           provide: FlowRataRunWorkspaceRepository,
           useFactory: mockFlowRataRunWorkspaceRepository,
-        }
+        },
       ],
     }).compile();
 
@@ -102,7 +106,7 @@ describe('Flow Rata Run Check Service Test', () => {
       importPayload.averageVelocityWithWallEffects = 1;
 
       let rataSumRec = new RataSummary();
-      rataSumRec.referenceMethodCode = "2F";
+      rataSumRec.referenceMethodCode = '2F';
 
       jest
         .spyOn(rataSummaryRepository, 'findOne')
@@ -117,9 +121,7 @@ describe('Flow Rata Run Check Service Test', () => {
     it('Should get [RATA-114-B] error', async () => {
       importPayload.averageVelocityWithWallEffects = -1;
 
-      jest
-        .spyOn(repository, 'findOne')
-        .mockResolvedValue(null);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       try {
         await service.runChecks(importPayload, false, false, rataSumId);
@@ -131,7 +133,7 @@ describe('Flow Rata Run Check Service Test', () => {
       importPayload.calculatedWAF = 1;
 
       let rataSumRec = new RataSummary();
-      rataSumRec.referenceMethodCode = "M2H";
+      rataSumRec.referenceMethodCode = 'M2H';
 
       jest
         .spyOn(rataSummaryRepository, 'findOne')
@@ -149,14 +151,21 @@ describe('Flow Rata Run Check Service Test', () => {
       importPayload.averageVelocityWithWallEffects = null;
 
       let rataSumRec = new RataSummary();
-      rataSumRec.referenceMethodCode = "A";
+      rataSumRec.referenceMethodCode = 'A';
 
       jest
         .spyOn(rataSummaryRepository, 'findOne')
         .mockResolvedValue(rataSumRec);
 
       try {
-        await service.runChecks(importPayload, false, false, rataSumId, rataSummaryImportPayload, rataRunId);
+        await service.runChecks(
+          importPayload,
+          false,
+          false,
+          rataSumId,
+          rataSummaryImportPayload,
+          rataRunId,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -165,14 +174,19 @@ describe('Flow Rata Run Check Service Test', () => {
       importPayload.averageVelocityWithWallEffects = null;
 
       let testSumRec = new RataRun();
-      testSumRec.runStatusCode = "NOTUSED";
+      testSumRec.runStatusCode = 'NOTUSED';
 
-      jest
-        .spyOn(rataRunRepository, 'findOne')
-        .mockResolvedValue(testSumRec);
+      jest.spyOn(rataRunRepository, 'findOne').mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(importPayload, false, false, rataSumId, rataSummaryImportPayload, rataRunId);
+        await service.runChecks(
+          importPayload,
+          false,
+          false,
+          rataSumId,
+          rataSummaryImportPayload,
+          rataRunId,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }

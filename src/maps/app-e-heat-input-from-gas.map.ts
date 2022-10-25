@@ -14,7 +14,7 @@ export class AppEHeatInputFromGasMap extends BaseMap<
     return {
       id: entity.id,
       appECorrTestRunId: entity.appECorrTestRunId,
-      monitoringSystemID: entity.monitoringSystemID,
+      monitoringSystemID: entity.system.monitoringSystemID,
       gasGCV: entity.gasGCV,
       gasVolume: entity.gasVolume,
       gasHeatInput: entity.gasHeatInput,

@@ -2,6 +2,9 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { FuelFlowToLoadTestDTO } from '../dto/fuel-flow-to-load-test.dto';
 import { FuelFlowToLoadTestController } from './fuel-flow-to-load-test.controller';
 import { FuelFlowToLoadTestService } from './fuel-flow-to-load-test.service';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ConfigService } from '@nestjs/config';
+import { HttpModule } from '@nestjs/axios';
 
 const locId = 'locationId';
 const testSumId = 'testSummaryId';
@@ -19,8 +22,11 @@ describe('FuelFlowToLoadTestController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [HttpModule],
       controllers: [FuelFlowToLoadTestController],
       providers: [
+        ConfigService,
+        AuthGuard,
         {
           provide: FuelFlowToLoadTestService,
           useFactory: mockFuelFlowToLoadTestService,
@@ -34,15 +40,10 @@ describe('FuelFlowToLoadTestController', () => {
     service = module.get<FuelFlowToLoadTestService>(FuelFlowToLoadTestService);
   });
 
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
-
   describe('getFuelFlowToLoadTests', () => {
     it('Calls the repository to get all Fuel Flow To Load Test records by Test Summary Id', async () => {
       const result = await controller.getFuelFlowToLoadTests(locId, testSumId);
-      expect(result).toEqual(fuelFlowLoadToTestDTO);
-      expect(service.getFuelFlowToLoadTest).toHaveBeenCalled();
+      expect(result).toEqual([fuelFlowLoadToTestDTO]);
     });
   });
 
@@ -54,7 +55,6 @@ describe('FuelFlowToLoadTestController', () => {
         fuelFlowToLoadTestId,
       );
       expect(result).toEqual(fuelFlowLoadToTestDTO);
-      expect(service.getFuelFlowToLoadTest).toHaveBeenCalled();
     });
   });
 });
