@@ -23,6 +23,10 @@ import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-mas
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
 import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
+import {
+  BEGIN_DATE_TEST_TYPE_CODES,
+  VALID_CODES_FOR_END_MINUTE_VALIDATION,
+} from '../utilities/constants';
 
 const KEY = 'Test Summary';
 
@@ -118,15 +122,19 @@ export class TestSummaryChecksService {
     }
 
     // TEST-3 Test Begin Minute Valid
-    error = await this.testMinuteField(summary, locationId, 'beginMinute');
-    if (error) {
-      errorList.push(error);
+    if (BEGIN_DATE_TEST_TYPE_CODES.includes(summary.testTypeCode)) {
+      error = await this.testMinuteField(summary, locationId, 'beginMinute');
+      if (error) {
+        errorList.push(error);
+      }
     }
 
-    // TEST-6 Test End Minute Valid
-    error = await this.testMinuteField(summary, locationId, 'endMinute');
-    if (error) {
-      errorList.push(error);
+    if (VALID_CODES_FOR_END_MINUTE_VALIDATION.includes(summary.testTypeCode)) {
+      // TEST-6 Test End Minute Valid
+      error = await this.testMinuteField(summary, locationId, 'endMinute');
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     // TEST-7 Test Dates Consistent
@@ -798,7 +806,7 @@ export class TestSummaryChecksService {
         TestTypeCodes.LINE,
         TestTypeCodes.RATA,
         TestTypeCodes.CYCLE,
-        TestTypeCodes.F2LREF,
+        TestTypeCodes.FF2LTST,
         TestTypeCodes.APPE,
         TestTypeCodes.UNITDEF,
       ];

@@ -110,6 +110,11 @@ export class FlowToLoadCheckWorkspaceController {
     @Param('id') id: string,
     @User() user: CurrentUser,
   ): Promise<void> {
-    return this.service.deleteFlowToLoadCheck(testSumId, id, user.userId, false);
+    return this.service.deleteFlowToLoadCheck(
+      testSumId,
+      id,
+      user.userId,
+      false,
+    );
   }
 }
