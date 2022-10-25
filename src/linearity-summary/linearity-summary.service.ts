@@ -3,8 +3,6 @@ import { In } from 'typeorm';
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Logger } from '@us-epa-camd/easey-common/logger';
-
 import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryRepository } from './linearity-summary.repository';
@@ -14,7 +12,6 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 @Injectable()
 export class LinearitySummaryService {
   constructor(
-    private readonly logger: Logger,
     private readonly map: LinearitySummaryMap,
     private readonly injectionService: LinearityInjectionService,
     @InjectRepository(LinearitySummaryRepository)
