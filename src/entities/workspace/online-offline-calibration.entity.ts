@@ -52,9 +52,9 @@ export class OnlineOfflineCalibration extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'calc_online_zero_cal_error',
+    name: 'online_zero_aps_ind',
   })
-  calculatedOnlineZeroCalibrationError: number;
+  onlineZeroAPSIndicator: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
@@ -76,9 +76,9 @@ export class OnlineOfflineCalibration extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'calc_online_upscale_cal_error',
+    name: 'online_upscale_aps_ind',
   })
-  calculatedOnlineUpscaleCalibrationError: number;
+  onlineUpscaleAPSIndicator: number;
 
   @Column({
     type: 'date',
@@ -124,9 +124,9 @@ export class OnlineOfflineCalibration extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'calc_offline_zero_cal_error',
+    name: 'offline_zero_aps_ind',
   })
-  calculatedOfflineZeroCalibrationError: number;
+  offlineZeroAPSIndicator: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
@@ -148,9 +148,9 @@ export class OnlineOfflineCalibration extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
-    name: 'calc_offline_upscale_cal_error',
+    name: 'offline_upscale_aps_ind',
   })
-  calculatedOfflineUpscaleCalibrationError: number;
+  offlineUpscaleAPSIndicator: number;
 
   @Column({
     type: 'date',
