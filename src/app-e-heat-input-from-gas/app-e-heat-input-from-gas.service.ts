@@ -1,7 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
 import {
   AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasRecordDTO,
@@ -45,9 +44,9 @@ export class AppEHeatInputFromGasService {
   async getAppEHeatInputFromGasByTestRunIds(
     testSumIds: string[],
   ): Promise<AppEHeatInputFromGasDTO[]> {
-    const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
-    });
+    const results = await this.repository.getAppEHeatInputFromGasesByTestRunIds(
+      testSumIds,
+    );
     return this.map.many(results);
   }
 

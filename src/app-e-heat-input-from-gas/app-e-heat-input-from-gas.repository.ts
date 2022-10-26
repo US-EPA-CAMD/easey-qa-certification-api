@@ -26,4 +26,16 @@ export class AppEHeatInputFromGasRepository extends Repository<
 
     return query.getMany();
   }
+
+  async getAppEHeatInputFromGasesByTestRunIds(
+    appECorrTestRunIds: string[],
+  ): Promise<AppEHeatInputFromGas[]> {
+    const query = this.createQueryBuilder('aehig')
+      .leftJoinAndSelect('aehig.system', 'ms')
+      .where('aehig.appECorrTestRunId IN (:...appECorrTestRunIds)', {
+        appECorrTestRunIds,
+      });
+
+    return query.getMany();
+  }
 }
