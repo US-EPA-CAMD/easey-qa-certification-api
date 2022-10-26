@@ -55,7 +55,5 @@ export class RataImportDTO extends RataBaseDTO {
 }
 
 export class RataDTO extends RataRecordDTO {
-  @ValidateNested({ each: true })
-  @Type(() => RataSummaryDTO)
   rataSummaryData: RataSummaryDTO[];
 }

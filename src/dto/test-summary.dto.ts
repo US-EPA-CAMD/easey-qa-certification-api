@@ -522,71 +522,21 @@ export class TestSummaryImportDTO extends TestSummaryBaseDTO {
 }
 
 export class TestSummaryDTO extends TestSummaryRecordDTO {
-  @ValidateNested({ each: true })
-  @Type(() => CalibrationInjectionDTO)
   calibrationInjectionData: CalibrationInjectionDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => LinearitySummaryDTO)
   linearitySummaryData: LinearitySummaryDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => RataDTO)
   rataData: RataDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => FlowToLoadReferenceDTO)
   flowToLoadReferenceData: FlowToLoadReferenceDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => FlowToLoadCheckDTO)
   flowToLoadCheckData: FlowToLoadCheckDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => CycleTimeSummaryDTO)
   cycleTimeSummaryData: CycleTimeSummaryDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => OnlineOfflineCalibrationDTO)
   onlineOfflineCalibrationData: OnlineOfflineCalibrationDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => FuelFlowmeterAccuracyDTO)
   fuelFlowmeterAccuracyData: FuelFlowmeterAccuracyDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => TransmitterTransducerDTO)
   transmitterTransducerData: TransmitterTransducerDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => FuelFlowToLoadBaselineDTO)
   fuelFlowToLoadBaselineData: FuelFlowToLoadBaselineDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => FuelFlowToLoadTestDTO)
   fuelFlowToLoadTestData: FuelFlowToLoadTestDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => AppECorrelationTestSummaryDTO)
   appECorrelationTestSummaryData: AppECorrelationTestSummaryDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => UnitDefaultTestDTO)
   unitDefaultTestData: UnitDefaultTestDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => HgSummaryDTO)
   hgSummaryData: HgSummaryDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => TestQualificationDTO)
   testQualificationData: TestQualificationDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => ProtocolGasDTO)
   protocolGasData: ProtocolGasDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => AirEmissionTestingDTO)
   airEmissionTestingData: AirEmissionTestingDTO[];
 }
