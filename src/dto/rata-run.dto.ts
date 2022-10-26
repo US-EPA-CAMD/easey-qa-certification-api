@@ -45,6 +45,24 @@ export class RataRunBaseDTO {
   endDate: Date;
   endHour: number;
   endMinute: number;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-27-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsNotNegative({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-27-B', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @ValidateIf(o => o.runStatusCode === 'RUNUSED')
   cemValue: number;
 
   @IsNotEmpty({
@@ -97,7 +115,5 @@ export class RataRunImportDTO extends RataRunBaseDTO {
 }
 
 export class RataRunDTO extends RataRunRecordDTO {
-  @ValidateNested({ each: true })
-  @Type(() => FlowRataRunDTO)
   flowRataRunData: FlowRataRunDTO[];
 }
