@@ -146,6 +146,9 @@ export class TestSummaryService {
           fuelFlowToLoadTestData = await this.fuelFlowToLoadTestService.export(
             testSumIds,
           );
+          appECorrelationTestSummaryData = await this.appECorrelationTestSummaryService.export(
+            testSumIds,
+          );
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -155,6 +158,9 @@ export class TestSummaryService {
               i => i.testSumId === s.id,
             );
             s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
               i => i.testSumId === s.id,
             );
           });
