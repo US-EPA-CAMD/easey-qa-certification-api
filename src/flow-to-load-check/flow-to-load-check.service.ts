@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, forwardRef, Inject } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
@@ -7,7 +7,6 @@ import {
   FlowToLoadCheckDTO,
   FlowToLoadCheckRecordDTO,
 } from '../dto/flow-to-load-check.dto';
-import { In } from 'typeorm';
 
 @Injectable()
 export class FlowToLoadCheckService {
