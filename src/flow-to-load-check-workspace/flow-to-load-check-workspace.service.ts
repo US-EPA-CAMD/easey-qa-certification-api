@@ -11,6 +11,7 @@ import {
   FlowToLoadCheckDTO,
   FlowToLoadCheckRecordDTO,
 } from '../dto/flow-to-load-check.dto';
+import { In } from 'typeorm';
 
 @Injectable()
 export class FlowToLoadCheckWorkspaceService {
@@ -135,5 +136,18 @@ export class FlowToLoadCheckWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getFlowToLoadChecksByTestSumIds(
+    testSumIds: string[],
+  ): Promise<FlowToLoadCheckDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<FlowToLoadCheckDTO[]> {
+    return this.getFlowToLoadChecksByTestSumIds(testSumIds);
   }
 }

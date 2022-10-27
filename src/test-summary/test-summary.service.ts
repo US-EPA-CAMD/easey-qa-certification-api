@@ -12,6 +12,7 @@ import { RataService } from '../rata/rata.service';
 import { ProtocolGasService } from '../protocol-gas/protocol-gas.service';
 import { AppECorrelationTestSummaryService } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.service';
 import { FuelFlowToLoadTestService } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.service';
+import { FlowToLoadCheckService } from '../flow-to-load-check/flow-to-load-check.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -30,6 +31,8 @@ export class TestSummaryService {
     private readonly appECorrelationTestSummaryService: AppECorrelationTestSummaryService,
     @Inject(forwardRef(() => FuelFlowToLoadTestService))
     private readonly fuelFlowToLoadTestService: FuelFlowToLoadTestService,
+    @Inject(forwardRef(() => FlowToLoadCheckService))
+    private readonly flowToLoadCheckService: FlowToLoadCheckService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -130,6 +133,7 @@ export class TestSummaryService {
           rataData,
           protocolGasData,
           fuelFlowToLoadTestData,
+          flowToLoadCheckData,
           appECorrelationTestSummaryData = null;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
@@ -144,6 +148,9 @@ export class TestSummaryService {
           rataData = await this.rataService.export(testSumIds);
           protocolGasData = await this.protocolGasService.export(testSumIds);
           fuelFlowToLoadTestData = await this.fuelFlowToLoadTestService.export(
+            testSumIds,
+          );
+          flowToLoadCheckData = await this.flowToLoadCheckService.export(
             testSumIds,
           );
           appECorrelationTestSummaryData = await this.appECorrelationTestSummaryService.export(
@@ -161,6 +168,9 @@ export class TestSummaryService {
               i => i.testSumId === s.id,
             );
             s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.flowToLoadCheckData = flowToLoadCheckData.filter(
               i => i.testSumId === s.id,
             );
           });

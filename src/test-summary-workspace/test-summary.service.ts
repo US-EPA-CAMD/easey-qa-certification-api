@@ -38,6 +38,7 @@ import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
 import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
+import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -56,6 +57,8 @@ export class TestSummaryWorkspaceService {
     private readonly fuelFlowToLoadTestWorkspaceService: FuelFlowToLoadTestWorkspaceService,
     @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
     private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
+    @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
+    private readonly flowToLoadCheckService: FlowToLoadCheckWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -156,6 +159,7 @@ export class TestSummaryWorkspaceService {
           rataData,
           protocolGasData,
           fuelFlowToLoadTestData,
+          flowToLoadCheckData,
           appECorrelationTestSummaryData;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
@@ -175,6 +179,9 @@ export class TestSummaryWorkspaceService {
           fuelFlowToLoadTestData = await this.fuelFlowToLoadTestWorkspaceService.export(
             testSumIds,
           );
+          flowToLoadCheckData = await this.flowToLoadCheckService.export(
+            testSumIds,
+          );
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -187,6 +194,9 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.flowToLoadCheckData = flowToLoadCheckData.filter(
               i => i.testSumId === s.id,
             );
           });

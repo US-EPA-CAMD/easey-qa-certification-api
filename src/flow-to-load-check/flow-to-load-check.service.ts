@@ -3,7 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
 import { FlowToLoadCheckRepository } from './flow-to-load-check.repository';
-import { FlowToLoadCheckRecordDTO } from '../dto/flow-to-load-check.dto';
+import {
+  FlowToLoadCheckDTO,
+  FlowToLoadCheckRecordDTO,
+} from '../dto/flow-to-load-check.dto';
+import { In } from 'typeorm';
 
 @Injectable()
 export class FlowToLoadCheckService {
@@ -32,5 +36,18 @@ export class FlowToLoadCheckService {
     }
 
     return this.map.one(result);
+  }
+
+  async getFlowToLoadChecksByTestSumIds(
+    testSumIds: string[],
+  ): Promise<FlowToLoadCheckDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<FlowToLoadCheckDTO[]> {
+    return this.getFlowToLoadChecksByTestSumIds(testSumIds);
   }
 }

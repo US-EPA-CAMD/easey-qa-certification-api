@@ -6,6 +6,7 @@ import { FlowToLoadCheckRepository } from './flow-to-load-check.repository';
 import { FlowToLoadCheckService } from './flow-to-load-check.service';
 import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
 
+const testSumId = 'j5ft68';
 const flowToLoadCheckId = '';
 const entity = new FlowToLoadCheck();
 const flowToLoadCheck = new FlowToLoadCheckDTO();
@@ -77,6 +78,15 @@ describe('FlowToLoadCheckService', () => {
       const results = await service.getFlowToLoadChecks(flowToLoadCheckId);
       expect(results).toEqual([flowToLoadCheck]);
       expect(repository.find).toHaveBeenCalled();
+    });
+  });
+  describe('Export', () => {
+    it('Should Export Protocol Gas', async () => {
+      jest
+        .spyOn(service, 'getFlowToLoadChecksByTestSumIds')
+        .mockResolvedValue([flowToLoadCheck]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([flowToLoadCheck]);
     });
   });
 });
