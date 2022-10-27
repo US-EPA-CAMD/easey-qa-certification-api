@@ -38,6 +38,7 @@ import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
 import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
+import { FlowToLoadCheckWorkspaceService } from 'src/flow-to-load-check-workspace/flow-to-load-check-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -56,6 +57,8 @@ export class TestSummaryWorkspaceService {
     private readonly fuelFlowToLoadTestWorkspaceService: FuelFlowToLoadTestWorkspaceService,
     @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
     private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
+    @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
+    private readonly flowToLoadCheckWorkspaceService: FlowToLoadCheckWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -315,6 +318,29 @@ export class TestSummaryWorkspaceService {
               this.fuelFlowToLoadTestWorkspaceService.import(
                 createdTestSummary.id,
                 fuelFlowToLoadTest,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.flowToLoadCheckData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.F2LCHK
+    ) {
+      for (const flowToLoadCheck of payload.flowToLoadCheckData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.flowToLoadCheckWorkspaceService.import(
+                createdTestSummary.id,
+                flowToLoadCheck,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),
