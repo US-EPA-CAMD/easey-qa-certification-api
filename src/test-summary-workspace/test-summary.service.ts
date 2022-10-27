@@ -25,10 +25,7 @@ import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { LinearitySummaryWorkspaceService } from '../linearity-summary-workspace/linearity-summary.service';
 
 import { Unit } from './../entities/workspace/unit.entity';
-import { Component } from './../entities/workspace/component.entity';
 import { StackPipe } from './../entities/workspace/stack-pipe.entity';
-import { MonitorSystem } from './../entities/workspace/monitor-system.entity';
-import { ReportingPeriod } from './../entities/workspace/reporting-period.entity';
 import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
 
 import { TestTypeCodes } from '../enums/test-type-code.enum';

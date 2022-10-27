@@ -60,6 +60,7 @@ const mockRepository = () => ({
   getTestSummariesByUnitStack: jest.fn().mockResolvedValue([testSummary]),
   getTestSummaryByLocationId: jest.fn().mockResolvedValue(testSummary),
   delete: jest.fn().mockResolvedValue(null),
+  findOne: jest.fn().mockResolvedValue(testSummary),
   create: jest.fn().mockResolvedValue(testSummary),
   save: jest.fn().mockResolvedValue(testSummary),
 });
@@ -103,6 +104,12 @@ const unit = new Unit();
 unit.name = '1';
 const stackPipe = new StackPipe();
 stackPipe.name = '1';
+const rp = new ReportingPeriod();
+rp.id = 1;
+const ms = new MonitorSystem();
+ms.id = '1';
+const comp = new Component();
+comp.id = '1';
 
 describe('TestSummaryWorkspaceService', () => {
   let service: TestSummaryWorkspaceService;
@@ -169,19 +176,19 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: ReportingPeriodRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(new ReportingPeriod()),
+            findOne: jest.fn().mockResolvedValue(rp),
           }),
         },
         {
           provide: MonitorSystemRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
+            findOne: jest.fn().mockResolvedValue(ms),
           }),
         },
         {
           provide: ComponentWorkspaceRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(new Component()),
+            findOne: jest.fn().mockResolvedValue(comp),
           }),
         },
       ],
@@ -246,27 +253,6 @@ describe('TestSummaryWorkspaceService', () => {
     });
   });
 
-  describe('import', () => {
-    it('Should create test summary ', async () => {
-      const returnedSummary = testSummaryDto;
-      returnedSummary.id = testSumId;
-
-      const creste = jest
-        .spyOn(service, 'createTestSummary')
-        .mockResolvedValue(returnedSummary);
-
-      const result = await service.import(
-        locationId,
-        payload,
-        userId,
-        historicalrecordId,
-      );
-
-      expect(creste).toHaveBeenCalled();
-      expect(result).toEqual(null);
-    });
-  });
-
   describe('createTestSummary', () => {
     it('should call the createTestSummary and create test summariy', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
@@ -327,6 +313,20 @@ describe('TestSummaryWorkspaceService', () => {
 
       expect(result).toEqual(testSummaryDto);
     });
+
+    it('should call updateTestSummary and throw error while test summariy not found', async () => {
+      jest.spyOn(repository, 'getTestSummaryById').mockResolvedValue(undefined);
+
+      let errored = false;
+
+      try {
+        await service.updateTestSummary(locationId, testSumId, payload, userId);
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
+    });
   });
 
   describe('deleteTestSummary', () => {
@@ -350,6 +350,56 @@ describe('TestSummaryWorkspaceService', () => {
       }
 
       expect(errored).toBe(true);
+    });
+  });
+
+  describe('resetToNeedsEvaluation', () => {
+    it('should update eval status', async () => {
+      const result = await service.resetToNeedsEvaluation(testSumId, userId);
+
+      expect(result).toEqual(undefined);
+      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('lookupValues', () => {
+    it('should return reportPeriodId, componentRecordId, monitorSystemRecordId', async () => {
+      payload.year = 2022;
+      payload.quarter = 1;
+      payload.componentID = '1';
+      payload.monitoringSystemID = '1';
+
+      const result = await service.lookupValues(locationId, payload);
+
+      expect(result).toEqual([1, '1', '1']);
+    });
+  });
+
+  describe('import', () => {
+    it('Should create test summary ', async () => {
+      const returnedSummary = testSummaryDto;
+      returnedSummary.id = testSumId;
+
+      const creste = jest
+        .spyOn(service, 'createTestSummary')
+        .mockResolvedValue(returnedSummary);
+
+      const importPayload = payload;
+      const calInj = new CalibrationInjection();
+
+      importPayload.calibrationInjectionData = [calInj];
+
+      const result = await service.import(
+        locationId,
+        importPayload,
+        userId,
+        historicalrecordId,
+      );
+
+      expect(creste).toHaveBeenCalled();
+      expect(result).toEqual(null);
+      expect(creste).toHaveBeenCalled();
     });
   });
 });
