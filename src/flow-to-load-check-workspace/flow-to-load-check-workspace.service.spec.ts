@@ -173,7 +173,7 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
   });
 
   describe('Export', () => {
-    it('Should Export Protocol Gas', async () => {
+    it('Should Export Flow To Load Check', async () => {
       jest
         .spyOn(service, 'getFlowToLoadChecksByTestSumIds')
         .mockResolvedValue([flowToLoadCheck]);
