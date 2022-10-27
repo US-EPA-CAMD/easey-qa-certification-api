@@ -18,12 +18,12 @@ import { FuelFlowToLoadTestService } from '../fuel-flow-to-load-test/fuel-flow-t
 import { FuelFlowToLoadTest } from '../entities/fuel-flow-to-load-test.entity';
 import { CalibrationInjection } from '../entities/calibration-injection.entity';
 import { CalibrationInjectionService } from '../calibration-injection/calibration-injection.service';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 const locationId = '121';
 const facilityId = 1;
 const unitId = '121';
 const testSumId = '1';
-const userId = 'testuser';
 
 const testSumaary = new TestSummary();
 const testSumaaryDto = new TestSummaryDTO();
@@ -151,7 +151,7 @@ describe('TestSummaryService', () => {
   describe('export', () => {
     it('calls the repository.getTestSummariesByUnitStack() and get test summaries by locationId', async () => {
       const returnedSummary = testSumaaryDto;
-      returnedSummary.testTypeCode = 'LINE';
+      returnedSummary.testTypeCode = TestTypeCodes.LINE;
       returnedSummary.id = testSumId;
 
       const spySummaries = jest
@@ -159,6 +159,27 @@ describe('TestSummaryService', () => {
         .mockResolvedValue([returnedSummary]);
 
       const result = await service.export(facilityId, [unitId]);
+
+      expect(spySummaries).toHaveBeenCalled();
+      expect(result).toEqual([testSumaaryDto]);
+    });
+
+    it('calls the repository.getTestSummariesByUnitStack() and get test summaries by locationId and TestTypeCodes', async () => {
+      const returnedSummary = testSumaaryDto;
+      returnedSummary.testTypeCode = TestTypeCodes.LINE;
+      returnedSummary.id = testSumId;
+
+      const spySummaries = jest
+        .spyOn(service, 'getTestSummaries')
+        .mockResolvedValue([returnedSummary]);
+
+      const result = await service.export(
+        facilityId,
+        [unitId],
+        [],
+        [],
+        [TestTypeCodes.LINE],
+      );
 
       expect(spySummaries).toHaveBeenCalled();
       expect(result).toEqual([testSumaaryDto]);
