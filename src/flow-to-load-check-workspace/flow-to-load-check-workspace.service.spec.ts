@@ -23,6 +23,7 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
+  delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
@@ -34,7 +35,7 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
-describe('AppECorrelationTestSummaryWorkspaceService', () => {
+describe('FlowToLoadCheckWorkspaceService', () => {
   let service: FlowToLoadCheckWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
   let repository: FlowToLoadCheckWorkspaceRepository;

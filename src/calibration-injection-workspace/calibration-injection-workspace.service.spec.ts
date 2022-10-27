@@ -1,14 +1,17 @@
 import { InternalServerErrorException } from '@nestjs/common/exceptions';
 import { Test, TestingModule } from '@nestjs/testing';
+import { CalibrationInjectionRepository } from '../calibration-injection/calibration-injection.repository';
 import {
   CalibrationInjectionBaseDTO,
   CalibrationInjectionDTO,
 } from '../dto/calibration-injection.dto';
-import { CalibrationInjection } from '../entities/calibration-injection.entity';
+import { CalibrationInjection } from '../entities/workspace/calibration-injection.entity';
+import { CalibrationInjection as CalibrationInjectionOfficial } from '../entities/calibration-injection.entity';
 import { CalibrationInjectionMap } from '../maps/calibration-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { CalibrationInjectionWorkspaceRepository } from './calibration-injection-workspace.repository';
 import { CalibrationInjectionWorkspaceService } from './calibration-injection-workspace.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 const id = '';
 const testSumId = '';
@@ -35,6 +38,10 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockHistoricalRepo = () => ({
+  findOne: jest.fn().mockResolvedValue(new CalibrationInjectionOfficial()),
+});
+
 describe('CalibrationInjectionWorkspaceService', () => {
   let service: CalibrationInjectionWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
@@ -43,6 +50,7 @@ describe('CalibrationInjectionWorkspaceService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        Logger,
         CalibrationInjectionWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
@@ -51,6 +59,10 @@ describe('CalibrationInjectionWorkspaceService', () => {
         {
           provide: CalibrationInjectionWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: CalibrationInjectionRepository,
+          useFactory: mockHistoricalRepo,
         },
         {
           provide: CalibrationInjectionMap,
@@ -182,6 +194,40 @@ describe('CalibrationInjectionWorkspaceService', () => {
       }
 
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('getCalibrationInjectionByTestSumIds', () => {
+    it('Should get Calibration Injection records by test sum ids', async () => {
+      const result = await service.getCalibrationInjectionByTestSumIds([
+        testSumId,
+      ]);
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Calibration Injection Record', async () => {
+      jest
+        .spyOn(service, 'getCalibrationInjectionByTestSumIds')
+        .mockResolvedValue([]);
+
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('import', () => {
+    it('Should Import Calibration Injection', async () => {
+      jest.spyOn(service, 'createCalibrationInjection').mockResolvedValue(dto);
+
+      await service.import(testSumId, payload, userId, false);
+    });
+
+    it('Should Import Calibration Injection from Historical Record', async () => {
+      jest.spyOn(service, 'createCalibrationInjection').mockResolvedValue(dto);
+
+      await service.import(testSumId, payload, userId, true);
     });
   });
 });

@@ -16,6 +16,8 @@ import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-s
 import { AppECorrelationTestSummaryService } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.service';
 import { FuelFlowToLoadTestService } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.service';
 import { FuelFlowToLoadTest } from '../entities/fuel-flow-to-load-test.entity';
+import { CalibrationInjection } from '../entities/calibration-injection.entity';
+import { CalibrationInjectionService } from '../calibration-injection/calibration-injection.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -45,21 +47,22 @@ const mockMap = () => ({
 
 const mockRataService = () => ({
   export: jest.fn().mockResolvedValue([new Rata()]),
-  import: jest.fn().mockResolvedValue(null),
 });
 
 const mockProtocolGasService = () => ({
   export: jest.fn().mockResolvedValue([new ProtocolGas()]),
-  import: jest.fn().mockResolvedValue(null),
 });
 
 const mockAppECorrelationTestSummaryService = () => ({
   export: jest.fn().mockResolvedValue([new AppECorrelationTestSummary()]),
-  import: jest.fn().mockResolvedValue(null),
 });
 
 const mockFuelFlowToLoadTestService = () => ({
   export: jest.fn().mockResolvedValue([new FuelFlowToLoadTest()]),
+});
+
+const mockCalibrationInjectionService = () => ({
+  export: jest.fn().mockResolvedValue([new CalibrationInjection()]),
 });
 
 describe('TestSummaryService', () => {
@@ -98,6 +101,10 @@ describe('TestSummaryService', () => {
         {
           provide: FuelFlowToLoadTestService,
           useFactory: mockFuelFlowToLoadTestService,
+        },
+        {
+          provide: CalibrationInjectionService,
+          useFactory: mockCalibrationInjectionService,
         },
       ],
     }).compile();

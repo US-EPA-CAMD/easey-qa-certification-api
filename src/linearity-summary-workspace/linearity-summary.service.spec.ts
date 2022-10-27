@@ -24,6 +24,8 @@ const linearitySummaryRecords = [linearitySummaryRecord];
 const payload = new LinearitySummaryBaseDTO();
 
 const mockRepository = () => ({
+  getSummariesByTestSumId: jest.fn().mockResolvedValue([entity]),
+  getSummaryById: jest.fn().mockResolvedValue(entity),
   find: jest.fn().mockResolvedValue([entity]),
   findOne: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
@@ -35,21 +37,13 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
-const mockService = () => ({
-  getSummariesByTestSumId: jest.fn().mockResolvedValue(linearitySummaryRecords),
-  getSummaryById: jest.fn().mockResolvedValue(linearitySummaryRecord),
-  createSummary: jest.fn().mockResolvedValue(linearitySummaryRecord),
-  deleteSummary: jest.fn().mockResolvedValue(undefined),
-  updateSummary: jest.fn().mockResolvedValue(linearitySummaryRecord),
-});
-
 const mockLinearityInjectionService = () => ({
   import: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(linearitySummaryRecord),
-  many: jest.fn().mockResolvedValue([linearitySummaryRecords]),
+  many: jest.fn().mockResolvedValue(linearitySummaryRecords),
 });
 
 const mockOfficialRepository = () => ({
@@ -73,10 +67,6 @@ describe('LinearitySummaryWorkspaceService', () => {
         {
           provide: LinearityInjectionWorkspaceService,
           useFactory: mockLinearityInjectionService,
-        },
-        {
-          provide: LinearitySummaryWorkspaceService,
-          useFactory: mockService,
         },
         {
           provide: LinearitySummaryWorkspaceRepository,
