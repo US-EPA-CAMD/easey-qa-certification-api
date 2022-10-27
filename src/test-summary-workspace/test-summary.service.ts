@@ -38,6 +38,7 @@ import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
 import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
+import { CalibrationInjectionWorkspaceService } from '../calibration-injection-workspace/calibration-injection-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -56,6 +57,8 @@ export class TestSummaryWorkspaceService {
     private readonly fuelFlowToLoadTestWorkspaceService: FuelFlowToLoadTestWorkspaceService,
     @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
     private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
+    @Inject(forwardRef(() => CalibrationInjectionWorkspaceService))
+    private readonly calInjWorkspaceService: CalibrationInjectionWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -156,7 +159,8 @@ export class TestSummaryWorkspaceService {
           rataData,
           protocolGasData,
           fuelFlowToLoadTestData,
-          appECorrelationTestSummaryData;
+          appECorrelationTestSummaryData,
+          calibrationInjectionData;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
@@ -167,14 +171,23 @@ export class TestSummaryWorkspaceService {
 
         if (testSumIds) {
           linearitySummaryData = await this.linearityService.export(testSumIds);
+
           rataData = await this.rataService.export(testSumIds);
+
           protocolGasData = await this.protocolGasService.export(testSumIds);
+
           appECorrelationTestSummaryData = await this.appECorrelationTestSummaryWorkspaceService.export(
             testSumIds,
           );
+
           fuelFlowToLoadTestData = await this.fuelFlowToLoadTestWorkspaceService.export(
             testSumIds,
           );
+
+          calibrationInjectionData = await this.calInjWorkspaceService.export(
+            testSumIds,
+          );
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -187,6 +200,9 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.calibrationInjectionData = calibrationInjectionData.filter(
               i => i.testSumId === s.id,
             );
           });
@@ -339,6 +355,29 @@ export class TestSummaryWorkspaceService {
                 locationId,
                 createdTestSummary.id,
                 appECorrelationTestSummary,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.calibrationInjectionData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.SEVENDAY
+    ) {
+      for (const calibrationInjection of payload.calibrationInjectionData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.calInjWorkspaceService.import(
+                createdTestSummary.id,
+                calibrationInjection,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),

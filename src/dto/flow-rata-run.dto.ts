@@ -31,7 +31,6 @@ export class FlowRataRunBaseDTO {
   })
   @IsInRange(MIN_BAROMETRIC_PRESSURE, MAX_BAROMETRIC_PRESSURE, {
     message: (args: ValidationArguments) => {
-      console.log('args.value', typeof args.value);
       return CheckCatalogService.formatResultMessage('RATA-63-B', {
         value: args.value,
         fieldname: args.property,

@@ -29,6 +29,7 @@ import { FlowToLoadReferenceWorkspaceModule } from '../flow-to-load-reference-wo
 import { CalibrationInjectionWorkspaceModule } from '../calibration-injection-workspace/calibration-injection-workspace.module';
 import { AppEHeatInputFromGasWorkspaceModule } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
 import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.module';
+import { CalibrationInjectionRepository } from '../calibration-injection/calibration-injection.repository';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oi
       TestSummaryMasterDataRelationshipRepository,
       MonitorSystemRepository,
       MonitorMethodRepository,
+      CalibrationInjectionRepository,
     ]),
     forwardRef(() => LinearitySummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),
