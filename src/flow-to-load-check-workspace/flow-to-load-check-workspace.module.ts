@@ -6,11 +6,14 @@ import { FlowToLoadCheckWorkspaceService } from './flow-to-load-check-workspace.
 import { FlowToLoadCheckWorkspaceController } from './flow-to-load-check-workspace.controller';
 import { FlowToLoadCheckWorkspaceRepository } from './flow-to-load-check-workspace.repository';
 import { HttpModule } from '@nestjs/axios';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([FlowToLoadCheckWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
+    forwardRef(() => TestSummaryWorkspaceService),
+    forwardRef(() => FlowToLoadCheckWorkspaceService),
     HttpModule,
   ],
   controllers: [FlowToLoadCheckWorkspaceController],

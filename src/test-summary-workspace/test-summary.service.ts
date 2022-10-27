@@ -38,6 +38,7 @@ import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
 import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
+import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -54,6 +55,8 @@ export class TestSummaryWorkspaceService {
     private readonly protocolGasService: ProtocolGasWorkspaceService,
     @Inject(forwardRef(() => FuelFlowToLoadTestWorkspaceService))
     private readonly fuelFlowToLoadTestWorkspaceService: FuelFlowToLoadTestWorkspaceService,
+    @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
+    private readonly flowToLoadCheckWorkspaceService: FlowToLoadCheckWorkspaceService,
     @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
     private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
   ) {}
@@ -156,7 +159,8 @@ export class TestSummaryWorkspaceService {
           rataData,
           protocolGasData,
           fuelFlowToLoadTestData,
-          appECorrelationTestSummaryData;
+          appECorrelationTestSummaryData,
+          flowToLoadCheckData;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
@@ -170,6 +174,9 @@ export class TestSummaryWorkspaceService {
           rataData = await this.rataService.export(testSumIds);
           protocolGasData = await this.protocolGasService.export(testSumIds);
           appECorrelationTestSummaryData = await this.appECorrelationTestSummaryWorkspaceService.export(
+            testSumIds,
+          );
+          flowToLoadCheckData = await this.flowToLoadCheckWorkspaceService.export(
             testSumIds,
           );
           fuelFlowToLoadTestData = await this.fuelFlowToLoadTestWorkspaceService.export(
@@ -187,6 +194,9 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.flowToLoadCheckData = flowToLoadCheckData.filter(
               i => i.testSumId === s.id,
             );
           });

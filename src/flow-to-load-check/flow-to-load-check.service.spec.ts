@@ -1,18 +1,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
 
-import { FlowToLoadCheckDTO } from '../dto/flow-to-load-check.dto';
+import {
+  FlowToLoadCheckBaseDTO,
+  FlowToLoadCheckDTO,
+} from '../dto/flow-to-load-check.dto';
 import { FlowToLoadCheckRepository } from './flow-to-load-check.repository';
 import { FlowToLoadCheckService } from './flow-to-load-check.service';
 import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
 
+const testSumId = '';
 const flowToLoadCheckId = '';
 const entity = new FlowToLoadCheck();
 const flowToLoadCheck = new FlowToLoadCheckDTO();
+const payload = new FlowToLoadCheckBaseDTO();
 
 const mockRepository = () => ({
+  getFlowToLoadChecksByTestSumIds: jest
+    .fn()
+    .mockResolvedValue([flowToLoadCheck]),
   find: jest.fn().mockResolvedValue([entity]),
   findOne: jest.fn().mockResolvedValue(entity),
+});
+
+const mockFlowToLoadCheckService = () => ({
+  import: jest.fn(),
+  export: jest.fn().mockResolvedValue([new FlowToLoadCheckDTO()]),
 });
 
 const mockMap = () => ({
@@ -39,6 +52,10 @@ describe('FlowToLoadCheckService', () => {
         {
           provide: FlowToLoadCheckMap,
           useFactory: mockMap,
+        },
+        {
+          provide: FlowToLoadCheckService,
+          useFactory: mockFlowToLoadCheckService,
         },
       ],
     }).compile();
@@ -77,6 +94,24 @@ describe('FlowToLoadCheckService', () => {
       const results = await service.getFlowToLoadChecks(flowToLoadCheckId);
       expect(results).toEqual([flowToLoadCheck]);
       expect(repository.find).toHaveBeenCalled();
+    });
+  });
+
+  describe('getFlowToLoadChecksByTestSumIds', () => {
+    it('Should get Flow To Load Check records by test sum ids', async () => {
+      const result = await repository.getFlowToLoadChecksByTestSumIds([
+        flowToLoadCheckId,
+      ]);
+      expect(result).toEqual([entity]);
+    });
+  });
+  describe('Export', () => {
+    it('Should Flow To Load Check', async () => {
+      jest
+        .spyOn(repository, 'getFlowToLoadChecksByTestSumIds')
+        .mockResolvedValue([]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([entity]);
     });
   });
 });

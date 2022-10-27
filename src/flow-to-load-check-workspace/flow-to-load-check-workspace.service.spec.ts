@@ -19,6 +19,9 @@ const flowToLoadCheck = new FlowToLoadCheckDTO();
 const payload = new FlowToLoadCheckBaseDTO();
 
 const mockRepository = () => ({
+  getFlowToLoadChecksByTestSumIds: jest
+    .fn()
+    .mockResolvedValue([flowToLoadCheck]),
   find: jest.fn().mockResolvedValue([entity]),
   findOne: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
@@ -32,6 +35,11 @@ const mockMap = () => ({
 
 const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
+});
+
+const mockFlowToLoadCheckService = () => ({
+  import: jest.fn(),
+  export: jest.fn().mockResolvedValue([new FlowToLoadCheckDTO()]),
 });
 
 describe('AppECorrelationTestSummaryWorkspaceService', () => {
@@ -50,6 +58,10 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
         {
           provide: FlowToLoadCheckWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: FlowToLoadCheckWorkspaceService,
+          useFactory: mockFlowToLoadCheckService,
         },
         {
           provide: FlowToLoadCheckMap,
@@ -169,6 +181,24 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
       }
 
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('getFlowToLoadChecksByTestSumIds', () => {
+    it('Should get Flow To Load Check records by test sum ids', async () => {
+      const result = await repository.getFlowToLoadChecksByTestSumIds([
+        flowToLoadCheckId,
+      ]);
+      expect(result).toEqual([entity]);
+    });
+  });
+  describe('Export', () => {
+    it('Should Export Flow To Load Check', async () => {
+      jest
+        .spyOn(repository, 'getFlowToLoadChecksByTestSumIds')
+        .mockResolvedValue([]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([entity]);
     });
   });
 });
