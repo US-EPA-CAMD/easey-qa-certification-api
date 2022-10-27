@@ -20,14 +20,10 @@ export class OnlineOfflineCalibrationMap extends BaseMap<
       addDate: entity.addDate.toLocaleString(),
       updateDate: entity.updateDate.toLocaleString(),
 
-      calculatedOfflineUpscaleCalibrationError:
-        entity.calculatedOfflineUpscaleCalibrationError,
-      calculatedOfflineZeroCalibrationError:
-        entity.calculatedOfflineZeroCalibrationError,
-      calculatedOnlineUpscaleCalibrationError:
-        entity.calculatedOnlineUpscaleCalibrationError,
-      calculatedOnlineZeroCalibrationError:
-        entity.calculatedOnlineZeroCalibrationError,
+      offlineUpscaleAPSIndicator: entity.offlineUpscaleAPSIndicator,
+      offlineZeroAPSIndicator: entity.offlineZeroAPSIndicator,
+      onlineUpscaleAPSIndicator: entity.onlineUpscaleAPSIndicator,
+      onlineZeroAPSIndicator: entity.onlineZeroAPSIndicator,
       offlineUpscaleCalibrationError: entity.offlineUpscaleCalibrationError,
       offlineUpscaleInjectionDate:
         entity.offlineUpscaleInjectionDate?.toLocaleString() ?? null,
