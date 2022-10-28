@@ -10,7 +10,6 @@ import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
 import { RataRun } from '../entities/workspace/rata-run.entity';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 
 const KEY = 'RATA Run';
@@ -22,7 +21,6 @@ export class RataRunChecksService {
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
     @InjectRepository(RataRunWorkspaceRepository)
     private readonly repository: RataRunWorkspaceRepository,
-    private readonly testSummaryService: TestSummaryWorkspaceService,
   ) {}
 
   private throwIfErrors(errorList: string[]) {
@@ -48,10 +46,8 @@ export class RataRunChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-    }
-
-    if (isUpdate) {
-      testSumRecord = await this.testSummaryService.getTestSummaryById(
+    } else {
+      testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
       );
     }
@@ -252,7 +248,7 @@ export class RataRunChecksService {
           });
         }
       } else if (
-        testSumRecord.system?.systemTypeCode.startsWith('HG')
+        !testSumRecord.system?.systemTypeCode.startsWith('HG') && testSumRecord.system?.systemTypeCode !== 'FLOW'
       ) {
         if((Math.abs(endDate.getTime() - beginDate.getTime()))/(1000*60) < 21){
           error = CheckCatalogService.formatResultMessage('RATA-130-B', {
