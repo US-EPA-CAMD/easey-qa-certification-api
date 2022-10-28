@@ -40,6 +40,7 @@ import { ComponentWorkspaceRepository } from '../component-workspace/component.r
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
+import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -74,6 +75,8 @@ export class TestSummaryWorkspaceService {
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
     @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
     private readonly flowToLoadCheckWorkspaceService: FlowToLoadCheckWorkspaceService,
+    @Inject(forwardRef(() => FlowToLoadReferenceWorkspaceService))
+    private readonly flowToLoadReferenceWorkspaceService: FlowToLoadReferenceWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -378,6 +381,29 @@ export class TestSummaryWorkspaceService {
               this.flowToLoadCheckWorkspaceService.import(
                 createdTestSummary.id,
                 flowToLoadCheck,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.flowToLoadReferenceData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.F2LREF
+    ) {
+      for (const flowToLoadReference of payload.flowToLoadReferenceData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.flowToLoadReferenceWorkspaceService.import(
+                createdTestSummary.id,
+                flowToLoadReference,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),
