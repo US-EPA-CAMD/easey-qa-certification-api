@@ -17,6 +17,7 @@ import { RataRun } from '../entities/workspace/rata-run.entity';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { FlowRataRun } from '../entities/workspace/flow-rata-run.entity';
 
 const KEY = 'Flow RATA Run';
 
@@ -85,6 +86,15 @@ export class FlowRataRunChecksService {
       if (error) {
         errorList.push(error);
       }
+
+      error = this.rata69Check(
+        flowRataRun,
+        rataRunRecord,
+        flowRataRun.wetMolecularWeight,
+      );
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     /* // RATA-85 Number of Traverse Points Valid
@@ -132,6 +142,39 @@ export class FlowRataRunChecksService {
 
     return error;
   } */
+
+  private rata69Check(
+    flowRataRun: FlowRataRunBaseDTO | FlowRataRunImportDTO,
+    rataRunRecord: FlowRataRun,
+    wetMolecularWeight: number,
+  ): string {
+    let error: string = null;
+    if (
+      flowRataRun.percentCO2 &&
+      flowRataRun.percentO2 &&
+      flowRataRun.percentMoisture
+    ) {
+      rataRunRecord.calculatedWetMolecularWeight =
+        rataRunRecord.calculatedDryMolecularWeight *
+          (1 - rataRunRecord.percentMoisture / 100) +
+        18 * (rataRunRecord.percentMoisture / 100);
+    }
+    if (rataRunRecord.calculatedWetMolecularWeight !== null) {
+      let absoluteDifference = Math.round(
+        Math.abs(
+          wetMolecularWeight - rataRunRecord.calculatedWetMolecularWeight,
+        ),
+      );
+      // UNSURE ABOUT SECOND PARAM(wetMolecularWeight) - follow up
+      if (absoluteDifference > wetMolecularWeight) {
+        error = this.getMessage('RATA-69-C', {
+          key: KEY,
+        });
+      }
+    }
+
+    return error;
+  }
 
   private rata94Check(
     rataRunRecord: RataRun,
