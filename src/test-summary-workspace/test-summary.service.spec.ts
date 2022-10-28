@@ -129,7 +129,7 @@ describe('TestSummaryWorkspaceService', () => {
         },
         {
           provide: FlowToLoadCheckWorkspaceService,
-          useFactory: mockFlowToLoadCheckService,
+          useFactory: mockFlowToLoadCheckWorkspaceService,
         },
       ],
     }).compile();
