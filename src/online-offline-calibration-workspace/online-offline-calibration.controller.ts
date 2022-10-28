@@ -1,7 +1,7 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -22,6 +22,33 @@ export class OnlineOfflineCalibrationWorkspaceController {
   constructor(
     private readonly service: OnlineOfflineCalibrationWorkspaceService,
   ) {}
+
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: OnlineOfflineCalibrationRecordDTO,
+    description: 'Retrieves workspace Online Offline Calibration records by Test Summary Id',
+  })
+  getOnlineOfflineCalibrations(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+  ) {
+    return this.service.getOnlineOfflineCalibrations(testSumId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: OnlineOfflineCalibrationRecordDTO,
+    description: 'Retrieves workspace Online Offline Calibration record by its Id',
+  })
+  getOnlineOfflineCalibration(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('id') id: string,
+  ) {
+    return this.service.getOnlineOfflineCalibration(id);
+  }
 
   @Post()
   @UseGuards(AuthGuard)

@@ -13,6 +13,7 @@ import { HttpService } from '@nestjs/axios';
 
 const locId = '';
 const testSumId = '';
+const onlineOfflineCalibrationId = '';
 const user: CurrentUser = {
   clientIp: '',
   expiration: '',
@@ -26,6 +27,8 @@ const onlineOfflineCalibrations: OnlineOfflineCalibrationDTO[] = [];
 onlineOfflineCalibrations.push(onlineOfflineCalibrationRecord);
 
 const mockService = () => ({
+  getOnlineOfflineCalibrations: jest.fn().mockResolvedValue(onlineOfflineCalibrations),
+  getOnlineOfflineCalibration: jest.fn().mockResolvedValue(onlineOfflineCalibrationRecord),
   createOnlineOfflineCalibration: jest.fn(),
 });
 
@@ -70,6 +73,29 @@ describe('Online Offline Calibration Workspace Controller', () => {
     service = module.get<OnlineOfflineCalibrationWorkspaceService>(
       OnlineOfflineCalibrationWorkspaceService,
     );
+  });
+
+  describe('getOnlineOfflineCalibrations', () => {
+    it('Calls the repository to get all Online Offline Calibrations for a Test Summary Id', async () => {
+      const result = await controller.getOnlineOfflineCalibrations(
+        locId,
+        testSumId,
+      );
+      expect(result).toEqual(onlineOfflineCalibrations);
+      expect(service.getOnlineOfflineCalibrations).toHaveBeenCalled();
+    });
+  });
+
+  describe('getOnlineOfflineCalibration', () => {
+    it('Calls the repository to get one Online Offline Calibration by its Id', async () => {
+      const result = await controller.getOnlineOfflineCalibration(
+        locId,
+        testSumId,
+        onlineOfflineCalibrationId,
+      );
+      expect(result).toEqual(onlineOfflineCalibrationRecord);
+      expect(service.getOnlineOfflineCalibration).toHaveBeenCalled();
+    });
   });
 
   describe('createOnlineOfflineCalibration', () => {

@@ -8,13 +8,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '../utilities/functions';
 import {
+  OnlineOfflineCalibrationDTO,
   OnlineOfflineCalibrationBaseDTO,
   OnlineOfflineCalibrationRecordDTO,
 } from '../dto/online-offline-calibration.dto';
-import { OnlineOfflineCalibration } from '../entities/workspace/online-offline-calibration.entity';
 import { OnlineOfflineCalibrationWorkspaceRepository } from './online-offline-calibration.repository';
 import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class OnlineOfflineCalibrationWorkspaceService {
@@ -26,6 +27,27 @@ export class OnlineOfflineCalibrationWorkspaceService {
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
   ) {}
+
+  async getOnlineOfflineCalibrations(testSumId: string): Promise<OnlineOfflineCalibrationDTO[]> {
+    const records = await this.repository.find({
+      where: { testSumId },
+    });
+
+    return this.map.many(records);
+  }
+
+  async getOnlineOfflineCalibration(id: string): Promise<OnlineOfflineCalibrationDTO> {
+    const result = await this.repository.findOne(id);
+
+    if (!result) {
+      throw new LoggingException(
+        `Online Offline Calibration record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
 
   async createOnlineOfflineCalibration(
     testSumId: string,
