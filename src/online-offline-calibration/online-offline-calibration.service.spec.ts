@@ -1,27 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { TestSummaryService } from '../test-summary/test-summary.service';
 import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
-import { OnlineOfflineCalibration } from '../entities/workspace/online-offline-calibration.entity';
+import { OnlineOfflineCalibration } from '../entities/online-offline-calibration.entity';
 import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.map';
-import { OnlineOfflineCalibrationWorkspaceRepository } from './online-offline-calibration.repository';
-import { OnlineOfflineCalibrationWorkspaceService } from './online-offline-calibration.service';
+import { OnlineOfflineCalibrationRepository } from './online-offline-calibration.repository';
+import { OnlineOfflineCalibrationService } from './online-offline-calibration.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 const testSumId = '1';
 const onlineOfflineCalibrationId = 'abc123';
-const userId = 'testuser';
 const onlineOfflineCalibration = new OnlineOfflineCalibration();
 const onlineOfflineCalibrationDTO = new OnlineOfflineCalibrationDTO();
 
-const payload = new OnlineOfflineCalibrationDTO();
-
-const mockTestSumService = () => ({
-  resetToNeedsEvaluation: jest.fn(),
-});
-
 const mockRepository = () => ({
-  create: jest.fn().mockResolvedValue(onlineOfflineCalibration),
-  save: jest.fn().mockResolvedValue(onlineOfflineCalibration),
   findOne: jest.fn().mockResolvedValue(onlineOfflineCalibration),
   find: jest.fn().mockResolvedValue([onlineOfflineCalibration]),
 });
@@ -31,21 +22,21 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue([onlineOfflineCalibrationDTO]),
 });
 
-describe('OnlineOfflineCalibrationWorkspaceService', () => {
-  let service: OnlineOfflineCalibrationWorkspaceService;
-  let repository: OnlineOfflineCalibrationWorkspaceRepository;
+describe('OnlineOfflineCalibrationService', () => {
+  let service: OnlineOfflineCalibrationService;
+  let repository: OnlineOfflineCalibrationRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
-        OnlineOfflineCalibrationWorkspaceService,
+        OnlineOfflineCalibrationService,
         {
-          provide: TestSummaryWorkspaceService,
-          useFactory: mockTestSumService,
+          provide: TestSummaryService,
+          useFactory: () => {},
         },
         {
-          provide: OnlineOfflineCalibrationWorkspaceRepository,
+          provide: OnlineOfflineCalibrationRepository,
           useFactory: mockRepository,
         },
         {
@@ -55,11 +46,11 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
       ],
     }).compile();
 
-    service = module.get<OnlineOfflineCalibrationWorkspaceService>(
-      OnlineOfflineCalibrationWorkspaceService,
+    service = module.get<OnlineOfflineCalibrationService>(
+      OnlineOfflineCalibrationService,
     );
-    repository = module.get<OnlineOfflineCalibrationWorkspaceRepository>(
-      OnlineOfflineCalibrationWorkspaceRepository,
+    repository = module.get<OnlineOfflineCalibrationRepository>(
+      OnlineOfflineCalibrationRepository,
     );
   });
 
@@ -91,18 +82,6 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
     it('Calls repository to get al Online Offline Calibrations matching a given Test Summary Id', async () => {
       const result = await service.getOnlineOfflineCalibrations(testSumId);
       expect(result).toEqual([onlineOfflineCalibrationDTO]);
-    });
-  });
-
-  describe('createOnlineOfflineCalibration', () => {
-    it('Calls the repository to insert an Online Offline Calibration record', async () => {
-      const result = await service.createOnlineOfflineCalibration(
-        testSumId,
-        payload,
-        userId,
-      );
-      expect(result).toEqual(onlineOfflineCalibrationDTO);
-      expect(repository.create).toHaveBeenCalled();
     });
   });
 });
