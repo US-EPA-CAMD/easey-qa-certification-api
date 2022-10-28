@@ -1,10 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import {
-  OnlineOfflineCalibrationBaseDTO,
-  OnlineOfflineCalibrationDTO,
-  OnlineOfflineCalibrationImportDTO,
-} from '../dto/online-offline-calibration.dto';
+import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
 import { OnlineOfflineCalibration } from '../entities/workspace/online-offline-calibration.entity';
 import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.map';
 import { OnlineOfflineCalibrationWorkspaceRepository } from './online-offline-calibration.repository';
@@ -12,6 +8,7 @@ import { OnlineOfflineCalibrationWorkspaceService } from './online-offline-calib
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 const testSumId = '1';
+const onlineOfflineCalibrationId = 'abc123';
 const userId = 'testuser';
 const onlineOfflineCalibration = new OnlineOfflineCalibration();
 const onlineOfflineCalibrationDTO = new OnlineOfflineCalibrationDTO();
@@ -26,10 +23,12 @@ const mockRepository = () => ({
   create: jest.fn().mockResolvedValue(onlineOfflineCalibration),
   save: jest.fn().mockResolvedValue(onlineOfflineCalibration),
   findOne: jest.fn().mockResolvedValue(onlineOfflineCalibration),
+  find: jest.fn().mockResolvedValue([onlineOfflineCalibration]),
 });
 
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(onlineOfflineCalibrationDTO),
+  many: jest.fn().mockResolvedValue([onlineOfflineCalibrationDTO]),
 });
 
 describe('OnlineOfflineCalibrationWorkspaceService', () => {
@@ -62,6 +61,37 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
     repository = module.get<OnlineOfflineCalibrationWorkspaceRepository>(
       OnlineOfflineCalibrationWorkspaceRepository,
     );
+  });
+
+  describe('getOnlineOfflineCalibration', () => {
+    it('Calls repository.findOne({id}) to get a single Online Offline Calibration record', async () => {
+      const result = await service.getOnlineOfflineCalibration(
+        onlineOfflineCalibrationId,
+      );
+      expect(result).toEqual(onlineOfflineCalibrationDTO);
+      expect(repository.findOne).toHaveBeenCalled();
+    });
+
+    it('Should throw error when Online Offline Calibration record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      let errored = false;
+
+      try {
+        await service.getOnlineOfflineCalibration('invalidId');
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
+    });
+  });
+
+  describe('getOnlineOfflineCalibrations', () => {
+    it('Calls repository to get al Online Offline Calibrations matching a given Test Summary Id', async () => {
+      const result = await service.getOnlineOfflineCalibrations(testSumId);
+      expect(result).toEqual([onlineOfflineCalibrationDTO]);
+    });
   });
 
   describe('createOnlineOfflineCalibration', () => {

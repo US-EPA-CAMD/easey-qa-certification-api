@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiCreatedResponse, ApiOkResponse,
+  ApiCreatedResponse,
+  ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -27,7 +28,8 @@ export class OnlineOfflineCalibrationWorkspaceController {
   @ApiOkResponse({
     isArray: true,
     type: OnlineOfflineCalibrationRecordDTO,
-    description: 'Retrieves workspace Online Offline Calibration records by Test Summary Id',
+    description:
+      'Retrieves workspace Online Offline Calibration records by Test Summary Id',
   })
   getOnlineOfflineCalibrations(
     @Param('locId') _locationId: string,
@@ -40,7 +42,8 @@ export class OnlineOfflineCalibrationWorkspaceController {
   @ApiOkResponse({
     isArray: false,
     type: OnlineOfflineCalibrationRecordDTO,
-    description: 'Retrieves workspace Online Offline Calibration record by its Id',
+    description:
+      'Retrieves workspace Online Offline Calibration record by its Id',
   })
   getOnlineOfflineCalibration(
     @Param('locId') _locationId: string,

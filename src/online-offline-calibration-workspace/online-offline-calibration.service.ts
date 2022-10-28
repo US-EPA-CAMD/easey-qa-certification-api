@@ -28,7 +28,9 @@ export class OnlineOfflineCalibrationWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
   ) {}
 
-  async getOnlineOfflineCalibrations(testSumId: string): Promise<OnlineOfflineCalibrationDTO[]> {
+  async getOnlineOfflineCalibrations(
+    testSumId: string,
+  ): Promise<OnlineOfflineCalibrationDTO[]> {
     const records = await this.repository.find({
       where: { testSumId },
     });
@@ -36,7 +38,9 @@ export class OnlineOfflineCalibrationWorkspaceService {
     return this.map.many(records);
   }
 
-  async getOnlineOfflineCalibration(id: string): Promise<OnlineOfflineCalibrationDTO> {
+  async getOnlineOfflineCalibration(
+    id: string,
+  ): Promise<OnlineOfflineCalibrationDTO> {
     const result = await this.repository.findOne(id);
 
     if (!result) {

@@ -14,8 +14,12 @@ const onlineOfflineCalibrations: OnlineOfflineCalibrationDTO[] = [];
 onlineOfflineCalibrations.push(onlineOfflineCalibrationRecord);
 
 const mockService = () => ({
-  getOnlineOfflineCalibrations: jest.fn().mockResolvedValue(onlineOfflineCalibrations),
-  getOnlineOfflineCalibration: jest.fn().mockResolvedValue(onlineOfflineCalibrationRecord),
+  getOnlineOfflineCalibrations: jest
+    .fn()
+    .mockResolvedValue(onlineOfflineCalibrations),
+  getOnlineOfflineCalibration: jest
+    .fn()
+    .mockResolvedValue(onlineOfflineCalibrationRecord),
 });
 
 describe('Online Offline Calibration Controller', () => {
@@ -63,5 +67,4 @@ describe('Online Offline Calibration Controller', () => {
       expect(service.getOnlineOfflineCalibration).toHaveBeenCalled();
     });
   });
-
 });
