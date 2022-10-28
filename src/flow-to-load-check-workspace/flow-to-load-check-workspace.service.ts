@@ -12,10 +12,10 @@ import {
   FlowToLoadCheckImportDTO,
   FlowToLoadCheckRecordDTO,
 } from '../dto/flow-to-load-check.dto';
+import { In } from 'typeorm';
 import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { FlowToLoadCheckRepository } from '../flow-to-load-check/flow-to-load-check.repository';
-import { In } from 'typeorm';
 
 @Injectable()
 export class FlowToLoadCheckWorkspaceService {
@@ -143,6 +143,48 @@ export class FlowToLoadCheckWorkspaceService {
       testSumId,
       userId,
       isImport,
+    );
+  }
+
+  async getFlowToLoadChecksByTestSumIds(
+    testSumIds: string[],
+  ): Promise<FlowToLoadCheckDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<FlowToLoadCheckDTO[]> {
+    return this.getFlowToLoadChecksByTestSumIds(testSumIds);
+  }
+
+  async import(
+    testSumId: string,
+    payload: FlowToLoadCheckImportDTO,
+    userId: string,
+    isHistoricalRecord: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: FlowToLoadCheck;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepo.findOne({
+        testSumId: testSumId,
+        testBasisCode: payload.testBasisCode,
+      });
+    }
+
+    const createdFlowToLoadCheck = await this.createFlowToLoadCheck(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Flow To Load Check Successfully Imported.  Record Id: ${createdFlowToLoadCheck.id}`,
     );
   }
 }
