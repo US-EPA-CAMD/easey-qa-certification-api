@@ -55,6 +55,10 @@ import { CalibrationInjectionWorkspaceModule } from './calibration-injection-wor
 import { CalibrationInjectionModule } from './calibration-injection/calibration-injection.module';
 import { OnlineOfflineCalibrationModule } from './online-offline-calibration/online-offline-calibration.module';
 import { OnlineOfflineCalibrationWorkspaceModule } from './online-offline-calibration-workspace/online-offline-calibration.module';
+import { UnitModule } from './unit/unit.module';
+import { StackPipeModule } from './stack-pipe/stack-pipe.module';
+import { MonitorLocationModule } from './monitor-location/monitor-location.module';
+import { ReportingPeriodModule } from './reporting-period/reporting-period.module';
 
 @Module({
   imports: [
@@ -111,6 +115,10 @@ import { OnlineOfflineCalibrationWorkspaceModule } from './online-offline-calibr
     CalibrationInjectionModule,
     OnlineOfflineCalibrationModule,
     OnlineOfflineCalibrationWorkspaceModule,
+    UnitModule,
+    StackPipeModule,
+    MonitorLocationModule,
+    ReportingPeriodModule,
   ],
 })
 export class AppModule {}

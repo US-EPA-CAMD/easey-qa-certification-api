@@ -13,9 +13,9 @@ const MIN_STATIC_STACK_PRESSURE = -30;
 const MAX_STATIC_STACK_PRESSURE = 30;
 const MIN_BAROMETRIC_PRESSURE = 20;
 const MAX_BAROMETRIC_PRESSURE = 35;
-const MIN_PERCENT_CO2_PRESSURE = 0.1;
+const MIN_PERCENT_CO2_PRESSURE = 0;
 const MAX_PERCENT_CO2_PRESSURE = 20;
-const MIN_PERCENT_O2_PRESSURE = 0.1;
+const MIN_PERCENT_O2_PRESSURE = 0;
 const MAX_PERCENT_O2_PRESSURE = 22;
 
 export class FlowRataRunBaseDTO {
@@ -31,7 +31,6 @@ export class FlowRataRunBaseDTO {
   })
   @IsInRange(MIN_BAROMETRIC_PRESSURE, MAX_BAROMETRIC_PRESSURE, {
     message: (args: ValidationArguments) => {
-      console.log('args.value', typeof args.value);
       return CheckCatalogService.formatResultMessage('RATA-63-B', {
         value: args.value,
         fieldname: args.property,
@@ -72,17 +71,23 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  @IsInRange(MIN_PERCENT_CO2_PRESSURE, MAX_PERCENT_CO2_PRESSURE, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-65-B', {
-        value: args.value,
-        fieldname: args.property,
-        key: KEY,
-        minvalue: MIN_PERCENT_CO2_PRESSURE,
-        maxvalue: MAX_PERCENT_CO2_PRESSURE,
-      });
+  @IsInRange(
+    MIN_PERCENT_O2_PRESSURE,
+    MAX_PERCENT_CO2_PRESSURE,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatResultMessage('RATA-65-B', {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+          minvalue: MIN_PERCENT_CO2_PRESSURE,
+          maxvalue: MAX_PERCENT_CO2_PRESSURE,
+        });
+      },
     },
-  })
+    false,
+    false,
+  )
   percentCO2: number;
 
   @IsNotEmpty({
@@ -93,17 +98,23 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  @IsInRange(MIN_PERCENT_O2_PRESSURE, MAX_PERCENT_O2_PRESSURE, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-66-B', {
-        value: args.value,
-        fieldname: args.property,
-        key: KEY,
-        minvalue: MIN_PERCENT_O2_PRESSURE,
-        maxvalue: MAX_PERCENT_O2_PRESSURE,
-      });
+  @IsInRange(
+    MIN_PERCENT_O2_PRESSURE,
+    MAX_PERCENT_O2_PRESSURE,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatResultMessage('RATA-66-B', {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+          minvalue: MIN_PERCENT_O2_PRESSURE,
+          maxvalue: MAX_PERCENT_O2_PRESSURE,
+        });
+      },
     },
-  })
+    false,
+    false,
+  )
   percentO2: number;
 
   percentMoisture: number;

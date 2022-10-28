@@ -63,21 +63,22 @@ export class AppECorrelationTestRunService {
       appECorrTestSumIds,
     );
 
-    const hIGas = await this.appEHeatInputFromGasService.export(
-      appECorrelationTestRuns.map(i => i.id),
-    );
-    const hIOil = await this.appEHeatInputFromOilService.export(
-      appECorrelationTestRuns.map(i => i.id),
-    );
+    const testRunIds: string[] = appECorrelationTestRuns.map(i => i.id);
 
-    appECorrelationTestRuns.forEach(s => {
-      s.appEHeatInputFromGasData = hIGas.filter(
-        i => i.appECorrTestRunId === s.id,
-      );
-      s.appEHeatInputFromOilData = hIOil.filter(
-        i => i.appECorrTestRunId === s.id,
-      );
-    });
+    if (testRunIds.length > 0) {
+      const hIGas = await this.appEHeatInputFromGasService.export(testRunIds);
+      const hIOil = await this.appEHeatInputFromOilService.export(testRunIds);
+
+      appECorrelationTestRuns.forEach(s => {
+        s.appEHeatInputFromGasData = hIGas.filter(
+          i => i.appECorrTestRunId === s.id,
+        );
+        s.appEHeatInputFromOilData = hIOil.filter(
+          i => i.appECorrTestRunId === s.id,
+        );
+      });
+    }
+
     return appECorrelationTestRuns;
   }
 }
