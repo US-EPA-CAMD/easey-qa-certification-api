@@ -58,7 +58,7 @@ export class TestSummaryWorkspaceService {
     @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
     private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
     @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
-    private readonly flowToLoadCheckWorkspaceService: FlowToLoadCheckWorkspaceService,
+    private readonly flowToLoadCheckService: FlowToLoadCheckWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -159,6 +159,7 @@ export class TestSummaryWorkspaceService {
           rataData,
           protocolGasData,
           fuelFlowToLoadTestData,
+          flowToLoadCheckData,
           appECorrelationTestSummaryData;
         let testSumIds;
         if (testTypeCodes?.length > 0) {
@@ -178,6 +179,9 @@ export class TestSummaryWorkspaceService {
           fuelFlowToLoadTestData = await this.fuelFlowToLoadTestWorkspaceService.export(
             testSumIds,
           );
+          flowToLoadCheckData = await this.flowToLoadCheckService.export(
+            testSumIds,
+          );
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -190,6 +194,9 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.flowToLoadCheckData = flowToLoadCheckData.filter(
               i => i.testSumId === s.id,
             );
           });
@@ -338,7 +345,7 @@ export class TestSummaryWorkspaceService {
           new Promise(async (resolve, _reject) => {
             const innerPromises = [];
             innerPromises.push(
-              this.flowToLoadCheckWorkspaceService.import(
+              this.flowToLoadCheckService.import(
                 createdTestSummary.id,
                 flowToLoadCheck,
                 userId,
