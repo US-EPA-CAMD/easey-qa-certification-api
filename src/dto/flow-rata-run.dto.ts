@@ -17,6 +17,8 @@ const MIN_PERCENT_CO2_PRESSURE = 0.1;
 const MAX_PERCENT_CO2_PRESSURE = 20;
 const MIN_PERCENT_O2_PRESSURE = 0.1;
 const MAX_PERCENT_O2_PRESSURE = 22;
+const MIN_PERCENT_MOISTURE = 0;
+const MAX_PERCENT_MOISTURE = 75.0;
 
 export class FlowRataRunBaseDTO {
   numberOfTraversePoints: number;
@@ -106,7 +108,27 @@ export class FlowRataRunBaseDTO {
   })
   percentO2: number;
 
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-67-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_PERCENT_O2_PRESSURE, MAX_PERCENT_O2_PRESSURE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-67-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+        minvalue: MIN_PERCENT_MOISTURE,
+        maxvalue: MAX_PERCENT_MOISTURE,
+      });
+    },
+  })
   percentMoisture: number;
+
   dryMolecularWeight: number;
   wetMolecularWeight: number;
   averageVelocityWithoutWallEffects: number;
