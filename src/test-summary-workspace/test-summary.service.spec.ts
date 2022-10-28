@@ -86,6 +86,9 @@ const mockAppECorrelationTestSummaryService = () => ({
 const mockFuelFlowToLoadTestWorkspaceService = () => ({
   import: jest.fn().mockResolvedValue(null),
 });
+const mockFlowToLoadCheckWorkspaceService = () => ({
+  import: jest.fn().mockResolvedValue(null),
+});
 
 describe('TestSummaryWorkspaceService', () => {
   let service: TestSummaryWorkspaceService;

@@ -337,6 +337,29 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
+      payload.flowToLoadCheckData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.F2LCHK
+    ) {
+      for (const flowToLoadCheck of payload.flowToLoadCheckData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.flowToLoadCheckService.import(
+                createdTestSummary.id,
+                flowToLoadCheck,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
       payload.appECorrelationTestSummaryData?.length > 0 &&
       payload.testTypeCode === TestTypeCodes.APPE
     ) {
