@@ -180,6 +180,8 @@ export class QACertificationChecksService {
                   true,
                   false,
                   summary,
+                  undefined,
+                  rataSummary.rataRunData,
                 );
 
                 resolve(results);

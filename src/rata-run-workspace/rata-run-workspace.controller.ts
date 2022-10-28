@@ -82,7 +82,7 @@ export class RataRunWorkspaceController {
     @Body() payload: RataRunBaseDTO,
     @User() user: CurrentUser,
   ): Promise<RataRunRecordDTO> {
-    await this.checksService.runChecks(payload, testSumId, false, true);
+    await this.checksService.runChecks(payload, testSumId, false, false, null, rataSumId);
     return this.service.createRataRun(
       testSumId,
       rataSumId,
