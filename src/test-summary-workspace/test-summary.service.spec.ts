@@ -33,6 +33,8 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { Component } from '../entities/workspace/component.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
+import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -80,6 +82,11 @@ const mockProtocolGasService = () => ({
   import: jest.fn().mockResolvedValue(null),
 });
 
+const mockFlowToLoadCheckService = () => ({
+  export: jest.fn().mockResolvedValue([new FlowToLoadCheck()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(testSummaryDto),
   many: jest.fn().mockResolvedValue([testSummaryDto]),
@@ -97,6 +104,9 @@ const mockCalibrationInjectionWorkspaceService = () => ({
 
 const mockFuelFlowToLoadTestWorkspaceService = () => ({
   export: jest.fn().mockResolvedValue([new FuelFlowToLoadTest()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+const mockFlowToLoadCheckWorkspaceService = () => ({
   import: jest.fn().mockResolvedValue(null),
 });
 
@@ -190,6 +200,10 @@ describe('TestSummaryWorkspaceService', () => {
           useFactory: () => ({
             findOne: jest.fn().mockResolvedValue(comp),
           }),
+        },
+        {
+          provide: FlowToLoadCheckWorkspaceService,
+          useFactory: mockFlowToLoadCheckService,
         },
       ],
     }).compile();

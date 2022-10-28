@@ -13,6 +13,7 @@ import { ProtocolGasService } from '../protocol-gas/protocol-gas.service';
 import { AppECorrelationTestSummaryService } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.service';
 import { FuelFlowToLoadTestService } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.service';
 import { CalibrationInjectionService } from '../calibration-injection/calibration-injection.service';
+import { FlowToLoadCheckService } from '../flow-to-load-check/flow-to-load-check.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -33,6 +34,8 @@ export class TestSummaryService {
     private readonly fuelFlowToLoadTestService: FuelFlowToLoadTestService,
     @Inject(forwardRef(() => CalibrationInjectionService))
     private readonly calInjService: CalibrationInjectionService,
+    @Inject(forwardRef(() => FlowToLoadCheckService))
+    private readonly flowToLoadCheckService: FlowToLoadCheckService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -134,7 +137,8 @@ export class TestSummaryService {
           protocolGasData,
           fuelFlowToLoadTestData,
           appECorrelationTestSummaryData,
-          calibrationInjectionData;
+          calibrationInjectionData,
+          flowToLoadCheckData;
         let testSumIds;
 
         if (testTypeCodes?.length > 0) {
@@ -153,6 +157,10 @@ export class TestSummaryService {
           protocolGasData = await this.protocolGasService.export(testSumIds);
 
           fuelFlowToLoadTestData = await this.fuelFlowToLoadTestService.export(
+            testSumIds,
+          );
+
+          flowToLoadCheckData = await this.flowToLoadCheckService.export(
             testSumIds,
           );
 
@@ -179,6 +187,9 @@ export class TestSummaryService {
               i => i.testSumId === s.id,
             );
             s.calibrationInjectionData = calibrationInjectionData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.flowToLoadCheckData = flowToLoadCheckData.filter(
               i => i.testSumId === s.id,
             );
           });

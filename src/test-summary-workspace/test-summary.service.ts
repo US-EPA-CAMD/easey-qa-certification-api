@@ -39,6 +39,7 @@ import { MonitorLocationRepository } from '../monitor-location/monitor-location.
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
+import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -71,6 +72,8 @@ export class TestSummaryWorkspaceService {
     private readonly monSysRepository: MonitorSystemRepository,
     @InjectRepository(ReportingPeriodRepository)
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
+    @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
+    private readonly flowToLoadCheckService: FlowToLoadCheckWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -171,8 +174,10 @@ export class TestSummaryWorkspaceService {
           rataData,
           protocolGasData,
           fuelFlowToLoadTestData,
-          appECorrelationTestSummaryData,
-          calibrationInjectionData;
+          calibrationInjectionData,
+          flowToLoadCheckData,
+          appECorrelationTestSummaryData;
+
         let testSumIds;
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
@@ -200,6 +205,10 @@ export class TestSummaryWorkspaceService {
             testSumIds,
           );
 
+          flowToLoadCheckData = await this.flowToLoadCheckService.export(
+            testSumIds,
+          );
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -215,6 +224,9 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.calibrationInjectionData = calibrationInjectionData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.flowToLoadCheckData = flowToLoadCheckData.filter(
               i => i.testSumId === s.id,
             );
           });
@@ -343,6 +355,29 @@ export class TestSummaryWorkspaceService {
               this.fuelFlowToLoadTestWorkspaceService.import(
                 createdTestSummary.id,
                 fuelFlowToLoadTest,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.flowToLoadCheckData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.F2LCHK
+    ) {
+      for (const flowToLoadCheck of payload.flowToLoadCheckData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.flowToLoadCheckService.import(
+                createdTestSummary.id,
+                flowToLoadCheck,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),

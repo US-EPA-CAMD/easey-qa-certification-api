@@ -19,6 +19,8 @@ import { FuelFlowToLoadTest } from '../entities/fuel-flow-to-load-test.entity';
 import { CalibrationInjection } from '../entities/calibration-injection.entity';
 import { CalibrationInjectionService } from '../calibration-injection/calibration-injection.service';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
+import { FlowToLoadCheckService } from '../flow-to-load-check/flow-to-load-check.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -51,6 +53,11 @@ const mockRataService = () => ({
 
 const mockProtocolGasService = () => ({
   export: jest.fn().mockResolvedValue([new ProtocolGas()]),
+});
+
+const mockFlowToLoadCheckService = () => ({
+  export: jest.fn().mockResolvedValue([new FlowToLoadCheck()]),
+  import: jest.fn().mockResolvedValue(null),
 });
 
 const mockAppECorrelationTestSummaryService = () => ({
@@ -105,6 +112,10 @@ describe('TestSummaryService', () => {
         {
           provide: CalibrationInjectionService,
           useFactory: mockCalibrationInjectionService,
+        },
+        {
+          provide: FlowToLoadCheckService,
+          useFactory: mockFlowToLoadCheckService,
         },
       ],
     }).compile();
