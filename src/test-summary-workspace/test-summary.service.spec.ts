@@ -33,7 +33,7 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { Component } from '../entities/workspace/component.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
+import { FlowToLoadCheck } from '../entities/workspace/flow-to-load-check.entity';
 import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
 
 const locationId = '121';

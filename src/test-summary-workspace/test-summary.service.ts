@@ -73,7 +73,7 @@ export class TestSummaryWorkspaceService {
     @InjectRepository(ReportingPeriodRepository)
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
     @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
-    private readonly flowToLoadCheckService: FlowToLoadCheckWorkspaceService,
+    private readonly flowToLoadCheckWorkspaceService: FlowToLoadCheckWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -205,7 +205,7 @@ export class TestSummaryWorkspaceService {
             testSumIds,
           );
 
-          flowToLoadCheckData = await this.flowToLoadCheckService.export(
+          flowToLoadCheckData = await this.flowToLoadCheckWorkspaceService.export(
             testSumIds,
           );
 
@@ -375,7 +375,7 @@ export class TestSummaryWorkspaceService {
           new Promise(async (resolve, _reject) => {
             const innerPromises = [];
             innerPromises.push(
-              this.flowToLoadCheckService.import(
+              this.flowToLoadCheckWorkspaceService.import(
                 createdTestSummary.id,
                 flowToLoadCheck,
                 userId,
