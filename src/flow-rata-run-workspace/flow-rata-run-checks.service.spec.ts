@@ -33,6 +33,7 @@ let rataSumRecord = {
 
 const importPayload = new FlowRataRunImportDTO();
 importPayload.averageVelocityWithWallEffects = 1;
+importPayload.averageStackFlowRate = 1;
 const rataSummaryImportPayload = new RataSummaryImportDTO();
 
 const mockTestSumRepository = () => ({
@@ -99,6 +100,22 @@ describe('Flow Rata Run Check Service Test', () => {
     rataRunRepository = module.get(RataRunWorkspaceRepository);
 
     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+  });
+
+  describe('RATA-94 Average Wet Stack Flow Rate Valid', () => {
+    it('Should get [RATA-94-C] error', async () => {
+      importPayload.averageStackFlowRate = 1;
+
+      let rataRunRec = new RataRun();
+      rataRunRec.rataReferenceValue = null;
+
+      jest.spyOn(rataRunRepository, 'findOne').mockResolvedValue(rataRunRec);
+      try {
+        await service.runChecks(importPayload, false, false, rataSumId);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
   });
 
   describe('RATA-114 Reported Average Velocity With Wall Effects Valid', () => {

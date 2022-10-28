@@ -81,7 +81,7 @@ export class FlowRataRunChecksService {
         errorList.push(error);
       }
 
-      error = this.rata94Check(rataSummaryRecord, rataRunRecord);
+      error = this.rata94Check(rataRunRecord, flowRataRun.averageStackFlowRate);
       if (error) {
         errorList.push(error);
       }
@@ -134,13 +134,13 @@ export class FlowRataRunChecksService {
   } */
 
   private rata94Check(
-    rataRun: RataRunImportDTO,
+    rataRunRecord: RataRun,
     averageStackFlowRate: number,
   ): string {
     let error: string = null;
     if (
-      rataRun.rataReferenceValue &&
-      averageStackFlowRate !== rataRun.rataReferenceValue
+      rataRunRecord.rataReferenceValue &&
+      averageStackFlowRate !== rataRunRecord.rataReferenceValue
     ) {
       error = this.getMessage('RATA-94-C', {
         key: KEY,

@@ -6,7 +6,7 @@ import {
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
-import { IsNotNegative } from 'src/pipes/is-not-negative.pipe';
+import { IsNotNegative } from '../pipes/is-not-negative.pipe';
 import { RataTraverseDTO, RataTraverseImportDTO } from './rata-traverse.dto';
 
 const KEY = 'Flow RATA Run';
