@@ -12,6 +12,7 @@ import {
   FlowToLoadCheckImportDTO,
   FlowToLoadCheckRecordDTO,
 } from '../dto/flow-to-load-check.dto';
+import { In } from 'typeorm';
 import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { FlowToLoadCheckRepository } from '../flow-to-load-check/flow-to-load-check.repository';
@@ -143,6 +144,19 @@ export class FlowToLoadCheckWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getFlowToLoadChecksByTestSumIds(
+    testSumIds: string[],
+  ): Promise<FlowToLoadCheckDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<FlowToLoadCheckDTO[]> {
+    return this.getFlowToLoadChecksByTestSumIds(testSumIds);
   }
 
   async import(

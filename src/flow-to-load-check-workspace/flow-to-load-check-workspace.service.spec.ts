@@ -189,7 +189,15 @@ describe('FlowToLoadCheckWorkspaceService', () => {
     });
   });
 
-  describe('Import', () => {
+  describe('Export', () => {
+    it('Should Export Flow To Load Check', async () => {
+      jest
+        .spyOn(service, 'getFlowToLoadChecksByTestSumIds')
+        .mockResolvedValue([flowToLoadCheck]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([flowToLoadCheck]);
+
+describe('Import', () => {
     it('Should Import Flow To Load Check', async () => {
       jest
         .spyOn(service, 'createFlowToLoadCheck')
