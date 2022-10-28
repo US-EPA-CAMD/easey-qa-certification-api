@@ -29,6 +29,7 @@ import { FlowToLoadReferenceWorkspaceModule } from '../flow-to-load-reference-wo
 import { CalibrationInjectionWorkspaceModule } from '../calibration-injection-workspace/calibration-injection-workspace.module';
 import { AppEHeatInputFromGasWorkspaceModule } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
 import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.module';
+import { FuelFlowToLoadBaselineWorkspaceModule } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oi
     forwardRef(() => AppEHeatInputFromGasWorkspaceModule),
     forwardRef(() => AppEHeatInputFromOilWorkspaceModule),
     forwardRef(() => CalibrationInjectionWorkspaceModule),
+    forwardRef(() => FuelFlowToLoadBaselineWorkspaceModule),
     TestResultCodeModule,
     HttpModule,
   ],

@@ -39,6 +39,7 @@ import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
 import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
 import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
+import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -59,6 +60,8 @@ export class TestSummaryWorkspaceService {
     private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
     @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
     private readonly flowToLoadCheckService: FlowToLoadCheckWorkspaceService,
+    @Inject(forwardRef(() => FuelFlowToLoadBaselineWorkspaceService))
+    private readonly fuelFlowToLoadBaselineService: FuelFlowToLoadBaselineWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -348,6 +351,29 @@ export class TestSummaryWorkspaceService {
               this.flowToLoadCheckService.import(
                 createdTestSummary.id,
                 flowToLoadCheck,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.fuelFlowToLoadBaselineData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.FF2LBAS
+    ) {
+      for (const fuelFlowToLoadBaseline of payload.fuelFlowToLoadBaselineData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.fuelFlowToLoadBaselineService.import(
+                createdTestSummary.id,
+                fuelFlowToLoadBaseline,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),
