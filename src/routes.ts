@@ -45,6 +45,7 @@ import { FuelFlowToLoadBaselineModule } from './fuel-flow-to-load-baseline/fuel-
 import { CalibrationInjectionWorkspaceModule } from './calibration-injection-workspace/calibration-injection-workspace.module';
 import { CalibrationInjectionModule } from './calibration-injection/calibration-injection.module';
 import { OnlineOfflineCalibrationWorkspaceModule } from './online-offline-calibration-workspace/online-offline-calibration.module';
+import { OnlineOfflineCalibrationModule } from './online-offline-calibration/online-offline-calibration.module';
 
 const routes: Routes = [
   {
@@ -152,6 +153,10 @@ const routes: Routes = [
                 ],
               },
             ],
+          },
+          {
+            path: ':testSumId/online-offline-calibration',
+            module: OnlineOfflineCalibrationModule,
           },
         ],
       },

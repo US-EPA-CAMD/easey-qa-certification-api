@@ -17,8 +17,8 @@ export class OnlineOfflineCalibrationMap extends BaseMap<
       id: entity.id,
       testSumId: entity.testSumId,
       userId: entity.userId,
-      addDate: entity.addDate.toLocaleString(),
-      updateDate: entity.updateDate.toLocaleString(),
+      addDate: entity.addDate?.toLocaleString() ?? null,
+      updateDate: entity.updateDate?.toLocaleString() ?? null,
 
       offlineUpscaleAPSIndicator: entity.offlineUpscaleAPSIndicator,
       offlineZeroAPSIndicator: entity.offlineZeroAPSIndicator,
