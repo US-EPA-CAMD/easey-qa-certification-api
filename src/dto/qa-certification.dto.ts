@@ -55,15 +55,7 @@ export class QACertificationImportDTO extends QACertificationBaseDTO {
 }
 
 export class QACertificationDTO extends QACertificationBaseDTO {
-  @ValidateNested({ each: true })
-  @Type(() => TestSummaryDTO)
   testSummaryData: TestSummaryDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => CertificationEventDTO)
   certificationEventData: CertificationEventDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => TestExtensionExemptionDTO)
   testExtensionExemptionData: TestExtensionExemptionDTO[];
 }

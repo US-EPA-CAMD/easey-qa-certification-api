@@ -134,7 +134,10 @@ export class FlowRataRunChecksService {
   ): string {
     let error: string = null;
     let FIELDNAME: string = 'averageVelocityWithWallEffects';
-    if (averageVelocityWithWallEffects !== null || averageVelocityWithWallEffects === 0) {
+    if (
+      averageVelocityWithWallEffects !== null ||
+      averageVelocityWithWallEffects === 0
+    ) {
       if (
         ['2F', '2G', '2FJ', '2GJ'].includes(
           rataSummaryRecord.referenceMethodCode,

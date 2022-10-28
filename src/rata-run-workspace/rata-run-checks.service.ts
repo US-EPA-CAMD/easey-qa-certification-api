@@ -7,10 +7,11 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { TestSummary } from '../entities/test-summary.entity';
 import { RataRunBaseDTO, RataRunImportDTO } from '../dto/rata-run.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
-import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
 import { RataRun } from '../entities/workspace/rata-run.entity';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 
 const KEY = 'RATA Run';
 @Injectable()
@@ -21,6 +22,7 @@ export class RataRunChecksService {
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
     @InjectRepository(RataRunWorkspaceRepository)
     private readonly repository: RataRunWorkspaceRepository,
+    private readonly testSummaryService: TestSummaryWorkspaceService,
   ) {}
 
   private throwIfErrors(errorList: string[]) {
@@ -45,9 +47,11 @@ export class RataRunChecksService {
     this.logger.info('Running RATA Run Checks');
 
     if (isImport) {
-      testSumRecord = TestSummary;
-    } else {
-      testSumRecord = await this.testSummaryRepository.getTestSummaryById(
+      testSumRecord = testSummary;
+    }
+
+    if (isUpdate) {
+      testSumRecord = await this.testSummaryService.getTestSummaryById(
         testSumId,
       );
     }
@@ -61,6 +65,13 @@ export class RataRunChecksService {
 
       // RATA-29 Result C
       error = this.rata29Check(rataRun, testSumRecord);
+      if (error) {
+        errorList.push(error);
+      }
+
+      
+      // RATA-31 Result B
+      error = this.rata31Check(rataRun);
       if (error) {
         errorList.push(error);
       }
@@ -280,6 +291,24 @@ export class RataRunChecksService {
         }
       }
     }
+  }
+
+  private rata31Check(rataRun: RataRunBaseDTO) {
+    let error: string = null;
+    const beginTime = `${rataRun.beginDate +
+      rataRun.beginHour.toString() +
+      rataRun.beginMinute.toString()}`;
+    const endTime = `${rataRun.endDate +
+      rataRun.endHour.toString() +
+      rataRun.endMinute.toString()}`;
+
+    if (beginTime > endTime) {
+      error = CheckCatalogService.formatResultMessage('RATA-31-B', {
+        key: KEY,
+      });
+    }
+
+    return error;
   }
 
   getMessage(messageKey: string, messageArgs: object): string {
