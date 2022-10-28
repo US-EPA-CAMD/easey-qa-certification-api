@@ -72,7 +72,7 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  @IsInRange(MIN_PERCENT_CO2_PRESSURE, MAX_PERCENT_CO2_PRESSURE, {
+  @IsInRange(0.1, MAX_PERCENT_CO2_PRESSURE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-65-B', {
         value: args.value,
@@ -93,7 +93,7 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  @IsInRange(MIN_PERCENT_O2_PRESSURE, MAX_PERCENT_O2_PRESSURE, {
+  @IsInRange(0.1, MAX_PERCENT_O2_PRESSURE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-66-B', {
         value: args.value,
