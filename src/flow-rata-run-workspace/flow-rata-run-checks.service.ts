@@ -80,6 +80,11 @@ export class FlowRataRunChecksService {
       if (error) {
         errorList.push(error);
       }
+
+      error = this.rata94Check(rataSummaryRecord, rataRunRecord);
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     /* // RATA-85 Number of Traverse Points Valid
@@ -127,6 +132,22 @@ export class FlowRataRunChecksService {
 
     return error;
   } */
+
+  private rata94Check(
+    rataRun: RataRunImportDTO,
+    averageStackFlowRate: number,
+  ): string {
+    let error: string = null;
+    if (
+      rataRun.rataReferenceValue &&
+      averageStackFlowRate !== rataRun.rataReferenceValue
+    ) {
+      error = this.getMessage('RATA-94-C', {
+        key: KEY,
+      });
+    }
+    return error;
+  }
 
   private rata114Check(
     rataSummaryRecord: RataSummary,
