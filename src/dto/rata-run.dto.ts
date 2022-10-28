@@ -98,7 +98,6 @@ export class RataRunBaseDTO {
       });
     },
   })
-  @ValidateIf(o => o.beginDate > o.endDate)
   endDate: Date;
 
   @IsNotEmpty({
