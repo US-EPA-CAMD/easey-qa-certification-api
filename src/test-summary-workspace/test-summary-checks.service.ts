@@ -711,7 +711,6 @@ export class TestSummaryChecksService {
     let error: string = null;
     let fields: string[] = [];
     let duplicate: TestSummary | QASuppData;
-    let FIELDNAME: string = 'fields';
 
     const duplicates = summaries.filter(i => {
       return (
@@ -771,7 +770,7 @@ export class TestSummaryChecksService {
         locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
         testTypeCode: summary.testTypeCode,
         testNumber: summary.testNumber,
-        fieldname: FIELDNAME,
+        fieldname: fields,
       });
     }
 

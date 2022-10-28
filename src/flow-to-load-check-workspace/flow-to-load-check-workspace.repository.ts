@@ -9,7 +9,7 @@ export class FlowToLoadCheckWorkspaceRepository extends Repository<
     testSumIds: string[],
   ): Promise<FlowToLoadCheck[]> {
     const query = this.createQueryBuilder('f2lchk')
-      .leftJoinAndSelect('f2lchk.system', 'ms')
+      .leftJoinAndSelect('f2lchk.system', 'o')
       .where('f2lchk.testSumId IN (:...testSumIds)', {
         testSumIds,
       });
