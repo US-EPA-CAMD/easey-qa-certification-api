@@ -58,7 +58,7 @@ export class TestSummaryWorkspaceService {
     @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
     private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
     @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
-    private readonly flowToLoadCheckService: FlowToLoadCheckWorkspaceService,
+    private readonly flowToLoadCheckWorkspaceService: FlowToLoadCheckWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -179,7 +179,7 @@ export class TestSummaryWorkspaceService {
           fuelFlowToLoadTestData = await this.fuelFlowToLoadTestWorkspaceService.export(
             testSumIds,
           );
-          flowToLoadCheckData = await this.flowToLoadCheckService.export(
+          flowToLoadCheckData = await this.flowToLoadCheckWorkspaceService.export(
             testSumIds,
           );
           testSummaries.forEach(s => {
@@ -325,6 +325,29 @@ export class TestSummaryWorkspaceService {
               this.fuelFlowToLoadTestWorkspaceService.import(
                 createdTestSummary.id,
                 fuelFlowToLoadTest,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.flowToLoadCheckData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.F2LCHK
+    ) {
+      for (const flowToLoadCheck of payload.flowToLoadCheckData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.flowToLoadCheckWorkspaceService.import(
+                createdTestSummary.id,
+                flowToLoadCheck,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),
