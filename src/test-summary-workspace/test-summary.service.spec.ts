@@ -21,6 +21,7 @@ import { ProtocolGas } from '../entities/workspace/protocol-gas.entity';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
 import { AppECorrelationTestSummary } from '../entities/workspace/app-e-correlation-test-summary.entity';
 import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
+import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -79,6 +80,9 @@ const mockAppECorrelationTestSummaryService = () => ({
 const mockFuelFlowToLoadTestWorkspaceService = () => ({
   import: jest.fn().mockResolvedValue(null),
 });
+const mockFlowToLoadCheckWorkspaceService = () => ({
+  import: jest.fn().mockResolvedValue(null),
+});
 
 describe('TestSummaryWorkspaceService', () => {
   let service: TestSummaryWorkspaceService;
@@ -116,6 +120,10 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: FuelFlowToLoadTestWorkspaceService,
           useFactory: mockFuelFlowToLoadTestWorkspaceService,
+        },
+        {
+          provide: FlowToLoadCheckWorkspaceService,
+          useFactory: mockFlowToLoadCheckWorkspaceService,
         },
       ],
     }).compile();

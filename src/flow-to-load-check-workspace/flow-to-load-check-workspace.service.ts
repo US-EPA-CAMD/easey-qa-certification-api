@@ -9,8 +9,12 @@ import { FlowToLoadCheckWorkspaceRepository } from './flow-to-load-check-workspa
 import {
   FlowToLoadCheckBaseDTO,
   FlowToLoadCheckDTO,
+  FlowToLoadCheckImportDTO,
   FlowToLoadCheckRecordDTO,
 } from '../dto/flow-to-load-check.dto';
+import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { FlowToLoadCheckRepository } from '../flow-to-load-check/flow-to-load-check.repository';
 
 @Injectable()
 export class FlowToLoadCheckWorkspaceService {
@@ -20,6 +24,9 @@ export class FlowToLoadCheckWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(FlowToLoadCheckWorkspaceRepository)
     private readonly repository: FlowToLoadCheckWorkspaceRepository,
+    @InjectRepository(FlowToLoadCheckRepository)
+    private readonly historicalRepo: FlowToLoadCheckRepository,
+    private readonly logger: Logger,
   ) {}
 
   async getFlowToLoadChecks(
@@ -48,12 +55,13 @@ export class FlowToLoadCheckWorkspaceService {
     payload: FlowToLoadCheckBaseDTO,
     userId: string,
     isImport: boolean = false,
+    historicalRecordId?: string,
   ): Promise<FlowToLoadCheckRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
       userId,
       addDate: timestamp,
@@ -134,6 +142,35 @@ export class FlowToLoadCheckWorkspaceService {
       testSumId,
       userId,
       isImport,
+    );
+  }
+
+  async import(
+    testSumId: string,
+    payload: FlowToLoadCheckImportDTO,
+    userId: string,
+    isHistoricalRecord: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: FlowToLoadCheck;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepo.findOne({
+        testSumId: testSumId,
+        testBasisCode: payload.testBasisCode,
+      });
+    }
+
+    const createdFlowToLoadCheck = await this.createFlowToLoadCheck(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Flow To Load Check Successfully Imported.  Record Id: ${createdFlowToLoadCheck.id}`,
     );
   }
 }
