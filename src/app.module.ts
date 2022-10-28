@@ -53,6 +53,7 @@ import { FuelFlowToLoadBaselineWorkspaceModule } from './fuel-flow-to-load-basel
 import { FuelFlowToLoadBaselineModule } from './fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.module';
 import { CalibrationInjectionWorkspaceModule } from './calibration-injection-workspace/calibration-injection-workspace.module';
 import { CalibrationInjectionModule } from './calibration-injection/calibration-injection.module';
+import { OnlineOfflineCalibrationModule } from './online-offline-calibration/online-offline-calibration.module';
 import { OnlineOfflineCalibrationWorkspaceModule } from './online-offline-calibration-workspace/online-offline-calibration.module';
 
 @Module({
@@ -108,6 +109,7 @@ import { OnlineOfflineCalibrationWorkspaceModule } from './online-offline-calibr
     FuelFlowToLoadBaselineModule,
     CalibrationInjectionWorkspaceModule,
     CalibrationInjectionModule,
+    OnlineOfflineCalibrationModule,
     OnlineOfflineCalibrationWorkspaceModule,
   ],
 })
