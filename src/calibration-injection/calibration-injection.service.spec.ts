@@ -75,4 +75,24 @@ describe('CalibrationInjectionService', () => {
       expect(errored).toEqual(true);
     });
   });
+
+  describe('getCalibrationInjectionByTestSumIds', () => {
+    it('Should get Calibration Injection records by test sum ids', async () => {
+      const result = await service.getCalibrationInjectionByTestSumIds([
+        testSumId,
+      ]);
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Calibration Injection Record', async () => {
+      jest
+        .spyOn(service, 'getCalibrationInjectionByTestSumIds')
+        .mockResolvedValue([]);
+
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([]);
+    });
+  });
 });
