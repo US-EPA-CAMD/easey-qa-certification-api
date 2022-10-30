@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -70,6 +78,25 @@ export class OnlineOfflineCalibrationWorkspaceController {
     return this.service.createOnlineOfflineCalibration(
       testSumId,
       payload,
+      user.userId,
+    );
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Delete a workspace Online Offline Calibration record',
+  })
+  async deleteOnlineOfflineCalibration(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteOnlineOfflineCalibration(
+      testSumId,
+      id,
       user.userId,
     );
   }
