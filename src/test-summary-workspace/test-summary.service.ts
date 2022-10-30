@@ -179,6 +179,7 @@ export class TestSummaryWorkspaceService {
           fuelFlowToLoadTestData,
           calibrationInjectionData,
           flowToLoadCheckData,
+          flowToLoadReferenceData,
           appECorrelationTestSummaryData;
 
         let testSumIds;
@@ -212,6 +213,10 @@ export class TestSummaryWorkspaceService {
             testSumIds,
           );
 
+          flowToLoadReferenceData = await this.flowToLoadReferenceWorkspaceService.export(
+            testSumIds,
+          );
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -230,6 +235,9 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.flowToLoadCheckData = flowToLoadCheckData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
               i => i.testSumId === s.id,
             );
           });
