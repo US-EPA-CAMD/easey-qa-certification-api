@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -69,7 +70,7 @@ export class OnlineOfflineCalibrationWorkspaceController {
     description:
       'Creates an Online Offline Calibration record in the workspace',
   })
-  async create(
+  async createOnlineOfflineCalibration(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: OnlineOfflineCalibrationBaseDTO,
@@ -99,5 +100,22 @@ export class OnlineOfflineCalibrationWorkspaceController {
       id,
       user.userId,
     );
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: OnlineOfflineCalibrationRecordDTO,
+    description: 'Updates an Online Offline Calibration record in the workspace',
+  })
+  async updateOnlineOfflineCalibration(
+    @Param('locid') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: OnlineOfflineCalibrationBaseDTO,
+    @User() user: CurrentUser,
+  ) {
+    return this.service.updateOnlineOfflineCalibration(testSumId, id, payload, user.userId);
   }
 }

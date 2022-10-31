@@ -139,4 +139,17 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
       expect(errored).toEqual(true);
     });
   });
+
+  describe('updateOnlineOfflineCalibration', () => {
+    it('Calls the repository to update an existing Online Offline Calibration record', async () => {
+      const result = await service.updateOnlineOfflineCalibration(
+        testSumId,
+        onlineOfflineCalibrationId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(onlineOfflineCalibrationDTO);
+      expect(repository.save).toHaveBeenCalled();
+    });
+  });
 });
