@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   FuelFlowToLoadBaselineBaseDTO,
   FuelFlowToLoadBaselineDTO,
+  FuelFlowToLoadBaselineImportDTO,
+  FuelFlowToLoadBaselineRecordDTO,
 } from '../dto/fuel-flow-to-load-baseline.dto';
 import { FuelFlowToLoadBaselineMap } from '../maps/fuel-flow-to-load-baseline.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -10,6 +12,9 @@ import { FuelFlowToLoadBaselineWorkspaceRepository } from './fuel-flow-to-load-b
 import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '../utilities/functions';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { FuelFlowToLoadBaseline } from '../entities/fuel-flow-to-load-baseline.entity';
+import { FuelFlowToLoadBaselineRepository } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class FuelFlowToLoadBaselineWorkspaceService {
@@ -19,6 +24,9 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(FuelFlowToLoadBaselineWorkspaceRepository)
     private readonly repository: FuelFlowToLoadBaselineWorkspaceRepository,
+    @InjectRepository(FuelFlowToLoadBaselineRepository)
+    private readonly historicalRepo: FuelFlowToLoadBaselineRepository,
+    private readonly logger: Logger,
   ) {}
 
   async getFuelFlowToLoadBaselines(
@@ -53,12 +61,13 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     payload: FuelFlowToLoadBaselineBaseDTO,
     userId: string,
     isImport: boolean = false,
-  ): Promise<FuelFlowToLoadBaselineDTO> {
+    historicalRecordId?: string,
+  ): Promise<FuelFlowToLoadBaselineRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
       userId,
       addDate: timestamp,
@@ -144,6 +153,35 @@ export class FuelFlowToLoadBaselineWorkspaceService {
       testSumId,
       userId,
       isImport,
+    );
+  }
+
+  async import(
+    testSumId: string,
+    payload: FuelFlowToLoadBaselineImportDTO,
+    userId: string,
+    isHistoricalRecord: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: FuelFlowToLoadBaseline;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepo.findOne({
+        testSumId: testSumId,
+        accuracyTestNumber: payload.accuracyTestNumber,
+      });
+    }
+
+    const createdFuelFlowToLoadBaseline = await this.createFuelFlowToLoadBaseline(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Fuel Flow To Load Baseline Successfully Imported.  Record Id: ${createdFuelFlowToLoadBaseline.id}`,
     );
   }
 }
