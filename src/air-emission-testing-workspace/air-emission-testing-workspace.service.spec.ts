@@ -168,7 +168,7 @@ describe('AirEmissionTestingWorkspaceService', () => {
 
     it('Should through error while deleting a Air Emission Testing record', async () => {
       const error = new LoggingException(
-        `Error deleting RATA with record Id [${airEmissiontestingId}]`,
+        `Error deleting Air Emission Testing with record Id [${airEmissiontestingId}]`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);

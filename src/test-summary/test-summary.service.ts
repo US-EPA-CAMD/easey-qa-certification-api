@@ -14,6 +14,7 @@ import { AppECorrelationTestSummaryService } from '../app-e-correlation-test-sum
 import { FuelFlowToLoadTestService } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.service';
 import { CalibrationInjectionService } from '../calibration-injection/calibration-injection.service';
 import { FlowToLoadCheckService } from '../flow-to-load-check/flow-to-load-check.service';
+import { FlowToLoadReferenceService } from '../flow-to-load-reference/flow-to-load-reference.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -36,6 +37,8 @@ export class TestSummaryService {
     private readonly calInjService: CalibrationInjectionService,
     @Inject(forwardRef(() => FlowToLoadCheckService))
     private readonly flowToLoadCheckService: FlowToLoadCheckService,
+    @Inject(forwardRef(() => FlowToLoadReferenceService))
+    private readonly flowLoadReferenceService: FlowToLoadReferenceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -138,7 +141,8 @@ export class TestSummaryService {
           fuelFlowToLoadTestData,
           appECorrelationTestSummaryData,
           calibrationInjectionData,
-          flowToLoadCheckData;
+          flowToLoadCheckData,
+          flowToLoadReferenceData;
         let testSumIds;
 
         if (testTypeCodes?.length > 0) {
@@ -161,6 +165,10 @@ export class TestSummaryService {
           );
 
           flowToLoadCheckData = await this.flowToLoadCheckService.export(
+            testSumIds,
+          );
+
+          flowToLoadReferenceData = await this.flowLoadReferenceService.export(
             testSumIds,
           );
 
@@ -190,6 +198,9 @@ export class TestSummaryService {
               i => i.testSumId === s.id,
             );
             s.flowToLoadCheckData = flowToLoadCheckData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
               i => i.testSumId === s.id,
             );
           });

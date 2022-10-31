@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -61,7 +70,7 @@ export class OnlineOfflineCalibrationWorkspaceController {
     description:
       'Creates an Online Offline Calibration record in the workspace',
   })
-  async create(
+  async createOnlineOfflineCalibration(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: OnlineOfflineCalibrationBaseDTO,
@@ -72,5 +81,41 @@ export class OnlineOfflineCalibrationWorkspaceController {
       payload,
       user.userId,
     );
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Delete a workspace Online Offline Calibration record',
+  })
+  async deleteOnlineOfflineCalibration(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteOnlineOfflineCalibration(
+      testSumId,
+      id,
+      user.userId,
+    );
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: OnlineOfflineCalibrationRecordDTO,
+    description: 'Updates an Online Offline Calibration record in the workspace',
+  })
+  async updateOnlineOfflineCalibration(
+    @Param('locid') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: OnlineOfflineCalibrationBaseDTO,
+    @User() user: CurrentUser,
+  ) {
+    return this.service.updateOnlineOfflineCalibration(testSumId, id, payload, user.userId);
   }
 }
