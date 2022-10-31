@@ -40,6 +40,7 @@ import { ComponentWorkspaceRepository } from '../component-workspace/component.r
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
+import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
 import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
 
 @Injectable()
@@ -74,6 +75,9 @@ export class TestSummaryWorkspaceService {
     @InjectRepository(ReportingPeriodRepository)
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
     @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
+    private readonly flowToLoadCheckService: FlowToLoadCheckWorkspaceService,
+    @Inject(forwardRef(() => FuelFlowToLoadBaselineWorkspaceService))
+    private readonly fuelFlowToLoadBaselineService: FuelFlowToLoadBaselineWorkspaceService,
     private readonly flowToLoadCheckWorkspaceService: FlowToLoadCheckWorkspaceService,
     @Inject(forwardRef(() => FlowToLoadReferenceWorkspaceService))
     private readonly flowToLoadReferenceWorkspaceService: FlowToLoadReferenceWorkspaceService,
@@ -389,6 +393,29 @@ export class TestSummaryWorkspaceService {
               this.flowToLoadCheckWorkspaceService.import(
                 createdTestSummary.id,
                 flowToLoadCheck,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.fuelFlowToLoadBaselineData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.FF2LBAS
+    ) {
+      for (const fuelFlowToLoadBaseline of payload.fuelFlowToLoadBaselineData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.fuelFlowToLoadBaselineService.import(
+                createdTestSummary.id,
+                fuelFlowToLoadBaseline,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),
