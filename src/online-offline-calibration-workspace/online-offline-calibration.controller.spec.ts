@@ -108,9 +108,14 @@ describe('Online Offline Calibration Workspace Controller', () => {
       jest
         .spyOn(service, 'createOnlineOfflineCalibration')
         .mockResolvedValue(onlineOfflineCalibrationRecord);
-      expect(await controller.createOnlineOfflineCalibration(locId, testSumId, payload, user)).toEqual(
-        onlineOfflineCalibrationRecord,
-      );
+      expect(
+        await controller.createOnlineOfflineCalibration(
+          locId,
+          testSumId,
+          payload,
+          user,
+        ),
+      ).toEqual(onlineOfflineCalibrationRecord);
     });
   });
 
@@ -119,9 +124,15 @@ describe('Online Offline Calibration Workspace Controller', () => {
       jest
         .spyOn(service, 'updateOnlineOfflineCalibration')
         .mockResolvedValue(onlineOfflineCalibrationRecord);
-      expect(await controller.updateOnlineOfflineCalibration(locId, testSumId, onlineOfflineCalibrationId, payload, user)).toEqual(
-        onlineOfflineCalibrationRecord,
-      );
+      expect(
+        await controller.updateOnlineOfflineCalibration(
+          locId,
+          testSumId,
+          onlineOfflineCalibrationId,
+          payload,
+          user,
+        ),
+      ).toEqual(onlineOfflineCalibrationRecord);
     });
   });
 

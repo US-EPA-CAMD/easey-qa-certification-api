@@ -107,7 +107,8 @@ export class OnlineOfflineCalibrationWorkspaceController {
   @ApiBearerAuth('Token')
   @ApiOkResponse({
     type: OnlineOfflineCalibrationRecordDTO,
-    description: 'Updates an Online Offline Calibration record in the workspace',
+    description:
+      'Updates an Online Offline Calibration record in the workspace',
   })
   async updateOnlineOfflineCalibration(
     @Param('locid') _locationId: string,
@@ -116,6 +117,11 @@ export class OnlineOfflineCalibrationWorkspaceController {
     @Body() payload: OnlineOfflineCalibrationBaseDTO,
     @User() user: CurrentUser,
   ) {
-    return this.service.updateOnlineOfflineCalibration(testSumId, id, payload, user.userId);
+    return this.service.updateOnlineOfflineCalibration(
+      testSumId,
+      id,
+      payload,
+      user.userId,
+    );
   }
 }

@@ -91,8 +91,8 @@ export class FlowRataRunBaseDTO {
         });
       },
     },
-    //   false,
-    //   false,
+    false,
+    false,
   )
   percentCO2: number;
 
@@ -118,8 +118,8 @@ export class FlowRataRunBaseDTO {
         });
       },
     },
-    //   false,
-    //   false,
+    false,
+    false,
   )
   percentO2: number;
 
@@ -145,8 +145,8 @@ export class FlowRataRunBaseDTO {
         });
       },
     },
-    //   false,
-    //   false,
+    false,
+    false,
   )
   percentMoisture: number;
 
@@ -211,6 +211,14 @@ export class FlowRataRunBaseDTO {
     },
   })
   @IsNotNegative({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-94-B', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsNotZero({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-94-B', {
         fieldname: args.property,

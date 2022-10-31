@@ -51,7 +51,9 @@ describe('linearitySummaryService', () => {
     }).compile();
 
     service = module.get<LinearitySummaryService>(LinearitySummaryService);
-    repository = module.get<LinearitySummaryRepository>(LinearitySummaryRepository);
+    repository = module.get<LinearitySummaryRepository>(
+      LinearitySummaryRepository,
+    );
   });
 
   describe('getlinearitySummary', () => {
