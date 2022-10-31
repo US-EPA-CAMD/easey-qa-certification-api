@@ -160,13 +160,14 @@ export class FlowRataRunChecksService {
         18 * (rataRunRecord.percentMoisture / 100);
     }
     if (rataRunRecord.calculatedWetMolecularWeight !== null) {
-      let absoluteDifference = Math.round(
-        Math.abs(
-          wetMolecularWeight - rataRunRecord.calculatedWetMolecularWeight,
-        ),
-      );
+      let absoluteDifference =
+        Math.round(
+          Math.abs(
+            wetMolecularWeight - rataRunRecord.calculatedWetMolecularWeight,
+          ) * 100,
+        ) / 100;
       // UNSURE ABOUT SECOND PARAM(wetMolecularWeight) - follow up
-      if (absoluteDifference > wetMolecularWeight) {
+      if (absoluteDifference > rataRunRecord.dryMolecularWeight) {
         error = this.getMessage('RATA-69-C', {
           key: KEY,
         });
