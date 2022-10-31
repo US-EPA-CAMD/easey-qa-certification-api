@@ -76,17 +76,23 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  @IsInRange(MIN_PERCENT_O2_PRESSURE, MAX_PERCENT_CO2_PRESSURE, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-65-B', {
-        value: args.value,
-        fieldname: args.property,
-        key: KEY,
-        minvalue: MIN_PERCENT_CO2_PRESSURE,
-        maxvalue: MAX_PERCENT_CO2_PRESSURE,
-      });
+  @IsInRange(
+    MIN_PERCENT_O2_PRESSURE,
+    MAX_PERCENT_CO2_PRESSURE,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatResultMessage('RATA-65-B', {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+          minvalue: MIN_PERCENT_CO2_PRESSURE,
+          maxvalue: MAX_PERCENT_CO2_PRESSURE,
+        });
+      },
     },
-  })
+    false,
+    false,
+  )
   percentCO2: number;
 
   @IsNotEmpty({
@@ -97,17 +103,23 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  @IsInRange(MIN_PERCENT_O2_PRESSURE, MAX_PERCENT_O2_PRESSURE, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-66-B', {
-        value: args.value,
-        fieldname: args.property,
-        key: KEY,
-        minvalue: MIN_PERCENT_O2_PRESSURE,
-        maxvalue: MAX_PERCENT_O2_PRESSURE,
-      });
+  @IsInRange(
+    MIN_PERCENT_O2_PRESSURE,
+    MAX_PERCENT_O2_PRESSURE,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatResultMessage('RATA-66-B', {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+          minvalue: MIN_PERCENT_O2_PRESSURE,
+          maxvalue: MAX_PERCENT_O2_PRESSURE,
+        });
+      },
     },
-  })
+    false,
+    false,
+  )
   percentO2: number;
 
   @IsNotEmpty({
@@ -118,17 +130,23 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  @IsInRange(MIN_PERCENT_MOISTURE, MAX_PERCENT_MOISTURE, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-67-B', {
-        value: args.value,
-        fieldname: args.property,
-        key: KEY,
-        minvalue: MIN_PERCENT_MOISTURE,
-        maxvalue: MAX_PERCENT_MOISTURE,
-      });
+  @IsInRange(
+    MIN_PERCENT_MOISTURE,
+    MAX_PERCENT_MOISTURE,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatResultMessage('RATA-67-B', {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+          minvalue: MIN_PERCENT_MOISTURE,
+          maxvalue: MAX_PERCENT_MOISTURE,
+        });
+      },
     },
-  })
+    false,
+    false,
+  )
   percentMoisture: number;
 
   dryMolecularWeight: number;
