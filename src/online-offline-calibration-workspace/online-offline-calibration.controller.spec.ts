@@ -34,6 +34,7 @@ const mockService = () => ({
     .fn()
     .mockResolvedValue(onlineOfflineCalibrationRecord),
   createOnlineOfflineCalibration: jest.fn(),
+  updateOnlineOfflineCalibration: jest.fn(),
 });
 
 const mockAuthGuard = () => ({});
@@ -107,7 +108,18 @@ describe('Online Offline Calibration Workspace Controller', () => {
       jest
         .spyOn(service, 'createOnlineOfflineCalibration')
         .mockResolvedValue(onlineOfflineCalibrationRecord);
-      expect(await controller.create(locId, testSumId, payload, user)).toEqual(
+      expect(await controller.createOnlineOfflineCalibration(locId, testSumId, payload, user)).toEqual(
+        onlineOfflineCalibrationRecord,
+      );
+    });
+  });
+
+  describe('updateOnlineOfflineCalibration', () => {
+    it('Should call the service to update an existing record', async () => {
+      jest
+        .spyOn(service, 'updateOnlineOfflineCalibration')
+        .mockResolvedValue(onlineOfflineCalibrationRecord);
+      expect(await controller.updateOnlineOfflineCalibration(locId, testSumId, onlineOfflineCalibrationId, payload, user)).toEqual(
         onlineOfflineCalibrationRecord,
       );
     });

@@ -63,6 +63,30 @@ describe('Linearity Summary Check Service Test', () => {
     });
   });
 
+  describe('LINEAR-15 Linearity Summary Calibration Gas Level Valid', () => {
+    const payload = new LinearitySummary();
+    it('Should get GasLevelCode is null error', async () => {
+      payload.gasLevelCode = null;
+      jest.spyOn(repository, 'findOne').mockResolvedValue(payload);
+
+      try{
+        await service.runChecks(payload, testSumId, false, false);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+    it('Should get GasLevelCode is not equal to "HIGH", "MID", or "LOW" error', async () => {
+      payload.gasLevelCode = "NOTHIGH";
+      jest.spyOn(repository, 'findOne').mockResolvedValue(payload);
+
+      try{
+        await service.runChecks(payload, testSumId, false, false);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+  });
+
   describe('LINEAR-32 Duplicate Linearity Summary (Result A)', () => {
     const payload = new LinearitySummaryBaseDTO();
     payload.gasLevelCode = 'LOW';
