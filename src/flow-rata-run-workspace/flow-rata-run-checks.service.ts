@@ -17,7 +17,6 @@ import { RataRun } from '../entities/workspace/rata-run.entity';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
-import { FlowRataRun } from '../entities/workspace/flow-rata-run.entity';
 
 const KEY = 'Flow RATA Run';
 
