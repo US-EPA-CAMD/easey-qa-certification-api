@@ -1,22 +1,22 @@
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
-
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-
-import { InjectRepository } from '@nestjs/typeorm';
-
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+
 import { currentDateTime } from '../utilities/functions';
 import {
   OnlineOfflineCalibrationDTO,
   OnlineOfflineCalibrationBaseDTO,
   OnlineOfflineCalibrationRecordDTO,
+  OnlineOfflineCalibrationImportDTO,
 } from '../dto/online-offline-calibration.dto';
 import { OnlineOfflineCalibrationWorkspaceRepository } from './online-offline-calibration.repository';
 import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { ProtocolGasBaseDTO, ProtocolGasDTO } from '../dto/protocol-gas.dto';
+import { OnlineOfflineCalibration } from '../entities/online-offline-calibration.entity';
+import { OnlineOfflineCalibrationRepository } from '../online-offline-calibration/online-offline-calibration.repository';
 
 @Injectable()
 export class OnlineOfflineCalibrationWorkspaceService {
@@ -27,6 +27,8 @@ export class OnlineOfflineCalibrationWorkspaceService {
     private readonly repository: OnlineOfflineCalibrationWorkspaceRepository,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
+    @InjectRepository(OnlineOfflineCalibrationRepository)
+    private readonly historicalRepo: OnlineOfflineCalibrationRepository,
   ) {}
 
   async getOnlineOfflineCalibrations(
@@ -101,15 +103,13 @@ export class OnlineOfflineCalibrationWorkspaceService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
-  
+
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
     );
-
   }
-
 
   async updateOnlineOfflineCalibration(
     testSumId: string,
@@ -126,7 +126,8 @@ export class OnlineOfflineCalibrationWorkspaceService {
     entity.offlineZeroAPSIndicator = payload.offlineZeroAPSIndicator;
     entity.onlineUpscaleAPSIndicator = payload.onlineUpscaleAPSIndicator;
     entity.onlineZeroAPSIndicator = payload.onlineZeroAPSIndicator;
-    entity.offlineUpscaleCalibrationError = payload.offlineUpscaleCalibrationError;
+    entity.offlineUpscaleCalibrationError =
+      payload.offlineUpscaleCalibrationError;
     entity.offlineUpscaleInjectionDate = payload.offlineUpscaleInjectionDate;
     entity.offlineUpscaleInjectionHour = payload.offlineUpscaleInjectionHour;
     entity.offlineUpscaleMeasuredValue = payload.offlineUpscaleMeasuredValue;
@@ -136,7 +137,8 @@ export class OnlineOfflineCalibrationWorkspaceService {
     entity.offlineZeroInjectionHour = payload.offlineZeroInjectionHour;
     entity.offlineZeroMeasuredValue = payload.offlineZeroMeasuredValue;
     entity.offlineZeroReferenceValue = payload.offlineZeroReferenceValue;
-    entity.onlineUpscaleCalibrationError = payload.onlineUpscaleCalibrationError;
+    entity.onlineUpscaleCalibrationError =
+      payload.onlineUpscaleCalibrationError;
     entity.onlineUpscaleInjectionDate = payload.onlineUpscaleInjectionDate;
     entity.onlineUpscaleInjectionHour = payload.onlineUpscaleInjectionHour;
     entity.onlineUpscaleMeasuredValue = payload.onlineUpscaleMeasuredValue;
@@ -160,5 +162,44 @@ export class OnlineOfflineCalibrationWorkspaceService {
     );
 
     return this.getOnlineOfflineCalibration(id);
+  }
+
+  async onlineOfflineCalibrationByTestSumIds(
+    testSumIds: string[],
+  ): Promise<OnlineOfflineCalibrationDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async import(
+    testSumId: string,
+    payload: OnlineOfflineCalibrationImportDTO,
+    userId: string,
+    isHistoricalRecord: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: OnlineOfflineCalibration;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepo.findOne({
+        testSumId,
+        upscaleGasLevelCode: payload.upscaleGasLevelCode,
+      });
+    }
+
+    const createdOnlineOfflineCalibration = await this.createOnlineOfflineCalibration(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Online Offline Calibration successfully imported. Record Id: ${createdOnlineOfflineCalibration}`,
+    );
   }
 }
