@@ -8,13 +8,11 @@ import {
   LinearityInjectionImportDTO,
 } from '../dto/linearity-injection.dto';
 import {
-  LinearitySummaryBaseDTO,
   LinearitySummaryDTO,
-  LinearitySummaryImportDTO,
+  LinearitySummaryImportDTO, LinearitySummaryRecordDTO,
 } from '../dto/linearity-summary.dto';
 import { LinearityInjectionWorkspaceService } from '../linearity-injection-workspace/linearity-injection.service';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
-import { InternalServerErrorException } from '@nestjs/common';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
@@ -23,7 +21,6 @@ const id = '';
 const testSumId = '1';
 const linSumId = '1';
 const userId = 'testuser';
-const entity = new LinearitySummary();
 const linearitySummaryRecord = new LinearitySummaryDTO();
 const linearitySummaryRecords = [linearitySummaryRecord];
 
@@ -47,6 +44,7 @@ const mockRepository = () => ({
 
 const historicalLinSum = new LinearitySummary();
 historicalLinSum.id = 'HISTORICAL-ID';
+
 const mockOfficialRepository = () => ({
   findOne: jest.fn().mockResolvedValue(historicalLinSum),
 });
@@ -63,10 +61,6 @@ const mockLinearityInjectionService = () => ({
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(linearitySummaryRecord),
   many: jest.fn().mockResolvedValue(linearitySummaryRecords),
-});
-
-const mockOfficialRepository = () => ({
-  findOne: jest.fn(),
 });
 
 describe('LinearitySummaryWorkspaceService', () => {
@@ -201,7 +195,7 @@ describe('LinearitySummaryWorkspaceService', () => {
   describe('createSummary', () => {
     it('Should insert a Linearity Summary record', async () => {
       const result = await service.createSummary(testSumId, payload, userId);
-      expect(result).toEqual(lineSummaryDto);
+      expect(result).toEqual(linearitySummaryRecord);
     });
 
     it('Should insert a Linearity Summary record with historical Id', async () => {
@@ -212,7 +206,7 @@ describe('LinearitySummaryWorkspaceService', () => {
         true,
         'HISTORICAL-ID',
       );
-      expect(result).toEqual(lineSummaryDto);
+      expect(result).toEqual(linearitySummaryRecord);
     });
   });
 
@@ -224,7 +218,7 @@ describe('LinearitySummaryWorkspaceService', () => {
         payload,
         userId,
       );
-      expect(result).toEqual(lineSummaryDto);
+      expect(result).toEqual(linearitySummaryRecord);
     });
 
     it('Should through error while updating a Linearity Summary record', async () => {
