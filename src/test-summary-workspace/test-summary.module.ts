@@ -35,6 +35,7 @@ import { UnitRepository } from '../unit/unit.repository';
 import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
+import { OnlineOfflineCalibrationWorkspaceModule } from '../online-offline-calibration-workspace/online-offline-calibration.module';
 
 @Module({
   imports: [
@@ -67,6 +68,7 @@ import { ReportingPeriodRepository } from '../reporting-period/reporting-period.
     forwardRef(() => AppEHeatInputFromOilWorkspaceModule),
     forwardRef(() => CalibrationInjectionWorkspaceModule),
     forwardRef(() => FuelFlowToLoadBaselineWorkspaceModule),
+    forwardRef(() => OnlineOfflineCalibrationWorkspaceModule),
     TestResultCodeModule,
     HttpModule,
   ],
