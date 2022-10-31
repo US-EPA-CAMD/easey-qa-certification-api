@@ -36,6 +36,7 @@ import { ComponentWorkspaceRepository } from '../component-workspace/component.r
 import { FlowToLoadCheck } from '../entities/workspace/flow-to-load-check.entity';
 import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
 import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
+import { FuelFlowToLoadBaseline } from '../entities/workspace/fuel-flow-to-load-baseline.entity';
 
 const locationId = '121';
 const facilityId = 1;
@@ -111,6 +112,7 @@ const mockFlowToLoadCheckWorkspaceService = () => ({
   import: jest.fn().mockResolvedValue(null),
 });
 const mockFuelFlowToLoadBaselineService = () => ({
+  export: jest.fn().mockResolvedValue([new FuelFlowToLoadBaseline()]),
   import: jest.fn().mockResolvedValue(null),
 });
 
