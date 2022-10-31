@@ -3,7 +3,6 @@ import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
-  IsPositive,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
@@ -163,7 +162,7 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  @IsPositive({
+  @IsNotNegative({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-115-B', {
         fieldname: args.property,
@@ -184,7 +183,7 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  @IsPositive({
+  @IsNotNegative({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-94-B', {
         fieldname: args.property,
