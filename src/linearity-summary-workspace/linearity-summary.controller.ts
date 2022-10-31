@@ -44,7 +44,7 @@ export class LinearitySummaryWorkspaceController {
     description:
       'Retrieves workspace Linearity Summary records by Test Summary Id',
   })
-  async getLinearitySummaries(
+  async getSummariesByTestSumId(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
   ): Promise<LinearitySummaryRecordDTO[]> {
@@ -56,7 +56,7 @@ export class LinearitySummaryWorkspaceController {
     type: LinearitySummaryRecordDTO,
     description: 'Retrieves workspace Linearity Summary record by its Id',
   })
-  async getLinearitySummary(
+  async getSummaryById(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('id') id: string,
@@ -71,13 +71,13 @@ export class LinearitySummaryWorkspaceController {
     type: LinearitySummaryRecordDTO,
     description: 'Creates a Linearity Summary record in the workspace',
   })
-  async createLinearitySummary(
+  async createSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: LinearitySummaryBaseDTO,
     @User() user: CurrentUser,
   ): Promise<LinearitySummaryRecordDTO> {
-    await this.checksService.runChecks(payload, testSumId);
+    //await this.checksService.runChecks(payload, testSumId);
     return this.service.createSummary(testSumId, payload, user.userId);
   }
 
@@ -88,14 +88,14 @@ export class LinearitySummaryWorkspaceController {
     type: LinearitySummaryRecordDTO,
     description: 'Updates a Linearity Summary record in the workspace',
   })
-  async updateLinearitySummary(
+  async updateSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
     @Body() payload: LinearitySummaryBaseDTO,
     @User() user: CurrentUser,
   ): Promise<LinearitySummaryRecordDTO> {
-    await this.checksService.runChecks(payload, testSumId, false, true);
+    // await this.checksService.runChecks(payload, testSumId, false, true);
     return this.service.updateSummary(testSumId, id, payload, user.userId);
   }
 
@@ -105,7 +105,7 @@ export class LinearitySummaryWorkspaceController {
   @ApiOkResponse({
     description: 'Deletes a Linearity Summary record from the workspace',
   })
-  async deleteLinearitySummary(
+  async deleteSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,

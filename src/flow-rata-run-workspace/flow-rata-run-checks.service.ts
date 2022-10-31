@@ -80,6 +80,11 @@ export class FlowRataRunChecksService {
       if (error) {
         errorList.push(error);
       }
+
+      error = this.rata94Check(rataRunRecord, flowRataRun.averageStackFlowRate);
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     /* // RATA-85 Number of Traverse Points Valid
@@ -128,13 +133,32 @@ export class FlowRataRunChecksService {
     return error;
   } */
 
+  private rata94Check(
+    rataRunRecord: RataRun,
+    averageStackFlowRate: number,
+  ): string {
+    let error: string = null;
+    if (
+      rataRunRecord.rataReferenceValue &&
+      averageStackFlowRate !== rataRunRecord.rataReferenceValue
+    ) {
+      error = this.getMessage('RATA-94-C', {
+        key: KEY,
+      });
+    }
+    return error;
+  }
+
   private rata114Check(
     rataSummaryRecord: RataSummary,
     averageVelocityWithWallEffects: number,
   ): string {
     let error: string = null;
-    let FIELDNAME: string = 'averageVelocityWithWallEffects;' + '';
-    if (averageVelocityWithWallEffects) {
+    let FIELDNAME: string = 'averageVelocityWithWallEffects';
+    if (
+      averageVelocityWithWallEffects !== null ||
+      averageVelocityWithWallEffects === 0
+    ) {
       if (
         ['2F', '2G', '2FJ', '2GJ'].includes(
           rataSummaryRecord.referenceMethodCode,
@@ -153,14 +177,16 @@ export class FlowRataRunChecksService {
           key: KEY,
         });
       }
-    } else if (
-      rataSummaryRecord.referenceMethodCode === 'M2H' ||
-      rataSummaryRecord.calculatedWAF
-    ) {
-      error = this.getMessage('RATA-114-C', {
-        fieldname: FIELDNAME,
-        key: KEY,
-      });
+    } else {
+      if (
+        rataSummaryRecord.referenceMethodCode === 'M2H' ||
+        rataSummaryRecord.calculatedWAF
+      ) {
+        error = this.getMessage('RATA-114-C', {
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
+      }
     }
 
     return error;

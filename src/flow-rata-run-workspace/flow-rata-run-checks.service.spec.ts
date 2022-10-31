@@ -19,8 +19,10 @@ import { TestSummary } from '../entities/workspace/test-summary.entity';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
-const rataRunId = '';
+const locationId = '';
+const testSumId = '';
 const rataSumId = '';
+const rataRunId = '';
 const flowRataRunId = '';
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
@@ -33,6 +35,7 @@ let rataSumRecord = {
 
 const importPayload = new FlowRataRunImportDTO();
 importPayload.averageVelocityWithWallEffects = 1;
+importPayload.averageStackFlowRate = 1;
 const rataSummaryImportPayload = new RataSummaryImportDTO();
 
 const mockTestSumRepository = () => ({
@@ -99,6 +102,33 @@ describe('Flow Rata Run Check Service Test', () => {
     rataRunRepository = module.get(RataRunWorkspaceRepository);
 
     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+  });
+
+  describe('RATA-94 Average Wet Stack Flow Rate Valid', () => {
+    it('Should get [RATA-94-C] error', async () => {
+      importPayload.averageStackFlowRate = 1;
+      let rataRunRec = new RataRun();
+      rataRunRec.rataReferenceValue = null;
+
+      jest.spyOn(rataRunRepository, 'findOne').mockResolvedValue(rataRunRec);
+      try {
+        await service.runChecks(importPayload, false, false, rataSumId);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+      try {
+        await service.runChecks(
+          importPayload,
+          false,
+          false,
+          rataSumId,
+          rataSummaryImportPayload,
+          testSumId,
+        );
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
   });
 
   describe('RATA-114 Reported Average Velocity With Wall Effects Valid', () => {

@@ -375,7 +375,6 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(1993, new Date().getFullYear(), {
     message: (args: ValidationArguments) => {
-      console.log(args);
       return `Year must be greater than or equal to 1993 and less than or equal to ${new Date().getFullYear()}. You reported an invalid year of [${
         args.value
       }] in Test Summary record for Unit/Stack [${
@@ -395,7 +394,6 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(1, 4, {
     message: (args: ValidationArguments) => {
-      console.log(args);
       return `Quarter must be a numeric number from 1 to 4. You reported an invalid quarter of [${
         args.value
       }] in Test Summary record for Unit/Stack [${
@@ -522,71 +520,21 @@ export class TestSummaryImportDTO extends TestSummaryBaseDTO {
 }
 
 export class TestSummaryDTO extends TestSummaryRecordDTO {
-  @ValidateNested({ each: true })
-  @Type(() => CalibrationInjectionDTO)
   calibrationInjectionData: CalibrationInjectionDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => LinearitySummaryDTO)
   linearitySummaryData: LinearitySummaryDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => RataDTO)
   rataData: RataDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => FlowToLoadReferenceDTO)
   flowToLoadReferenceData: FlowToLoadReferenceDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => FlowToLoadCheckDTO)
   flowToLoadCheckData: FlowToLoadCheckDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => CycleTimeSummaryDTO)
   cycleTimeSummaryData: CycleTimeSummaryDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => OnlineOfflineCalibrationDTO)
   onlineOfflineCalibrationData: OnlineOfflineCalibrationDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => FuelFlowmeterAccuracyDTO)
   fuelFlowmeterAccuracyData: FuelFlowmeterAccuracyDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => TransmitterTransducerDTO)
   transmitterTransducerData: TransmitterTransducerDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => FuelFlowToLoadBaselineDTO)
   fuelFlowToLoadBaselineData: FuelFlowToLoadBaselineDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => FuelFlowToLoadTestDTO)
   fuelFlowToLoadTestData: FuelFlowToLoadTestDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => AppECorrelationTestSummaryDTO)
   appECorrelationTestSummaryData: AppECorrelationTestSummaryDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => UnitDefaultTestDTO)
   unitDefaultTestData: UnitDefaultTestDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => HgSummaryDTO)
   hgSummaryData: HgSummaryDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => TestQualificationDTO)
   testQualificationData: TestQualificationDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => ProtocolGasDTO)
   protocolGasData: ProtocolGasDTO[];
-
-  @ValidateNested({ each: true })
-  @Type(() => AirEmissionTestingDTO)
   airEmissionTestingData: AirEmissionTestingDTO[];
 }

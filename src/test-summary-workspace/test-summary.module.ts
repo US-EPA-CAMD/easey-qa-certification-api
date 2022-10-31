@@ -29,6 +29,12 @@ import { FlowToLoadReferenceWorkspaceModule } from '../flow-to-load-reference-wo
 import { CalibrationInjectionWorkspaceModule } from '../calibration-injection-workspace/calibration-injection-workspace.module';
 import { AppEHeatInputFromGasWorkspaceModule } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
 import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.module';
+import { FuelFlowToLoadBaselineWorkspaceModule } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.module';
+import { CalibrationInjectionRepository } from '../calibration-injection/calibration-injection.repository';
+import { UnitRepository } from '../unit/unit.repository';
+import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
+import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
+import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 
 @Module({
   imports: [
@@ -40,7 +46,12 @@ import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oi
       AnalyzerRangeWorkspaceRepository,
       TestSummaryMasterDataRelationshipRepository,
       MonitorSystemRepository,
+      ReportingPeriodRepository,
+      MonitorLocationRepository,
+      UnitRepository,
+      StackPipeRepository,
       MonitorMethodRepository,
+      CalibrationInjectionRepository,
     ]),
     forwardRef(() => LinearitySummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),
@@ -55,6 +66,7 @@ import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oi
     forwardRef(() => AppEHeatInputFromGasWorkspaceModule),
     forwardRef(() => AppEHeatInputFromOilWorkspaceModule),
     forwardRef(() => CalibrationInjectionWorkspaceModule),
+    forwardRef(() => FuelFlowToLoadBaselineWorkspaceModule),
     TestResultCodeModule,
     HttpModule,
   ],

@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { InternalServerErrorException } from '@nestjs/common';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { LinearitySummary } from '../entities/linearity-summary.entity';
 import { LinearitySummaryRepository } from '../linearity-summary/linearity-summary.repository';
@@ -7,9 +8,9 @@ import {
   LinearityInjectionImportDTO,
 } from '../dto/linearity-injection.dto';
 import {
+  LinearitySummaryBaseDTO,
   LinearitySummaryDTO,
   LinearitySummaryImportDTO,
-  LinearitySummaryRecordDTO,
 } from '../dto/linearity-summary.dto';
 import { LinearityInjectionWorkspaceService } from '../linearity-injection-workspace/linearity-injection.service';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
@@ -18,9 +19,13 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
 
+const id = '';
 const testSumId = '1';
 const linSumId = '1';
 const userId = 'testuser';
+const entity = new LinearitySummary();
+const linearitySummaryRecord = new LinearitySummaryDTO();
+const linearitySummaryRecords = [linearitySummaryRecord];
 
 const lineSummary = new LinearitySummary();
 const lineSummaryDto = new LinearitySummaryDTO();
@@ -46,7 +51,9 @@ const mockOfficialRepository = () => ({
   findOne: jest.fn().mockResolvedValue(historicalLinSum),
 });
 
-const mockTestSummaryService = () => ({});
+const mockTestSumService = () => ({
+  resetToNeedsEvaluation: jest.fn(),
+});
 
 const mockLinearityInjectionService = () => ({
   import: jest.fn().mockResolvedValue(null),
@@ -54,12 +61,17 @@ const mockLinearityInjectionService = () => ({
 });
 
 const mockMap = () => ({
-  one: jest.fn().mockResolvedValue(lineSummaryDto),
-  many: jest.fn().mockResolvedValue([lineSummaryDto]),
+  one: jest.fn().mockResolvedValue(linearitySummaryRecord),
+  many: jest.fn().mockResolvedValue(linearitySummaryRecords),
+});
+
+const mockOfficialRepository = () => ({
+  findOne: jest.fn(),
 });
 
 describe('LinearitySummaryWorkspaceService', () => {
   let service: LinearitySummaryWorkspaceService;
+  let testSummaryService: TestSummaryWorkspaceService;
   let repository: LinearitySummaryWorkspaceRepository;
 
   beforeEach(async () => {
@@ -69,7 +81,7 @@ describe('LinearitySummaryWorkspaceService', () => {
         LinearitySummaryWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
-          useFactory: mockTestSummaryService,
+          useFactory: mockTestSumService,
         },
         {
           provide: LinearityInjectionWorkspaceService,
@@ -96,8 +108,16 @@ describe('LinearitySummaryWorkspaceService', () => {
       ],
     }).compile();
 
-    service = module.get(LinearitySummaryWorkspaceService);
-    repository = module.get(LinearitySummaryWorkspaceRepository);
+
+    service = module.get<LinearitySummaryWorkspaceService>(
+      LinearitySummaryWorkspaceService,
+    );
+    testSummaryService = module.get<TestSummaryWorkspaceService>(
+      TestSummaryWorkspaceService,
+    );
+    repository = module.get<LinearitySummaryWorkspaceRepository>(
+      LinearitySummaryWorkspaceRepository,
+    );
   });
 
   describe('getSummaryById', () => {
@@ -151,8 +171,12 @@ describe('LinearitySummaryWorkspaceService', () => {
     it('Should import Linearity Summary', async () => {
       jest
         .spyOn(service, 'createSummary')
-        .mockResolvedValue(lineSummaryRecordDto);
-      const result = await service.import(testSumId, importPayload, userId);
+        .mockResolvedValue(linearitySummaryRecord);
+      const result = await service.import(
+        testSumId,
+        new LinearitySummaryImportDTO(),
+        userId,
+      );
       expect(result).toEqual(null);
     });
 
@@ -235,6 +259,49 @@ describe('LinearitySummaryWorkspaceService', () => {
         errored = true;
       }
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('getSummariesByTestSumId', () => {
+    it('Should return Linearity Summary records by Test Summary id', async () => {
+      const result = await service.getSummariesByTestSumId(testSumId);
+      expect(result).toEqual(linearitySummaryRecords);
+    });
+  });
+
+  describe('getSummaryById', () => {
+    it('Should return a Linearity Summary record', async () => {
+      const result = await service.getSummaryById(id);
+      expect(result).toEqual(linearitySummaryRecord);
+    });
+  });
+
+  describe('createSummary', () => {
+    it('Should create and return a new Linearity Summary record', async () => {
+      const result = await service.createSummary(testSumId, payload, userId);
+
+      expect(result).toEqual(linearitySummaryRecord);
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+  });
+
+  describe('editFuelFlowToLoadTest', () => {
+    it('Should update and return a new Linearity Summary record', async () => {
+      const result = await service.updateSummary(
+        testSumId,
+        id,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(linearitySummaryRecord);
+    });
+  });
+
+  describe('deleteSummary', () => {
+    it('Should delete a Linearity Summary record', async () => {
+      const result = await service.deleteSummary(testSumId, id, userId);
+
+      expect(result).toEqual(undefined);
     });
   });
 });

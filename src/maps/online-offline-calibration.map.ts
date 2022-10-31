@@ -17,17 +17,13 @@ export class OnlineOfflineCalibrationMap extends BaseMap<
       id: entity.id,
       testSumId: entity.testSumId,
       userId: entity.userId,
-      addDate: entity.addDate.toLocaleString(),
-      updateDate: entity.updateDate.toLocaleString(),
+      addDate: entity.addDate?.toLocaleString() ?? null,
+      updateDate: entity.updateDate?.toLocaleString() ?? null,
 
-      calculatedOfflineUpscaleCalibrationError:
-        entity.calculatedOfflineUpscaleCalibrationError,
-      calculatedOfflineZeroCalibrationError:
-        entity.calculatedOfflineZeroCalibrationError,
-      calculatedOnlineUpscaleCalibrationError:
-        entity.calculatedOnlineUpscaleCalibrationError,
-      calculatedOnlineZeroCalibrationError:
-        entity.calculatedOnlineZeroCalibrationError,
+      offlineUpscaleAPSIndicator: entity.offlineUpscaleAPSIndicator,
+      offlineZeroAPSIndicator: entity.offlineZeroAPSIndicator,
+      onlineUpscaleAPSIndicator: entity.onlineUpscaleAPSIndicator,
+      onlineZeroAPSIndicator: entity.onlineZeroAPSIndicator,
       offlineUpscaleCalibrationError: entity.offlineUpscaleCalibrationError,
       offlineUpscaleInjectionDate:
         entity.offlineUpscaleInjectionDate?.toLocaleString() ?? null,

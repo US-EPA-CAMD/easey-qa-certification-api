@@ -17,12 +17,15 @@ const mockTestSumService = () => ({
 });
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue(appEHIGasRecords),
+  testSumIds: jest.fn().mockResolvedValue(appEHIGasRecords),
   create: jest.fn().mockResolvedValue(appEHIGasRecord),
   save: jest.fn().mockResolvedValue(appEHIGasRecord),
   findOne: jest.fn().mockResolvedValue(appEHIGasRecord),
   getAppEHeatInputFromGasById: jest.fn().mockResolvedValue(appEHIGasRecord),
   getAppEHeatInputFromGasByTestRunId: jest
+    .fn()
+    .mockResolvedValue(appEHIGasRecords),
+  getAppEHeatInputFromGasesByTestRunIds: jest
     .fn()
     .mockResolvedValue(appEHIGasRecords),
 });
@@ -78,7 +81,9 @@ describe('AppEHeatInputFromGasService', () => {
     });
 
     it('Should throw error when record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(repository, 'getAppEHeatInputFromGasById')
+        .mockResolvedValue(null);
 
       let errored = false;
 

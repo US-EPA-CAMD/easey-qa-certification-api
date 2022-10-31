@@ -6,14 +6,45 @@ import {
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
+import { IsNotNegative } from '../pipes/is-not-negative.pipe';
 import { RataTraverseDTO, RataTraverseImportDTO } from './rata-traverse.dto';
 
 const KEY = 'Flow RATA Run';
 const MIN_STATIC_STACK_PRESSURE = -30;
 const MAX_STATIC_STACK_PRESSURE = 30;
+const MIN_BAROMETRIC_PRESSURE = 20;
+const MAX_BAROMETRIC_PRESSURE = 35;
+const MIN_PERCENT_CO2_PRESSURE = 0;
+const MAX_PERCENT_CO2_PRESSURE = 20;
+const MIN_PERCENT_O2_PRESSURE = 0;
+const MAX_PERCENT_O2_PRESSURE = 22;
+const MIN_PERCENT_MOISTURE = 0;
+const MAX_PERCENT_MOISTURE = 75.0;
+const MIN_WET_MOLECULAR_WEIGHT = 25;
+const MAX_WET_MOLECULAR_WEIGHT = 30;
 
 export class FlowRataRunBaseDTO {
   numberOfTraversePoints: number;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-63-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_BAROMETRIC_PRESSURE, MAX_BAROMETRIC_PRESSURE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-63-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+        minvalue: MIN_BAROMETRIC_PRESSURE,
+        maxvalue: MAX_BAROMETRIC_PRESSURE,
+      });
+    },
+  })
   barometricPressure: number;
 
   @IsNotEmpty({
@@ -36,14 +67,130 @@ export class FlowRataRunBaseDTO {
     },
   })
   staticStackPressure: number;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-65-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_PERCENT_O2_PRESSURE, MAX_PERCENT_CO2_PRESSURE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-65-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+        minvalue: MIN_PERCENT_CO2_PRESSURE,
+        maxvalue: MAX_PERCENT_CO2_PRESSURE,
+      });
+    },
+  })
   percentCO2: number;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-66-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_PERCENT_O2_PRESSURE, MAX_PERCENT_O2_PRESSURE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-66-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+        minvalue: MIN_PERCENT_O2_PRESSURE,
+        maxvalue: MAX_PERCENT_O2_PRESSURE,
+      });
+    },
+  })
   percentO2: number;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-67-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_PERCENT_MOISTURE, MAX_PERCENT_MOISTURE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-67-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+        minvalue: MIN_PERCENT_MOISTURE,
+        maxvalue: MAX_PERCENT_MOISTURE,
+      });
+    },
+  })
   percentMoisture: number;
+
   dryMolecularWeight: number;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-69-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_WET_MOLECULAR_WEIGHT, MAX_WET_MOLECULAR_WEIGHT, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-69-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+        minvalue: MIN_WET_MOLECULAR_WEIGHT,
+        maxvalue: MAX_WET_MOLECULAR_WEIGHT,
+      });
+    },
+  })
   wetMolecularWeight: number;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-115-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsNotNegative({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-115-B', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   averageVelocityWithoutWallEffects: number;
+
   averageVelocityWithWallEffects: number;
   calculatedWAF: number;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-94-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsNotNegative({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-94-B', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   averageStackFlowRate: number;
 }
 
@@ -67,7 +214,5 @@ export class FlowRataRunImportDTO extends FlowRataRunBaseDTO {
 }
 
 export class FlowRataRunDTO extends FlowRataRunRecordDTO {
-  @ValidateNested({ each: true })
-  @Type(() => RataTraverseDTO)
   rataTraverseData: RataTraverseDTO[];
 }
