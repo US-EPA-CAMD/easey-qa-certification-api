@@ -16,6 +16,7 @@ import { OnlineOfflineCalibrationWorkspaceRepository } from './online-offline-ca
 import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { ProtocolGasBaseDTO, ProtocolGasDTO } from '../dto/protocol-gas.dto';
 
 @Injectable()
 export class OnlineOfflineCalibrationWorkspaceService {
@@ -100,11 +101,64 @@ export class OnlineOfflineCalibrationWorkspaceService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+  }
+
+
+  async updateOnlineOfflineCalibration(
+    testSumId: string,
+    id: string,
+    payload: OnlineOfflineCalibrationBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<OnlineOfflineCalibrationDTO> {
+    const timestamp = currentDateTime().toLocaleString();
+
+    const entity = await this.getOnlineOfflineCalibration(id);
+
+    entity.offlineUpscaleAPSIndicator = payload.offlineUpscaleAPSIndicator;
+    entity.offlineZeroAPSIndicator = payload.offlineZeroAPSIndicator;
+    entity.onlineUpscaleAPSIndicator = payload.onlineUpscaleAPSIndicator;
+    entity.onlineZeroAPSIndicator = payload.onlineZeroAPSIndicator;
+    entity.offlineUpscaleCalibrationError = payload.offlineUpscaleCalibrationError;
+    entity.offlineUpscaleInjectionDate = payload.offlineUpscaleInjectionDate;
+    entity.offlineUpscaleInjectionHour = payload.offlineUpscaleInjectionHour;
+    entity.offlineUpscaleMeasuredValue = payload.offlineUpscaleMeasuredValue;
+    entity.offlineUpscaleReferenceValue = payload.offlineUpscaleReferenceValue;
+    entity.offlineZeroCalibrationError = payload.offlineZeroCalibrationError;
+    entity.offlineZeroInjectionDate = payload.offlineZeroInjectionDate;
+    entity.offlineZeroInjectionHour = payload.offlineZeroInjectionHour;
+    entity.offlineZeroMeasuredValue = payload.offlineZeroMeasuredValue;
+    entity.offlineZeroReferenceValue = payload.offlineZeroReferenceValue;
+    entity.onlineUpscaleCalibrationError = payload.onlineUpscaleCalibrationError;
+    entity.onlineUpscaleInjectionDate = payload.onlineUpscaleInjectionDate;
+    entity.onlineUpscaleInjectionHour = payload.onlineUpscaleInjectionHour;
+    entity.onlineUpscaleMeasuredValue = payload.onlineUpscaleMeasuredValue;
+    entity.onlineUpscaleReferenceValue = payload.onlineUpscaleReferenceValue;
+    entity.onlineZeroCalibrationError = payload.onlineZeroCalibrationError;
+    entity.onlineZeroInjectionDate = payload.onlineZeroInjectionDate;
+    entity.onlineZeroInjectionHour = payload.onlineZeroInjectionHour;
+    entity.onlineZeroMeasuredValue = payload.onlineZeroMeasuredValue;
+    entity.onlineZeroReferenceValue = payload.onlineZeroReferenceValue;
+    entity.upscaleGasLevelCode = payload.upscaleGasLevelCode;
+
+    entity.userId = userId;
+    entity.updateDate = timestamp;
+
+    await this.repository.save(entity);
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
     );
+
+    return this.getOnlineOfflineCalibration(id);
   }
 }
