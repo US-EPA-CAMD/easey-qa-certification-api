@@ -112,4 +112,16 @@ describe('Online Offline Calibration Workspace Controller', () => {
       );
     });
   });
+
+  describe('deleteOnlineOfflineCalibration', () => {
+    it('should call the RataService.deleteOnlineOfflineCalibration and delete Air Emission Testing record', async () => {
+      const result = await controller.deleteOnlineOfflineCalibration(
+        locId,
+        testSumId,
+        onlineOfflineCalibrationId,
+        user,
+      );
+      expect(result).toEqual(null);
+    });
+  });
 });

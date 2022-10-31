@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CalibrationInjectionMap } from '../maps/calibration-injection.map';
 import { CalibrationInjectionDTO } from '../dto/calibration-injection.dto';
 import { CalibrationInjectionRepository } from './calibration-injection.repository';
+import { In } from 'typeorm';
 
 @Injectable()
 export class CalibrationInjectionService {
@@ -38,5 +39,19 @@ export class CalibrationInjectionService {
     }
 
     return this.map.one(result);
+  }
+
+  async getCalibrationInjectionByTestSumIds(
+    testSumIds: string[],
+  ): Promise<CalibrationInjectionDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<CalibrationInjectionDTO[]> {
+    const calInjs = await this.getCalibrationInjectionByTestSumIds(testSumIds);
+    return calInjs;
   }
 }

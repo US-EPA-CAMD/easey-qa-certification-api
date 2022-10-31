@@ -1,6 +1,10 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
+import { In } from 'typeorm';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import { currentDateTime } from '../utilities/functions';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FlowToLoadReferenceMap } from '../maps/flow-to-load-reference.map';
@@ -8,9 +12,10 @@ import { FlowToLoadReferenceWorkspaceRepository } from './flow-to-load-reference
 import {
   FlowToLoadReferenceBaseDTO,
   FlowToLoadReferenceDTO,
+  FlowToLoadReferenceImportDTO,
 } from '../dto/flow-to-load-reference.dto';
-import { In } from 'typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { FlowToLoadReferenceRepository } from '../flow-to-load-reference/flow-to-load-reference.repository';
+import { FlowToLoadReference } from '../entities/flow-to-load-reference.entity';
 
 @Injectable()
 export class FlowToLoadReferenceWorkspaceService {
@@ -20,6 +25,9 @@ export class FlowToLoadReferenceWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(FlowToLoadReferenceWorkspaceRepository)
     private readonly repository: FlowToLoadReferenceWorkspaceRepository,
+    @InjectRepository(FlowToLoadReferenceRepository)
+    private readonly historicalRepo: FlowToLoadReferenceRepository,
+    private readonly logger: Logger,
   ) {}
 
   async getFlowToLoadReferences(
@@ -48,12 +56,13 @@ export class FlowToLoadReferenceWorkspaceService {
     payload: FlowToLoadReferenceBaseDTO,
     userId: string,
     isImport: boolean = false,
+    historicalRecordId?: string,
   ): Promise<FlowToLoadReferenceDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
       userId,
       addDate: timestamp,
@@ -138,6 +147,35 @@ export class FlowToLoadReferenceWorkspaceService {
       where: { testSumId: In(testSumIds) },
     });
     return this.map.many(results);
+  }
+
+  async import(
+    testSumId: string,
+    payload: FlowToLoadReferenceImportDTO,
+    userId: string,
+    isHistoricalRecord: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: FlowToLoadReference;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepo.findOne({
+        testSumId: testSumId,
+        operatingLevelCode: payload.operatingLevelCode,
+      });
+    }
+
+    const createdFlowToLoadReference = await this.createFlowToLoadReference(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Flow To Load Reference Successfully Imported.  Record Id: ${createdFlowToLoadReference.id}`,
+    );
   }
 
   async export(testSumIds: string[]): Promise<FlowToLoadReferenceDTO[]> {
