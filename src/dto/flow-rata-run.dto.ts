@@ -34,8 +34,8 @@ export class FlowRataRunBaseDTO {
     },
   })
   @Min(MIN_NO_OF_TRAVERSE_POINTS, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-85-A', {
+    message: () => {
+      return CheckCatalogService.formatResultMessage('RATA-85-B', {
         key: KEY,
       });
     },
