@@ -69,17 +69,17 @@ describe('Linearity Summary Check Service Test', () => {
       payload.gasLevelCode = null;
       jest.spyOn(repository, 'findOne').mockResolvedValue(payload);
 
-      try{
+      try {
         await service.runChecks(payload, testSumId, false, false);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
     it('Should get GasLevelCode is not equal to "HIGH", "MID", or "LOW" error', async () => {
-      payload.gasLevelCode = "NOTHIGH";
+      payload.gasLevelCode = 'NOTHIGH';
       jest.spyOn(repository, 'findOne').mockResolvedValue(payload);
 
-      try{
+      try {
         await service.runChecks(payload, testSumId, false, false);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);

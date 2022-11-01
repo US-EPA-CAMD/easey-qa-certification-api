@@ -134,7 +134,7 @@ export class FlowRataRunChecksService {
   } */
 
   private rata94Check(
-    rataRunRecord: RataRun,
+    rataRunRecord: RataRun | RataRunImportDTO,
     averageStackFlowRate: number,
   ): string {
     let error: string = null;
