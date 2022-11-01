@@ -1,5 +1,5 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { IsInRange } from '@us-epa-camd/easey-common/pipes';
+import { IsInRange, Min } from '@us-epa-camd/easey-common/pipes';
 import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
@@ -23,8 +23,24 @@ const MIN_PERCENT_MOISTURE = 0;
 const MAX_PERCENT_MOISTURE = 75.0;
 const MIN_WET_MOLECULAR_WEIGHT = 25;
 const MAX_WET_MOLECULAR_WEIGHT = 30;
+const MIN_NO_OF_TRAVERSE_POINTS = 12;
 
 export class FlowRataRunBaseDTO {
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-85-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @Min(MIN_NO_OF_TRAVERSE_POINTS, {
+    message: () => {
+      return CheckCatalogService.formatResultMessage('RATA-85-B', {
+        key: KEY,
+      });
+    },
+  })
   numberOfTraversePoints: number;
 
   @IsNotEmpty({
