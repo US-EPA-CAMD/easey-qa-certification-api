@@ -3,6 +3,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
 import { OnlineOfflineCalibration } from '../entities/workspace/online-offline-calibration.entity';
 import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.map';
+import { OnlineOfflineCalibrationRepository } from '../online-offline-calibration/online-offline-calibration.repository';
 import { OnlineOfflineCalibrationWorkspaceRepository } from './online-offline-calibration.repository';
 import { OnlineOfflineCalibrationWorkspaceService } from './online-offline-calibration.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -29,6 +30,8 @@ const mockRepository = () => ({
   delete: jest.fn().mockResolvedValue(null),
 });
 
+const mockOfficialRepo = () => ({});
+
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(onlineOfflineCalibrationDTO),
   many: jest.fn().mockResolvedValue([onlineOfflineCalibrationDTO]),
@@ -50,6 +53,10 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
         {
           provide: OnlineOfflineCalibrationWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: OnlineOfflineCalibrationRepository,
+          useFactory: mockOfficialRepo,
         },
         {
           provide: OnlineOfflineCalibrationMap,
@@ -152,4 +159,16 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
       expect(repository.save).toHaveBeenCalled();
     });
   });
+  /*
+  describe('Export', () => {
+    it('Should Export Online Offline Calibration', async () => {
+      //jest
+      //  .spyOn(service, 'getOnlineOfflineCalibrationByTestSumIds')
+      //  .mockResolvedValue([onlineOfflineCalibrationDTO]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([onlineOfflineCalibrationDTO]);
+    });
+  });
+
+ */
 });
