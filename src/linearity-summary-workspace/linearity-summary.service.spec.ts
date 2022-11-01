@@ -9,7 +9,8 @@ import {
 } from '../dto/linearity-injection.dto';
 import {
   LinearitySummaryDTO,
-  LinearitySummaryImportDTO, LinearitySummaryRecordDTO,
+  LinearitySummaryImportDTO,
+  LinearitySummaryRecordDTO,
 } from '../dto/linearity-summary.dto';
 import { LinearityInjectionWorkspaceService } from '../linearity-injection-workspace/linearity-injection.service';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
@@ -101,7 +102,6 @@ describe('LinearitySummaryWorkspaceService', () => {
         },
       ],
     }).compile();
-
 
     service = module.get<LinearitySummaryWorkspaceService>(
       LinearitySummaryWorkspaceService,
