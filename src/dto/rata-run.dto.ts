@@ -1,5 +1,6 @@
 import {
   IsNotEmpty,
+  IsPositive,
   ValidateIf,
   ValidateNested,
   ValidationArguments,
@@ -182,11 +183,11 @@ export class RataRunBaseDTO {
       });
     },
   })
-  @IsNotNegative({
+  @IsPositive({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-26-B', {
-        value: args.value,
         fieldname: args.property,
+        key: KEY,
       });
     },
   })
