@@ -76,6 +76,14 @@ export class FlowRataRunChecksService {
         errorList.push(error);
       }
 
+      error = this.rata115Check(
+        rataSummaryRecord,
+        flowRataRun.averageVelocityWithoutWallEffects,
+      );
+      if (error) {
+        errorList.push(error);
+      }
+
       error = this.rata124Check(rataSummaryRecord, rataRunRecord);
       if (error) {
         errorList.push(error);
@@ -102,6 +110,22 @@ export class FlowRataRunChecksService {
       averageStackFlowRate !== rataRunRecord.rataReferenceValue
     ) {
       error = this.getMessage('RATA-94-C', {
+        key: KEY,
+      });
+    }
+    console.log('rata-94-check called');
+    return error;
+  }
+
+  private rata115Check(
+    rataSummaryRecord: RataSummary,
+    averageVelocityWithoutWallEffects: number,
+  ): string {
+    let error: string = null;
+    let FIELDNAME: string = 'averageVelocityWithoutWallEffects';
+    if (averageVelocityWithoutWallEffects <= 0) {
+      error = this.getMessage('RATA-115-B', {
+        fieldname: FIELDNAME,
         key: KEY,
       });
     }
