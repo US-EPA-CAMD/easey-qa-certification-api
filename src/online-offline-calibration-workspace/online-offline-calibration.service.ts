@@ -202,4 +202,10 @@ export class OnlineOfflineCalibrationWorkspaceService {
       `Online Offline Calibration successfully imported. Record Id: ${createdOnlineOfflineCalibration}`,
     );
   }
+
+  async export(
+    testSumIds: string[],
+  ): Promise<OnlineOfflineCalibrationRecordDTO[]> {
+    return this.onlineOfflineCalibrationByTestSumIds(testSumIds);
+  }
 }

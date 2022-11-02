@@ -37,6 +37,11 @@ import { FlowToLoadCheck } from '../entities/workspace/flow-to-load-check.entity
 import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
 import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
 import { FuelFlowToLoadBaseline } from '../entities/workspace/fuel-flow-to-load-baseline.entity';
+import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
+import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
+import { FlowToLoadCheckDTO } from '../dto/flow-to-load-check.dto';
+import { FlowToLoadReferenceDTO } from '../dto/flow-to-load-reference.dto';
+import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
 
 const locationId = '121';
 const facilityId = 1;
@@ -84,11 +89,6 @@ const mockProtocolGasService = () => ({
   import: jest.fn().mockResolvedValue(null),
 });
 
-const mockFlowToLoadCheckService = () => ({
-  export: jest.fn().mockResolvedValue([new FlowToLoadCheck()]),
-  import: jest.fn().mockResolvedValue(null),
-});
-
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(testSummaryDto),
   many: jest.fn().mockResolvedValue([testSummaryDto]),
@@ -108,12 +108,22 @@ const mockFuelFlowToLoadTestWorkspaceService = () => ({
   export: jest.fn().mockResolvedValue([new FuelFlowToLoadTest()]),
   import: jest.fn().mockResolvedValue(null),
 });
+
+const mockFlowToLoadReferenceWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new FlowToLoadReferenceDTO()]),
+});
+
 const mockFlowToLoadCheckWorkspaceService = () => ({
   import: jest.fn().mockResolvedValue(null),
+  export: jest.fn().mockResolvedValue([new FlowToLoadCheckDTO()]),
 });
 const mockFuelFlowToLoadBaselineService = () => ({
   export: jest.fn().mockResolvedValue([new FuelFlowToLoadBaseline()]),
   import: jest.fn().mockResolvedValue(null),
+});
+
+const mockOnlineOfflineCalibrationWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new OnlineOfflineCalibrationDTO()]),
 });
 
 const unit = new Unit();
@@ -172,6 +182,10 @@ describe('TestSummaryWorkspaceService', () => {
           useFactory: mockCalibrationInjectionWorkspaceService,
         },
         {
+          provide: OnlineOfflineCalibrationWorkspaceService,
+          useFactory: mockOnlineOfflineCalibrationWorkspaceService,
+        },
+        {
           provide: MonitorLocationRepository,
           useFactory: () => ({
             findOne: jest.fn().mockResolvedValue(new MonitorLocation()),
@@ -210,6 +224,10 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: FlowToLoadCheckWorkspaceService,
           useFactory: mockFlowToLoadCheckWorkspaceService,
+        },
+        {
+          provide: FlowToLoadReferenceWorkspaceService,
+          useFactory: mockFlowToLoadReferenceWorkspaceService,
         },
         {
           provide: FuelFlowToLoadBaselineWorkspaceService,

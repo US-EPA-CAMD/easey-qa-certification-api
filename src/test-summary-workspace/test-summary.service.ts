@@ -187,7 +187,8 @@ export class TestSummaryWorkspaceService {
           calibrationInjectionData,
           flowToLoadCheckData,
           flowToLoadReferenceData,
-          appECorrelationTestSummaryData;
+          appECorrelationTestSummaryData,
+          onlineOfflineCalibrationData;
 
         let testSumIds;
         if (testTypeCodes?.length > 0) {
@@ -224,6 +225,10 @@ export class TestSummaryWorkspaceService {
             testSumIds,
           );
 
+          onlineOfflineCalibrationData = await this.onlineOfflineCalibrationWorkspaceService.export(
+            testSumIds,
+          );
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -245,6 +250,9 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.onlineOfflineCalibrationData = onlineOfflineCalibrationData.filter(
               i => i.testSumId === s.id,
             );
           });
