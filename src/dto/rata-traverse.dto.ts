@@ -83,6 +83,7 @@ export class RataTraverseBaseDTO {
     false,
   )
   velocityCalibrationCoefficient: number;
+
   lastProbeDate: Date;
   avgVelDiffPressure: number;
   avgSquareVelDiffPressure: number;
