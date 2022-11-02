@@ -27,7 +27,7 @@ export class RataTraverse extends BaseEntity {
     type: 'varchar',
     name: 'probeid',
   })
-  probeId: string;
+  probeID: string;
 
   @Column({
     type: 'varchar',
@@ -45,7 +45,7 @@ export class RataTraverse extends BaseEntity {
     type: 'varchar',
     name: 'method_traverse_point_id',
   })
-  methodTraversePointId: string;
+  methodTraversePointID: string;
 
   @Column({
     type: 'numeric',
