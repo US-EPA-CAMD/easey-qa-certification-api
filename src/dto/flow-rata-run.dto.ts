@@ -34,13 +34,13 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  /*@Min(MIN_NO_OF_TRAVERSE_POINTS, {
+  @Min(MIN_NO_OF_TRAVERSE_POINTS, {
     message: () => {
       return CheckCatalogService.formatResultMessage('RATA-85-B', {
         key: KEY,
       });
     },
-  })*/
+  })
   numberOfTraversePoints: number;
 
   @IsNotEmpty({
