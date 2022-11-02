@@ -6,7 +6,7 @@ import {
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
-import { IsNotZero } from 'src/pipes/is-not-zero.pipe';
+import { IsNotZero } from '../pipes/is-not-zero.pipe';
 import { IsNotNegative } from '../pipes/is-not-negative.pipe';
 import { RataTraverseDTO, RataTraverseImportDTO } from './rata-traverse.dto';
 
@@ -192,22 +192,6 @@ export class FlowRataRunBaseDTO {
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-115-A', {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
-  @IsNotZero({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-115-B', {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
-  @IsNotNegative({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-115-B', {
         fieldname: args.property,
         key: KEY,
       });
