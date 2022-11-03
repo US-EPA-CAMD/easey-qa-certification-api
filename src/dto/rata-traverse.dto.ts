@@ -7,6 +7,8 @@ import { IsValidCode } from '../pipes/is-valid-code.pipe';
 const KEY = 'RATA Traverse';
 const MIN_VEL_CAL_COEFF = 0.5;
 const MAX_VEL_CAL_COEFF = 1.5;
+const MIN_TSTACK_TEMP = 0;
+const MAX_TSTACK_TEMP = 1000;
 
 export class RataTraverseBaseDTO {
   @IsNotEmpty({
@@ -85,9 +87,44 @@ export class RataTraverseBaseDTO {
   )
   velocityCalibrationCoefficient: number;
 
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-75-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   lastProbeDate: Date;
+
   avgVelDiffPressure: number;
   avgSquareVelDiffPressure: number;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-77-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(
+    MIN_TSTACK_TEMP,
+    MAX_TSTACK_TEMP,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatResultMessage('RATA-77-B', {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+          minvalue: MIN_TSTACK_TEMP,
+          maxvalue: MAX_TSTACK_TEMP,
+        });
+      },
+    },
+    false,
+    false,
+  )
   tStackTemperature: number;
   pointUsedIndicator: number;
   numberWallEffectsPoints: number;

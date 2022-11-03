@@ -8,6 +8,7 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
 import { FlowRataRunWorkspaceModule } from '../flow-rata-run-workspace/flow-rata-run-workspace.module';
 import { RataTraverseMap } from '../maps/rata-traverse.map';
 import { RataTraverseModule } from '../rata-traverse/rata-traverse.module';
+import { RataTraverseChecksService } from './rata-traverse-checks.service';
 
 @Module({
   imports: [
@@ -18,7 +19,16 @@ import { RataTraverseModule } from '../rata-traverse/rata-traverse.module';
     HttpModule,
   ],
   controllers: [RataTraverseWorkspaceController],
-  providers: [RataTraverseWorkspaceService, RataTraverseMap],
-  exports: [TypeOrmModule, RataTraverseMap, RataTraverseWorkspaceService],
+  providers: [
+    RataTraverseWorkspaceService,
+    RataTraverseMap,
+    RataTraverseChecksService,
+  ],
+  exports: [
+    TypeOrmModule,
+    RataTraverseMap,
+    RataTraverseWorkspaceService,
+    RataTraverseChecksService,
+  ],
 })
 export class RataTraverseWorkspaceModule {}
