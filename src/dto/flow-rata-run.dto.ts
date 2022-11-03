@@ -94,7 +94,7 @@ export class FlowRataRunBaseDTO {
     },
   })
   @IsInRange(
-    MIN_PERCENT_O2_PRESSURE,
+    MIN_PERCENT_CO2_PRESSURE,
     MAX_PERCENT_CO2_PRESSURE,
     {
       message: (args: ValidationArguments) => {
