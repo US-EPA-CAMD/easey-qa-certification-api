@@ -7,6 +7,7 @@ import { IsValidCode } from '../pipes/is-valid-code.pipe';
 const KEY = 'RATA Traverse';
 const MIN_VEL_CAL_COEFF = 0.5;
 const MAX_VEL_CAL_COEFF = 1.5;
+
 export class RataTraverseBaseDTO {
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
