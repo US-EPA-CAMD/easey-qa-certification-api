@@ -25,6 +25,9 @@ const mockRepository = () => ({
   getAppEHeatInputFromGasByTestRunId: jest
     .fn()
     .mockResolvedValue(appEHIGasRecords),
+  getAppEHeatInputFromGasesByTestRunIds: jest
+    .fn()
+    .mockResolvedValue(appEHIGasRecords),
 });
 
 const mockMap = () => ({
@@ -78,7 +81,9 @@ describe('AppEHeatInputFromGasService', () => {
     });
 
     it('Should throw error when record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(repository, 'getAppEHeatInputFromGasById')
+        .mockResolvedValue(null);
 
       let errored = false;
 

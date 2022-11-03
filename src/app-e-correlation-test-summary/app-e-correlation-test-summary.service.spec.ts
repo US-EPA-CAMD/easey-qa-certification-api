@@ -76,7 +76,6 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
     it('Calls the service to create a new Appendix E Correlation Test Summary record', async () => {
       const result = await service.getAppECorrelation(testSumId);
       expect(result).toEqual(appECorrelationTest);
-      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
   });
 

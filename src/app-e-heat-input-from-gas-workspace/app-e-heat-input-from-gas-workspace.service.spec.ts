@@ -129,10 +129,6 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
     });
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('getAppEHeatInputFromGasByTestRunIds', () => {
     it('Should get Appendix E Heat Input From Gas records by test sum ids', async () => {
       const result = await service.getAppEHeatInputFromGasByTestRunIds([

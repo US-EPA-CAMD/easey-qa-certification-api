@@ -12,7 +12,9 @@ import { RataService } from '../rata/rata.service';
 import { ProtocolGasService } from '../protocol-gas/protocol-gas.service';
 import { AppECorrelationTestSummaryService } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.service';
 import { FuelFlowToLoadTestService } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.service';
+import { CalibrationInjectionService } from '../calibration-injection/calibration-injection.service';
 import { FlowToLoadCheckService } from '../flow-to-load-check/flow-to-load-check.service';
+import { FlowToLoadReferenceService } from '../flow-to-load-reference/flow-to-load-reference.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -31,8 +33,12 @@ export class TestSummaryService {
     private readonly appECorrelationTestSummaryService: AppECorrelationTestSummaryService,
     @Inject(forwardRef(() => FuelFlowToLoadTestService))
     private readonly fuelFlowToLoadTestService: FuelFlowToLoadTestService,
+    @Inject(forwardRef(() => CalibrationInjectionService))
+    private readonly calInjService: CalibrationInjectionService,
     @Inject(forwardRef(() => FlowToLoadCheckService))
     private readonly flowToLoadCheckService: FlowToLoadCheckService,
+    @Inject(forwardRef(() => FlowToLoadReferenceService))
+    private readonly flowLoadReferenceService: FlowToLoadReferenceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -133,29 +139,47 @@ export class TestSummaryService {
           rataData,
           protocolGasData,
           fuelFlowToLoadTestData,
+          appECorrelationTestSummaryData,
+          calibrationInjectionData,
           flowToLoadCheckData,
-          appECorrelationTestSummaryData = null;
+          flowToLoadReferenceData;
         let testSumIds;
+
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
             testTypeCodes.includes(i.testTypeCode),
           );
         }
+
         testSumIds = testSummaries.map(i => i.id);
 
         if (testSumIds) {
           linearitySummaryData = await this.linearityService.export(testSumIds);
+
           rataData = await this.rataService.export(testSumIds);
+
           protocolGasData = await this.protocolGasService.export(testSumIds);
+
           fuelFlowToLoadTestData = await this.fuelFlowToLoadTestService.export(
             testSumIds,
           );
+
           flowToLoadCheckData = await this.flowToLoadCheckService.export(
             testSumIds,
           );
+
+          flowToLoadReferenceData = await this.flowLoadReferenceService.export(
+            testSumIds,
+          );
+
           appECorrelationTestSummaryData = await this.appECorrelationTestSummaryService.export(
             testSumIds,
           );
+
+          calibrationInjectionData = await this.calInjService.export(
+            testSumIds,
+          );
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -170,7 +194,13 @@ export class TestSummaryService {
             s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
               i => i.testSumId === s.id,
             );
+            s.calibrationInjectionData = calibrationInjectionData.filter(
+              i => i.testSumId === s.id,
+            );
             s.flowToLoadCheckData = flowToLoadCheckData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
               i => i.testSumId === s.id,
             );
           });

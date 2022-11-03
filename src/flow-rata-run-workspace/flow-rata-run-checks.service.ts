@@ -76,57 +76,61 @@ export class FlowRataRunChecksService {
         errorList.push(error);
       }
 
+      error = this.rata115Check(
+        rataSummaryRecord,
+        flowRataRun.averageVelocityWithoutWallEffects,
+      );
+      if (error) {
+        errorList.push(error);
+      }
+
       error = this.rata124Check(rataSummaryRecord, rataRunRecord);
       if (error) {
         errorList.push(error);
       }
-    }
 
-    /* // RATA-85 Number of Traverse Points Valid
-    error = this.rata85Check(flowRataRun, rataSummaryRecord);
-    if (error) {
-      errorList.push(error);
-    }
-    
-    if (!isUpdate) {
-      // RATA-109 Duplicate Flow RATA Run
-      error = this.rata109Check(rataSummaryRecord, rataRunRecord);
+      error = this.rata94Check(rataRunRecord, flowRataRun.averageStackFlowRate);
       if (error) {
         errorList.push(error);
       }
-    } */
+    }
 
     this.throwIfErrors(errorList);
     this.logger.info('Completed Flow Rata Run Checks');
     return errorList;
   }
 
-  /* // RATA-85 Number of Traverse Points Valid
-  private rata85Check(
-    flowRataRun: FlowRataRunBaseDTO | FlowRataRunImportDTO,
-    rataSummary: RataSummaryImportDTO | RataSummary,
+  private rata94Check(
+    rataRunRecord: RataRun | RataRunImportDTO,
+    averageStackFlowRate: number,
   ): string {
     let error: string = null;
-    let rataReplacementPointCount = 0;
-
-    if (!['2FH', '2GH', 'M2H'].includes(rataSummary.referenceMethodCode) && rataReplacementPointCount > 0 && flowRataRun.numberOfTraversePoints < 16) {
-      error = CheckCatalogService.formatResultMessage('RATA-85-C', {
-        key: 'Flow RATA Run',
+    if (
+      rataRunRecord.rataReferenceValue &&
+      averageStackFlowRate !== rataRunRecord.rataReferenceValue
+    ) {
+      error = this.getMessage('RATA-94-C', {
+        key: KEY,
       });
     }
-
+    console.log('rata-94-check called');
     return error;
   }
 
-  // RATA-109 Duplicate Flow RATA Run
-  private rata109Check(
-    rataSummary: RataSummaryImportDTO | RataSummary,
-    rataRun: RataRunImportDTO | RataRun,
+  private rata115Check(
+    rataSummaryRecord: RataSummary,
+    averageVelocityWithoutWallEffects: number,
   ): string {
     let error: string = null;
-
+    let FIELDNAME: string = 'averageVelocityWithoutWallEffects';
+    if (averageVelocityWithoutWallEffects <= 0) {
+      error = this.getMessage('RATA-115-B', {
+        fieldname: FIELDNAME,
+        key: KEY,
+      });
+    }
     return error;
-  } */
+  }
 
   private rata114Check(
     rataSummaryRecord: RataSummary,

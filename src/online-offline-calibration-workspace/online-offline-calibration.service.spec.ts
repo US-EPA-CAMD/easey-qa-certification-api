@@ -3,9 +3,12 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
 import { OnlineOfflineCalibration } from '../entities/workspace/online-offline-calibration.entity';
 import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.map';
+import { OnlineOfflineCalibrationRepository } from '../online-offline-calibration/online-offline-calibration.repository';
 import { OnlineOfflineCalibrationWorkspaceRepository } from './online-offline-calibration.repository';
 import { OnlineOfflineCalibrationWorkspaceService } from './online-offline-calibration.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { HttpStatus } from '@nestjs/common';
 
 const testSumId = '1';
 const onlineOfflineCalibrationId = 'abc123';
@@ -24,7 +27,10 @@ const mockRepository = () => ({
   save: jest.fn().mockResolvedValue(onlineOfflineCalibration),
   findOne: jest.fn().mockResolvedValue(onlineOfflineCalibration),
   find: jest.fn().mockResolvedValue([onlineOfflineCalibration]),
+  delete: jest.fn().mockResolvedValue(null),
 });
+
+const mockOfficialRepo = () => ({});
 
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(onlineOfflineCalibrationDTO),
@@ -47,6 +53,10 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
         {
           provide: OnlineOfflineCalibrationWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: OnlineOfflineCalibrationRepository,
+          useFactory: mockOfficialRepo,
         },
         {
           provide: OnlineOfflineCalibrationMap,
@@ -105,4 +115,60 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
       expect(repository.create).toHaveBeenCalled();
     });
   });
+
+  describe('deleteOnlineOfflineCalibration', () => {
+    it('should delete a Online Offline Calibration record', async () => {
+      const result = await service.deleteOnlineOfflineCalibration(
+        testSumId,
+        onlineOfflineCalibrationId,
+        userId,
+      );
+      expect(result).toEqual(undefined);
+    });
+
+    it('should throw error while deleting a Online Offline Calibration record', async () => {
+      const error = new LoggingException(
+        `Error deleting Online Offline Calibration with record Id [${onlineOfflineCalibrationId}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+      jest.spyOn(repository, 'delete').mockRejectedValue(error);
+
+      let errored = false;
+      try {
+        await service.deleteOnlineOfflineCalibration(
+          testSumId,
+          onlineOfflineCalibrationId,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('updateOnlineOfflineCalibration', () => {
+    it('Calls the repository to update an existing Online Offline Calibration record', async () => {
+      const result = await service.updateOnlineOfflineCalibration(
+        testSumId,
+        onlineOfflineCalibrationId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(onlineOfflineCalibrationDTO);
+      expect(repository.save).toHaveBeenCalled();
+    });
+  });
+  /*
+  describe('Export', () => {
+    it('Should Export Online Offline Calibration', async () => {
+      //jest
+      //  .spyOn(service, 'getOnlineOfflineCalibrationByTestSumIds')
+      //  .mockResolvedValue([onlineOfflineCalibrationDTO]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([onlineOfflineCalibrationDTO]);
+    });
+  });
+
+ */
 });

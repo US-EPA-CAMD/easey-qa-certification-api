@@ -120,15 +120,15 @@ export class RataRunBaseDTO {
 
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-30-A', {
+      return CheckCatalogService.formatResultMessage('RATA-31-A', {
         fieldname: args.property,
         key: KEY,
       });
     },
   })
-  @IsInRange(MIN_HOUR, MAX_HOUR, {
+  @IsInRange(MIN_MINUTE, MAX_MINUTE, {
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-30-A', {
+      return CheckCatalogService.formatResultMessage('RATA-31-A', {
         fieldname: args.property,
         key: KEY,
       });
@@ -186,8 +186,8 @@ export class RataRunBaseDTO {
   @IsPositive({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-26-B', {
-        value: args.value,
         fieldname: args.property,
+        key: KEY,
       });
     },
   })

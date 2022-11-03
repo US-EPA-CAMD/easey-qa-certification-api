@@ -34,6 +34,7 @@ const mockService = () => ({
     .fn()
     .mockResolvedValue(onlineOfflineCalibrationRecord),
   createOnlineOfflineCalibration: jest.fn(),
+  updateOnlineOfflineCalibration: jest.fn(),
 });
 
 const mockAuthGuard = () => ({});
@@ -107,9 +108,43 @@ describe('Online Offline Calibration Workspace Controller', () => {
       jest
         .spyOn(service, 'createOnlineOfflineCalibration')
         .mockResolvedValue(onlineOfflineCalibrationRecord);
-      expect(await controller.create(locId, testSumId, payload, user)).toEqual(
-        onlineOfflineCalibrationRecord,
+      expect(
+        await controller.createOnlineOfflineCalibration(
+          locId,
+          testSumId,
+          payload,
+          user,
+        ),
+      ).toEqual(onlineOfflineCalibrationRecord);
+    });
+  });
+
+  describe('updateOnlineOfflineCalibration', () => {
+    it('Should call the service to update an existing record', async () => {
+      jest
+        .spyOn(service, 'updateOnlineOfflineCalibration')
+        .mockResolvedValue(onlineOfflineCalibrationRecord);
+      expect(
+        await controller.updateOnlineOfflineCalibration(
+          locId,
+          testSumId,
+          onlineOfflineCalibrationId,
+          payload,
+          user,
+        ),
+      ).toEqual(onlineOfflineCalibrationRecord);
+    });
+  });
+
+  describe('deleteOnlineOfflineCalibration', () => {
+    it('should call the RataService.deleteOnlineOfflineCalibration and delete Air Emission Testing record', async () => {
+      const result = await controller.deleteOnlineOfflineCalibration(
+        locId,
+        testSumId,
+        onlineOfflineCalibrationId,
+        user,
       );
+      expect(result).toEqual(null);
     });
   });
 });

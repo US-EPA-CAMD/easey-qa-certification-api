@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   CalibrationInjectionBaseDTO,
   CalibrationInjectionDTO,
+  CalibrationInjectionImportDTO,
 } from '../dto/calibration-injection.dto';
 import { CalibrationInjectionMap } from '../maps/calibration-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -10,15 +11,22 @@ import { CalibrationInjectionWorkspaceRepository } from './calibration-injection
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
+import { CalibrationInjection } from '../entities/calibration-injection.entity';
+import { CalibrationInjectionRepository } from '../calibration-injection/calibration-injection.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class CalibrationInjectionWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     private readonly map: CalibrationInjectionMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(CalibrationInjectionWorkspaceRepository)
     private readonly repository: CalibrationInjectionWorkspaceRepository,
+    @InjectRepository(CalibrationInjectionRepository)
+    private readonly historicalRepository: CalibrationInjectionRepository,
   ) {}
 
   async getCalibrationInjections(
@@ -147,5 +155,56 @@ export class CalibrationInjectionWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getCalibrationInjectionByTestSumIds(
+    testSumIds: string[],
+  ): Promise<CalibrationInjectionDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<CalibrationInjectionDTO[]> {
+    const calInjs = await this.getCalibrationInjectionByTestSumIds(testSumIds);
+    return calInjs;
+  }
+
+  async import(
+    testSumId: string,
+    payload: CalibrationInjectionImportDTO,
+    userId: string,
+    isHistoricalRecord?: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: CalibrationInjection;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepository.findOne({
+        testSumId: testSumId,
+        upscaleGasLevelCode: payload.upscaleGasLevelCode,
+        zeroInjectionDate: payload.zeroInjectionDate,
+        zeroInjectionHour: payload.zeroInjectionHour,
+        zeroInjectionMinute: payload.zeroInjectionMinute,
+        upscaleInjectionDate: payload.upscaleInjectionDate,
+        upscaleInjectionHour: payload.upscaleInjectionHour,
+        upscaleInjectionMinute: payload.upscaleInjectionMinute,
+      });
+    }
+
+    const createdCalibrationInjection = await this.createCalibrationInjection(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Calibration Injection Successfully Imported. Record Id: ${createdCalibrationInjection.id}`,
+    );
+
+    return null;
   }
 }
