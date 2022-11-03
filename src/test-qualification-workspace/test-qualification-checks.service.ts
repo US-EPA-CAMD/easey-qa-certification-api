@@ -50,10 +50,10 @@ export class TestQualificationChecksService {
       );
     }
 
-    // RATA-9-E
-    error = this.rata9Check(testQualification);
-    if (error) {
-      errorList.push(error);
+    // RATA-9-10-11-E
+    const errors = this.rata9And10And11Check(testQualification);
+    if (errors.length > 0) {
+      errorList.push(...errors);
     }
 
     this.throwIfErrors(errorList);
@@ -63,22 +63,39 @@ export class TestQualificationChecksService {
     return errorList;
   }
 
-  // RATA-9-E
-  private rata9Check(
+  // RATA-9-10-11-E
+  private rata9And10And11Check(
     testQualification: TestQualificationBaseDTO | TestQualificationImportDTO,
-  ) {
-    if (
-      testQualification.testClaimCode !== 'SLC' &&
-      testQualification.highLoadPercentage !== null
-    ) {
+  ): string[] {
+    if (testQualification.testClaimCode !== 'SLC') {
+      const errors: string[] = [];
       let error: string = null;
 
-      error = CheckCatalogService.formatResultMessage('RATA-9-E', {
-        fieldname: 'highLoadPercentage',
-        key: KEY,
-      });
+      if (testQualification.highLoadPercentage !== null) {
+        error = CheckCatalogService.formatResultMessage('RATA-9-E', {
+          fieldname: 'highLoadPercentage',
+          key: KEY,
+        });
+        errors.push(error);
+      }
 
-      return error;
+      if (testQualification.midLoadPercentage !== null) {
+        error = CheckCatalogService.formatResultMessage('RATA-10-E', {
+          fieldname: 'midLoadPercentage',
+          key: KEY,
+        });
+        errors.push(error);
+      }
+
+      if (testQualification.lowLoadPercentage !== null) {
+        error = CheckCatalogService.formatResultMessage('RATA-11-E', {
+          fieldname: 'lowLoadPercentage',
+          key: KEY,
+        });
+        errors.push(error);
+      }
+
+      return errors;
     }
   }
 }
