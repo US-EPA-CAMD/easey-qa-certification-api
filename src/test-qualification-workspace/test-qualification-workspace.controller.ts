@@ -22,13 +22,17 @@ import {
   TestQualificationBaseDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
+import { TestQualificationChecksService } from './test-qualification-checks.service';
 import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Test Qualification')
 export class TestQualificationWorkspaceController {
-  constructor(private readonly service: TestQualificationWorkspaceService) {}
+  constructor(
+    private readonly service: TestQualificationWorkspaceService,
+    private readonly checksService: TestQualificationChecksService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -111,6 +115,7 @@ export class TestQualificationWorkspaceController {
     @Body() payload: TestQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<TestQualificationRecordDTO> {
+    await this.checksService.runChecks(payload, testSumId, false, true);
     return this.service.updateTestQualification(
       testSumId,
       id,
