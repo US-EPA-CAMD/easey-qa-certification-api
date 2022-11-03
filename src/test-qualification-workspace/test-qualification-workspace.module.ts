@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
 import { TestQualificationMap } from '../maps/test-qualification.map';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
+import { TestQualificationChecksService } from './test-qualification-checks.service';
 
 @Module({
   imports: [
@@ -14,11 +15,16 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
     HttpModule,
   ],
   controllers: [TestQualificationWorkspaceController],
-  providers: [TestQualificationMap, TestQualificationWorkspaceService],
+  providers: [
+    TestQualificationMap,
+    TestQualificationWorkspaceService,
+    TestQualificationChecksService,
+  ],
   exports: [
     TypeOrmModule,
     TestQualificationMap,
     TestQualificationWorkspaceService,
+    TestQualificationChecksService,
   ],
 })
 export class TestQualificationWorkspaceModule {}
