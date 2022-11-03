@@ -15,6 +15,7 @@ import { FuelFlowToLoadTestService } from '../fuel-flow-to-load-test/fuel-flow-t
 import { CalibrationInjectionService } from '../calibration-injection/calibration-injection.service';
 import { FlowToLoadCheckService } from '../flow-to-load-check/flow-to-load-check.service';
 import { FlowToLoadReferenceService } from '../flow-to-load-reference/flow-to-load-reference.service';
+import { OnlineOfflineCalibrationService } from '../online-offline-calibration/online-offline-calibration.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -39,6 +40,8 @@ export class TestSummaryService {
     private readonly flowToLoadCheckService: FlowToLoadCheckService,
     @Inject(forwardRef(() => FlowToLoadReferenceService))
     private readonly flowLoadReferenceService: FlowToLoadReferenceService,
+    @Inject(forwardRef(() => OnlineOfflineCalibrationService))
+    private readonly onlineOfflineCalibrationService: OnlineOfflineCalibrationService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -142,7 +145,8 @@ export class TestSummaryService {
           appECorrelationTestSummaryData,
           calibrationInjectionData,
           flowToLoadCheckData,
-          flowToLoadReferenceData;
+          flowToLoadReferenceData,
+          onlineOfflineCalibrationData;
         let testSumIds;
 
         if (testTypeCodes?.length > 0) {
@@ -180,6 +184,10 @@ export class TestSummaryService {
             testSumIds,
           );
 
+          onlineOfflineCalibrationData = await this.onlineOfflineCalibrationService.export(
+            testSumIds,
+          );
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -201,6 +209,9 @@ export class TestSummaryService {
               i => i.testSumId === s.id,
             );
             s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.onlineOfflineCalibrationData = onlineOfflineCalibrationData.filter(
               i => i.testSumId === s.id,
             );
           });

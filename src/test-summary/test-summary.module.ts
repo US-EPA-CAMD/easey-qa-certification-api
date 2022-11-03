@@ -17,6 +17,7 @@ import { FuelFlowToLoadTestModule } from '../fuel-flow-to-load-test/fuel-flow-to
 import { FlowToLoadCheckModule } from '../flow-to-load-check/flow-to-load-check.module';
 import { FlowToLoadReferenceModule } from '../flow-to-load-reference/flow-to-load-reference.module';
 import { CalibrationInjectionModule } from '../calibration-injection/calibration-injection.module';
+import { OnlineOfflineCalibrationModule } from '../online-offline-calibration/online-offline-calibration.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { CalibrationInjectionModule } from '../calibration-injection/calibration
     AirEmissionTestingModule,
     AppECorrelationTestSummaryModule,
     CalibrationInjectionModule,
+    OnlineOfflineCalibrationModule,
   ],
   controllers: [TestSummaryController],
   providers: [TestSummaryMap, TestSummaryService],

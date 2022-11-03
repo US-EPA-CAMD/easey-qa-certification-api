@@ -3,11 +3,15 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
+import {
+  OnlineOfflineCalibrationDTO,
+  OnlineOfflineCalibrationRecordDTO,
+} from '../dto/online-offline-calibration.dto';
 import { OnlineOfflineCalibrationRepository } from './online-offline-calibration.repository';
 import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.map';
 import { TestSummaryService } from '../test-summary/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
 
 @Injectable()
 export class OnlineOfflineCalibrationService {
@@ -43,5 +47,21 @@ export class OnlineOfflineCalibrationService {
     }
 
     return this.map.one(result);
+  }
+
+  async onlineOfflineCalibrationByTestSumIds(
+    testSumIds: string[],
+  ): Promise<OnlineOfflineCalibrationDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(
+    testSumIds: string[],
+  ): Promise<OnlineOfflineCalibrationRecordDTO[]> {
+    return this.onlineOfflineCalibrationByTestSumIds(testSumIds);
   }
 }
