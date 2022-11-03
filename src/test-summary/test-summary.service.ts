@@ -15,6 +15,7 @@ import { FuelFlowToLoadTestService } from '../fuel-flow-to-load-test/fuel-flow-t
 import { CalibrationInjectionService } from '../calibration-injection/calibration-injection.service';
 import { FlowToLoadCheckService } from '../flow-to-load-check/flow-to-load-check.service';
 import { FlowToLoadReferenceService } from '../flow-to-load-reference/flow-to-load-reference.service';
+import { FuelFlowToLoadBaselineService } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -33,6 +34,8 @@ export class TestSummaryService {
     private readonly appECorrelationTestSummaryService: AppECorrelationTestSummaryService,
     @Inject(forwardRef(() => FuelFlowToLoadTestService))
     private readonly fuelFlowToLoadTestService: FuelFlowToLoadTestService,
+    @Inject(forwardRef(() => FuelFlowToLoadBaselineService))
+    private readonly fuelFlowToLoadBaselineService: FuelFlowToLoadBaselineService,
     @Inject(forwardRef(() => CalibrationInjectionService))
     private readonly calInjService: CalibrationInjectionService,
     @Inject(forwardRef(() => FlowToLoadCheckService))
@@ -139,6 +142,7 @@ export class TestSummaryService {
           rataData,
           protocolGasData,
           fuelFlowToLoadTestData,
+          fuelFlowToLoadBaselineData,
           appECorrelationTestSummaryData,
           calibrationInjectionData,
           flowToLoadCheckData,
@@ -161,6 +165,10 @@ export class TestSummaryService {
           protocolGasData = await this.protocolGasService.export(testSumIds);
 
           fuelFlowToLoadTestData = await this.fuelFlowToLoadTestService.export(
+            testSumIds,
+          );
+
+          fuelFlowToLoadBaselineData = await this.fuelFlowToLoadBaselineService.export(
             testSumIds,
           );
 
@@ -190,6 +198,9 @@ export class TestSummaryService {
             );
             s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
               i => i.testSumId === s.id,
+            );
+            s.fuelFlowToLoadBaselineData = fuelFlowToLoadBaselineData.filter(
+              i => i.tesSumId === s.id,
             );
             s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
               i => i.testSumId === s.id,

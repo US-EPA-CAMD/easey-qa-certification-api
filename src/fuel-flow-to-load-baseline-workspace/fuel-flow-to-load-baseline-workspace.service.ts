@@ -15,6 +15,7 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { FuelFlowToLoadBaseline } from '../entities/fuel-flow-to-load-baseline.entity';
 import { FuelFlowToLoadBaselineRepository } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { In } from 'typeorm';
 
 @Injectable()
 export class FuelFlowToLoadBaselineWorkspaceService {
@@ -183,5 +184,19 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     this.logger.info(
       `Fuel Flow To Load Baseline Successfully Imported.  Record Id: ${createdFuelFlowToLoadBaseline.id}`,
     );
+  }
+
+  async getFuelFlowToLoadBaselineByTestSumIds(
+    testSumIds: string[],
+  ): Promise<FuelFlowToLoadBaselineDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<FuelFlowToLoadBaselineDTO[]> {
+    return this.getFuelFlowToLoadBaselineByTestSumIds(testSumIds);
   }
 }
