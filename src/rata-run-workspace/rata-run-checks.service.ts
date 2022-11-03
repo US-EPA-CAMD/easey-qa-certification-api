@@ -195,10 +195,6 @@ export class RataRunChecksService {
   ): Promise<string> {
     let error: string = null;
     let duplicates: RataRun[] | RataRunBaseDTO[];
-    this.logger.info(rataRun)
-    this.logger.info(isImport)
-    this.logger.info(rataSumId)
-    this.logger.info(rataRuns)
 
     if (rataSumId && !isImport) {
       duplicates = await this.repository.find({
