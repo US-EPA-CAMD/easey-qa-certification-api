@@ -4,22 +4,16 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import {
   TestQualificationBaseDTO,
   TestQualificationImportDTO,
 } from '../dto/test-qualification.dto';
-import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 
 const KEY = 'Test Qualification';
 
 @Injectable()
 export class TestQualificationChecksService {
-  constructor(
-    private readonly logger: Logger,
-    @InjectRepository(TestSummaryWorkspaceRepository)
-    private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
-  ) {}
+  constructor(private readonly logger: Logger) {}
 
   private throwIfErrors(errorList: string[]) {
     if (errorList.length > 0) {
@@ -29,26 +23,15 @@ export class TestQualificationChecksService {
 
   async runChecks(
     testQualification: TestQualificationBaseDTO | TestQualificationImportDTO,
-    testSumId: string,
-    isImport: boolean = false,
-    isUpdate: boolean = false,
-    testSummary?: TestSummaryImportDTO,
+    _testSumId: string,
+    _isImport: boolean = false,
+    _isUpdate: boolean = false,
   ) {
     let error: string = null;
     const errorList: string[] = [];
     let testSumRecord;
 
     this.logger.info('Running Test Qualification Checks');
-
-    if (isImport) {
-      testSumRecord = testSummary;
-    }
-
-    if (isUpdate) {
-      testSumRecord = await this.testSummaryRepository.getTestSummaryById(
-        testSumId,
-      );
-    }
 
     // RATA-9-10-11-E
     const errors = this.rata9And10And11Check(testQualification);
