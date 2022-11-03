@@ -8,14 +8,19 @@ import { TestSummary } from '../entities/test-summary.entity';
 import { RataRunBaseDTO, RataRunImportDTO } from '../dto/rata-run.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
+import { RataRun } from '../entities/workspace/rata-run.entity';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 
 const KEY = 'RATA Run';
 @Injectable()
 export class RataRunChecksService {
   constructor(
     private readonly logger: Logger,
-    private readonly testSummaryService: TestSummaryWorkspaceService,
+    @InjectRepository(TestSummaryWorkspaceRepository)
+    private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
+    @InjectRepository(RataRunWorkspaceRepository)
+    private readonly repository: RataRunWorkspaceRepository,
   ) {}
 
   private throwIfErrors(errorList: string[]) {
@@ -30,6 +35,8 @@ export class RataRunChecksService {
     isImport: boolean = false,
     isUpdate: boolean = false,
     testSummary?: TestSummaryImportDTO,
+    rataSumId?: string,
+    rataRuns?: RataRunImportDTO[],
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
@@ -39,10 +46,8 @@ export class RataRunChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-    }
-
-    if (isUpdate) {
-      testSumRecord = await this.testSummaryService.getTestSummaryById(
+    } else {
+      testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
       );
     }
@@ -60,16 +65,42 @@ export class RataRunChecksService {
         errorList.push(error);
       }
 
+      
+      // RATA-31 Result B
+      error = this.rata31Check(rataRun);
+      if (error) {
+        errorList.push(error);
+      }
+
       // RATA-33 Result C
       error = this.rata33Check(rataRun, testSumRecord);
       if (error) {
         errorList.push(error);
       }
 
-      // RATA-31 Result B
-      error = this.rata31Check(rataRun);
+      // RATA-101
+      error = this.rata101Check(rataRun, testSumRecord);
       if (error) {
         errorList.push(error);
+      }
+
+      // RATA-130
+      error = this.rata130Check(rataRun, testSumRecord);
+      if (error) {
+        errorList.push(error);
+      }
+
+      if (!isUpdate) {
+        // RATA-108 Duplicate RATA Run
+        error = await this.rata108Check(
+          rataRun,
+          isImport,
+          rataSumId,
+          rataRuns,
+        );
+        if (error) {
+          errorList.push(error);
+        }
       }
     }
 
@@ -121,6 +152,109 @@ export class RataRunChecksService {
         rataRun.rataReferenceValue,
       ) || null
     );
+  }
+
+  private rata101Check(
+    rataRun: RataRunBaseDTO,
+    testSumRecord: TestSummary,
+  ): string {
+    let error: string = null;
+    
+    if(rataRun.runStatusCode === 'RUNUSED'){
+      if(
+        testSumRecord.system?.systemTypeCode === 'FLOW' 
+        && (
+          (rataRun.cemValue > 0 
+            && (Math.ceil(rataRun.cemValue/1000)*1000 !== rataRun.cemValue)
+          ) || 
+          (rataRun.rataReferenceValue > 0 
+            && (Math.ceil(rataRun.rataReferenceValue/1000)*1000 !== rataRun.rataReferenceValue)
+          )
+        )
+      ) {
+        error = this.getMessage('RATA-101-A', {
+          key: KEY,
+        });
+      } else if (
+        rataRun.cemValue <= 0 || rataRun.rataReferenceValue <= 0
+      ) {
+        error = this.getMessage('RATA-101-B', {
+          key: KEY,
+        });
+      }
+    }
+
+    return error;
+  }
+
+  private async rata108Check(
+    rataRun: RataRunBaseDTO | RataRunImportDTO,
+    isImport: boolean,
+    rataSumId: string,
+    rataRuns: RataRunImportDTO[],
+  ): Promise<string> {
+    let error: string = null;
+    let duplicates: RataRun[] | RataRunBaseDTO[];
+
+    if (rataSumId && !isImport) {
+      duplicates = await this.repository.find({
+        rataSumId: rataSumId,
+        runNumber: rataRun.runNumber,
+      });
+      if (duplicates.length > 0) {
+        error = CheckCatalogService.formatResultMessage('RATA-108-A', {
+          recordtype: KEY,
+          fieldnames: 'runNumber & operatingLevelCode',
+        });
+      }
+    }
+
+    if (rataRuns?.length > 1 && isImport) {
+      duplicates = rataRuns.filter(
+        rs => rs.runNumber === rataRun.runNumber,
+      );
+
+      if (duplicates.length > 1) {
+        error = CheckCatalogService.formatResultMessage('RATA-108-A', {
+          recordtype: KEY,
+          fieldnames: 'runNumber & operatingLevelCode',
+        });
+      }
+    }
+    return error;
+  }
+
+  private rata130Check(
+    rataRun: RataRunBaseDTO,
+    testSumRecord: TestSummary,
+  ): string {
+    let error: string = null;
+    let beginDate = new Date(rataRun.beginDate);
+    let endDate = new Date(rataRun.endDate);
+    beginDate.setHours(rataRun.beginHour)
+    endDate.setHours(rataRun.endHour)
+    beginDate.setMinutes(rataRun.beginMinute)
+    endDate.setMinutes(rataRun.endMinute)
+
+    if(rataRun.runStatusCode === 'RUNUSED'){
+      if(testSumRecord.system?.systemTypeCode === 'FLOW'){
+        if((Math.abs(endDate.getTime() - beginDate.getTime()))/(1000*60) < 5){
+          error = CheckCatalogService.formatResultMessage('RATA-130-A', {
+            key: KEY,
+          });
+        }
+      } else if (
+        !testSumRecord.system?.systemTypeCode.startsWith('HG') && testSumRecord.system?.systemTypeCode !== 'FLOW'
+      ) {
+        if((Math.abs(endDate.getTime() - beginDate.getTime()))/(1000*60) < 21){
+          error = CheckCatalogService.formatResultMessage('RATA-130-B', {
+            key: KEY,
+          });
+        }
+      }
+    }
+
+    return error;
   }
 
   private rataRunValueFloatCheck(
