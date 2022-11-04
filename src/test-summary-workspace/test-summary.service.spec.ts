@@ -406,15 +406,15 @@ describe('TestSummaryWorkspaceService', () => {
   });
 
   describe('lookupValues', () => {
-    it('should return reportPeriodId, componentRecordId, monitorSystemRecordId', async () => {
+    it('should return reportPeriodId, componentRecordId, monitorSystem', async () => {
       payload.year = 2022;
       payload.quarter = 1;
       payload.componentID = '1';
-      payload.monitoringSystemID = '1';
+      payload.monitoringSystemID = 'abc';
 
       const result = await service.lookupValues(locationId, payload);
 
-      expect(result).toEqual([1, '1', '1']);
+      expect(result).toEqual([1, '1', ms]);
     });
   });
 

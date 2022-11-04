@@ -80,8 +80,8 @@ export class RataTraverseBaseDTO {
         });
       },
     },
-    false,
-    false,
+    true,
+    true,
   )
   velocityCalibrationCoefficient: number;
 

@@ -52,7 +52,7 @@ export class MonitorSystem extends BaseEntity {
     () => TestSummary,
     ts => ts.system,
   )
-  @JoinColumn({ name: 'mon_loc_id' })
+  @JoinColumn({ name: 'mon_sys_id' })
   testSummaries: TestSummary[];
 
   @OneToMany(

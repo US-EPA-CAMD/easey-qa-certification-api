@@ -18,6 +18,7 @@ import { FlowToLoadCheckModule } from '../flow-to-load-check/flow-to-load-check.
 import { FlowToLoadReferenceModule } from '../flow-to-load-reference/flow-to-load-reference.module';
 import { CalibrationInjectionModule } from '../calibration-injection/calibration-injection.module';
 import { OnlineOfflineCalibrationModule } from '../online-offline-calibration/online-offline-calibration.module';
+import { FuelFlowToLoadBaselineModule } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { OnlineOfflineCalibrationModule } from '../online-offline-calibration/on
     RataModule,
     TestQualificationModule,
     FuelFlowToLoadTestModule,
+    FuelFlowToLoadBaselineModule,
     FlowToLoadCheckModule,
     FlowToLoadReferenceModule,
     AirEmissionTestingModule,
