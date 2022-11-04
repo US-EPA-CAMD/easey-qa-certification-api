@@ -75,28 +75,10 @@ export class TestQualificationWorkspaceController {
     @Body() payload: TestQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<TestQualificationRecordDTO> {
+    await this.checksService.runChecks(payload, testSumId, false, true);
     return this.service.createTestQualification(
       testSumId,
       payload,
-      user.userId,
-    );
-  }
-
-  @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
-  @ApiOkResponse({
-    description: 'Deletes a test qualification record from the workspace',
-  })
-  async deleteTestQualification(
-    @Param('locId') _locationId: string,
-    @Param('testSumId') testSumId: string,
-    @Param('id') testQualificationId: string,
-    @User() user: CurrentUser,
-  ): Promise<void> {
-    return this.service.deleteTestQualification(
-      testSumId,
-      testQualificationId,
       user.userId,
     );
   }
@@ -120,6 +102,25 @@ export class TestQualificationWorkspaceController {
       testSumId,
       id,
       payload,
+      user.userId,
+    );
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Deletes a test qualification record from the workspace',
+  })
+  async deleteTestQualification(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') testQualificationId: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteTestQualification(
+      testSumId,
+      testQualificationId,
       user.userId,
     );
   }
