@@ -84,4 +84,14 @@ describe('OnlineOfflineCalibrationService', () => {
       expect(result).toEqual([onlineOfflineCalibrationDTO]);
     });
   });
+
+  describe('Export', () => {
+    it('Should Export Online Offline Calibration', async () => {
+      //jest
+      //  .spyOn(service, 'onlineOfflineCalibrationByTestSumIds')
+      //  .mockResolvedValue([onlineOfflineCalibrationDTO]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([onlineOfflineCalibrationDTO]);
+    });
+  });
 });

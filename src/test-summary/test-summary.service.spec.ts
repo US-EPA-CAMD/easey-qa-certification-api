@@ -21,6 +21,10 @@ import { CalibrationInjectionService } from '../calibration-injection/calibratio
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
 import { FlowToLoadCheckService } from '../flow-to-load-check/flow-to-load-check.service';
+import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
+import { OnlineOfflineCalibrationService } from '../online-offline-calibration/online-offline-calibration.service';
+import { FlowToLoadReference } from '../entities/flow-to-load-reference.entity';
+import { FlowToLoadReferenceService } from '../flow-to-load-reference/flow-to-load-reference.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -72,6 +76,14 @@ const mockCalibrationInjectionService = () => ({
   export: jest.fn().mockResolvedValue([new CalibrationInjection()]),
 });
 
+const mockFlowToLoadReferenceService = () => ({
+  export: jest.fn().mockResolvedValue([new FlowToLoadReference()]),
+});
+
+const mockOnlineOfflineCalibrationService = () => ({
+  export: jest.fn().mockResolvedValue([new OnlineOfflineCalibrationDTO()]),
+});
+
 describe('TestSummaryService', () => {
   let service: TestSummaryService;
   let repository: TestSummaryRepository;
@@ -116,6 +128,14 @@ describe('TestSummaryService', () => {
         {
           provide: FlowToLoadCheckService,
           useFactory: mockFlowToLoadCheckService,
+        },
+        {
+          provide: FlowToLoadReferenceService,
+          useFactory: mockFlowToLoadReferenceService,
+        },
+        {
+          provide: OnlineOfflineCalibrationService,
+          useFactory: mockOnlineOfflineCalibrationService,
         },
       ],
     }).compile();
