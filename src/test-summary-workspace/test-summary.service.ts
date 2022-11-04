@@ -184,6 +184,7 @@ export class TestSummaryWorkspaceService {
           rataData,
           protocolGasData,
           fuelFlowToLoadTestData,
+          fuelFlowToLoadBaselineData,
           calibrationInjectionData,
           flowToLoadCheckData,
           flowToLoadReferenceData,
@@ -210,6 +211,10 @@ export class TestSummaryWorkspaceService {
           );
 
           fuelFlowToLoadTestData = await this.fuelFlowToLoadTestWorkspaceService.export(
+            testSumIds,
+          );
+
+          fuelFlowToLoadBaselineData = await this.fuelFlowToLoadBaselineService.export(
             testSumIds,
           );
 
@@ -241,6 +246,9 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.fuelFlowToLoadBaselineData = fuelFlowToLoadBaselineData.filter(
               i => i.testSumId === s.id,
             );
             s.calibrationInjectionData = calibrationInjectionData.filter(
@@ -546,8 +554,12 @@ export class TestSummaryWorkspaceService {
     const [
       reportPeriodId,
       componentRecordId,
-      monitorSystemRecordId,
+      monitorSystem,
     ] = await this.lookupValues(locationId, payload);
+
+    // Swap the DTO 3-char System ID for the Actual UID of the Monitor System
+    payload.monitoringSystemID = monitorSystem?.id;
+
     const location = await this.monitorLocationRepository.findOne(locationId);
 
     let unit: Unit;
@@ -575,7 +587,6 @@ export class TestSummaryWorkspaceService {
       ...payload,
       id: historicalrecordId ? historicalrecordId : uuid(),
       locationId,
-      monitorSystemRecordId,
       componentRecordId,
       reportPeriodId,
       userId,
@@ -632,8 +643,11 @@ export class TestSummaryWorkspaceService {
     const [
       reportPeriodId,
       componentRecordId,
-      monitorSystemRecordId,
+      monitorSystem,
     ] = await this.lookupValues(locationId, payload);
+
+    // Swap the DTO 3-char System ID for the Actual UID of the Monitor System
+    payload.monitoringSystemID = monitorSystem?.id;
 
     entity.beginDate = payload.beginDate;
     entity.beginHour = payload.beginHour;
@@ -644,7 +658,7 @@ export class TestSummaryWorkspaceService {
     entity.componentRecordId = componentRecordId;
     entity.gracePeriodIndicator = payload.gracePeriodIndicator;
     entity.injectionProtocolCode = payload.injectionProtocolCode;
-    entity.monitorSystemRecordId = monitorSystemRecordId;
+    entity.monitoringSystemID = payload.monitoringSystemID;
     entity.reportPeriodId = reportPeriodId;
     entity.spanScaleCode = payload.spanScaleCode;
     entity.testComment = payload.testComment;
@@ -698,7 +712,7 @@ export class TestSummaryWorkspaceService {
   async lookupValues(locationId: string, payload: TestSummaryBaseDTO) {
     let reportPeriodId = null;
     let componentRecordId = null;
-    let monitorSystemRecordId = null;
+    let monitorSystem = null;
 
     if (payload.year && payload.quarter) {
       const rptPeriod = await this.reportingPeriodRepository.findOne({
@@ -719,14 +733,12 @@ export class TestSummaryWorkspaceService {
     }
 
     if (payload.monitoringSystemID) {
-      const monitorSystem = await this.monSysRepository.findOne({
+      monitorSystem = await this.monSysRepository.findOne({
         locationId: locationId,
         monitoringSystemID: payload.monitoringSystemID,
       });
-
-      monitorSystemRecordId = monitorSystem ? monitorSystem.id : null;
     }
 
-    return [reportPeriodId, componentRecordId, monitorSystemRecordId];
+    return [reportPeriodId, componentRecordId, monitorSystem];
   }
 }
