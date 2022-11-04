@@ -122,8 +122,8 @@ export class RataTraverseBaseDTO {
         });
       },
     },
-    false,
-    false,
+    true,
+    true,
   )
   tStackTemperature: number;
   pointUsedIndicator: number;
