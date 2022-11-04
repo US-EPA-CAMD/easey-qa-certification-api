@@ -113,7 +113,6 @@ export class FlowRataRunChecksService {
         key: KEY,
       });
     }
-    console.log('rata-94-check called');
     return error;
   }
 
