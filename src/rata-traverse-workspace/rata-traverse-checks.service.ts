@@ -11,7 +11,7 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import {
   RataTraverseBaseDTO,
   RataTraverseImportDTO,
-} from 'src/dto/rata-traverse.dto';
+} from '../dto/rata-traverse.dto';
 
 const KEY = 'RATA Traverse';
 
