@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   TestQualificationBaseDTO,
-  TestQualificationDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
 import { TestQualificationWorkspaceController } from './test-qualification-workspace.controller';

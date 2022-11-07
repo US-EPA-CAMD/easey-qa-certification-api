@@ -21,12 +21,6 @@ const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 const monitorSystemRecord = new MonitorSystem();
 
-let testSumRecord = {
-  system: {
-    systemTypeCode: 'FLOW',
-  },
-};
-
 const mockTestSumRepository = () => ({
   getTestSummaryByLocationId: jest.fn().mockResolvedValue(null),
   getTestSummaryById: jest.fn().mockResolvedValue(null),
