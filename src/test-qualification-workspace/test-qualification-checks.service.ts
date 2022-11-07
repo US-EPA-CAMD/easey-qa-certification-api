@@ -35,10 +35,9 @@ export class TestQualificationChecksService {
     if (testQualification.testClaimCode !== 'SLC') {
       const errors = this.rata9And10And11Check(testQualification);
 
-      errorList.push(...errors);
+      console.log(errors);
+      if (errors.length > 0) errorList.push(...errors);
     }
-
-    console.log('ErrorList', errorList);
 
     this.throwIfErrors(errorList);
 
@@ -76,9 +75,9 @@ export class TestQualificationChecksService {
         key: KEY,
       });
       errors.push(error);
-
-      return errors;
     }
+
+    return errors;
   }
 
   getErrorMessage(errorCode: string, options: object): string {

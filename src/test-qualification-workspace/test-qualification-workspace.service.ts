@@ -65,6 +65,8 @@ export class TestQualificationWorkspaceService {
 
     await this.repository.save(entity);
 
+    await this.repository.save(entity);
+
     entity = await this.repository.findOne(entity.id);
 
     await this.testSummaryService.resetToNeedsEvaluation(
