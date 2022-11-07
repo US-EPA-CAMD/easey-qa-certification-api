@@ -75,10 +75,9 @@ export class TestSummaryWorkspaceService {
     private readonly monSysRepository: MonitorSystemRepository,
     @InjectRepository(ReportingPeriodRepository)
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
-    @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
-    private readonly flowToLoadCheckService: FlowToLoadCheckWorkspaceService,
     @Inject(forwardRef(() => FuelFlowToLoadBaselineWorkspaceService))
-    private readonly fuelFlowToLoadBaselineService: FuelFlowToLoadBaselineWorkspaceService,
+    private readonly fuelFlowToLoadBaselineWorkspaceService: FuelFlowToLoadBaselineWorkspaceService,
+    @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
     private readonly flowToLoadCheckWorkspaceService: FlowToLoadCheckWorkspaceService,
     @Inject(forwardRef(() => FlowToLoadReferenceWorkspaceService))
     private readonly flowToLoadReferenceWorkspaceService: FlowToLoadReferenceWorkspaceService,
@@ -214,7 +213,7 @@ export class TestSummaryWorkspaceService {
             testSumIds,
           );
 
-          fuelFlowToLoadBaselineData = await this.fuelFlowToLoadBaselineService.export(
+          fuelFlowToLoadBaselineData = await this.fuelFlowToLoadBaselineWorkspaceService.export(
             testSumIds,
           );
 
@@ -432,7 +431,7 @@ export class TestSummaryWorkspaceService {
           new Promise(async (resolve, _reject) => {
             const innerPromises = [];
             innerPromises.push(
-              this.fuelFlowToLoadBaselineService.import(
+              this.fuelFlowToLoadBaselineWorkspaceService.import(
                 createdTestSummary.id,
                 fuelFlowToLoadBaseline,
                 userId,
