@@ -1,5 +1,9 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { v4 as uuid } from 'uuid';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+
+import { currentDateTime } from '../utilities/functions';
 import {
   TestQualificationBaseDTO,
   TestQualificationDTO,
@@ -8,9 +12,6 @@ import {
 import { TestQualificationMap } from '../maps/test-qualification.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
-import { currentDateTime } from '../utilities/functions';
-import { v4 as uuid } from 'uuid';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class TestQualificationWorkspaceService {
@@ -63,12 +64,15 @@ export class TestQualificationWorkspaceService {
     });
 
     await this.repository.save(entity);
+
     entity = await this.repository.findOne(entity.id);
+
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
     );
+
     return this.map.one(entity);
   }
 
