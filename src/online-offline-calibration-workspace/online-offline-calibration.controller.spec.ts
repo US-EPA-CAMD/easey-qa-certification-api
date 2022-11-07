@@ -35,6 +35,7 @@ const mockService = () => ({
     .mockResolvedValue(onlineOfflineCalibrationRecord),
   createOnlineOfflineCalibration: jest.fn(),
   updateOnlineOfflineCalibration: jest.fn(),
+  deleteOnlineOfflineCalibration: jest.fn().mockResolvedValue(null),
 });
 
 const mockAuthGuard = () => ({});
