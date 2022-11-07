@@ -25,6 +25,8 @@ import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.d
 import { OnlineOfflineCalibrationService } from '../online-offline-calibration/online-offline-calibration.service';
 import { FlowToLoadReference } from '../entities/flow-to-load-reference.entity';
 import { FlowToLoadReferenceService } from '../flow-to-load-reference/flow-to-load-reference.service';
+import { FuelFlowToLoadBaselineService } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.service';
+import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
 
 const locationId = '121';
 const facilityId = 1;
@@ -84,6 +86,10 @@ const mockOnlineOfflineCalibrationService = () => ({
   export: jest.fn().mockResolvedValue([new OnlineOfflineCalibrationDTO()]),
 });
 
+const mockFuelFlowToLoadBaselineService = () => ({
+  export: jest.fn().mockResolvedValue([new FuelFlowToLoadBaselineDTO()]),
+});
+
 describe('TestSummaryService', () => {
   let service: TestSummaryService;
   let repository: TestSummaryRepository;
@@ -136,6 +142,10 @@ describe('TestSummaryService', () => {
         {
           provide: OnlineOfflineCalibrationService,
           useFactory: mockOnlineOfflineCalibrationService,
+        },
+        {
+          provide: FuelFlowToLoadBaselineService,
+          useFactory: mockFuelFlowToLoadBaselineService,
         },
       ],
     }).compile();

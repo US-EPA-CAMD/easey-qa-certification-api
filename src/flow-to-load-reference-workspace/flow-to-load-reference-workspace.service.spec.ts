@@ -5,10 +5,13 @@ import {
   FlowToLoadReferenceBaseDTO,
   FlowToLoadReferenceDTO,
 } from '../dto/flow-to-load-reference.dto';
-import { FlowToLoadReference } from '../entities/flow-to-load-reference.entity';
+import { FlowToLoadReference as FlowToLoadReferenceOfficial } from '../entities/flow-to-load-reference.entity';
+import { FlowToLoadReference } from '../entities/workspace/flow-to-load-reference.entity';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FlowToLoadReferenceWorkspaceRepository } from './flow-to-load-reference-workspace.repository';
 import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference-workspace.service';
+import { FlowToLoadReferenceRepository } from '../flow-to-load-reference/flow-to-load-reference.repository';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 const testSumId = '';
 const userId = 'user';
@@ -23,6 +26,10 @@ const mockRepository = () => ({
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
+});
+
+const mockOfficialRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(new FlowToLoadReferenceOfficial()),
 });
 
 const mockMap = () => ({
@@ -41,6 +48,7 @@ describe('FlowToLoadReferenceWorkspaceService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         FlowToLoadReferenceWorkspaceService,
         {
@@ -50,6 +58,10 @@ describe('FlowToLoadReferenceWorkspaceService', () => {
         {
           provide: FlowToLoadReferenceWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: FlowToLoadReferenceRepository,
+          useFactory: mockOfficialRepository,
         },
         {
           provide: FlowToLoadReferenceMap,
