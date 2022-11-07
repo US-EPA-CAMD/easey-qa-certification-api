@@ -186,7 +186,6 @@ export class OnlineOfflineCalibrationWorkspaceService {
     if (isHistoricalRecord) {
       historicalRecord = await this.historicalRepo.findOne({
         testSumId,
-        upscaleGasLevelCode: payload.upscaleGasLevelCode,
       });
     }
 
