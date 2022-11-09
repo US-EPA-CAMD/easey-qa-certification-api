@@ -59,6 +59,8 @@ import { UnitModule } from './unit/unit.module';
 import { StackPipeModule } from './stack-pipe/stack-pipe.module';
 import { MonitorLocationModule } from './monitor-location/monitor-location.module';
 import { ReportingPeriodModule } from './reporting-period/reporting-period.module';
+import { FuelFlowmeterAccuracyWorkspaceModule } from './fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
+import { FuelFlowmeterAccuracyModule } from './fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.module';
 
 @Module({
   imports: [
@@ -119,6 +121,8 @@ import { ReportingPeriodModule } from './reporting-period/reporting-period.modul
     StackPipeModule,
     MonitorLocationModule,
     ReportingPeriodModule,
+    FuelFlowmeterAccuracyModule,
+    FuelFlowmeterAccuracyWorkspaceModule,
   ],
 })
 export class AppModule {}
