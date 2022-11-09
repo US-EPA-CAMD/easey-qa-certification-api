@@ -16,11 +16,11 @@ export class CycleTimeSummaryController {
     description:
       'Retrieves official Cycle Time Summary records by Test Summary Id',
   })
-  async getCycleTimeSummarys(
+  async getCycleTimeSummaries(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
   ): Promise<CycleTimeSummaryDTO[]> {
-    return this.service.getCycleTimeSummarys(testSumId);
+    return this.service.getCycleTimeSummaries(testSumId);
   }
 
   @Get(':id')

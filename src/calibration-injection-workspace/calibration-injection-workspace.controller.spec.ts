@@ -77,7 +77,7 @@ describe('CalibrationInjectionWorkspaceController', () => {
   });
 
   describe('createCalibrationInjection', () => {
-    it('Calls the service and create a new fuel Flow To Load Baseline record', async () => {
+    it('Calls the service and create a new Calibration Injection record', async () => {
       const result = await controller.createCalibrationInjection(
         locId,
         testSumId,

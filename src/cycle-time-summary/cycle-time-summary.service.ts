@@ -13,7 +13,7 @@ export class CycleTimeSummaryService {
     private readonly repository: CycleTimeSummaryRepository,
   ) {}
 
-  async getCycleTimeSummarys(
+  async getCycleTimeSummaries(
     testSumId: string,
   ): Promise<CycleTimeSummaryDTO[]> {
     const records = await this.repository.find({ where: { testSumId } });
