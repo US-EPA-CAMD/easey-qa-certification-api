@@ -26,6 +26,7 @@ import { FlowToLoadReference } from './flow-to-load-reference.entity';
 import { FuelFlowToLoadBaseline } from './fuel-flow-to-load-baseline.entity';
 import { CalibrationInjection } from './calibration-injection.entity';
 import { OnlineOfflineCalibration } from './online-offline-calibration.entity';
+import { CycleTimeSummary } from './cycle-time-summary.entity';
 
 @Entity({ name: 'camdecmpswks.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -223,6 +224,13 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   protocolGases: ProtocolGas[];
+
+  @OneToMany(
+    () => CycleTimeSummary,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  cycleTimeSummary: CycleTimeSummary[];
 
   @OneToMany(
     () => AirEmissionTesting,
