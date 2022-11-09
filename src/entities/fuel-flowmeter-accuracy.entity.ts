@@ -33,7 +33,7 @@ export class FuelFlowmeterAccuracy extends BaseEntity {
     name: 'reinstall_hour',
     transformer: new NumericColumnTransformer(),
   })
-  reinstallationHour: string;
+  reinstallationHour: number;
 
   @Column({
     name: 'low_fuel_accuracy',
