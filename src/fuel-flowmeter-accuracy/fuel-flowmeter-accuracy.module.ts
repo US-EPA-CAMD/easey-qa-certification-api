@@ -21,4 +21,4 @@ import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
     FuelFlowmeterAccuracyService,
   ],
 })
-export class FlowToLoadReferenceModule {}
+export class FuelFlowmeterAccuracyModule {}

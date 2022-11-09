@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { FuelFlowmeterAccuracyDTO } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracy } from '../entities/fuel-flowmeter-accuracy.entity';
-import { FuelFlowToLoadTestDTO } from '../dto/fuel-flow-to-load-test.dto';
-import { FuelFlowToLoadTest } from '../entities/fuel-flow-to-load-test.entity';
 
 @Injectable()
 export class FuelFlowmeterAccuracyMap extends BaseMap<
