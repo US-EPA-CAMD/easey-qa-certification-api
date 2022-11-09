@@ -11,8 +11,8 @@ export class FuelFlowmeterAccuracyRecordDTO extends FuelFlowmeterAccuracyBaseDTO
   id: string;
   testSumId: string;
   userId: string;
-  addDate: Date;
-  updateDate: Date;
+  addDate: string;
+  updateDate: string;
   reinstallationDate: Date;
 }
 
