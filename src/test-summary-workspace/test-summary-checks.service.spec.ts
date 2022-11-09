@@ -170,7 +170,7 @@ describe('Test Summary Check Service Test', () => {
     service = module.get(TestSummaryChecksService);
     repository = module.get(TestSummaryWorkspaceRepository);
 
-    jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+    // jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
 
   describe('Test Summary Checks', () => {
@@ -210,6 +210,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('Should get error IMPORT-20 Duplicate Test Summary record', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       jest
         .spyOn(repository, 'getTestSummaryByLocationId')
         .mockResolvedValue(null);
@@ -222,6 +223,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('Should get error IMPORT -21 Duplicate Test Summary record', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       const returnedTestSummary = new TestSummary();
       returnedTestSummary.spanScaleCode = 'L';
       returnedTestSummary.endHour = 2;
@@ -245,6 +247,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('Should get error IMPORT -21 Duplicate Test Summary record (endMinute)', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       const returnedTestSummary = new TestSummary();
       returnedTestSummary.endMinute = 3;
       returnedTestSummary.endHour = 1;
@@ -261,6 +264,11 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('Should get error IMPORT -21 Duplicate Test Summary record (when QASuppDataFound)', async () => {
+      jest
+        .spyOn(qaRepository, 'getUnassociatedQASuppDataByLocationIdAndTestSum')
+        .mockResolvedValue(new QASuppData());
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
       const returnedQASupp = new QASuppData();
       returnedQASupp.component = new Component();
       returnedQASupp.component.componentID = '011';
@@ -714,6 +722,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('returns error message when testType "LINE"', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       const summary = {
         ...summaryBase,
         testTypeCode: TestTypeCodes.LINE.toString(),
@@ -724,6 +733,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('returns error message A when startMinute is null and testType is not [LINE, RATA, CYCLE, F2LREF, APPE, UNITDEF] and monitor plan is found', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       qaMonitorPlanWSRepo.getMonitorPlanWithALowerBeginDate.mockResolvedValue(
         new MonitorPlan(),
       );
@@ -737,6 +747,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('returns error message B when startMinute is null and testType is not [LINE, RATA, CYCLE, F2LREF, APPE, UNITDEF] and monitor plan is NOT found', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       qaMonitorPlanWSRepo.getMonitorPlanWithALowerBeginDate.mockResolvedValue(
         null,
       );

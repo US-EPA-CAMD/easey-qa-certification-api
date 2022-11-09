@@ -208,7 +208,7 @@ export class TestSummaryService {
               i => i.testSumId === s.id,
             );
             s.fuelFlowToLoadBaselineData = fuelFlowToLoadBaselineData.filter(
-              i => i.tesSumId === s.id,
+              i => i.testSumId === s.id,
             );
             s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
               i => i.testSumId === s.id,
@@ -233,6 +233,7 @@ export class TestSummaryService {
     );
 
     await Promise.all(promises);
+
     return testSummaries;
   }
 }

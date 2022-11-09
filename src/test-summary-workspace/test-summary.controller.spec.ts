@@ -8,6 +8,7 @@ import {
   TestSummaryRecordDTO,
 } from '../dto/test-summary.dto';
 import { TestSummaryChecksService } from './test-summary-checks.service';
+import { TestQualificationChecksService } from '../test-qualification-workspace/test-qualification-checks.service';
 
 import { TestSummaryWorkspaceController } from './test-summary.controller';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
@@ -41,6 +42,10 @@ const mockTestSummaryChecksService = () => ({
   runChecks: jest.fn().mockResolvedValue([]),
 });
 
+const mockTestQualChecksService = () => ({
+  runChecks: jest.fn().mockResolvedValue([]),
+});
+
 describe('Test Summary Controller', () => {
   let controller: TestSummaryWorkspaceController;
   let service: TestSummaryWorkspaceService;
@@ -60,6 +65,10 @@ describe('Test Summary Controller', () => {
         {
           provide: TestSummaryChecksService,
           useFactory: mockTestSummaryChecksService,
+        },
+        {
+          provide: TestQualificationChecksService,
+          useFactory: mockTestQualChecksService,
         },
         TestSummaryWorkspaceRepository,
         QASuppDataWorkspaceRepository,

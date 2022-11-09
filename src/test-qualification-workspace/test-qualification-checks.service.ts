@@ -25,17 +25,18 @@ export class TestQualificationChecksService {
     _testSumId: string,
     _isImport: boolean = false,
     _isUpdate: boolean = false,
-  ) {
+  ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
-    let testSumRecord;
 
     this.logger.info('Running Test Qualification Checks');
 
     // RATA-9-10-11-E
-    const errors = this.rata9And10And11Check(testQualification);
-    if (errors.length > 0) {
-      errorList.push(...errors);
+    if (testQualification.testClaimCode !== 'SLC') {
+      const errors = this.rata9And10And11Check(testQualification);
+
+      console.log(errors);
+      if (errors.length > 0) errorList.push(...errors);
     }
 
     this.throwIfErrors(errorList);
@@ -49,35 +50,37 @@ export class TestQualificationChecksService {
   private rata9And10And11Check(
     testQualification: TestQualificationBaseDTO | TestQualificationImportDTO,
   ): string[] {
-    if (testQualification.testClaimCode !== 'SLC') {
-      const errors: string[] = [];
-      let error: string = null;
+    const errors: string[] = [];
+    let error: string = null;
 
-      if (testQualification.highLoadPercentage !== null) {
-        error = CheckCatalogService.formatResultMessage('RATA-9-E', {
-          fieldname: 'highLoadPercentage',
-          key: KEY,
-        });
-        errors.push(error);
-      }
-
-      if (testQualification.midLoadPercentage !== null) {
-        error = CheckCatalogService.formatResultMessage('RATA-10-E', {
-          fieldname: 'midLoadPercentage',
-          key: KEY,
-        });
-        errors.push(error);
-      }
-
-      if (testQualification.lowLoadPercentage !== null) {
-        error = CheckCatalogService.formatResultMessage('RATA-11-E', {
-          fieldname: 'lowLoadPercentage',
-          key: KEY,
-        });
-        errors.push(error);
-      }
-
-      return errors;
+    if (testQualification.highLoadPercentage !== null) {
+      error = this.getErrorMessage('RATA-9-E', {
+        fieldname: 'highLoadPercentage',
+        key: KEY,
+      });
+      errors.push(error);
     }
+
+    if (testQualification.midLoadPercentage !== null) {
+      error = this.getErrorMessage('RATA-10-E', {
+        fieldname: 'midLoadPercentage',
+        key: KEY,
+      });
+      errors.push(error);
+    }
+
+    if (testQualification.lowLoadPercentage !== null) {
+      error = this.getErrorMessage('RATA-11-E', {
+        fieldname: 'lowLoadPercentage',
+        key: KEY,
+      });
+      errors.push(error);
+    }
+
+    return errors;
+  }
+
+  getErrorMessage(errorCode: string, options: object): string {
+    return CheckCatalogService.formatResultMessage(errorCode, options);
   }
 }

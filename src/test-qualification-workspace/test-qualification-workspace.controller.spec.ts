@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   TestQualificationBaseDTO,
-  TestQualificationDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
 import { TestQualificationWorkspaceController } from './test-qualification-workspace.controller';
@@ -10,6 +9,7 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { HttpModule } from '@nestjs/axios';
+import { TestQualificationChecksService } from './test-qualification-checks.service';
 
 const locId = '';
 const testSumId = '';
@@ -31,6 +31,10 @@ const mockTestQualificationWorkspaceService = () => ({
   getTestQualification: jest.fn().mockResolvedValue(testQualificationRecord),
   createTestQualification: jest.fn().mockResolvedValue(testQualificationRecord),
   deleteTestQualification: jest.fn().mockResolvedValue(null),
+});
+
+const mockChecksService = () => ({
+  runChecks: jest.fn().mockResolvedValue([]),
 });
 
 const payload: TestQualificationBaseDTO = {
@@ -56,6 +60,10 @@ describe('TestQualificationWorkspaceController', () => {
         {
           provide: TestQualificationWorkspaceService,
           useFactory: mockTestQualificationWorkspaceService,
+        },
+        {
+          provide: TestQualificationChecksService,
+          useFactory: mockChecksService,
         },
       ],
     }).compile();

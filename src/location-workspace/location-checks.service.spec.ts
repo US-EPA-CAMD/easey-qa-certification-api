@@ -11,6 +11,8 @@ import { Component } from '../entities/workspace/component.entity';
 import { QACertificationImportDTO } from '../dto/qa-certification.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 
+const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
+
 describe('location checks service tests', () => {
   let service: LocationChecksService;
   let repository: any;
@@ -33,6 +35,8 @@ describe('location checks service tests', () => {
 
     service = module.get(LocationChecksService);
     repository = module.get(LocationWorkspaceRepository);
+
+    jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
 
   describe('processLocations tests', () => {
@@ -75,9 +79,7 @@ describe('location checks service tests', () => {
 
       expect(result).not.toBeNull();
       expect(result[0]).toBe(baseLocations);
-      expect(result[1]).toEqual([
-        `The database does not contain Unit [${baseLocations[0].unitId}] for Facility [${payload.orisCode}]`,
-      ]);
+      expect(result[1]).toEqual([MOCK_ERROR_MSG]);
     });
 
     it('IMPORT-13: Tests stack/pipe prefix', async () => {
@@ -90,9 +92,7 @@ describe('location checks service tests', () => {
 
       const result = await service.runChecks(payload);
 
-      expect(result[1]).toEqual([
-        `The following Stack/Pipe was misidentified as a unit [${locations[0].unitId}]`,
-      ]);
+      expect(result[1]).toEqual([MOCK_ERROR_MSG]);
     });
 
     it('IMPORT-13: Tests error message when database does not contain unit data for the facility', async () => {
@@ -108,9 +108,7 @@ describe('location checks service tests', () => {
 
       const result = await service.runChecks(payload);
 
-      expect(result[1]).toEqual([
-        `The database does not contain Unit [${baseLocations[0].unitId}] for Facility [${payload.orisCode}]`,
-      ]);
+      expect(result[1]).toEqual([MOCK_ERROR_MSG]);
     });
 
     it('IMPORT-13: Tests error message when database does not contain Stack/Pipe data for the facility', async () => {
@@ -129,9 +127,7 @@ describe('location checks service tests', () => {
 
       const result = await service.runChecks(payload);
 
-      expect(result[1]).toEqual([
-        `The database does not contain Stack/Pipe [${location[0].stackPipeId}] for Facility [${payload.orisCode}]`,
-      ]);
+      expect(result[1]).toEqual([MOCK_ERROR_MSG]);
     });
 
     it('IMPORT-14 & IMPORT-15: Tests error message when database does not contain one of the system ids and component ids', async () => {
@@ -159,16 +155,8 @@ describe('location checks service tests', () => {
       // 2 will match and 2 won't match the db. The errors we are testing below are for the ones that don't match
       expect(result).not.toBeNull();
       expect(result[1].length).toBe(2);
-      expect(
-        result[1].includes(
-          `The database does not contain System [${baseLocations[0].systemIDs[0]}] for Unit [${baseLocations[0].unitId}] and Facility [${payload.orisCode}]`,
-        ),
-      ).toBe(true);
-      expect(
-        result[1].includes(
-          `The database does not contain Component [${baseLocations[0].componentIDs[0]}] for Unit [${baseLocations[0].unitId}] and Facility [${payload.orisCode}]`,
-        ),
-      ).toBe(true);
+      expect(result[1].includes(MOCK_ERROR_MSG)).toBe(true);
+      expect(result[1].includes(MOCK_ERROR_MSG)).toBe(true);
     });
   });
 });
