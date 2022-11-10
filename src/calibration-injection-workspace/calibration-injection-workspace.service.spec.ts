@@ -170,7 +170,7 @@ describe('CalibrationInjectionWorkspaceService', () => {
   });
 
   describe('deleteCalibrationInjection', () => {
-    it('Should delete a Fuel Flow To Load Baseline record', async () => {
+    it('Should delete a Calibration Injection record', async () => {
       const result = await service.deleteCalibrationInjection(
         testSumId,
         id,
@@ -181,7 +181,7 @@ describe('CalibrationInjectionWorkspaceService', () => {
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
 
-    it('Should throw error when database throws an error while deleting a Fuel Flow To Load Baseline record', async () => {
+    it('Should throw error when database throws an error while deleting a Calibration Injection record', async () => {
       jest
         .spyOn(repository, 'delete')
         .mockRejectedValue(new InternalServerErrorException('Unknown Error'));

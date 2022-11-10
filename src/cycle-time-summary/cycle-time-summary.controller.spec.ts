@@ -1,9 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CycleTimeSummaryController } from './cycle-time-summary.controller';
 import { CycleTimeSummaryService } from './cycle-time-summary.service';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
-  CycleTimeSummaryBaseDTO,
   CycleTimeSummaryDTO,
 } from '../dto/cycle-time-summary.dto';
 import { HttpModule } from '@nestjs/axios';
@@ -13,17 +11,8 @@ import { ConfigService } from '@nestjs/config';
 const locId = '';
 const testSumId = '';
 const id = '';
-const user: CurrentUser = {
-  userId: 'testUser',
-  sessionId: '',
-  expiration: '',
-  clientIp: '',
-  isAdmin: false,
-  roles: [],
-};
-const dto = new CycleTimeSummaryDTO();
 
-const payload = new CycleTimeSummaryBaseDTO();
+const dto = new CycleTimeSummaryDTO();
 
 const mockService = () => ({
   getCycleTimeSummary: jest.fn().mockResolvedValue(dto),
