@@ -1,9 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CycleTimeSummaryController } from './cycle-time-summary.controller';
 import { CycleTimeSummaryService } from './cycle-time-summary.service';
-import {
-  CycleTimeSummaryDTO,
-} from '../dto/cycle-time-summary.dto';
+import { CycleTimeSummaryDTO } from '../dto/cycle-time-summary.dto';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';

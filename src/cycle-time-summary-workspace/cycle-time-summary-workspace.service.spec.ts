@@ -9,6 +9,7 @@ import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entit
 import { CycleTimeSummaryWorkspaceRepository } from './cycle-time-summary-workspace.repository';
 import { CycleTimeSummaryWorkspaceService } from './cycle-time-summary-workspace.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { InternalServerErrorException } from '@nestjs/common';
 
 const id = '';
 const testSumId = '';
@@ -23,6 +24,7 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
+  delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
@@ -116,6 +118,59 @@ describe('CycleTimeSummaryWorkspaceService', () => {
       );
 
       expect(result).toEqual(dto);
+    });
+  });
+
+  describe('updateCycleTimeSummary', () => {
+    it('Should update and return the Cycle Time Summary record', async () => {
+      const result = await service.updateCycleTimeSummary(
+        testSumId,
+        id,
+        payload,
+        userId,
+      );
+
+      expect(result).toEqual(dto);
+    });
+
+    it('Should throw error when a Cycle Time Summary record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.updateCycleTimeSummary(testSumId, id, payload, userId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteCycleTimeSummary', () => {
+    it('Should delete a Cycle Time Summary record', async () => {
+      const result = await service.deleteCycleTimeSummary(
+        testSumId,
+        id,
+        userId,
+      );
+
+      expect(result).toEqual(undefined);
+    });
+
+    it('Should throw error when database throws an error while deleting a Cycle Time Summary record', async () => {
+      jest
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+      let errored = false;
+
+      try {
+        await service.deleteCycleTimeSummary(testSumId, id, userId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
     });
   });
 });

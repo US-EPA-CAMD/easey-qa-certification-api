@@ -29,6 +29,8 @@ const mockService = () => ({
   createCycleTimeSummary: jest.fn().mockResolvedValue(dto),
   getCycleTimeSummary: jest.fn().mockResolvedValue(dto),
   getCycleTimeSummaries: jest.fn().mockResolvedValue([dto]),
+  updateCycleTimeSummary: jest.fn().mockResolvedValue(dto),
+  deleteCycleTimeSummary: jest.fn().mockResolvedValue(undefined),
 });
 
 describe('CycleTimeSummaryWorkspaceController', () => {
@@ -76,6 +78,31 @@ describe('CycleTimeSummaryWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(dto);
+    });
+  });
+
+  describe('updateCycleTimeSummary', () => {
+    it('Calls the service and update a existing Cycle Time Summary record', async () => {
+      const result = await controller.updateCycleTimeSummary(
+        locId,
+        testSumId,
+        id,
+        payload,
+        user,
+      );
+      expect(result).toEqual(dto);
+    });
+  });
+
+  describe('deleteCycleTimeSummary', () => {
+    it('Calls the service and delete a Cycle Time Summary record', async () => {
+      const result = await controller.deleteCycleTimeSummary(
+        locId,
+        testSumId,
+        id,
+        user,
+      );
+      expect(result).toEqual(undefined);
     });
   });
 });

@@ -1,6 +1,5 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { CycleTimeSummaryWorkspaceRepository } from './cycle-time-summary-workspace.repository';
@@ -15,7 +14,6 @@ import {
 @Injectable()
 export class CycleTimeSummaryWorkspaceService {
   constructor(
-    private readonly logger: Logger,
     private readonly map: CycleTimeSummaryMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
@@ -76,5 +74,63 @@ export class CycleTimeSummaryWorkspaceService {
       isImport,
     );
     return this.map.one(entity);
+  }
+
+  async updateCycleTimeSummary(
+    testSumId: string,
+    id: string,
+    payload: CycleTimeSummaryBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<CycleTimeSummaryDTO> {
+    const entity = await this.repository.findOne({
+      id,
+      testSumId,
+    });
+
+    if (!entity) {
+      throw new LoggingException(
+        `Cycle Time Summary record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    entity.totalTime = payload.totalTime;
+
+    await this.repository.save(entity);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.map.one(entity);
+  }
+
+  async deleteCycleTimeSummary(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete({
+        id,
+        testSumId,
+      });
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting Cycle Time Summary record [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
+      );
+    }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
   }
 }
