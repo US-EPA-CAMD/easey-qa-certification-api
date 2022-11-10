@@ -36,6 +36,7 @@ import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { OnlineOfflineCalibrationWorkspaceModule } from '../online-offline-calibration-workspace/online-offline-calibration.module';
+import { CycleTimeSummaryWorkspaceModule } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.module';
 
 @Module({
   imports: [
@@ -69,6 +70,7 @@ import { OnlineOfflineCalibrationWorkspaceModule } from '../online-offline-calib
     forwardRef(() => CalibrationInjectionWorkspaceModule),
     forwardRef(() => FuelFlowToLoadBaselineWorkspaceModule),
     forwardRef(() => OnlineOfflineCalibrationWorkspaceModule),
+    forwardRef(() => CycleTimeSummaryWorkspaceModule),
     TestResultCodeModule,
     HttpModule,
   ],

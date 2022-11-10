@@ -1,8 +1,8 @@
-import { AnalyzerRangeWorkspaceRepository } from "./analyzer-range.repository";
+import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 import { Test } from '@nestjs/testing';
 import { SelectQueryBuilder } from 'typeorm';
-import { AnalyzerRange } from "../entities/workspace/analyzerRange.entity";
-import { TestSummaryBaseDTO } from "../dto/test-summary.dto";
+import { AnalyzerRange } from '../entities/workspace/analyzerRange.entity';
+import { TestSummaryBaseDTO } from '../dto/test-summary.dto';
 
 const analyzerRange = new AnalyzerRange();
 
@@ -41,12 +41,10 @@ describe('AppEHeatInputFromOilWorkspaceRepository', () => {
 
       const result = await repository.getAnalyzerRangeByComponentIdAndDate(
         'componentRecordId',
-        new TestSummaryBaseDTO()
+        new TestSummaryBaseDTO(),
       );
 
       expect(result).toEqual([analyzerRange]);
     });
   });
 });
-
-

@@ -197,6 +197,22 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
+  @IsNotNegative({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-115-B', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsNotZero({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-115-B', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   averageVelocityWithoutWallEffects: number;
 
   averageVelocityWithWallEffects: number;
