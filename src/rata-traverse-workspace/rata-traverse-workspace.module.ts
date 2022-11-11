@@ -9,12 +9,14 @@ import { FlowRataRunWorkspaceModule } from '../flow-rata-run-workspace/flow-rata
 import { RataTraverseMap } from '../maps/rata-traverse.map';
 import { RataTraverseModule } from '../rata-traverse/rata-traverse.module';
 import { RataTraverseChecksService } from './rata-traverse-checks.service';
+import { RataSummaryWorkspaceModule } from '../rata-summary-workspace/rata-summary-workspace.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([RataTraverseWorkspaceRepository]),
     forwardRef(() => RataTraverseModule),
     forwardRef(() => TestSummaryWorkspaceModule),
+    forwardRef(() => RataSummaryWorkspaceModule),
     forwardRef(() => FlowRataRunWorkspaceModule),
     HttpModule,
   ],
