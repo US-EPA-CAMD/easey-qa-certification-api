@@ -179,7 +179,7 @@ describe('Rata Traverse Check Service Test', () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       importPayload.avgVelDiffPressure = null;
       importPayload.avgSquareVelDiffPressure = 1;
-      importPayload.replacementVelocity = 1;
+      importPayload.replacementVelocity = null;
 
       try {
         await checkService.runChecks(
@@ -244,6 +244,7 @@ describe('Rata Traverse Check Service Test', () => {
 
     it('Should get [RATA-83-D] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+      rataSummaryImport.referenceMethodCode = '2F';
       importPayload.pointUsedIndicator = 2;
       importPayload.replacementVelocity = 1;
       rataSummaryImport.defaultWAF = 3;
