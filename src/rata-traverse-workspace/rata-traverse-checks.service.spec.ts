@@ -188,9 +188,9 @@ describe('Rata Traverse Check Service Test', () => {
           testSumId,
           testSummaryImport,
           null,
+          rataSummaryImport,
           null,
-          null,
-          false,
+          true,
           false,
         );
       } catch (err) {
@@ -209,9 +209,9 @@ describe('Rata Traverse Check Service Test', () => {
           testSumId,
           testSummaryImport,
           null,
+          rataSummaryImport,
           null,
-          null,
-          false,
+          true,
           false,
         );
       } catch (err) {
@@ -232,9 +232,9 @@ describe('Rata Traverse Check Service Test', () => {
           testSumId,
           testSummaryImport,
           null,
+          rataSummaryImport,
           null,
-          null,
-          false,
+          true,
           false,
         );
       } catch (err) {
@@ -244,7 +244,7 @@ describe('Rata Traverse Check Service Test', () => {
 
     it('Should get [RATA-83-D] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      rataSummaryImport.referenceMethodCode = '2F';
+      rataSummaryImport.referenceMethodCode = '2FH';
       importPayload.pointUsedIndicator = 2;
       importPayload.replacementVelocity = 1;
       rataSummaryImport.defaultWAF = 3;
@@ -256,9 +256,9 @@ describe('Rata Traverse Check Service Test', () => {
           testSumId,
           testSummaryImport,
           null,
+          rataSummaryImport,
           null,
-          null,
-          false,
+          true,
           false,
         );
       } catch (err) {
@@ -268,8 +268,8 @@ describe('Rata Traverse Check Service Test', () => {
 
     it('Should get [RATA-83-E] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.replacementVelocity = 1;
       rataSummaryImport.referenceMethodCode = '2F';
+      importPayload.replacementVelocity = 1;
 
       try {
         await checkService.runChecks(
@@ -278,9 +278,9 @@ describe('Rata Traverse Check Service Test', () => {
           testSumId,
           testSummaryImport,
           null,
+          rataSummaryImport,
           null,
-          null,
-          false,
+          true,
           false,
         );
       } catch (err) {
@@ -299,7 +299,7 @@ describe('Rata Traverse Check Service Test', () => {
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(returnValue);
       try {
-        await checkService.runChecks(payload, locationId, testSumId, testSummaryImport, rataSumId, rataSummaryImport, flowRataRunId);
+        await checkService.runChecks(payload, locationId, testSumId, testSummaryImport, rataSumId, rataSummaryImport, flowRataRunId, true, false);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
