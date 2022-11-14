@@ -26,6 +26,7 @@ import { FlowToLoadCheck } from './flow-to-load-check.entity';
 import { FuelFlowToLoadBaseline } from './fuel-flow-to-load-baseline.entity';
 import { CalibrationInjection } from './workspace/calibration-injection.entity';
 import { OnlineOfflineCalibration } from './online-offline-calibration.entity';
+import { FuelFlowmeterAccuracy } from './fuel-flowmeter-accuracy.entity';
 import { CycleTimeSummary } from './cycle-time-summary.entity';
 
 @Entity({ name: 'camdecmps.test_summary' })
@@ -291,6 +292,13 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   onlineOfflineCalibrations: OnlineOfflineCalibration[];
+
+  @OneToMany(
+    () => FuelFlowmeterAccuracy,
+    ffma => ffma.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  fuelFlowmeterAccuracy: FuelFlowmeterAccuracy[];
 
   @ManyToOne(
     () => ReportingPeriod,

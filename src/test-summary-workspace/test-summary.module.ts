@@ -36,6 +36,7 @@ import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { OnlineOfflineCalibrationWorkspaceModule } from '../online-offline-calibration-workspace/online-offline-calibration.module';
+import { FuelFlowmeterAccuracyWorkspaceModule } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
 import { CycleTimeSummaryWorkspaceModule } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.module';
 
 @Module({
@@ -63,6 +64,7 @@ import { CycleTimeSummaryWorkspaceModule } from '../cycle-time-summary-workspace
     forwardRef(() => AppECorrelationTestSummaryWorkspaceModule),
     forwardRef(() => FlowToLoadReferenceWorkspaceModule),
     forwardRef(() => FuelFlowToLoadTestWorkspaceModule),
+    forwardRef(() => FuelFlowmeterAccuracyWorkspaceModule),
     forwardRef(() => FlowToLoadCheckWorkspaceModule),
     forwardRef(() => AirEmissionTestingWorkspaceModule),
     forwardRef(() => AppEHeatInputFromGasWorkspaceModule),

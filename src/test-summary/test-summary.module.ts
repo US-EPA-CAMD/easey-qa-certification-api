@@ -19,6 +19,7 @@ import { FlowToLoadReferenceModule } from '../flow-to-load-reference/flow-to-loa
 import { CalibrationInjectionModule } from '../calibration-injection/calibration-injection.module';
 import { OnlineOfflineCalibrationModule } from '../online-offline-calibration/online-offline-calibration.module';
 import { FuelFlowToLoadBaselineModule } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.module';
+import { FuelFlowmeterAccuracyModule } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.module';
 import { CycleTimeSummaryModule } from '../cycle-time-summary/cycle-time-summary.module';
 
 @Module({
@@ -31,6 +32,7 @@ import { CycleTimeSummaryModule } from '../cycle-time-summary/cycle-time-summary
     TestQualificationModule,
     FuelFlowToLoadTestModule,
     FuelFlowToLoadBaselineModule,
+    FuelFlowmeterAccuracyModule,
     FlowToLoadCheckModule,
     FlowToLoadReferenceModule,
     AirEmissionTestingModule,

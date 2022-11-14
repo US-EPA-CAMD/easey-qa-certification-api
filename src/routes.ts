@@ -46,6 +46,8 @@ import { CalibrationInjectionWorkspaceModule } from './calibration-injection-wor
 import { CalibrationInjectionModule } from './calibration-injection/calibration-injection.module';
 import { OnlineOfflineCalibrationWorkspaceModule } from './online-offline-calibration-workspace/online-offline-calibration.module';
 import { OnlineOfflineCalibrationModule } from './online-offline-calibration/online-offline-calibration.module';
+import { FuelFlowmeterAccuracyModule } from './fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.module';
+import { FuelFlowmeterAccuracyWorkspaceModule } from './fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
 import { CycleTimeSummaryWorkspaceModule } from './cycle-time-summary-workspace/cycle-time-summary-workspace.module';
 import { CycleTimeSummaryModule } from './cycle-time-summary/cycle-time-summary.module';
 
@@ -95,6 +97,10 @@ const routes: Routes = [
           {
             path: ':testSumId/flow-to-load-references',
             module: FlowToLoadReferenceModule,
+          },
+          {
+            path: ':testSumId/fuel-flowmeter-accuracies',
+            module: FuelFlowmeterAccuracyModule,
           },
           {
             path: ':testSumId/fuel-flow-to-load-tests',
@@ -229,6 +235,10 @@ const routes: Routes = [
           {
             path: ':testSumId/flow-to-load-references',
             module: FlowToLoadReferenceWorkspaceModule,
+          },
+          {
+            path: ':testSumId/fuel-flowmeter-accuracies',
+            module: FuelFlowmeterAccuracyWorkspaceModule,
           },
           {
             path: ':testSumId/fuel-flow-to-load-tests',
