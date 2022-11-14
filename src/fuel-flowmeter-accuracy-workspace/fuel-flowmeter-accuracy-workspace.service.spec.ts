@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
@@ -154,35 +155,34 @@ describe('FuelFlowmeterWorkspaceService', () => {
     });
   });
 
-  // describe('deleteFlowToLoadReference', () => {
-  //   it('Should delete a Fuel Flowmeter record', async () => {
-  //     const result = await service.deleteFlowToLoadReference(
-  //       testSumId,
-  //       fuelFlowmeterAccuracyId,
-  //       userId,
-  //     );
-  //
-  //     expect(result).toEqual(undefined);
-  //     expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
-  //   });
-  //
-  //   it('Should throw error when database throws an error while deleting a Fuel Flowmeter record', async () => {
-  //     jest
-  //       .spyOn(repository, 'delete')
-  //       .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
-  //     let errored = false;
-  //
-  //     try {
-  //       await service.deleteFlowToLoadReference(
-  //         testSumId,
-  //         fuelFlowmeterAccuracyId,
-  //         userId,
-  //       );
-  //     } catch (e) {
-  //       errored = true;
-  //     }
-  //
-  //     expect(errored).toEqual(true);
-  //   });
-  // });
+  describe('deleteFuelFlowmeterAccuracy', () => {
+    it('Should delete a Fuel Flowmeter Accuracy record', async () => {
+      const result = await service.deleteFuelFlowmeterAccuracy(
+        testSumId,
+        fuelFlowmeterAccuracyId,
+        userId,
+      );
+
+      expect(result).toEqual(undefined);
+    });
+
+    it('Should throw error when database throws an error while deleting a Fuel Flowmeter Accuracy record', async () => {
+      jest
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+      let errored = false;
+
+      try {
+        await service.deleteFuelFlowmeterAccuracy(
+          testSumId,
+          fuelFlowmeterAccuracyId,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
 });

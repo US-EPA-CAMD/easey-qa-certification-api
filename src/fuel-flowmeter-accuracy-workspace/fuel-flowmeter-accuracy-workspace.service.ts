@@ -104,4 +104,24 @@ export class FuelFlowmeterAccuracyWorkspaceService {
 
     return this.map.one(entity);
   }
+
+  async deleteFuelFlowmeterAccuracy(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete({
+        id,
+        testSumId,
+      });
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting Fuel Flowmeter Accuracy record Id [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
+      );
+    }
+  }
 }
