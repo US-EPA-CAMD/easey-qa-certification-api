@@ -5,6 +5,7 @@ import {
   Post,
   Body,
   Put,
+  Delete,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -101,5 +102,20 @@ export class FuelFlowmeterAccuracyWorkspaceController {
       payload,
       user.userId,
     );
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Deletes a Fuel Flowmeter record from the workspace',
+  })
+  async deleteFuelFlowmeterAccuracy(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteFuelFlowmeterAccuracy(testSumId, id, user.userId);
   }
 }

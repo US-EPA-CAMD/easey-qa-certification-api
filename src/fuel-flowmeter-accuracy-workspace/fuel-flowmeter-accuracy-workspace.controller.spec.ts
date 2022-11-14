@@ -31,6 +31,7 @@ const mockService = () => ({
     .fn()
     .mockResolvedValue(fuelFlowmeterAccuracy),
   editFuelFlowmeterAccuracy: jest.fn().mockResolvedValue(fuelFlowmeterAccuracy),
+  deleteFuelFlowmeterAccuracy: jest.fn().mockResolvedValue(undefined),
 });
 
 const payload = new FuelFlowmeterAccuracyBaseDTO();
@@ -101,6 +102,17 @@ describe('FuelFlowmeterAccuracyWorkspaceController', () => {
           user,
         ),
       ).toEqual(fuelFlowmeterAccuracy);
+    });
+  });
+  describe('deleteFuelFlowmeterAccuracy', () => {
+    it('Calls the service and delete a Fuel Flowmeter record', async () => {
+      const result = await controller.deleteFuelFlowmeterAccuracy(
+        locId,
+        testSumId,
+        fuelFlowmeterAccuracyId,
+        user,
+      );
+      expect(result).toEqual(undefined);
     });
   });
 });
