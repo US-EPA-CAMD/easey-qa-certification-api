@@ -22,13 +22,17 @@ import {
   RataTraverseBaseDTO,
   RataTraverseRecordDTO,
 } from '../dto/rata-traverse.dto';
+import { RataTraverseChecksService } from './rata-traverse-checks.service';
 import { RataTraverseWorkspaceService } from './rata-traverse-workspace.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Rata Traverse')
 export class RataTraverseWorkspaceController {
-  constructor(private readonly service: RataTraverseWorkspaceService) {}
+  constructor(
+    private readonly service: RataTraverseWorkspaceService, 
+    private readonly checksService: RataTraverseChecksService,
+    ) {}
 
   @Get()
   @ApiOkResponse({
@@ -83,6 +87,17 @@ export class RataTraverseWorkspaceController {
     @Body() payload: RataTraverseBaseDTO,
     @User() user: CurrentUser,
   ): Promise<RataTraverseRecordDTO> {
+    await this.checksService.runChecks(
+      payload,
+      _locationId,
+      testSumId,
+      null,
+      _rataSumId,
+      null,
+      flowRataRunId,
+      false,
+      false,
+    );
     return this.service.createRataTraverse(
       testSumId,
       flowRataRunId,
@@ -109,6 +124,17 @@ export class RataTraverseWorkspaceController {
     @Body() payload: RataTraverseBaseDTO,
     @User() user: CurrentUser,
   ): Promise<RataTraverseRecordDTO> {
+    await this.checksService.runChecks(
+      payload,
+      _locationId,
+      testSumId,
+      null,
+      _rataSumId,
+      null,
+      _flowRataRunId,
+      false,
+      true,
+    );
     return this.service.updateRataTraverse(testSumId, id, payload, user.userId);
   }
 

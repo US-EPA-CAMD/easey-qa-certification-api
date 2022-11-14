@@ -11,7 +11,12 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import {
   RataTraverseBaseDTO,
   RataTraverseImportDTO,
-} from 'src/dto/rata-traverse.dto';
+} from '../dto/rata-traverse.dto';
+import { RataSummary } from '../entities/workspace/rata-summary.entity';
+import { RataSummaryWorkspaceRepository } from '../rata-summary-workspace/rata-summary-workspace.repository';
+import { RataSummaryImportDTO } from '../dto/rata-summary.dto';
+import { RataTraverse } from '../entities/workspace/rata-traverse.entity';
+import { RataTraverseWorkspaceRepository } from './rata-traverse-workspace.repository';
 
 const KEY = 'RATA Traverse';
 
@@ -21,8 +26,12 @@ export class RataTraverseChecksService {
     private readonly logger: Logger,
     @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
+    @InjectRepository(RataTraverseWorkspaceRepository)
+    private readonly repository: RataTraverseWorkspaceRepository,
     @InjectRepository(MonitorSystemRepository)
     private readonly monitorSystemRepository: MonitorSystemRepository,
+    @InjectRepository(RataSummaryWorkspaceRepository)
+    private readonly rataSummaryRepository: RataSummaryWorkspaceRepository,
   ) {}
 
   private throwIfErrors(errorList: string[]) {
@@ -40,17 +49,23 @@ export class RataTraverseChecksService {
     locationId: string,
     testSumId?: string,
     testSummary?: TestSummaryImportDTO,
+    rataSumId?: string,
+    rataSummary?: RataSummaryImportDTO,
+    flowRataRunId?: string,
     isImport: boolean = false,
     isUpdate: boolean = false,
+    rataTraverses?: RataTraverseImportDTO[],
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
     let testSumRecord;
+    let rataSumRecord;
 
     this.logger.info('Running RATA Traverse Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
+      rataSumRecord = rataSummary;
       testSumRecord.system = await this.monitorSystemRepository.findOne({
         monitoringSystemID: testSummary.monitoringSystemID,
         locationId: locationId,
@@ -59,12 +74,26 @@ export class RataTraverseChecksService {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
       );
+      rataSumRecord = await this.rataSummaryRepository.findOne(
+        rataSumId,
+      );
     }
 
     if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
       error = this.rata76Check(rataTraverse);
       if (error) {
         errorList.push(error);
+      }
+
+      error = this.rata83Check(rataTraverse, rataSumRecord);
+      if (error) {
+        errorList.push(error);
+      }
+      if (!isUpdate) {
+        error = await this.rata110Check(rataTraverse, isImport, flowRataRunId, rataTraverses);
+        if (error) {
+          errorList.push(error);
+        }
       }
     }
 
@@ -96,6 +125,88 @@ export class RataTraverseChecksService {
       });
     }
 
+    return error;
+  }
+
+  private rata83Check(
+    rataTraverse: RataTraverseBaseDTO | RataTraverseImportDTO,
+    rataSumRecord: RataSummary,
+  ): string {
+    let error = null;
+    const FIELDNAME = "replacementVelocity";
+
+    if(['2FH', '2GH', 'M2H'].includes(rataSumRecord.referenceMethodCode)){
+      if(rataTraverse.pointUsedIndicator === 1){
+        if(!rataTraverse.replacementVelocity && rataTraverse.replacementVelocity !== 0){
+          error = this.getMessage('RATA-83-A', {
+            fieldname: FIELDNAME,
+            key: KEY,
+          });
+        } else if(rataTraverse.replacementVelocity <= 0 || rataTraverse.replacementVelocity >= 20000){
+          error = this.getMessage('RATA-83-B', {
+            fieldname: FIELDNAME,
+            key: KEY,
+          });
+        }
+      } else {
+        if(rataTraverse.replacementVelocity || rataTraverse.replacementVelocity === 0){
+          if(rataSumRecord.referenceMethodCode === 'M2H' || !rataSumRecord.defaultWAF){
+            error = this.getMessage('RATA-83-C', {
+              key: KEY,
+            });
+          } else {
+            error = this.getMessage('RATA-83-D', {
+              key: KEY,
+            });
+          }
+        }
+      }
+    } else {
+      if(rataSumRecord.referenceMethodCode){
+        if(rataTraverse.replacementVelocity || rataTraverse.replacementVelocity === 0){
+          error = this.getMessage('RATA-83-E', {
+            fieldname: FIELDNAME,
+            key: KEY,
+          });
+        }
+      }
+    }
+
+    return error;
+  }
+
+  private async rata110Check(
+    rataTraverse: RataTraverseBaseDTO | RataTraverseImportDTO,
+    isImport: boolean,
+    flowRataRunId: string,
+    rataTraverses: RataTraverseImportDTO[],
+  ): Promise<string> {
+    let error: string = null;
+    let duplicates: RataTraverse[] | RataTraverseBaseDTO[];
+    const FIELDNAMES = 'runNumber, operatingLevelCode, and MethodTraversePointID';
+    
+    if (flowRataRunId && !isImport) {
+      duplicates = await this.repository.find({
+        flowRataRunId: flowRataRunId,
+        methodTraversePointID: rataTraverse.methodTraversePointID,
+      });
+      if (duplicates.length > 0) {
+        error = CheckCatalogService.formatResultMessage('RATA-110-A', {
+          recordtype: KEY,
+          fieldnames: FIELDNAMES,
+        });
+      }
+    }
+
+    if (rataTraverses?.length > 1 && isImport) {
+      duplicates = rataTraverses.filter(rs => rs.methodTraversePointID === rataTraverse.methodTraversePointID);
+      if (duplicates.length > 1) {
+        error = CheckCatalogService.formatResultMessage('RATA-110-A', {
+          recordtype: KEY,
+          fieldnames: FIELDNAMES,
+        });
+      }
+    }
     return error;
   }
 }
