@@ -48,6 +48,8 @@ import { OnlineOfflineCalibrationWorkspaceModule } from './online-offline-calibr
 import { OnlineOfflineCalibrationModule } from './online-offline-calibration/online-offline-calibration.module';
 import { FuelFlowmeterAccuracyModule } from './fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.module';
 import { FuelFlowmeterAccuracyWorkspaceModule } from './fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
+import { CycleTimeSummaryWorkspaceModule } from './cycle-time-summary-workspace/cycle-time-summary-workspace.module';
+import { CycleTimeSummaryModule } from './cycle-time-summary/cycle-time-summary.module';
 
 const routes: Routes = [
   {
@@ -79,6 +81,10 @@ const routes: Routes = [
           {
             path: ':testSumId/protocol-gases',
             module: ProtocolGasModule,
+          },
+          {
+            path: ':testSumId/cycle-time-summaries',
+            module: CycleTimeSummaryModule,
           },
           {
             path: ':testSumId/test-qualifications',
@@ -189,6 +195,10 @@ const routes: Routes = [
           {
             path: ':testSumId/protocol-gases',
             module: ProtocolGasWorkspaceModule,
+          },
+          {
+            path: ':testSumId/cycle-time-summaries',
+            module: CycleTimeSummaryWorkspaceModule,
           },
           {
             path: ':testSumId/air-emission-testings',

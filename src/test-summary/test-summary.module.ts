@@ -20,6 +20,7 @@ import { CalibrationInjectionModule } from '../calibration-injection/calibration
 import { OnlineOfflineCalibrationModule } from '../online-offline-calibration/online-offline-calibration.module';
 import { FuelFlowToLoadBaselineModule } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.module';
 import { FuelFlowmeterAccuracyModule } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.module';
+import { CycleTimeSummaryModule } from '../cycle-time-summary/cycle-time-summary.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { FuelFlowmeterAccuracyModule } from '../fuel-flowmeter-accuracy/fuel-flo
     AppECorrelationTestSummaryModule,
     CalibrationInjectionModule,
     OnlineOfflineCalibrationModule,
+    CycleTimeSummaryModule,
   ],
   controllers: [TestSummaryController],
   providers: [TestSummaryMap, TestSummaryService],

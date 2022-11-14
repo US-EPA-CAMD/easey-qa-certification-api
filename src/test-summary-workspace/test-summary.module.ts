@@ -37,6 +37,7 @@ import { MonitorLocationRepository } from '../monitor-location/monitor-location.
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { OnlineOfflineCalibrationWorkspaceModule } from '../online-offline-calibration-workspace/online-offline-calibration.module';
 import { FuelFlowmeterAccuracyWorkspaceModule } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
+import { CycleTimeSummaryWorkspaceModule } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.module';
 
 @Module({
   imports: [
@@ -71,6 +72,7 @@ import { FuelFlowmeterAccuracyWorkspaceModule } from '../fuel-flowmeter-accuracy
     forwardRef(() => CalibrationInjectionWorkspaceModule),
     forwardRef(() => FuelFlowToLoadBaselineWorkspaceModule),
     forwardRef(() => OnlineOfflineCalibrationWorkspaceModule),
+    forwardRef(() => CycleTimeSummaryWorkspaceModule),
     TestResultCodeModule,
     HttpModule,
   ],

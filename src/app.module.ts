@@ -61,6 +61,8 @@ import { MonitorLocationModule } from './monitor-location/monitor-location.modul
 import { ReportingPeriodModule } from './reporting-period/reporting-period.module';
 import { FuelFlowmeterAccuracyWorkspaceModule } from './fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
 import { FuelFlowmeterAccuracyModule } from './fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.module';
+import { CycleTimeSummaryWorkspaceModule } from './cycle-time-summary-workspace/cycle-time-summary-workspace.module';
+import { CycleTimeSummaryModule } from './cycle-time-summary/cycle-time-summary.module';
 
 @Module({
   imports: [
@@ -123,6 +125,8 @@ import { FuelFlowmeterAccuracyModule } from './fuel-flowmeter-accuracy/fuel-flow
     ReportingPeriodModule,
     FuelFlowmeterAccuracyModule,
     FuelFlowmeterAccuracyWorkspaceModule,
+    CycleTimeSummaryWorkspaceModule,
+    CycleTimeSummaryModule,
   ],
 })
 export class AppModule {}
