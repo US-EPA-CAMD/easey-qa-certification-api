@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
 import { CycleTimeSummaryDTO } from '../dto/cycle-time-summary.dto';
 import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
 import { CycleTimeSummaryRepository } from './cycle-time-summary.repository';
@@ -38,5 +39,19 @@ export class CycleTimeSummaryService {
     }
 
     return this.map.one(result);
+  }
+
+  async getCycleTimeSummaryByTestSumIds(
+    testSumIds: string[],
+  ): Promise<CycleTimeSummaryDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<CycleTimeSummaryDTO[]> {
+    const calInjs = await this.getCycleTimeSummaryByTestSumIds(testSumIds);
+    return calInjs;
   }
 }
