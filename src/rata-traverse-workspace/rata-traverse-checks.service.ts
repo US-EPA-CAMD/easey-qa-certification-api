@@ -84,11 +84,29 @@ export class RataTraverseChecksService {
       if (error) {
         errorList.push(error);
       }
+    
+      this.logger.info(errorList)
 
+      error = this.rata81Check(rataTraverse, rataSumRecord);
+      if (error) {
+        errorList.push(error);
+      }
+    
+      this.logger.info(errorList)
+
+      error = this.rata82Check(rataTraverse, rataSumRecord);
+      if (error) {
+        errorList.push(error);
+      }
+
+    
+      this.logger.info(errorList)
       error = this.rata83Check(rataTraverse, rataSumRecord);
       if (error) {
         errorList.push(error);
       }
+    
+      this.logger.info(errorList)
       if (!isUpdate) {
         error = await this.rata110Check(rataTraverse, isImport, flowRataRunId, rataTraverses);
         if (error) {
@@ -96,6 +114,9 @@ export class RataTraverseChecksService {
         }
       }
     }
+    
+    
+    this.logger.info(errorList)
 
     this.throwIfErrors(errorList);
     this.logger.info('Completed RATA Traverse Checks');
@@ -123,6 +144,79 @@ export class RataTraverseChecksService {
       error = this.getMessage('RATA-76-B', {
         key: KEY,
       });
+    }
+
+    return error;
+  }
+
+  private rata81Check(
+    rataTraverse: RataTraverseBaseDTO | RataTraverseImportDTO,
+    rataSumRecord: RataSummary,
+  ): string {
+    let error = null;
+    const FIELDNAME = "ReferenceMethodCode";
+
+    if(rataTraverse.pointUsedIndicator === 1){
+      if(['2FH', '2GH', 'M2H'].includes(rataSumRecord.referenceMethodCode)){
+        if(!rataTraverse.replacementVelocity || rataTraverse.replacementVelocity === 0){
+          if(rataSumRecord.referenceMethodCode === 'M2H' || !rataSumRecord.defaultWAF){
+            error = this.getMessage('RATA-81-A', {
+              key: KEY,
+            });
+          } else {
+            error = this.getMessage('RATA-81-B', {
+              key: KEY,
+            });
+          }
+        }
+      } else {
+        error = this.getMessage('RATA-81-C', {
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
+      }
+    }
+
+    return error;
+  }
+
+  private rata82Check(
+    rataTraverse: RataTraverseBaseDTO | RataTraverseImportDTO,
+    rataSumRecord: RataSummary,
+  ): string {
+    let error = null;
+    const FIELDNAME = "NumberWallEffectsPoints";
+
+    if(['2FH', '2GH', 'M2H'].includes(rataSumRecord.referenceMethodCode)){
+      if(rataTraverse.pointUsedIndicator === 1){
+        if(!rataTraverse.numberWallEffectsPoints || rataTraverse.numberWallEffectsPoints < 2){
+          if(rataSumRecord.referenceMethodCode === 'M2H' || !rataSumRecord.defaultWAF){
+            error = this.getMessage('RATA-82-A', {
+              key: KEY,
+            });
+          } else {
+            error = this.getMessage('RATA-82-B', {
+              key: KEY,
+            });
+          }
+        }
+      } else {
+        if(rataTraverse.numberWallEffectsPoints || rataTraverse.numberWallEffectsPoints === 0){
+          error = this.getMessage('RATA-82-C', {
+            fieldname: FIELDNAME,
+            key: KEY,
+          });
+        }
+      }
+    } else {
+      if(rataSumRecord.referenceMethodCode){
+        if(rataTraverse.numberWallEffectsPoints || rataTraverse.numberWallEffectsPoints === 0){
+          error = this.getMessage('RATA-82-D', {
+            fieldname: FIELDNAME,
+            key: KEY,
+          });
+        }
+      }
     }
 
     return error;
