@@ -13,6 +13,7 @@ import { FlowToLoadCheckMap } from './flow-to-load-check.map';
 import { FlowToLoadReferenceMap } from './flow-to-load-reference.map';
 import { CalibrationInjectionMap } from './calibration-injection.map';
 import { CycleTimeSummaryMap } from './cycle-time-summary.map';
+import { FuelFlowmeterAccuracyMap } from './fuel-flowmeter-accuracy.map';
 
 @Injectable()
 export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
@@ -28,6 +29,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
     private readonly flowToLoadReferenceMap: FlowToLoadReferenceMap,
     private readonly calibrationInjectionMap: CalibrationInjectionMap,
     private readonly cycleTimeSummaryMap: CycleTimeSummaryMap,
+    private readonly fuelFlowmeterAccuracyMap: FuelFlowmeterAccuracyMap,
   ) {
     super();
   }
@@ -68,6 +70,10 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
 
     const fuelFlowToloadTest = entity.fuelFlowToLoadTests
       ? await this.fuelFlowToLoadTestMap.many(entity.fuelFlowToLoadTests)
+      : [];
+
+    const fuelFlowmeterAccuracy = entity.fuelFlowmeterAccuracy
+      ? await this.fuelFlowmeterAccuracyMap.many(entity.fuelFlowmeterAccuracy)
       : [];
 
     const calibrationInjections = entity.calibrationInjections
@@ -130,7 +136,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       flowToLoadCheckData: flowToloadCheck,
       cycleTimeSummaryData: cycleTimeSummary,
       onlineOfflineCalibrationData: [],
-      fuelFlowmeterAccuracyData: [],
+      fuelFlowmeterAccuracyData: fuelFlowmeterAccuracy,
       transmitterTransducerData: [],
       fuelFlowToLoadBaselineData: [],
       appECorrelationTestSummaryData: appECorrelationTestSummaries,

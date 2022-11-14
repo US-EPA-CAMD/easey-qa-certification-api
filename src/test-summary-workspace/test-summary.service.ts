@@ -44,6 +44,7 @@ import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-bas
 import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
 import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
 import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
+import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -80,6 +81,8 @@ export class TestSummaryWorkspaceService {
     private readonly fuelFlowToLoadBaselineWorkspaceService: FuelFlowToLoadBaselineWorkspaceService,
     @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
     private readonly flowToLoadCheckWorkspaceService: FlowToLoadCheckWorkspaceService,
+    @Inject(forwardRef(() => FuelFlowmeterAccuracyWorkspaceService))
+    private readonly fuelFlowmeterAccuracyWorkspaceService: FuelFlowmeterAccuracyWorkspaceService,
     @Inject(forwardRef(() => FlowToLoadReferenceWorkspaceService))
     private readonly flowToLoadReferenceWorkspaceService: FlowToLoadReferenceWorkspaceService,
     @Inject(forwardRef(() => OnlineOfflineCalibrationWorkspaceService))
