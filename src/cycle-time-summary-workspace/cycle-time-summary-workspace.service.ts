@@ -9,16 +9,24 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
   CycleTimeSummaryBaseDTO,
   CycleTimeSummaryDTO,
+  CycleTimeSummaryImportDTO,
 } from '../dto/cycle-time-summary.dto';
+import { In } from 'typeorm';
+import { CycleTimeSummary } from '../entities/cycle-time-summary.entity';
+import { CycleTimeSummaryRepository } from '../cycle-time-summary/cycle-time-summary.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class CycleTimeSummaryWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     private readonly map: CycleTimeSummaryMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(CycleTimeSummaryWorkspaceRepository)
     private readonly repository: CycleTimeSummaryWorkspaceRepository,
+    @InjectRepository(CycleTimeSummaryRepository)
+    private readonly historicalRepository: CycleTimeSummaryRepository,
   ) {}
 
   async getCycleTimeSummaries(
@@ -132,5 +140,49 @@ export class CycleTimeSummaryWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getCycleTimeSummaryByTestSumIds(
+    testSumIds: string[],
+  ): Promise<CycleTimeSummaryDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<CycleTimeSummaryDTO[]> {
+    return this.getCycleTimeSummaryByTestSumIds(testSumIds);
+  }
+
+  async import(
+    testSumId: string,
+    payload: CycleTimeSummaryImportDTO,
+    userId: string,
+    isHistoricalRecord?: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: CycleTimeSummary;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepository.findOne({
+        testSumId: testSumId,
+        totalTime: payload.totalTime,
+      });
+    }
+
+    const createdCycleTimeSummary = await this.createCycleTimeSummary(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Cycle Time Summary Successfully Imported. Record Id: ${createdCycleTimeSummary.id}`,
+    );
+
+    return null;
   }
 }

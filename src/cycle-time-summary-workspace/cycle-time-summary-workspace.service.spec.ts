@@ -6,10 +6,12 @@ import {
   CycleTimeSummaryDTO,
 } from '../dto/cycle-time-summary.dto';
 import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
+import { CycleTimeSummary as CycleTimeSummaryOfficial } from '../entities/cycle-time-summary.entity';
 import { CycleTimeSummaryWorkspaceRepository } from './cycle-time-summary-workspace.repository';
 import { CycleTimeSummaryWorkspaceService } from './cycle-time-summary-workspace.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { InternalServerErrorException } from '@nestjs/common';
+import { CycleTimeSummaryRepository } from '../cycle-time-summary/cycle-time-summary.repository';
 
 const id = '';
 const testSumId = '';
@@ -36,6 +38,10 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockHistoricalRepo = () => ({
+  findOne: jest.fn().mockResolvedValue(new CycleTimeSummaryOfficial()),
+});
+
 describe('CycleTimeSummaryWorkspaceService', () => {
   let service: CycleTimeSummaryWorkspaceService;
   let repository: CycleTimeSummaryWorkspaceRepository;
@@ -56,6 +62,10 @@ describe('CycleTimeSummaryWorkspaceService', () => {
         {
           provide: CycleTimeSummaryMap,
           useFactory: mockMap,
+        },
+        {
+          provide: CycleTimeSummaryRepository,
+          useFactory: mockHistoricalRepo,
         },
       ],
     }).compile();
@@ -171,6 +181,38 @@ describe('CycleTimeSummaryWorkspaceService', () => {
       }
 
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('getCycleTimeSummaryByTestSumIds', () => {
+    it('Should get Cycle Time Summary records by test sum ids', async () => {
+      const result = await service.getCycleTimeSummaryByTestSumIds([testSumId]);
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Cycle Time Summary Record', async () => {
+      jest
+        .spyOn(service, 'getCycleTimeSummaryByTestSumIds')
+        .mockResolvedValue([]);
+
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('import', () => {
+    it('Should Import Cycle Time Summary', async () => {
+      jest.spyOn(service, 'createCycleTimeSummary').mockResolvedValue(dto);
+
+      await service.import(testSumId, payload, userId, false);
+    });
+
+    it('Should Import Cycle Time Summary from Historical Record', async () => {
+      jest.spyOn(service, 'createCycleTimeSummary').mockResolvedValue(dto);
+
+      await service.import(testSumId, payload, userId, true);
     });
   });
 });

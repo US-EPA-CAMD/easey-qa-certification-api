@@ -27,6 +27,8 @@ import { FlowToLoadReference } from '../entities/flow-to-load-reference.entity';
 import { FlowToLoadReferenceService } from '../flow-to-load-reference/flow-to-load-reference.service';
 import { FuelFlowToLoadBaselineService } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.service';
 import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
+import { CycleTimeSummary } from '../entities/cycle-time-summary.entity';
+import { CycleTimeSummaryService } from '../cycle-time-summary/cycle-time-summary.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -76,6 +78,10 @@ const mockFuelFlowToLoadTestService = () => ({
 
 const mockCalibrationInjectionService = () => ({
   export: jest.fn().mockResolvedValue([new CalibrationInjection()]),
+});
+
+const mockCycleTimeSummaryService = () => ({
+  export: jest.fn().mockResolvedValue([new CycleTimeSummary()]),
 });
 
 const mockFlowToLoadReferenceService = () => ({
@@ -130,6 +136,10 @@ describe('TestSummaryService', () => {
         {
           provide: CalibrationInjectionService,
           useFactory: mockCalibrationInjectionService,
+        },
+        {
+          provide: CycleTimeSummaryService,
+          useFactory: mockCycleTimeSummaryService,
         },
         {
           provide: FlowToLoadCheckService,
