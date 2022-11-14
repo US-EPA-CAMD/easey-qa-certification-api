@@ -30,6 +30,7 @@ const mockService = () => ({
   createFuelFlowmeterAccuracy: jest
     .fn()
     .mockResolvedValue(fuelFlowmeterAccuracy),
+  editFuelFlowmeterAccuracy: jest.fn().mockResolvedValue(fuelFlowmeterAccuracy),
 });
 
 const payload = new FuelFlowmeterAccuracyBaseDTO();
@@ -86,6 +87,20 @@ describe('FuelFlowmeterAccuracyWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(fuelFlowmeterAccuracy);
+    });
+  });
+
+  describe('editFuelFlowmeterAccuracy', () => {
+    it('should call the Fuel Flowmeter Accuracy record', async () => {
+      expect(
+        await controller.editFuelFlowmeterAccuracy(
+          locId,
+          testSumId,
+          fuelFlowmeterAccuracyId,
+          payload,
+          user,
+        ),
+      ).toEqual(fuelFlowmeterAccuracy);
     });
   });
 });

@@ -5,6 +5,7 @@ export class FuelFlowmeterAccuracyBaseDTO {
   lowFuelAccuracy: number;
   midFuelAccuracy: number;
   highFuelAccuracy: number;
+  reinstallationDate: Date;
 }
 
 export class FuelFlowmeterAccuracyRecordDTO extends FuelFlowmeterAccuracyBaseDTO {
@@ -13,7 +14,6 @@ export class FuelFlowmeterAccuracyRecordDTO extends FuelFlowmeterAccuracyBaseDTO
   userId: string;
   addDate: string;
   updateDate: string;
-  reinstallationDate: Date;
 }
 
 export class FuelFlowmeterAccuracyImportDTO extends FuelFlowmeterAccuracyBaseDTO {}

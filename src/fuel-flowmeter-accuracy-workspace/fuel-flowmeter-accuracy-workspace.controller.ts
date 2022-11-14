@@ -1,4 +1,12 @@
-import { Controller, Param, Get, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Param,
+  Get,
+  Post,
+  Body,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -11,6 +19,7 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   FuelFlowmeterAccuracyBaseDTO,
+  FuelFlowmeterAccuracyDTO,
   FuelFlowmeterAccuracyRecordDTO,
 } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracyWorkspaceService } from './fuel-flowmeter-accuracy-workspace.service';
@@ -67,6 +76,28 @@ export class FuelFlowmeterAccuracyWorkspaceController {
   ): Promise<FuelFlowmeterAccuracyRecordDTO> {
     return this.service.createFuelFlowmeterAccuracy(
       testSumId,
+      payload,
+      user.userId,
+    );
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: FuelFlowmeterAccuracyDTO,
+    description: 'Updates a workspace Fuel FLowmeter Accuracy record',
+  })
+  editFuelFlowmeterAccuracy(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: FuelFlowmeterAccuracyBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<FuelFlowmeterAccuracyDTO> {
+    return this.service.editFuelFlowmeterAccuracy(
+      testSumId,
+      id,
       payload,
       user.userId,
     );

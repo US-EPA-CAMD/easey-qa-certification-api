@@ -6,6 +6,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 
 import {
   FuelFlowmeterAccuracyBaseDTO,
+  FuelFlowmeterAccuracyDTO,
   FuelFlowmeterAccuracyRecordDTO,
 } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracyWorkspaceRepository } from './fuel-flowmeter-accuracy-workspace.repository';
@@ -43,6 +44,37 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     }
 
     return this.map.one(result);
+  }
+
+  async editFuelFlowmeterAccuracy(
+    testSumId: string,
+    id: string,
+    payload: FuelFlowmeterAccuracyBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<FuelFlowmeterAccuracyDTO> {
+    const timestamp = currentDateTime().toLocaleString();
+
+    const entity = await this.getFuelFlowmeterAccuracy(id);
+
+    entity.accuracyTestMethodCode = payload.accuracyTestMethodCode;
+    entity.reinstallationHour = payload.reinstallationHour;
+    entity.lowFuelAccuracy = payload.lowFuelAccuracy;
+    entity.midFuelAccuracy = payload.midFuelAccuracy;
+    entity.highFuelAccuracy = payload.highFuelAccuracy;
+    entity.reinstallationDate = payload.reinstallationDate;
+    entity.userId = userId;
+    entity.updateDate = timestamp;
+
+    await this.repository.save(entity);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.getFuelFlowmeterAccuracy(id);
   }
 
   async createFuelFlowmeterAccuracy(
