@@ -76,4 +76,22 @@ describe('CycleTimeSummaryService', () => {
       expect(errored).toEqual(true);
     });
   });
+
+  describe('getCycleTimeSummaryByTestSumIds', () => {
+    it('Should get Cycle Time Summary records by test sum ids', async () => {
+      const result = await service.getCycleTimeSummaryByTestSumIds([testSumId]);
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Cycle Time Summary Record', async () => {
+      jest
+        .spyOn(service, 'getCycleTimeSummaryByTestSumIds')
+        .mockResolvedValue([]);
+
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([]);
+    });
+  });
 });
