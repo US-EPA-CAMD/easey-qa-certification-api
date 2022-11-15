@@ -182,7 +182,7 @@ export class RataTraverseChecksService {
 
     return error;
   }
-  
+
   private rata75Check(testSumBeginDate, lastProbeDate) {
     let error = null;
 

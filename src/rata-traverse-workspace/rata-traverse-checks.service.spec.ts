@@ -140,7 +140,8 @@ describe('Rata Traverse Check Service Test', () => {
       importPayload.pointUsedIndicator = 2;
       importPayload.replacementVelocity = null;
       importPayload.numberWallEffectsPoints = null;
-      importPayload.probeTypeCode = 'PRANDT1';
+      importPayload.probeTypeCode = 'AAA';
+      importPayload.yawAngle = 45;
 
       try {
         await checkService.runChecks(
@@ -149,9 +150,9 @@ describe('Rata Traverse Check Service Test', () => {
           testSumId,
           testSummaryImport,
           null,
+          rataSummaryImport,
           null,
-          null,
-          false,
+          true,
           false,
         );
       } catch (err) {
@@ -170,6 +171,7 @@ describe('Rata Traverse Check Service Test', () => {
       importPayload.replacementVelocity = null;
       importPayload.numberWallEffectsPoints = null;
       importPayload.probeTypeCode = 'PRANDT1';
+      importPayload.yawAngle = 45;
 
       try {
         await checkService.runChecks(
@@ -178,9 +180,9 @@ describe('Rata Traverse Check Service Test', () => {
           testSumId,
           testSummaryImport,
           null,
+          rataSummaryImport,
           null,
-          null,
-          false,
+          true,
           false,
         );
       } catch (err) {
@@ -196,8 +198,9 @@ describe('Rata Traverse Check Service Test', () => {
       rataSummaryImport.referenceMethodCode = 'M2H';
       importPayload.pointUsedIndicator = 2;
       importPayload.replacementVelocity = null;
-      importPayload.numberWallEffectsPoints = 3;
+      importPayload.numberWallEffectsPoints = null;
       importPayload.probeTypeCode = 'SPHERE';
+      importPayload.yawAngle = null;
 
       try {
         await checkService.runChecks(
@@ -206,9 +209,9 @@ describe('Rata Traverse Check Service Test', () => {
           testSumId,
           testSummaryImport,
           null,
+          rataSummaryImport,
           null,
-          null,
-          false,
+          true,
           false,
         );
       } catch (err) {
@@ -235,9 +238,9 @@ describe('Rata Traverse Check Service Test', () => {
           testSumId,
           testSummaryImport,
           null,
+          rataSummaryImport,
           null,
-          null,
-          false,
+          true,
           false,
         );
       } catch (err) {
@@ -262,9 +265,9 @@ describe('Rata Traverse Check Service Test', () => {
           testSumId,
           testSummaryImport,
           null,
+          rataSummaryImport,
           null,
-          null,
-          false,
+          true,
           false,
         );
       } catch (err) {
