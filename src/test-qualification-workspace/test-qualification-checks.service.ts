@@ -143,6 +143,7 @@ export class TestQualificationChecksService {
       error = this.getErrorMessage('RATA-120-C', {
         datefield1: testSumBeginDate,
         datefield2: testQualEndDate,
+        key: KEY,
       });
       errors.push(error);
     }
