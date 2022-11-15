@@ -28,6 +28,7 @@ import { CalibrationInjection } from './workspace/calibration-injection.entity';
 import { OnlineOfflineCalibration } from './online-offline-calibration.entity';
 import { FuelFlowmeterAccuracy } from './fuel-flowmeter-accuracy.entity';
 import { CycleTimeSummary } from './cycle-time-summary.entity';
+import { TransmitterTransducerAccuracy } from './workspace/transmitter-transducer-accuracy.entity';
 
 @Entity({ name: 'camdecmps.test_summary' })
 export class TestSummary extends BaseEntity {

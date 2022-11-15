@@ -111,7 +111,7 @@ export class TestSummaryWorkspaceService {
     delete dto.cycleTimeSummaryData;
     delete dto.onlineOfflineCalibrationData;
     delete dto.fuelFlowmeterAccuracyData;
-    delete dto.transmitterTransducerData;
+    delete dto.transmitterTransducerAccuracyData;
     delete dto.fuelFlowToLoadBaselineData;
     delete dto.fuelFlowToLoadTestData;
     delete dto.unitDefaultTestData;
@@ -647,7 +647,7 @@ export class TestSummaryWorkspaceService {
     delete dto.cycleTimeSummaryData;
     delete dto.onlineOfflineCalibrationData;
     delete dto.fuelFlowmeterAccuracyData;
-    delete dto.transmitterTransducerData;
+    delete dto.transmitterTransducerAccuracyData;
     delete dto.fuelFlowToLoadBaselineData;
     delete dto.fuelFlowToLoadTestData;
     delete dto.appECorrelationTestSummaryData;

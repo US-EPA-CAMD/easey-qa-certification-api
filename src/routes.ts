@@ -50,6 +50,7 @@ import { FuelFlowmeterAccuracyModule } from './fuel-flowmeter-accuracy/fuel-flow
 import { FuelFlowmeterAccuracyWorkspaceModule } from './fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
 import { CycleTimeSummaryWorkspaceModule } from './cycle-time-summary-workspace/cycle-time-summary-workspace.module';
 import { CycleTimeSummaryModule } from './cycle-time-summary/cycle-time-summary.module';
+import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.module';
 
 const routes: Routes = [
   {
@@ -283,6 +284,10 @@ const routes: Routes = [
           {
             path: ':testSumId/online-offline-calibration',
             module: OnlineOfflineCalibrationWorkspaceModule,
+          },
+          {
+            path: ':testSumId/transmitter-transducer-accuracy',
+            module: TransmitterTransducerAccuracyWorkspaceModule,
           },
         ],
       },
