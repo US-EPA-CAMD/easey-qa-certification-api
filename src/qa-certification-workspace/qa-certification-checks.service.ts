@@ -238,18 +238,19 @@ export class QACertificationChecksService {
       });
 
       summary.testQualificationData?.forEach(testQualification => {
-        new Promise(async (resolve, _reject) => {
-          const results = this.testQualificationChecksService.runChecks(
-            locationId,
-            testQualification,
-            true,
-            false,
-            duplicateQaSupp ? duplicateQaSupp.testSumId : null,
-            summary,
-          );
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const results = this.testQualificationChecksService.runChecks(
+              testQualification,
+              duplicateQaSupp ? duplicateQaSupp.testSumId : null,
+              summary,
+              true,
+              false,
+            );
 
-          resolve(results);
-        });
+            resolve(results);
+          }),
+        );
       });
     }
 

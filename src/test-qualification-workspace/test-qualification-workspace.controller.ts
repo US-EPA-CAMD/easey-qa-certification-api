@@ -70,18 +70,12 @@ export class TestQualificationWorkspaceController {
     description: 'Creates a workspace Test Qualification record.',
   })
   async createTestQualification(
-    @Param('locId') locationId: string,
+    @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: TestQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<TestQualificationRecordDTO> {
-    await this.checksService.runChecks(
-      locationId,
-      payload,
-      false,
-      true,
-      testSumId,
-    );
+    await this.checksService.runChecks(payload, testSumId, null, false, false);
     return this.service.createTestQualification(
       testSumId,
       payload,
@@ -97,19 +91,13 @@ export class TestQualificationWorkspaceController {
     description: 'Updates a test qualification record in the workspace',
   })
   async testQualificationSummary(
-    @Param('locId') locationId: string,
+    @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
     @Body() payload: TestQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<TestQualificationRecordDTO> {
-    await this.checksService.runChecks(
-      locationId,
-      payload,
-      false,
-      true,
-      testSumId,
-    );
+    await this.checksService.runChecks(payload, testSumId, null, false, true);
     return this.service.updateTestQualification(
       testSumId,
       id,

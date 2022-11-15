@@ -32,12 +32,11 @@ export class TestQualificationChecksService {
   }
 
   async runChecks(
-    locationId: string,
     testQualification: TestQualificationBaseDTO | TestQualificationImportDTO,
-    isImport: boolean = false,
-    isUpdate: boolean = false,
     testSumId: string,
     testSummary?: TestSummaryImportDTO,
+    isImport: boolean = false,
+    isUpdate: boolean = false,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
