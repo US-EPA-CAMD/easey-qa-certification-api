@@ -284,6 +284,7 @@ describe('Rata Traverse Check Service Test', () => {
       importPayload.replacementVelocity = null;
       importPayload.numberWallEffectsPoints = 3;
       importPayload.probeTypeCode = 'PRANDT1';
+      importPayload.lastProbeDate = new Date('2020-01-01');
 
       try {
         await checkService.runChecks(
@@ -314,6 +315,7 @@ describe('Rata Traverse Check Service Test', () => {
       importPayload.replacementVelocity = null;
       importPayload.numberWallEffectsPoints = 3;
       importPayload.probeTypeCode = null;
+      importPayload.yawAngle = 45;
 
       try {
         await checkService.runChecks(
@@ -372,6 +374,7 @@ describe('Rata Traverse Check Service Test', () => {
       importPayload.pointUsedIndicator = 1;
       importPayload.replacementVelocity = 2;
       importPayload.numberWallEffectsPoints = 1;
+      importPayload.yawAngle = null;
 
       try {
         await checkService.runChecks(
@@ -400,6 +403,7 @@ describe('Rata Traverse Check Service Test', () => {
       importPayload.replacementVelocity = null;
       importPayload.numberWallEffectsPoints = 1;
       rataSummaryImport.defaultWAF = 1;
+      importPayload.yawAngle = 45;
 
       try {
         await checkService.runChecks(
@@ -428,6 +432,7 @@ describe('Rata Traverse Check Service Test', () => {
       importPayload.pointUsedIndicator = 2;
       importPayload.replacementVelocity = null;
       importPayload.numberWallEffectsPoints = 3;
+      importPayload.yawAngle = null;
 
       try {
         await checkService.runChecks(
@@ -455,6 +460,7 @@ describe('Rata Traverse Check Service Test', () => {
       importPayload.pointUsedIndicator = 2;
       importPayload.replacementVelocity = null;
       importPayload.numberWallEffectsPoints = 3;
+      importPayload.yawAngle = 45;
 
       try {
         await checkService.runChecks(
@@ -484,6 +490,7 @@ describe('Rata Traverse Check Service Test', () => {
       importPayload.pointUsedIndicator = 1;
       importPayload.replacementVelocity = null;
       importPayload.numberWallEffectsPoints = 3;
+      importPayload.yawAngle = null;
 
       try {
         await checkService.runChecks(
@@ -567,6 +574,7 @@ describe('Rata Traverse Check Service Test', () => {
       importPayload.pointUsedIndicator = 2;
       importPayload.replacementVelocity = 1;
       importPayload.numberWallEffectsPoints = null;
+      importPayload.yawAngle = 45;
 
       try {
         await checkService.runChecks(
@@ -617,9 +625,11 @@ describe('Rata Traverse Check Service Test', () => {
     it('Should get [RATA-110-A] error', async () => {
       const payload = new RataTraverseBaseDTO();
       payload.methodTraversePointID = '4';
+      payload.yawAngle = 45;
 
       const returnValue = new RataTraverse();
       returnValue.methodTraversePointID = '4';
+      returnValue.yawAngle = 45;
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(returnValue);
       try {
