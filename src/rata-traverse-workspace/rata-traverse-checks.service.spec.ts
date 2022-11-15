@@ -129,11 +129,104 @@ describe('Rata Traverse Check Service Test', () => {
     });
   });
 
+  describe('RATA-72 Probe Type Valid', () => {
+    it('Should get [RATA-72-B] error 1st trigger', async () => {
+      jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+      importPayload.avgVelDiffPressure = 1;
+      importPayload.avgSquareVelDiffPressure = null;
+      importPayload.methodTraversePointID = '999';
+      rataSummaryImport.referenceMethodCode = '2F';
+      rataSummaryImport.defaultWAF = 1;
+      importPayload.pointUsedIndicator = 2;
+      importPayload.replacementVelocity = null;
+      importPayload.numberWallEffectsPoints = null;
+      importPayload.probeTypeCode = 'PRANDT1';
+
+      try {
+        await checkService.runChecks(
+          importPayload,
+          locationId,
+          testSumId,
+          testSummaryImport,
+          null,
+          null,
+          null,
+          false,
+          false,
+        );
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+
+    it('Should get [RATA-72-B] error 2nd trigger', async () => {
+      jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+      importPayload.avgVelDiffPressure = 1;
+      importPayload.avgSquareVelDiffPressure = null;
+      importPayload.methodTraversePointID = '999';
+      rataSummaryImport.referenceMethodCode = '2G';
+      rataSummaryImport.defaultWAF = 1;
+      importPayload.pointUsedIndicator = 2;
+      importPayload.replacementVelocity = null;
+      importPayload.numberWallEffectsPoints = null;
+      importPayload.probeTypeCode = 'PRANDT1';
+
+      try {
+        await checkService.runChecks(
+          importPayload,
+          locationId,
+          testSumId,
+          testSummaryImport,
+          null,
+          null,
+          null,
+          false,
+          false,
+        );
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+
+    it('Should get [RATA-72-B] error 3rd trigger', async () => {
+      jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+      importPayload.avgVelDiffPressure = 1;
+      importPayload.avgSquareVelDiffPressure = null;
+      importPayload.methodTraversePointID = '999';
+      rataSummaryImport.referenceMethodCode = 'M2H';
+      importPayload.pointUsedIndicator = 2;
+      importPayload.replacementVelocity = null;
+      importPayload.numberWallEffectsPoints = 3;
+      importPayload.probeTypeCode = 'SPHERE';
+
+      try {
+        await checkService.runChecks(
+          importPayload,
+          locationId,
+          testSumId,
+          testSummaryImport,
+          null,
+          null,
+          null,
+          false,
+          false,
+        );
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+  });
+
   describe('RATA-76 Velocity Differential Pressure Valid', () => {
     it('Should get [RATA-76-A] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       importPayload.avgVelDiffPressure = null;
       importPayload.avgSquareVelDiffPressure = null;
+      importPayload.methodTraversePointID = '999';
+      rataSummaryImport.referenceMethodCode = '2FH';
+      importPayload.pointUsedIndicator = 1;
+      importPayload.replacementVelocity = 2;
+      importPayload.numberWallEffectsPoints = 3;
 
       try {
         await checkService.runChecks(
@@ -156,6 +249,11 @@ describe('Rata Traverse Check Service Test', () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       importPayload.avgVelDiffPressure = 1;
       importPayload.avgSquareVelDiffPressure = 1;
+      importPayload.methodTraversePointID = '999';
+      rataSummaryImport.referenceMethodCode = '2FH';
+      importPayload.pointUsedIndicator = 1;
+      importPayload.replacementVelocity = 2;
+      importPayload.numberWallEffectsPoints = 3;
 
       try {
         await checkService.runChecks(
@@ -185,6 +283,7 @@ describe('Rata Traverse Check Service Test', () => {
       importPayload.pointUsedIndicator = 1;
       importPayload.replacementVelocity = null;
       importPayload.numberWallEffectsPoints = 3;
+      importPayload.probeTypeCode = 'PRANDT1';
 
       try {
         await checkService.runChecks(
@@ -214,6 +313,7 @@ describe('Rata Traverse Check Service Test', () => {
       importPayload.pointUsedIndicator = 1;
       importPayload.replacementVelocity = null;
       importPayload.numberWallEffectsPoints = 3;
+      importPayload.probeTypeCode = null;
 
       try {
         await checkService.runChecks(

@@ -19,6 +19,7 @@ import { RataTraverse } from '../entities/workspace/rata-traverse.entity';
 import { RataTraverseWorkspaceRepository } from './rata-traverse-workspace.repository';
 
 const KEY = 'RATA Traverse';
+let rataInvalidProbes = [];
 
 @Injectable()
 export class RataTraverseChecksService {
@@ -80,33 +81,32 @@ export class RataTraverseChecksService {
     }
 
     if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
+
+      error = this.rata72Check(rataTraverse, rataSumRecord);
+      if (error) {
+        errorList.push(error);
+      }
+
       error = this.rata76Check(rataTraverse);
       if (error) {
         errorList.push(error);
       }
-    
-      this.logger.info(errorList)
 
       error = this.rata81Check(rataTraverse, rataSumRecord);
       if (error) {
         errorList.push(error);
       }
-    
-      this.logger.info(errorList)
 
       error = this.rata82Check(rataTraverse, rataSumRecord);
       if (error) {
         errorList.push(error);
       }
 
-    
-      this.logger.info(errorList)
       error = this.rata83Check(rataTraverse, rataSumRecord);
       if (error) {
         errorList.push(error);
       }
     
-      this.logger.info(errorList)
       if (!isUpdate) {
         error = await this.rata110Check(rataTraverse, isImport, flowRataRunId, rataTraverses);
         if (error) {
@@ -114,13 +114,52 @@ export class RataTraverseChecksService {
         }
       }
     }
-    
-    
-    this.logger.info(errorList)
 
     this.throwIfErrors(errorList);
     this.logger.info('Completed RATA Traverse Checks');
     return errorList;
+  }
+
+  private rata72Check(
+    rataTraverse: RataTraverseBaseDTO | RataTraverseImportDTO,
+    rataSumRecord: RataSummary,
+  ): string {
+    let error = null;
+
+    if(rataTraverse.probeTypeCode){
+      if(!rataInvalidProbes.includes(rataTraverse.probeTypeCode)){
+        if(rataSumRecord.referenceMethodCode.startsWith('2F')){
+          if(!['PRISM', 'PRISM-T', 'SPHERE'].includes(rataTraverse.probeTypeCode)){
+            rataInvalidProbes.push(rataTraverse.probeTypeCode)
+            error = this.getMessage('RATA-72-B', {
+              value: rataTraverse.probeTypeCode,
+              key: KEY,
+              method: rataSumRecord.referenceMethodCode,
+            });
+          }
+        } else if (rataSumRecord.referenceMethodCode.startsWith('2G')){
+          if(rataTraverse.probeTypeCode === 'PRANDT1'){
+            rataInvalidProbes.push(rataTraverse.probeTypeCode)
+            error = this.getMessage('RATA-72-B', {
+              value: rataTraverse.probeTypeCode,
+              key: KEY,
+              method: rataSumRecord.referenceMethodCode,
+            });
+          }
+        } else if (rataSumRecord.referenceMethodCode === 'M2H'){
+          if(!['TYPE-SA', 'TYPE-SM', 'PRANDT1'].includes(rataTraverse.probeTypeCode)){
+            rataInvalidProbes.push(rataTraverse.probeTypeCode)
+            error = this.getMessage('RATA-72-B', {
+              value: rataTraverse.probeTypeCode,
+              key: KEY,
+              method: rataSumRecord.referenceMethodCode,
+            });
+          }
+        }
+      }
+    }
+
+    return error;
   }
 
   private rata76Check(
