@@ -1,14 +1,48 @@
-import { IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator';
+import {
+  IsNotEmpty,
+  MinDate,
+  ValidateIf,
+  ValidationArguments,
+} from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 
 const KEY = 'Test Qualification';
 const LOAD_PERCENTAGE_MIN_VALUE = 0;
 const LOAD_PERCENTAGE_MAX_VALUE = 100;
+const MIN_BEGIN_DATE = '1993-01-01';
 
 export class TestQualificationBaseDTO {
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-118-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   testClaimCode: string;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-119-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @ValidateIf(o => o.testClaimCode === 'SLC')
   beginDate: Date;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-120-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @ValidateIf(o => o.testClaimCode === 'SLC')
   endDate: Date;
 
   @IsNotEmpty({
