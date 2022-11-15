@@ -17,6 +17,7 @@ import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.service';
 import { FlowRataRunChecksService } from '../flow-rata-run-workspace/flow-rata-run-checks.service';
 import { RataTraverseChecksService } from '../rata-traverse-workspace/rata-traverse-checks.service';
+import { TestQualificationChecksService } from '../test-qualification-workspace/test-qualification-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -24,6 +25,7 @@ export class QACertificationChecksService {
     private readonly logger: Logger,
     private readonly locationChecksService: LocationChecksService,
     private readonly testSummaryChecksService: TestSummaryChecksService,
+    private readonly testQualificationChecksService: TestQualificationChecksService,
     private readonly linearitySummaryChecksService: LinearitySummaryChecksService,
     private readonly linearityInjectionChecksService: LinearityInjectionChecksService,
     private readonly rataChecksService: RataChecksService,
@@ -223,7 +225,7 @@ export class QACertificationChecksService {
                       null,
                       true,
                       false,
-                      flowRataRun.rataTraverseData
+                      flowRataRun.rataTraverseData,
                     );
 
                     resolve(results);
@@ -232,6 +234,21 @@ export class QACertificationChecksService {
               });
             });
           });
+        });
+      });
+
+      summary.testQualificationData?.forEach(testQualification => {
+        new Promise(async (resolve, _reject) => {
+          const results = this.testQualificationChecksService.runChecks(
+            locationId,
+            testQualification,
+            true,
+            false,
+            duplicateQaSupp ? duplicateQaSupp.testSumId : null,
+            summary,
+          );
+
+          resolve(results);
         });
       });
     }

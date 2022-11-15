@@ -25,17 +25,18 @@ export class TestQualificationChecksService {
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
   ) {}
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
+  private throwIfErrors(errorList: string[], isImport: boolean = false) {
+    if (!isImport && errorList.length > 0) {
       throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }
 
   async runChecks(
+    locationId: string,
     testQualification: TestQualificationBaseDTO | TestQualificationImportDTO,
-    testSumId: string,
     isImport: boolean = false,
     isUpdate: boolean = false,
+    testSumId: string,
     testSummary?: TestSummaryImportDTO,
   ): Promise<string[]> {
     let error: string = null;
@@ -46,85 +47,84 @@ export class TestQualificationChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-    }
-
-    if (isUpdate) {
+    } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
       );
     }
 
     if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
-      if (testQualification.testClaimCode === 'SLC') {
-        // RATA-119
-        error = this.rata119Check(testQualification.beginDate);
-        if (error) {
-          errorList.push(error);
-        }
-
-        // RATA-120
-        const rata120errors = this.rata120Checks(
-          testSumRecord.beginDate,
-          testQualification.endDate,
-        );
-        if (rata120errors.length > 0) errorList.push(...rata120errors);
-
-        if (testQualification.testClaimCode !== 'SLC') {
-          // RATA-9-10-11-E
-          const rata91011errors = this.rata9And10And11Check(testQualification);
-          if (rata91011errors.length > 0) errorList.push(...rata91011errors);
-        }
+      // RATA-119
+      error = this.rata119Check(testQualification);
+      if (error) {
+        errorList.push(error);
       }
+
+      // RATA-120
+      const rata120errors = this.rata120Checks(
+        testSumRecord.beginDate,
+        testQualification,
+      );
+      if (rata120errors.length > 0) errorList.push(...rata120errors);
+
+      // RATA-9-10-11-E
+      const rata91011errors = this.rata9_10_11Check(testQualification);
+      if (rata91011errors.length > 0) errorList.push(...rata91011errors);
     }
 
-    this.throwIfErrors(errorList);
-
+    this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed Test Qualification Checks');
-
     return errorList;
   }
 
   // RATA-9-10-11-E
-  private rata9And10And11Check(
+  private rata9_10_11Check(
     testQualification: TestQualificationBaseDTO | TestQualificationImportDTO,
   ): string[] {
     const errors: string[] = [];
     let error: string = null;
 
-    if (testQualification.highLoadPercentage !== null) {
-      error = this.getErrorMessage('RATA-9-E', {
-        fieldname: 'highLoadPercentage',
-        key: KEY,
-      });
-      errors.push(error);
-    }
+    if (testQualification.testClaimCode !== 'SLC') {
+      if (testQualification.highLoadPercentage !== null) {
+        error = this.getErrorMessage('RATA-9-E', {
+          fieldname: 'highLoadPercentage',
+          key: KEY,
+        });
+        errors.push(error);
+      }
 
-    if (testQualification.midLoadPercentage !== null) {
-      error = this.getErrorMessage('RATA-10-E', {
-        fieldname: 'midLoadPercentage',
-        key: KEY,
-      });
-      errors.push(error);
-    }
+      if (testQualification.midLoadPercentage !== null) {
+        error = this.getErrorMessage('RATA-10-E', {
+          fieldname: 'midLoadPercentage',
+          key: KEY,
+        });
+        errors.push(error);
+      }
 
-    if (testQualification.lowLoadPercentage !== null) {
-      error = this.getErrorMessage('RATA-11-E', {
-        fieldname: 'lowLoadPercentage',
-        key: KEY,
-      });
-      errors.push(error);
+      if (testQualification.lowLoadPercentage !== null) {
+        error = this.getErrorMessage('RATA-11-E', {
+          fieldname: 'lowLoadPercentage',
+          key: KEY,
+        });
+        errors.push(error);
+      }
     }
 
     return errors;
   }
 
-  private rata119Check(beginDate: Date) {
+  private rata119Check(
+    testQualification: TestQualificationBaseDTO | TestQualificationImportDTO,
+  ) {
     let error = null;
 
-    if (new Date(beginDate) < new Date('1993-01-01')) {
+    if (
+      testQualification.testClaimCode === 'SLC' &&
+      new Date(testQualification.beginDate) < new Date('1993-01-01')
+    ) {
       error = this.getErrorMessage('RATA-119-B', {
         fieldname: 'beginDate',
-        date: beginDate,
+        date: testQualification.beginDate,
         key: KEY,
       });
     }
@@ -132,22 +132,30 @@ export class TestQualificationChecksService {
     return error;
   }
 
-  private rata120Checks(testSumBeginDate, testQualEndDate) {
+  private rata120Checks(
+    testSumBeginDate: Date,
+    testQualification: TestQualificationBaseDTO | TestQualificationImportDTO,
+  ) {
     const errors: string[] = [];
     let error: string = null;
 
-    if (testQualEndDate > testSumBeginDate) {
-      error = this.getErrorMessage('RATA-120-B');
-      errors.push(error);
-    }
+    if (testQualification.testClaimCode === 'SLC') {
+      if (testQualification.endDate > testSumBeginDate) {
+        error = this.getErrorMessage('RATA-120-B');
+        errors.push(error);
+      }
 
-    if (testSumBeginDate !== null && testQualEndDate <= testSumBeginDate) {
-      error = this.getErrorMessage('RATA-120-C', {
-        datefield1: testSumBeginDate,
-        datefield2: testQualEndDate,
-        key: KEY,
-      });
-      errors.push(error);
+      if (
+        testSumBeginDate !== null &&
+        testQualification.endDate <= testSumBeginDate
+      ) {
+        error = this.getErrorMessage('RATA-120-C', {
+          datefield1: testSumBeginDate,
+          datefield2: testQualification.endDate,
+          key: KEY,
+        });
+        errors.push(error);
+      }
     }
 
     return errors;
