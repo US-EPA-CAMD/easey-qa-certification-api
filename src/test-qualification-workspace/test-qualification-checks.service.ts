@@ -4,6 +4,7 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 import {
   TestQualificationBaseDTO,
   TestQualificationImportDTO,
@@ -13,7 +14,6 @@ import {
   TestSummaryImportDTO,
 } from '../dto/test-summary.dto';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { TestSummary } from 'src/entities/workspace/test-summary.entity';
 
 const KEY = 'Test Qualification';
 
@@ -54,25 +54,27 @@ export class TestQualificationChecksService {
       );
     }
 
-    if (testQualification.testClaimCode === 'SLC') {
-      // RATA-119
-      error = this.rata119Check(testQualification.beginDate);
-      if (error) {
-        errorList.push(error);
+    if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
+      if (testQualification.testClaimCode === 'SLC') {
+        // RATA-119
+        error = this.rata119Check(testQualification.beginDate);
+        if (error) {
+          errorList.push(error);
+        }
+
+        // RATA-120
+        const rata120errors = this.rata120Checks(
+          testSumRecord.beginDate,
+          testQualification.endDate,
+        );
+        if (rata120errors.length > 0) errorList.push(...rata120errors);
+
+        if (testQualification.testClaimCode !== 'SLC') {
+          // RATA-9-10-11-E
+          const rata91011errors = this.rata9And10And11Check(testQualification);
+          if (rata91011errors.length > 0) errorList.push(...rata91011errors);
+        }
       }
-
-      // RATA-120
-      const rata120errors = this.rata120Checks(
-        testSumRecord.beginDate,
-        testQualification.endDate,
-      );
-      if (rata120errors.length > 0) errorList.push(...rata120errors);
-    }
-
-    if (testQualification.testClaimCode !== 'SLC') {
-      // RATA-9-10-11-E
-      const rata91011errors = this.rata9And10And11Check(testQualification);
-      if (rata91011errors.length > 0) errorList.push(...rata91011errors);
     }
 
     this.throwIfErrors(errorList);
@@ -143,6 +145,7 @@ export class TestQualificationChecksService {
       error = this.getErrorMessage('RATA-120-C', {
         datefield1: testSumBeginDate,
         datefield2: testQualEndDate,
+        key: KEY,
       });
       errors.push(error);
     }
