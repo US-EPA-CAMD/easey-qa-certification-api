@@ -207,8 +207,15 @@ describe('FuelFlowmeterWorkspaceService', () => {
         testSumId,
         new FuelFlowmeterAccuracyImportDTO(),
         userId,
-        true,
+        false,
       );
+    });
+    it('Should Import Fuel Flowmeter Accuracy from Historical Record', async () => {
+      jest
+        .spyOn(service, 'createFuelFlowmeterAccuracy')
+        .mockResolvedValue(fuelFlowmeterAccuracy);
+
+      await service.import(testSumId, payload, userId, true);
     });
   });
 });

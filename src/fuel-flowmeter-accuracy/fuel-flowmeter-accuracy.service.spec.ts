@@ -80,9 +80,9 @@ describe('FuelFlowmeterAccuracyService', () => {
     it('Should Export Fuel FLowmeter Accuracy', async () => {
       jest
         .spyOn(service, 'getFuelFlowmeterAccuraciesByTestSumIds')
-        .mockResolvedValue([fuelFlowmeterAccuracy]);
+        .mockResolvedValue([]);
       const result = await service.export([testSumId]);
-      expect(result).toEqual([fuelFlowmeterAccuracy]);
+      expect(result).toEqual([]);
     });
   });
 });
