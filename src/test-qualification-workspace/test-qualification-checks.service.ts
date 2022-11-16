@@ -9,11 +9,11 @@ import {
   TestQualificationBaseDTO,
   TestQualificationImportDTO,
 } from '../dto/test-qualification.dto';
-import {
-  TestSummaryBaseDTO,
-  TestSummaryImportDTO,
-} from '../dto/test-summary.dto';
+import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { RataImportDTO } from '../dto/rata.dto';
+import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
 
 const KEY = 'Test Qualification';
 
@@ -23,6 +23,10 @@ export class TestQualificationChecksService {
     private readonly logger: Logger,
     @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
+    @InjectRepository(MonitorSystemRepository)
+    private readonly monitorSystemRepository: MonitorSystemRepository,
+    @InjectRepository(TestQualificationWorkspaceRepository)
+    private readonly testQualRepository: TestQualificationWorkspaceRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -32,27 +36,47 @@ export class TestQualificationChecksService {
   }
 
   async runChecks(
+    locationId: string,
     testQualification: TestQualificationBaseDTO | TestQualificationImportDTO,
+    testQualifications: TestQualificationImportDTO[],
     testSumId: string,
-    testSummary?: TestSummaryImportDTO,
+    testSummary: TestSummaryImportDTO,
+    rata: RataImportDTO,
     isImport: boolean = false,
     isUpdate: boolean = false,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
-    let testSumRecord: TestSummaryBaseDTO;
+    let testSumRecord, rataRecord;
 
     this.logger.info('Running Test Qualification Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
+      testSumRecord.system = await this.monitorSystemRepository.findOne({
+        monitoringSystemID: testSummary.monitoringSystemID,
+        locationId: locationId,
+      });
+      rataRecord = rata;
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
       );
+      if (testSumRecord.ratas?.length > 0) {
+        rataRecord = testSumRecord.ratas[0];
+      }
     }
 
     if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
+      const rata118errors = this.rata118Checks(
+        testQualification,
+        testSumRecord,
+        rataRecord,
+      );
+      if (rata118errors.length > 0) {
+        errorList.push(...rata118errors);
+      }
+
       // RATA-119
       error = this.rata119Check(testQualification);
       if (error) {
@@ -64,11 +88,27 @@ export class TestQualificationChecksService {
         testSumRecord.beginDate,
         testQualification,
       );
-      if (rata120errors.length > 0) errorList.push(...rata120errors);
+      if (rata120errors.length > 0) {
+        errorList.push(...rata120errors);
+      }
 
       // RATA-9-10-11-E
       const rata91011errors = this.rata9_10_11Check(testQualification);
-      if (rata91011errors.length > 0) errorList.push(...rata91011errors);
+      if (rata91011errors.length > 0) {
+        errorList.push(...rata91011errors);
+      }
+
+      if (!isUpdate) {
+        error = await this.rata121DuplicateCheck(
+          testQualification,
+          testQualifications,
+          testSumId,
+          isImport,
+        );
+        if (error) {
+          errorList.push(error);
+        }
+      }
     }
 
     this.throwIfErrors(errorList, isImport);
@@ -106,6 +146,68 @@ export class TestQualificationChecksService {
           key: KEY,
         });
         errors.push(error);
+      }
+    }
+
+    return errors;
+  }
+
+  private rata118Checks(
+    testQualification: TestQualificationBaseDTO | TestQualificationImportDTO,
+    testSummary: any,
+    rataRecord: any,
+  ) {
+    let errors: string[];
+
+    if (!['SLC', 'NLE', 'ORE'].includes(testQualification.testClaimCode)) {
+      errors.push(
+        this.getErrorMessage('RATA-118-B', {
+          fieldname: 'testClaimCode',
+        }),
+      );
+    } else {
+      if (testQualification.testClaimCode === 'SLC') {
+        if (testSummary.system !== 'FLOW') {
+          errors.push(
+            this.getErrorMessage('RATA-118-C', {
+              value: testQualification.testClaimCode,
+            }),
+          );
+        }
+        if (rataRecord.numberOfLoadLevels > 1) {
+          errors.push(
+            this.getErrorMessage('RATA-118-D', {
+              value: testQualification.testClaimCode,
+            }),
+          );
+        }
+      }
+
+      if (testQualification.testClaimCode === 'ORE') {
+        if (testSummary.system !== 'FLOW') {
+          errors.push(
+            this.getErrorMessage('RATA-118-C', {
+              value: testQualification.testClaimCode,
+            }),
+          );
+        }
+        if (rataRecord.numberOfLoadLevels < 2) {
+          errors.push(
+            this.getErrorMessage('RATA-118-E', {
+              value: testQualification.testClaimCode,
+            }),
+          );
+        }
+      }
+
+      if (testQualification.testClaimCode === 'NLE') {
+        if (rataRecord.numberOfLoadLevels > 1) {
+          errors.push(
+            this.getErrorMessage('RATA-118-D', {
+              value: testQualification.testClaimCode,
+            }),
+          );
+        }
       }
     }
 
@@ -158,6 +260,36 @@ export class TestQualificationChecksService {
     }
 
     return errors;
+  }
+
+  private async rata121DuplicateCheck(
+    testQualification: TestQualificationBaseDTO | TestQualificationImportDTO,
+    testQualifications?: TestQualificationImportDTO[],
+    testSumId?: string,
+    isImport: boolean = false,
+  ) {
+    let error = null;
+    let testQuals = [];
+
+    if (isImport) {
+      testQuals = testQualifications.filter(
+        tq => tq.testClaimCode === testQualification.testClaimCode,
+      );
+    } else {
+      testQuals = await this.testQualRepository.find({
+        testSumId: testSumId,
+        testClaimCode: testQualification.testClaimCode,
+      });
+    }
+
+    if (testQuals.length > 1) {
+      error = this.getErrorMessage('RATA-121-A', {
+        recordtype: 'RATA Test Qualification',
+        fieldnames: 'testClaimCode',
+      });
+    }
+
+    return error;
   }
 
   getErrorMessage(errorCode: string, options?: object): string {
