@@ -1,10 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
-  ValidateIf,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
+import { Type } from 'class-transformer';
+
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { IsNotNegative } from '../pipes/is-not-negative.pipe';
 import {
@@ -13,7 +14,6 @@ import {
 } from './linearity-injection.dto';
 import { GasLevelCode } from '../entities/workspace/gas-level-code.entity';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
-import { Type } from 'class-transformer';
 
 const KEY = 'Linearity Summary';
 

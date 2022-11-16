@@ -127,7 +127,6 @@ describe('Linearity Injection Check Service Test', () => {
           testSumImportDto,
         );
       } catch (err) {
-        console.log(err);
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });

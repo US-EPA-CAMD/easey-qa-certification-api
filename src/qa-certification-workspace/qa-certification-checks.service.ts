@@ -17,6 +17,7 @@ import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.service';
 import { FlowRataRunChecksService } from '../flow-rata-run-workspace/flow-rata-run-checks.service';
 import { RataTraverseChecksService } from '../rata-traverse-workspace/rata-traverse-checks.service';
+import { TestQualificationChecksService } from '../test-qualification-workspace/test-qualification-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -24,6 +25,7 @@ export class QACertificationChecksService {
     private readonly logger: Logger,
     private readonly locationChecksService: LocationChecksService,
     private readonly testSummaryChecksService: TestSummaryChecksService,
+    private readonly testQualificationChecksService: TestQualificationChecksService,
     private readonly linearitySummaryChecksService: LinearitySummaryChecksService,
     private readonly linearityInjectionChecksService: LinearityInjectionChecksService,
     private readonly rataChecksService: RataChecksService,
@@ -154,6 +156,25 @@ export class QACertificationChecksService {
             resolve(results);
           }),
         );
+
+        summary.testQualificationData?.forEach(testQualification => {
+          promises.push(
+            new Promise(async (resolve, _reject) => {
+              const results = this.testQualificationChecksService.runChecks(
+                locationId,
+                testQualification,
+                summary.testQualificationData,
+                duplicateQaSupp ? duplicateQaSupp.testSumId : null,
+                summary,
+                rata,
+                true,
+                false,
+              );
+
+              resolve(results);
+            }),
+          );
+        });
 
         rata.rataSummaryData?.forEach(rataSummary => {
           promises.push(

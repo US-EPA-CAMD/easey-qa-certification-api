@@ -65,6 +65,8 @@ import { CycleTimeSummaryWorkspaceModule } from './cycle-time-summary-workspace/
 import { CycleTimeSummaryModule } from './cycle-time-summary/cycle-time-summary.module';
 import { TransmitterTransducerAccuracyModule } from './transmitter-transducer-accuracy/transmitter-transducer-accuracy.module';
 import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.module';
+import { CycleTimeInjectionModule } from './cycle-time-injection/cycle-time-injection.module';
+import { CycleTimeInjectionWorkspaceModule } from './cycle-time-injection-workspace/cycle-time-injection-workspace.module';
 
 @Module({
   imports: [
@@ -131,6 +133,8 @@ import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-tran
     CycleTimeSummaryModule,
     TransmitterTransducerAccuracyModule,
     TransmitterTransducerAccuracyWorkspaceModule,
+    CycleTimeInjectionModule,
+    CycleTimeInjectionWorkspaceModule,
   ],
 })
 export class AppModule {}
