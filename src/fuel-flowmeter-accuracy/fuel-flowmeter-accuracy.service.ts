@@ -2,8 +2,12 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
-import { FuelFlowmeterAccuracyRecordDTO } from '../dto/fuel-flowmeter-accuracy.dto';
+import {
+  FuelFlowmeterAccuracyDTO,
+  FuelFlowmeterAccuracyRecordDTO,
+} from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracyRepository } from './fuel-flowmeter-accuracy.repository';
+import { In } from 'typeorm';
 
 @Injectable()
 export class FuelFlowmeterAccuracyService {
@@ -34,5 +38,19 @@ export class FuelFlowmeterAccuracyService {
     }
 
     return this.map.one(result);
+  }
+
+  async getFuelFlowmeterAccuraciesByTestSumIds(
+    testSumIds: string[],
+  ): Promise<FuelFlowmeterAccuracyDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<FuelFlowmeterAccuracyDTO[]> {
+    return this.getFuelFlowmeterAccuraciesByTestSumIds(testSumIds);
   }
 }
