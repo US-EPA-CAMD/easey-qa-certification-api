@@ -58,11 +58,11 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     const entity = await this.getFuelFlowmeterAccuracy(id);
 
     entity.accuracyTestMethodCode = payload.accuracyTestMethodCode;
+    entity.reinstallationDate = payload.reinstallationDate;
     entity.reinstallationHour = payload.reinstallationHour;
     entity.lowFuelAccuracy = payload.lowFuelAccuracy;
     entity.midFuelAccuracy = payload.midFuelAccuracy;
     entity.highFuelAccuracy = payload.highFuelAccuracy;
-    entity.reinstallationDate = payload.reinstallationDate;
     entity.userId = userId;
     entity.updateDate = timestamp;
 
@@ -82,7 +82,7 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     payload: FuelFlowmeterAccuracyBaseDTO,
     userId: string,
     isImport: boolean = false,
-  ): Promise<FuelFlowmeterAccuracyRecordDTO> {
+  ): Promise<FuelFlowmeterAccuracyDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({

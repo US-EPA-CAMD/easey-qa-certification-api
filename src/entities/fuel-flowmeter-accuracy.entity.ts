@@ -30,6 +30,12 @@ export class FuelFlowmeterAccuracy extends BaseEntity {
   accuracyTestMethodCode: string;
 
   @Column({
+    type: 'timestamp',
+    name: 'reinstall_date',
+  })
+  reinstallationDate: string;
+
+  @Column({
     name: 'reinstall_hour',
     transformer: new NumericColumnTransformer(),
   })
@@ -58,12 +64,6 @@ export class FuelFlowmeterAccuracy extends BaseEntity {
     name: 'userid',
   })
   userId: string;
-
-  @Column({
-    type: 'timestamp',
-    name: 'reinstall_date',
-  })
-  reinstallationDate: Date;
 
   @Column({
     type: 'timestamp',
