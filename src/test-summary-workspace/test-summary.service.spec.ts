@@ -136,10 +136,6 @@ const mockFuelFlowmeterAccuracyWorkspaceService = () => ({
   export: jest.fn().mockResolvedValue([new FuelFlowmeterAccuracyDTO()]),
   import: jest.fn().mockResolvedValue(null),
 });
-const mockFuelFlowmeterAccuracyService = () => ({
-  export: jest.fn().mockResolvedValue([new FuelFlowmeterAccuracy()]),
-  import: jest.fn().mockResolvedValue(null),
-});
 
 const mockOnlineOfflineCalibrationWorkspaceService = () => ({
   export: jest.fn().mockResolvedValue([new OnlineOfflineCalibrationDTO()]),
@@ -198,7 +194,7 @@ describe('TestSummaryWorkspaceService', () => {
         },
         {
           provide: FuelFlowmeterAccuracyWorkspaceService,
-          useFactory: mockFuelFlowmeterAccuracyService,
+          useFactory: mockFuelFlowmeterAccuracyWorkspaceService,
         },
         {
           provide: CalibrationInjectionWorkspaceService,
@@ -259,10 +255,6 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: FuelFlowToLoadBaselineWorkspaceService,
           useFactory: mockFuelFlowToLoadBaselineService,
-        },
-        {
-          provide: FuelFlowmeterAccuracyWorkspaceService,
-          useFactory: mockFuelFlowmeterAccuracyWorkspaceService,
         },
       ],
     }).compile();
