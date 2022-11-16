@@ -63,6 +63,8 @@ import { FuelFlowmeterAccuracyWorkspaceModule } from './fuel-flowmeter-accuracy-
 import { FuelFlowmeterAccuracyModule } from './fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.module';
 import { CycleTimeSummaryWorkspaceModule } from './cycle-time-summary-workspace/cycle-time-summary-workspace.module';
 import { CycleTimeSummaryModule } from './cycle-time-summary/cycle-time-summary.module';
+import { CycleTimeInjectionModule } from './cycle-time-injection/cycle-time-injection.module';
+import { CycleTimeInjectionWorkspaceModule } from './cycle-time-injection-workspace/cycle-time-injection-workspace.module';
 
 @Module({
   imports: [
@@ -127,6 +129,8 @@ import { CycleTimeSummaryModule } from './cycle-time-summary/cycle-time-summary.
     FuelFlowmeterAccuracyWorkspaceModule,
     CycleTimeSummaryWorkspaceModule,
     CycleTimeSummaryModule,
+    CycleTimeInjectionModule,
+    CycleTimeInjectionWorkspaceModule,
   ],
 })
 export class AppModule {}
