@@ -157,7 +157,7 @@ export class TestQualificationChecksService {
     testSummary: any,
     rataRecord: any,
   ) {
-    let errors: string[];
+    let errors = [];
 
     if (!['SLC', 'NLE', 'ORE'].includes(testQualification.testClaimCode)) {
       errors.push(
@@ -167,7 +167,7 @@ export class TestQualificationChecksService {
       );
     } else {
       if (testQualification.testClaimCode === 'SLC') {
-        if (testSummary.system !== 'FLOW') {
+        if (testSummary.system.systemTypeCode !== 'FLOW') {
           errors.push(
             this.getErrorMessage('RATA-118-C', {
               value: testQualification.testClaimCode,
@@ -184,7 +184,7 @@ export class TestQualificationChecksService {
       }
 
       if (testQualification.testClaimCode === 'ORE') {
-        if (testSummary.system !== 'FLOW') {
+        if (testSummary.system.systemTypeCode !== 'FLOW') {
           errors.push(
             this.getErrorMessage('RATA-118-C', {
               value: testQualification.testClaimCode,
@@ -278,7 +278,7 @@ export class TestQualificationChecksService {
 
       if (testQuals.length > 1) {
         error = this.getErrorMessage('RATA-121-A', {
-          recordtype: 'RATA Test Qualification',
+          recordtype: 'Test Qualification',
           fieldnames: 'testClaimCode',
         });
       }
@@ -290,7 +290,7 @@ export class TestQualificationChecksService {
 
       if (testQuals.length > 0) {
         error = this.getErrorMessage('RATA-121-A', {
-          recordtype: 'RATA Test Qualification',
+          recordtype: 'Test Qualification',
           fieldnames: 'testClaimCode',
         });
       }
