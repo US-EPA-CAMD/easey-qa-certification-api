@@ -1,3 +1,10 @@
+import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
+import {
+  CycleTimeInjectionDTO,
+  CycleTimeInjectionImportDTO,
+} from './cycle-time-injection.dto';
+
 const KEY = 'Cycle Time Summary';
 export class CycleTimeSummaryBaseDTO {
   totalTime: number;
@@ -12,6 +19,12 @@ export class CycleTimeSummaryRecordDTO extends CycleTimeSummaryBaseDTO {
   updateDate: string;
 }
 
-export class CycleTimeSummaryImportDTO extends CycleTimeSummaryBaseDTO {}
+export class CycleTimeSummaryImportDTO extends CycleTimeSummaryBaseDTO {
+  @ValidateNested({ each: true })
+  @Type(() => CycleTimeInjectionImportDTO)
+  cycleTimeInjectionData: CycleTimeInjectionImportDTO[];
+}
 
-export class CycleTimeSummaryDTO extends CycleTimeSummaryRecordDTO {}
+export class CycleTimeSummaryDTO extends CycleTimeSummaryRecordDTO {
+  cycleTimeInjectionData: CycleTimeInjectionDTO[];
+}
