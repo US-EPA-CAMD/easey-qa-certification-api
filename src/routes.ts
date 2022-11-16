@@ -50,6 +50,8 @@ import { FuelFlowmeterAccuracyModule } from './fuel-flowmeter-accuracy/fuel-flow
 import { FuelFlowmeterAccuracyWorkspaceModule } from './fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
 import { CycleTimeSummaryWorkspaceModule } from './cycle-time-summary-workspace/cycle-time-summary-workspace.module';
 import { CycleTimeSummaryModule } from './cycle-time-summary/cycle-time-summary.module';
+import { CycleTimeInjectionModule } from './cycle-time-injection/cycle-time-injection.module';
+import { CycleTimeInjectionWorkspaceModule } from './cycle-time-injection-workspace/cycle-time-injection-workspace.module';
 
 const routes: Routes = [
   {
@@ -85,6 +87,12 @@ const routes: Routes = [
           {
             path: ':testSumId/cycle-time-summaries',
             module: CycleTimeSummaryModule,
+            children: [
+              {
+                path: ':cycleTimeSumId/cycle-time-injections',
+                module: CycleTimeInjectionModule,
+              },
+            ],
           },
           {
             path: ':testSumId/test-qualifications',
@@ -199,6 +207,12 @@ const routes: Routes = [
           {
             path: ':testSumId/cycle-time-summaries',
             module: CycleTimeSummaryWorkspaceModule,
+            children: [
+              {
+                path: ':cycleTimeSumId/cycle-time-injections',
+                module: CycleTimeInjectionWorkspaceModule,
+              },
+            ],
           },
           {
             path: ':testSumId/air-emission-testings',
