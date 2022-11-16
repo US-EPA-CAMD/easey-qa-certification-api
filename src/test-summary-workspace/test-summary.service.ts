@@ -190,6 +190,7 @@ export class TestSummaryWorkspaceService {
           protocolGasData,
           fuelFlowToLoadTestData,
           fuelFlowToLoadBaselineData,
+          fuelFlowmeterAccuracyData,
           calibrationInjectionData,
           cycleTimeSummaryData,
           flowToLoadCheckData,
@@ -221,6 +222,10 @@ export class TestSummaryWorkspaceService {
           );
 
           fuelFlowToLoadBaselineData = await this.fuelFlowToLoadBaselineWorkspaceService.export(
+            testSumIds,
+          );
+
+          fuelFlowmeterAccuracyData = await this.fuelFlowmeterAccuracyWorkspaceService.export(
             testSumIds,
           );
 
@@ -268,6 +273,9 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.fuelFlowmeterAccuracyData = fuelFlowmeterAccuracyData.filter(
               i => i.testSumId === s.id,
             );
             s.onlineOfflineCalibrationData = onlineOfflineCalibrationData.filter(

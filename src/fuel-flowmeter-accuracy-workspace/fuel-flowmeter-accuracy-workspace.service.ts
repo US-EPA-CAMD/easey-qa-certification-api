@@ -12,6 +12,7 @@ import {
 import { FuelFlowmeterAccuracyWorkspaceRepository } from './fuel-flowmeter-accuracy-workspace.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
+import { In } from 'typeorm';
 
 @Injectable()
 export class FuelFlowmeterAccuracyWorkspaceService {
@@ -82,12 +83,13 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     payload: FuelFlowmeterAccuracyBaseDTO,
     userId: string,
     isImport: boolean = false,
+    historicalRecordId?: string,
   ): Promise<FuelFlowmeterAccuracyDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
       userId,
       addDate: timestamp,
@@ -123,5 +125,19 @@ export class FuelFlowmeterAccuracyWorkspaceService {
         e,
       );
     }
+  }
+
+  async getFuelFlowmeterAccuraciesByTestSumIds(
+    testSumIds: string[],
+  ): Promise<FuelFlowmeterAccuracyDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<FuelFlowmeterAccuracyDTO[]> {
+    return this.getFuelFlowmeterAccuraciesByTestSumIds(testSumIds);
   }
 }

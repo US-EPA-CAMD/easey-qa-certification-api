@@ -43,6 +43,8 @@ import { FlowToLoadReferenceDTO } from '../dto/flow-to-load-reference.dto';
 import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
 import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
 import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
+import { FuelFlowmeterAccuracy } from '../entities/workspace/fuel-flowmeter-accuracy.entity';
+import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -127,6 +129,10 @@ const mockFuelFlowToLoadBaselineService = () => ({
   export: jest.fn().mockResolvedValue([new FuelFlowToLoadBaseline()]),
   import: jest.fn().mockResolvedValue(null),
 });
+const mockFuelFlowmeterAccuracyService = () => ({
+  export: jest.fn().mockResolvedValue([new FuelFlowmeterAccuracy()]),
+  import: jest.fn().mockResolvedValue(null),
+});
 
 const mockOnlineOfflineCalibrationWorkspaceService = () => ({
   export: jest.fn().mockResolvedValue([new OnlineOfflineCalibrationDTO()]),
@@ -182,6 +188,10 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: FuelFlowToLoadTestWorkspaceService,
           useFactory: mockFuelFlowToLoadTestWorkspaceService,
+        },
+        {
+          provide: FuelFlowmeterAccuracyWorkspaceService,
+          useFactory: mockFuelFlowmeterAccuracyService,
         },
         {
           provide: CalibrationInjectionWorkspaceService,
