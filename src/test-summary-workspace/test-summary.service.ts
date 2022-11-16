@@ -43,6 +43,8 @@ import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace
 import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
 import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
 import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
+import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
+import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -79,10 +81,14 @@ export class TestSummaryWorkspaceService {
     private readonly fuelFlowToLoadBaselineWorkspaceService: FuelFlowToLoadBaselineWorkspaceService,
     @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
     private readonly flowToLoadCheckWorkspaceService: FlowToLoadCheckWorkspaceService,
+    @Inject(forwardRef(() => FuelFlowmeterAccuracyWorkspaceService))
+    private readonly fuelFlowmeterAccuracyWorkspaceService: FuelFlowmeterAccuracyWorkspaceService,
     @Inject(forwardRef(() => FlowToLoadReferenceWorkspaceService))
     private readonly flowToLoadReferenceWorkspaceService: FlowToLoadReferenceWorkspaceService,
     @Inject(forwardRef(() => OnlineOfflineCalibrationWorkspaceService))
     private readonly onlineOfflineCalibrationWorkspaceService: OnlineOfflineCalibrationWorkspaceService,
+    @Inject(forwardRef(() => CycleTimeSummaryWorkspaceService))
+    private readonly cycleTimeSummaryWorkspaceService: CycleTimeSummaryWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -185,6 +191,7 @@ export class TestSummaryWorkspaceService {
           fuelFlowToLoadTestData,
           fuelFlowToLoadBaselineData,
           calibrationInjectionData,
+          cycleTimeSummaryData,
           flowToLoadCheckData,
           flowToLoadReferenceData,
           appECorrelationTestSummaryData,
@@ -233,6 +240,10 @@ export class TestSummaryWorkspaceService {
             testSumIds,
           );
 
+          cycleTimeSummaryData = await this.cycleTimeSummaryWorkspaceService.export(
+            testSumIds,
+          );
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -260,6 +271,9 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.onlineOfflineCalibrationData = onlineOfflineCalibrationData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.cycleTimeSummaryData = cycleTimeSummaryData.filter(
               i => i.testSumId === s.id,
             );
           });
@@ -504,6 +518,29 @@ export class TestSummaryWorkspaceService {
               this.calInjWorkspaceService.import(
                 createdTestSummary.id,
                 calibrationInjection,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.cycleTimeSummaryData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.CYCLE
+    ) {
+      for (const cycleTimeSummary of payload.cycleTimeSummaryData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.cycleTimeSummaryWorkspaceService.import(
+                createdTestSummary.id,
+                cycleTimeSummary,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),

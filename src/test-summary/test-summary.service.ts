@@ -17,6 +17,7 @@ import { FlowToLoadCheckService } from '../flow-to-load-check/flow-to-load-check
 import { FlowToLoadReferenceService } from '../flow-to-load-reference/flow-to-load-reference.service';
 import { OnlineOfflineCalibrationService } from '../online-offline-calibration/online-offline-calibration.service';
 import { FuelFlowToLoadBaselineService } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.service';
+import { CycleTimeSummaryService } from '../cycle-time-summary/cycle-time-summary.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -45,6 +46,8 @@ export class TestSummaryService {
     private readonly flowLoadReferenceService: FlowToLoadReferenceService,
     @Inject(forwardRef(() => OnlineOfflineCalibrationService))
     private readonly onlineOfflineCalibrationService: OnlineOfflineCalibrationService,
+    @Inject(forwardRef(() => CycleTimeSummaryService))
+    private readonly cycleTimeSummaryService: CycleTimeSummaryService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -148,6 +151,7 @@ export class TestSummaryService {
           fuelFlowToLoadBaselineData,
           appECorrelationTestSummaryData,
           calibrationInjectionData,
+          cycleTimeSummaryData,
           flowToLoadCheckData,
           flowToLoadReferenceData,
           onlineOfflineCalibrationData;
@@ -196,6 +200,10 @@ export class TestSummaryService {
             testSumIds,
           );
 
+          cycleTimeSummaryData = await this.cycleTimeSummaryService.export(
+            testSumIds,
+          );
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -223,6 +231,9 @@ export class TestSummaryService {
               i => i.testSumId === s.id,
             );
             s.onlineOfflineCalibrationData = onlineOfflineCalibrationData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.cycleTimeSummaryData = cycleTimeSummaryData.filter(
               i => i.testSumId === s.id,
             );
           });

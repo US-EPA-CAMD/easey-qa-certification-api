@@ -33,7 +33,6 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { Component } from '../entities/workspace/component.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { FlowToLoadCheck } from '../entities/workspace/flow-to-load-check.entity';
 import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
 import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
 import { FuelFlowToLoadBaseline } from '../entities/workspace/fuel-flow-to-load-baseline.entity';
@@ -42,6 +41,8 @@ import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-cali
 import { FlowToLoadCheckDTO } from '../dto/flow-to-load-check.dto';
 import { FlowToLoadReferenceDTO } from '../dto/flow-to-load-reference.dto';
 import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
+import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
+import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
 
 const locationId = '121';
 const facilityId = 1;
@@ -101,6 +102,11 @@ const mockAppECorrelationTestSummaryService = () => ({
 
 const mockCalibrationInjectionWorkspaceService = () => ({
   export: jest.fn().mockResolvedValue([new CalibrationInjection()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
+const mockCycleTimeSummaryWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new CycleTimeSummary()]),
   import: jest.fn().mockResolvedValue(null),
 });
 
@@ -180,6 +186,10 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: CalibrationInjectionWorkspaceService,
           useFactory: mockCalibrationInjectionWorkspaceService,
+        },
+        {
+          provide: CycleTimeSummaryWorkspaceService,
+          useFactory: mockCycleTimeSummaryWorkspaceService,
         },
         {
           provide: OnlineOfflineCalibrationWorkspaceService,

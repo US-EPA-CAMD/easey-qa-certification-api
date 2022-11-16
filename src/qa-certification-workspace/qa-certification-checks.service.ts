@@ -218,8 +218,12 @@ export class QACertificationChecksService {
                       locationId,
                       null,
                       summary,
+                      null,
+                      rataSummary,
+                      null,
                       true,
                       false,
+                      flowRataRun.rataTraverseData
                     );
 
                     resolve(results);
