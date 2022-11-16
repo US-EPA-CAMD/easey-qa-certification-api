@@ -35,7 +35,6 @@ import { Component } from '../entities/workspace/component.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
 import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
-import { FuelFlowToLoadBaseline } from '../entities/workspace/fuel-flow-to-load-baseline.entity';
 import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
 import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
 import { FlowToLoadCheckDTO } from '../dto/flow-to-load-check.dto';
@@ -45,6 +44,8 @@ import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspac
 import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
 import { FuelFlowmeterAccuracy } from '../entities/workspace/fuel-flowmeter-accuracy.entity';
 import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
+import { FuelFlowmeterAccuracyDTO } from '../dto/fuel-flowmeter-accuracy.dto';
+import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
 
 const locationId = '121';
 const facilityId = 1;
@@ -125,8 +126,14 @@ const mockFlowToLoadCheckWorkspaceService = () => ({
   import: jest.fn().mockResolvedValue(null),
   export: jest.fn().mockResolvedValue([new FlowToLoadCheckDTO()]),
 });
+
 const mockFuelFlowToLoadBaselineService = () => ({
-  export: jest.fn().mockResolvedValue([new FuelFlowToLoadBaseline()]),
+  export: jest.fn().mockResolvedValue([new FuelFlowToLoadBaselineDTO()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
+const mockFuelFlowmeterAccuracyWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new FuelFlowmeterAccuracyDTO()]),
   import: jest.fn().mockResolvedValue(null),
 });
 const mockFuelFlowmeterAccuracyService = () => ({
@@ -252,6 +259,10 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: FuelFlowToLoadBaselineWorkspaceService,
           useFactory: mockFuelFlowToLoadBaselineService,
+        },
+        {
+          provide: FuelFlowmeterAccuracyWorkspaceService,
+          useFactory: mockFuelFlowmeterAccuracyWorkspaceService,
         },
       ],
     }).compile();
