@@ -6,7 +6,10 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { RataTraverseBaseDTO, RataTraverseImportDTO } from '../dto/rata-traverse.dto';
+import {
+  RataTraverseBaseDTO,
+  RataTraverseImportDTO,
+} from '../dto/rata-traverse.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { RataSummaryImportDTO } from '../dto/rata-summary.dto';
@@ -48,11 +51,11 @@ const mockTestSumRepository = () => ({
 
 const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(importPayload),
-})
+});
 
 const mockRataSumRepository = () => ({
   findOne: jest.fn().mockResolvedValue(rataSummary),
-})
+});
 
 const mockMonitorSystemRepository = () => ({
   findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
@@ -122,7 +125,7 @@ describe('Rata Traverse Check Service Test', () => {
         flowRataRunId,
         true,
         false,
-        flowRataRunImport.rataTraverseData
+        flowRataRunImport.rataTraverseData,
       );
 
       expect(result).toEqual([]);
@@ -636,7 +639,17 @@ describe('Rata Traverse Check Service Test', () => {
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(returnValue);
       try {
-        await checkService.runChecks(payload, locationId, testSumId, testSummaryImport, rataSumId, rataSummaryImport, flowRataRunId, true, false);
+        await checkService.runChecks(
+          payload,
+          locationId,
+          testSumId,
+          testSummaryImport,
+          rataSumId,
+          rataSummaryImport,
+          flowRataRunId,
+          true,
+          false,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
