@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
-import { TransmitterTransducerAccuracy } from '../entities/workspace/transmitter-transducer-accuracy.entity';
+import { TransmitterTransducerAccuracy } from '../entities/transmitter-transducer-accuracy.entity';
 import { TransmitterTransducerAccuracyDTO } from '../dto/transmitter-transducer-accuracy.dto';
-
 
 @Injectable()
 export class TransmitterTransducerAccuracyMap extends BaseMap<TransmitterTransducerAccuracy, TransmitterTransducerAccuracyDTO> {

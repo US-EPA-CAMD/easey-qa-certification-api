@@ -28,7 +28,7 @@ import { CalibrationInjection } from './workspace/calibration-injection.entity';
 import { OnlineOfflineCalibration } from './online-offline-calibration.entity';
 import { FuelFlowmeterAccuracy } from './fuel-flowmeter-accuracy.entity';
 import { CycleTimeSummary } from './cycle-time-summary.entity';
-import { TransmitterTransducerAccuracy } from './workspace/transmitter-transducer-accuracy.entity';
+import { TransmitterTransducerAccuracy } from './transmitter-transducer-accuracy.entity';
 
 @Entity({ name: 'camdecmps.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -307,4 +307,11 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'rpt_period_id' })
   reportingPeriod: ReportingPeriod;
+
+  @OneToMany(
+    () => TransmitterTransducerAccuracy,
+    transAccuracy => transAccuracy.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  transmitterTransducerAccuracies: TransmitterTransducerAccuracy[];
 }
