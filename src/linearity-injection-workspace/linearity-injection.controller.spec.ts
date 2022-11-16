@@ -64,7 +64,6 @@ describe('Linearity Injection Controller', () => {
           provide: LinearityInjectionWorkspaceService,
           useFactory: mockService,
         },
-        ConfigService,
         {
           provide: LinearityInjectionChecksService,
           useFactory: mockCheckService,

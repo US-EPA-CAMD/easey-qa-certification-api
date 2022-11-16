@@ -4,10 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryColumn,
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { TestSummary } from './test-summary.entity';
+import { CycleTimeInjection } from './cycle-time-injection.entity';
 
 @Entity({
   name: 'camdecmps.cycle_time_summary',
@@ -63,4 +65,11 @@ export class CycleTimeSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
+
+  @OneToMany(
+    () => CycleTimeInjection,
+    o => o.cycleTimeSummary,
+  )
+  @JoinColumn({ name: 'cycle_time_sum_id' })
+  cycleTimeInjections: CycleTimeInjection[];
 }
