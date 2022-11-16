@@ -76,6 +76,14 @@ describe('FuelFlowmeterAccuracyService', () => {
     });
   });
 
+  describe('getFuelFlowmeterAccuraciesByTestSumIds', () => {
+    it('Should get Fuel Flowmeter Accuracy records by test sum ids', async () => {
+      const result = await service.getFuelFlowmeterAccuraciesByTestSumIds([
+        testSumId,
+      ]);
+      expect(result).toEqual([fuelFlowmeterAccuracy]);
+    });
+  });
   describe('Export', () => {
     it('Should Export Fuel FLowmeter Accuracy', async () => {
       jest
