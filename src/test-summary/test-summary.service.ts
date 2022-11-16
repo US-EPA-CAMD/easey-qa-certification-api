@@ -70,7 +70,7 @@ export class TestSummaryService {
     delete dto.cycleTimeSummaryData;
     delete dto.onlineOfflineCalibrationData;
     delete dto.fuelFlowmeterAccuracyData;
-    delete dto.transmitterTransducerAccuracyData;
+    delete dto.transmitterTransducerData;
     delete dto.fuelFlowToLoadBaselineData;
     delete dto.fuelFlowToLoadTestData;
     delete dto.appECorrelationTestSummaryData;

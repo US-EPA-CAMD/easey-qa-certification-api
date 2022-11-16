@@ -61,9 +61,9 @@ import {
   CalibrationInjectionImportDTO,
 } from './calibration-injection.dto';
 import {
-  TransmitterTransducerAccuracyDTO,
-  TransmitterTransducerAccuracyImportDTO,
-} from './transmitter-transducer-accuracy.dto';
+  TransmitterTransducerDTO,
+  TransmitterTransducerImportDTO,
+} from './transmitter-transducer.dto';
 import {
   FuelFlowmeterAccuracyDTO,
   FuelFlowmeterAccuracyImportDTO,
@@ -483,8 +483,8 @@ export class TestSummaryImportDTO extends TestSummaryBaseDTO {
   fuelFlowmeterAccuracyData: FuelFlowmeterAccuracyImportDTO[];
 
   @ValidateNested({ each: true })
-  @Type(() => TransmitterTransducerAccuracyImportDTO)
-  transmitterTransducerData: TransmitterTransducerAccuracyImportDTO[];
+  @Type(() => TransmitterTransducerImportDTO)
+  transmitterTransducerData: TransmitterTransducerImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => FuelFlowToLoadTestImportDTO)
@@ -528,7 +528,7 @@ export class TestSummaryDTO extends TestSummaryRecordDTO {
   cycleTimeSummaryData: CycleTimeSummaryDTO[];
   onlineOfflineCalibrationData: OnlineOfflineCalibrationDTO[];
   fuelFlowmeterAccuracyData: FuelFlowmeterAccuracyDTO[];
-  transmitterTransducerAccuracyData: TransmitterTransducerAccuracyDTO[];
+  transmitterTransducerData: TransmitterTransducerDTO[];
   fuelFlowToLoadBaselineData: FuelFlowToLoadBaselineDTO[];
   fuelFlowToLoadTestData: FuelFlowToLoadTestDTO[];
   appECorrelationTestSummaryData: AppECorrelationTestSummaryDTO[];

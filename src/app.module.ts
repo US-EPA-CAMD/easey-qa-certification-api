@@ -63,7 +63,6 @@ import { FuelFlowmeterAccuracyWorkspaceModule } from './fuel-flowmeter-accuracy-
 import { FuelFlowmeterAccuracyModule } from './fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.module';
 import { CycleTimeSummaryWorkspaceModule } from './cycle-time-summary-workspace/cycle-time-summary-workspace.module';
 import { CycleTimeSummaryModule } from './cycle-time-summary/cycle-time-summary.module';
-import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.module';
 
 @Module({
   imports: [
@@ -128,7 +127,6 @@ import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-tran
     FuelFlowmeterAccuracyWorkspaceModule,
     CycleTimeSummaryWorkspaceModule,
     CycleTimeSummaryModule,
-    TransmitterTransducerAccuracyWorkspaceModule,
   ],
 })
 export class AppModule {}
