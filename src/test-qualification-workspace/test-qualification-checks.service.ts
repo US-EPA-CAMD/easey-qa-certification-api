@@ -275,18 +275,25 @@ export class TestQualificationChecksService {
       testQuals = testQualifications.filter(
         tq => tq.testClaimCode === testQualification.testClaimCode,
       );
+
+      if (testQuals.length > 1) {
+        error = this.getErrorMessage('RATA-121-A', {
+          recordtype: 'RATA Test Qualification',
+          fieldnames: 'testClaimCode',
+        });
+      }
     } else {
       testQuals = await this.testQualRepository.find({
         testSumId: testSumId,
         testClaimCode: testQualification.testClaimCode,
       });
-    }
 
-    if (testQuals.length > 1) {
-      error = this.getErrorMessage('RATA-121-A', {
-        recordtype: 'RATA Test Qualification',
-        fieldnames: 'testClaimCode',
-      });
+      if (testQuals.length > 0) {
+        error = this.getErrorMessage('RATA-121-A', {
+          recordtype: 'RATA Test Qualification',
+          fieldnames: 'testClaimCode',
+        });
+      }
     }
 
     return error;
