@@ -75,7 +75,7 @@ export class TestQualificationWorkspaceController {
     @Body() payload: TestQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<TestQualificationRecordDTO> {
-    await this.checksService.runChecks(payload, testSumId, false, true);
+    await this.checksService.runChecks(payload, testSumId, null, false, false);
     return this.service.createTestQualification(
       testSumId,
       payload,
@@ -97,7 +97,7 @@ export class TestQualificationWorkspaceController {
     @Body() payload: TestQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<TestQualificationRecordDTO> {
-    await this.checksService.runChecks(payload, testSumId, false, true);
+    await this.checksService.runChecks(payload, testSumId, null, false, true);
     return this.service.updateTestQualification(
       testSumId,
       id,
