@@ -29,6 +29,8 @@ import { FuelFlowToLoadBaselineService } from '../fuel-flow-to-load-baseline/fue
 import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
 import { CycleTimeSummary } from '../entities/cycle-time-summary.entity';
 import { CycleTimeSummaryService } from '../cycle-time-summary/cycle-time-summary.service';
+import { FuelFlowmeterAccuracy } from '../entities/fuel-flowmeter-accuracy.entity';
+import { FuelFlowmeterAccuracyService } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -65,7 +67,6 @@ const mockProtocolGasService = () => ({
 
 const mockFlowToLoadCheckService = () => ({
   export: jest.fn().mockResolvedValue([new FlowToLoadCheck()]),
-  import: jest.fn().mockResolvedValue(null),
 });
 
 const mockAppECorrelationTestSummaryService = () => ({
@@ -94,6 +95,9 @@ const mockOnlineOfflineCalibrationService = () => ({
 
 const mockFuelFlowToLoadBaselineService = () => ({
   export: jest.fn().mockResolvedValue([new FuelFlowToLoadBaselineDTO()]),
+});
+const mockFuelFlowmeterAccuracyService = () => ({
+  export: jest.fn().mockResolvedValue([new FuelFlowmeterAccuracy()]),
 });
 
 describe('TestSummaryService', () => {
@@ -148,6 +152,10 @@ describe('TestSummaryService', () => {
         {
           provide: FlowToLoadReferenceService,
           useFactory: mockFlowToLoadReferenceService,
+        },
+        {
+          provide: FuelFlowmeterAccuracyService,
+          useFactory: mockFuelFlowmeterAccuracyService,
         },
         {
           provide: OnlineOfflineCalibrationService,

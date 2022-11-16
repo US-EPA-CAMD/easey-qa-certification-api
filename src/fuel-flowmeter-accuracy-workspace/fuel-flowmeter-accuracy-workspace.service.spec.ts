@@ -5,6 +5,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import {
   FuelFlowmeterAccuracyBaseDTO,
   FuelFlowmeterAccuracyDTO,
+  FuelFlowmeterAccuracyImportDTO,
 } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracyWorkspaceRepository } from './fuel-flowmeter-accuracy-workspace.repository';
 import { FuelFlowmeterAccuracyWorkspaceService } from './fuel-flowmeter-accuracy-workspace.service';
@@ -183,6 +184,31 @@ describe('FuelFlowmeterWorkspaceService', () => {
       }
 
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('Export', () => {
+    it('Should Export Fuel Flowmeter Accuracy', async () => {
+      jest
+        .spyOn(service, 'getFuelFlowmeterAccuraciesByTestSumIds')
+        .mockResolvedValue([fuelFlowmeterAccuracy]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([fuelFlowmeterAccuracy]);
+    });
+  });
+
+  describe('Import', () => {
+    it('Should Import Fuel Flowmeter Accuracy', async () => {
+      jest
+        .spyOn(service, 'createFuelFlowmeterAccuracy')
+        .mockResolvedValue(fuelFlowmeterAccuracy);
+
+      await service.import(
+        testSumId,
+        new FuelFlowmeterAccuracyImportDTO(),
+        userId,
+        true,
+      );
     });
   });
 });

@@ -7,12 +7,16 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import {
   FuelFlowmeterAccuracyBaseDTO,
   FuelFlowmeterAccuracyDTO,
+  FuelFlowmeterAccuracyImportDTO,
   FuelFlowmeterAccuracyRecordDTO,
 } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracyWorkspaceRepository } from './fuel-flowmeter-accuracy-workspace.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
 import { In } from 'typeorm';
+import { FuelFlowmeterAccuracy } from '../entities/fuel-flowmeter-accuracy.entity';
+import { FuelFlowmeterAccuracyRepository } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class FuelFlowmeterAccuracyWorkspaceService {
@@ -22,6 +26,9 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(FuelFlowmeterAccuracyWorkspaceRepository)
     private readonly repository: FuelFlowmeterAccuracyWorkspaceRepository,
+    @InjectRepository(FuelFlowmeterAccuracyRepository)
+    private readonly historicalRepo: FuelFlowmeterAccuracyRepository,
+    private readonly logger: Logger,
   ) {}
 
   async getFuelFlowmeterAccuracies(
@@ -125,6 +132,12 @@ export class FuelFlowmeterAccuracyWorkspaceService {
         e,
       );
     }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
   }
 
   async getFuelFlowmeterAccuraciesByTestSumIds(
@@ -139,5 +152,34 @@ export class FuelFlowmeterAccuracyWorkspaceService {
 
   async export(testSumIds: string[]): Promise<FuelFlowmeterAccuracyDTO[]> {
     return this.getFuelFlowmeterAccuraciesByTestSumIds(testSumIds);
+  }
+
+  async import(
+    testSumId: string,
+    payload: FuelFlowmeterAccuracyImportDTO,
+    userId: string,
+    isHistoricalRecord: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: FuelFlowmeterAccuracy;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepo.findOne({
+        testSumId: testSumId,
+        accuracyTestMethodCode: payload.accuracyTestMethodCode,
+      });
+    }
+
+    const createdFlowToLoadReference = await this.createFuelFlowmeterAccuracy(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Flow To Load Reference Successfully Imported.  Record Id: ${createdFlowToLoadReference.id}`,
+    );
   }
 }

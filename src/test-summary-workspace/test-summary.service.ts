@@ -468,6 +468,29 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
+      payload.fuelFlowmeterAccuracyData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.FFACC
+    ) {
+      for (const fuelFlowmeterAccuracy of payload.fuelFlowmeterAccuracyData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.fuelFlowmeterAccuracyWorkspaceService.import(
+                createdTestSummary.id,
+                fuelFlowmeterAccuracy,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
       payload.flowToLoadReferenceData?.length > 0 &&
       payload.testTypeCode === TestTypeCodes.F2LREF
     ) {
