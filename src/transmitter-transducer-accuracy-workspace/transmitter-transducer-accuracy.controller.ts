@@ -1,5 +1,11 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { User } from '@us-epa-camd/easey-common/decorators';
@@ -14,14 +20,16 @@ import {
 @ApiSecurity('APIKey')
 @ApiTags('Transmitter Transducer Accuracy')
 export class TransmitterTransducerAccuracyWorkspaceController {
-  constructor(private readonly service: TransmitterTransducerAccuracyWorkspaceService) {
-  }
+  constructor(
+    private readonly service: TransmitterTransducerAccuracyWorkspaceService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
     isArray: true,
     type: TransmitterTransducerAccuracyRecordDTO,
-    description: 'Retrieves workspace Transmitter Transducer Accuracy records by Test Summary Id',
+    description:
+      'Retrieves workspace Transmitter Transducer Accuracy records by Test Summary Id',
   })
   getTransmitterTransducerAccuracies(
     @Param('locId') _locationId: string,
@@ -34,7 +42,8 @@ export class TransmitterTransducerAccuracyWorkspaceController {
   @ApiOkResponse({
     isArray: false,
     type: TransmitterTransducerAccuracyDTO,
-    description: 'Retrieves official Transmitter Transducer Accuracy record by its Id',
+    description:
+      'Retrieves official Transmitter Transducer Accuracy record by its Id',
   })
   getTransmitterTransducerAccuracy(
     @Param('locId') _locationId: string,
@@ -49,7 +58,8 @@ export class TransmitterTransducerAccuracyWorkspaceController {
   @ApiBearerAuth('Token')
   @ApiCreatedResponse({
     type: TransmitterTransducerAccuracyRecordDTO,
-    description: 'Creates a Transmitter Transducer Accuracy record in the workspace',
+    description:
+      'Creates a Transmitter Transducer Accuracy record in the workspace',
   })
   async createTransmitterTransducerAccuracy(
     @Param('locId') _locationId: string,
@@ -57,6 +67,10 @@ export class TransmitterTransducerAccuracyWorkspaceController {
     @Body() payload: TransmitterTransducerAccuracyBaseDTO,
     @User() user: CurrentUser,
   ): Promise<TransmitterTransducerAccuracyRecordDTO> {
-    return this.service.createTransmitterTransducerAccuracy(testSumId, payload, user.userId);
+    return this.service.createTransmitterTransducerAccuracy(
+      testSumId,
+      payload,
+      user.userId,
+    );
   }
 }

@@ -29,7 +29,7 @@ const payload: TransmitterTransducerAccuracyBaseDTO = {
   lowLevelAccuracy: 0,
   lowLevelAccuracySpecCode: '',
   midLevelAccuracy: 0,
-  midLevelAccuracySpecCode: ''
+  midLevelAccuracySpecCode: '',
 };
 
 const user: CurrentUser = {
@@ -74,7 +74,12 @@ describe('Transmitter Transducer Workspace Controller', () => {
         .spyOn(service, 'createTransmitterTransducerAccuracy')
         .mockResolvedValue(recordDTO);
       expect(
-        await controller.createTransmitterTransducerAccuracy(locId, testSumId, payload, user),
+        await controller.createTransmitterTransducerAccuracy(
+          locId,
+          testSumId,
+          payload,
+          user,
+        ),
       ).toEqual(recordDTO);
     });
   });

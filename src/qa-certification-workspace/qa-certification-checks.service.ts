@@ -223,7 +223,7 @@ export class QACertificationChecksService {
                       null,
                       true,
                       false,
-                      flowRataRun.rataTraverseData
+                      flowRataRun.rataTraverseData,
                     );
 
                     resolve(results);

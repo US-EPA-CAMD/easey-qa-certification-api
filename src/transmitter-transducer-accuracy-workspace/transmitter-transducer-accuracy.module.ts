@@ -7,15 +7,23 @@ import { TransmitterTransducerAccuracyWorkspaceController } from './transmitter-
 import { TransmitterTransducerAccuracyWorkspaceService } from './transmitter-transducer-accuracy.service';
 import { TransmitterTransducerAccuracyWorkspaceRepository } from './transmitter-transducer-accuracy.repository';
 
-
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TransmitterTransducerAccuracyWorkspaceRepository]),
+    TypeOrmModule.forFeature([
+      TransmitterTransducerAccuracyWorkspaceRepository,
+    ]),
     forwardRef(() => TestSummaryWorkspaceModule),
     HttpModule,
   ],
   controllers: [TransmitterTransducerAccuracyWorkspaceController],
-  providers: [TransmitterTransducerAccuracyWorkspaceService, TransmitterTransducerAccuracyMap],
-  exports: [TypeOrmModule, TransmitterTransducerAccuracyMap, TransmitterTransducerAccuracyWorkspaceService],
+  providers: [
+    TransmitterTransducerAccuracyWorkspaceService,
+    TransmitterTransducerAccuracyMap,
+  ],
+  exports: [
+    TypeOrmModule,
+    TransmitterTransducerAccuracyMap,
+    TransmitterTransducerAccuracyWorkspaceService,
+  ],
 })
 export class TransmitterTransducerAccuracyWorkspaceModule {}

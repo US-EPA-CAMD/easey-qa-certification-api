@@ -4,8 +4,13 @@ import { TransmitterTransducerAccuracy } from '../entities/transmitter-transduce
 import { TransmitterTransducerAccuracyDTO } from '../dto/transmitter-transducer-accuracy.dto';
 
 @Injectable()
-export class TransmitterTransducerAccuracyMap extends BaseMap<TransmitterTransducerAccuracy, TransmitterTransducerAccuracyDTO> {
-  public async one(entity: TransmitterTransducerAccuracy): Promise<TransmitterTransducerAccuracyDTO> {
+export class TransmitterTransducerAccuracyMap extends BaseMap<
+  TransmitterTransducerAccuracy,
+  TransmitterTransducerAccuracyDTO
+> {
+  public async one(
+    entity: TransmitterTransducerAccuracy,
+  ): Promise<TransmitterTransducerAccuracyDTO> {
     return {
       id: entity.id,
       testSumId: entity.testSumId,
@@ -20,5 +25,4 @@ export class TransmitterTransducerAccuracyMap extends BaseMap<TransmitterTransdu
       updateDate: entity.updateDate,
     };
   }
-
 }

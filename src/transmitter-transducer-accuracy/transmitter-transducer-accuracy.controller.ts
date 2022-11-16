@@ -1,5 +1,11 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import { TransmitterTransducerAccuracyService } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.service';
 import { ProtocolGasRecordDTO } from '../dto/protocol-gas.dto';
 import {
@@ -11,14 +17,14 @@ import {
 @ApiSecurity('APIKey')
 @ApiTags('Transmitter Transducer Accuracy')
 export class TransmitterTransducerAccuracyController {
-  constructor(private readonly service: TransmitterTransducerAccuracyService) {
-  }
+  constructor(private readonly service: TransmitterTransducerAccuracyService) {}
 
   @Get()
   @ApiOkResponse({
     isArray: true,
     type: TransmitterTransducerAccuracyRecordDTO,
-    description: 'Retrieves official Transmitter Transducer Accuracy records by Test Summary Id',
+    description:
+      'Retrieves official Transmitter Transducer Accuracy records by Test Summary Id',
   })
   getTransmitterTransducerAccuracies(
     @Param('locId') _locationId: string,
@@ -31,7 +37,8 @@ export class TransmitterTransducerAccuracyController {
   @ApiOkResponse({
     isArray: false,
     type: TransmitterTransducerAccuracyDTO,
-    description: 'Retrieves official Transmitter Transducer Accuracy record by its Id',
+    description:
+      'Retrieves official Transmitter Transducer Accuracy record by its Id',
   })
   getTransmitterTransducerAccuracy(
     @Param('locId') _locationId: string,

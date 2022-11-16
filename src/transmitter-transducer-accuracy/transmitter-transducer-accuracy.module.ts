@@ -7,7 +7,6 @@ import { TransmitterTransducerAccuracyController } from './transmitter-transduce
 import { TransmitterTransducerAccuracyService } from './transmitter-transducer-accuracy.service';
 import { TransmitterTransducerAccuracyRepository } from './transmitter-transducer-accuracy.repository';
 
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([TransmitterTransducerAccuracyRepository]),
@@ -15,7 +14,14 @@ import { TransmitterTransducerAccuracyRepository } from './transmitter-transduce
     HttpModule,
   ],
   controllers: [TransmitterTransducerAccuracyController],
-  providers: [TransmitterTransducerAccuracyService, TransmitterTransducerAccuracyMap],
-  exports: [TypeOrmModule, TransmitterTransducerAccuracyMap, TransmitterTransducerAccuracyService],
+  providers: [
+    TransmitterTransducerAccuracyService,
+    TransmitterTransducerAccuracyMap,
+  ],
+  exports: [
+    TypeOrmModule,
+    TransmitterTransducerAccuracyMap,
+    TransmitterTransducerAccuracyService,
+  ],
 })
 export class TransmitterTransducerAccuracyModule {}

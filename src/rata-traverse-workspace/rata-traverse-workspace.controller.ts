@@ -30,9 +30,9 @@ import { RataTraverseWorkspaceService } from './rata-traverse-workspace.service'
 @ApiTags('Rata Traverse')
 export class RataTraverseWorkspaceController {
   constructor(
-    private readonly service: RataTraverseWorkspaceService, 
+    private readonly service: RataTraverseWorkspaceService,
     private readonly checksService: RataTraverseChecksService,
-    ) {}
+  ) {}
 
   @Get()
   @ApiOkResponse({

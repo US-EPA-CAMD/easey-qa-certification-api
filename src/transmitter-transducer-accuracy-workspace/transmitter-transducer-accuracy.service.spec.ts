@@ -2,7 +2,10 @@ import { TransmitterTransducerAccuracyWorkspaceService } from './transmitter-tra
 import { TransmitterTransducerAccuracyWorkspaceRepository } from './transmitter-transducer-accuracy.repository';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TransmitterTransducerAccuracy } from '../entities/workspace/transmitter-transducer-accuracy.entity';
-import { TransmitterTransducerAccuracyBaseDTO, TransmitterTransducerAccuracyRecordDTO } from '../dto/transmitter-transducer-accuracy.dto';
+import {
+  TransmitterTransducerAccuracyBaseDTO,
+  TransmitterTransducerAccuracyRecordDTO,
+} from '../dto/transmitter-transducer-accuracy.dto';
 import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 
@@ -19,15 +22,14 @@ const mockRepo = () => ({
 });
 
 const mockMap = () => ({
-  one: jest.fn().mockResolvedValue(recordDTO)
+  one: jest.fn().mockResolvedValue(recordDTO),
 });
 
 const mockTestSummaryService = () => ({
-  resetToNeedsEvaluation: jest.fn()
+  resetToNeedsEvaluation: jest.fn(),
 });
 
 describe('TransmitterTransducerAccuracyWorkspaceService', () => {
-
   let service: TransmitterTransducerAccuracyWorkspaceService;
   let repo: TransmitterTransducerAccuracyWorkspaceRepository;
 
@@ -37,31 +39,37 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
         TransmitterTransducerAccuracyWorkspaceService,
         {
           provide: TransmitterTransducerAccuracyWorkspaceRepository,
-          useFactory: mockRepo
+          useFactory: mockRepo,
         },
         {
           provide: TransmitterTransducerAccuracyMap,
-          useFactory: mockMap
+          useFactory: mockMap,
         },
         {
           provide: TestSummaryWorkspaceService,
-          useFactory: mockTestSummaryService
-        }
-      ]
+          useFactory: mockTestSummaryService,
+        },
+      ],
     }).compile();
 
     service = module.get<TransmitterTransducerAccuracyWorkspaceService>(
-      TransmitterTransducerAccuracyWorkspaceService
-    )
+      TransmitterTransducerAccuracyWorkspaceService,
+    );
     repo = module.get<TransmitterTransducerAccuracyWorkspaceRepository>(
-      TransmitterTransducerAccuracyWorkspaceRepository
-    )
+      TransmitterTransducerAccuracyWorkspaceRepository,
+    );
   });
 
   describe('createTransmitterTransducerAccuracy', () => {
     it('Should call repository to save a new record and return a DTO', async () => {
-      const result = await service.createTransmitterTransducerAccuracy(testSumID, baseDTO, userID, false, null);
+      const result = await service.createTransmitterTransducerAccuracy(
+        testSumID,
+        baseDTO,
+        userID,
+        false,
+        null,
+      );
       expect(result).toEqual(recordDTO);
     });
   });
-})
+});

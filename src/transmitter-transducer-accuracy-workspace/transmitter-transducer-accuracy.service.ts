@@ -8,12 +8,12 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
   TransmitterTransducerAccuracyBaseDTO,
-  TransmitterTransducerAccuracyDTO, TransmitterTransducerAccuracyRecordDTO,
+  TransmitterTransducerAccuracyDTO,
+  TransmitterTransducerAccuracyRecordDTO,
 } from '../dto/transmitter-transducer-accuracy.dto';
 
 @Injectable()
 export class TransmitterTransducerAccuracyWorkspaceService {
-
   constructor(
     @InjectRepository(TransmitterTransducerAccuracyWorkspaceRepository)
     private readonly repository: TransmitterTransducerAccuracyWorkspaceRepository,
@@ -22,7 +22,9 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
   ) {}
 
-  async getTransmitterTransducerAccuracy(id: string): Promise<TransmitterTransducerAccuracyDTO> {
+  async getTransmitterTransducerAccuracy(
+    id: string,
+  ): Promise<TransmitterTransducerAccuracyDTO> {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
@@ -35,7 +37,9 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     return this.map.one(entity);
   }
 
-  async getTransmitterTransducerAccuracies(testSumId: string): Promise<TransmitterTransducerAccuracyDTO[]> {
+  async getTransmitterTransducerAccuracies(
+    testSumId: string,
+  ): Promise<TransmitterTransducerAccuracyDTO[]> {
     const records = await this.repository.find({
       where: { testSumId },
     });

@@ -1,9 +1,16 @@
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryColumn,
+} from 'typeorm';
 import { TestSummary } from './test-summary.entity';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
 @Entity({
-  name: 'camdecmpswks.trans_accuracy'
+  name: 'camdecmpswks.trans_accuracy',
 })
 export class TransmitterTransducerAccuracy extends BaseEntity {
   @PrimaryColumn({
@@ -75,7 +82,7 @@ export class TransmitterTransducerAccuracy extends BaseEntity {
 
   @ManyToOne(
     () => TestSummary,
-    o => o.protocolGases,
+    testSum => testSum.transmitterTransducerAccuracies,
   )
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
