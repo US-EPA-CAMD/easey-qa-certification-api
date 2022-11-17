@@ -4,6 +4,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import {
   CycleTimeSummaryBaseDTO,
   CycleTimeSummaryDTO,
+  CycleTimeSummaryImportDTO,
 } from '../dto/cycle-time-summary.dto';
 import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
 import { CycleTimeSummary as CycleTimeSummaryOfficial } from '../entities/cycle-time-summary.entity';
@@ -20,6 +21,7 @@ const entity = new CycleTimeSummary();
 const dto = new CycleTimeSummaryDTO();
 
 const payload = new CycleTimeSummaryBaseDTO();
+const importPayload = new CycleTimeSummaryImportDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
@@ -206,13 +208,13 @@ describe('CycleTimeSummaryWorkspaceService', () => {
     it('Should Import Cycle Time Summary', async () => {
       jest.spyOn(service, 'createCycleTimeSummary').mockResolvedValue(dto);
 
-      await service.import(testSumId, payload, userId, false);
+      await service.import(testSumId, importPayload, userId, false);
     });
 
     it('Should Import Cycle Time Summary from Historical Record', async () => {
       jest.spyOn(service, 'createCycleTimeSummary').mockResolvedValue(dto);
 
-      await service.import(testSumId, payload, userId, true);
+      await service.import(testSumId, importPayload, userId, true);
     });
   });
 });
