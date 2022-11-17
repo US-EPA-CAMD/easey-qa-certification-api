@@ -903,7 +903,11 @@ export class TestSummaryChecksService {
         componentID: summary.componentID,
         locationId: locationId,
       });
-      if (component && component.componentTypeCode !== 'FLOW') {
+      if (
+        component &&
+        component.componentTypeCode !== 'FLOW' &&
+        summary.testTypeCode !== 'FFACC'
+      ) {
         if (summary.spanScaleCode === null) {
           return this.getMessage('TEST-8-A', {
             fieldname: FIELDNAME,
