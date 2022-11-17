@@ -42,6 +42,7 @@ import { FlowToLoadReferenceDTO } from '../dto/flow-to-load-reference.dto';
 import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
 import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
 import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
+import { FuelFlowmeterAccuracy } from '../entities/workspace/fuel-flowmeter-accuracy.entity';
 import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
 import { FuelFlowmeterAccuracyDTO } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
@@ -192,6 +193,10 @@ describe('TestSummaryWorkspaceService', () => {
           useFactory: mockFuelFlowToLoadTestWorkspaceService,
         },
         {
+          provide: FuelFlowmeterAccuracyWorkspaceService,
+          useFactory: mockFuelFlowmeterAccuracyWorkspaceService,
+        },
+        {
           provide: CalibrationInjectionWorkspaceService,
           useFactory: mockCalibrationInjectionWorkspaceService,
         },
@@ -250,10 +255,6 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: FuelFlowToLoadBaselineWorkspaceService,
           useFactory: mockFuelFlowToLoadBaselineService,
-        },
-        {
-          provide: FuelFlowmeterAccuracyWorkspaceService,
-          useFactory: mockFuelFlowmeterAccuracyWorkspaceService,
         },
       ],
     }).compile();

@@ -11,7 +11,9 @@ describe('CycleTimeInjectionController', () => {
       providers: [CycleTimeInjectionService],
     }).compile();
 
-    controller = module.get<CycleTimeInjectionController>(CycleTimeInjectionController);
+    controller = module.get<CycleTimeInjectionController>(
+      CycleTimeInjectionController,
+    );
   });
 
   it('should be defined', () => {

@@ -75,4 +75,22 @@ describe('FuelFlowmeterAccuracyService', () => {
       expect(errored).toEqual(true);
     });
   });
+
+  describe('getFuelFlowmeterAccuraciesByTestSumIds', () => {
+    it('Should get Fuel Flowmeter Accuracy records by test sum ids', async () => {
+      const result = await service.getFuelFlowmeterAccuraciesByTestSumIds([
+        testSumId,
+      ]);
+      expect(result).toEqual([fuelFlowmeterAccuracy]);
+    });
+  });
+  describe('Export', () => {
+    it('Should Export Fuel FLowmeter Accuracy', async () => {
+      jest
+        .spyOn(service, 'getFuelFlowmeterAccuraciesByTestSumIds')
+        .mockResolvedValue([]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([]);
+    });
+  });
 });
