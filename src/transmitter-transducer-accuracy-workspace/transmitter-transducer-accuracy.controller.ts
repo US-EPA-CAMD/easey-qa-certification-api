@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -69,6 +77,28 @@ export class TransmitterTransducerAccuracyWorkspaceController {
   ): Promise<TransmitterTransducerAccuracyRecordDTO> {
     return this.service.createTransmitterTransducerAccuracy(
       testSumId,
+      payload,
+      user.userId,
+    );
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: TransmitterTransducerAccuracyRecordDTO,
+    description: 'Updates a workspace Transmitter Transducer Accuracy record',
+  })
+  updateTransmitterTransducerAccuracy(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: TransmitterTransducerAccuracyBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<TransmitterTransducerAccuracyRecordDTO> {
+    return this.service.updateTransmitterTransducerAccuracy(
+      testSumId,
+      id,
       payload,
       user.userId,
     );

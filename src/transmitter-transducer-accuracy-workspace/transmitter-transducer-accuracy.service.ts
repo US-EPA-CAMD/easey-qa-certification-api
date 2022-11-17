@@ -1,11 +1,12 @@
-import { currentDateTime } from '../utilities/functions';
-import { v4 as uuid } from 'uuid';
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { v4 as uuid } from 'uuid';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+
+import { currentDateTime } from '../utilities/functions';
 import { TransmitterTransducerAccuracyWorkspaceRepository } from './transmitter-transducer-accuracy.repository';
 import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
   TransmitterTransducerAccuracyBaseDTO,
   TransmitterTransducerAccuracyDTO,
@@ -67,6 +68,40 @@ export class TransmitterTransducerAccuracyWorkspaceService {
 
     await this.repository.save(entity);
     entity = await this.repository.findOne(entity.id);
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.map.one(entity);
+  }
+
+  async updateTransmitterTransducerAccuracy(
+    testSumId: string,
+    id: string,
+    payload: TransmitterTransducerAccuracyBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<TransmitterTransducerAccuracyDTO> {
+    const entity = await this.repository.findOne({ id, testSumId });
+
+    if (!entity) {
+      throw new LoggingException(
+        `Transmitter Transducer Accuracy record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    entity.lowLevelAccuracy = payload.lowLevelAccuracy;
+    entity.lowLevelAccuracySpecCode = payload.lowLevelAccuracySpecCode;
+    entity.midLevelAccuracy = payload.midLevelAccuracy;
+    entity.midLevelAccuracySpecCode = payload.midLevelAccuracySpecCode;
+    entity.highLevelAccuracy = payload.highLevelAccuracy;
+    entity.highLevelAccuracySpecCode = payload.highLevelAccuracySpecCode;
+
+    await this.repository.save(entity);
+
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,

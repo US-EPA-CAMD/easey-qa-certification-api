@@ -31,6 +31,7 @@ const mockTestSummaryService = () => ({
 
 describe('TransmitterTransducerAccuracyWorkspaceService', () => {
   let service: TransmitterTransducerAccuracyWorkspaceService;
+  let testSummaryService: TestSummaryWorkspaceService;
   let repo: TransmitterTransducerAccuracyWorkspaceRepository;
 
   beforeEach(async () => {
@@ -55,6 +56,9 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
     service = module.get<TransmitterTransducerAccuracyWorkspaceService>(
       TransmitterTransducerAccuracyWorkspaceService,
     );
+    testSummaryService = module.get<TestSummaryWorkspaceService>(
+      TestSummaryWorkspaceService,
+    );
     repo = module.get<TransmitterTransducerAccuracyWorkspaceRepository>(
       TransmitterTransducerAccuracyWorkspaceRepository,
     );
@@ -70,6 +74,38 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
         null,
       );
       expect(result).toEqual(recordDTO);
+    });
+  });
+
+  describe('updateCalibrationInjection', () => {
+    it('Should update and return the Calibration Injection record', async () => {
+      const result = await service.updateTransmitterTransducerAccuracy(
+        testSumID,
+        entity.id,
+        baseDTO,
+        userID,
+      );
+
+      expect(result).toEqual(recordDTO);
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should throw error when a Calibration Injection record not found', async () => {
+      jest.spyOn(repo, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.updateTransmitterTransducerAccuracy(
+          testSumID,
+          entity.id,
+          baseDTO,
+          userID,
+        );
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
     });
   });
 });
