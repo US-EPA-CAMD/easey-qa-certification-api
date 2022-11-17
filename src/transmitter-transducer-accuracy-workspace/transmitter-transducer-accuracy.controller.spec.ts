@@ -23,6 +23,7 @@ const mockService = () => ({
   getTransmitterTransducerAccuracy: jest.fn().mockResolvedValue(dto),
   getTransmitterTransducerAccuracies: jest.fn().mockResolvedValue([dto]),
   createTransmitterTransducerAccuracy: jest.fn(),
+  updateTransmitterTransducerAccuracy: jest.fn().mockResolvedValue(dto),
 });
 
 const payload: TransmitterTransducerAccuracyBaseDTO = {
@@ -106,6 +107,19 @@ describe('Transmitter Transducer Workspace Controller', () => {
           user,
         ),
       ).toEqual(recordDTO);
+    });
+  });
+
+  describe('updateCalibrationInjection', () => {
+    it('Calls the service and update a existing Transmitter Transducer Accuracy record', async () => {
+      const result = await controller.updateTransmitterTransducerAccuracy(
+        locId,
+        testSumId,
+        entityId,
+        payload,
+        user,
+      );
+      expect(result).toEqual(dto);
     });
   });
 });
