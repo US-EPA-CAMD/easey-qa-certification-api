@@ -25,7 +25,7 @@ export class ReviewAndSubmitService {
         );
       }
       return this.map.many(
-        await this.repository.find({ where: { orisCd: In(orisCodes) } }),
+        await this.repository.find({ where: { orisCode: In(orisCodes) } }),
       );
     } catch (e) {
       throw new LoggingException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);

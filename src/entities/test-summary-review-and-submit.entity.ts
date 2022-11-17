@@ -7,7 +7,7 @@ export class TestSummaryReviewAndSubmit {
   @ViewColumn({
     name: 'oris_code',
   })
-  orisCd: number;
+  orisCode: number;
 
   @ViewColumn({
     name: 'facility_name',
@@ -62,10 +62,10 @@ export class TestSummaryReviewAndSubmit {
   @ViewColumn({
     name: 'eval_status_cd',
   })
-  evalStatusCd: string;
+  evalStatusCode: string;
 
   @ViewColumn({
     name: 'submission_availability_cd',
   })
-  submissionCd: string;
+  submissionCode: string;
 }

@@ -13,7 +13,7 @@ export class ReviewAndSubmitTestSummaryMap extends BaseMap<
     entity: TestSummaryReviewAndSubmit,
   ): Promise<ReviewAndSubmitTestSummaryDTO> {
     return {
-      orisCd: entity.orisCd,
+      orisCode: entity.orisCode,
 
       facilityName: entity.facilityName,
 
@@ -34,9 +34,10 @@ export class ReviewAndSubmitTestSummaryMap extends BaseMap<
       userId: entity.userId,
 
       updateDate: entity.updateDate,
-      evalStatusCd: entity.evalStatusCd,
 
-      submissionCd: entity.submissionCd,
+      evalStatusCode: entity.evalStatusCode,
+
+      submissionCode: entity.submissionCode,
     };
   }
 }

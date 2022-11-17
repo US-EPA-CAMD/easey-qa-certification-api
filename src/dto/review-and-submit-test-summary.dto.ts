@@ -1,5 +1,5 @@
 export class ReviewAndSubmitTestSummaryDTO {
-  orisCd: number;
+  orisCode: number;
 
   facilityName: string;
 
@@ -21,7 +21,7 @@ export class ReviewAndSubmitTestSummaryDTO {
 
   updateDate: string;
 
-  evalStatusCd: string;
+  evalStatusCode: string;
 
-  submissionCd: string;
+  submissionCode: string;
 }
