@@ -50,6 +50,8 @@ import { FuelFlowmeterAccuracyModule } from './fuel-flowmeter-accuracy/fuel-flow
 import { FuelFlowmeterAccuracyWorkspaceModule } from './fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
 import { CycleTimeSummaryWorkspaceModule } from './cycle-time-summary-workspace/cycle-time-summary-workspace.module';
 import { CycleTimeSummaryModule } from './cycle-time-summary/cycle-time-summary.module';
+import { TransmitterTransducerAccuracyModule } from './transmitter-transducer-accuracy/transmitter-transducer-accuracy.module';
+import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.module';
 import { CycleTimeInjectionModule } from './cycle-time-injection/cycle-time-injection.module';
 import { CycleTimeInjectionWorkspaceModule } from './cycle-time-injection-workspace/cycle-time-injection-workspace.module';
 
@@ -178,6 +180,10 @@ const routes: Routes = [
             path: ':testSumId/online-offline-calibration',
             module: OnlineOfflineCalibrationModule,
           },
+          {
+            path: ':testSumId/transmitter-transducer-accuracy',
+            module: TransmitterTransducerAccuracyModule,
+          },
         ],
       },
     ],
@@ -297,6 +303,10 @@ const routes: Routes = [
           {
             path: ':testSumId/online-offline-calibration',
             module: OnlineOfflineCalibrationWorkspaceModule,
+          },
+          {
+            path: ':testSumId/transmitter-transducer-accuracy',
+            module: TransmitterTransducerAccuracyWorkspaceModule,
           },
         ],
       },
