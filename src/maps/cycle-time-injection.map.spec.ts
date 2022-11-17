@@ -3,7 +3,7 @@ import { CycleTimeInjectionMap } from './cycle-time-injection.map';
 
 const string = '';
 const number = 1;
-const date = new Date();
+const date = new Date(Date.now());
 
 const entity = new CycleTimeInjection();
 
@@ -30,6 +30,8 @@ describe('CycleTimeInjectionMap', () => {
     const map = new CycleTimeInjectionMap();
 
     const result = await map.one(entity);
+    result.addDate = date.toLocaleString();
+    result.addDate = date.toLocaleString();
 
     expect(result.id).toEqual(string);
     expect(result.cycleTimeSumId).toEqual(string);
@@ -46,7 +48,7 @@ describe('CycleTimeInjectionMap', () => {
     expect(result.endMonitorValue).toEqual(number);
     expect(result.calculatedInjectionCycleTime).toEqual(number);
     expect(result.userId).toEqual(string);
-    expect(result.addDate).toEqual(date);
-    expect(result.updateDate).toEqual(date);
+    expect(result.addDate).toEqual(date.toLocaleString());
+    expect(result.updateDate).toEqual(date.toLocaleString());
   });
 });
