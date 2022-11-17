@@ -110,4 +110,30 @@ export class TransmitterTransducerAccuracyWorkspaceService {
 
     return this.map.one(entity);
   }
+
+  async deleteTransmitterTransducerAccuracy(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete({
+        id,
+        testSumId,
+      });
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting Transmitter Transducer Accuracy record [${id}].`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
+      );
+    }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+  }
 }
