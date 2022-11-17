@@ -2,7 +2,6 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TransmitterTransducerAccuracyRepository } from './transmitter-transducer-accuracy.repository';
 import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
-import { TestSummaryService } from '../test-summary/test-summary.service';
 import { TransmitterTransducerAccuracyDTO } from '../dto/transmitter-transducer-accuracy.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
@@ -12,8 +11,6 @@ export class TransmitterTransducerAccuracyService {
     @InjectRepository(TransmitterTransducerAccuracyRepository)
     private readonly repository: TransmitterTransducerAccuracyRepository,
     private readonly map: TransmitterTransducerAccuracyMap,
-    @Inject(forwardRef(() => TestSummaryService))
-    private readonly testSummaryService: TestSummaryService,
   ) {}
 
   async getTransmitterTransducerAccuracy(

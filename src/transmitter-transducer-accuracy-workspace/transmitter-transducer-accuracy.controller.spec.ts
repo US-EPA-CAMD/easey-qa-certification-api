@@ -6,9 +6,7 @@ import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { TransmitterTransducerAccuracyWorkspaceService } from './transmitter-transducer-accuracy.service';
-import { TransmitterTransducerAccuracy } from '../entities/workspace/transmitter-transducer-accuracy.entity';
 import { TransmitterTransducerAccuracyWorkspaceController } from './transmitter-transducer-accuracy.controller';
-import { ProtocolGasDTO, ProtocolGasRecordDTO } from '../dto/protocol-gas.dto';
 import {
   TransmitterTransducerAccuracyBaseDTO,
   TransmitterTransducerAccuracyDTO,
@@ -17,9 +15,13 @@ import {
 
 const locId = '';
 const testSumId = '';
+const entityId = '';
+const dto = new TransmitterTransducerAccuracyDTO();
 const recordDTO = new TransmitterTransducerAccuracyRecordDTO();
 
 const mockService = () => ({
+  getTransmitterTransducerAccuracy: jest.fn().mockResolvedValue(dto),
+  getTransmitterTransducerAccuracies: jest.fn().mockResolvedValue([dto]),
   createTransmitterTransducerAccuracy: jest.fn(),
 });
 
@@ -66,6 +68,29 @@ describe('Transmitter Transducer Workspace Controller', () => {
     service = module.get<TransmitterTransducerAccuracyWorkspaceService>(
       TransmitterTransducerAccuracyWorkspaceService,
     );
+  });
+
+  describe('getTransmitterTransducerAccuracies', () => {
+    it('Should call the service to get all records for a Test Summary ID', async () => {
+      const result = await controller.getTransmitterTransducerAccuracies(
+        locId,
+        testSumId,
+      );
+
+      expect(result).toEqual([recordDTO]);
+    });
+  });
+
+  describe('getTransmitterTransducerAccuracy', () => {
+    it('Calls the service to get one record by Id', async () => {
+      const result = await controller.getTransmitterTransducerAccuracy(
+        locId,
+        testSumId,
+        entityId,
+      );
+      expect(result).toEqual(recordDTO);
+      expect(service.getTransmitterTransducerAccuracy).toHaveBeenCalled();
+    });
   });
 
   describe('createTransmitterTransducerAccuracy', () => {
