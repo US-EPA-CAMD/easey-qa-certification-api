@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -100,6 +101,26 @@ export class TransmitterTransducerAccuracyWorkspaceController {
       testSumId,
       id,
       payload,
+      user.userId,
+    );
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: TransmitterTransducerAccuracyRecordDTO,
+    description: 'Deletes a workspace Transmitter Transducer Accuracy record',
+  })
+  deleteTransmitterTransducerAccuracy(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteTransmitterTransducerAccuracy(
+      testSumId,
+      id,
       user.userId,
     );
   }
