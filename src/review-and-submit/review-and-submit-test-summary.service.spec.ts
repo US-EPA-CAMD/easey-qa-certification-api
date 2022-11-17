@@ -41,12 +41,12 @@ describe('ReviewAndSubmitController', () => {
   });
 
   describe('getTestSummary', () => {
-    it('should call the review and submit test summary controller function given list of orisCodes', async () => {
+    it('should call the getTestSummary test summary service function given list of orisCodes', async () => {
       const result = await service.getTestSummaryRecords([3], []);
       expect(result.length).toBe(2);
     });
 
-    it('should call the review and submit test summary controller function given list of monPlanIds', async () => {
+    it('should call the getTestSummary test summary service function given list of monPlanIds', async () => {
       const result = await service.getTestSummaryRecords([], ['MOCK']);
       expect(result.length).toBe(1);
     });
