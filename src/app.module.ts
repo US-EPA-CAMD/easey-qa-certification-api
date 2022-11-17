@@ -67,6 +67,7 @@ import { CycleTimeInjectionModule } from './cycle-time-injection/cycle-time-inje
 import { CycleTimeInjectionWorkspaceModule } from './cycle-time-injection-workspace/cycle-time-injection-workspace.module';
 import { TransmitterTransducerAccuracyModule } from './transmitter-transducer-accuracy/transmitter-transducer-accuracy.module';
 import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.module';
+import { ReviewAndSubmitModule } from './review-and-submit/review-and-submit.module';
 
 @Module({
   imports: [
@@ -120,6 +121,7 @@ import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-tran
     FuelFlowToLoadBaselineWorkspaceModule,
     FuelFlowToLoadBaselineModule,
     CalibrationInjectionWorkspaceModule,
+    ReviewAndSubmitModule,
     CalibrationInjectionModule,
     OnlineOfflineCalibrationModule,
     OnlineOfflineCalibrationWorkspaceModule,
