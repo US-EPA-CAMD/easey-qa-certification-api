@@ -18,6 +18,7 @@ import { FlowToLoadReferenceService } from '../flow-to-load-reference/flow-to-lo
 import { OnlineOfflineCalibrationService } from '../online-offline-calibration/online-offline-calibration.service';
 import { FuelFlowToLoadBaselineService } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.service';
 import { CycleTimeSummaryService } from '../cycle-time-summary/cycle-time-summary.service';
+import { FuelFlowmeterAccuracyService } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -38,6 +39,8 @@ export class TestSummaryService {
     private readonly fuelFlowToLoadTestService: FuelFlowToLoadTestService,
     @Inject(forwardRef(() => FuelFlowToLoadBaselineService))
     private readonly fuelFlowToLoadBaselineService: FuelFlowToLoadBaselineService,
+    @Inject(forwardRef(() => FuelFlowmeterAccuracyService))
+    private readonly fuelFlowmeterAccuracyService: FuelFlowmeterAccuracyService,
     @Inject(forwardRef(() => CalibrationInjectionService))
     private readonly calInjService: CalibrationInjectionService,
     @Inject(forwardRef(() => FlowToLoadCheckService))
@@ -149,6 +152,7 @@ export class TestSummaryService {
           protocolGasData,
           fuelFlowToLoadTestData,
           fuelFlowToLoadBaselineData,
+          fuelFlowmeterAccuracyData,
           appECorrelationTestSummaryData,
           calibrationInjectionData,
           cycleTimeSummaryData,
@@ -185,6 +189,10 @@ export class TestSummaryService {
           );
 
           flowToLoadReferenceData = await this.flowLoadReferenceService.export(
+            testSumIds,
+          );
+
+          fuelFlowmeterAccuracyData = await this.fuelFlowmeterAccuracyService.export(
             testSumIds,
           );
 
@@ -228,6 +236,9 @@ export class TestSummaryService {
               i => i.testSumId === s.id,
             );
             s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.fuelFlowmeterAccuracyData = fuelFlowmeterAccuracyData.filter(
               i => i.testSumId === s.id,
             );
             s.onlineOfflineCalibrationData = onlineOfflineCalibrationData.filter(

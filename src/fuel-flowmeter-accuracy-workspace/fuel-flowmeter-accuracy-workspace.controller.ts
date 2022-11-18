@@ -21,7 +21,6 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   FuelFlowmeterAccuracyBaseDTO,
   FuelFlowmeterAccuracyDTO,
-  FuelFlowmeterAccuracyRecordDTO,
 } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracyWorkspaceService } from './fuel-flowmeter-accuracy-workspace.service';
 
@@ -36,21 +35,21 @@ export class FuelFlowmeterAccuracyWorkspaceController {
   @Get()
   @ApiOkResponse({
     isArray: true,
-    type: FuelFlowmeterAccuracyRecordDTO,
+    type: FuelFlowmeterAccuracyDTO,
     description:
       'Retrieves Workspace Fuel Flowmeter Accuracy records by Test Summary Id',
   })
   async getFuelFlowmeterAccuracies(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<FuelFlowmeterAccuracyRecordDTO[]> {
+  ): Promise<FuelFlowmeterAccuracyDTO[]> {
     return this.service.getFuelFlowmeterAccuracies(testSumId);
   }
 
   @Get(':id')
   @ApiOkResponse({
     isArray: false,
-    type: FuelFlowmeterAccuracyRecordDTO,
+    type: FuelFlowmeterAccuracyDTO,
     description:
       'Retrieves a Workspace Fuel Flowmeter Accuracy record by its Id',
   })
@@ -58,7 +57,7 @@ export class FuelFlowmeterAccuracyWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('id') id: string,
-  ): Promise<FuelFlowmeterAccuracyRecordDTO> {
+  ): Promise<FuelFlowmeterAccuracyDTO> {
     return this.service.getFuelFlowmeterAccuracy(id);
   }
 
@@ -66,7 +65,7 @@ export class FuelFlowmeterAccuracyWorkspaceController {
   @ApiBearerAuth('Token')
   @UseGuards(AuthGuard)
   @ApiCreatedResponse({
-    type: FuelFlowmeterAccuracyRecordDTO,
+    type: FuelFlowmeterAccuracyDTO,
     description: 'Creates a workspace Fuel Flowmeter Accuracy record.',
   })
   async createFuelFlowmeterAccuracy(
@@ -74,7 +73,7 @@ export class FuelFlowmeterAccuracyWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Body() payload: FuelFlowmeterAccuracyBaseDTO,
     @User() user: CurrentUser,
-  ): Promise<FuelFlowmeterAccuracyRecordDTO> {
+  ): Promise<FuelFlowmeterAccuracyDTO> {
     return this.service.createFuelFlowmeterAccuracy(
       testSumId,
       payload,

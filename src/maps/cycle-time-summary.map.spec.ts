@@ -1,4 +1,5 @@
 import { CycleTimeSummary } from '../entities/cycle-time-summary.entity';
+import { CycleTimeInjectionMap } from './cycle-time-injection.map';
 import { CycleTimeSummaryMap } from './cycle-time-summary.map';
 
 const string = '';
@@ -18,7 +19,7 @@ entity.updateDate = date;
 
 describe('CycleTimeSummaryMap', () => {
   it('should map an entity to a dto', async () => {
-    const map = new CycleTimeSummaryMap();
+    const map = new CycleTimeSummaryMap(new CycleTimeInjectionMap());
     const result = await map.one(entity);
     expect(result.id).toEqual(string);
     expect(result.testSumId).toEqual(string);
@@ -35,7 +36,7 @@ describe('CycleTimeSummaryMap', () => {
     entity.addDate = undefined;
     entity.updateDate = undefined;
 
-    const map = new CycleTimeSummaryMap();
+    const map = new CycleTimeSummaryMap(new CycleTimeInjectionMap());
     const result = await map.one(entity);
 
     expect(result.addDate).toEqual(null);

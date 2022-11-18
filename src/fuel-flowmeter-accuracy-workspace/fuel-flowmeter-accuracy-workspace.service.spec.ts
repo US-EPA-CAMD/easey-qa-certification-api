@@ -1,10 +1,11 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { Logger, LoggerModule } from '@us-epa-camd/easey-common/logger';
 import {
   FuelFlowmeterAccuracyBaseDTO,
   FuelFlowmeterAccuracyDTO,
+  FuelFlowmeterAccuracyImportDTO,
 } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracyWorkspaceRepository } from './fuel-flowmeter-accuracy-workspace.repository';
 import { FuelFlowmeterAccuracyWorkspaceService } from './fuel-flowmeter-accuracy-workspace.service';
@@ -49,6 +50,7 @@ describe('FuelFlowmeterWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
+        Logger,
         FuelFlowmeterAccuracyWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
@@ -124,6 +126,18 @@ describe('FuelFlowmeterWorkspaceService', () => {
       expect(result).toEqual(fuelFlowmeterAccuracy);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
+
+    it('Should create and return a new Fuel Flowmeter Accuracy record with Historical Record Id', async () => {
+      const result = await service.createFuelFlowmeterAccuracy(
+        testSumId,
+        payload,
+        userId,
+        false,
+        'historicalId',
+      );
+
+      expect(result).toEqual(fuelFlowmeterAccuracy);
+    });
   });
 
   describe('editFuelFlowmeterAccuracy', () => {
@@ -183,6 +197,47 @@ describe('FuelFlowmeterWorkspaceService', () => {
       }
 
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('getFuelFlowmeterAccuraciesByTestSumIds', () => {
+    it('Should get Fuel Flowmeter Accuracy records by test sum ids', async () => {
+      const result = await service.getFuelFlowmeterAccuraciesByTestSumIds([
+        testSumId,
+      ]);
+      expect(result).toEqual([fuelFlowmeterAccuracy]);
+    });
+  });
+
+  describe('Export', () => {
+    it('Should Export Fuel Flowmeter Accuracy Record', async () => {
+      jest
+        .spyOn(service, 'getFuelFlowmeterAccuraciesByTestSumIds')
+        .mockResolvedValue([]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('Import', () => {
+    it('Should Import Fuel Flowmeter Accuracy', async () => {
+      jest
+        .spyOn(service, 'createFuelFlowmeterAccuracy')
+        .mockResolvedValue(fuelFlowmeterAccuracy);
+
+      await service.import(
+        testSumId,
+        new FuelFlowmeterAccuracyImportDTO(),
+        userId,
+        false,
+      );
+    });
+    it('Should Import Fuel Flowmeter Accuracy from Historical Record', async () => {
+      jest
+        .spyOn(service, 'createFuelFlowmeterAccuracy')
+        .mockResolvedValue(fuelFlowmeterAccuracy);
+
+      await service.import(testSumId, payload, userId, true);
     });
   });
 });

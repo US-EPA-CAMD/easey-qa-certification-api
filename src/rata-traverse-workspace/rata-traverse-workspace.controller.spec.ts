@@ -4,6 +4,7 @@ import { RataTraverseWorkspaceService } from './rata-traverse-workspace.service'
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { RataTraverseChecksService } from './rata-traverse-checks.service';
 
 describe('RataTraverseWorkspaceController', () => {
   let controller: RataTraverseWorkspaceController;
@@ -18,6 +19,12 @@ describe('RataTraverseWorkspaceController', () => {
         {
           provide: RataTraverseWorkspaceService,
           useFactory: () => ({}),
+        },
+        {
+          provide: RataTraverseChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn().mockResolvedValue([]),
+          }),
         },
       ],
     }).compile();

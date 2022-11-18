@@ -190,6 +190,7 @@ export class TestSummaryWorkspaceService {
           protocolGasData,
           fuelFlowToLoadTestData,
           fuelFlowToLoadBaselineData,
+          fuelFlowmeterAccuracyData,
           calibrationInjectionData,
           cycleTimeSummaryData,
           flowToLoadCheckData,
@@ -221,6 +222,10 @@ export class TestSummaryWorkspaceService {
           );
 
           fuelFlowToLoadBaselineData = await this.fuelFlowToLoadBaselineWorkspaceService.export(
+            testSumIds,
+          );
+
+          fuelFlowmeterAccuracyData = await this.fuelFlowmeterAccuracyWorkspaceService.export(
             testSumIds,
           );
 
@@ -268,6 +273,9 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.fuelFlowmeterAccuracyData = fuelFlowmeterAccuracyData.filter(
               i => i.testSumId === s.id,
             );
             s.onlineOfflineCalibrationData = onlineOfflineCalibrationData.filter(
@@ -448,6 +456,29 @@ export class TestSummaryWorkspaceService {
               this.fuelFlowToLoadBaselineWorkspaceService.import(
                 createdTestSummary.id,
                 fuelFlowToLoadBaseline,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.fuelFlowmeterAccuracyData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.FFACC
+    ) {
+      for (const fuelFlowmeterAccuracy of payload.fuelFlowmeterAccuracyData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.fuelFlowmeterAccuracyWorkspaceService.import(
+                createdTestSummary.id,
+                fuelFlowmeterAccuracy,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),

@@ -9,7 +9,7 @@ import {
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { TestSummary } from './test-summary.entity';
 
-@Entity({ name: 'camdecmps.fuel_flowmeter_accuracy' })
+@Entity({ name: 'camdecmpswks.fuel_flowmeter_accuracy' })
 export class FuelFlowmeterAccuracy extends BaseEntity {
   @PrimaryColumn({
     type: 'varchar',
@@ -28,6 +28,12 @@ export class FuelFlowmeterAccuracy extends BaseEntity {
     name: 'acc_test_method_cd',
   })
   accuracyTestMethodCode: string;
+
+  @Column({
+    type: 'timestamp',
+    name: 'reinstall_date',
+  })
+  reinstallationDate: string;
 
   @Column({
     name: 'reinstall_hour',
@@ -58,12 +64,6 @@ export class FuelFlowmeterAccuracy extends BaseEntity {
     name: 'userid',
   })
   userId: string;
-
-  @Column({
-    type: 'timestamp',
-    name: 'reinstall_date',
-  })
-  reinstallationDate: Date;
 
   @Column({
     type: 'timestamp',

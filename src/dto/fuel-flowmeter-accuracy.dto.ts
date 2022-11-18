@@ -1,11 +1,11 @@
 const KEY = 'Fuel Flowmeter Accuracy';
 export class FuelFlowmeterAccuracyBaseDTO {
   accuracyTestMethodCode: string;
-  reinstallationHour: number;
   lowFuelAccuracy: number;
   midFuelAccuracy: number;
   highFuelAccuracy: number;
-  reinstallationDate: Date;
+  reinstallationDate: string;
+  reinstallationHour: number;
 }
 
 export class FuelFlowmeterAccuracyRecordDTO extends FuelFlowmeterAccuracyBaseDTO {

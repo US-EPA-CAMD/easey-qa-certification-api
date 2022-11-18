@@ -39,6 +39,8 @@ import { FlowToLoadReferenceImportDTO } from '../dto/flow-to-load-reference.dto'
 import { FlowToLoadCheckImportDTO } from '../dto/flow-to-load-check.dto';
 import { OnlineOfflineCalibrationImportDTO } from '../dto/online-offline-calibration.dto';
 import { CycleTimeSummaryImportDTO } from '../dto/cycle-time-summary.dto';
+import { FuelFlowmeterAccuracyImportDTO } from '../dto/fuel-flowmeter-accuracy.dto';
+import { TransmitterTransducerAccuracyImportDTO } from '../dto/transmitter-transducer-accuracy.dto';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -353,8 +355,12 @@ describe('Test Summary Check Service Test', () => {
       importPayload.onlineOfflineCalibrationData = [
         new OnlineOfflineCalibrationImportDTO(),
       ];
-      importPayload.fuelFlowmeterAccuracyData = [{}];
-      importPayload.transmitterTransducerData = [{}];
+      importPayload.fuelFlowmeterAccuracyData = [
+        new FuelFlowmeterAccuracyImportDTO(),
+      ];
+      importPayload.transmitterTransducerData = [
+        new TransmitterTransducerAccuracyImportDTO(),
+      ];
       importPayload.fuelFlowToLoadBaselineData = [
         new FuelFlowToLoadBaselineImportDTO(),
       ];
