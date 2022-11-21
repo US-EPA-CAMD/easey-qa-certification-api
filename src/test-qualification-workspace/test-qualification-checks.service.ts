@@ -174,7 +174,7 @@ export class TestQualificationChecksService {
             }),
           );
         }
-        if (rataRecord.numberOfLoadLevels > 1) {
+        if (rataRecord?.numberOfLoadLevels > 1) {
           errors.push(
             this.getErrorMessage('RATA-118-D', {
               value: testQualification.testClaimCode,
