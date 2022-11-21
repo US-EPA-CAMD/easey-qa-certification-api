@@ -157,25 +157,6 @@ export class QACertificationChecksService {
           }),
         );
 
-        summary.testQualificationData?.forEach(testQualification => {
-          promises.push(
-            new Promise(async (resolve, _reject) => {
-              const results = this.testQualificationChecksService.runChecks(
-                locationId,
-                testQualification,
-                summary.testQualificationData,
-                duplicateQaSupp ? duplicateQaSupp.testSumId : null,
-                summary,
-                rata,
-                true,
-                false,
-              );
-
-              resolve(results);
-            }),
-          );
-        });
-
         rata.rataSummaryData?.forEach(rataSummary => {
           promises.push(
             new Promise(async (resolve, _reject) => {
@@ -254,6 +235,25 @@ export class QACertificationChecksService {
             });
           });
         });
+      });
+
+      summary.testQualificationData?.forEach(testQualification => {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const results = this.testQualificationChecksService.runChecks(
+              locationId,
+              testQualification,
+              summary.testQualificationData,
+              duplicateQaSupp ? duplicateQaSupp.testSumId : null,
+              summary,
+              summary.rataData?.length > 0 ? summary.rataData[0] : null,
+              true,
+              false,
+            );
+
+            resolve(results);
+          }),
+        );
       });
     }
 

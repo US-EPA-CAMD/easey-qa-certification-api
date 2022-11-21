@@ -191,7 +191,7 @@ export class TestQualificationChecksService {
             }),
           );
         }
-        if (rataRecord.numberOfLoadLevels < 2) {
+        if (rataRecord?.numberOfLoadLevels < 2) {
           errors.push(
             this.getErrorMessage('RATA-118-E', {
               value: testQualification.testClaimCode,
@@ -201,7 +201,7 @@ export class TestQualificationChecksService {
       }
 
       if (testQualification.testClaimCode === 'NLE') {
-        if (rataRecord.numberOfLoadLevels > 1) {
+        if (rataRecord?.numberOfLoadLevels > 1) {
           errors.push(
             this.getErrorMessage('RATA-118-D', {
               value: testQualification.testClaimCode,
