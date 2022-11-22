@@ -231,7 +231,10 @@ export class RataTraverseChecksService {
   private rata78Check(referenceMethodCode: string, yawAngle: number): string {
     let error: string = null;
 
-    if (['2F', '2G'].includes(referenceMethodCode)) {
+    if (
+      referenceMethodCode.startsWith('2F') ||
+      referenceMethodCode.startsWith('2G')
+    ) {
       if (!yawAngle) {
         error = this.getMessage('RATA-78-A', {
           key: KEY,
@@ -244,7 +247,7 @@ export class RataTraverseChecksService {
           fieldname: 'yawAngle',
           minvalue: YAW_ANGLE_MIN_VALUE,
           maxvalue: YAW_ANGLE_MAX_VALUE,
-          key: KEY
+          key: KEY,
         });
       }
     } else {
@@ -261,10 +264,12 @@ export class RataTraverseChecksService {
 
   private rata79Check(referenceMethodCode: string, pitchAngle: number): string {
     let error: string = null;
+    const fieldname = 'pitchAngle';
 
-    if (referenceMethodCode === '2F') {
+    if (referenceMethodCode.startsWith('2F')) {
       if (!pitchAngle) {
         error = this.getMessage('RATA-79-A', {
+          fieldname,
           key: KEY,
         });
       }
@@ -275,7 +280,7 @@ export class RataTraverseChecksService {
       ) {
         error = this.getMessage('RATA-79-B', {
           value: pitchAngle,
-          fieldname: 'yawAngle',
+          fieldname,
           minvalue: PITCH_ANGLE_MIN_VALUE,
           maxvalue: PITCH_ANGLE_MAX_VALUE,
           key: KEY,
@@ -284,7 +289,7 @@ export class RataTraverseChecksService {
     } else {
       if (pitchAngle) {
         error = this.getMessage('RATA-79-C', {
-          fieldname: 'pitchAngle',
+          fieldname,
           key: KEY,
         });
       }
