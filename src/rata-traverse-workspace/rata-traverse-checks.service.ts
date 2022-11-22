@@ -106,6 +106,14 @@ export class RataTraverseChecksService {
         errorList.push(error);
       }
 
+      error = this.rata79Check(
+        rataSumRecord.referenceMethodCode,
+        rataTraverse.pitchAngle,
+      );
+      if (error) {
+        errorList.push(error);
+      }
+
       error = this.rata81Check(rataTraverse, rataSumRecord);
       if (error) {
         errorList.push(error);
@@ -236,6 +244,7 @@ export class RataTraverseChecksService {
           fieldname: 'yawAngle',
           minvalue: YAW_ANGLE_MIN_VALUE,
           maxvalue: YAW_ANGLE_MAX_VALUE,
+          key: KEY
         });
       }
     } else {
@@ -269,6 +278,7 @@ export class RataTraverseChecksService {
           fieldname: 'yawAngle',
           minvalue: PITCH_ANGLE_MIN_VALUE,
           maxvalue: PITCH_ANGLE_MAX_VALUE,
+          key: KEY,
         });
       }
     } else {
