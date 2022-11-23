@@ -1,3 +1,5 @@
+import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
 import {
   AppECorrelationTestRunDTO,
   AppECorrelationTestRunImportDTO,
@@ -23,6 +25,8 @@ export class AppECorrelationTestSummaryRecordDTO extends AppECorrelationTestSumm
 }
 
 export class AppECorrelationTestSummaryImportDTO extends AppECorrelationTestSummaryBaseDTO {
+  @ValidateNested({ each: true })
+  @Type(() => AppECorrelationTestRunImportDTO)
   appECorrelationTestRunData: AppECorrelationTestRunImportDTO[];
 }
 

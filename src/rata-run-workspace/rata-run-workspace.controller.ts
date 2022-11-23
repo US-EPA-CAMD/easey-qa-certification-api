@@ -83,11 +83,13 @@ export class RataRunWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<RataRunRecordDTO> {
     await this.checksService.runChecks(
-      locationId,
       payload,
+      locationId,
       testSumId,
       false,
-      true,
+      false,
+      null,
+      rataSumId,
     );
     return this.service.createRataRun(
       testSumId,
@@ -107,7 +109,7 @@ export class RataRunWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('rataId') _rataId: string,
-    @Param('rataSumId') rataSumId: string,
+    @Param('rataSumId') _rataSumId: string,
     @Param('id') id: string,
     @User() user: CurrentUser,
   ): Promise<void> {
@@ -131,8 +133,8 @@ export class RataRunWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<RataRunRecordDTO> {
     await this.checksService.runChecks(
-      locationId,
       payload,
+      locationId,
       testSumId,
       false,
       true,

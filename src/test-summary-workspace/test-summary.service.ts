@@ -1,6 +1,4 @@
 import { v4 as uuid } from 'uuid';
-import { getManager } from 'typeorm';
-
 import {
   forwardRef,
   HttpStatus,
@@ -27,17 +25,26 @@ import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { LinearitySummaryWorkspaceService } from '../linearity-summary-workspace/linearity-summary.service';
 
 import { Unit } from './../entities/workspace/unit.entity';
-import { Component } from './../entities/workspace/component.entity';
 import { StackPipe } from './../entities/workspace/stack-pipe.entity';
-import { MonitorSystem } from './../entities/workspace/monitor-system.entity';
-import { MonitorLocation } from './../entities/workspace/monitor-location.entity';
-import { ReportingPeriod } from './../entities/workspace/reporting-period.entity';
 import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
 
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
+import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
+import { CalibrationInjectionWorkspaceService } from '../calibration-injection-workspace/calibration-injection-workspace.service';
+import { UnitRepository } from '../unit/unit.repository';
+import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
+import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
+import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
+import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
 import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
+import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
+import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
+import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -52,10 +59,36 @@ export class TestSummaryWorkspaceService {
     private readonly rataService: RataWorkspaceService,
     @Inject(forwardRef(() => ProtocolGasWorkspaceService))
     private readonly protocolGasService: ProtocolGasWorkspaceService,
+    @Inject(forwardRef(() => FuelFlowToLoadTestWorkspaceService))
+    private readonly fuelFlowToLoadTestWorkspaceService: FuelFlowToLoadTestWorkspaceService,
     @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
     private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
+    @Inject(forwardRef(() => CalibrationInjectionWorkspaceService))
+    private readonly calInjWorkspaceService: CalibrationInjectionWorkspaceService,
+    @InjectRepository(UnitRepository)
+    private readonly unitRepository: UnitRepository,
+    @InjectRepository(StackPipeRepository)
+    private readonly stackPipeRepository: StackPipeRepository,
+    @InjectRepository(MonitorLocationRepository)
+    private readonly monitorLocationRepository: MonitorLocationRepository,
+    @InjectRepository(ComponentWorkspaceRepository)
+    private readonly componentRepository: ComponentWorkspaceRepository,
+    @InjectRepository(MonitorSystemRepository)
+    private readonly monSysRepository: MonitorSystemRepository,
+    @InjectRepository(ReportingPeriodRepository)
+    private readonly reportingPeriodRepository: ReportingPeriodRepository,
+    @Inject(forwardRef(() => FuelFlowToLoadBaselineWorkspaceService))
+    private readonly fuelFlowToLoadBaselineWorkspaceService: FuelFlowToLoadBaselineWorkspaceService,
+    @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
+    private readonly flowToLoadCheckWorkspaceService: FlowToLoadCheckWorkspaceService,
+    @Inject(forwardRef(() => FuelFlowmeterAccuracyWorkspaceService))
+    private readonly fuelFlowmeterAccuracyWorkspaceService: FuelFlowmeterAccuracyWorkspaceService,
     @Inject(forwardRef(() => FlowToLoadReferenceWorkspaceService))
     private readonly flowToLoadReferenceWorkspaceService: FlowToLoadReferenceWorkspaceService,
+    @Inject(forwardRef(() => OnlineOfflineCalibrationWorkspaceService))
+    private readonly onlineOfflineCalibrationWorkspaceService: OnlineOfflineCalibrationWorkspaceService,
+    @Inject(forwardRef(() => CycleTimeSummaryWorkspaceService))
+    private readonly cycleTimeSummaryWorkspaceService: CycleTimeSummaryWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -81,7 +114,6 @@ export class TestSummaryWorkspaceService {
     delete dto.transmitterTransducerData;
     delete dto.fuelFlowToLoadBaselineData;
     delete dto.fuelFlowToLoadTestData;
-    delete dto.appECorrelationTestSummaryData;
     delete dto.unitDefaultTestData;
     delete dto.hgSummaryData;
     delete dto.testQualificationData;
@@ -156,8 +188,16 @@ export class TestSummaryWorkspaceService {
         let linearitySummaryData,
           rataData,
           protocolGasData,
+          fuelFlowToLoadTestData,
+          fuelFlowToLoadBaselineData,
+          fuelFlowmeterAccuracyData,
+          calibrationInjectionData,
+          cycleTimeSummaryData,
+          flowToLoadCheckData,
           flowToLoadReferenceData,
-          appECorrelationTestSummaryData = null;
+          appECorrelationTestSummaryData,
+          onlineOfflineCalibrationData;
+
         let testSumIds;
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
@@ -168,14 +208,47 @@ export class TestSummaryWorkspaceService {
 
         if (testSumIds) {
           linearitySummaryData = await this.linearityService.export(testSumIds);
+
           rataData = await this.rataService.export(testSumIds);
+
           protocolGasData = await this.protocolGasService.export(testSumIds);
-          flowToLoadReferenceData = await this.flowToLoadReferenceWorkspaceService.export(
-            testSumIds,
-          );
+
           appECorrelationTestSummaryData = await this.appECorrelationTestSummaryWorkspaceService.export(
             testSumIds,
           );
+
+          fuelFlowToLoadTestData = await this.fuelFlowToLoadTestWorkspaceService.export(
+            testSumIds,
+          );
+
+          fuelFlowToLoadBaselineData = await this.fuelFlowToLoadBaselineWorkspaceService.export(
+            testSumIds,
+          );
+
+          fuelFlowmeterAccuracyData = await this.fuelFlowmeterAccuracyWorkspaceService.export(
+            testSumIds,
+          );
+
+          calibrationInjectionData = await this.calInjWorkspaceService.export(
+            testSumIds,
+          );
+
+          flowToLoadCheckData = await this.flowToLoadCheckWorkspaceService.export(
+            testSumIds,
+          );
+
+          flowToLoadReferenceData = await this.flowToLoadReferenceWorkspaceService.export(
+            testSumIds,
+          );
+
+          onlineOfflineCalibrationData = await this.onlineOfflineCalibrationWorkspaceService.export(
+            testSumIds,
+          );
+
+          cycleTimeSummaryData = await this.cycleTimeSummaryWorkspaceService.export(
+            testSumIds,
+          );
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -187,7 +260,28 @@ export class TestSummaryWorkspaceService {
             s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
               i => i.testSumId === s.id,
             );
+            s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.fuelFlowToLoadBaselineData = fuelFlowToLoadBaselineData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.calibrationInjectionData = calibrationInjectionData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.flowToLoadCheckData = flowToLoadCheckData.filter(
+              i => i.testSumId === s.id,
+            );
             s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.fuelFlowmeterAccuracyData = fuelFlowmeterAccuracyData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.onlineOfflineCalibrationData = onlineOfflineCalibrationData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.cycleTimeSummaryData = cycleTimeSummaryData.filter(
               i => i.testSumId === s.id,
             );
           });
@@ -305,6 +399,121 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
+      payload.fuelFlowToLoadTestData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.FF2LTST
+    ) {
+      for (const fuelFlowToLoadTest of payload.fuelFlowToLoadTestData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.fuelFlowToLoadTestWorkspaceService.import(
+                createdTestSummary.id,
+                fuelFlowToLoadTest,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.flowToLoadCheckData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.F2LCHK
+    ) {
+      for (const flowToLoadCheck of payload.flowToLoadCheckData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.flowToLoadCheckWorkspaceService.import(
+                createdTestSummary.id,
+                flowToLoadCheck,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.fuelFlowToLoadBaselineData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.FF2LBAS
+    ) {
+      for (const fuelFlowToLoadBaseline of payload.fuelFlowToLoadBaselineData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.fuelFlowToLoadBaselineWorkspaceService.import(
+                createdTestSummary.id,
+                fuelFlowToLoadBaseline,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.fuelFlowmeterAccuracyData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.FFACC
+    ) {
+      for (const fuelFlowmeterAccuracy of payload.fuelFlowmeterAccuracyData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.fuelFlowmeterAccuracyWorkspaceService.import(
+                createdTestSummary.id,
+                fuelFlowmeterAccuracy,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.flowToLoadReferenceData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.F2LREF
+    ) {
+      for (const flowToLoadReference of payload.flowToLoadReferenceData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.flowToLoadReferenceWorkspaceService.import(
+                createdTestSummary.id,
+                flowToLoadReference,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
       payload.appECorrelationTestSummaryData?.length > 0 &&
       payload.testTypeCode === TestTypeCodes.APPE
     ) {
@@ -314,8 +523,78 @@ export class TestSummaryWorkspaceService {
             const innerPromises = [];
             innerPromises.push(
               this.appECorrelationTestSummaryWorkspaceService.import(
+                locationId,
                 createdTestSummary.id,
                 appECorrelationTestSummary,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.calibrationInjectionData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.SEVENDAY
+    ) {
+      for (const calibrationInjection of payload.calibrationInjectionData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.calInjWorkspaceService.import(
+                createdTestSummary.id,
+                calibrationInjection,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.cycleTimeSummaryData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.CYCLE
+    ) {
+      for (const cycleTimeSummary of payload.cycleTimeSummaryData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.cycleTimeSummaryWorkspaceService.import(
+                createdTestSummary.id,
+                cycleTimeSummary,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.onlineOfflineCalibrationData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.ONOFF
+    ) {
+      for (const onlineOfflineCalibration of payload.onlineOfflineCalibrationData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.onlineOfflineCalibrationWorkspaceService.import(
+                createdTestSummary.id,
+                onlineOfflineCalibration,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),
@@ -338,22 +617,25 @@ export class TestSummaryWorkspaceService {
     userId: string,
     historicalrecordId?: string,
   ): Promise<TestSummaryRecordDTO> {
-    const mgr = getManager();
     const timestamp = currentDateTime();
     const [
       reportPeriodId,
       componentRecordId,
-      monitorSystemRecordId,
+      monitorSystem,
     ] = await this.lookupValues(locationId, payload);
-    const location = await mgr.findOne(MonitorLocation, locationId);
+
+    // Swap the DTO 3-char System ID for the Actual UID of the Monitor System
+    payload.monitoringSystemID = monitorSystem?.id;
+
+    const location = await this.monitorLocationRepository.findOne(locationId);
 
     let unit: Unit;
     let stackPipe: StackPipe;
 
     if (location.unitId) {
-      unit = await mgr.findOne(Unit, location.unitId);
+      unit = await this.unitRepository.findOne(location.unitId);
     } else {
-      stackPipe = await mgr.findOne(StackPipe, location.stackPipeId);
+      stackPipe = await this.stackPipeRepository.findOne(location.stackPipeId);
     }
 
     if (
@@ -372,7 +654,6 @@ export class TestSummaryWorkspaceService {
       ...payload,
       id: historicalrecordId ? historicalrecordId : uuid(),
       locationId,
-      monitorSystemRecordId,
       componentRecordId,
       reportPeriodId,
       userId,
@@ -429,8 +710,11 @@ export class TestSummaryWorkspaceService {
     const [
       reportPeriodId,
       componentRecordId,
-      monitorSystemRecordId,
+      monitorSystem,
     ] = await this.lookupValues(locationId, payload);
+
+    // Swap the DTO 3-char System ID for the Actual UID of the Monitor System
+    payload.monitoringSystemID = monitorSystem?.id;
 
     entity.beginDate = payload.beginDate;
     entity.beginHour = payload.beginHour;
@@ -441,7 +725,7 @@ export class TestSummaryWorkspaceService {
     entity.componentRecordId = componentRecordId;
     entity.gracePeriodIndicator = payload.gracePeriodIndicator;
     entity.injectionProtocolCode = payload.injectionProtocolCode;
-    entity.monitorSystemRecordId = monitorSystemRecordId;
+    entity.monitoringSystemID = payload.monitoringSystemID;
     entity.reportPeriodId = reportPeriodId;
     entity.spanScaleCode = payload.spanScaleCode;
     entity.testComment = payload.testComment;
@@ -493,45 +777,35 @@ export class TestSummaryWorkspaceService {
   }
 
   async lookupValues(locationId: string, payload: TestSummaryBaseDTO) {
-    const mgr = getManager();
-
     let reportPeriodId = null;
     let componentRecordId = null;
-    let monitorSystemRecordId = null;
+    let monitorSystem = null;
 
     if (payload.year && payload.quarter) {
-      const rptPeriod = await mgr.findOne(ReportingPeriod, {
-        where: {
-          year: payload.year,
-          quarter: payload.quarter,
-        },
+      const rptPeriod = await this.reportingPeriodRepository.findOne({
+        year: payload.year,
+        quarter: payload.quarter,
       });
 
       reportPeriodId = rptPeriod ? rptPeriod.id : null;
     }
 
     if (payload.componentID) {
-      const component = await mgr.findOne(Component, {
-        where: {
-          locationId: locationId,
-          componentID: payload.componentID,
-        },
+      const component = await this.componentRepository.findOne({
+        locationId: locationId,
+        componentID: payload.componentID,
       });
 
       componentRecordId = component ? component.id : null;
     }
 
     if (payload.monitoringSystemID) {
-      const monitorSystem = await mgr.findOne(MonitorSystem, {
-        where: {
-          locationId,
-          monitoringSystemID: payload.monitoringSystemID,
-        },
+      monitorSystem = await this.monSysRepository.findOne({
+        locationId: locationId,
+        monitoringSystemID: payload.monitoringSystemID,
       });
-
-      monitorSystemRecordId = monitorSystem ? monitorSystem.id : null;
     }
 
-    return [reportPeriodId, componentRecordId, monitorSystemRecordId];
+    return [reportPeriodId, componentRecordId, monitorSystem];
   }
 }

@@ -51,6 +51,23 @@ import { FlowToLoadReferenceWorkspaceModule } from './flow-to-load-reference-wor
 import { FlowToLoadReferenceModule } from './flow-to-load-reference/flow-to-load-reference.module';
 import { FuelFlowToLoadBaselineWorkspaceModule } from './fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.module';
 import { FuelFlowToLoadBaselineModule } from './fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.module';
+import { CalibrationInjectionWorkspaceModule } from './calibration-injection-workspace/calibration-injection-workspace.module';
+import { CalibrationInjectionModule } from './calibration-injection/calibration-injection.module';
+import { OnlineOfflineCalibrationModule } from './online-offline-calibration/online-offline-calibration.module';
+import { OnlineOfflineCalibrationWorkspaceModule } from './online-offline-calibration-workspace/online-offline-calibration.module';
+import { UnitModule } from './unit/unit.module';
+import { StackPipeModule } from './stack-pipe/stack-pipe.module';
+import { MonitorLocationModule } from './monitor-location/monitor-location.module';
+import { ReportingPeriodModule } from './reporting-period/reporting-period.module';
+import { FuelFlowmeterAccuracyWorkspaceModule } from './fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
+import { FuelFlowmeterAccuracyModule } from './fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.module';
+import { CycleTimeSummaryWorkspaceModule } from './cycle-time-summary-workspace/cycle-time-summary-workspace.module';
+import { CycleTimeSummaryModule } from './cycle-time-summary/cycle-time-summary.module';
+import { CycleTimeInjectionModule } from './cycle-time-injection/cycle-time-injection.module';
+import { CycleTimeInjectionWorkspaceModule } from './cycle-time-injection-workspace/cycle-time-injection-workspace.module';
+import { TransmitterTransducerAccuracyModule } from './transmitter-transducer-accuracy/transmitter-transducer-accuracy.module';
+import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.module';
+import { ReviewAndSubmitModule } from './review-and-submit/review-and-submit.module';
 
 @Module({
   imports: [
@@ -103,6 +120,23 @@ import { FuelFlowToLoadBaselineModule } from './fuel-flow-to-load-baseline/fuel-
     AppEHeatInputFromOilWorkspaceModule,
     FuelFlowToLoadBaselineWorkspaceModule,
     FuelFlowToLoadBaselineModule,
+    CalibrationInjectionWorkspaceModule,
+    ReviewAndSubmitModule,
+    CalibrationInjectionModule,
+    OnlineOfflineCalibrationModule,
+    OnlineOfflineCalibrationWorkspaceModule,
+    UnitModule,
+    StackPipeModule,
+    MonitorLocationModule,
+    ReportingPeriodModule,
+    FuelFlowmeterAccuracyModule,
+    FuelFlowmeterAccuracyWorkspaceModule,
+    CycleTimeSummaryWorkspaceModule,
+    CycleTimeSummaryModule,
+    TransmitterTransducerAccuracyModule,
+    TransmitterTransducerAccuracyWorkspaceModule,
+    CycleTimeInjectionModule,
+    CycleTimeInjectionWorkspaceModule,
   ],
 })
 export class AppModule {}

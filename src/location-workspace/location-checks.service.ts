@@ -81,7 +81,7 @@ export class LocationChecksService {
     const locations: LocationIdentifiers[] = this.processLocations(payload);
 
     if (locations.length === 0) {
-      errorList.push(CheckCatalogService.formatResultMessage('IMPORT-13-A'));
+      errorList.push(this.getMessage('IMPORT-13-A'));
     } else {
       const dbLocations = await this.repository.getLocationsByUnitStackPipeIds(
         orisCode,
@@ -103,14 +103,14 @@ export class LocationChecksService {
           ) {
             // IMPORT-13 All Unit Locations Present in the Production Database (Result C)
             errorList.push(
-              CheckCatalogService.formatResultMessage('IMPORT-13-C', {
+              this.getMessage('IMPORT-13-C', {
                 invalid: location.unitId,
               }),
             );
           } else if (!dbLocation) {
             // IMPORT-13 All Stack/Pipe Locations Present in the Production Database (Result B)
             errorList.push(
-              CheckCatalogService.formatResultMessage('IMPORT-13-B', {
+              this.getMessage('IMPORT-13-B', {
                 unitStackID: location.unitId,
               }),
             );
@@ -121,7 +121,7 @@ export class LocationChecksService {
           if (!dbLocation) {
             // IMPORT-13 All Stack/Pipe Locations Present in the Production Database (Result B)
             errorList.push(
-              CheckCatalogService.formatResultMessage('IMPORT-13-B', {
+              this.getMessage('IMPORT-13-B', {
                 unitStackID: location.stackPipeId,
               }),
             );
@@ -137,7 +137,7 @@ export class LocationChecksService {
             if (!dbSystemIDs.includes(systemID)) {
               // IMPORT-14 All QA Systems Present in the Production Database (Result A)
               errorList.push(
-                CheckCatalogService.formatResultMessage('IMPORT-14-A', {
+                this.getMessage('IMPORT-14-A', {
                   systemID,
                 }),
               );
@@ -148,7 +148,7 @@ export class LocationChecksService {
             if (!dbComponentIDs.includes(componentID)) {
               // IMPORT-15 All QA Components Present in the Production Database (Result A)
               errorList.push(
-                CheckCatalogService.formatResultMessage('IMPORT-15-A', {
+                this.getMessage('IMPORT-15-A', {
                   componentID,
                 }),
               );
@@ -160,5 +160,9 @@ export class LocationChecksService {
 
     this.logger.info('Completed Unit/Stack Location Checks');
     return [locations, errorList];
+  }
+
+  getMessage(messageKey: string, messageArgs?: object): string {
+    return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
   }
 }

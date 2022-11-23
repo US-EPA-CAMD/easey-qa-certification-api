@@ -9,8 +9,13 @@ import { LinearityInjectionChecksService } from './linearity-injection-checks.se
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
 import { LinearitySummaryWorkspaceRepository } from '../linearity-summary-workspace/linearity-summary.repository';
 import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
+const testSumId = '1';
 const linSumId = '1';
 
 const mockRepository = () => ({
@@ -23,6 +28,10 @@ linSum.injections = [linInj];
 
 const mockLinearySummaryRepository = () => ({
   getSummaryById: jest.fn().mockResolvedValue(linSum),
+});
+
+const mockTestSummaryRepository = () => ({
+  getTestSummaryById: jest.fn().mockResolvedValue(new TestSummary()),
 });
 
 describe('Linearity Injection Check Service Test', () => {
@@ -43,6 +52,10 @@ describe('Linearity Injection Check Service Test', () => {
           provide: LinearitySummaryWorkspaceRepository,
           useFactory: mockLinearySummaryRepository,
         },
+        {
+          provide: TestSummaryWorkspaceRepository,
+          useFactory: mockTestSummaryRepository,
+        },
       ],
     }).compile();
 
@@ -58,7 +71,7 @@ describe('Linearity Injection Check Service Test', () => {
   describe('Linearity Injection Checks', () => {
     const payload = new LinearityInjectionBaseDTO();
     it('Should pass all checks', async () => {
-      const result = await service.runChecks(linSumId, payload);
+      const result = await service.runChecks(payload, linSumId, testSumId);
       expect(result).toEqual([]);
     });
   });
@@ -78,7 +91,7 @@ describe('Linearity Injection Check Service Test', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(returnValue);
 
       try {
-        await service.runChecks(linSumId, payload);
+        await service.runChecks(payload, linSumId, testSumId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -91,24 +104,34 @@ describe('Linearity Injection Check Service Test', () => {
     payload.injectionHour = 1;
     payload.injectionMinute = 1;
 
-    const linInjImportDto = new LinearityInjectionImportDTO();
-    const importpayload = [linInjImportDto, linInjImportDto, linInjImportDto];
-    linInjImportDto.injectionDate = new Date('2022-01-12');
-    linInjImportDto.injectionHour = 1;
-    linInjImportDto.injectionMinute = 1;
-    importpayload.push(linInjImportDto);
-
-    it('Should get There were more than three gas injections for [Linearity Summary] error while importing', async () => {
+    it('Should get error when There were more than three gas injections for [Linearity Summary] while importing', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
+      const linInjImportDto = new LinearityInjectionImportDTO();
+      const testSumImportDto = new TestSummaryImportDTO();
+      testSumImportDto.testTypeCode = TestTypeCodes.LINE;
+      const importpayload = [linInjImportDto, linInjImportDto, linInjImportDto];
+      linInjImportDto.injectionDate = new Date('2022-01-12');
+      linInjImportDto.injectionHour = 1;
+      linInjImportDto.injectionMinute = 1;
+      importpayload.push(linInjImportDto);
+
       try {
-        await service.runChecks(linSumId, payload, true, false, importpayload);
+        await service.runChecks(
+          payload,
+          linSumId,
+          testSumId,
+          true,
+          false,
+          importpayload,
+          testSumImportDto,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
-    it('Should get There were more than three gas injections for [Linearity Summary] error', async () => {
+    it('Should get error when There were more than three gas injections for [Linearity Summary]', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
       linSum.injections = [linInj, linInj, linInj, linInj];
       jest
@@ -116,7 +139,7 @@ describe('Linearity Injection Check Service Test', () => {
         .mockResolvedValue(linSum);
 
       try {
-        await service.runChecks(linSumId, payload);
+        await service.runChecks(payload, linSumId, testSumId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }

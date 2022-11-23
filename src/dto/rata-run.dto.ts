@@ -1,4 +1,10 @@
-import { IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsPositive,
+  ValidateIf,
+  ValidateNested,
+  ValidationArguments,
+} from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 import { RunStatusCode } from '../entities/run-status-code.entity';
@@ -6,10 +12,15 @@ import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { FlowRataRunDTO, FlowRataRunImportDTO } from './flow-rata-run.dto';
 import { IsNotNegative } from '../pipes/is-not-negative.pipe';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
+import { Type } from 'class-transformer';
 
 const KEY = 'RATA Run';
 const MIN_RUN_NUMBER = 1;
 const MAX_RUN_NUMBER = 99;
+const MIN_HOUR = 0;
+const MAX_HOUR = 23;
+const MIN_MINUTE = 0;
+const MAX_MINUTE = 59;
 
 export class RataRunBaseDTO {
   @IsNotEmpty({
@@ -33,12 +44,115 @@ export class RataRunBaseDTO {
   })
   runNumber: number;
 
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-30-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   beginDate: Date;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-30-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-30-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   beginHour: number;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-30-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_MINUTE, MAX_MINUTE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-30-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   beginMinute: number;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-31-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   endDate: Date;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-31-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-31-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   endHour: number;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-31-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_MINUTE, MAX_MINUTE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-31-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   endMinute: number;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-27-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsNotNegative({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-27-B', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @ValidateIf(o => o.runStatusCode === 'RUNUSED')
   cemValue: number;
 
   @IsNotEmpty({
@@ -61,8 +175,33 @@ export class RataRunBaseDTO {
   @ValidateIf(o => o.runStatusCode === 'RUNUSED')
   rataReferenceValue: number;
 
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-26-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsPositive({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-26-B', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @ValidateIf(o => o.runStatusCode === 'RUNUSED')
   grossUnitLoad: number;
 
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('RATA-29-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsValidCode(RunStatusCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-29-B', {
@@ -85,6 +224,8 @@ export class RataRunRecordDTO extends RataRunBaseDTO {
 }
 
 export class RataRunImportDTO extends RataRunBaseDTO {
+  @ValidateNested({ each: true })
+  @Type(() => FlowRataRunImportDTO)
   flowRataRunData: FlowRataRunImportDTO[];
 }
 

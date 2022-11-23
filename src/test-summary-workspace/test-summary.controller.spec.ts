@@ -1,7 +1,6 @@
-import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
 import {
   TestSummaryBaseDTO,
@@ -9,10 +8,22 @@ import {
   TestSummaryRecordDTO,
 } from '../dto/test-summary.dto';
 import { TestSummaryChecksService } from './test-summary-checks.service';
+import { TestQualificationChecksService } from '../test-qualification-workspace/test-qualification-checks.service';
 
 import { TestSummaryWorkspaceController } from './test-summary.controller';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryWorkspaceService } from './test-summary.service';
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
+
+const user: CurrentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 const testSummaryDto = new TestSummaryDTO();
 const testSummary = new TestSummaryRecordDTO();
@@ -31,6 +42,10 @@ const mockTestSummaryChecksService = () => ({
   runChecks: jest.fn().mockResolvedValue([]),
 });
 
+const mockTestQualChecksService = () => ({
+  runChecks: jest.fn().mockResolvedValue([]),
+});
+
 describe('Test Summary Controller', () => {
   let controller: TestSummaryWorkspaceController;
   let service: TestSummaryWorkspaceService;
@@ -38,9 +53,11 @@ describe('Test Summary Controller', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [HttpModule],
       controllers: [TestSummaryWorkspaceController],
       providers: [
+        ConfigService,
+        AuthGuard,
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSummaryWorkspaceService,
@@ -48,6 +65,10 @@ describe('Test Summary Controller', () => {
         {
           provide: TestSummaryChecksService,
           useFactory: mockTestSummaryChecksService,
+        },
+        {
+          provide: TestQualificationChecksService,
+          useFactory: mockTestQualChecksService,
         },
         TestSummaryWorkspaceRepository,
         QASuppDataWorkspaceRepository,
@@ -81,7 +102,7 @@ describe('Test Summary Controller', () => {
     it('should create test summary record', async () => {
       const spyCheckService = jest.spyOn(checkService, 'runChecks');
       const spyService = jest.spyOn(service, 'createTestSummary');
-      const result = await controller.createTestSummary('1', payload);
+      const result = await controller.createTestSummary('1', payload, user);
       expect(result).toEqual(testSummary);
       expect(spyCheckService).toHaveBeenCalled();
       expect(spyService).toHaveBeenCalled();
@@ -92,7 +113,12 @@ describe('Test Summary Controller', () => {
     it('should update test summary record', async () => {
       const spyCheckService = jest.spyOn(checkService, 'runChecks');
       const spyService = jest.spyOn(service, 'updateTestSummary');
-      const result = await controller.updateTestSummary('1', '1', payload);
+      const result = await controller.updateTestSummary(
+        '1',
+        '1',
+        payload,
+        user,
+      );
       expect(result).toEqual(testSummary);
       expect(spyCheckService).toHaveBeenCalled();
       expect(spyService).toHaveBeenCalled();
@@ -102,7 +128,7 @@ describe('Test Summary Controller', () => {
   describe('deleteTestSummary', () => {
     it('should delete test summary record', async () => {
       const spyService = jest.spyOn(service, 'deleteTestSummary');
-      const result = await controller.deleteTestSummary('1', '1');
+      const result = await controller.deleteTestSummary('1', '1', user);
       expect(result).toEqual('');
       expect(spyService).toHaveBeenCalled();
     });

@@ -2,8 +2,12 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { FlowToLoadReferenceRepository } from './flow-to-load-reference.repository';
-import { FlowToLoadReferenceRecordDTO } from '../dto/flow-to-load-reference.dto';
+import {
+  FlowToLoadReferenceDTO,
+  FlowToLoadReferenceRecordDTO,
+} from '../dto/flow-to-load-reference.dto';
 import { FlowToLoadReferenceMap } from '../maps/flow-to-load-reference.map';
+import { In } from 'typeorm';
 
 @Injectable()
 export class FlowToLoadReferenceService {
@@ -34,5 +38,19 @@ export class FlowToLoadReferenceService {
     }
 
     return this.map.one(result);
+  }
+
+  async getFlowToLoadReferencesByTestSumIds(
+    testSumIds: string[],
+  ): Promise<FlowToLoadReferenceDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<FlowToLoadReferenceDTO[]> {
+    return this.getFlowToLoadReferencesByTestSumIds(testSumIds);
   }
 }

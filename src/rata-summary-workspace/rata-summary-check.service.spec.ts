@@ -1,37 +1,32 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import {
-  RataSummaryBaseDTO,
-  RataSummaryImportDTO,
-} from '../dto/rata-summary.dto';
+import { RataSummaryImportDTO } from '../dto/rata-summary.dto';
 
-import { RataSummary } from '../entities/workspace/rata-summary.entity';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { RataSummaryWorkspaceService } from './rata-summary-workspace.service';
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { RataSummaryChecksService } from './rata-summary-checks.service';
 
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
 const locationId = '';
 const testSumId = '';
+const rataSumId = '';
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 const monitorSystemRecord = new MonitorSystem();
-let testSumRecord = {
-  system: {
-    systemTypeCode: 'FLOW',
-  },
-};
 
-const mockRepository = () => ({
+const mockTestSumRepository = () => ({
   getTestSummaryByLocationId: jest.fn().mockResolvedValue(null),
+  getTestSummaryById: jest.fn().mockResolvedValue(null),
   findOne: jest.fn().mockResolvedValue(null),
 });
+
 const mockMonitorSystemRepository = () => ({
   findOne: jest.fn().mockResolvedValue(monitorSystemRecord),
 });
@@ -45,6 +40,7 @@ const mockTestSummaryRelationshipRepository = () => ({
 describe('Rata Summary Check Service Test', () => {
   let service: RataSummaryChecksService;
   let repository: RataSummaryWorkspaceRepository;
+  let testSumRepository: TestSummaryWorkspaceRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -63,19 +59,18 @@ describe('Rata Summary Check Service Test', () => {
         },
         {
           provide: TestSummaryWorkspaceRepository,
-          useFactory: mockRepository,
+          useFactory: mockTestSumRepository,
         },
         {
           provide: MonitorSystemRepository,
-          useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
-          }),
+          useFactory: mockMonitorSystemRepository,
         },
       ],
     }).compile();
 
     service = module.get(RataSummaryChecksService);
     repository = module.get(RataSummaryWorkspaceRepository);
+    testSumRepository = module.get(TestSummaryWorkspaceRepository);
 
     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
@@ -90,7 +85,13 @@ describe('Rata Summary Check Service Test', () => {
       (payload.defaultWAF = 1);
 
     it('Should get Result A', async () => {
+      const testSummary = new TestSummary();
+      testSummary.testTypeCode = TestTypeCodes.RATA;
+
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(testSumRepository, 'getTestSummaryById')
+        .mockResolvedValue(testSummary);
       try {
         await service.runChecks(testSumId, payload);
       } catch (err) {
@@ -98,9 +99,15 @@ describe('Rata Summary Check Service Test', () => {
       }
 
       try {
-        await service.runChecks(locationId, payload, testSumId, false, false, [
+        await service.runChecks(
+          locationId,
           payload,
-        ]);
+          false,
+          false,
+          rataSumId,
+          testSumId,
+          [payload],
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }

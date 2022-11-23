@@ -42,6 +42,19 @@ import { FlowToLoadReferenceWorkspaceModule } from './flow-to-load-reference-wor
 import { FlowToLoadReferenceModule } from './flow-to-load-reference/flow-to-load-reference.module';
 import { FuelFlowToLoadBaselineWorkspaceModule } from './fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.module';
 import { FuelFlowToLoadBaselineModule } from './fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.module';
+import { CalibrationInjectionWorkspaceModule } from './calibration-injection-workspace/calibration-injection-workspace.module';
+import { CalibrationInjectionModule } from './calibration-injection/calibration-injection.module';
+import { OnlineOfflineCalibrationWorkspaceModule } from './online-offline-calibration-workspace/online-offline-calibration.module';
+import { OnlineOfflineCalibrationModule } from './online-offline-calibration/online-offline-calibration.module';
+import { FuelFlowmeterAccuracyModule } from './fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.module';
+import { FuelFlowmeterAccuracyWorkspaceModule } from './fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
+import { CycleTimeSummaryWorkspaceModule } from './cycle-time-summary-workspace/cycle-time-summary-workspace.module';
+import { CycleTimeSummaryModule } from './cycle-time-summary/cycle-time-summary.module';
+import { TransmitterTransducerAccuracyModule } from './transmitter-transducer-accuracy/transmitter-transducer-accuracy.module';
+import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.module';
+import { CycleTimeInjectionModule } from './cycle-time-injection/cycle-time-injection.module';
+import { CycleTimeInjectionWorkspaceModule } from './cycle-time-injection-workspace/cycle-time-injection-workspace.module';
+import { ReviewAndSubmitModule } from './review-and-submit/review-and-submit.module';
 
 const routes: Routes = [
   {
@@ -51,6 +64,10 @@ const routes: Routes = [
   {
     path: '/workspace',
     module: QACertificationWorkspaceModule,
+  },
+  {
+    path: '/review-and-submit',
+    module: ReviewAndSubmitModule,
   },
   {
     path: '/locations',
@@ -75,6 +92,16 @@ const routes: Routes = [
             module: ProtocolGasModule,
           },
           {
+            path: ':testSumId/cycle-time-summaries',
+            module: CycleTimeSummaryModule,
+            children: [
+              {
+                path: ':cycleTimeSumId/cycle-time-injections',
+                module: CycleTimeInjectionModule,
+              },
+            ],
+          },
+          {
             path: ':testSumId/test-qualifications',
             module: TestQualificationModule,
           },
@@ -87,12 +114,20 @@ const routes: Routes = [
             module: FlowToLoadReferenceModule,
           },
           {
+            path: ':testSumId/fuel-flowmeter-accuracies',
+            module: FuelFlowmeterAccuracyModule,
+          },
+          {
             path: ':testSumId/fuel-flow-to-load-tests',
             module: FuelFlowToLoadTestModule,
           },
           {
             path: ':testSumId/fuel-flow-to-load-baselines',
             module: FuelFlowToLoadBaselineModule,
+          },
+          {
+            path: ':testSumId/calibration-injections',
+            module: CalibrationInjectionModule,
           },
           {
             path: ':testSumId/air-emission-testings',
@@ -146,6 +181,14 @@ const routes: Routes = [
               },
             ],
           },
+          {
+            path: ':testSumId/online-offline-calibration',
+            module: OnlineOfflineCalibrationModule,
+          },
+          {
+            path: ':testSumId/transmitter-transducer-accuracy',
+            module: TransmitterTransducerAccuracyModule,
+          },
         ],
       },
     ],
@@ -171,6 +214,16 @@ const routes: Routes = [
           {
             path: ':testSumId/protocol-gases',
             module: ProtocolGasWorkspaceModule,
+          },
+          {
+            path: ':testSumId/cycle-time-summaries',
+            module: CycleTimeSummaryWorkspaceModule,
+            children: [
+              {
+                path: ':cycleTimeSumId/cycle-time-injections',
+                module: CycleTimeInjectionWorkspaceModule,
+              },
+            ],
           },
           {
             path: ':testSumId/air-emission-testings',
@@ -209,12 +262,20 @@ const routes: Routes = [
             module: FlowToLoadReferenceWorkspaceModule,
           },
           {
+            path: ':testSumId/fuel-flowmeter-accuracies',
+            module: FuelFlowmeterAccuracyWorkspaceModule,
+          },
+          {
             path: ':testSumId/fuel-flow-to-load-tests',
             module: FuelFlowToLoadTestWorkspaceModule,
           },
           {
             path: ':testSumId/fuel-flow-to-load-baselines',
             module: FuelFlowToLoadBaselineWorkspaceModule,
+          },
+          {
+            path: ':testSumId/calibration-injections',
+            module: CalibrationInjectionWorkspaceModule,
           },
           {
             path: ':testSumId/rata',
@@ -243,6 +304,14 @@ const routes: Routes = [
                 ],
               },
             ],
+          },
+          {
+            path: ':testSumId/online-offline-calibration',
+            module: OnlineOfflineCalibrationWorkspaceModule,
+          },
+          {
+            path: ':testSumId/transmitter-transducer-accuracy',
+            module: TransmitterTransducerAccuracyWorkspaceModule,
           },
         ],
       },

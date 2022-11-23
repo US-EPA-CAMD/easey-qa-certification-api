@@ -1,29 +1,28 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import {
-  RataSummaryBaseDTO,
-  RataSummaryImportDTO,
-} from '../dto/rata-summary.dto';
+import { RataSummaryImportDTO } from '../dto/rata-summary.dto';
 
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { FlowRataRunChecksService } from './flow-rata-run-checks.service';
 import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.repository';
 import { RataFrequencyCode } from '../entities/workspace/rata-frequency-code.entity';
 import { FlowRataRunImportDTO } from '../dto/flow-rata-run.dto';
-import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { RataSummaryWorkspaceRepository } from '../rata-summary-workspace/rata-summary-workspace.repository';
 import { RataRunWorkspaceRepository } from '../rata-run-workspace/rata-run-workspace.repository';
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
 import { RataSummaryRepository } from '../rata-summary/rata-summary.repository';
 import { RataRun } from '../entities/workspace/rata-run.entity';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
-const rataRunId = '';
+const locationId = '';
+const testSumId = '';
 const rataSumId = '';
+const rataRunId = '';
 const flowRataRunId = '';
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
@@ -33,11 +32,15 @@ let rataSumRecord = {
     systemTypeCode: 'FLOW',
   },
 };
-const rataFreqCdRecord = new RataFrequencyCode();
 
 const importPayload = new FlowRataRunImportDTO();
 importPayload.averageVelocityWithWallEffects = 1;
+importPayload.averageStackFlowRate = 1;
 const rataSummaryImportPayload = new RataSummaryImportDTO();
+
+const mockTestSumRepository = () => ({
+  getTestSummaryById: jest.fn().mockResolvedValue(new TestSummary()),
+});
 
 const mockRataSummaryRepository = () => ({
   findOne: jest.fn().mockResolvedValue(rataSumRecord),
@@ -67,6 +70,10 @@ describe('Flow Rata Run Check Service Test', () => {
       providers: [
         FlowRataRunChecksService,
         {
+          provide: TestSummaryWorkspaceRepository,
+          useFactory: mockTestSumRepository,
+        },
+        {
           provide: MonitorSystemRepository,
           useFactory: mockMonitorSystemRepository,
         },
@@ -95,6 +102,33 @@ describe('Flow Rata Run Check Service Test', () => {
     rataRunRepository = module.get(RataRunWorkspaceRepository);
 
     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+  });
+
+  describe('RATA-94 Average Wet Stack Flow Rate Valid', () => {
+    it('Should get [RATA-94-C] error', async () => {
+      importPayload.averageStackFlowRate = 1;
+      let rataRunRec = new RataRun();
+      rataRunRec.rataReferenceValue = null;
+
+      jest.spyOn(rataRunRepository, 'findOne').mockResolvedValue(rataRunRec);
+      try {
+        await service.runChecks(importPayload, false, false, rataSumId);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+      try {
+        await service.runChecks(
+          importPayload,
+          false,
+          false,
+          rataSumId,
+          rataSummaryImportPayload,
+          testSumId,
+        );
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
   });
 
   describe('RATA-114 Reported Average Velocity With Wall Effects Valid', () => {

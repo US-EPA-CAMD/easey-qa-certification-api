@@ -14,12 +14,28 @@ import { ProtocolGas } from '../entities/protocol-gas.entity';
 import { ProtocolGasService } from '../protocol-gas/protocol-gas.service';
 import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
 import { AppECorrelationTestSummaryService } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.service';
+import { FuelFlowToLoadTestService } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.service';
+import { FuelFlowToLoadTest } from '../entities/fuel-flow-to-load-test.entity';
+import { CalibrationInjection } from '../entities/calibration-injection.entity';
+import { CalibrationInjectionService } from '../calibration-injection/calibration-injection.service';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
+import { FlowToLoadCheckService } from '../flow-to-load-check/flow-to-load-check.service';
+import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
+import { OnlineOfflineCalibrationService } from '../online-offline-calibration/online-offline-calibration.service';
+import { FlowToLoadReference } from '../entities/flow-to-load-reference.entity';
+import { FlowToLoadReferenceService } from '../flow-to-load-reference/flow-to-load-reference.service';
+import { FuelFlowToLoadBaselineService } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.service';
+import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
+import { CycleTimeSummary } from '../entities/cycle-time-summary.entity';
+import { CycleTimeSummaryService } from '../cycle-time-summary/cycle-time-summary.service';
+import { FuelFlowmeterAccuracy } from '../entities/fuel-flowmeter-accuracy.entity';
+import { FuelFlowmeterAccuracyService } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.service';
 
 const locationId = '121';
 const facilityId = 1;
 const unitId = '121';
 const testSumId = '1';
-const userId = 'testuser';
 
 const testSumaary = new TestSummary();
 const testSumaaryDto = new TestSummaryDTO();
@@ -43,17 +59,45 @@ const mockMap = () => ({
 
 const mockRataService = () => ({
   export: jest.fn().mockResolvedValue([new Rata()]),
-  import: jest.fn().mockResolvedValue(null),
 });
 
 const mockProtocolGasService = () => ({
   export: jest.fn().mockResolvedValue([new ProtocolGas()]),
-  import: jest.fn().mockResolvedValue(null),
+});
+
+const mockFlowToLoadCheckService = () => ({
+  export: jest.fn().mockResolvedValue([new FlowToLoadCheck()]),
 });
 
 const mockAppECorrelationTestSummaryService = () => ({
   export: jest.fn().mockResolvedValue([new AppECorrelationTestSummary()]),
-  import: jest.fn().mockResolvedValue(null),
+});
+
+const mockFuelFlowToLoadTestService = () => ({
+  export: jest.fn().mockResolvedValue([new FuelFlowToLoadTest()]),
+});
+
+const mockCalibrationInjectionService = () => ({
+  export: jest.fn().mockResolvedValue([new CalibrationInjection()]),
+});
+
+const mockCycleTimeSummaryService = () => ({
+  export: jest.fn().mockResolvedValue([new CycleTimeSummary()]),
+});
+
+const mockFlowToLoadReferenceService = () => ({
+  export: jest.fn().mockResolvedValue([new FlowToLoadReference()]),
+});
+
+const mockOnlineOfflineCalibrationService = () => ({
+  export: jest.fn().mockResolvedValue([new OnlineOfflineCalibrationDTO()]),
+});
+
+const mockFuelFlowToLoadBaselineService = () => ({
+  export: jest.fn().mockResolvedValue([new FuelFlowToLoadBaselineDTO()]),
+});
+const mockFuelFlowmeterAccuracyService = () => ({
+  export: jest.fn().mockResolvedValue([new FuelFlowmeterAccuracy()]),
 });
 
 describe('TestSummaryService', () => {
@@ -88,6 +132,38 @@ describe('TestSummaryService', () => {
         {
           provide: AppECorrelationTestSummaryService,
           useFactory: mockAppECorrelationTestSummaryService,
+        },
+        {
+          provide: FuelFlowToLoadTestService,
+          useFactory: mockFuelFlowToLoadTestService,
+        },
+        {
+          provide: CalibrationInjectionService,
+          useFactory: mockCalibrationInjectionService,
+        },
+        {
+          provide: CycleTimeSummaryService,
+          useFactory: mockCycleTimeSummaryService,
+        },
+        {
+          provide: FlowToLoadCheckService,
+          useFactory: mockFlowToLoadCheckService,
+        },
+        {
+          provide: FlowToLoadReferenceService,
+          useFactory: mockFlowToLoadReferenceService,
+        },
+        {
+          provide: FuelFlowmeterAccuracyService,
+          useFactory: mockFuelFlowmeterAccuracyService,
+        },
+        {
+          provide: OnlineOfflineCalibrationService,
+          useFactory: mockOnlineOfflineCalibrationService,
+        },
+        {
+          provide: FuelFlowToLoadBaselineService,
+          useFactory: mockFuelFlowToLoadBaselineService,
         },
       ],
     }).compile();
@@ -134,7 +210,7 @@ describe('TestSummaryService', () => {
   describe('export', () => {
     it('calls the repository.getTestSummariesByUnitStack() and get test summaries by locationId', async () => {
       const returnedSummary = testSumaaryDto;
-      returnedSummary.testTypeCode = 'LINE';
+      returnedSummary.testTypeCode = TestTypeCodes.LINE;
       returnedSummary.id = testSumId;
 
       const spySummaries = jest
@@ -142,6 +218,27 @@ describe('TestSummaryService', () => {
         .mockResolvedValue([returnedSummary]);
 
       const result = await service.export(facilityId, [unitId]);
+
+      expect(spySummaries).toHaveBeenCalled();
+      expect(result).toEqual([testSumaaryDto]);
+    });
+
+    it('calls the repository.getTestSummariesByUnitStack() and get test summaries by locationId and TestTypeCodes', async () => {
+      const returnedSummary = testSumaaryDto;
+      returnedSummary.testTypeCode = TestTypeCodes.LINE;
+      returnedSummary.id = testSumId;
+
+      const spySummaries = jest
+        .spyOn(service, 'getTestSummaries')
+        .mockResolvedValue([returnedSummary]);
+
+      const result = await service.export(
+        facilityId,
+        [unitId],
+        [],
+        [],
+        [TestTypeCodes.LINE],
+      );
 
       expect(spySummaries).toHaveBeenCalled();
       expect(result).toEqual([testSumaaryDto]);

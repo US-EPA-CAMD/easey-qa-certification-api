@@ -7,6 +7,9 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { TestSummary } from '../entities/test-summary.entity';
 import { RataRunBaseDTO, RataRunImportDTO } from '../dto/rata-run.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
+import { RataRun } from '../entities/workspace/rata-run.entity';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 
@@ -17,23 +20,27 @@ export class RataRunChecksService {
     private readonly logger: Logger,
     @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
+    @InjectRepository(RataRunWorkspaceRepository)
+    private readonly repository: RataRunWorkspaceRepository,
     @InjectRepository(MonitorSystemRepository)
-    private readonly monitoringSystemRepository: MonitorSystemRepository,
+    private readonly monitorSystemRepository: MonitorSystemRepository,
   ) {}
 
-  private throwIfErrors(errorList: string[], isImport: boolean = false) {
-    if (!isImport && errorList.length > 0) {
+  private throwIfErrors(errorList: string[]) {
+    if (errorList.length > 0) {
       throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }
 
   async runChecks(
-    locationId: string,
     rataRun: RataRunBaseDTO | RataRunImportDTO,
+    locationId: string,
     testSumId?: string,
     isImport: boolean = false,
-    _isUpdate: boolean = false,
+    isUpdate: boolean = false,
     testSummary?: TestSummaryImportDTO,
+    rataSumId?: string,
+    rataRuns?: RataRunImportDTO[],
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
@@ -42,11 +49,10 @@ export class RataRunChecksService {
     this.logger.info('Running RATA Run Checks');
 
     if (isImport) {
-      testSumRecord = TestSummary;
-
-      testSumRecord.system = await this.monitoringSystemRepository.findOne({
+      testSumRecord = testSummary;
+      testSumRecord.system = await this.monitorSystemRepository.findOne({
         monitoringSystemID: testSummary.monitoringSystemID,
-        locationId,
+        locationId: locationId,
       });
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
@@ -54,28 +60,54 @@ export class RataRunChecksService {
       );
     }
 
-    // RATA-27 Result C
-    error = this.rata27Check(rataRun, testSumRecord);
-    if (error) {
-      errorList.push(error);
+    if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
+      // RATA-27 Result C
+      error = this.rata27Check(rataRun, testSumRecord);
+      if (error) {
+        errorList.push(error);
+      }
+
+      // RATA-29 Result C
+      error = this.rata29Check(rataRun, testSumRecord);
+      if (error) {
+        errorList.push(error);
+      }
+
+      // RATA-31 Result B
+      error = this.rata31Check(rataRun);
+      if (error) {
+        errorList.push(error);
+      }
+
+      // RATA-33 Result C
+      error = this.rata33Check(rataRun, testSumRecord);
+      if (error) {
+        errorList.push(error);
+      }
+
+      // RATA-101
+      error = this.rata101Check(rataRun, testSumRecord);
+      if (error) {
+        errorList.push(error);
+      }
+
+      // RATA-130
+      error = this.rata130Check(rataRun, testSumRecord);
+      if (error) {
+        errorList.push(error);
+      }
+
+      if (!isUpdate) {
+        // RATA-108 Duplicate RATA Run
+        error = await this.rata108Check(rataRun, isImport, rataSumId, rataRuns);
+        if (error) {
+          errorList.push(error);
+        }
+      }
     }
 
-    // RATA-29 Result C
-    error = this.rata29Check(rataRun, testSumRecord);
-    if (error) {
-      errorList.push(error);
-    }
-
-    // RATA-33 Result C
-    error = this.rata33Check(rataRun, testSumRecord);
-    if (error) {
-      errorList.push(error);
-    }
-
-    this.throwIfErrors(errorList, isImport);
-
+    this.throwIfErrors(errorList);
     this.logger.info('Completed RATA Run Checks');
-
     return errorList;
   }
 
@@ -124,6 +156,109 @@ export class RataRunChecksService {
     );
   }
 
+  private rata101Check(
+    rataRun: RataRunBaseDTO,
+    testSumRecord: TestSummary,
+  ): string {
+    let error: string = null;
+
+    if (rataRun.runStatusCode === 'RUNUSED') {
+      if (
+        testSumRecord.system?.systemTypeCode === 'FLOW' &&
+        ((rataRun.cemValue > 0 &&
+          Math.ceil(rataRun.cemValue / 1000) * 1000 !== rataRun.cemValue) ||
+          (rataRun.rataReferenceValue > 0 &&
+            Math.ceil(rataRun.rataReferenceValue / 1000) * 1000 !==
+              rataRun.rataReferenceValue))
+      ) {
+        error = this.getMessage('RATA-101-A', {
+          key: KEY,
+        });
+      } else if (rataRun.cemValue <= 0 || rataRun.rataReferenceValue <= 0) {
+        error = this.getMessage('RATA-101-B', {
+          key: KEY,
+        });
+      }
+    }
+
+    return error;
+  }
+
+  private async rata108Check(
+    rataRun: RataRunBaseDTO | RataRunImportDTO,
+    isImport: boolean,
+    rataSumId: string,
+    rataRuns: RataRunImportDTO[],
+  ): Promise<string> {
+    let error: string = null;
+    let duplicates: RataRun[] | RataRunBaseDTO[];
+
+    if (rataSumId && !isImport) {
+      duplicates = await this.repository.find({
+        rataSumId: rataSumId,
+        runNumber: rataRun.runNumber,
+      });
+      if (duplicates.length > 0) {
+        error = CheckCatalogService.formatResultMessage('RATA-108-A', {
+          recordtype: KEY,
+          fieldnames: 'runNumber & operatingLevelCode',
+        });
+      }
+    }
+
+    if (rataRuns?.length > 1 && isImport) {
+      duplicates = rataRuns.filter(rs => rs.runNumber === rataRun.runNumber);
+
+      if (duplicates.length > 1) {
+        error = CheckCatalogService.formatResultMessage('RATA-108-A', {
+          recordtype: KEY,
+          fieldnames: 'runNumber & operatingLevelCode',
+        });
+      }
+    }
+    return error;
+  }
+
+  private rata130Check(
+    rataRun: RataRunBaseDTO,
+    testSumRecord: TestSummary,
+  ): string {
+    let error: string = null;
+    let beginDate = new Date(rataRun.beginDate);
+    let endDate = new Date(rataRun.endDate);
+    beginDate.setHours(rataRun.beginHour);
+    endDate.setHours(rataRun.endHour);
+    beginDate.setMinutes(rataRun.beginMinute);
+    endDate.setMinutes(rataRun.endMinute);
+
+    if (rataRun.runStatusCode === 'RUNUSED') {
+      if (testSumRecord.system?.systemTypeCode === 'FLOW') {
+        if (
+          Math.abs(endDate.getTime() - beginDate.getTime()) / (1000 * 60) <
+          5
+        ) {
+          error = CheckCatalogService.formatResultMessage('RATA-130-A', {
+            key: KEY,
+          });
+        }
+      } else if (
+        !testSumRecord.system?.systemTypeCode.startsWith('HG') &&
+        testSumRecord.system?.systemTypeCode !== 'FLOW'
+      ) {
+        if (
+          Math.abs(endDate.getTime() - beginDate.getTime()) / (1000 * 60) <
+          21
+        ) {
+          error = CheckCatalogService.formatResultMessage('RATA-130-B', {
+            key: KEY,
+          });
+        }
+      }
+    }
+
+    return error;
+  }
+
   private rataRunValueFloatCheck(
     rataRun: RataRunBaseDTO,
     testSumRecord: TestSummary,
@@ -150,6 +285,24 @@ export class RataRunChecksService {
         }
       }
     }
+  }
+
+  private rata31Check(rataRun: RataRunBaseDTO) {
+    let error: string = null;
+    const beginTime = `${rataRun.beginDate +
+      rataRun.beginHour.toString() +
+      rataRun.beginMinute.toString()}`;
+    const endTime = `${rataRun.endDate +
+      rataRun.endHour.toString() +
+      rataRun.endMinute.toString()}`;
+
+    if (beginTime > endTime) {
+      error = CheckCatalogService.formatResultMessage('RATA-31-B', {
+        key: KEY,
+      });
+    }
+
+    return error;
   }
 
   getMessage(messageKey: string, messageArgs: object): string {

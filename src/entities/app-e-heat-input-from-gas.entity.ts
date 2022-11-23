@@ -9,6 +9,7 @@ import {
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { AppECorrelationTestRun } from './app-e-correlation-test-run.entity';
+import { MonitorSystem } from './monitor-system.entity';
 
 @Entity({ name: 'camdecmps.ae_hi_gas' })
 export class AppEHeatInputFromGas extends BaseEntity {
@@ -23,6 +24,12 @@ export class AppEHeatInputFromGas extends BaseEntity {
     name: 'ae_corr_test_run_id',
   })
   appECorrTestRunId: string;
+
+  @Column({
+    type: 'varchar',
+    name: 'mon_sys_id',
+  })
+  monitoringSystemId: string;
 
   @Column({
     type: 'numeric',
@@ -54,12 +61,6 @@ export class AppEHeatInputFromGas extends BaseEntity {
 
   @Column({
     type: 'varchar',
-    name: 'mon_sys_id',
-  })
-  monitoringSystemID: string;
-
-  @Column({
-    type: 'varchar',
     name: 'userid',
   })
   userId: string;
@@ -82,4 +83,11 @@ export class AppEHeatInputFromGas extends BaseEntity {
   )
   @JoinColumn({ name: 'ae_corr_test_run_id' })
   appECorrelationTestRun: AppECorrelationTestRun;
+
+  @ManyToOne(
+    () => MonitorSystem,
+    ms => ms.appEHeatInputFromGases,
+  )
+  @JoinColumn({ name: 'mon_sys_id' })
+  system: MonitorSystem;
 }

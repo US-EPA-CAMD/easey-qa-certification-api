@@ -6,6 +6,8 @@ import {
   AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasImportDTO,
 } from './app-e-heat-input-from-gas.dto';
+import { ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
 
 const KEY = 'Appendix E Correlation Test Run';
 
@@ -34,7 +36,12 @@ export class AppECorrelationTestRunRecordDTO extends AppECorrelationTestRunBaseD
 }
 
 export class AppECorrelationTestRunImportDTO extends AppECorrelationTestRunBaseDTO {
+  @ValidateNested({ each: true })
+  @Type(() => AppEHeatInputFromOilImportDTO)
   appEHeatInputFromOilData: AppEHeatInputFromOilImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => AppEHeatInputFromGasImportDTO)
   appEHeatInputFromGasData: AppEHeatInputFromGasImportDTO[];
 }
 

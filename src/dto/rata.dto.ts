@@ -1,5 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, ValidationArguments } from 'class-validator';
+import { Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  ValidateNested,
+  ValidationArguments,
+} from 'class-validator';
 import { RataSummaryDTO, RataSummaryImportDTO } from './rata-summary.dto';
 
 const KEY = 'RATA';
@@ -44,6 +49,8 @@ export class RataRecordDTO extends RataBaseDTO {
 }
 
 export class RataImportDTO extends RataBaseDTO {
+  @ValidateNested({ each: true })
+  @Type(() => RataSummaryImportDTO)
   rataSummaryData: RataSummaryImportDTO[];
 }
 

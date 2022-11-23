@@ -1,15 +1,18 @@
 import { HttpStatus, InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+
+import { FuelFlowToLoadBaselineRepository } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.repository';
 import {
   FuelFlowToLoadBaselineBaseDTO,
   FuelFlowToLoadBaselineDTO,
+  FuelFlowToLoadBaselineImportDTO,
 } from '../dto/fuel-flow-to-load-baseline.dto';
 import { FuelFlowToLoadBaseline } from '../entities/workspace/fuel-flow-to-load-baseline.entity';
 import { FuelFlowToLoadBaselineMap } from '../maps/fuel-flow-to-load-baseline.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FuelFlowToLoadBaselineWorkspaceRepository } from './fuel-flow-to-load-baseline-workspace.repository';
 import { FuelFlowToLoadBaselineWorkspaceService } from './fuel-flow-to-load-baseline-workspace.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 const id = '';
 const testSumId = '';
@@ -36,14 +39,20 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockOfficialRepository = () => ({
+  findOne: jest.fn(),
+});
+
 describe('FuelFlowToLoadBaselineWorkspaceService', () => {
   let service: FuelFlowToLoadBaselineWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
   let repository: FuelFlowToLoadBaselineWorkspaceRepository;
+  let officialRepository: FuelFlowToLoadBaselineRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        Logger,
         FuelFlowToLoadBaselineWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
@@ -52,6 +61,10 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
         {
           provide: FuelFlowToLoadBaselineWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: FuelFlowToLoadBaselineRepository,
+          useFactory: mockOfficialRepository,
         },
         {
           provide: FuelFlowToLoadBaselineMap,
@@ -68,6 +81,9 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
     );
     repository = module.get<FuelFlowToLoadBaselineWorkspaceRepository>(
       FuelFlowToLoadBaselineWorkspaceRepository,
+    );
+    officialRepository = module.get<FuelFlowToLoadBaselineRepository>(
+      FuelFlowToLoadBaselineRepository,
     );
   });
 
@@ -114,7 +130,7 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
   });
 
   describe('updateFuelFlowToLoadBaseline', () => {
-    it('Should update and return a new Fuel Flow To Load Baseline record', async () => {
+    it('Should update and return the Fuel Flow To Load Baseline record', async () => {
       const result = await service.updateFuelFlowToLoadBaseline(
         testSumId,
         id,
@@ -170,6 +186,21 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
       }
 
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('Import', () => {
+    it('Should Import Fuel Flow To Load Baseline', async () => {
+      jest
+        .spyOn(service, 'createFuelFlowToLoadBaseline')
+        .mockResolvedValue(dto);
+
+      await service.import(
+        testSumId,
+        new FuelFlowToLoadBaselineImportDTO(),
+        userId,
+        true,
+      );
     });
   });
 });

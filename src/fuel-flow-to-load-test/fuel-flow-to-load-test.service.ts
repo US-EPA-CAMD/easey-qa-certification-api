@@ -20,8 +20,14 @@ export class FuelFlowToLoadTestService {
     return this.map.many(records);
   }
 
-  async getFuelFlowToLoadTest(id: string): Promise<FuelFlowToLoadTestDTO> {
-    const result = await this.repository.findOne(id);
+  async getFuelFlowToLoadTest(
+    id: string,
+    testSumId: string,
+  ): Promise<FuelFlowToLoadTestDTO> {
+    const result = await this.repository.findOne({
+      id,
+      testSumId,
+    });
 
     if (!result) {
       throw new LoggingException(
@@ -31,5 +37,19 @@ export class FuelFlowToLoadTestService {
     }
 
     return this.map.one(result);
+  }
+
+  async getFuelFlowToLoadTestBySumIds(
+    testSumIds: string[],
+  ): Promise<FuelFlowToLoadTestDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<FuelFlowToLoadTestDTO[]> {
+    return this.getFuelFlowToLoadTestBySumIds(testSumIds);
   }
 }

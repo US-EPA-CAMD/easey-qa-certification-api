@@ -11,6 +11,9 @@ import { AppECorrelationTestSummaryMap } from './app-e-correlation-summary.map';
 import { FuelFlowToLoadTestMap } from './fuel-flow-to-load-test.map';
 import { FlowToLoadCheckMap } from './flow-to-load-check.map';
 import { FlowToLoadReferenceMap } from './flow-to-load-reference.map';
+import { CalibrationInjectionMap } from './calibration-injection.map';
+import { CycleTimeSummaryMap } from './cycle-time-summary.map';
+import { FuelFlowmeterAccuracyMap } from './fuel-flowmeter-accuracy.map';
 
 @Injectable()
 export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
@@ -24,6 +27,9 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
     private readonly fuelFlowToLoadTestMap: FuelFlowToLoadTestMap,
     private readonly flowToLoadCheckMap: FlowToLoadCheckMap,
     private readonly flowToLoadReferenceMap: FlowToLoadReferenceMap,
+    private readonly calibrationInjectionMap: CalibrationInjectionMap,
+    private readonly cycleTimeSummaryMap: CycleTimeSummaryMap,
+    private readonly fuelFlowmeterAccuracyMap: FuelFlowmeterAccuracyMap,
   ) {
     super();
   }
@@ -64,6 +70,18 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
 
     const fuelFlowToloadTest = entity.fuelFlowToLoadTests
       ? await this.fuelFlowToLoadTestMap.many(entity.fuelFlowToLoadTests)
+      : [];
+
+    const fuelFlowmeterAccuracy = entity.fuelFlowmeterAccuracy
+      ? await this.fuelFlowmeterAccuracyMap.many(entity.fuelFlowmeterAccuracy)
+      : [];
+
+    const calibrationInjections = entity.calibrationInjections
+      ? await this.calibrationInjectionMap.many(entity.calibrationInjections)
+      : [];
+
+    const cycleTimeSummary = entity.cycleTimeSummary
+      ? await this.cycleTimeSummaryMap.many(entity.cycleTimeSummary)
       : [];
 
     if (entity['evalStatusCode']) {
@@ -110,20 +128,19 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
       reportPeriodId: entity.reportPeriodId,
-      calibrationInjectionData: [],
+
+      calibrationInjectionData: calibrationInjections,
       linearitySummaryData: linearitySummaries,
       rataData: ratas,
-      flowRataRunData: [],
       flowToLoadReferenceData: flowToloadReference,
       flowToLoadCheckData: flowToloadCheck,
-      cycleTimeSummaryData: [],
+      cycleTimeSummaryData: cycleTimeSummary,
       onlineOfflineCalibrationData: [],
-      fuelFlowmeterAccuracyData: [],
+      fuelFlowmeterAccuracyData: fuelFlowmeterAccuracy,
       transmitterTransducerData: [],
       fuelFlowToLoadBaselineData: [],
       appECorrelationTestSummaryData: appECorrelationTestSummaries,
       fuelFlowToLoadTestData: fuelFlowToloadTest,
-
       unitDefaultTestData: [],
       hgSummaryData: [],
       testQualificationData: testQuals,

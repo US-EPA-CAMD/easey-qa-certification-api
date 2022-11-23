@@ -33,6 +33,14 @@ import { AnalyzerRange } from '../entities/workspace/analyzerRange.entity';
 import { AirEmissionTestingImportDTO } from '../dto/air-emission-test.dto';
 import { AppECorrelationTestSummaryImportDTO } from '../dto/app-e-correlation-test-summary.dto';
 import { FuelFlowToLoadTestImportDTO } from '../dto/fuel-flow-to-load-test.dto';
+import { FuelFlowToLoadBaselineImportDTO } from '../dto/fuel-flow-to-load-baseline.dto';
+import { CalibrationInjectionImportDTO } from '../dto/calibration-injection.dto';
+import { FlowToLoadReferenceImportDTO } from '../dto/flow-to-load-reference.dto';
+import { FlowToLoadCheckImportDTO } from '../dto/flow-to-load-check.dto';
+import { OnlineOfflineCalibrationImportDTO } from '../dto/online-offline-calibration.dto';
+import { CycleTimeSummaryImportDTO } from '../dto/cycle-time-summary.dto';
+import { FuelFlowmeterAccuracyImportDTO } from '../dto/fuel-flowmeter-accuracy.dto';
+import { TransmitterTransducerAccuracyImportDTO } from '../dto/transmitter-transducer-accuracy.dto';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -165,7 +173,7 @@ describe('Test Summary Check Service Test', () => {
     service = module.get(TestSummaryChecksService);
     repository = module.get(TestSummaryWorkspaceRepository);
 
-    jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+    // jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
 
   describe('Test Summary Checks', () => {
@@ -205,6 +213,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('Should get error IMPORT-20 Duplicate Test Summary record', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       jest
         .spyOn(repository, 'getTestSummaryByLocationId')
         .mockResolvedValue(null);
@@ -217,6 +226,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('Should get error IMPORT -21 Duplicate Test Summary record', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       const returnedTestSummary = new TestSummary();
       returnedTestSummary.spanScaleCode = 'L';
       returnedTestSummary.endHour = 2;
@@ -240,6 +250,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('Should get error IMPORT -21 Duplicate Test Summary record (endMinute)', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       const returnedTestSummary = new TestSummary();
       returnedTestSummary.endMinute = 3;
       returnedTestSummary.endHour = 1;
@@ -256,6 +267,11 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('Should get error IMPORT -21 Duplicate Test Summary record (when QASuppDataFound)', async () => {
+      jest
+        .spyOn(qaRepository, 'getUnassociatedQASuppDataByLocationIdAndTestSum')
+        .mockResolvedValue(new QASuppData());
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
       const returnedQASupp = new QASuppData();
       returnedQASupp.component = new Component();
       returnedQASupp.component.componentID = '011';
@@ -327,15 +343,27 @@ describe('Test Summary Check Service Test', () => {
       importPayload.testTypeCode = TestTypeCodes.LINE;
       importPayload.rataData = [new RataImportDTO()];
       importPayload.testQualificationData = [new TestQualificationImportDTO()];
-      importPayload.calibrationInjectionData = [{}];
+      importPayload.calibrationInjectionData = [
+        new CalibrationInjectionImportDTO(),
+      ];
       importPayload.hgSummaryData = [{}];
-      importPayload.flowToLoadReferenceData = [{}];
-      importPayload.flowToLoadCheckData = [{}];
-      importPayload.cycleTimeSummaryData = [{}];
-      importPayload.onlineOfflineCalibrationData = [{}];
-      importPayload.fuelFlowmeterAccuracyData = [{}];
-      importPayload.transmitterTransducerData = [{}];
-      importPayload.fuelFlowToLoadBaselineData = [{}];
+      importPayload.flowToLoadReferenceData = [
+        new FlowToLoadReferenceImportDTO(),
+      ];
+      importPayload.flowToLoadCheckData = [new FlowToLoadCheckImportDTO()];
+      importPayload.cycleTimeSummaryData = [new CycleTimeSummaryImportDTO()];
+      importPayload.onlineOfflineCalibrationData = [
+        new OnlineOfflineCalibrationImportDTO(),
+      ];
+      importPayload.fuelFlowmeterAccuracyData = [
+        new FuelFlowmeterAccuracyImportDTO(),
+      ];
+      importPayload.transmitterTransducerData = [
+        new TransmitterTransducerAccuracyImportDTO(),
+      ];
+      importPayload.fuelFlowToLoadBaselineData = [
+        new FuelFlowToLoadBaselineImportDTO(),
+      ];
       importPayload.fuelFlowToLoadTestData = [
         new FuelFlowToLoadTestImportDTO(),
       ];
@@ -701,6 +729,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('returns error message when testType "LINE"', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       const summary = {
         ...summaryBase,
         testTypeCode: TestTypeCodes.LINE.toString(),
@@ -711,6 +740,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('returns error message A when startMinute is null and testType is not [LINE, RATA, CYCLE, F2LREF, APPE, UNITDEF] and monitor plan is found', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       qaMonitorPlanWSRepo.getMonitorPlanWithALowerBeginDate.mockResolvedValue(
         new MonitorPlan(),
       );
@@ -724,6 +754,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('returns error message B when startMinute is null and testType is not [LINE, RATA, CYCLE, F2LREF, APPE, UNITDEF] and monitor plan is NOT found', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       qaMonitorPlanWSRepo.getMonitorPlanWithALowerBeginDate.mockResolvedValue(
         null,
       );

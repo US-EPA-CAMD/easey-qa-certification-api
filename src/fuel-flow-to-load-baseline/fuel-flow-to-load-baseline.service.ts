@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
 import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
 import { FuelFlowToLoadBaselineMap } from '../maps/fuel-flow-to-load-baseline.map';
 import { FuelFlowToLoadBaselineRepository } from './fuel-flow-to-load-baseline.repository';
@@ -36,5 +37,19 @@ export class FuelFlowToLoadBaselineService {
     }
 
     return this.map.one(result);
+  }
+
+  async getFuelFlowToLoadBaselineBySumIds(
+    testSumIds: string[],
+  ): Promise<FuelFlowToLoadBaselineDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<FuelFlowToLoadBaselineDTO[]> {
+    return this.getFuelFlowToLoadBaselineBySumIds(testSumIds);
   }
 }

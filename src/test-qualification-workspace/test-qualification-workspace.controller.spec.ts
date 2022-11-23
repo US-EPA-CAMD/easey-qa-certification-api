@@ -1,16 +1,27 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   TestQualificationBaseDTO,
-  TestQualificationDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
 import { TestQualificationWorkspaceController } from './test-qualification-workspace.controller';
 import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ConfigService } from '@nestjs/config';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { HttpModule } from '@nestjs/axios';
+import { TestQualificationChecksService } from './test-qualification-checks.service';
 
 const locId = '';
 const testSumId = '';
 const testQualificationId = 'g7h8i9';
-const testUser = 'testUser';
+const user: CurrentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 const testQualificationRecord = new TestQualificationRecordDTO();
 const testQualifications = [testQualificationRecord];
@@ -20,6 +31,10 @@ const mockTestQualificationWorkspaceService = () => ({
   getTestQualification: jest.fn().mockResolvedValue(testQualificationRecord),
   createTestQualification: jest.fn().mockResolvedValue(testQualificationRecord),
   deleteTestQualification: jest.fn().mockResolvedValue(null),
+});
+
+const mockChecksService = () => ({
+  runChecks: jest.fn().mockResolvedValue([]),
 });
 
 const payload: TestQualificationBaseDTO = {
@@ -37,11 +52,18 @@ describe('TestQualificationWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [HttpModule],
       controllers: [TestQualificationWorkspaceController],
       providers: [
+        ConfigService,
+        AuthGuard,
         {
           provide: TestQualificationWorkspaceService,
           useFactory: mockTestQualificationWorkspaceService,
+        },
+        {
+          provide: TestQualificationChecksService,
+          useFactory: mockChecksService,
         },
       ],
     }).compile();
@@ -80,6 +102,7 @@ describe('TestQualificationWorkspaceController', () => {
         locId,
         testSumId,
         payload,
+        user,
       );
       expect(result).toEqual(testQualificationRecord);
       expect(service.createTestQualification).toHaveBeenCalled();
@@ -92,6 +115,7 @@ describe('TestQualificationWorkspaceController', () => {
         locId,
         testQualificationId,
         testSumId,
+        user,
       );
       expect(result).toEqual(null);
       expect(service.deleteTestQualification).toHaveBeenCalled();

@@ -16,7 +16,8 @@ import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.service';
 import { FlowRataRunChecksService } from '../flow-rata-run-workspace/flow-rata-run-checks.service';
-import { TestTypeCodes } from 'src/enums/test-type-code.enum';
+import { RataTraverseChecksService } from '../rata-traverse-workspace/rata-traverse-checks.service';
+import { TestQualificationChecksService } from '../test-qualification-workspace/test-qualification-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -24,12 +25,14 @@ export class QACertificationChecksService {
     private readonly logger: Logger,
     private readonly locationChecksService: LocationChecksService,
     private readonly testSummaryChecksService: TestSummaryChecksService,
+    private readonly testQualificationChecksService: TestQualificationChecksService,
     private readonly linearitySummaryChecksService: LinearitySummaryChecksService,
     private readonly linearityInjectionChecksService: LinearityInjectionChecksService,
     private readonly rataChecksService: RataChecksService,
     private readonly rataSummaryChecksService: RataSummaryChecksService,
     private readonly rataRunChecksService: RataRunChecksService,
     private readonly flowRataRunChecksService: FlowRataRunChecksService,
+    private readonly rataTraverseChecksService: RataTraverseChecksService,
     @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
   ) {}
@@ -104,50 +107,67 @@ export class QACertificationChecksService {
         }),
       );
 
-      if (summary.testTypeCode === TestTypeCodes.LINE) {
-        summary.linearitySummaryData?.forEach(linearitySummary => {
+      summary.linearitySummaryData?.forEach(linearitySummary => {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const results = this.linearitySummaryChecksService.runChecks(
+              linearitySummary,
+              undefined,
+              true,
+              false,
+              summary,
+            );
+
+            resolve(results);
+          }),
+        );
+
+        linearitySummary.linearityInjectionData?.forEach(linearityInjection => {
           promises.push(
             new Promise(async (resolve, _reject) => {
-              const results = this.linearitySummaryChecksService.runChecks(
-                locationId,
-                linearitySummary,
+              const results = this.linearityInjectionChecksService.runChecks(
+                linearityInjection,
+                undefined,
+                undefined,
                 true,
+                false,
+                linearitySummary.linearityInjectionData,
+                summary,
               );
 
               resolve(results);
             }),
           );
-
-          linearitySummary.linearityInjectionData?.forEach(
-            linearityInjection => {
-              promises.push(
-                new Promise(async (resolve, _reject) => {
-                  const results = this.linearityInjectionChecksService.runChecks(
-                    locationId,
-                    linearityInjection,
-                    true,
-                    false,
-                    linearitySummary.linearityInjectionData,
-                  );
-
-                  resolve(results);
-                }),
-              );
-            },
-          );
         });
-      }
+      });
 
-      if (summary.testTypeCode === TestTypeCodes.RATA) {
-        summary.rataData?.forEach(rata => {
+      summary.rataData?.forEach(rata => {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const results = this.rataChecksService.runChecks(
+              locationId,
+              rata,
+              null,
+              true,
+              false,
+              summary,
+            );
+
+            resolve(results);
+          }),
+        );
+
+        rata.rataSummaryData?.forEach(rataSummary => {
           promises.push(
             new Promise(async (resolve, _reject) => {
-              const results = this.rataChecksService.runChecks(
+              const results = this.rataSummaryChecksService.runChecks(
                 locationId,
-                rata,
-                null,
+                rataSummary,
                 true,
                 false,
+                null,
+                null,
+                rata.rataSummaryData,
                 summary,
               );
 
@@ -155,33 +175,36 @@ export class QACertificationChecksService {
             }),
           );
 
-          rata.rataSummaryData?.forEach(rataSummary => {
+          rataSummary.rataRunData?.forEach(rataRun => {
             promises.push(
               new Promise(async (resolve, _reject) => {
-                const results = this.rataSummaryChecksService.runChecks(
+                const results = this.rataRunChecksService.runChecks(
+                  rataRun,
                   locationId,
-                  rataSummary,
+                  null,
                   true,
                   false,
-                  null,
-                  null,
-                  rata.rataSummaryData,
                   summary,
+                  undefined,
+                  rataSummary.rataRunData,
                 );
 
                 resolve(results);
               }),
             );
 
-            rataSummary.rataRunData?.forEach(rataRun => {
+            rataRun.flowRataRunData?.forEach(flowRataRun => {
               promises.push(
                 new Promise(async (resolve, _reject) => {
-                  const results = this.rataRunChecksService.runChecks(
-                    locationId,
-                    rataRun,
-                    null,
+                  const results = this.flowRataRunChecksService.runChecks(
+                    flowRataRun,
                     true,
                     false,
+                    null,
+                    rataSummary,
+                    null,
+                    rataRun,
+                    null,
                     summary,
                   );
 
@@ -189,17 +212,20 @@ export class QACertificationChecksService {
                 }),
               );
 
-              rataRun.flowRataRunData?.forEach(flowRataRun => {
+              flowRataRun.rataTraverseData?.forEach(rataTraverse => {
                 promises.push(
                   new Promise(async (resolve, _reject) => {
-                    const results = this.flowRataRunChecksService.runChecks(
-                      flowRataRun,
-                      true,
-                      false,
+                    const results = this.rataTraverseChecksService.runChecks(
+                      rataTraverse,
+                      locationId,
+                      null,
+                      summary,
                       null,
                       rataSummary,
                       null,
-                      rataRun,
+                      true,
+                      false,
+                      flowRataRun.rataTraverseData,
                     );
 
                     resolve(results);
@@ -209,7 +235,26 @@ export class QACertificationChecksService {
             });
           });
         });
-      }
+      });
+
+      summary.testQualificationData?.forEach(testQualification => {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const results = this.testQualificationChecksService.runChecks(
+              locationId,
+              testQualification,
+              summary.testQualificationData,
+              duplicateQaSupp ? duplicateQaSupp.testSumId : null,
+              summary,
+              summary.rataData?.length > 0 ? summary.rataData[0] : null,
+              true,
+              false,
+            );
+
+            resolve(results);
+          }),
+        );
+      });
     }
 
     this.throwIfErrors(await this.extractErrors(promises));

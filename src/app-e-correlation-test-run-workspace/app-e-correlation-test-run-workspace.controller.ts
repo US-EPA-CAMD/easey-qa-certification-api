@@ -82,6 +82,8 @@ export class AppECorrelationTestRunWorkspaceController {
       appECorrTestSumId,
       payload,
       user.userId,
+      false,
+      null,
     );
   }
 

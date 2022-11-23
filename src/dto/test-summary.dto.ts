@@ -3,6 +3,7 @@ import {
   ValidationArguments,
   IsNotEmpty,
   IsOptional,
+  ValidateNested,
 } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
@@ -60,9 +61,9 @@ import {
   CalibrationInjectionImportDTO,
 } from './calibration-injection.dto';
 import {
-  TransmitterTransducerDTO,
-  TransmitterTransducerImportDTO,
-} from './transmitter-transducer.dto';
+  TransmitterTransducerAccuracyDTO,
+  TransmitterTransducerAccuracyImportDTO,
+} from './transmitter-transducer-accuracy.dto';
 import {
   FuelFlowmeterAccuracyDTO,
   FuelFlowmeterAccuracyImportDTO,
@@ -79,7 +80,6 @@ import {
   AppECorrelationTestSummaryDTO,
   AppECorrelationTestSummaryImportDTO,
 } from './app-e-correlation-test-summary.dto';
-import { FlowRataRunDTO, FlowRataRunImportDTO } from './flow-rata-run.dto';
 
 import { RequireOne } from '../pipes/require-one.pipe';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
@@ -102,7 +102,8 @@ import {
   VALID_CODES_FOR_END_DATE_VALIDATION,
 } from '../utilities/constants';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
-import { TestTypeCodes } from 'src/enums/test-type-code.enum';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { Type } from 'class-transformer';
 
 const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -315,8 +316,12 @@ export class TestSummaryBaseDTO {
     message: ErrorMessages.SingleFormat('endDate', 'YYYY-MM-DD format'),
   })
   @IsInDateRange(MIN_DATE, new Date(Date.now()).toISOString(), {
-    message: (args: ValidationArguments) =>
-      `You reported an invalid EndDate in the Test Summary record for Location [${args.object['locationId']}], TestTypeCode [${args.object['testTypeCode']}] and TestNumber [${args.object['testNumber']}].`,
+    message: (args: ValidationArguments) => {
+      args.object['locationId'] = args.object['unitId']
+        ? args.object['unitId']
+        : args.object['stackPipeId'];
+      return `You reported an invalid EndDate in the Test Summary record for Location [${args.object['locationId']}], TestTypeCode [${args.object['testTypeCode']}] and TestNumber [${args.object['testNumber']}].`;
+    },
   })
   @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
   endDate?: Date;
@@ -370,7 +375,6 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(1993, new Date().getFullYear(), {
     message: (args: ValidationArguments) => {
-      console.log(args);
       return `Year must be greater than or equal to 1993 and less than or equal to ${new Date().getFullYear()}. You reported an invalid year of [${
         args.value
       }] in Test Summary record for Unit/Stack [${
@@ -390,7 +394,6 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(1, 4, {
     message: (args: ValidationArguments) => {
-      console.log(args);
       return `Quarter must be a numeric number from 1 to 4. You reported an invalid quarter of [${
         args.value
       }] in Test Summary record for Unit/Stack [${
@@ -447,23 +450,72 @@ export class TestSummaryRecordDTO extends TestSummaryBaseDTO {
 }
 
 export class TestSummaryImportDTO extends TestSummaryBaseDTO {
+  @ValidateNested({ each: true })
+  @Type(() => CalibrationInjectionImportDTO)
   calibrationInjectionData: CalibrationInjectionImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => LinearitySummaryImportDTO)
   linearitySummaryData: LinearitySummaryImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => RataImportDTO)
   rataData: RataImportDTO[];
-  flowRataRunData: FlowRataRunImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => FlowToLoadReferenceImportDTO)
   flowToLoadReferenceData: FlowToLoadReferenceImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => FlowToLoadCheckImportDTO)
   flowToLoadCheckData: FlowToLoadCheckImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => CycleTimeSummaryImportDTO)
   cycleTimeSummaryData: CycleTimeSummaryImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => OnlineOfflineCalibrationImportDTO)
   onlineOfflineCalibrationData: OnlineOfflineCalibrationImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => FuelFlowmeterAccuracyImportDTO)
   fuelFlowmeterAccuracyData: FuelFlowmeterAccuracyImportDTO[];
-  transmitterTransducerData: TransmitterTransducerImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => TransmitterTransducerAccuracyImportDTO)
+  transmitterTransducerData: TransmitterTransducerAccuracyImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => FuelFlowToLoadTestImportDTO)
   fuelFlowToLoadBaselineData: FuelFlowToLoadBaselineImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => FuelFlowToLoadTestImportDTO)
   fuelFlowToLoadTestData: FuelFlowToLoadTestImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => AppECorrelationTestSummaryImportDTO)
   appECorrelationTestSummaryData: AppECorrelationTestSummaryImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => UnitDefaultTestImportDTO)
   unitDefaultTestData: UnitDefaultTestImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => HgSummaryImportDTO)
   hgSummaryData: HgSummaryImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => TestQualificationImportDTO)
   testQualificationData: TestQualificationImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => ProtocolGasImportDTO)
   protocolGasData: ProtocolGasImportDTO[];
+
+  @ValidateNested({ each: true })
+  @Type(() => AirEmissionTestingImportDTO)
   airEmissionTestingData: AirEmissionTestingImportDTO[];
 }
 
@@ -471,13 +523,12 @@ export class TestSummaryDTO extends TestSummaryRecordDTO {
   calibrationInjectionData: CalibrationInjectionDTO[];
   linearitySummaryData: LinearitySummaryDTO[];
   rataData: RataDTO[];
-  flowRataRunData: FlowRataRunDTO[];
   flowToLoadReferenceData: FlowToLoadReferenceDTO[];
   flowToLoadCheckData: FlowToLoadCheckDTO[];
   cycleTimeSummaryData: CycleTimeSummaryDTO[];
   onlineOfflineCalibrationData: OnlineOfflineCalibrationDTO[];
   fuelFlowmeterAccuracyData: FuelFlowmeterAccuracyDTO[];
-  transmitterTransducerData: TransmitterTransducerDTO[];
+  transmitterTransducerData: TransmitterTransducerAccuracyDTO[];
   fuelFlowToLoadBaselineData: FuelFlowToLoadBaselineDTO[];
   fuelFlowToLoadTestData: FuelFlowToLoadTestDTO[];
   appECorrelationTestSummaryData: AppECorrelationTestSummaryDTO[];

@@ -2,11 +2,13 @@ import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { AppECorrelationTestRunDTO } from '../dto/app-e-correlation-test-run.dto';
+import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
 import { AppendixETestSummaryRepository } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.repository';
 import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryDTO,
-  AppECorrelationTestSummaryImportDTO,
+  AppECorrelationTestSummaryRecordDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
 import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
@@ -14,6 +16,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
 import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-test-summary-workspace.service';
 
+const locationId = '5';
 const testSumId = '';
 const userId = 'user';
 const appendixECorrelationTestSummaryId = '';
@@ -40,6 +43,11 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockTestRunService = () => ({
+  import: jest.fn(),
+  export: jest.fn().mockResolvedValue([new AppECorrelationTestRunDTO()]),
+});
+
 const mockOfficialRepository = () => ({
   findOne: jest.fn(),
 });
@@ -57,6 +65,14 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
         AppECorrelationTestSummaryWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
+          useFactory: mockTestSumService,
+        },
+        {
+          provide: AppECorrelationTestRunWorkspaceService,
+          useFactory: mockTestRunService,
+        },
+        {
+          provide: AppendixETestSummaryRepository,
           useFactory: mockTestSumService,
         },
         {
@@ -130,18 +146,22 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
     });
   });
 
-  describe('Import', () => {
-    it('Should Import Appendix E Correlation Test Summary', async () => {
-      jest
-        .spyOn(service, 'createAppECorrelation')
-        .mockResolvedValue(appECorrelationTest);
+  describe('import', () => {
+    const importDTO = new AppECorrelationTestSummaryDTO();
+    const recordDTO = new AppECorrelationTestSummaryRecordDTO();
 
-      await service.import(
-        testSumId,
-        new AppECorrelationTestSummaryImportDTO(),
-        userId,
-        true,
-      );
+    it('Should Import Appendix E Correlation Test Summary', async () => {
+      jest.spyOn(service, 'createAppECorrelation').mockResolvedValue(recordDTO);
+
+      await service.import(locationId, testSumId, importDTO, userId, false);
+    });
+
+    it('Should Import Appendix E Correlation Test Summary from Historical Record', async () => {
+      importDTO.appECorrelationTestRunData = [new AppECorrelationTestRunDTO()];
+
+      jest.spyOn(service, 'createAppECorrelation').mockResolvedValue(recordDTO);
+
+      await service.import(locationId, testSumId, importDTO, userId, true);
     });
   });
 

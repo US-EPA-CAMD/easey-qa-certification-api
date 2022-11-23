@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-
+import { HttpModule } from '@nestjs/axios';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { QACertificationWorkspaceController } from './qa-certification.controller';
@@ -11,10 +11,22 @@ import {
 } from '../dto/qa-certification.dto';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { ConfigService } from '@nestjs/config';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 const qaCertDto = new QACertificationDTO();
 const qaParamsDto = new QACertificationParamsDTO();
 const payload = new QACertificationImportDTO();
+
+const user: CurrentUser = {
+  userId: 'testUser',
+  sessionId: '',
+  expiration: '',
+  clientIp: '',
+  isAdmin: false,
+  roles: [],
+};
 
 const qaSuppData = new QASuppData();
 const location = {
@@ -41,9 +53,11 @@ describe('QA Certification Workspace Controller Test', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggerModule],
+      imports: [HttpModule],
       controllers: [QACertificationWorkspaceController],
       providers: [
+        ConfigService,
+        AuthGuard,
         {
           provide: QACertificationWorkspaceService,
           useFactory: mockService,
@@ -73,7 +87,7 @@ describe('QA Certification Workspace Controller Test', () => {
         .spyOn(checkService, 'runChecks')
         .mockResolvedValue([[location], [qaSuppData]]);
       jest.spyOn(service, 'import').mockResolvedValue(undefined);
-      expect(await controller.import(payload)).toBe(undefined);
+      expect(await controller.import(payload, user)).toBe(undefined);
     });
   });
 });

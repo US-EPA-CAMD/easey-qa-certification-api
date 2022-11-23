@@ -23,6 +23,10 @@ import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-mas
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
 import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
+import {
+  BEGIN_DATE_TEST_TYPE_CODES,
+  VALID_CODES_FOR_END_MINUTE_VALIDATION,
+} from '../utilities/constants';
 
 const KEY = 'Test Summary';
 
@@ -118,15 +122,19 @@ export class TestSummaryChecksService {
     }
 
     // TEST-3 Test Begin Minute Valid
-    error = await this.testMinuteField(summary, locationId, 'beginMinute');
-    if (error) {
-      errorList.push(error);
+    if (BEGIN_DATE_TEST_TYPE_CODES.includes(summary.testTypeCode)) {
+      error = await this.testMinuteField(summary, locationId, 'beginMinute');
+      if (error) {
+        errorList.push(error);
+      }
     }
 
-    // TEST-6 Test End Minute Valid
-    error = await this.testMinuteField(summary, locationId, 'endMinute');
-    if (error) {
-      errorList.push(error);
+    if (VALID_CODES_FOR_END_MINUTE_VALIDATION.includes(summary.testTypeCode)) {
+      // TEST-6 Test End Minute Valid
+      error = await this.testMinuteField(summary, locationId, 'endMinute');
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     // TEST-7 Test Dates Consistent
@@ -165,14 +173,6 @@ export class TestSummaryChecksService {
     error = await this.test23Check(locationId, summary);
     if (error) {
       errorList.push(error);
-    }
-
-    if (summary.testResultCode === TestTypeCodes.RATA) {
-      // RATA-100 Test Result Code Valid
-      error = await this.rata100check(summary);
-      if (error) {
-        errorList.push(error);
-      }
     }
 
     if (!isUpdate) {
@@ -711,7 +711,6 @@ export class TestSummaryChecksService {
     let error: string = null;
     let fields: string[] = [];
     let duplicate: TestSummary | QASuppData;
-    let FIELDNAME: string = 'fields';
 
     const duplicates = summaries.filter(i => {
       return (
@@ -771,7 +770,7 @@ export class TestSummaryChecksService {
         locationID: summary.unitId ? summary.unitId : summary.stackPipeId,
         testTypeCode: summary.testTypeCode,
         testNumber: summary.testNumber,
-        fieldname: FIELDNAME,
+        fieldname: fields,
       });
     }
 
@@ -806,7 +805,7 @@ export class TestSummaryChecksService {
         TestTypeCodes.LINE,
         TestTypeCodes.RATA,
         TestTypeCodes.CYCLE,
-        TestTypeCodes.F2LREF,
+        TestTypeCodes.FF2LTST,
         TestTypeCodes.APPE,
         TestTypeCodes.UNITDEF,
       ];
@@ -904,7 +903,11 @@ export class TestSummaryChecksService {
         componentID: summary.componentID,
         locationId: locationId,
       });
-      if (component && component.componentTypeCode !== 'FLOW') {
+      if (
+        component &&
+        component.componentTypeCode !== 'FLOW' &&
+        summary.testTypeCode !== 'FFACC'
+      ) {
         if (summary.spanScaleCode === null) {
           return this.getMessage('TEST-8-A', {
             fieldname: FIELDNAME,
@@ -1138,8 +1141,8 @@ export class TestSummaryChecksService {
   ): string {
     let error: string = null;
     const resultA = this.getMessage('IMPORT-33-A', {
-      'test type': summary.testTypeCode,
-      'location type': summary.stackPipeId,
+      testType: summary.testTypeCode,
+      locationType: summary.stackPipeId,
     });
 
     const INVALID_TEST_TYPE_CODES_FOR_CS_AND_MS = [
@@ -1251,37 +1254,6 @@ export class TestSummaryChecksService {
       }
     }
     return error;
-  }
-
-  // RATA-100 Test Result Code Valid
-  async rata100check(
-    summary: TestSummaryBaseDTO | TestSummaryImportDTO,
-  ): Promise<string> {
-    let error: string = null;
-    let FIELDNAME: string = 'testResultCode';
-    let KEY: 'Test Summary';
-    const resultC = this.getMessage('RATA-100-C', {
-      value: summary.testResultCode,
-      fieldname: FIELDNAME,
-      key: KEY,
-    });
-    //  const resultC = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type, in the field, in the field [testResultCode] for [Test Summary]`;
-
-    if (
-      !['PASSED', 'PASSAPS', 'FAILED', 'ABORTED'].includes(
-        summary.testResultCode,
-      )
-    ) {
-      const record = this.testResultCodeRepository.findOne(
-        summary.testResultCode,
-      );
-
-      if (record) {
-        error = resultC;
-      }
-
-      return error;
-    }
   }
 
   getMessage(messageKey: string, messageArgs: object): string {

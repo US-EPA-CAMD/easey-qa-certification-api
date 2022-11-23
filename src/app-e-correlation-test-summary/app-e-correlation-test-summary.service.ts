@@ -1,10 +1,14 @@
-import { Injectable, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpStatus, forwardRef, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AppendixETestSummaryRepository } from './app-e-correlation-test-summary.repository';
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
-import { AppECorrelationTestSummaryRecordDTO } from '../dto/app-e-correlation-test-summary.dto';
+import {
+  AppECorrelationTestSummaryDTO,
+  AppECorrelationTestSummaryRecordDTO,
+} from '../dto/app-e-correlation-test-summary.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
+import { AppECorrelationTestRunService } from '../app-e-correlation-test-run/app-e-correlation-test-run.service';
 
 @Injectable()
 export class AppECorrelationTestSummaryService {
@@ -12,6 +16,8 @@ export class AppECorrelationTestSummaryService {
     private readonly map: AppECorrelationTestSummaryMap,
     @InjectRepository(AppendixETestSummaryRepository)
     private readonly repository: AppendixETestSummaryRepository,
+    @Inject(forwardRef(() => AppECorrelationTestRunService))
+    private readonly appECorrelationTestRunService: AppECorrelationTestRunService,
   ) {}
 
   async getAppECorrelations(
@@ -39,16 +45,27 @@ export class AppECorrelationTestSummaryService {
 
   async getAppECorrelationsByTestSumIds(
     testSumIds: string[],
-  ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
+  ): Promise<AppECorrelationTestSummaryDTO[]> {
     const results = await this.repository.find({
       where: { testSumId: In(testSumIds) },
     });
     return this.map.many(results);
   }
 
-  async export(
-    TestSumIds: string[],
-  ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
-    return await this.getAppECorrelationsByTestSumIds(TestSumIds);
+  async export(testSumIds: string[]): Promise<AppECorrelationTestSummaryDTO[]> {
+    const appECorrelationTests = await this.getAppECorrelationsByTestSumIds(
+      testSumIds,
+    );
+
+    const testRuns = await this.appECorrelationTestRunService.export(
+      appECorrelationTests.map(i => i.id),
+    );
+
+    appECorrelationTests.forEach(s => {
+      s.appECorrelationTestRunData = testRuns.filter(
+        i => i.appECorrTestSumId === s.id,
+      );
+    });
+    return appECorrelationTests;
   }
 }

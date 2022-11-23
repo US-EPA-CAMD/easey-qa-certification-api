@@ -15,6 +15,9 @@ import { RataChecksService } from '../rata-workspace/rata-checks.service';
 import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary-checks.service';
 import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
 import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.service';
+import { FlowRataRunChecksService } from '../flow-rata-run-workspace/flow-rata-run-checks.service';
+import { RataTraverseChecksService } from '../rata-traverse-workspace/rata-traverse-checks.service';
+import { TestQualificationChecksService } from '../test-qualification-workspace/test-qualification-checks.service';
 
 const returnLocationRunChecks = [
   {
@@ -84,6 +87,24 @@ describe('QA Certification Check Service Test', () => {
         },
         {
           provide: RataRunChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
+        {
+          provide: FlowRataRunChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
+        {
+          provide: RataTraverseChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
+        {
+          provide: TestQualificationChecksService,
           useFactory: () => ({
             runChecks: jest.fn().mockResolvedValue([]),
           }),

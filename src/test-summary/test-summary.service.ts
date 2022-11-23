@@ -11,6 +11,14 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { RataService } from '../rata/rata.service';
 import { ProtocolGasService } from '../protocol-gas/protocol-gas.service';
 import { AppECorrelationTestSummaryService } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.service';
+import { FuelFlowToLoadTestService } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.service';
+import { CalibrationInjectionService } from '../calibration-injection/calibration-injection.service';
+import { FlowToLoadCheckService } from '../flow-to-load-check/flow-to-load-check.service';
+import { FlowToLoadReferenceService } from '../flow-to-load-reference/flow-to-load-reference.service';
+import { OnlineOfflineCalibrationService } from '../online-offline-calibration/online-offline-calibration.service';
+import { FuelFlowToLoadBaselineService } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.service';
+import { CycleTimeSummaryService } from '../cycle-time-summary/cycle-time-summary.service';
+import { FuelFlowmeterAccuracyService } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -27,6 +35,22 @@ export class TestSummaryService {
     private readonly protocolGasService: ProtocolGasService,
     @Inject(forwardRef(() => AppECorrelationTestSummaryService))
     private readonly appECorrelationTestSummaryService: AppECorrelationTestSummaryService,
+    @Inject(forwardRef(() => FuelFlowToLoadTestService))
+    private readonly fuelFlowToLoadTestService: FuelFlowToLoadTestService,
+    @Inject(forwardRef(() => FuelFlowToLoadBaselineService))
+    private readonly fuelFlowToLoadBaselineService: FuelFlowToLoadBaselineService,
+    @Inject(forwardRef(() => FuelFlowmeterAccuracyService))
+    private readonly fuelFlowmeterAccuracyService: FuelFlowmeterAccuracyService,
+    @Inject(forwardRef(() => CalibrationInjectionService))
+    private readonly calInjService: CalibrationInjectionService,
+    @Inject(forwardRef(() => FlowToLoadCheckService))
+    private readonly flowToLoadCheckService: FlowToLoadCheckService,
+    @Inject(forwardRef(() => FlowToLoadReferenceService))
+    private readonly flowLoadReferenceService: FlowToLoadReferenceService,
+    @Inject(forwardRef(() => OnlineOfflineCalibrationService))
+    private readonly onlineOfflineCalibrationService: OnlineOfflineCalibrationService,
+    @Inject(forwardRef(() => CycleTimeSummaryService))
+    private readonly cycleTimeSummaryService: CycleTimeSummaryService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -126,22 +150,68 @@ export class TestSummaryService {
         let linearitySummaryData,
           rataData,
           protocolGasData,
-          appECorrelationTestSummaryData = null;
+          fuelFlowToLoadTestData,
+          fuelFlowToLoadBaselineData,
+          fuelFlowmeterAccuracyData,
+          appECorrelationTestSummaryData,
+          calibrationInjectionData,
+          cycleTimeSummaryData,
+          flowToLoadCheckData,
+          flowToLoadReferenceData,
+          onlineOfflineCalibrationData;
         let testSumIds;
+
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
             testTypeCodes.includes(i.testTypeCode),
           );
         }
+
         testSumIds = testSummaries.map(i => i.id);
 
         if (testSumIds) {
           linearitySummaryData = await this.linearityService.export(testSumIds);
+
           rataData = await this.rataService.export(testSumIds);
+
           protocolGasData = await this.protocolGasService.export(testSumIds);
+
+          fuelFlowToLoadTestData = await this.fuelFlowToLoadTestService.export(
+            testSumIds,
+          );
+
+          fuelFlowToLoadBaselineData = await this.fuelFlowToLoadBaselineService.export(
+            testSumIds,
+          );
+
+          flowToLoadCheckData = await this.flowToLoadCheckService.export(
+            testSumIds,
+          );
+
+          flowToLoadReferenceData = await this.flowLoadReferenceService.export(
+            testSumIds,
+          );
+
+          fuelFlowmeterAccuracyData = await this.fuelFlowmeterAccuracyService.export(
+            testSumIds,
+          );
+
           appECorrelationTestSummaryData = await this.appECorrelationTestSummaryService.export(
             testSumIds,
           );
+
+          calibrationInjectionData = await this.calInjService.export(
+            testSumIds,
+          );
+
+          onlineOfflineCalibrationData = await this.onlineOfflineCalibrationService.export(
+            testSumIds,
+          );
+
+          cycleTimeSummaryData = await this.cycleTimeSummaryService.export(
+            testSumIds,
+          );
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -150,7 +220,31 @@ export class TestSummaryService {
             s.protocolGasData = protocolGasData.filter(
               i => i.testSumId === s.id,
             );
+            s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.fuelFlowToLoadBaselineData = fuelFlowToLoadBaselineData.filter(
+              i => i.testSumId === s.id,
+            );
             s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.calibrationInjectionData = calibrationInjectionData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.flowToLoadCheckData = flowToLoadCheckData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.fuelFlowmeterAccuracyData = fuelFlowmeterAccuracyData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.onlineOfflineCalibrationData = onlineOfflineCalibrationData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.cycleTimeSummaryData = cycleTimeSummaryData.filter(
               i => i.testSumId === s.id,
             );
           });
@@ -161,6 +255,7 @@ export class TestSummaryService {
     );
 
     await Promise.all(promises);
+
     return testSummaries;
   }
 }

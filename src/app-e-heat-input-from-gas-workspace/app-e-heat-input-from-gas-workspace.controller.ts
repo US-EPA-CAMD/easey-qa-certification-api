@@ -38,7 +38,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     description:
       'Retrieves a workspace Appendix E Heat Input From Gas records by Appendix E Correlation Test Run Id',
   })
-  async getAppECorrelationTestRuns(
+  async getAppEHeatInputFromGases(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('appECorrTestSumId') _appECorrTestSumId: string,
@@ -53,7 +53,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     type: AppEHeatInputFromGasRecordDTO,
     description: `Retrieves a workspace Appendix E Heat Input From Gas record by it's Id`,
   })
-  async getAppECorrelationTestRun(
+  async getAppEHeatInputFromGas(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('appECorrTestSumId') _appECorrTestSumId: string,
@@ -71,7 +71,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     description: 'Creates a workspace Appendix E Heat Input From Gas record.',
   })
   async createAppEHeatInputFromGas(
-    @Param('locId') _locationId: string,
+    @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('appECorrTestSumId') _appECorrTestSumId: string,
     @Param('appECorrTestRunId') appECorrTestRunId: string,
@@ -79,10 +79,12 @@ export class AppEHeatInputFromGasWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<AppEHeatInputFromGasRecordDTO> {
     return this.service.createAppEHeatInputFromGas(
+      locationId,
       testSumId,
       appECorrTestRunId,
       payload,
       user.userId,
+      false,
     );
   }
 
@@ -93,7 +95,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     type: AppEHeatInputFromGasRecordDTO,
     description: 'Updates a workspace Appendix E Heat Input From Gas record.',
   })
-  async updateAppECorrelationTestRun(
+  async updateAppEHeatInputFromGas(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('appECorrTestSumId') _appECorrTestSumId: string,

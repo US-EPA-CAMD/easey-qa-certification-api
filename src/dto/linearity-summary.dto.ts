@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator';
+import {
+  IsNotEmpty,
+  ValidateNested,
+  ValidationArguments,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { IsNotNegative } from '../pipes/is-not-negative.pipe';
 import {
@@ -91,6 +97,8 @@ export class LinearitySummaryRecordDTO extends LinearitySummaryBaseDTO {
 }
 
 export class LinearitySummaryImportDTO extends LinearitySummaryBaseDTO {
+  @ValidateNested({ each: true })
+  @Type(() => LinearityInjectionImportDTO)
   linearityInjectionData: LinearityInjectionImportDTO[];
 }
 

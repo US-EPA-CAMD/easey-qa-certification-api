@@ -10,7 +10,7 @@ import {
   LinearitySummaryImportDTO,
 } from '../dto/linearity-summary.dto';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { MonitorLocation } from '../entities/monitor-location.entity';
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { Unit } from '../entities/workspace/unit.entity';
 import { InternalServerErrorException } from '@nestjs/common';
@@ -20,6 +20,32 @@ import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-
 import { ProtocolGas } from '../entities/workspace/protocol-gas.entity';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
 import { AppECorrelationTestSummary } from '../entities/workspace/app-e-correlation-test-summary.entity';
+import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
+import { CalibrationInjectionWorkspaceService } from '../calibration-injection-workspace/calibration-injection-workspace.service';
+import { CalibrationInjection } from '../entities/workspace/calibration-injection.entity';
+import { FuelFlowToLoadTest } from '../entities/workspace/fuel-flow-to-load-test.entity';
+import { UnitRepository } from '../unit/unit.repository';
+import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
+import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
+import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
+import { ReportingPeriod } from '../entities/workspace/reporting-period.entity';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
+import { Component } from '../entities/workspace/component.entity';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
+import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
+import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
+import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
+import { FlowToLoadCheckDTO } from '../dto/flow-to-load-check.dto';
+import { FlowToLoadReferenceDTO } from '../dto/flow-to-load-reference.dto';
+import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
+import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
+import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
+import { FuelFlowmeterAccuracy } from '../entities/workspace/fuel-flowmeter-accuracy.entity';
+import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
+import { FuelFlowmeterAccuracyDTO } from '../dto/fuel-flowmeter-accuracy.dto';
+import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
 
 const locationId = '121';
 const facilityId = 1;
@@ -47,6 +73,7 @@ const mockRepository = () => ({
   getTestSummariesByUnitStack: jest.fn().mockResolvedValue([testSummary]),
   getTestSummaryByLocationId: jest.fn().mockResolvedValue(testSummary),
   delete: jest.fn().mockResolvedValue(null),
+  findOne: jest.fn().mockResolvedValue(testSummary),
   create: jest.fn().mockResolvedValue(testSummary),
   save: jest.fn().mockResolvedValue(testSummary),
 });
@@ -76,9 +103,61 @@ const mockAppECorrelationTestSummaryService = () => ({
   import: jest.fn().mockResolvedValue(null),
 });
 
+const mockCalibrationInjectionWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new CalibrationInjection()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
+const mockCycleTimeSummaryWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new CycleTimeSummary()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
+const mockFuelFlowToLoadTestWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new FuelFlowToLoadTest()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
+const mockFlowToLoadReferenceWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new FlowToLoadReferenceDTO()]),
+});
+
+const mockFlowToLoadCheckWorkspaceService = () => ({
+  import: jest.fn().mockResolvedValue(null),
+  export: jest.fn().mockResolvedValue([new FlowToLoadCheckDTO()]),
+});
+
+const mockFuelFlowToLoadBaselineService = () => ({
+  export: jest.fn().mockResolvedValue([new FuelFlowToLoadBaselineDTO()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
+const mockFuelFlowmeterAccuracyWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new FuelFlowmeterAccuracyDTO()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
+const mockOnlineOfflineCalibrationWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new OnlineOfflineCalibrationDTO()]),
+});
+
+const unit = new Unit();
+unit.name = '1';
+const stackPipe = new StackPipe();
+stackPipe.name = '1';
+const rp = new ReportingPeriod();
+rp.id = 1;
+const ms = new MonitorSystem();
+ms.id = '1';
+const comp = new Component();
+comp.id = '1';
+
 describe('TestSummaryWorkspaceService', () => {
   let service: TestSummaryWorkspaceService;
   let repository: TestSummaryWorkspaceRepository;
+  let unitRepository: UnitRepository;
+  let stackPipeRepository: StackPipeRepository;
+  let locationRepository: MonitorLocationRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -109,11 +188,82 @@ describe('TestSummaryWorkspaceService', () => {
           provide: AppECorrelationTestSummaryWorkspaceService,
           useFactory: mockAppECorrelationTestSummaryService,
         },
+        {
+          provide: FuelFlowToLoadTestWorkspaceService,
+          useFactory: mockFuelFlowToLoadTestWorkspaceService,
+        },
+        {
+          provide: FuelFlowmeterAccuracyWorkspaceService,
+          useFactory: mockFuelFlowmeterAccuracyWorkspaceService,
+        },
+        {
+          provide: CalibrationInjectionWorkspaceService,
+          useFactory: mockCalibrationInjectionWorkspaceService,
+        },
+        {
+          provide: CycleTimeSummaryWorkspaceService,
+          useFactory: mockCycleTimeSummaryWorkspaceService,
+        },
+        {
+          provide: OnlineOfflineCalibrationWorkspaceService,
+          useFactory: mockOnlineOfflineCalibrationWorkspaceService,
+        },
+        {
+          provide: MonitorLocationRepository,
+          useFactory: () => ({
+            findOne: jest.fn().mockResolvedValue(new MonitorLocation()),
+          }),
+        },
+        {
+          provide: UnitRepository,
+          useFactory: () => ({
+            findOne: jest.fn().mockResolvedValue(unit),
+          }),
+        },
+        {
+          provide: StackPipeRepository,
+          useFactory: () => ({
+            findOne: jest.fn().mockResolvedValue(stackPipe),
+          }),
+        },
+        {
+          provide: ReportingPeriodRepository,
+          useFactory: () => ({
+            findOne: jest.fn().mockResolvedValue(rp),
+          }),
+        },
+        {
+          provide: MonitorSystemRepository,
+          useFactory: () => ({
+            findOne: jest.fn().mockResolvedValue(ms),
+          }),
+        },
+        {
+          provide: ComponentWorkspaceRepository,
+          useFactory: () => ({
+            findOne: jest.fn().mockResolvedValue(comp),
+          }),
+        },
+        {
+          provide: FlowToLoadCheckWorkspaceService,
+          useFactory: mockFlowToLoadCheckWorkspaceService,
+        },
+        {
+          provide: FlowToLoadReferenceWorkspaceService,
+          useFactory: mockFlowToLoadReferenceWorkspaceService,
+        },
+        {
+          provide: FuelFlowToLoadBaselineWorkspaceService,
+          useFactory: mockFuelFlowToLoadBaselineService,
+        },
       ],
     }).compile();
 
     service = module.get(TestSummaryWorkspaceService);
     repository = module.get(TestSummaryWorkspaceRepository);
+    unitRepository = module.get(UnitRepository);
+    stackPipeRepository = module.get(StackPipeRepository);
+    locationRepository = module.get(MonitorLocationRepository);
   });
 
   describe('getTestSummaryById', () => {
@@ -168,46 +318,9 @@ describe('TestSummaryWorkspaceService', () => {
     });
   });
 
-  describe('import', () => {
-    it('Should create test summary ', async () => {
-      const returnedSummary = testSummaryDto;
-      returnedSummary.id = testSumId;
-
-      const creste = jest
-        .spyOn(service, 'createTestSummary')
-        .mockResolvedValue(returnedSummary);
-
-      const result = await service.import(
-        locationId,
-        payload,
-        userId,
-        historicalrecordId,
-      );
-
-      expect(creste).toHaveBeenCalled();
-      expect(result).toEqual(null);
-    });
-  });
-
   describe('createTestSummary', () => {
     it('should call the createTestSummary and create test summariy', async () => {
-      const mockManager = {
-        findOne: jest.fn().mockImplementation((entityType, params) => {
-          if (entityType.name == 'StackPipe') {
-            const pipe = new StackPipe();
-            pipe.name = '1';
-            return pipe;
-          } else if (entityType.name == 'Unit') {
-            return new Unit();
-          } else if (entityType.name == 'MonitorLocation') {
-            return new MonitorLocation();
-          }
-        }),
-      };
-
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
-
-      // jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
 
       jest
         .spyOn(repository, 'getTestSummaryById')
@@ -223,27 +336,18 @@ describe('TestSummaryWorkspaceService', () => {
     });
 
     it('should call the createTestSummary and throw error if Unit does not match', async () => {
-      const mockManager = {
-        findOne: jest.fn().mockImplementation((entityType, params) => {
-          if (entityType.name == 'StackPipe') {
-            const pipe = new StackPipe();
-            pipe.name = '101';
-            return pipe;
-          } else if (entityType.name == 'Unit') {
-            const unit = new Unit();
-            unit.name = '101';
-            return unit;
-          } else if (entityType.name == 'MonitorLocation') {
-            const loc = new MonitorLocation();
-            loc.unitId = '11';
-            return loc;
-          }
-        }),
-      };
-
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
 
-      // jest.spyOn(utils, 'getEntityManager').mockReturnValue(mockManager);
+      const pipe = new StackPipe();
+      pipe.name = '101';
+      const unit = new Unit();
+      unit.name = '101';
+      const loc = new MonitorLocation();
+      loc.unitId = '11';
+
+      jest.spyOn(unitRepository, 'findOne').mockResolvedValue(unit);
+      jest.spyOn(stackPipeRepository, 'findOne').mockResolvedValue(stackPipe);
+      jest.spyOn(locationRepository, 'findOne').mockResolvedValue(loc);
 
       let errored = false;
 
@@ -274,6 +378,20 @@ describe('TestSummaryWorkspaceService', () => {
 
       expect(result).toEqual(testSummaryDto);
     });
+
+    it('should call updateTestSummary and throw error while test summariy not found', async () => {
+      jest.spyOn(repository, 'getTestSummaryById').mockResolvedValue(undefined);
+
+      let errored = false;
+
+      try {
+        await service.updateTestSummary(locationId, testSumId, payload, userId);
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
+    });
   });
 
   describe('deleteTestSummary', () => {
@@ -297,6 +415,56 @@ describe('TestSummaryWorkspaceService', () => {
       }
 
       expect(errored).toBe(true);
+    });
+  });
+
+  describe('resetToNeedsEvaluation', () => {
+    it('should update eval status', async () => {
+      const result = await service.resetToNeedsEvaluation(testSumId, userId);
+
+      expect(result).toEqual(undefined);
+      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.save).toHaveBeenCalled();
+    });
+  });
+
+  describe('lookupValues', () => {
+    it('should return reportPeriodId, componentRecordId, monitorSystem', async () => {
+      payload.year = 2022;
+      payload.quarter = 1;
+      payload.componentID = '1';
+      payload.monitoringSystemID = 'abc';
+
+      const result = await service.lookupValues(locationId, payload);
+
+      expect(result).toEqual([1, '1', ms]);
+    });
+  });
+
+  describe('import', () => {
+    it('Should create test summary ', async () => {
+      const returnedSummary = testSummaryDto;
+      returnedSummary.id = testSumId;
+
+      const creste = jest
+        .spyOn(service, 'createTestSummary')
+        .mockResolvedValue(returnedSummary);
+
+      const importPayload = payload;
+      const calInj = new CalibrationInjection();
+
+      importPayload.calibrationInjectionData = [calInj];
+
+      const result = await service.import(
+        locationId,
+        importPayload,
+        userId,
+        historicalrecordId,
+      );
+
+      expect(creste).toHaveBeenCalled();
+      expect(result).toEqual(null);
+      expect(creste).toHaveBeenCalled();
     });
   });
 });

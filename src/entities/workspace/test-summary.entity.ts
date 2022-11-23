@@ -24,6 +24,11 @@ import { FuelFlowToLoadTest } from './fuel-flow-to-load-test.entity';
 import { FlowToLoadCheck } from './flow-to-load-check.entity';
 import { FlowToLoadReference } from './flow-to-load-reference.entity';
 import { FuelFlowToLoadBaseline } from './fuel-flow-to-load-baseline.entity';
+import { CalibrationInjection } from './calibration-injection.entity';
+import { OnlineOfflineCalibration } from './online-offline-calibration.entity';
+import { FuelFlowmeterAccuracy } from './fuel-flowmeter-accuracy.entity';
+import { CycleTimeSummary } from './cycle-time-summary.entity';
+import { TransmitterTransducerAccuracy } from './transmitter-transducer-accuracy.entity';
 
 @Entity({ name: 'camdecmpswks.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -40,7 +45,7 @@ export class TestSummary extends BaseEntity {
   @Column({
     name: 'mon_sys_id',
   })
-  monitorSystemRecordId: string;
+  monitoringSystemID: string;
 
   @Column({
     name: 'component_id',
@@ -223,6 +228,13 @@ export class TestSummary extends BaseEntity {
   protocolGases: ProtocolGas[];
 
   @OneToMany(
+    () => CycleTimeSummary,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  cycleTimeSummary: CycleTimeSummary[];
+
+  @OneToMany(
     () => AirEmissionTesting,
     o => o.testSummary,
   )
@@ -258,6 +270,13 @@ export class TestSummary extends BaseEntity {
   appECorrelationTestSummaries: AppECorrelationTestSummary[];
 
   @OneToMany(
+    () => CalibrationInjection,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  calibrationInjections: CalibrationInjection[];
+
+  @OneToMany(
     () => FuelFlowToLoadBaseline,
     fftlb => fftlb.testSummary,
   )
@@ -277,4 +296,25 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   flowToLoadReference: FlowToLoadReference[];
+
+  @OneToMany(
+    () => FuelFlowmeterAccuracy,
+    ffma => ffma.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  fuelFlowmeterAccuracy: FuelFlowmeterAccuracy[];
+
+  @OneToMany(
+    () => OnlineOfflineCalibration,
+    onOffCal => onOffCal.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  onlineOfflineCalibrations: OnlineOfflineCalibration[];
+
+  @OneToMany(
+    () => TransmitterTransducerAccuracy,
+    transAccuracy => transAccuracy.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  transmitterTransducerAccuracies: TransmitterTransducerAccuracy[];
 }

@@ -10,6 +10,7 @@ import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
 import { ProtocolGasWorkspaceService } from './protocol-gas.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { ProtocolGasRepository } from '../protocol-gas/protocol-gas.repository';
 
 const protocolGasId = 'a1b2c3';
 const testSumId = '1';
@@ -36,7 +37,7 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(protocolGas),
 });
 
-const mockHistoricalRepo = () => ({
+const mockHistoricalRepository = () => ({
   findOne: jest.fn().mockResolvedValue(protocolGas),
 });
 
@@ -61,6 +62,10 @@ describe('ProtocolGasWorkspaceService', () => {
         {
           provide: ProtocolGasWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: ProtocolGasRepository,
+          useFactory: mockHistoricalRepository,
         },
         {
           provide: ProtocolGasMap,

@@ -72,7 +72,7 @@ export class ProtocolGas extends BaseEntity {
 
   @ManyToOne(
     () => TestSummary,
-    o => o.linearitySummaries,
+    o => o.protocolGases,
   )
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;

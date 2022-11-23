@@ -22,13 +22,17 @@ import {
   TestQualificationBaseDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
+import { TestQualificationChecksService } from './test-qualification-checks.service';
 import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Test Qualification')
 export class TestQualificationWorkspaceController {
-  constructor(private readonly service: TestQualificationWorkspaceService) {}
+  constructor(
+    private readonly service: TestQualificationWorkspaceService,
+    private readonly checksService: TestQualificationChecksService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -66,13 +70,55 @@ export class TestQualificationWorkspaceController {
     description: 'Creates a workspace Test Qualification record.',
   })
   async createTestQualification(
-    @Param('locId') _locationId: string,
+    @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: TestQualificationBaseDTO,
     @User() user: CurrentUser,
   ): Promise<TestQualificationRecordDTO> {
+    await this.checksService.runChecks(
+      locationId,
+      payload,
+      null,
+      testSumId,
+      null,
+      null,
+      false,
+      false,
+    );
     return this.service.createTestQualification(
       testSumId,
+      payload,
+      user.userId,
+    );
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: TestQualificationRecordDTO,
+    description: 'Updates a test qualification record in the workspace',
+  })
+  async testQualificationSummary(
+    @Param('locId') locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: TestQualificationBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<TestQualificationRecordDTO> {
+    await this.checksService.runChecks(
+      locationId,
+      payload,
+      null,
+      testSumId,
+      null,
+      null,
+      false,
+      true,
+    );
+    return this.service.updateTestQualification(
+      testSumId,
+      id,
       payload,
       user.userId,
     );
@@ -93,28 +139,6 @@ export class TestQualificationWorkspaceController {
     return this.service.deleteTestQualification(
       testSumId,
       testQualificationId,
-      user.userId,
-    );
-  }
-
-  @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
-  @ApiOkResponse({
-    type: TestQualificationRecordDTO,
-    description: 'Updates a test qualification record in the workspace',
-  })
-  async testQualificationSummary(
-    @Param('locId') _locationId: string,
-    @Param('testSumId') testSumId: string,
-    @Param('id') id: string,
-    @Body() payload: TestQualificationBaseDTO,
-    @User() user: CurrentUser,
-  ): Promise<TestQualificationRecordDTO> {
-    return this.service.updateTestQualification(
-      testSumId,
-      id,
-      payload,
       user.userId,
     );
   }

@@ -17,9 +17,9 @@ export class AppEHeatInputFromOilService {
   async getAppEHeatInputFromOilRecords(
     appECorrTestRunId: string,
   ): Promise<AppEHeatInputFromOilDTO[]> {
-    const records = await this.repository.find({
-      where: { appECorrTestRunId },
-    });
+    const records = await this.repository.getAppEHeatInputFromOilsByTestRunId(
+      appECorrTestRunId,
+    );
 
     return this.map.many(records);
   }
@@ -27,7 +27,7 @@ export class AppEHeatInputFromOilService {
   async getAppEHeatInputFromOilRecord(
     id: string,
   ): Promise<AppEHeatInputFromOilDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.getAppEHeatInputFromOilById(id);
 
     if (!result) {
       throw new LoggingException(
@@ -37,5 +37,18 @@ export class AppEHeatInputFromOilService {
     }
 
     return this.map.one(result);
+  }
+
+  async getAppEHeatInputFromOilRecordsByTestRunIds(
+    testSumIds: string[],
+  ): Promise<AppEHeatInputFromOilDTO[]> {
+    const results = await this.repository.getAppEHeatInputFromOilsByTestRunIds(
+      testSumIds,
+    );
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<AppEHeatInputFromOilDTO[]> {
+    return this.getAppEHeatInputFromOilRecordsByTestRunIds(testSumIds);
   }
 }

@@ -25,6 +25,8 @@ const mockService = () => ({
   getFlowToLoadChecks: jest.fn().mockResolvedValue(flowToLoadChecks),
   getFlowToLoadCheck: jest.fn().mockResolvedValue(flowToLoadCheck),
   createFlowToLoadCheck: jest.fn().mockResolvedValue(flowToLoadCheck),
+  editFlowToLoadCheck: jest.fn().mockResolvedValue(flowToLoadCheck),
+  deleteFlowToLoadCheck: jest.fn(),
 });
 
 const payload = new FlowToLoadCheckBaseDTO();
@@ -78,6 +80,32 @@ describe('FlowToLoadCheckWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(flowToLoadCheck);
+    });
+  });
+
+  describe('editFlowToLoadCheck', () => {
+    it('Calls the service and edits a Flow To Load Check record', async () => {
+      expect(
+        await controller.editFlowToLoadCheck(
+          locId,
+          testSumId,
+          flowToLoadCheckId,
+          payload,
+          user,
+        ),
+      ).toEqual(flowToLoadCheck);
+    });
+  });
+
+  describe('deleteFlowToLoadCheck', () => {
+    it('Calls the service and delete a Flow To Load Check record', async () => {
+      const result = await controller.deleteFlowToLoadCheck(
+        locId,
+        testSumId,
+        flowToLoadCheckId,
+        user,
+      );
+      expect(result).toEqual(undefined);
     });
   });
 });

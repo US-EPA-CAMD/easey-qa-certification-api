@@ -26,6 +26,18 @@ import { AppECorrelationTestSummaryWorkspaceModule } from '../app-e-correlation-
 import { FuelFlowToLoadTestWorkspaceModule } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.module';
 import { FlowToLoadCheckWorkspaceModule } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.module';
 import { FlowToLoadReferenceWorkspaceModule } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.module';
+import { CalibrationInjectionWorkspaceModule } from '../calibration-injection-workspace/calibration-injection-workspace.module';
+import { AppEHeatInputFromGasWorkspaceModule } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
+import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.module';
+import { FuelFlowToLoadBaselineWorkspaceModule } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.module';
+import { CalibrationInjectionRepository } from '../calibration-injection/calibration-injection.repository';
+import { UnitRepository } from '../unit/unit.repository';
+import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
+import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
+import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
+import { OnlineOfflineCalibrationWorkspaceModule } from '../online-offline-calibration-workspace/online-offline-calibration.module';
+import { FuelFlowmeterAccuracyWorkspaceModule } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
+import { CycleTimeSummaryWorkspaceModule } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.module';
 
 @Module({
   imports: [
@@ -37,7 +49,12 @@ import { FlowToLoadReferenceWorkspaceModule } from '../flow-to-load-reference-wo
       AnalyzerRangeWorkspaceRepository,
       TestSummaryMasterDataRelationshipRepository,
       MonitorSystemRepository,
+      ReportingPeriodRepository,
+      MonitorLocationRepository,
+      UnitRepository,
+      StackPipeRepository,
       MonitorMethodRepository,
+      CalibrationInjectionRepository,
     ]),
     forwardRef(() => LinearitySummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),
@@ -47,8 +64,15 @@ import { FlowToLoadReferenceWorkspaceModule } from '../flow-to-load-reference-wo
     forwardRef(() => AppECorrelationTestSummaryWorkspaceModule),
     forwardRef(() => FlowToLoadReferenceWorkspaceModule),
     forwardRef(() => FuelFlowToLoadTestWorkspaceModule),
+    forwardRef(() => FuelFlowmeterAccuracyWorkspaceModule),
     forwardRef(() => FlowToLoadCheckWorkspaceModule),
     forwardRef(() => AirEmissionTestingWorkspaceModule),
+    forwardRef(() => AppEHeatInputFromGasWorkspaceModule),
+    forwardRef(() => AppEHeatInputFromOilWorkspaceModule),
+    forwardRef(() => CalibrationInjectionWorkspaceModule),
+    forwardRef(() => FuelFlowToLoadBaselineWorkspaceModule),
+    forwardRef(() => OnlineOfflineCalibrationWorkspaceModule),
+    forwardRef(() => CycleTimeSummaryWorkspaceModule),
     TestResultCodeModule,
     HttpModule,
   ],

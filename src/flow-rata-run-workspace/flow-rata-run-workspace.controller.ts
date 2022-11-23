@@ -93,6 +93,8 @@ export class FlowRataRunWorkspaceController {
       null,
       rataRunId,
       null,
+      testSumId,
+      null,
     );
     return this.service.createFlowRataRun(
       testSumId,
@@ -110,7 +112,7 @@ export class FlowRataRunWorkspaceController {
     description: 'Updates a Flow Rata Run record in the workspace',
   })
   async updateRataRun(
-    @Param('locId') locationId: string,
+    @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('rataId') _rataId: string,
     @Param('rataSumId') rataSumId: string,
@@ -126,6 +128,8 @@ export class FlowRataRunWorkspaceController {
       rataSumId,
       null,
       rataRunId,
+      null,
+      testSumId,
       null,
     );
     return this.service.updateRataRun(

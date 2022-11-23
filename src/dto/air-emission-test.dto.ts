@@ -66,8 +66,43 @@ export class AirEmissionTestingBaseDTO {
   })
   aetbEmail: string;
 
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('AETB-9-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   examDate: Date;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('AETB-7-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   providerName: string;
+
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('AETB-8-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsEmail({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('AETB-8-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   providerEmail: string;
 }
 
