@@ -44,6 +44,11 @@ export class ReportingPeriod extends BaseEntity {
   })
   endDate: Date;
 
+  @Column({
+    name: 'period_abbreviation',
+  })
+  periodAbbreviation: string;
+
   @OneToMany(
     () => TestSummary,
     o => o.reportingPeriod,

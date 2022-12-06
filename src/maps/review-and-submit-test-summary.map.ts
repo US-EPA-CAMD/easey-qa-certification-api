@@ -38,6 +38,10 @@ export class ReviewAndSubmitTestSummaryMap extends BaseMap<
       evalStatusCode: entity.evalStatusCode,
 
       submissionCode: entity.submissionCode,
+
+      periodAbbreviation: entity.periodAbbreviation,
+
+      testSumId: entity.testSumId,
     };
   }
 }

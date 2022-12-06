@@ -7,6 +7,8 @@ export class ReviewAndSubmitTestSummaryDTO {
 
   locationInfo: string;
 
+  testSumId: string;
+
   testInfo: string;
 
   testTypeCode: string;
@@ -24,4 +26,6 @@ export class ReviewAndSubmitTestSummaryDTO {
   evalStatusCode: string;
 
   submissionCode: string;
+
+  periodAbbreviation: string;
 }
