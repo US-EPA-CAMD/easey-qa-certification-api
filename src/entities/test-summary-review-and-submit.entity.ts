@@ -30,6 +30,11 @@ export class TestSummaryReviewAndSubmit {
   testInfo: string;
 
   @ViewColumn({
+    name: 'test_sum_id',
+  })
+  testSumId: string;
+
+  @ViewColumn({
     name: 'test_type_cd',
   })
   testTypeCode: string;
@@ -68,4 +73,9 @@ export class TestSummaryReviewAndSubmit {
     name: 'submission_availability_cd',
   })
   submissionCode: string;
+
+  @ViewColumn({
+    name: 'period_abbreviation',
+  })
+  periodAbbreviation: string;
 }
