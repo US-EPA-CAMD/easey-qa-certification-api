@@ -15,6 +15,7 @@ import { In } from 'typeorm';
 import { CycleTimeSummary } from '../entities/cycle-time-summary.entity';
 import { CycleTimeSummaryRepository } from '../cycle-time-summary/cycle-time-summary.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { CycleTimeInjectionWorkspaceService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace.service';
 
 @Injectable()
 export class CycleTimeSummaryWorkspaceService {
@@ -27,6 +28,8 @@ export class CycleTimeSummaryWorkspaceService {
     private readonly repository: CycleTimeSummaryWorkspaceRepository,
     @InjectRepository(CycleTimeSummaryRepository)
     private readonly historicalRepository: CycleTimeSummaryRepository,
+    @Inject(forwardRef(() => CycleTimeInjectionWorkspaceService))
+    private readonly cycleTimeInjectionService: CycleTimeInjectionWorkspaceService,
   ) {}
 
   async getCycleTimeSummaries(
@@ -152,7 +155,21 @@ export class CycleTimeSummaryWorkspaceService {
   }
 
   async export(testSumIds: string[]): Promise<CycleTimeSummaryDTO[]> {
-    return this.getCycleTimeSummaryByTestSumIds(testSumIds);
+    const cycleTimeSummaries = await this.getCycleTimeSummaryByTestSumIds(
+      testSumIds,
+    );
+
+    const cycleTimeInjections = await this.cycleTimeInjectionService.export(
+      cycleTimeSummaries.map(i => i.id),
+    );
+
+    cycleTimeSummaries.forEach(s => {
+      s.cycleTimeInjectionData = cycleTimeInjections.filter(
+        i => i.cycleTimeSumId === s.id,
+      );
+    });
+
+    return cycleTimeSummaries;
   }
 
   async import(

@@ -83,4 +83,24 @@ describe('CycleTimeInjectionWorkspaceService', () => {
       expect(result).toEqual(cycleTimeInjectionDTO);
     });
   });
+
+  describe('getCycleTimeInjectionByCycleTimeSumIds', () => {
+    it('Should get Cycle Time injection records by cycleTimeSumIds', async () => {
+      const result = await service.getCycleTimeInjectionByCycleTimeSumIds([
+        cycleTimeSumId,
+      ]);
+      expect(result).toEqual([cycleTimeInjectionDTO]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Cycle Time Injection Record', async () => {
+      jest
+        .spyOn(service, 'getCycleTimeInjectionByCycleTimeSumIds')
+        .mockResolvedValue([]);
+
+      const result = await service.export([cycleTimeSumId]);
+      expect(result).toEqual([]);
+    });
+  });
 });

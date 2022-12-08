@@ -6,12 +6,14 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '../utilities/functions';
 import {
   CycleTimeInjectionBaseDTO,
+  CycleTimeInjectionDTO,
   CycleTimeInjectionImportDTO,
   CycleTimeInjectionRecordDTO,
 } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjectionWorkspaceRepository } from './cycle-time-injection-workspace.repository';
 import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { In } from 'typeorm';
 
 @Injectable()
 export class CycleTimeInjectionWorkspaceService {
@@ -53,5 +55,18 @@ export class CycleTimeInjectionWorkspaceService {
     );
 
     return this.map.one(entity);
+  }
+
+  async getCycleTimeInjectionByCycleTimeSumIds(
+    cycleTimeSumIds: string[],
+  ): Promise<CycleTimeInjectionDTO[]> {
+    const results = await this.repository.find({
+      where: { cycleTimeSumId: In(cycleTimeSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(cycleTimeSumIds: string[]): Promise<CycleTimeInjectionDTO[]> {
+    return this.getCycleTimeInjectionByCycleTimeSumIds(cycleTimeSumIds);
   }
 }
