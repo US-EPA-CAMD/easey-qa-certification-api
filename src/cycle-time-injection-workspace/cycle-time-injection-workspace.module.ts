@@ -8,10 +8,12 @@ import { CycleTimeInjectionWorkspaceRepository } from './cycle-time-injection-wo
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { CycleTimeSummaryWorkspaceModule } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.module';
 import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
+import { CycleTimeInjectionModule } from '../cycle-time-injection/cycle-time-injection.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([CycleTimeInjectionWorkspaceRepository]),
+    forwardRef(() => CycleTimeInjectionModule),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => CycleTimeSummaryWorkspaceModule),
     HttpModule,

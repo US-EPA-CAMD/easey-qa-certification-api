@@ -13,6 +13,11 @@ import { CycleTimeSummaryWorkspaceService } from './cycle-time-summary-workspace
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { InternalServerErrorException } from '@nestjs/common';
 import { CycleTimeSummaryRepository } from '../cycle-time-summary/cycle-time-summary.repository';
+import { CycleTimeInjectionWorkspaceService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace.service';
+import {
+  CycleTimeInjectionDTO,
+  CycleTimeInjectionImportDTO,
+} from '../dto/cycle-time-injection.dto';
 
 const id = '';
 const testSumId = '';
@@ -22,6 +27,9 @@ const dto = new CycleTimeSummaryDTO();
 
 const payload = new CycleTimeSummaryBaseDTO();
 const importPayload = new CycleTimeSummaryImportDTO();
+
+const cycleTimeInjDto = new CycleTimeInjectionDTO();
+cycleTimeInjDto.cycleTimeSumId = 'SOME_ID';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
@@ -34,6 +42,11 @@ const mockRepository = () => ({
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(dto),
   many: jest.fn().mockResolvedValue([dto]),
+});
+
+const mockCycleTimeInjectionService = () => ({
+  import: jest.fn(),
+  export: jest.fn().mockResolvedValue([cycleTimeInjDto]),
 });
 
 const mockTestSumService = () => ({
@@ -56,6 +69,10 @@ describe('CycleTimeSummaryWorkspaceService', () => {
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSumService,
+        },
+        {
+          provide: CycleTimeInjectionWorkspaceService,
+          useFactory: mockCycleTimeInjectionService,
         },
         {
           provide: CycleTimeSummaryWorkspaceRepository,
@@ -195,12 +212,15 @@ describe('CycleTimeSummaryWorkspaceService', () => {
 
   describe('export', () => {
     it('Should export Cycle Time Summary Record', async () => {
+      dto.id = 'SOME_ID';
+
       jest
         .spyOn(service, 'getCycleTimeSummaryByTestSumIds')
-        .mockResolvedValue([]);
+        .mockResolvedValue([dto]);
 
       const result = await service.export([testSumId]);
-      expect(result).toEqual([]);
+      dto.cycleTimeInjectionData = [cycleTimeInjDto];
+      expect(result).toEqual([dto]);
     });
   });
 
@@ -212,6 +232,9 @@ describe('CycleTimeSummaryWorkspaceService', () => {
     });
 
     it('Should Import Cycle Time Summary from Historical Record', async () => {
+      importPayload.cycleTimeInjectionData = [
+        new CycleTimeInjectionImportDTO(),
+      ];
       jest.spyOn(service, 'createCycleTimeSummary').mockResolvedValue(dto);
 
       await service.import(testSumId, importPayload, userId, true);
