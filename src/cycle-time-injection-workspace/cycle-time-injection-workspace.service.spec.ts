@@ -126,7 +126,7 @@ describe('CycleTimeInjectionWorkspaceService', () => {
 
   describe('import', () => {
     const importPayload = new CycleTimeInjectionImportDTO();
-    it('Should Import Cycle Time Summary', async () => {
+    it('Should Import Cycle Time Injection', async () => {
       jest
         .spyOn(service, 'createCycleTimeInjection')
         .mockResolvedValue(cycleTimeInjectionDTO);
@@ -141,7 +141,7 @@ describe('CycleTimeInjectionWorkspaceService', () => {
       expect(result).toEqual(null);
     });
 
-    it('Should Import Cycle Time Summary from Historical Record', async () => {
+    it('Should Import Cycle Time Injection from Historical Record', async () => {
       jest
         .spyOn(service, 'createCycleTimeInjection')
         .mockResolvedValue(cycleTimeInjectionDTO);
