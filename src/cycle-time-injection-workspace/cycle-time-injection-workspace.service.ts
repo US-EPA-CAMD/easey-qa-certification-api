@@ -14,6 +14,8 @@ import { CycleTimeInjectionWorkspaceRepository } from './cycle-time-injection-wo
 import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { In } from 'typeorm';
+import { CycleTimeInjection } from '../entities/cycle-time-injection.entity';
+import { CycleTimeInjectionRepository } from '../cycle-time-injection/cycle-time-injection.repository';
 
 @Injectable()
 export class CycleTimeInjectionWorkspaceService {
@@ -24,6 +26,8 @@ export class CycleTimeInjectionWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(CycleTimeInjectionWorkspaceRepository)
     private readonly repository: CycleTimeInjectionWorkspaceRepository,
+    @InjectRepository(CycleTimeInjectionRepository)
+    private readonly historicalRepository: CycleTimeInjectionRepository,
   ) {}
 
   async createCycleTimeInjection(
@@ -32,12 +36,13 @@ export class CycleTimeInjectionWorkspaceService {
     payload: CycleTimeInjectionBaseDTO | CycleTimeInjectionImportDTO,
     userId: string,
     isImport: boolean = false,
+    historicalRecordId?: string,
   ): Promise<CycleTimeInjectionRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       cycleTimeSumId,
       userId,
       addDate: timestamp,
@@ -68,5 +73,38 @@ export class CycleTimeInjectionWorkspaceService {
 
   async export(cycleTimeSumIds: string[]): Promise<CycleTimeInjectionDTO[]> {
     return this.getCycleTimeInjectionByCycleTimeSumIds(cycleTimeSumIds);
+  }
+
+  async import(
+    testSumId: string,
+    cycleTimeSumId: string,
+    payload: CycleTimeInjectionImportDTO,
+    userId: string,
+    isHistoricalRecord?: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: CycleTimeInjection;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepository.findOne({
+        cycleTimeSumId: cycleTimeSumId,
+        gasLevelCode: payload.gasLevelCode,
+      });
+    }
+
+    const createdCycleTimeInjection = await this.createCycleTimeInjection(
+      testSumId,
+      cycleTimeSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Cycle Time Injection Successfully Imported. Record Id: ${createdCycleTimeInjection.id}`,
+    );
+
+    return null;
   }
 }

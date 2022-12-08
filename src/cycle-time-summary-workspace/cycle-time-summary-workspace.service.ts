@@ -179,6 +179,7 @@ export class CycleTimeSummaryWorkspaceService {
     isHistoricalRecord?: boolean,
   ) {
     const isImport = true;
+    const promises = [];
     let historicalRecord: CycleTimeSummary;
 
     if (isHistoricalRecord) {
@@ -199,6 +200,29 @@ export class CycleTimeSummaryWorkspaceService {
     this.logger.info(
       `Cycle Time Summary Successfully Imported. Record Id: ${createdCycleTimeSummary.id}`,
     );
+
+    if (payload.cycleTimeInjectionData?.length > 0) {
+      for (const cycleTimeInjection of payload.cycleTimeInjectionData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.cycleTimeInjectionService.import(
+                testSumId,
+                createdCycleTimeSummary.id,
+                cycleTimeInjection,
+                userId,
+                isHistoricalRecord,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    await Promise.all(promises);
 
     return null;
   }

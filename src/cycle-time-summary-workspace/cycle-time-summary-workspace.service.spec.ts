@@ -14,7 +14,10 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { InternalServerErrorException } from '@nestjs/common';
 import { CycleTimeSummaryRepository } from '../cycle-time-summary/cycle-time-summary.repository';
 import { CycleTimeInjectionWorkspaceService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace.service';
-import { CycleTimeInjectionDTO } from '../dto/cycle-time-injection.dto';
+import {
+  CycleTimeInjectionDTO,
+  CycleTimeInjectionImportDTO,
+} from '../dto/cycle-time-injection.dto';
 
 const id = '';
 const testSumId = '';
@@ -229,6 +232,9 @@ describe('CycleTimeSummaryWorkspaceService', () => {
     });
 
     it('Should Import Cycle Time Summary from Historical Record', async () => {
+      importPayload.cycleTimeInjectionData = [
+        new CycleTimeInjectionImportDTO(),
+      ];
       jest.spyOn(service, 'createCycleTimeSummary').mockResolvedValue(dto);
 
       await service.import(testSumId, importPayload, userId, true);
