@@ -43,6 +43,7 @@ const user: CurrentUser = {
 
 const mockService = () => ({
   createCycleTimeInjection: jest.fn().mockResolvedValue(cycleTimeInjDTO),
+  updateCycleTimeInjection: jest.fn().mockResolvedValue(cycleTimeInjDTO),
 });
 
 describe('CycleTimeInjectionWorkspaceController', () => {
@@ -81,6 +82,21 @@ describe('CycleTimeInjectionWorkspaceController', () => {
         payload,
         user,
       );
+      expect(result).toEqual(cycleTimeInjDTO);
+    });
+  });
+
+  describe('updateCycleTimeInjection', () => {
+    it('should update Cycle Time Injection record', async () => {
+      const result = await controller.updateCycleTimeInjection(
+        locId,
+        testSumId,
+        cycleTimeSumId,
+        cycleTimeInjId,
+        payload,
+        user,
+      );
+
       expect(result).toEqual(cycleTimeInjDTO);
     });
   });
