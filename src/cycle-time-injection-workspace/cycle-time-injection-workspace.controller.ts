@@ -1,4 +1,12 @@
-import { Body, Controller, Param, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -65,5 +73,21 @@ export class CycleTimeInjectionWorkspaceController {
       payload,
       user.userId,
     );
+  }
+
+  @Delete('id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Deletes a Cycle Time Injection record from the workspace',
+  })
+  async deleteCycleTimeInjection(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('cycleTimeSumId') _cycleTimeSumId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteCycleTimeInjection(testSumId, id, user.userId);
   }
 }
