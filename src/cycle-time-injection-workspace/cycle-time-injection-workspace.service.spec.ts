@@ -12,9 +12,11 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { CycleTimeInjectionWorkspaceRepository } from './cycle-time-injection-workspace.repository';
 import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-workspace.service';
 import { CycleTimeInjectionRepository } from '../cycle-time-injection/cycle-time-injection.repository';
+import { Controller, InternalServerErrorException } from '@nestjs/common';
 
 const testSumId = '1';
 const cycleTimeSumId = '1';
+const cycleTimeInjId = '1';
 const userId = 'testuser';
 
 const cycleTimeInjection = new CycleTimeInjection();
@@ -43,6 +45,7 @@ const mockHistoricalRepo = () => ({
 
 describe('CycleTimeInjectionWorkspaceService', () => {
   let service: CycleTimeInjectionWorkspaceService;
+  let repository: CycleTimeInjectionWorkspaceRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -76,6 +79,9 @@ describe('CycleTimeInjectionWorkspaceService', () => {
 
     service = module.get<CycleTimeInjectionWorkspaceService>(
       CycleTimeInjectionWorkspaceService,
+    );
+    repository = module.get<CycleTimeInjectionWorkspaceRepository>(
+      CycleTimeInjectionWorkspaceRepository,
     );
   });
 
@@ -154,6 +160,71 @@ describe('CycleTimeInjectionWorkspaceService', () => {
         true,
       );
       expect(result).toEqual(null);
+    });
+  });
+
+  describe('udpateCycleTimeInjection', () => {
+    it('should update a Cycle Time Injection record', async () => {
+      const result = await service.updateCycleTimeInjection(
+        testSumId,
+        cycleTimeInjId,
+        payload,
+        userId,
+      );
+
+      expect(result).toEqual(cycleTimeInjectionDTO);
+    });
+
+    it('should throw an error while updating a Cycle Time Injection record', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+
+      try {
+        await service.updateCycleTimeInjection(
+          testSumId,
+          cycleTimeInjId,
+          payload,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteCycleTimeInjection', () => {
+    it('should delete Cycle Time Injection record', async () => {
+      const result = await service.deleteCycleTimeInjection(
+        testSumId,
+        cycleTimeInjId,
+        userId,
+      );
+
+      expect(result).toEqual(undefined);
+    });
+
+    it('should throw an error while deleting a Cycle Time Injection record', async () => {
+      const error = new InternalServerErrorException(
+        `Error deleting Cycle Time Injection record Id [${cycleTimeInjId}]`,
+      );
+      jest.spyOn(repository, 'delete').mockRejectedValue(error);
+
+      let errored = false;
+
+      try {
+        await service.deleteCycleTimeInjection(
+          testSumId,
+          cycleTimeInjId,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
     });
   });
 });

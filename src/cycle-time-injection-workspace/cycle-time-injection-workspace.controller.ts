@@ -1,7 +1,16 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -41,5 +50,44 @@ export class CycleTimeInjectionWorkspaceController {
       payload,
       user.userId,
     );
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: CycleTimeInjectionRecordDTO,
+    description: ' Updates a Cycle Time Injection record in the workspace',
+  })
+  async updateCycleTimeInjection(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('cycleTimeSumId') _cycleTimeSumId: string,
+    @Param('id') id: string,
+    @Body() payload: CycleTimeInjectionBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<CycleTimeInjectionRecordDTO> {
+    return this.service.updateCycleTimeInjection(
+      testSumId,
+      id,
+      payload,
+      user.userId,
+    );
+  }
+
+  @Delete('id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Deletes a Cycle Time Injection record from the workspace',
+  })
+  async deleteCycleTimeInjection(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('cycleTimeSumId') _cycleTimeSumId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteCycleTimeInjection(testSumId, id, user.userId);
   }
 }

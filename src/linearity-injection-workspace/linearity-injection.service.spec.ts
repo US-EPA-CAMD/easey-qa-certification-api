@@ -175,7 +175,7 @@ describe('LinearityInjectionWorkspaceService', () => {
       expect(result).toEqual(undefined);
     });
 
-    it('Should through error while deleting a Linearity Injection record', async () => {
+    it('Should throw error while deleting a Linearity Injection record', async () => {
       const error = new InternalServerErrorException(
         `Error deleting Linearity Injection record Id [${linInjId}]`,
       );

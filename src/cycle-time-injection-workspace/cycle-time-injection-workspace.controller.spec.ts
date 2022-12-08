@@ -43,6 +43,8 @@ const user: CurrentUser = {
 
 const mockService = () => ({
   createCycleTimeInjection: jest.fn().mockResolvedValue(cycleTimeInjDTO),
+  updateCycleTimeInjection: jest.fn().mockResolvedValue(cycleTimeInjDTO),
+  deleteCycleTimeInjection: jest.fn().mockResolvedValue(null),
 });
 
 describe('CycleTimeInjectionWorkspaceController', () => {
@@ -82,6 +84,35 @@ describe('CycleTimeInjectionWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(cycleTimeInjDTO);
+    });
+  });
+
+  describe('updateCycleTimeInjection', () => {
+    it('should update Cycle Time Injection record', async () => {
+      const result = await controller.updateCycleTimeInjection(
+        locId,
+        testSumId,
+        cycleTimeSumId,
+        cycleTimeInjId,
+        payload,
+        user,
+      );
+
+      expect(result).toEqual(cycleTimeInjDTO);
+    });
+  });
+
+  describe('deleteCycleTimeInjection', () => {
+    it('should delete Cycle Time Injection record', async () => {
+      const result = await controller.deleteCycleTimeInjection(
+        locId,
+        testSumId,
+        cycleTimeSumId,
+        cycleTimeInjId,
+        user,
+      );
+
+      expect(result).toEqual(null);
     });
   });
 });
