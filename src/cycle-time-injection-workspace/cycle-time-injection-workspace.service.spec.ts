@@ -43,6 +43,7 @@ const mockHistoricalRepo = () => ({
 
 describe('CycleTimeInjectionWorkspaceService', () => {
   let service: CycleTimeInjectionWorkspaceService;
+  let repository: CycleTimeInjectionWorkspaceRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -76,6 +77,9 @@ describe('CycleTimeInjectionWorkspaceService', () => {
 
     service = module.get<CycleTimeInjectionWorkspaceService>(
       CycleTimeInjectionWorkspaceService,
+    );
+    repository = module.get<CycleTimeInjectionWorkspaceRepository>(
+      CycleTimeInjectionWorkspaceRepository,
     );
   });
 
@@ -154,6 +158,38 @@ describe('CycleTimeInjectionWorkspaceService', () => {
         true,
       );
       expect(result).toEqual(null);
+    });
+  });
+
+  describe('udpateCycleTimeInjection', () => {
+    it('should update a Cycle Time Injection record', async () => {
+      const result = await service.updateCycleTimeInjection(
+        testSumId,
+        cycleTimeInjId,
+        payload,
+        userId,
+      );
+
+      expect(result).toEqual(cycleTimeInjectionDTO);
+    });
+
+    it('should throw an error while updating a Cycle Time Injection record', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+
+      try {
+        await service.updateCycleTimeInjection(
+          testSumId,
+          cycleTimeInjId,
+          payload,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
     });
   });
 });
