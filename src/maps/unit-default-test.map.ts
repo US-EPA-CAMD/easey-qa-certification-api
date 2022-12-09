@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
-import { UnitDefaultTestDTO } from 'src/dto/unit-default-test.dto';
-import { UnitDefaultTest } from 'src/entities/unit-default-test.entity';
+import { UnitDefaultTestDTO } from '../dto/unit-default-test.dto';
+import { UnitDefaultTest } from '../entities/unit-default-test.entity';
 
 @Injectable()
 export class UnitDefaultTestMap extends BaseMap<
