@@ -9,6 +9,7 @@ import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
 import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
 
+const id = '';
 const testSumId = '';
 const userId = 'user';
 
@@ -36,6 +37,7 @@ const mockTestSumService = () => ({
 
 describe('UnitDefaultTestWorkspaceService', () => {
   let service: UnitDefaultTestWorkspaceService;
+  let repository: UnitDefaultTestWorkspaceRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -59,6 +61,38 @@ describe('UnitDefaultTestWorkspaceService', () => {
     service = module.get<UnitDefaultTestWorkspaceService>(
       UnitDefaultTestWorkspaceService,
     );
+    repository = module.get<UnitDefaultTestWorkspaceRepository>(
+      UnitDefaultTestWorkspaceRepository,
+    );
+  });
+
+  describe('getUnitDefaultTests', () => {
+    it('Should return UnitDefaultTest records by Test Summary id', async () => {
+      const result = await service.getUnitDefaultTests(testSumId);
+
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('getUnitDefaultTest', () => {
+    it('Should return a UnitDefaultTest record', async () => {
+      const result = await service.getUnitDefaultTest(id, testSumId);
+
+      expect(result).toEqual(dto);
+    });
+
+    it('Should throw error when a UnitDefaultTest record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.getUnitDefaultTest(id, testSumId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
   });
 
   describe('createUnitDefaultTest', () => {

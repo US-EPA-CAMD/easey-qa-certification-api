@@ -1,7 +1,8 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -19,6 +20,34 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 @ApiTags('Unit Default Test')
 export class UnitDefaultTestWorkspaceController {
   constructor(private readonly service: UnitDefaultTestWorkspaceService) {}
+
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: UnitDefaultTestDTO,
+    description:
+      'Retrieves workspace Unit Default Test records by Test Summary Id',
+  })
+  async getUnitDefaultTests(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+  ): Promise<UnitDefaultTestDTO[]> {
+    return this.service.getUnitDefaultTests(testSumId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: UnitDefaultTestDTO,
+    description: 'Retrieves workspace Unit Default Test record by its Id',
+  })
+  async getUnitDefaultTest(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+  ): Promise<UnitDefaultTestDTO> {
+    return this.service.getUnitDefaultTest(id, testSumId);
+  }
 
   @Post()
   @UseGuards(AuthGuard)
