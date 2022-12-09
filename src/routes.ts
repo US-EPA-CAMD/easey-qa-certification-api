@@ -55,6 +55,8 @@ import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-tran
 import { CycleTimeInjectionModule } from './cycle-time-injection/cycle-time-injection.module';
 import { CycleTimeInjectionWorkspaceModule } from './cycle-time-injection-workspace/cycle-time-injection-workspace.module';
 import { ReviewAndSubmitModule } from './review-and-submit/review-and-submit.module';
+import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.module';
+import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/unit-default-test-workspace.module';
 
 const routes: Routes = [
   {
@@ -104,6 +106,10 @@ const routes: Routes = [
           {
             path: ':testSumId/test-qualifications',
             module: TestQualificationModule,
+          },
+          {
+            path: ':testSumId/unit-default-tests',
+            module: UnitDefaultTestModule,
           },
           {
             path: ':testSumId/flow-to-load-checks',
@@ -224,6 +230,10 @@ const routes: Routes = [
                 module: CycleTimeInjectionWorkspaceModule,
               },
             ],
+          },
+          {
+            path: ':testSumId/unit-default-tests',
+            module: UnitDefaultTestWorkspaceModule,
           },
           {
             path: ':testSumId/air-emission-testings',

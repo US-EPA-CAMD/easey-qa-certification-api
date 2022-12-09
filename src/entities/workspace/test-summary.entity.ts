@@ -29,6 +29,7 @@ import { OnlineOfflineCalibration } from './online-offline-calibration.entity';
 import { FuelFlowmeterAccuracy } from './fuel-flowmeter-accuracy.entity';
 import { CycleTimeSummary } from './cycle-time-summary.entity';
 import { TransmitterTransducerAccuracy } from './transmitter-transducer-accuracy.entity';
+import { UnitDefaultTest } from './unit-default-test.entity';
 
 @Entity({ name: 'camdecmpswks.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -233,6 +234,13 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   cycleTimeSummary: CycleTimeSummary[];
+
+  @OneToMany(
+    () => UnitDefaultTest,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  unitDefaultTest: UnitDefaultTest[];
 
   @OneToMany(
     () => AirEmissionTesting,

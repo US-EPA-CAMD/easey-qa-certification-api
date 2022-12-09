@@ -41,6 +41,7 @@ import { OnlineOfflineCalibrationImportDTO } from '../dto/online-offline-calibra
 import { CycleTimeSummaryImportDTO } from '../dto/cycle-time-summary.dto';
 import { FuelFlowmeterAccuracyImportDTO } from '../dto/fuel-flowmeter-accuracy.dto';
 import { TransmitterTransducerAccuracyImportDTO } from '../dto/transmitter-transducer-accuracy.dto';
+import { UnitDefaultTestImportDTO } from '../dto/unit-default-test.dto';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -370,7 +371,7 @@ describe('Test Summary Check Service Test', () => {
       importPayload.appECorrelationTestSummaryData = [
         new AppECorrelationTestSummaryImportDTO(),
       ];
-      importPayload.unitDefaultTestData = [{}];
+      importPayload.unitDefaultTestData = [new UnitDefaultTestImportDTO()];
       importPayload.airEmissionTestingData = [
         new AirEmissionTestingImportDTO(),
       ];
