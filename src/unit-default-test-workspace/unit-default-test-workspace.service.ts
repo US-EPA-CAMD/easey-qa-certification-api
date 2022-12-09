@@ -4,7 +4,7 @@ import {
   UnitDefaultTestBaseDTO,
   UnitDefaultTestDTO,
 } from 'src/dto/unit-default-test.dto';
-import { UnitDefaultTestMap } from 'src/maps/unit-default-test.map';
+import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
 import { currentDateTime } from '../utilities/functions';

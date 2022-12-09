@@ -38,7 +38,7 @@ import { ReportingPeriodRepository } from '../reporting-period/reporting-period.
 import { OnlineOfflineCalibrationWorkspaceModule } from '../online-offline-calibration-workspace/online-offline-calibration.module';
 import { FuelFlowmeterAccuracyWorkspaceModule } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
 import { CycleTimeSummaryWorkspaceModule } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.module';
-import { UnitDefaultTestWorkspaceModule } from 'src/unit-default-test-workspace/unit-default-test-workspace.module';
+import { UnitDefaultTestWorkspaceModule } from '../unit-default-test-workspace/unit-default-test-workspace.module';
 
 @Module({
   imports: [

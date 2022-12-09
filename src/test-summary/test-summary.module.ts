@@ -21,7 +21,7 @@ import { OnlineOfflineCalibrationModule } from '../online-offline-calibration/on
 import { FuelFlowToLoadBaselineModule } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.module';
 import { FuelFlowmeterAccuracyModule } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.module';
 import { CycleTimeSummaryModule } from '../cycle-time-summary/cycle-time-summary.module';
-import { UnitDefaultTestModule } from 'src/unit-default-test/unit-default-test.module';
+import { UnitDefaultTestModule } from '../unit-default-test/unit-default-test.module';
 
 @Module({
   imports: [
