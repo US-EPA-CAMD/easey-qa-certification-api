@@ -39,6 +39,8 @@ import { OnlineOfflineCalibrationWorkspaceModule } from '../online-offline-calib
 import { FuelFlowmeterAccuracyWorkspaceModule } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
 import { CycleTimeSummaryWorkspaceModule } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.module';
 import { UnitDefaultTestWorkspaceModule } from '../unit-default-test-workspace/unit-default-test-workspace.module';
+import { TransmitterTransducerAccuracyRepository } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.repository';
+import { TransmitterTransducerAccuracyWorkspaceModule } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.module';
 
 @Module({
   imports: [
@@ -56,6 +58,7 @@ import { UnitDefaultTestWorkspaceModule } from '../unit-default-test-workspace/u
       StackPipeRepository,
       MonitorMethodRepository,
       CalibrationInjectionRepository,
+      TransmitterTransducerAccuracyRepository,
     ]),
     forwardRef(() => LinearitySummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),
@@ -75,6 +78,7 @@ import { UnitDefaultTestWorkspaceModule } from '../unit-default-test-workspace/u
     forwardRef(() => OnlineOfflineCalibrationWorkspaceModule),
     forwardRef(() => CycleTimeSummaryWorkspaceModule),
     forwardRef(() => UnitDefaultTestWorkspaceModule),
+    forwardRef(() => TransmitterTransducerAccuracyWorkspaceModule),
     TestResultCodeModule,
     HttpModule,
   ],

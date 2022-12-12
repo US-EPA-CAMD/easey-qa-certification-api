@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { LinearitySummaryWorkspaceService } from '../linearity-summary-workspace/linearity-summary.service';
@@ -13,7 +14,6 @@ import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { Unit } from '../entities/workspace/unit.entity';
-import { InternalServerErrorException } from '@nestjs/common';
 import { Rata } from '../entities/workspace/rata.entity';
 import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
 import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
@@ -42,10 +42,11 @@ import { FlowToLoadReferenceDTO } from '../dto/flow-to-load-reference.dto';
 import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
 import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
 import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
-import { FuelFlowmeterAccuracy } from '../entities/workspace/fuel-flowmeter-accuracy.entity';
 import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
 import { FuelFlowmeterAccuracyDTO } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
+import { TransmitterTransducerAccuracyDTO } from '../dto/transmitter-transducer-accuracy.dto';
+import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -139,6 +140,11 @@ const mockFuelFlowmeterAccuracyWorkspaceService = () => ({
 
 const mockOnlineOfflineCalibrationWorkspaceService = () => ({
   export: jest.fn().mockResolvedValue([new OnlineOfflineCalibrationDTO()]),
+});
+
+const mockTransmitterTransducerAccuracyWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new TransmitterTransducerAccuracyDTO()]),
+  import: jest.fn().mockResolvedValue(null),
 });
 
 const unit = new Unit();
@@ -255,6 +261,10 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: FuelFlowToLoadBaselineWorkspaceService,
           useFactory: mockFuelFlowToLoadBaselineService,
+        },
+        {
+          provide: TransmitterTransducerAccuracyWorkspaceService,
+          useFactory: mockTransmitterTransducerAccuracyWorkspaceService,
         },
       ],
     }).compile();
