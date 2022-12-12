@@ -4,11 +4,11 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 import { LinearityInjectionDTO } from '../dto/linearity-injection.dto';
 import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { LinearityInjectionRepository } from './linearity-injection.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class LinearityInjectionService {

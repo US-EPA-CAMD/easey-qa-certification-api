@@ -42,6 +42,10 @@ const user: CurrentUser = {
 };
 
 const mockService = () => ({
+  getCycleTimeInjectionsByCycleTimeSumId: jest
+    .fn()
+    .mockResolvedValue([cycleTimeInjDTO]),
+  getCycleTimeInjection: jest.fn().mockResolvedValue(cycleTimeInjDTO),
   createCycleTimeInjection: jest.fn().mockResolvedValue(cycleTimeInjDTO),
   updateCycleTimeInjection: jest.fn().mockResolvedValue(cycleTimeInjDTO),
   deleteCycleTimeInjection: jest.fn().mockResolvedValue(null),
@@ -72,6 +76,30 @@ describe('CycleTimeInjectionWorkspaceController', () => {
     service = module.get<CycleTimeInjectionWorkspaceService>(
       CycleTimeInjectionWorkspaceService,
     );
+  });
+
+  describe('getCycleTimeInjectionsByCycleTimeSumId', () => {
+    it('should get Cycle Time Injections by Cycle Time Summary Id', async () => {
+      const result = await controller.getCycleTimeInjections(
+        locId,
+        testSumId,
+        cycleTimeSumId,
+      );
+      expect(result).toEqual([cycleTimeInjDTO]);
+    });
+  });
+
+  describe('getCycleTimeInjection', () => {
+    it('should get Cycle Time Injection record', async () => {
+      const result = await controller.getCycleTimeInjection(
+        locId,
+        testSumId,
+        cycleTimeSumId,
+        cycleTimeInjId,
+      );
+
+      expect(result).toEqual(cycleTimeInjDTO);
+    });
   });
 
   describe('createLinearityInjection', () => {

@@ -1,4 +1,6 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
@@ -12,7 +14,6 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { CycleTimeInjectionWorkspaceRepository } from './cycle-time-injection-workspace.repository';
 import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-workspace.service';
 import { CycleTimeInjectionRepository } from '../cycle-time-injection/cycle-time-injection.repository';
-import { Controller, InternalServerErrorException } from '@nestjs/common';
 
 const testSumId = '1';
 const cycleTimeSumId = '1';
@@ -83,6 +84,38 @@ describe('CycleTimeInjectionWorkspaceService', () => {
     repository = module.get<CycleTimeInjectionWorkspaceRepository>(
       CycleTimeInjectionWorkspaceRepository,
     );
+  });
+
+  describe('getCycleTimeInjections', () => {
+    it('should return Cycle Time Injection records by Cycle Time Summary Id', async () => {
+      const result = await service.getCycleTimeInjectionsByCycleTimeSumId(
+        cycleTimeSumId,
+      );
+
+      expect(result).toEqual([cycleTimeInjectionDTO]);
+    });
+  });
+
+  describe('getCycleTimeInjection', () => {
+    it('should return a Cycle Time Summary record', async () => {
+      const result = await service.getCycleTimeInjection(cycleTimeInjId);
+
+      expect(result).toEqual(cycleTimeInjectionDTO);
+    });
+
+    it('should throw an error when a Cycle Time Injection record is not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+
+      try {
+        await service.getCycleTimeInjection(cycleTimeInjId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
   });
 
   describe('createInjection', () => {
