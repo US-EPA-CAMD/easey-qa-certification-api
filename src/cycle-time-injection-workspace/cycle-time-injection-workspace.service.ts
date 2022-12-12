@@ -1,6 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
+
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
@@ -30,6 +31,29 @@ export class CycleTimeInjectionWorkspaceService {
     @InjectRepository(CycleTimeInjectionRepository)
     private readonly historicalRepository: CycleTimeInjectionRepository,
   ) {}
+
+  async getCycleTimeInjectionsByCycleTimeSumId(cycleTimeSumId: string) {
+    const results = await this.repository.find({
+      where: {
+        cycleTimeSumId,
+      },
+    });
+
+    return this.map.many(results);
+  }
+
+  async getCycleTimeInjection(id: string) {
+    const result = await this.repository.findOne(id);
+
+    if (!result) {
+      throw new LoggingException(
+        `A Cycle Time Injection record not found with Record Id [${id}]`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
 
   async createCycleTimeInjection(
     testSumId: string,
@@ -160,11 +184,12 @@ export class CycleTimeInjectionWorkspaceService {
     isImport: boolean = false,
   ): Promise<void> {
     try {
-      await this.repository.delete(id);
+      await this.repository.delete({ id });
     } catch (e) {
       throw new LoggingException(
         `Error deleting Cycle Time Injection record Id [${id}]`,
         HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
 

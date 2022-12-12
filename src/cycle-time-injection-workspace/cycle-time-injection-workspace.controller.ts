@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   Param,
   Post,
   Put,
@@ -29,6 +30,35 @@ import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-works
 @ApiTags('Cycle Time Injection')
 export class CycleTimeInjectionWorkspaceController {
   constructor(private readonly service: CycleTimeInjectionWorkspaceService) {}
+
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: CycleTimeInjectionRecordDTO,
+    description:
+      'Retreives workspace Cycle Time Injection records by Cycle Time Summary Id',
+  })
+  async getCycleTimeInjections(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('cycleTimeSumId') cycleTimeSumId: string,
+  ): Promise<CycleTimeInjectionRecordDTO[]> {
+    return this.service.getCycleTimeInjectionsByCycleTimeSumId(cycleTimeSumId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    type: CycleTimeInjectionRecordDTO,
+    description: 'Retrieves workspace Cycle Time Injection record by its Id',
+  })
+  async getCycleTimeInjection(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('cycleTimeSumId') _cycleTimeSumId: string,
+    @Param('id') id: string,
+  ): Promise<CycleTimeInjectionRecordDTO> {
+    return this.service.getCycleTimeInjection(id);
+  }
 
   @Post()
   @UseGuards(AuthGuard)
@@ -75,11 +105,11 @@ export class CycleTimeInjectionWorkspaceController {
     );
   }
 
-  @Delete('id')
+  @Delete(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth('Token')
   @ApiOkResponse({
-    description: 'Deletes a Cycle Time Injection record from the workspace',
+    description: 'Deletes a workspace Cycle Time Injection record',
   })
   async deleteCycleTimeInjection(
     @Param('locId') _locationId: string,
