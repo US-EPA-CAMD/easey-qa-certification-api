@@ -11,6 +11,8 @@ import { IsValidCodes } from '../pipes/is-valid-codes.pipe';
 
 import { TestTypeCode } from './../entities/test-type-code.entity';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { SystemTypeCode } from './../entities/system-type-code.entity';
+import { SystemTypeCodes } from '../enums/system-type-code.enum';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 
 const MIN_DATE = '1993-01-01';
@@ -35,6 +37,25 @@ export class TestSummaryParamsDTO {
     },
   )
   testTypeCodes?: string[];
+
+  @ApiProperty({
+    isArray: true,
+    enum: SystemTypeCodes,
+    //description: propertyMetadata.systemTypeCode.description,
+  })
+  @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
+  @IsValidCodes(
+    SystemTypeCode,
+    (args: ValidationArguments): FindOneOptions<SystemTypeCode> => {
+      return { where: { systemTypeCode: In(args.value) } };
+    },
+    {
+      message: (args: ValidationArguments) => {
+        return `The database does not contain any System Type Codewith ${args.value}`;
+      },
+    },
+  )
+  systemTypeCodes?: string[];
 
   @ApiProperty({
     description: getMetadata(

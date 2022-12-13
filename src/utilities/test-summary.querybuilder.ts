@@ -28,6 +28,19 @@ export const addTestTypeWhere = (
   return query;
 };
 
+export const addSystemTypeWhere = (
+  query: SelectQueryBuilder<TestSummary | WorkspaceTestSummary>,
+  systemTypeCodes: string[],
+): SelectQueryBuilder<TestSummary | WorkspaceTestSummary> => {
+  if (systemTypeCodes) {
+    query.andWhere('ms.systemTypeCode IN (:...systemTypeCodes)', {
+      systemTypeCodes,
+    });
+  }
+
+  return query;
+};
+
 export const addTestSummaryIdWhere = (
   query: any,
   testSummaryIds: string[],

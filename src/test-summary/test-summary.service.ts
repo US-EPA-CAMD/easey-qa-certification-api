@@ -89,12 +89,14 @@ export class TestSummaryService {
   async getTestSummariesByLocationId(
     locationId: string,
     testTypeCode?: string[],
+    systemTypeCode?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
     const results = await this.repository.getTestSummariesByLocationId(
       locationId,
       testTypeCode,
+      systemTypeCode,
       beginDate,
       endDate,
     );
