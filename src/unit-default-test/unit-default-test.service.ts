@@ -4,6 +4,7 @@ import { UnitDefaultTestDTO } from '../dto/unit-default-test.dto';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { UnitDefaultTestRepository } from './unit-default-test.repository';
+import { In } from 'typeorm';
 
 @Injectable()
 export class UnitDefaultTestService {
@@ -36,5 +37,19 @@ export class UnitDefaultTestService {
     }
 
     return this.map.one(result);
+  }
+
+  async getUnitDefaultTestsByTestSumIds(
+    testSumIds: string[],
+  ): Promise<UnitDefaultTestDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<UnitDefaultTestDTO[]> {
+    return this.getUnitDefaultTestsByTestSumIds(testSumIds);
   }
 }
