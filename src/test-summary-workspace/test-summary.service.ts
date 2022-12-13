@@ -260,7 +260,7 @@ export class TestSummaryWorkspaceService {
 
           unitDefaultTestData = await this.unitDefaultTestWorkspaceService.export(
             testSumIds,
-          )
+          );
 
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
@@ -299,7 +299,7 @@ export class TestSummaryWorkspaceService {
             );
             s.unitDefaultTestData = unitDefaultTestData.filter(
               i => i.testSumId === s.id,
-            )
+            );
           });
         }
 
