@@ -4,18 +4,23 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import {
   UnitDefaultTestBaseDTO,
   UnitDefaultTestDTO,
+  UnitDefaultTestImportDTO,
 } from '../dto/unit-default-test.dto';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
 import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { HttpStatus } from '@nestjs/common';
+import { UnitDefaultTest as UnitDefaultTestOfficial} from '../entities/unit-default-test.entity';
+import { UnitDefaultTestRepository } from '../unit-default-test/unit-default-test.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 const id = '';
 const testSumId = '';
 const userId = 'user';
 
 const payload = new UnitDefaultTestBaseDTO();
+const importPayload = new UnitDefaultTestImportDTO();
 
 const entity = new UnitDefaultTest();
 const dto = new UnitDefaultTestDTO();
@@ -37,6 +42,10 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockHistoricalRepo = () => ({
+  findOne: jest.fn().mockResolvedValue(new UnitDefaultTestOfficial()),
+});
+
 describe('UnitDefaultTestWorkspaceService', () => {
   let service: UnitDefaultTestWorkspaceService;
   let repository: UnitDefaultTestWorkspaceRepository;
@@ -44,6 +53,7 @@ describe('UnitDefaultTestWorkspaceService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        Logger,
         UnitDefaultTestWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
@@ -56,6 +66,10 @@ describe('UnitDefaultTestWorkspaceService', () => {
         {
           provide: UnitDefaultTestMap,
           useFactory: mockMap,
+        },
+        {
+          provide: UnitDefaultTestRepository,
+          useFactory: mockHistoricalRepo,
         },
       ],
     }).compile();
@@ -149,6 +163,38 @@ describe('UnitDefaultTestWorkspaceService', () => {
         errored = true;
       }
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('getUnitDefaultTestsByTestSumIds', () => {
+    it('Should get Unit Default Test records by test sum ids', async () => {
+      const result = await service.getUnitDefaultTestsByTestSumIds([testSumId]);
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Unit Default Test Record', async () => {
+      jest
+        .spyOn(service, 'getUnitDefaultTestsByTestSumIds')
+        .mockResolvedValue([]);
+
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('import', () => {
+    it('Should Import Unit Default Test', async () => {
+      jest.spyOn(service, 'createUnitDefaultTest').mockResolvedValue(dto);
+
+      await service.import(testSumId, importPayload, userId, false);
+    });
+
+    it('Should Import Cycle Time Summary from Historical Record', async () => {
+      jest.spyOn(service, 'createUnitDefaultTest').mockResolvedValue(dto);
+
+      await service.import(testSumId, importPayload, userId, true);
     });
   });
 });

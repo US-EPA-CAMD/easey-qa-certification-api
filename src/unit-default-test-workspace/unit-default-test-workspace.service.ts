@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   UnitDefaultTestBaseDTO,
   UnitDefaultTestDTO,
+  UnitDefaultTestImportDTO,
 } from '../dto/unit-default-test.dto';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -10,6 +11,10 @@ import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspac
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
+import { UnitDefaultTest } from '../entities/unit-default-test.entity';
+import { UnitDefaultTestRepository } from '../unit-default-test/unit-default-test.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class UnitDefaultTestWorkspaceService {
@@ -19,6 +24,9 @@ export class UnitDefaultTestWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(UnitDefaultTestWorkspaceRepository)
     private readonly repository: UnitDefaultTestWorkspaceRepository,
+    @InjectRepository(UnitDefaultTestRepository)
+    private readonly historicalRepo: UnitDefaultTestRepository,
+    private readonly logger: Logger,
   ) {}
 
   async getUnitDefaultTests(testSumId: string): Promise<UnitDefaultTestDTO[]> {
@@ -94,5 +102,50 @@ export class UnitDefaultTestWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getUnitDefaultTestsByTestSumIds(
+    testSumIds: string[],
+  ): Promise<UnitDefaultTestDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<UnitDefaultTestDTO[]> {
+    return this.getUnitDefaultTestsByTestSumIds(testSumIds);
+  }
+
+  async import(
+    testSumId: string,
+    payload: UnitDefaultTestImportDTO,
+    userId: string,
+    isHistoricalRecord: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: UnitDefaultTest;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepo.findOne({
+        testSumId: testSumId,
+        NOxDefaultRate: payload.NOxDefaultRate,
+      });
+    }
+
+    const createdFlowToLoadReference = await this.createUnitDefaultTest(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Flow To Load Reference Successfully Imported.  Record Id: ${createdFlowToLoadReference.id}`,
+    );
+
+    return null;
   }
 }

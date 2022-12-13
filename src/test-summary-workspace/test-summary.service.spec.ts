@@ -47,6 +47,8 @@ import { FuelFlowmeterAccuracyDTO } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
 import { TransmitterTransducerAccuracyDTO } from '../dto/transmitter-transducer-accuracy.dto';
 import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
+import { UnitDefaultTest } from '../entities/unit-default-test.entity';
+import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -144,6 +146,11 @@ const mockOnlineOfflineCalibrationWorkspaceService = () => ({
 
 const mockTransmitterTransducerAccuracyWorkspaceService = () => ({
   export: jest.fn().mockResolvedValue([new TransmitterTransducerAccuracyDTO()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
+const mockUnitDefaultTestWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new UnitDefaultTest()]),
   import: jest.fn().mockResolvedValue(null),
 });
 
@@ -265,6 +272,10 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: TransmitterTransducerAccuracyWorkspaceService,
           useFactory: mockTransmitterTransducerAccuracyWorkspaceService,
+        },
+        {
+          provide: UnitDefaultTestWorkspaceService,
+          useFactory: mockUnitDefaultTestWorkspaceService,
         },
       ],
     }).compile();

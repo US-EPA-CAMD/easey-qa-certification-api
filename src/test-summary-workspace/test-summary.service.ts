@@ -46,6 +46,7 @@ import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-cali
 import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
 import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
 import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
+import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -92,6 +93,8 @@ export class TestSummaryWorkspaceService {
     private readonly cycleTimeSummaryWorkspaceService: CycleTimeSummaryWorkspaceService,
     @Inject(forwardRef(() => TransmitterTransducerAccuracyWorkspaceService))
     private readonly transmitterTransducerAccuracyWorkspaceService: TransmitterTransducerAccuracyWorkspaceService,
+    @Inject(forwardRef(() => UnitDefaultTestWorkspaceService))
+    private readonly unitDefaultTestWorkspaceService: UnitDefaultTestWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -201,7 +204,8 @@ export class TestSummaryWorkspaceService {
           flowToLoadCheckData,
           flowToLoadReferenceData,
           appECorrelationTestSummaryData,
-          onlineOfflineCalibrationData;
+          onlineOfflineCalibrationData,
+          unitDefaultTestData;
 
         let testSumIds;
         if (testTypeCodes?.length > 0) {
@@ -254,6 +258,10 @@ export class TestSummaryWorkspaceService {
             testSumIds,
           );
 
+          unitDefaultTestData = await this.unitDefaultTestWorkspaceService.export(
+            testSumIds,
+          )
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -289,6 +297,9 @@ export class TestSummaryWorkspaceService {
             s.cycleTimeSummaryData = cycleTimeSummaryData.filter(
               i => i.testSumId === s.id,
             );
+            s.unitDefaultTestData = unitDefaultTestData.filter(
+              i => i.testSumId === s.id,
+            )
           });
         }
 
@@ -623,6 +634,29 @@ export class TestSummaryWorkspaceService {
               this.transmitterTransducerAccuracyWorkspaceService.import(
                 createdTestSummary.id,
                 transmitterTransducerAccuracy,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.unitDefaultTestData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.UNITDEF
+    ) {
+      for (const unitDefaultTest of payload.unitDefaultTestData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.unitDefaultTestWorkspaceService.import(
+                createdTestSummary.id,
+                unitDefaultTest,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),

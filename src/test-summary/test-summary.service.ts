@@ -19,6 +19,7 @@ import { OnlineOfflineCalibrationService } from '../online-offline-calibration/o
 import { FuelFlowToLoadBaselineService } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.service';
 import { CycleTimeSummaryService } from '../cycle-time-summary/cycle-time-summary.service';
 import { FuelFlowmeterAccuracyService } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.service';
+import { UnitDefaultTestService } from '../unit-default-test/unit-default-test.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -51,6 +52,8 @@ export class TestSummaryService {
     private readonly onlineOfflineCalibrationService: OnlineOfflineCalibrationService,
     @Inject(forwardRef(() => CycleTimeSummaryService))
     private readonly cycleTimeSummaryService: CycleTimeSummaryService,
+    @Inject(forwardRef(() => UnitDefaultTestService))
+    private readonly unitDefaultTestService: UnitDefaultTestService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -160,7 +163,8 @@ export class TestSummaryService {
           cycleTimeSummaryData,
           flowToLoadCheckData,
           flowToLoadReferenceData,
-          onlineOfflineCalibrationData;
+          onlineOfflineCalibrationData,
+          unitDefaultTestData;
         let testSumIds;
 
         if (testTypeCodes?.length > 0) {
@@ -214,6 +218,10 @@ export class TestSummaryService {
             testSumIds,
           );
 
+          unitDefaultTestData = await this.unitDefaultTestService.export(
+            testSumIds,
+          )
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -247,6 +255,9 @@ export class TestSummaryService {
               i => i.testSumId === s.id,
             );
             s.cycleTimeSummaryData = cycleTimeSummaryData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.unitDefaultTestData = unitDefaultTestData.filter(
               i => i.testSumId === s.id,
             );
           });

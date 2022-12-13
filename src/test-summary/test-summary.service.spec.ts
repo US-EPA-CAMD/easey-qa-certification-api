@@ -31,6 +31,8 @@ import { CycleTimeSummary } from '../entities/cycle-time-summary.entity';
 import { CycleTimeSummaryService } from '../cycle-time-summary/cycle-time-summary.service';
 import { FuelFlowmeterAccuracy } from '../entities/fuel-flowmeter-accuracy.entity';
 import { FuelFlowmeterAccuracyService } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.service';
+import { UnitDefaultTest } from '../entities/unit-default-test.entity';
+import { UnitDefaultTestService } from '../unit-default-test/unit-default-test.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -100,6 +102,10 @@ const mockFuelFlowmeterAccuracyService = () => ({
   export: jest.fn().mockResolvedValue([new FuelFlowmeterAccuracy()]),
 });
 
+const mockUnitDefaultTestService = () => ({
+  export: jest.fn().mockResolvedValue([new UnitDefaultTest()]),
+})
+
 describe('TestSummaryService', () => {
   let service: TestSummaryService;
   let repository: TestSummaryRepository;
@@ -164,6 +170,10 @@ describe('TestSummaryService', () => {
         {
           provide: FuelFlowToLoadBaselineService,
           useFactory: mockFuelFlowToLoadBaselineService,
+        },
+        {
+          provide: UnitDefaultTestService,
+          useFactory: mockUnitDefaultTestService,
         },
       ],
     }).compile();

@@ -74,4 +74,22 @@ describe('UnitDefaultTestService', () => {
       expect(errored).toEqual(true);
     });
   });
+
+  describe('getUnitDefaultTestsByTestSumIds', () => {
+    it('Should get Unit Default Test records by test sum ids', async () => {
+      const result = await service.getUnitDefaultTestsByTestSumIds([testSumId]);
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Unit Default Test Record', async () => {
+      jest
+        .spyOn(service, 'getUnitDefaultTestsByTestSumIds')
+        .mockResolvedValue([]);
+
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([]);
+    });
+  });
 });
