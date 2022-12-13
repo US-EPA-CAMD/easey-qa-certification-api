@@ -3,6 +3,7 @@ import { Repository, EntityRepository, SelectQueryBuilder } from 'typeorm';
 import {
   addJoins,
   addTestTypeWhere,
+  addSystemTypeWhere,
   addTestNumberWhere,
   addBeginAndEndDateWhere,
   addTestSummaryIdWhere,
@@ -45,6 +46,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
   async getTestSummariesByLocationId(
     locationId: string,
     testTypeCodes?: string[],
+    systemTypeCodes?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummary[]> {
@@ -53,6 +55,9 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
     });
 
     query = addTestTypeWhere(query, testTypeCodes) as SelectQueryBuilder<
+      TestSummary
+    >;
+    query = addSystemTypeWhere(query, systemTypeCodes) as SelectQueryBuilder<
       TestSummary
     >;
     query = addBeginAndEndDateWhere(
