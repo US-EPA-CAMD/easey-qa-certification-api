@@ -27,6 +27,7 @@ const payload = new UnitDefaultTestBaseDTO();
 
 const mockService = () => ({
   createUnitDefaultTest: jest.fn().mockResolvedValue(dto),
+  updateUnitDefaultTest: jest.fn().mockResolvedValue(dto),
   getUnitDefaultTest: jest.fn().mockResolvedValue(dto),
   getUnitDefaultTests: jest.fn().mockResolvedValue([dto]),
   deleteUnitDefaultTest: jest.fn().mockResolvedValue(null),
@@ -77,6 +78,20 @@ describe('UnitDefaultTestWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(dto);
+    });
+  });
+
+  describe('updateUnitDefaultTest', () => {
+    it('should call the updateUnitDefaultTest and update Unit Default Test record', async () => {
+      expect(
+        await controller.updateUnitDefaultTest(
+          locId,
+          testSumId,
+          id,
+          payload,
+          user,
+        ),
+      ).toEqual(dto);
     });
   });
 

@@ -92,7 +92,7 @@ describe('UnitDefaultTestWorkspaceService', () => {
 
   describe('getUnitDefaultTest', () => {
     it('Should return a UnitDefaultTest record', async () => {
-      const result = await service.getUnitDefaultTest(id, testSumId);
+      const result = await service.getUnitDefaultTest(id);
 
       expect(result).toEqual(dto);
     });
@@ -102,7 +102,7 @@ describe('UnitDefaultTestWorkspaceService', () => {
       let errored = false;
 
       try {
-        await service.getUnitDefaultTest(id, testSumId);
+        await service.getUnitDefaultTest(id);
       } catch (e) {
         errored = true;
       }
@@ -135,13 +135,33 @@ describe('UnitDefaultTestWorkspaceService', () => {
     });
   });
 
-  describe('deleteUnitDefaultTest', () => {
-    it('Should delete a Unit Default Test record', async () => {
-      const result = await service.deleteUnitDefaultTest(
+  describe('updateUnitDefaultTest', () => {
+    it('should update a Unit Default Test record', async () => {
+      const result = await service.updateUnitDefaultTest(
         testSumId,
         id,
+        payload,
         userId,
       );
+      expect(result).toEqual(dto);
+    });
+
+    it('should throw error with invalid Unit Default Test', async () => {
+      jest.spyOn(service, 'updateUnitDefaultTest').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.updateUnitDefaultTest(testSumId, id, payload, userId);
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteUnitDefaultTest', () => {
+    it('Should delete a Unit Default Test record', async () => {
+      const result = await service.deleteUnitDefaultTest(testSumId, id, userId);
       expect(result).toEqual(undefined);
     });
 
@@ -154,11 +174,7 @@ describe('UnitDefaultTestWorkspaceService', () => {
 
       let errored = false;
       try {
-        await service.deleteUnitDefaultTest(
-          testSumId,
-          id,
-          userId,
-        );
+        await service.deleteUnitDefaultTest(testSumId, id, userId);
       } catch (e) {
         errored = true;
       }
