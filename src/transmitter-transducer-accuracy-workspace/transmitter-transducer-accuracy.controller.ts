@@ -15,15 +15,17 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
+
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+
 import {
   TransmitterTransducerAccuracyBaseDTO,
   TransmitterTransducerAccuracyDTO,
   TransmitterTransducerAccuracyRecordDTO,
 } from '../dto/transmitter-transducer-accuracy.dto';
+import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
 
 @Controller()
 @ApiSecurity('APIKey')

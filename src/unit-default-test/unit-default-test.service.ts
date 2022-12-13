@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UnitDefaultTestDTO } from 'src/dto/unit-default-test.dto';
+import { UnitDefaultTestDTO } from '../dto/unit-default-test.dto';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { UnitDefaultTestRepository } from './unit-default-test.repository';
