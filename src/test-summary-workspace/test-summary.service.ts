@@ -649,7 +649,6 @@ export class TestSummaryWorkspaceService {
       payload.unitDefaultTestData?.length > 0 &&
       payload.testTypeCode === TestTypeCodes.UNITDEF
     ) {
-      console.log("Hello Robert")
       for (const unitDefaultTest of payload.unitDefaultTestData) {
         promises.push(
           new Promise(async (resolve, _reject) => {
