@@ -9,9 +9,9 @@ import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
 import { IsValidCodes } from '../pipes/is-valid-codes.pipe';
 
-import { TestTypeCode } from './../entities/test-type-code.entity';
+import { TestTypeCode } from '../entities/test-type-code.entity';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { SystemTypeCode } from './../entities/system-type-code.entity';
+import { SystemTypeCode } from '../entities/system-type-code.entity';
 import { SystemTypeCodes } from '../enums/system-type-code.enum';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 
