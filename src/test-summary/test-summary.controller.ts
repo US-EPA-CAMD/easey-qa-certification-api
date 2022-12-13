@@ -30,6 +30,7 @@ export class TestSummaryController {
     return this.service.getTestSummariesByLocationId(
       locationId,
       params.testTypeCodes,
+      params.systemTypeCodes,
       params.beginDate,
       params.endDate,
     );
