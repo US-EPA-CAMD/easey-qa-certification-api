@@ -8,6 +8,8 @@ import {
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
 import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { HttpStatus } from '@nestjs/common';
 
 const id = '';
 const testSumId = '';
@@ -116,6 +118,37 @@ describe('UnitDefaultTestWorkspaceService', () => {
       );
 
       expect(result).toEqual(dto);
+    });
+  });
+
+  describe('deleteUnitDefaultTest', () => {
+    it('Should delete a Unit Default Test record', async () => {
+      const result = await service.deleteUnitDefaultTest(
+        testSumId,
+        id,
+        userId,
+      );
+      expect(result).toEqual(undefined);
+    });
+
+    it('Should through error while deleting a Unit Default Test record', async () => {
+      const error = new LoggingException(
+        `Error deleting Unit Default Test with record Id [${testSumId}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+      jest.spyOn(repository, 'delete').mockRejectedValue(error);
+
+      let errored = false;
+      try {
+        await service.deleteUnitDefaultTest(
+          testSumId,
+          id,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
     });
   });
 });

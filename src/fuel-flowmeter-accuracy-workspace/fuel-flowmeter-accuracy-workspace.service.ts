@@ -1,9 +1,13 @@
 import { HttpStatus, forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+
 import { currentDateTime } from '../utilities/functions';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-
 import {
   FuelFlowmeterAccuracyBaseDTO,
   FuelFlowmeterAccuracyDTO,
@@ -11,12 +15,9 @@ import {
   FuelFlowmeterAccuracyRecordDTO,
 } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracyWorkspaceRepository } from './fuel-flowmeter-accuracy-workspace.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
-import { In } from 'typeorm';
 import { FuelFlowmeterAccuracy } from '../entities/fuel-flowmeter-accuracy.entity';
 import { FuelFlowmeterAccuracyRepository } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class FuelFlowmeterAccuracyWorkspaceService {

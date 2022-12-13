@@ -45,6 +45,7 @@ import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-w
 import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
 import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
 import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
+import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -89,6 +90,8 @@ export class TestSummaryWorkspaceService {
     private readonly onlineOfflineCalibrationWorkspaceService: OnlineOfflineCalibrationWorkspaceService,
     @Inject(forwardRef(() => CycleTimeSummaryWorkspaceService))
     private readonly cycleTimeSummaryWorkspaceService: CycleTimeSummaryWorkspaceService,
+    @Inject(forwardRef(() => TransmitterTransducerAccuracyWorkspaceService))
+    private readonly transmitterTransducerAccuracyWorkspaceService: TransmitterTransducerAccuracyWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -597,6 +600,29 @@ export class TestSummaryWorkspaceService {
               this.onlineOfflineCalibrationWorkspaceService.import(
                 createdTestSummary.id,
                 onlineOfflineCalibration,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.transmitterTransducerData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.FFACCTT
+    ) {
+      for (const transmitterTransducerAccuracy of payload.transmitterTransducerData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.transmitterTransducerAccuracyWorkspaceService.import(
+                createdTestSummary.id,
+                transmitterTransducerAccuracy,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),

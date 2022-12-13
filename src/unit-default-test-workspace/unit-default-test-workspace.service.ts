@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   UnitDefaultTestBaseDTO,
   UnitDefaultTestDTO,
-} from 'src/dto/unit-default-test.dto';
+} from '../dto/unit-default-test.dto';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
@@ -72,5 +72,27 @@ export class UnitDefaultTestWorkspaceService {
       isImport,
     );
     return this.map.one(entity);
+  }
+
+  async deleteUnitDefaultTest(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete(id);
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting Unit Default Test with record Id [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
   }
 }
