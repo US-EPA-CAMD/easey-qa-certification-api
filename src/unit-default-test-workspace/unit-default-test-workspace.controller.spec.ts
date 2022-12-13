@@ -29,6 +29,7 @@ const mockService = () => ({
   createUnitDefaultTest: jest.fn().mockResolvedValue(dto),
   getUnitDefaultTest: jest.fn().mockResolvedValue(dto),
   getUnitDefaultTests: jest.fn().mockResolvedValue([dto]),
+  deleteUnitDefaultTest: jest.fn().mockResolvedValue(null),
 });
 
 describe('UnitDefaultTestWorkspaceController', () => {
@@ -76,6 +77,18 @@ describe('UnitDefaultTestWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(dto);
+    });
+  });
+
+  describe('deleteTestQualification', () => {
+    it('Calls the service and deletes a Unit Default Test record', async () => {
+      const result = await controller.deleteUnitDefaultTest(
+        locId,
+        id,
+        testSumId,
+        user,
+      );
+      expect(result).toEqual(null);
     });
   });
 });
