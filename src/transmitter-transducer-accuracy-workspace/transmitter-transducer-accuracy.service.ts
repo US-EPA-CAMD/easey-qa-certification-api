@@ -1,7 +1,9 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
+
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { currentDateTime } from '../utilities/functions';
 import { TransmitterTransducerAccuracyWorkspaceRepository } from './transmitter-transducer-accuracy.repository';
@@ -10,17 +12,23 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import {
   TransmitterTransducerAccuracyBaseDTO,
   TransmitterTransducerAccuracyDTO,
+  TransmitterTransducerAccuracyImportDTO,
   TransmitterTransducerAccuracyRecordDTO,
 } from '../dto/transmitter-transducer-accuracy.dto';
+import { TransmitterTransducerAccuracy } from '../entities/transmitter-transducer-accuracy.entity';
+import { TransmitterTransducerAccuracyRepository } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.repository';
 
 @Injectable()
 export class TransmitterTransducerAccuracyWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     @InjectRepository(TransmitterTransducerAccuracyWorkspaceRepository)
     private readonly repository: TransmitterTransducerAccuracyWorkspaceRepository,
     private readonly map: TransmitterTransducerAccuracyMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
+    @InjectRepository(TransmitterTransducerAccuracyRepository)
+    private readonly historicalRepository: TransmitterTransducerAccuracyRepository,
   ) {}
 
   async getTransmitterTransducerAccuracy(
@@ -135,5 +143,41 @@ export class TransmitterTransducerAccuracyWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async import(
+    testSumId: string,
+    payload: TransmitterTransducerAccuracyImportDTO,
+    userId: string,
+    isHistoricalRecord?: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: TransmitterTransducerAccuracy;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepository.findOne({
+        testSumId: testSumId,
+        lowLevelAccuracy: payload.lowLevelAccuracy,
+        lowLevelAccuracySpecCode: payload.lowLevelAccuracySpecCode,
+        midLevelAccuracy: payload.midLevelAccuracy,
+        midLevelAccuracySpecCode: payload.midLevelAccuracySpecCode,
+        highLevelAccuracy: payload.highLevelAccuracy,
+        highLevelAccuracySpecCode: payload.highLevelAccuracySpecCode,
+      });
+    }
+
+    const createdTransmitterTransducerAccuracy = await this.createTransmitterTransducerAccuracy(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Transmitter Transducer Accuracy successfully imported. Record Id: ${createdTransmitterTransducerAccuracy.id}`,
+    );
+
+    return null;
   }
 }
