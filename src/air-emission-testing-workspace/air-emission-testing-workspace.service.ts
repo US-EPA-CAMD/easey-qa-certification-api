@@ -83,13 +83,6 @@ export class AirEmissionTestingWorkspaceService {
 
     const entity = await this.getAirEmissionTesting(id);
 
-    if (!entity) {
-      throw new LoggingException(
-        `an Air Emission Testing record not found with Record Id [${id}].`,
-        HttpStatus.NOT_FOUND,
-      );
-    }
-
     entity.qiLastName = payload.qiLastName;
     entity.qiFirstName = payload.qiFirstName;
     entity.qiMiddleInitial = payload.qiMiddleInitial;

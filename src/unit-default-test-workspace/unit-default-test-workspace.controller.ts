@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -6,18 +15,21 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
+
+import { User } from '@us-epa-camd/easey-common/decorators';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+
 import {
   UnitDefaultTestBaseDTO,
   UnitDefaultTestDTO,
+  UnitDefaultTestRecordDTO,
 } from '../dto/unit-default-test.dto';
 import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 @Controller()
 @ApiSecurity('APIKey')
-@ApiTags('Unit Default Test')
+@ApiTags('Unit Default Testing')
 export class UnitDefaultTestWorkspaceController {
   constructor(private readonly service: UnitDefaultTestWorkspaceService) {}
 
@@ -43,10 +55,10 @@ export class UnitDefaultTestWorkspaceController {
   })
   async getUnitDefaultTest(
     @Param('locId') _locationId: string,
-    @Param('testSumId') testSumId: string,
+    @Param('testSumId') _testSumId: string,
     @Param('id') id: string,
   ): Promise<UnitDefaultTestDTO> {
-    return this.service.getUnitDefaultTest(id, testSumId);
+    return this.service.getUnitDefaultTest(id);
   }
 
   @Post()
@@ -65,6 +77,29 @@ export class UnitDefaultTestWorkspaceController {
     return this.service.createUnitDefaultTest(testSumId, payload, user.userId);
   }
 
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    isArray: true,
+    type: UnitDefaultTestRecordDTO,
+    description: 'Updates workspace Unit Default Test record',
+  })
+  updateUnitDefaultTest(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: UnitDefaultTestBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<UnitDefaultTestDTO> {
+    return this.service.updateUnitDefaultTest(
+      testSumId,
+      id,
+      payload,
+      user.userId,
+    );
+  }
+
   @Delete(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth('Token')
@@ -77,10 +112,6 @@ export class UnitDefaultTestWorkspaceController {
     @Param('id') id: string,
     @User() user: CurrentUser,
   ): Promise<void> {
-    return this.service.deleteUnitDefaultTest(
-      testSumId,
-      id,
-      user.userId,
-    );
+    return this.service.deleteUnitDefaultTest(testSumId, id, user.userId);
   }
 }

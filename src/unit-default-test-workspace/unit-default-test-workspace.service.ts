@@ -1,5 +1,12 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { v4 as uuid } from 'uuid';
+import { In } from 'typeorm';
+
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
+import { currentDateTime } from '../utilities/functions';
 import {
   UnitDefaultTestBaseDTO,
   UnitDefaultTestDTO,
@@ -8,13 +15,8 @@ import {
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
-import { currentDateTime } from '../utilities/functions';
-import { v4 as uuid } from 'uuid';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
 import { UnitDefaultTest } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestRepository } from '../unit-default-test/unit-default-test.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class UnitDefaultTestWorkspaceService {
@@ -35,13 +37,9 @@ export class UnitDefaultTestWorkspaceService {
     return this.map.many(records);
   }
 
-  async getUnitDefaultTest(
-    id: string,
-    testSumId: string,
-  ): Promise<UnitDefaultTestDTO> {
+  async getUnitDefaultTest(id: string): Promise<UnitDefaultTestDTO> {
     const result = await this.repository.findOne({
       id,
-      testSumId,
     });
 
     if (!result) {
@@ -80,6 +78,37 @@ export class UnitDefaultTestWorkspaceService {
       isImport,
     );
     return this.map.one(entity);
+  }
+
+  async updateUnitDefaultTest(
+    testSumId: string,
+    id: string,
+    payload: UnitDefaultTestBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<UnitDefaultTestDTO> {
+    const timestamp = currentDateTime().toLocaleString();
+
+    const entity = await this.getUnitDefaultTest(id);
+
+    entity.fuelCode = payload.fuelCode;
+    entity.NOxDefaultRate = payload.NOxDefaultRate;
+    entity.operatingConditionCode = payload.operatingConditionCode;
+    entity.groupID = payload.groupID;
+    entity.numberOfUnitsInGroup = payload.numberOfUnitsInGroup;
+    entity.numberOfTestsForGroup = payload.numberOfTestsForGroup;
+    entity.userId = userId;
+    entity.updateDate = timestamp;
+
+    await this.repository.save(entity);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
+    return this.getUnitDefaultTest(id);
   }
 
   async deleteUnitDefaultTest(
