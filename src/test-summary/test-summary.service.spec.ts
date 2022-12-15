@@ -33,6 +33,8 @@ import { FuelFlowmeterAccuracy } from '../entities/fuel-flowmeter-accuracy.entit
 import { FuelFlowmeterAccuracyService } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.service';
 import { UnitDefaultTest } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestService } from '../unit-default-test/unit-default-test.service';
+import { TransmitterTransducerAccuracy } from '../entities/transmitter-transducer-accuracy.entity';
+import { TransmitterTransducerAccuracyService } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -104,7 +106,11 @@ const mockFuelFlowmeterAccuracyService = () => ({
 
 const mockUnitDefaultTestService = () => ({
   export: jest.fn().mockResolvedValue([new UnitDefaultTest()]),
-})
+});
+
+const mockTransmitterTransducerAccuracyService = () => ({
+  export: jest.fn().mockResolvedValue([new TransmitterTransducerAccuracy()]),
+});
 
 describe('TestSummaryService', () => {
   let service: TestSummaryService;
@@ -174,6 +180,10 @@ describe('TestSummaryService', () => {
         {
           provide: UnitDefaultTestService,
           useFactory: mockUnitDefaultTestService,
+        },
+        {
+          provide: TransmitterTransducerAccuracyService,
+          useFactory: mockTransmitterTransducerAccuracyService,
         },
       ],
     }).compile();

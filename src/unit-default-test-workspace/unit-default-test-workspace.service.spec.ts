@@ -11,7 +11,7 @@ import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspac
 import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { HttpStatus } from '@nestjs/common';
-import { UnitDefaultTest as UnitDefaultTestOfficial} from '../entities/unit-default-test.entity';
+import { UnitDefaultTest as UnitDefaultTestOfficial } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestRepository } from '../unit-default-test/unit-default-test.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 

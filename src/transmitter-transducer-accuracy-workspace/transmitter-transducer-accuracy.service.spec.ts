@@ -178,4 +178,24 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
       await service.import(testSumID, baseDTO, userID, true);
     });
   });
+
+  describe('getTransmitterTransducerAccuraciesByTestSumIds', () => {
+    it('Should get UTransmitter Transducer Accuracy records by Test Summary Ids', async () => {
+      const result = await service.getTransmitterTransducerAccuraciesByTestSumIds(
+        [testSumID],
+      );
+      expect(result).toEqual([recordDTO]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Unit Default Test Record', async () => {
+      jest
+        .spyOn(service, 'getTransmitterTransducerAccuraciesByTestSumIds')
+        .mockResolvedValue([]);
+
+      const result = await service.export([testSumID]);
+      expect(result).toEqual([]);
+    });
+  });
 });

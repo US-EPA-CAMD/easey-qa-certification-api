@@ -22,6 +22,7 @@ import { FuelFlowToLoadBaselineModule } from '../fuel-flow-to-load-baseline/fuel
 import { FuelFlowmeterAccuracyModule } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.module';
 import { CycleTimeSummaryModule } from '../cycle-time-summary/cycle-time-summary.module';
 import { UnitDefaultTestModule } from '../unit-default-test/unit-default-test.module';
+import { TransmitterTransducerAccuracyModule } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { UnitDefaultTestModule } from '../unit-default-test/unit-default-test.mo
     OnlineOfflineCalibrationModule,
     CycleTimeSummaryModule,
     UnitDefaultTestModule,
+    TransmitterTransducerAccuracyModule,
   ],
   controllers: [TestSummaryController],
   providers: [TestSummaryMap, TestSummaryService],

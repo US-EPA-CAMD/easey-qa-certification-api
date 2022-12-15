@@ -2,12 +2,12 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 import { TestSummaryDTO } from '../dto/test-summary.dto';
 import { TestSummaryMap } from '../maps/test-summary.map';
 import { TestSummaryRepository } from './test-summary.repository';
 import { LinearitySummaryService } from '../linearity-summary/linearity-summary.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { RataService } from '../rata/rata.service';
 import { ProtocolGasService } from '../protocol-gas/protocol-gas.service';
 import { AppECorrelationTestSummaryService } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.service';
@@ -20,6 +20,7 @@ import { FuelFlowToLoadBaselineService } from '../fuel-flow-to-load-baseline/fue
 import { CycleTimeSummaryService } from '../cycle-time-summary/cycle-time-summary.service';
 import { FuelFlowmeterAccuracyService } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.service';
 import { UnitDefaultTestService } from '../unit-default-test/unit-default-test.service';
+import { TransmitterTransducerAccuracyService } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -54,6 +55,8 @@ export class TestSummaryService {
     private readonly cycleTimeSummaryService: CycleTimeSummaryService,
     @Inject(forwardRef(() => UnitDefaultTestService))
     private readonly unitDefaultTestService: UnitDefaultTestService,
+    @Inject(forwardRef(() => TransmitterTransducerAccuracyService))
+    private readonly transmitterTransducerAccuracyService: TransmitterTransducerAccuracyService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -164,7 +167,9 @@ export class TestSummaryService {
           flowToLoadCheckData,
           flowToLoadReferenceData,
           onlineOfflineCalibrationData,
-          unitDefaultTestData;
+          unitDefaultTestData,
+          transmitterTransducerAccuracyData;
+
         let testSumIds;
 
         if (testTypeCodes?.length > 0) {
@@ -220,7 +225,11 @@ export class TestSummaryService {
 
           unitDefaultTestData = await this.unitDefaultTestService.export(
             testSumIds,
-          )
+          );
+
+          transmitterTransducerAccuracyData = await this.transmitterTransducerAccuracyService.export(
+            testSumIds,
+          );
 
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
@@ -258,6 +267,9 @@ export class TestSummaryService {
               i => i.testSumId === s.id,
             );
             s.unitDefaultTestData = unitDefaultTestData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.transmitterTransducerData = transmitterTransducerAccuracyData.filter(
               i => i.testSumId === s.id,
             );
           });
