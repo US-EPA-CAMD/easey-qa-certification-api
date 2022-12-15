@@ -205,14 +205,17 @@ export class TestSummaryWorkspaceService {
           flowToLoadReferenceData,
           appECorrelationTestSummaryData,
           onlineOfflineCalibrationData,
-          unitDefaultTestData;
+          unitDefaultTestData,
+          transmitterTransducerAccuracyData;
 
         let testSumIds;
+
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
             testTypeCodes.includes(i.testTypeCode),
           );
         }
+
         testSumIds = testSummaries.map(i => i.id);
 
         if (testSumIds) {
@@ -262,6 +265,10 @@ export class TestSummaryWorkspaceService {
             testSumIds,
           );
 
+          transmitterTransducerAccuracyData = await this.transmitterTransducerAccuracyWorkspaceService.export(
+            testSumIds,
+          );
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -298,6 +305,9 @@ export class TestSummaryWorkspaceService {
               i => i.testSumId === s.id,
             );
             s.unitDefaultTestData = unitDefaultTestData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.transmitterTransducerData = transmitterTransducerAccuracyData.filter(
               i => i.testSumId === s.id,
             );
           });

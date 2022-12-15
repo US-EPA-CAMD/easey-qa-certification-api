@@ -60,10 +60,6 @@ describe('TransmitterTransducerAccuracyService', () => {
     );
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
-
   describe('getProtocolGas', () => {
     it('Calls repository.findOne({id}) to get a single Transmitter Transducer Accuracy record', async () => {
       const result = await service.getTransmitterTransducerAccuracy(entityId);
@@ -78,11 +74,31 @@ describe('TransmitterTransducerAccuracyService', () => {
 
       try {
         await service.getTransmitterTransducerAccuracy(entityId);
-      } catch (err) {
+      } catch (e) {
         errored = true;
       }
 
       expect(errored).toBe(true);
+    });
+  });
+
+  describe('getTransmitterTransducerAccuraciesByTestSumIds', () => {
+    it('Should get UTransmitter Transducer Accuracy records by Test Summary Ids', async () => {
+      const result = await service.getTransmitterTransducerAccuraciesByTestSumIds(
+        [testSumId],
+      );
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Transmitter Transducer Accuracy record', async () => {
+      jest
+        .spyOn(service, 'getTransmitterTransducerAccuraciesByTestSumIds')
+        .mockResolvedValue([]);
+
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([]);
     });
   });
 });

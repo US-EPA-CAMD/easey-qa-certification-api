@@ -17,6 +17,7 @@ import {
 } from '../dto/transmitter-transducer-accuracy.dto';
 import { TransmitterTransducerAccuracy } from '../entities/transmitter-transducer-accuracy.entity';
 import { TransmitterTransducerAccuracyRepository } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.repository';
+import { In } from 'typeorm';
 
 @Injectable()
 export class TransmitterTransducerAccuracyWorkspaceService {
@@ -54,6 +55,18 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     });
 
     return this.map.many(records);
+  }
+
+  async getTransmitterTransducerAccuraciesByTestSumIds(
+    testSumIds: string[],
+  ): Promise<TransmitterTransducerAccuracyDTO[]> {
+    const results = await this.repository.find({
+      where: {
+        testSumId: In(testSumIds),
+      },
+    });
+
+    return this.map.many(results);
   }
 
   async createTransmitterTransducerAccuracy(
@@ -179,5 +192,11 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     );
 
     return null;
+  }
+
+  async export(
+    testSumIds: string[],
+  ): Promise<TransmitterTransducerAccuracyDTO[]> {
+    return this.getTransmitterTransducerAccuraciesByTestSumIds(testSumIds);
   }
 }

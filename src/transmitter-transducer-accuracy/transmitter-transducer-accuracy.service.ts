@@ -1,9 +1,12 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { In } from 'typeorm';
+
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+
 import { TransmitterTransducerAccuracyRepository } from './transmitter-transducer-accuracy.repository';
 import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
 import { TransmitterTransducerAccuracyDTO } from '../dto/transmitter-transducer-accuracy.dto';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class TransmitterTransducerAccuracyService {
@@ -36,5 +39,21 @@ export class TransmitterTransducerAccuracyService {
     });
 
     return this.map.many(records);
+  }
+
+  async getTransmitterTransducerAccuraciesByTestSumIds(
+    testSumIds: string[],
+  ): Promise<TransmitterTransducerAccuracyDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(
+    testSumIds: string[],
+  ): Promise<TransmitterTransducerAccuracyDTO[]> {
+    return this.getTransmitterTransducerAccuraciesByTestSumIds(testSumIds);
   }
 }
