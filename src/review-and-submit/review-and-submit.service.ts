@@ -38,38 +38,46 @@ export class ReviewAndSubmitService {
         );
       }
 
+      let quarterList;
       if (quarters && quarters.length > 0) {
-        const quarterList = await this.returnManager().find(ReportingPeriod, {
+        quarterList = await this.returnManager().find(ReportingPeriod, {
           where: { periodAbbreviation: In(quarters) },
         });
+      } else {
+        quarterList = await this.returnManager().find(ReportingPeriod);
+      }
 
-        const newResults = [];
+      const newResults = [];
 
-        for (const d of data) {
-          let found = false;
+      for (const d of data) {
+        let found = false;
 
-          for (const rp of quarterList) {
-            if (d.periodAbbreviation === rp.periodAbbreviation) {
-              found = true;
-              break;
-            }
-
-            if (
-              new Date(d.beginDate) >= new Date(rp.beginDate) &&
-              new Date(d.endDate) <= new Date(rp.endDate)
-            ) {
-              found = true;
-              break;
-            }
+        for (const rp of quarterList) {
+          if (d.periodAbbreviation === rp.periodAbbreviation) {
+            found = true;
+            break;
           }
 
-          if (found) {
-            newResults.push(d);
+          if (
+            new Date(d.beginDate) >= new Date(rp.beginDate) &&
+            new Date(d.endDate) <= new Date(rp.endDate)
+          ) {
+            found = true;
+            d.periodAbbreviation = rp.periodAbbreviation;
+            break;
           }
         }
 
-        data = newResults;
+        if (quarters && quarters.length > 0) {
+          if (found) {
+            newResults.push(d);
+          }
+        } else {
+          newResults.push(d);
+        }
       }
+
+      data = newResults;
 
       return data;
     } catch (e) {

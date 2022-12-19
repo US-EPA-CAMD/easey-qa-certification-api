@@ -49,11 +49,29 @@ describe('ReviewAndSubmitController', () => {
 
   describe('getTestSummary', () => {
     it('should call the getTestSummary test summary service function given list of orisCodes', async () => {
+      jest.spyOn(service, 'returnManager').mockReturnValue({
+        find: jest.fn().mockResolvedValue([
+          {
+            periodAbbreviation: '2022 Q1',
+            beginDate: '2021-03-01',
+            endDate: '2021-05-31',
+          },
+        ]),
+      });
       const result = await service.getTestSummaryRecords([3], [], []);
       expect(result.length).toBe(2);
     });
 
     it('should call the getTestSummary test summary service function given list of monPlanIds', async () => {
+      jest.spyOn(service, 'returnManager').mockReturnValue({
+        find: jest.fn().mockResolvedValue([
+          {
+            periodAbbreviation: '2022 Q1',
+            beginDate: '2021-03-01',
+            endDate: '2021-05-31',
+          },
+        ]),
+      });
       const result = await service.getTestSummaryRecords([], ['MOCK'], []);
       expect(result.length).toBe(1);
     });
