@@ -94,8 +94,8 @@ export class ProtocolGasWorkspaceService {
 
     entity.gasLevelCode = payload.gasLevelCode;
     entity.gasTypeCode = payload.gasTypeCode;
-    entity.vendorID = payload.vendorID;
-    entity.cylinderID = payload.cylinderID;
+    entity.vendorIdentifier = payload.vendorIdentifier;
+    entity.cylinderIdentifier = payload.cylinderIdentifier;
     entity.expirationDate = payload.expirationDate;
     entity.userId = userId;
     entity.updateDate = timestamp;
@@ -151,7 +151,7 @@ export class ProtocolGasWorkspaceService {
     if (isHistoricalRecord) {
       historicalRecord = await this.historicalRepo.findOne({
         testSumId: testSumId,
-        cylinderID: payload.cylinderID,
+        cylinderIdentifier: payload.cylinderIdentifier,
       });
     }
 
