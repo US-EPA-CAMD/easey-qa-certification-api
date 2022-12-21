@@ -7,7 +7,7 @@ import {
 } from '@nestjs/swagger';
 import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { HgSummaryBaseDTO, HgSummaryDTO } from 'src/dto/hg-summary.dto';
+import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 

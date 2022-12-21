@@ -42,6 +42,7 @@ import { CycleTimeSummaryImportDTO } from '../dto/cycle-time-summary.dto';
 import { FuelFlowmeterAccuracyImportDTO } from '../dto/fuel-flowmeter-accuracy.dto';
 import { TransmitterTransducerAccuracyImportDTO } from '../dto/transmitter-transducer-accuracy.dto';
 import { UnitDefaultTestImportDTO } from '../dto/unit-default-test.dto';
+import { HgSummaryImportDTO } from '../dto/hg-summary.dto';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -347,7 +348,7 @@ describe('Test Summary Check Service Test', () => {
       importPayload.calibrationInjectionData = [
         new CalibrationInjectionImportDTO(),
       ];
-      importPayload.hgSummaryData = [{}];
+      importPayload.hgSummaryData = [new HgSummaryImportDTO()];
       importPayload.flowToLoadReferenceData = [
         new FlowToLoadReferenceImportDTO(),
       ];
