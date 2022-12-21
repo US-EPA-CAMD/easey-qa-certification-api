@@ -57,6 +57,7 @@ import { CycleTimeInjectionWorkspaceModule } from './cycle-time-injection-worksp
 import { ReviewAndSubmitModule } from './review-and-submit/review-and-submit.module';
 import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.module';
 import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/unit-default-test-workspace.module';
+import { HgSummaryWorkspaceModule } from './hg-summary-workspace/hg-summary-workspace.module';
 
 const routes: Routes = [
   {
@@ -220,6 +221,10 @@ const routes: Routes = [
           {
             path: ':testSumId/protocol-gases',
             module: ProtocolGasWorkspaceModule,
+          },
+          {
+            path: ':testSumId/hg-summaries',
+            module: HgSummaryWorkspaceModule,
           },
           {
             path: ':testSumId/cycle-time-summaries',

@@ -30,6 +30,7 @@ import { FuelFlowmeterAccuracy } from './fuel-flowmeter-accuracy.entity';
 import { CycleTimeSummary } from './cycle-time-summary.entity';
 import { TransmitterTransducerAccuracy } from './transmitter-transducer-accuracy.entity';
 import { UnitDefaultTest } from './unit-default-test.entity';
+import { HgSummary } from './hg-summary.entity';
 
 @Entity({ name: 'camdecmps.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -245,6 +246,13 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   cycleTimeSummary: CycleTimeSummary[];
+
+  @OneToMany(
+    () => HgSummary,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  HgSummary: HgSummary[];
 
   @OneToMany(
     () => UnitDefaultTest,
