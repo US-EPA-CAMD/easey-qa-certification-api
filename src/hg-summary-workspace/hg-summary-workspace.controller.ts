@@ -1,7 +1,8 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Param, Post, Put, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -31,5 +32,22 @@ export class HgSummaryWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<HgSummaryDTO> {
     return this.service.createHgSummary(testSumId, payload, user.userId);
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: HgSummaryDTO,
+    description: 'Updates a workspace Hg Summary record.',
+  })
+  updateHgSummary(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @Body() payload: HgSummaryBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<HgSummaryDTO> {
+    return this.service.updateHgSummary(testSumId, id, payload, user.userId);
   }
 }

@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 
 const locId = '';
 const testSumId = '';
+const id = '';
 const user: CurrentUser = {
   userId: 'testUser',
   sessionId: '',
@@ -23,6 +24,7 @@ const payload = new HgSummaryBaseDTO();
 
 const mockService = () => ({
   createHgSummary: jest.fn().mockResolvedValue(dto),
+  updateHgSummary: jest.fn().mockResolvedValue(dto),
 });
 
 describe('HgSummaryWorkspaceController', () => {
@@ -52,6 +54,19 @@ describe('HgSummaryWorkspaceController', () => {
       const result = await controller.createHgSummary(
         locId,
         testSumId,
+        payload,
+        user,
+      );
+      expect(result).toEqual(dto);
+    });
+  });
+
+  describe('updateHgSummary', () => {
+    it('Calls the service and update a existing Hg Summary record', async () => {
+      const result = await controller.updateHgSummary(
+        locId,
+        testSumId,
+        id,
         payload,
         user,
       );

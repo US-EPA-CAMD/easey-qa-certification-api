@@ -147,7 +147,7 @@ describe('UnitDefaultTestWorkspaceService', () => {
     });
 
     it('should throw error with invalid Unit Default Test', async () => {
-      jest.spyOn(service, 'updateUnitDefaultTest').mockResolvedValue(undefined);
+      jest.spyOn(service, 'getUnitDefaultTest').mockResolvedValue(undefined);
 
       let errored = false;
       try {
