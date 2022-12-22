@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HgSummaryWorkspaceController } from './hg-summary-workspace.controller';
-import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
+import { HgSummaryController } from './hg-summary.controller';
+import { HgSummaryService } from './hg-summary.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HttpModule } from '@nestjs/axios';
@@ -23,31 +23,28 @@ const dto = new HgSummaryDTO();
 const payload = new HgSummaryBaseDTO();
 
 const mockService = () => ({
-  createHgSummary: jest.fn().mockResolvedValue(dto),
   getHgSummary: jest.fn().mockResolvedValue(dto),
   getHgSummaries: jest.fn().mockResolvedValue([dto]),
 });
 
-describe('HgSummaryWorkspaceController', () => {
-  let controller: HgSummaryWorkspaceController;
+describe('HgSummaryController', () => {
+  let controller: HgSummaryController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [HttpModule],
-      controllers: [HgSummaryWorkspaceController],
+      controllers: [HgSummaryController],
       providers: [
         ConfigService,
         AuthGuard,
         {
-          provide: HgSummaryWorkspaceService,
+          provide: HgSummaryService,
           useFactory: mockService,
         },
       ],
     }).compile();
 
-    controller = module.get<HgSummaryWorkspaceController>(
-      HgSummaryWorkspaceController,
-    );
+    controller = module.get<HgSummaryController>(HgSummaryController);
   });
 
   describe('getHgSummary', () => {
@@ -61,18 +58,6 @@ describe('HgSummaryWorkspaceController', () => {
     it('Calls the service to many Cycle Time Summary records', async () => {
       const result = await controller.getHgSummaries(locId, testSumId);
       expect(result).toEqual([dto]);
-    });
-  });
-
-  describe('createHgSummary', () => {
-    it('Calls the service and create a new Hg Summary record', async () => {
-      const result = await controller.createHgSummary(
-        locId,
-        testSumId,
-        payload,
-        user,
-      );
-      expect(result).toEqual(dto);
     });
   });
 });

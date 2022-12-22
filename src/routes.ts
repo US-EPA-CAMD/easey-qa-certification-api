@@ -58,6 +58,7 @@ import { ReviewAndSubmitModule } from './review-and-submit/review-and-submit.mod
 import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.module';
 import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/unit-default-test-workspace.module';
 import { HgSummaryWorkspaceModule } from './hg-summary-workspace/hg-summary-workspace.module';
+import { HgSummaryModule } from './hg-summary/hg-summary.module';
 
 const routes: Routes = [
   {
@@ -93,6 +94,10 @@ const routes: Routes = [
           {
             path: ':testSumId/protocol-gases',
             module: ProtocolGasModule,
+          },
+          {
+            path: ':testSumId/hg-summaries',
+            module: HgSummaryModule,
           },
           {
             path: ':testSumId/cycle-time-summaries',

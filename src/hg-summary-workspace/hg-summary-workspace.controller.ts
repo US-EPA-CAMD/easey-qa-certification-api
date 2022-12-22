@@ -1,7 +1,8 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -16,6 +17,33 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 @ApiTags('Hg Summary')
 export class HgSummaryWorkspaceController {
   constructor(private readonly service: HgSummaryWorkspaceService) {}
+
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: HgSummaryDTO,
+    description: 'Retrieves workspace Hg Summary records by Test Summary Id',
+  })
+  async getHgSummaries(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+  ): Promise<HgSummaryDTO[]> {
+    return this.service.getHgSummaries(testSumId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: HgSummaryDTO,
+    description: 'Retrieves workspace Hg Summary record by its Id',
+  })
+  async getHgSummary(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+  ): Promise<HgSummaryDTO> {
+    return this.service.getHgSummary(id, testSumId);
+  }
 
   @Post()
   @UseGuards(AuthGuard)
