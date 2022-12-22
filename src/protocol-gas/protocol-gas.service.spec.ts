@@ -15,8 +15,8 @@ const protocolGasDTO = new ProtocolGasDTO();
 const payload: ProtocolGasBaseDTO = {
   gasLevelCode: '',
   gasTypeCode: '',
-  vendorID: '',
-  cylinderID: '',
+  vendorIdentifier: '',
+  cylinderIdentifier: '',
   expirationDate: new Date(),
 };
 

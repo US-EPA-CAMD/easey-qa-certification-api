@@ -28,8 +28,8 @@ const mockService = () => ({
 const payload: ProtocolGasBaseDTO = {
   gasLevelCode: '',
   gasTypeCode: '',
-  vendorID: '',
-  cylinderID: '',
+  vendorIdentifier: '',
+  cylinderIdentifier: '',
   expirationDate: new Date(),
 };
 const user: CurrentUser = {
