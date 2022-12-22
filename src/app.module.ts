@@ -70,6 +70,7 @@ import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-tran
 import { ReviewAndSubmitModule } from './review-and-submit/review-and-submit.module';
 import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/unit-default-test-workspace.module';
 import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.module';
+import { HgSummaryWorkspaceModule } from './hg-summary-workspace/hg-summary-workspace.module';
 
 @Module({
   imports: [
@@ -141,6 +142,7 @@ import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.mod
     CycleTimeInjectionWorkspaceModule,
     UnitDefaultTestWorkspaceModule,
     UnitDefaultTestModule,
+    HgSummaryWorkspaceModule,
   ],
 })
 export class AppModule {}

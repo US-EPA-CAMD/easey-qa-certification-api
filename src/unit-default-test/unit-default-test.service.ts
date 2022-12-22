@@ -45,7 +45,7 @@ export class UnitDefaultTestService {
     const results = await this.repository.find({
       where: { testSumId: In(testSumIds) },
     });
-    
+
     return this.map.many(results);
   }
 
