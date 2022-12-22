@@ -6,6 +6,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
 import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
 
+const id = '';
 const testSumId = '';
 const userId = 'user';
 const entity = new HgSummary();
@@ -57,6 +58,35 @@ describe('HgSummaryWorkspaceService', () => {
     repository = module.get<HgSummaryWorkspaceRepository>(
       HgSummaryWorkspaceRepository,
     );
+  });
+
+  describe('getHgSummaries', () => {
+    it('Should return Hg Summary records by Test Summary id', async () => {
+      const result = await service.getHgSummaries(testSumId);
+
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('getHgSummary', () => {
+    it('Should return a Hg Summary record', async () => {
+      const result = await service.getHgSummary(id, testSumId);
+
+      expect(result).toEqual(dto);
+    });
+
+    it('Should throw error when a Hg Summary record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.getHgSummary(id, testSumId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
   });
 
   describe('createHgSummary', () => {
