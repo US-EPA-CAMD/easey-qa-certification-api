@@ -12,7 +12,7 @@ import { TestSummary } from './test-summary.entity';
 import { HgInjection } from './hg-injection.entity';
 
 @Entity({
-  name: 'camdecmpswks.hg_test_summary',
+  name: 'camdecmps.hg_test_summary',
 })
 export class HgSummary extends BaseEntity {
   @PrimaryColumn({

@@ -72,7 +72,7 @@ import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/un
 import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.module';
 import { HgSummaryWorkspaceModule } from './hg-summary-workspace/hg-summary-workspace.module';
 import { HgInjectionWorkspaceModule } from './hg-injection-workspace/hg-injection-workspace.module';
-
+import { HgSummaryModule } from './hg-summary/hg-summary.module';
 @Module({
   imports: [
     RouterModule.forRoutes(routes),
@@ -145,6 +145,7 @@ import { HgInjectionWorkspaceModule } from './hg-injection-workspace/hg-injectio
     UnitDefaultTestModule,
     HgSummaryWorkspaceModule,
     HgInjectionWorkspaceModule,
+    HgSummaryModule,
   ],
 })
 export class AppModule {}

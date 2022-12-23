@@ -59,6 +59,7 @@ import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.mod
 import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/unit-default-test-workspace.module';
 import { HgSummaryWorkspaceModule } from './hg-summary-workspace/hg-summary-workspace.module';
 import { HgInjectionWorkspaceModule } from './hg-injection-workspace/hg-injection-workspace.module';
+import { HgSummaryModule } from './hg-summary/hg-summary.module';
 
 const routes: Routes = [
   {
@@ -99,6 +100,10 @@ const routes: Routes = [
           //            path: ':hgTestSumId/hg-summaries',
           //            module: HgInjectionModule,
           //          },
+          {
+            path: ':testSumId/hg-summaries',
+            module: HgSummaryModule,
+          },
           {
             path: ':testSumId/cycle-time-summaries',
             module: CycleTimeSummaryModule,
