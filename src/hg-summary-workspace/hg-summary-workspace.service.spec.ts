@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgSummary } from '../entities/workspace/hg-summary.entity';
@@ -127,6 +128,29 @@ describe('HgSummaryWorkspaceService', () => {
 
       try {
         await service.updateHgSummary(testSumId, id, payload, userId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteHgSummary', () => {
+    it('Should delete a Hg Summary record', async () => {
+      const result = await service.deleteHgSummary(testSumId, id, userId);
+
+      expect(result).toEqual(undefined);
+    });
+
+    it('Should throw error when database throws an error while deleting a Hg Summary record', async () => {
+      jest
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+      let errored = false;
+
+      try {
+        await service.deleteHgSummary(testSumId, id, userId);
       } catch (e) {
         errored = true;
       }
