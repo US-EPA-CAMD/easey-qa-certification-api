@@ -58,6 +58,7 @@ import { ReviewAndSubmitModule } from './review-and-submit/review-and-submit.mod
 import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.module';
 import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/unit-default-test-workspace.module';
 import { HgSummaryWorkspaceModule } from './hg-summary-workspace/hg-summary-workspace.module';
+import { HgInjectionWorkspaceModule } from './hg-injection-workspace/hg-injection-workspace.module';
 
 const routes: Routes = [
   {
@@ -94,6 +95,10 @@ const routes: Routes = [
             path: ':testSumId/protocol-gases',
             module: ProtocolGasModule,
           },
+          //          {
+          //            path: ':hgTestSumId/hg-summaries',
+          //            module: HgInjectionModule,
+          //          },
           {
             path: ':testSumId/cycle-time-summaries',
             module: CycleTimeSummaryModule,
@@ -225,6 +230,10 @@ const routes: Routes = [
           {
             path: ':testSumId/hg-summaries',
             module: HgSummaryWorkspaceModule,
+          },
+          {
+            path: ':hgTestSumId/hg-summaries',
+            module: HgInjectionWorkspaceModule,
           },
           {
             path: ':testSumId/cycle-time-summaries',
