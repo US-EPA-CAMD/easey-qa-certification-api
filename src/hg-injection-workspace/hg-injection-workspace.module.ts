@@ -5,7 +5,7 @@ import { HttpModule } from '@nestjs/axios';
 import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.repository';
 import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
 import { HgInjectionWorkspaceController } from './hg-injection-workspace.controller';
-import { HgInjectionMap } from 'src/maps/hg-injection.map';
+import { HgInjectionMap } from '../maps/hg-injection.map';
 
 @Module({
   imports: [

@@ -3,7 +3,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
-import { HgInjectionBaseDTO, HgInjectionDTO } from 'src/dto/hg-injection.dto';
+import { HgInjectionBaseDTO, HgInjectionDTO } from '../dto/hg-injection.dto';
 import { HgInjectionWorkspaceController } from './hg-injection-workspace.controller';
 import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
 
@@ -52,21 +52,21 @@ describe('HgInjectionWorkspaceController', () => {
   });
 
   describe('getHgInjection', () => {
-    it('Calls the service to get a Cycle Time Injection record', async () => {
+    it('Calls the service to get a Hg Injection record', async () => {
       const result = await controller.getHgInjection(locId, hgTestSumId, id);
       expect(result).toEqual(dto);
     });
   });
 
   describe('getHgInjections', () => {
-    it('Calls the service to many Cycle Time Injection records', async () => {
+    it('Calls the service to many Hg Injection records', async () => {
       const result = await controller.getHgInjections(locId, hgTestSumId);
       expect(result).toEqual([dto]);
     });
   });
 
   describe('createHgInjection', () => {
-    it('Calls the service and create a new Hg Injection record', async () => {
+    it('Calls the service and create a new Hg record', async () => {
       const result = await controller.createHgInjection(
         locId,
         hgTestSumId,

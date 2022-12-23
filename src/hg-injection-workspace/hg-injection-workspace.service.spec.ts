@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HgInjectionBaseDTO, HgInjectionDTO } from 'src/dto/hg-injection.dto';
-import { HgInjection } from 'src/entities/hg-injection.entity';
-import { HgInjectionMap } from 'src/maps/hg-injection.map';
+import { HgInjectionBaseDTO, HgInjectionDTO } from '../dto/hg-injection.dto';
+import { HgInjection } from '../entities/hg-injection.entity';
+import { HgInjectionMap } from '../maps/hg-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.repository';
 import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
@@ -62,7 +62,7 @@ describe('HgInjectionWorkspaceService', () => {
     );
   });
 
-  describe('getHgSummaries', () => {
+  describe('getHgInjections', () => {
     it('Should return Hg Injection records by Hg Test Summary id', async () => {
       const result = await service.getHgInjections(hgTestSumId);
 

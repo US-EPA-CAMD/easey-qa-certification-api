@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { HgInjectionDTO } from 'src/dto/hg-injection.dto';
+import { HgInjectionDTO } from '../dto/hg-injection.dto';
 import { HgInjectionService } from './hg-injection.service';
 
 @Controller()

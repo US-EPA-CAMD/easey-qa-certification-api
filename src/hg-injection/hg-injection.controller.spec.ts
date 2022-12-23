@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HgInjectionController } from './hg-Injection.controller';
-import { HgInjectionService } from './hg-Injection.service';
+import { HgInjectionController } from './hg-injection.controller';
+import { HgInjectionService } from './hg-injection.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { HgInjectionBaseDTO, HgInjectionDTO } from '../dto/hg-Injection.dto';
+import { HgInjectionBaseDTO, HgInjectionDTO } from '../dto/hg-injection.dto';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
@@ -24,7 +24,7 @@ const payload = new HgInjectionBaseDTO();
 
 const mockService = () => ({
   getHgInjection: jest.fn().mockResolvedValue(dto),
-  getHgSummaries: jest.fn().mockResolvedValue([dto]),
+  getHgInjections: jest.fn().mockResolvedValue([dto]),
 });
 
 describe('HgInjectionController', () => {
@@ -48,14 +48,14 @@ describe('HgInjectionController', () => {
   });
 
   describe('getHgInjection', () => {
-    it('Calls the service to get a Cycle Time Injection record', async () => {
+    it('Calls the service to get a HG Injection record', async () => {
       const result = await controller.getHgInjection(locId, hgTestSumId, id);
       expect(result).toEqual(dto);
     });
   });
 
-  describe('getHgSummaries', () => {
-    it('Calls the service to many Cycle Time Injection records', async () => {
+  describe('getHgInjections', () => {
+    it('Calls the service to many HG Injection records', async () => {
       const result = await controller.getHgInjections(locId, hgTestSumId);
       expect(result).toEqual([dto]);
     });

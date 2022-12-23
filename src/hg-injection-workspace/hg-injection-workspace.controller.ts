@@ -17,7 +17,7 @@ import {
 import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { HgInjectionBaseDTO, HgInjectionDTO } from 'src/dto/hg-injection.dto';
+import { HgInjectionBaseDTO, HgInjectionDTO } from '../dto/hg-injection.dto';
 import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
 
 @Controller()

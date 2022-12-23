@@ -60,6 +60,7 @@ import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/un
 import { HgSummaryWorkspaceModule } from './hg-summary-workspace/hg-summary-workspace.module';
 import { HgInjectionWorkspaceModule } from './hg-injection-workspace/hg-injection-workspace.module';
 import { HgSummaryModule } from './hg-summary/hg-summary.module';
+import { HgInjectionModule } from './hg-injection/hg-injection.module';
 
 const routes: Routes = [
   {
@@ -96,10 +97,10 @@ const routes: Routes = [
             path: ':testSumId/protocol-gases',
             module: ProtocolGasModule,
           },
-          //          {
-          //            path: ':hgTestSumId/hg-summaries',
-          //            module: HgInjectionModule,
-          //          },
+          {
+            path: ':hgTestSumId/hg-summaries',
+            module: HgInjectionModule,
+          },
           {
             path: ':testSumId/hg-summaries',
             module: HgSummaryModule,
