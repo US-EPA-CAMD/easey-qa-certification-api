@@ -60,6 +60,35 @@ describe('HgSummaryWorkspaceService', () => {
     );
   });
 
+  describe('getHgSummaries', () => {
+    it('Should return Hg Summary records by Test Summary id', async () => {
+      const result = await service.getHgSummaries(testSumId);
+
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('getHgSummary', () => {
+    it('Should return a Hg Summary record', async () => {
+      const result = await service.getHgSummary(id, testSumId);
+
+      expect(result).toEqual(dto);
+    });
+
+    it('Should throw error when a Hg Summary record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.getHgSummary(id, testSumId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
+
   describe('createHgSummary', () => {
     it('Should create and return a new Hg Summary record', async () => {
       const result = await service.createHgSummary(testSumId, payload, userId);

@@ -71,6 +71,7 @@ import { ReviewAndSubmitModule } from './review-and-submit/review-and-submit.mod
 import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/unit-default-test-workspace.module';
 import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.module';
 import { HgSummaryWorkspaceModule } from './hg-summary-workspace/hg-summary-workspace.module';
+import { HgSummaryModule } from './hg-summary/hg-summary.module';
 
 @Module({
   imports: [
@@ -143,6 +144,7 @@ import { HgSummaryWorkspaceModule } from './hg-summary-workspace/hg-summary-work
     UnitDefaultTestWorkspaceModule,
     UnitDefaultTestModule,
     HgSummaryWorkspaceModule,
+    HgSummaryModule,
   ],
 })
 export class AppModule {}

@@ -18,6 +18,28 @@ export class HgSummaryWorkspaceService {
     private readonly repository: HgSummaryWorkspaceRepository,
   ) {}
 
+  async getHgSummaries(testSumId: string): Promise<HgSummaryDTO[]> {
+    const records = await this.repository.find({ where: { testSumId } });
+
+    return this.map.many(records);
+  }
+
+  async getHgSummary(id: string, testSumId: string): Promise<HgSummaryDTO> {
+    const result = await this.repository.findOne({
+      id,
+      testSumId,
+    });
+
+    if (!result) {
+      throw new LoggingException(
+        `Hg Summary record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
+
   async createHgSummary(
     testSumId: string,
     payload: HgSummaryBaseDTO,
