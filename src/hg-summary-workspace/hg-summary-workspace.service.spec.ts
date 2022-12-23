@@ -78,4 +78,22 @@ describe('HgSummaryWorkspaceService', () => {
       expect(result).toEqual(dto);
     });
   });
+
+  describe('getHgSummaryByTestSumIds', () => {
+    it('Should get Hg Summary records by test sum ids', async () => {
+      const result = await service.getHgSummaryByTestSumIds([testSumId]);
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Hg Summary Record', async () => {
+      jest
+        .spyOn(service, 'getHgSummaryByTestSumIds')
+        .mockResolvedValue([]);
+
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([]);
+    });
+  });
 });

@@ -6,6 +6,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
+import { In } from 'typeorm';
 
 @Injectable()
 export class HgSummaryWorkspaceService {
@@ -43,5 +44,19 @@ export class HgSummaryWorkspaceService {
       isImport,
     );
     return this.map.one(entity);
+  }
+
+  async getHgSummaryByTestSumIds(
+    testSumIds: string[],
+  ): Promise<HgSummaryDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<HgSummaryDTO[]> {
+    return this.getHgSummaryByTestSumIds(testSumIds);
   }
 }

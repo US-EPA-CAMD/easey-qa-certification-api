@@ -41,6 +41,7 @@ import { CycleTimeSummaryWorkspaceModule } from '../cycle-time-summary-workspace
 import { UnitDefaultTestWorkspaceModule } from '../unit-default-test-workspace/unit-default-test-workspace.module';
 import { TransmitterTransducerAccuracyRepository } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.repository';
 import { TransmitterTransducerAccuracyWorkspaceModule } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.module';
+import { HgSummaryWorkspaceModule } from 'src/hg-summary-workspace/hg-summary-workspace.module';
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import { TransmitterTransducerAccuracyWorkspaceModule } from '../transmitter-tra
     forwardRef(() => CycleTimeSummaryWorkspaceModule),
     forwardRef(() => UnitDefaultTestWorkspaceModule),
     forwardRef(() => TransmitterTransducerAccuracyWorkspaceModule),
+    forwardRef(() => HgSummaryWorkspaceModule),
     TestResultCodeModule,
     HttpModule,
   ],

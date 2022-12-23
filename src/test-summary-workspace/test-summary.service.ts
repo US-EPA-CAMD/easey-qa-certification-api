@@ -47,6 +47,7 @@ import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspac
 import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
 import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
+import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -95,6 +96,8 @@ export class TestSummaryWorkspaceService {
     private readonly transmitterTransducerAccuracyWorkspaceService: TransmitterTransducerAccuracyWorkspaceService,
     @Inject(forwardRef(() => UnitDefaultTestWorkspaceService))
     private readonly unitDefaultTestWorkspaceService: UnitDefaultTestWorkspaceService,
+    @Inject(forwardRef(() => HgSummaryWorkspaceService))
+    private readonly hgSummaryWorkspaceService: HgSummaryWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -206,7 +209,8 @@ export class TestSummaryWorkspaceService {
           appECorrelationTestSummaryData,
           onlineOfflineCalibrationData,
           unitDefaultTestData,
-          transmitterTransducerAccuracyData;
+          transmitterTransducerAccuracyData,
+          hgSummaryData;
 
         let testSumIds;
 
@@ -269,6 +273,10 @@ export class TestSummaryWorkspaceService {
             testSumIds,
           );
 
+          hgSummaryData = await this.hgSummaryWorkspaceService.export(
+            testSumIds,
+          );
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -310,6 +318,9 @@ export class TestSummaryWorkspaceService {
             s.transmitterTransducerData = transmitterTransducerAccuracyData.filter(
               i => i.testSumId === s.id,
             );
+            s.hgSummaryData = hgSummaryData.filter(
+              i => i.testSumId === s.id,
+            )
           });
         }
 
