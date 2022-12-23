@@ -70,4 +70,40 @@ export class HgInjectionWorkspaceService {
     );
     return this.map.one(entity);
   }
+
+  async updateHgInjection(
+    hgTestSumId: string,
+    id: string,
+    payload: HgInjectionBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<HgInjectionDTO> {
+    const entity = await this.repository.findOne({
+      id,
+      hgTestSumId,
+    });
+
+    if (!entity) {
+      throw new LoggingException(
+        `Hg Summary record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    entity.injectionDate = payload.injectionDate;
+    entity.injectionHour = payload.injectionHour;
+    entity.injectionMinute = payload.injectionMinute;
+    entity.measuredValue = payload.measuredValue;
+    entity.referenceValue = payload.referenceValue;
+
+    await this.repository.save(entity);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      hgTestSumId,
+      userId,
+      isImport,
+    );
+
+    return this.map.one(entity);
+  }
 }

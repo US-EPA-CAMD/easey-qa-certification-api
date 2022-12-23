@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -53,12 +61,34 @@ export class HgInjectionWorkspaceController {
     type: HgInjectionDTO,
     description: 'Creates a workspace Hg Injection record.',
   })
-  createHgSummary(
+  createHgInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: HgInjectionBaseDTO,
     @User() user: CurrentUser,
   ): Promise<HgInjectionDTO> {
     return this.service.createHgInjection(testSumId, payload, user.userId);
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: HgInjectionDTO,
+    description: 'Updates a workspace Hg Injection record.',
+  })
+  updateHgInjection(
+    @Param('locId') _locationId: string,
+    @Param('hgTestSumId') hgTestSumId: string,
+    @Param('id') id: string,
+    @Body() payload: HgInjectionBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<HgInjectionDTO> {
+    return this.service.updateHgInjection(
+      id,
+      hgTestSumId,
+      payload,
+      user.userId,
+    );
   }
 }
