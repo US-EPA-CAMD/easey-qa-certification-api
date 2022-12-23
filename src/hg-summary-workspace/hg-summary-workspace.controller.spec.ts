@@ -24,6 +24,7 @@ const payload = new HgSummaryBaseDTO();
 
 const mockService = () => ({
   createHgSummary: jest.fn().mockResolvedValue(dto),
+  updateHgSummary: jest.fn().mockResolvedValue(dto),
   getHgSummary: jest.fn().mockResolvedValue(dto),
   getHgSummaries: jest.fn().mockResolvedValue([dto]),
 });
@@ -69,6 +70,19 @@ describe('HgSummaryWorkspaceController', () => {
       const result = await controller.createHgSummary(
         locId,
         testSumId,
+        payload,
+        user,
+      );
+      expect(result).toEqual(dto);
+    });
+  });
+
+  describe('updateHgSummary', () => {
+    it('Calls the service and update a existing Hg Summary record', async () => {
+      const result = await controller.updateHgSummary(
+        locId,
+        testSumId,
+        id,
         payload,
         user,
       );

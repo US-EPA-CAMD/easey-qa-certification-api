@@ -108,4 +108,30 @@ describe('HgSummaryWorkspaceService', () => {
       expect(result).toEqual(dto);
     });
   });
+
+  describe('updateHgSummary', () => {
+    it('Should update and return the Hg Summary record', async () => {
+      const result = await service.updateHgSummary(
+        testSumId,
+        id,
+        payload,
+        userId,
+      );
+
+      expect(result).toEqual(dto);
+    });
+
+    it('Should throw error when a Hg Summary record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.updateHgSummary(testSumId, id, payload, userId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
 });
