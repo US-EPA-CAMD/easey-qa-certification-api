@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgSummary } from '../entities/workspace/hg-summary.entity';
@@ -6,6 +7,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
 import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
 
+const id = '';
 const testSumId = '';
 const userId = 'user';
 const entity = new HgSummary();
@@ -59,6 +61,35 @@ describe('HgSummaryWorkspaceService', () => {
     );
   });
 
+  describe('getHgSummaries', () => {
+    it('Should return Hg Summary records by Test Summary id', async () => {
+      const result = await service.getHgSummaries(testSumId);
+
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('getHgSummary', () => {
+    it('Should return a Hg Summary record', async () => {
+      const result = await service.getHgSummary(id, testSumId);
+
+      expect(result).toEqual(dto);
+    });
+
+    it('Should throw error when a Hg Summary record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.getHgSummary(id, testSumId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
+
   describe('createHgSummary', () => {
     it('Should create and return a new Hg Summary record', async () => {
       const result = await service.createHgSummary(testSumId, payload, userId);
@@ -94,6 +125,55 @@ describe('HgSummaryWorkspaceService', () => {
 
       const result = await service.export([testSumId]);
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('updateHgSummary', () => {
+    it('Should update and return the Hg Summary record', async () => {
+      const result = await service.updateHgSummary(
+        testSumId,
+        id,
+        payload,
+        userId,
+      );
+
+      expect(result).toEqual(dto);
+    });
+
+    it('Should throw error when a Hg Summary record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.updateHgSummary(testSumId, id, payload, userId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteHgSummary', () => {
+    it('Should delete a Hg Summary record', async () => {
+      const result = await service.deleteHgSummary(testSumId, id, userId);
+
+      expect(result).toEqual(undefined);
+    });
+
+    it('Should throw error when database throws an error while deleting a Hg Summary record', async () => {
+      jest
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+      let errored = false;
+
+      try {
+        await service.deleteHgSummary(testSumId, id, userId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
     });
   });
 });
