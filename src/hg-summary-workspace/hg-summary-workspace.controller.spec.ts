@@ -27,6 +27,7 @@ const mockService = () => ({
   updateHgSummary: jest.fn().mockResolvedValue(dto),
   getHgSummary: jest.fn().mockResolvedValue(dto),
   getHgSummaries: jest.fn().mockResolvedValue([dto]),
+  deleteHgSummary: jest.fn().mockResolvedValue(undefined),
 });
 
 describe('HgSummaryWorkspaceController', () => {
@@ -87,6 +88,18 @@ describe('HgSummaryWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(dto);
+    });
+  });
+
+  describe('deleteHgSummary', () => {
+    it('Calls the service and delete a Hg Summary record', async () => {
+      const result = await controller.deleteHgSummary(
+        locId,
+        testSumId,
+        id,
+        user,
+      );
+      expect(result).toEqual(undefined);
     });
   });
 });
