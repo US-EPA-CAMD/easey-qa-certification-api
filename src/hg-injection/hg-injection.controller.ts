@@ -28,7 +28,7 @@ export class HgInjectionController {
     type: HgInjectionDTO,
     description: 'Retrieves Injection Hg Injection record by its Id',
   })
-  async getHgSummary(
+  async getHgInjection(
     @Param('locId') _locationId: string,
     @Param('hgTestSumId') hgTestSumId: string,
     @Param('id') id: string,
