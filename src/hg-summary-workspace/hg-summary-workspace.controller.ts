@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -84,5 +85,20 @@ export class HgSummaryWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<HgSummaryDTO> {
     return this.service.updateHgSummary(testSumId, id, payload, user.userId);
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Deletes a workspace Hg Summary record.',
+  })
+  async deleteHgSummary(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteHgSummary(testSumId, id, user.userId);
   }
 }
