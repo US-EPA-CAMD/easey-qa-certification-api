@@ -1,7 +1,8 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -17,12 +18,40 @@ import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
 export class HgInjectionWorkspaceController {
   constructor(private readonly service: HgInjectionWorkspaceService) {}
 
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: HgInjectionDTO,
+    description:
+      'Retrieves workspace Hg Injection records by HG Test Summary Id',
+  })
+  async getHgInjections(
+    @Param('locId') _locationId: string,
+    @Param('hgTestSumId') hgTestSumId: string,
+  ): Promise<HgInjectionDTO[]> {
+    return this.service.getHgInjections(hgTestSumId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: HgInjectionDTO,
+    description: 'Retrieves workspace Hg Injection record by its Id',
+  })
+  async getHgInjection(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') hgTestSumId: string,
+    @Param('id') id: string,
+  ): Promise<HgInjectionDTO> {
+    return this.service.getHgInjection(id, hgTestSumId);
+  }
+
   @Post()
   @UseGuards(AuthGuard)
   @ApiBearerAuth('Token')
   @ApiCreatedResponse({
     type: HgInjectionDTO,
-    description: 'Creates a workspace Hg Summary record.',
+    description: 'Creates a workspace Hg Injection record.',
   })
   createHgSummary(
     @Param('locId') _locationId: string,

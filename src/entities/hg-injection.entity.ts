@@ -26,7 +26,7 @@ export class HgInjection extends BaseEntity {
     nullable: false,
     name: 'hg_test_sum_id',
   })
-  testSumId: string;
+  hgTestSumId: string;
 
   @Column({
     type: 'varchar',

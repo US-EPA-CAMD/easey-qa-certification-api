@@ -1,11 +1,12 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
-import { HgInjectionBaseDTO, HgInjectionDTO } from 'src/dto/hg-injection.dto';
+import { HgInjectionBaseDTO, HgInjectionDTO } from '../dto/hg-injection.dto';
 import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.repository';
-import { HgInjectionMap } from 'src/maps/hg-injection.map';
+import { HgInjectionMap } from '../maps/hg-injection.map';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class HgInjectionWorkspaceService {
@@ -17,8 +18,33 @@ export class HgInjectionWorkspaceService {
     private readonly repository: HgInjectionWorkspaceRepository,
   ) {}
 
+  async getHgInjections(hgTestSumId: string): Promise<HgInjectionDTO[]> {
+    const records = await this.repository.find({ where: { hgTestSumId } });
+
+    return this.map.many(records);
+  }
+
+  async getHgInjection(
+    id: string,
+    hgTestSumId: string,
+  ): Promise<HgInjectionDTO> {
+    const result = await this.repository.findOne({
+      id,
+      hgTestSumId,
+    });
+
+    if (!result) {
+      throw new LoggingException(
+        `Hg Injeciton record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
+
   async createHgInjection(
-    testSumId: string,
+    hgTestSumId: string,
     payload: HgInjectionBaseDTO,
     userId: string,
     isImport: boolean = false,
@@ -29,7 +55,7 @@ export class HgInjectionWorkspaceService {
     let entity = this.repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
-      testSumId,
+      hgTestSumId,
       userId,
       addDate: timestamp,
       updateDate: timestamp,
@@ -38,7 +64,7 @@ export class HgInjectionWorkspaceService {
     await this.repository.save(entity);
     entity = await this.repository.findOne(entity.id);
     await this.testSummaryService.resetToNeedsEvaluation(
-      testSumId,
+      hgTestSumId,
       userId,
       isImport,
     );

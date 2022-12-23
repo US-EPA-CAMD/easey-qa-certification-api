@@ -8,7 +8,7 @@ export class HgInjectionBaseDTO {
 
 export class HgInjectionRecordDTO extends HgInjectionBaseDTO {
   id: string;
-  testSumId: string;
+  hgTestSumId: string;
   userId: string;
   addDate: string;
   updateDate: string;
