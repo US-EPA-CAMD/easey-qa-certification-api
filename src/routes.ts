@@ -98,12 +98,14 @@ const routes: Routes = [
             module: ProtocolGasModule,
           },
           {
-            path: ':hgTestSumId/hg-summaries',
-            module: HgInjectionModule,
-          },
-          {
             path: ':testSumId/hg-summaries',
             module: HgSummaryModule,
+            children: [
+              {
+                path: ':hgTestSumId/hg-injections',
+                module: HgInjectionModule,
+              },
+            ],
           },
           {
             path: ':testSumId/cycle-time-summaries',
@@ -236,10 +238,12 @@ const routes: Routes = [
           {
             path: ':testSumId/hg-summaries',
             module: HgSummaryWorkspaceModule,
-          },
-          {
-            path: ':hgTestSumId/hg-summaries',
-            module: HgInjectionWorkspaceModule,
+            children: [
+              {
+                path: ':hgTestSumId/hg-injections',
+                module: HgInjectionWorkspaceModule,
+              },
+            ],
           },
           {
             path: ':testSumId/cycle-time-summaries',

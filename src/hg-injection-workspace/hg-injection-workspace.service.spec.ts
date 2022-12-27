@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { HgInjectionBaseDTO, HgInjectionDTO } from '../dto/hg-injection.dto';
 import { HgInjection } from '../entities/hg-injection.entity';
@@ -8,6 +9,8 @@ import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
 
 const id = '';
 const hgTestSumId = '';
+const hgTestInjId = '';
+const testSumId = '';
 const userId = 'user';
 const entity = new HgInjection();
 const dto = new HgInjectionDTO();
@@ -64,7 +67,7 @@ describe('HgInjectionWorkspaceService', () => {
 
   describe('getHgInjections', () => {
     it('Should return Hg Injection records by Hg Test Summary id', async () => {
-      const result = await service.getHgInjections(hgTestSumId);
+      const result = await service.getHgInjectionsByHgTestSumId(hgTestSumId);
 
       expect(result).toEqual([dto]);
     });
@@ -72,7 +75,7 @@ describe('HgInjectionWorkspaceService', () => {
 
   describe('getHgInjection', () => {
     it('Should return a Hg Injection record', async () => {
-      const result = await service.getHgInjection(id, hgTestSumId);
+      const result = await service.getHgInjection(hgTestSumId);
 
       expect(result).toEqual(dto);
     });
@@ -82,7 +85,7 @@ describe('HgInjectionWorkspaceService', () => {
       let errored = false;
 
       try {
-        await service.getHgInjection(id, hgTestSumId);
+        await service.getHgInjection(hgTestSumId);
       } catch (e) {
         errored = true;
       }
@@ -94,6 +97,7 @@ describe('HgInjectionWorkspaceService', () => {
   describe('createHgInjection', () => {
     it('Should create and return a new Hg Injection record', async () => {
       const result = await service.createHgInjection(
+        testSumId,
         hgTestSumId,
         payload,
         userId,
@@ -104,11 +108,11 @@ describe('HgInjectionWorkspaceService', () => {
 
     it('Should create and return a new Hg Injection record with Historical Record Id', async () => {
       const result = await service.createHgInjection(
+        testSumId,
         hgTestSumId,
         payload,
         userId,
         false,
-        'historicalId',
       );
 
       expect(result).toEqual(dto);
@@ -118,8 +122,8 @@ describe('HgInjectionWorkspaceService', () => {
   describe('updateHgSummary', () => {
     it('Should update and return the Hg Injection record', async () => {
       const result = await service.updateHgInjection(
-        hgTestSumId,
-        id,
+        testSumId,
+        hgTestInjId,
         payload,
         userId,
       );
@@ -133,6 +137,35 @@ describe('HgInjectionWorkspaceService', () => {
 
       try {
         await service.updateHgInjection(hgTestSumId, id, payload, userId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('deleteCycleTimeInjection', () => {
+    it('should delete Cycle Time Injection record', async () => {
+      const result = await service.deleteHgInjection(
+        testSumId,
+        hgTestInjId,
+        userId,
+      );
+
+      expect(result).toEqual(undefined);
+    });
+
+    it('should throw an error while deleting a Cycle Time Injection record', async () => {
+      const error = new InternalServerErrorException(
+        `Error deleting Cycle Time Injection record Id [${hgTestInjId}]`,
+      );
+      jest.spyOn(repository, 'delete').mockRejectedValue(error);
+
+      let errored = false;
+
+      try {
+        await service.deleteHgInjection(testSumId, hgTestInjId, userId);
       } catch (e) {
         errored = true;
       }

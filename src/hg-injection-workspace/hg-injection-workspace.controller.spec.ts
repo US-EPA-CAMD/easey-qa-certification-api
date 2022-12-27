@@ -9,6 +9,8 @@ import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
 
 const locId = '';
 const hgTestSumId = '';
+const testSumId = '';
+const hgTestInjId = '';
 const id = '';
 const user: CurrentUser = {
   userId: 'testUser',
@@ -53,14 +55,23 @@ describe('HgInjectionWorkspaceController', () => {
 
   describe('getHgInjection', () => {
     it('Calls the service to get a Hg Injection record', async () => {
-      const result = await controller.getHgInjection(locId, hgTestSumId, id);
+      const result = await controller.getHgInjection(
+        locId,
+        testSumId,
+        hgTestSumId,
+        hgTestInjId,
+      );
       expect(result).toEqual(dto);
     });
   });
 
-  describe('getHgInjections', () => {
+  describe('getHgInjectionsByHgTestSumId', () => {
     it('Calls the service to many Hg Injection records', async () => {
-      const result = await controller.getHgInjections(locId, hgTestSumId);
+      const result = await controller.getHgInjections(
+        locId,
+        testSumId,
+        hgTestSumId,
+      );
       expect(result).toEqual([dto]);
     });
   });
@@ -69,6 +80,7 @@ describe('HgInjectionWorkspaceController', () => {
     it('Calls the service and create a new Hg record', async () => {
       const result = await controller.createHgInjection(
         locId,
+        testSumId,
         hgTestSumId,
         payload,
         user,
@@ -81,12 +93,27 @@ describe('HgInjectionWorkspaceController', () => {
     it('Calls the service and update a existing Hg Injection record', async () => {
       const result = await controller.updateHgInjection(
         locId,
+        testSumId,
         hgTestSumId,
-        id,
+        hgTestInjId,
         payload,
         user,
       );
       expect(result).toEqual(dto);
+    });
+  });
+
+  describe('deleteHgInjection', () => {
+    it('should delete Hg Injection record', async () => {
+      const result = await controller.deleteHgInjection(
+        locId,
+        testSumId,
+        hgTestSumId,
+        hgTestInjId,
+        user,
+      );
+
+      expect(result).toEqual(null);
     });
   });
 });

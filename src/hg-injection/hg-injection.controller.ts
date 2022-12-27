@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { HgInjectionDTO } from '../dto/hg-injection.dto';
+import { HgInjectionRecordDTO } from '../dto/hg-injection.dto';
 import { HgInjectionService } from './hg-injection.service';
 
 @Controller()
@@ -12,27 +12,29 @@ export class HgInjectionController {
   @Get()
   @ApiOkResponse({
     isArray: true,
-    type: HgInjectionDTO,
+    type: HgInjectionRecordDTO,
     description: 'Retrieves workspace Hg Injection records by Test Summary Id',
   })
   async getHgInjections(
     @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
     @Param('hgTestSumId') hgTestSumId: string,
-  ): Promise<HgInjectionDTO[]> {
-    return this.service.getHgInjections(hgTestSumId);
+  ): Promise<HgInjectionRecordDTO[]> {
+    return this.service.getHgInjectionsByHgTestSumId(hgTestSumId);
   }
 
   @Get(':id')
   @ApiOkResponse({
     isArray: false,
-    type: HgInjectionDTO,
+    type: HgInjectionRecordDTO,
     description: 'Retrieves Injection Hg Injection record by its Id',
   })
   async getHgInjection(
     @Param('locId') _locationId: string,
-    @Param('hgTestSumId') hgTestSumId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('hgTestSumId') _hgTestSumId: string,
     @Param('id') id: string,
-  ): Promise<HgInjectionDTO> {
-    return this.service.getHgInjection(id, hgTestSumId);
+  ): Promise<HgInjectionRecordDTO> {
+    return this.service.getHgInjection(id);
   }
 }

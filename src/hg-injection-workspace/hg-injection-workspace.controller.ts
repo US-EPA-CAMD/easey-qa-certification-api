@@ -7,6 +7,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { Delete } from '@nestjs/common/decorators';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -17,7 +18,10 @@ import {
 import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { HgInjectionBaseDTO, HgInjectionDTO } from '../dto/hg-injection.dto';
+import {
+  HgInjectionBaseDTO,
+  HgInjectionRecordDTO,
+} from '../dto/hg-injection.dto';
 import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
 
 @Controller()
@@ -29,66 +33,86 @@ export class HgInjectionWorkspaceController {
   @Get()
   @ApiOkResponse({
     isArray: true,
-    type: HgInjectionDTO,
+    type: HgInjectionRecordDTO,
     description:
       'Retrieves workspace Hg Injection records by HG Test Summary Id',
   })
   async getHgInjections(
     @Param('locId') _locationId: string,
+    @Param('testSumId') _testSumId: string,
     @Param('hgTestSumId') hgTestSumId: string,
-  ): Promise<HgInjectionDTO[]> {
-    return this.service.getHgInjections(hgTestSumId);
+  ): Promise<HgInjectionRecordDTO[]> {
+    return this.service.getHgInjectionsByHgTestSumId(hgTestSumId);
   }
 
   @Get(':id')
   @ApiOkResponse({
     isArray: false,
-    type: HgInjectionDTO,
+    type: HgInjectionRecordDTO,
     description: 'Retrieves workspace Hg Injection record by its Id',
   })
   async getHgInjection(
     @Param('locId') _locationId: string,
-    @Param('testSumId') hgTestSumId: string,
+    @Param('testSumId') _testSumId: string,
+    @Param('hgTestSumId') _hgTestSumId: string,
     @Param('id') id: string,
-  ): Promise<HgInjectionDTO> {
-    return this.service.getHgInjection(id, hgTestSumId);
+  ): Promise<HgInjectionRecordDTO> {
+    return this.service.getHgInjection(id);
   }
 
   @Post()
   @UseGuards(AuthGuard)
   @ApiBearerAuth('Token')
   @ApiCreatedResponse({
-    type: HgInjectionDTO,
+    type: HgInjectionRecordDTO,
     description: 'Creates a workspace Hg Injection record.',
   })
-  createHgInjection(
+  async createHgInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
+    @Param('hgTestSumId') hgTestSumId: string,
     @Body() payload: HgInjectionBaseDTO,
     @User() user: CurrentUser,
-  ): Promise<HgInjectionDTO> {
-    return this.service.createHgInjection(testSumId, payload, user.userId);
+  ): Promise<HgInjectionRecordDTO> {
+    return this.service.createHgInjection(
+      testSumId,
+      hgTestSumId,
+      payload,
+      user.userId,
+    );
   }
 
   @Put(':id')
   @UseGuards(AuthGuard)
   @ApiBearerAuth('Token')
   @ApiOkResponse({
-    type: HgInjectionDTO,
+    type: HgInjectionRecordDTO,
     description: 'Updates a workspace Hg Injection record.',
   })
   updateHgInjection(
     @Param('locId') _locationId: string,
-    @Param('hgTestSumId') hgTestSumId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('hgTestSumId') _hgTestSumId: string,
     @Param('id') id: string,
     @Body() payload: HgInjectionBaseDTO,
     @User() user: CurrentUser,
-  ): Promise<HgInjectionDTO> {
-    return this.service.updateHgInjection(
-      id,
-      hgTestSumId,
-      payload,
-      user.userId,
-    );
+  ): Promise<HgInjectionRecordDTO> {
+    return this.service.updateHgInjection(testSumId, id, payload, user.userId);
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Deletes a workspace HG Injection record',
+  })
+  async deleteHgInjection(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('hgTestSumId') _cycleTimeSumId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteHgInjection(testSumId, id, user.userId);
   }
 }

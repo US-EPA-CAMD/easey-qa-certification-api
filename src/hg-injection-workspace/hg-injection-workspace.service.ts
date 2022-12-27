@@ -18,20 +18,14 @@ export class HgInjectionWorkspaceService {
     private readonly repository: HgInjectionWorkspaceRepository,
   ) {}
 
-  async getHgInjections(hgTestSumId: string): Promise<HgInjectionDTO[]> {
+  async getHgInjectionsByHgTestSumId(hgTestSumId: string) {
     const records = await this.repository.find({ where: { hgTestSumId } });
 
     return this.map.many(records);
   }
 
-  async getHgInjection(
-    id: string,
-    hgTestSumId: string,
-  ): Promise<HgInjectionDTO> {
-    const result = await this.repository.findOne({
-      id,
-      hgTestSumId,
-    });
+  async getHgInjection(id: string) {
+    const result = await this.repository.findOne(id);
 
     if (!result) {
       throw new LoggingException(
@@ -44,6 +38,7 @@ export class HgInjectionWorkspaceService {
   }
 
   async createHgInjection(
+    testSumId: string,
     hgTestSumId: string,
     payload: HgInjectionBaseDTO,
     userId: string,
@@ -64,7 +59,7 @@ export class HgInjectionWorkspaceService {
     await this.repository.save(entity);
     entity = await this.repository.findOne(entity.id);
     await this.testSummaryService.resetToNeedsEvaluation(
-      hgTestSumId,
+      testSumId,
       userId,
       isImport,
     );
@@ -72,16 +67,13 @@ export class HgInjectionWorkspaceService {
   }
 
   async updateHgInjection(
-    hgTestSumId: string,
+    testSumId: string,
     id: string,
     payload: HgInjectionBaseDTO,
     userId: string,
     isImport: boolean = false,
   ): Promise<HgInjectionDTO> {
-    const entity = await this.repository.findOne({
-      id,
-      hgTestSumId,
-    });
+    const entity = await this.repository.findOne(id);
 
     if (!entity) {
       throw new LoggingException(
@@ -99,11 +91,34 @@ export class HgInjectionWorkspaceService {
     await this.repository.save(entity);
 
     await this.testSummaryService.resetToNeedsEvaluation(
-      hgTestSumId,
+      testSumId,
       userId,
       isImport,
     );
 
     return this.map.one(entity);
+  }
+
+  async deleteHgInjection(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete({ id });
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting HG Injection record Id [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
+      );
+    }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
   }
 }
