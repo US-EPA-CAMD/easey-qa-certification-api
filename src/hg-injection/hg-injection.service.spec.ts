@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HgInjection } from 'src/entities/hg-injection.entity';
-import { HgInjectionMap } from 'src/maps/hg-injection.map';
+import { HgInjection } from '../entities/hg-injection.entity';
+import { HgInjectionMap } from '../maps/hg-injection.map';
 import { HgInjectionDTO } from '../dto/hg-injection.dto';
 import { HgInjectionRepository } from './hg-injection.repository';
 import { HgInjectionService } from './hg-injection.service';
@@ -47,7 +47,7 @@ describe('HgInjectionService', () => {
 
   describe('getHgInjections', () => {
     it('Should return Hg Injection records by Test Injection id', async () => {
-      const result = await service.getHgInjections(hgTestSumId);
+      const result = await service.getHgInjectionsByHgTestSumId(hgTestSumId);
 
       expect(result).toEqual([dto]);
     });
@@ -55,7 +55,7 @@ describe('HgInjectionService', () => {
 
   describe('getHgInjection', () => {
     it('Should return a Hg Injection record', async () => {
-      const result = await service.getHgInjection(id, hgTestSumId);
+      const result = await service.getHgInjection(hgTestSumId);
 
       expect(result).toEqual(dto);
     });
@@ -65,7 +65,7 @@ describe('HgInjectionService', () => {
       let errored = false;
 
       try {
-        await service.getHgInjection(id, hgTestSumId);
+        await service.getHgInjection(hgTestSumId);
       } catch (e) {
         errored = true;
       }

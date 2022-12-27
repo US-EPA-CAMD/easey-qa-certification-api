@@ -8,7 +8,9 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
 
 const locId = '';
+const testSumId = '';
 const hgTestSumId = '';
+const hgTestInjId = '';
 const id = '';
 const user: CurrentUser = {
   userId: 'testUser',
@@ -49,14 +51,24 @@ describe('HgInjectionController', () => {
 
   describe('getHgInjection', () => {
     it('Calls the service to get a HG Injection record', async () => {
-      const result = await controller.getHgInjection(locId, hgTestSumId, id);
+      const result = await controller.getHgInjection(
+        locId,
+        testSumId,
+        hgTestSumId,
+        id,
+      );
       expect(result).toEqual(dto);
     });
   });
 
   describe('getHgInjections', () => {
     it('Calls the service to many HG Injection records', async () => {
-      const result = await controller.getHgInjections(locId, hgTestSumId);
+      const result = await controller.getHgInjections(
+        locId,
+        testSumId,
+        hgTestSumId,
+        hgTestInjId,
+      );
       expect(result).toEqual([dto]);
     });
   });
