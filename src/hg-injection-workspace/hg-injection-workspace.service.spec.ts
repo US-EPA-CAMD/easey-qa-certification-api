@@ -145,8 +145,8 @@ describe('HgInjectionWorkspaceService', () => {
     });
   });
 
-  describe('deleteCycleTimeInjection', () => {
-    it('should delete Cycle Time Injection record', async () => {
+  describe('deleteHgInjection', () => {
+    it('should delete an H Injection record', async () => {
       const result = await service.deleteHgInjection(
         testSumId,
         hgTestInjId,
@@ -156,7 +156,7 @@ describe('HgInjectionWorkspaceService', () => {
       expect(result).toEqual(undefined);
     });
 
-    it('should throw an error while deleting a Cycle Time Injection record', async () => {
+    it('should throw an error while deleting a Hg Injection record', async () => {
       const error = new InternalServerErrorException(
         `Error deleting Cycle Time Injection record Id [${hgTestInjId}]`,
       );
