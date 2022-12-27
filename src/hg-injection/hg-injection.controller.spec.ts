@@ -10,7 +10,6 @@ import { ConfigService } from '@nestjs/config';
 const locId = '';
 const testSumId = '';
 const hgTestSumId = '';
-const hgTestInjId = '';
 const id = '';
 const user: CurrentUser = {
   userId: 'testUser',
@@ -67,7 +66,6 @@ describe('HgInjectionController', () => {
         locId,
         testSumId,
         hgTestSumId,
-        hgTestInjId,
       );
       expect(result).toEqual([dto]);
     });

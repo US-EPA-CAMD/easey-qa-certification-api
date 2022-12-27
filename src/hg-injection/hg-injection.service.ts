@@ -1,8 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
-import { HgInjectionDTO } from '../dto/hg-injection.dto';
 import { HgInjectionMap } from '../maps/hg-injection.map';
 import { HgInjectionRepository } from './hg-injection.repository';
 
