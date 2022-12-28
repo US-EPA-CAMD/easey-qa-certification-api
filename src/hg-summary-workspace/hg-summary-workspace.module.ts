@@ -4,7 +4,7 @@ import { HgSummaryWorkspaceController } from './hg-summary-workspace.controller'
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { HttpModule } from '@nestjs/axios';
-import { HgSummaryMap } from 'src/maps/hg-summary.map';
+import { HgSummaryMap } from '../maps/hg-summary.map';
 import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
 
 @Module({
