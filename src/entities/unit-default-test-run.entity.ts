@@ -10,7 +10,7 @@ import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { UnitDefaultTest} from './unit-default-test.entity';
 
 @Entity({
-  name: 'camdecmpswks.unit_default_test_run',
+  name: 'camdecmps.unit_default_test_run',
 })
 export class UnitDefaultTestRun extends BaseEntity {
   @PrimaryColumn({

@@ -1,5 +1,5 @@
 export class UnitDefaultTestRunBaseDTO {
-
+  operatingLevel: number;
   runNumber: number;
   beginDate: Date;
   beginHour: number;
@@ -7,11 +7,14 @@ export class UnitDefaultTestRunBaseDTO {
   endDate: Date;
   endHour: number;
   endMinute: number;
+  responseTime: number;
+  referenceValue: number;
+  runUsedIndicator: number;
 }
 
 export class UnitDefaultTestRunRecordDTO extends UnitDefaultTestRunBaseDTO {
   id: string;
-  testSumId: string;
+  unitDefaultTestSumId: string;
   userId: string;
   addDate: string;
   updateDate: string;
