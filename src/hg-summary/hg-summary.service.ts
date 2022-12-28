@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
 import { HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgSummaryMap } from '../maps/hg-summary.map';
 import { HgSummaryRepository } from './hg-summary.repository';
@@ -33,5 +34,19 @@ export class HgSummaryService {
     }
 
     return this.map.one(result);
+  }
+
+  async getHgSummaryByTestSumIds(
+    testSumIds: string[],
+  ): Promise<HgSummaryDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<HgSummaryDTO[]> {
+    return this.getHgSummaryByTestSumIds(testSumIds);
   }
 }

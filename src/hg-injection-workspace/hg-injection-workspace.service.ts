@@ -1,39 +1,35 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
-import { HgSummaryMap } from '../maps/hg-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
-import { In } from 'typeorm';
+import { HgInjectionBaseDTO, HgInjectionDTO } from '../dto/hg-injection.dto';
+import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.repository';
+import { HgInjectionMap } from '../maps/hg-injection.map';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
-export class HgSummaryWorkspaceService {
+export class HgInjectionWorkspaceService {
   constructor(
-    private readonly map: HgSummaryMap,
+    private readonly map: HgInjectionMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(HgSummaryWorkspaceRepository)
-    private readonly repository: HgSummaryWorkspaceRepository,
+    @InjectRepository(HgInjectionWorkspaceRepository)
+    private readonly repository: HgInjectionWorkspaceRepository,
   ) {}
 
-  async getHgSummaries(testSumId: string): Promise<HgSummaryDTO[]> {
-    const records = await this.repository.find({ where: { testSumId } });
+  async getHgInjectionsByHgTestSumId(hgTestSumId: string) {
+    const records = await this.repository.find({ where: { hgTestSumId } });
 
     return this.map.many(records);
   }
 
-  async getHgSummary(id: string, testSumId: string): Promise<HgSummaryDTO> {
-    const result = await this.repository.findOne({
-      id,
-      testSumId,
-    });
+  async getHgInjection(id: string) {
+    const result = await this.repository.findOne(id);
 
     if (!result) {
       throw new LoggingException(
-        `Hg Summary record not found with Record Id [${id}].`,
+        `Hg Injeciton record not found with Record Id [${id}].`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -41,19 +37,20 @@ export class HgSummaryWorkspaceService {
     return this.map.one(result);
   }
 
-  async createHgSummary(
+  async createHgInjection(
     testSumId: string,
-    payload: HgSummaryBaseDTO,
+    hgTestSumId: string,
+    payload: HgInjectionBaseDTO,
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
-  ): Promise<HgSummaryDTO> {
+  ): Promise<HgInjectionDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
-      testSumId,
+      hgTestSumId,
       userId,
       addDate: timestamp,
       updateDate: timestamp,
@@ -69,31 +66,14 @@ export class HgSummaryWorkspaceService {
     return this.map.one(entity);
   }
 
-  async getHgSummaryByTestSumIds(
-    testSumIds: string[],
-  ): Promise<HgSummaryDTO[]> {
-    const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
-    });
-
-    return this.map.many(results);
-  }
-
-  async export(testSumIds: string[]): Promise<HgSummaryDTO[]> {
-    return this.getHgSummaryByTestSumIds(testSumIds);
-  }
-  
-  async updateHgSummary(
+  async updateHgInjection(
     testSumId: string,
     id: string,
-    payload: HgSummaryBaseDTO,
+    payload: HgInjectionBaseDTO,
     userId: string,
     isImport: boolean = false,
-  ): Promise<HgSummaryDTO> {
-    const entity = await this.repository.findOne({
-      id,
-      testSumId,
-    });
+  ): Promise<HgInjectionDTO> {
+    const entity = await this.repository.findOne(id);
 
     if (!entity) {
       throw new LoggingException(
@@ -102,11 +82,11 @@ export class HgSummaryWorkspaceService {
       );
     }
 
-    entity.gasLevelCode = payload.gasLevelCode;
-    entity.meanMeasuredValue = payload.meanMeasuredValue;
-    entity.meanReferenceValue = payload.meanReferenceValue;
-    entity.percentError = payload.percentError;
-    entity.apsIndicator = payload.apsIndicator;
+    entity.injectionDate = payload.injectionDate;
+    entity.injectionHour = payload.injectionHour;
+    entity.injectionMinute = payload.injectionMinute;
+    entity.measuredValue = payload.measuredValue;
+    entity.referenceValue = payload.referenceValue;
 
     await this.repository.save(entity);
 
@@ -119,20 +99,17 @@ export class HgSummaryWorkspaceService {
     return this.map.one(entity);
   }
 
-  async deleteHgSummary(
+  async deleteHgInjection(
     testSumId: string,
     id: string,
     userId: string,
     isImport: boolean = false,
   ): Promise<void> {
     try {
-      await this.repository.delete({
-        id,
-        testSumId,
-      });
+      await this.repository.delete({ id });
     } catch (e) {
       throw new LoggingException(
-        `Error deleting Hg Summary record [${id}]`,
+        `Error deleting HG Injection record Id [${id}]`,
         HttpStatus.INTERNAL_SERVER_ERROR,
         e,
       );

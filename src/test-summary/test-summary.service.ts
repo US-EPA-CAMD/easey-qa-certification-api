@@ -21,6 +21,7 @@ import { CycleTimeSummaryService } from '../cycle-time-summary/cycle-time-summar
 import { FuelFlowmeterAccuracyService } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.service';
 import { UnitDefaultTestService } from '../unit-default-test/unit-default-test.service';
 import { TransmitterTransducerAccuracyService } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.service';
+import { HgSummaryService } from '../hg-summary/hg-summary.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -57,6 +58,8 @@ export class TestSummaryService {
     private readonly unitDefaultTestService: UnitDefaultTestService,
     @Inject(forwardRef(() => TransmitterTransducerAccuracyService))
     private readonly transmitterTransducerAccuracyService: TransmitterTransducerAccuracyService,
+    @Inject(forwardRef(() => HgSummaryService))
+    private readonly hgSummaryService: HgSummaryService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -168,7 +171,8 @@ export class TestSummaryService {
           flowToLoadReferenceData,
           onlineOfflineCalibrationData,
           unitDefaultTestData,
-          transmitterTransducerAccuracyData;
+          transmitterTransducerAccuracyData,
+          hgSummaryData;
 
         let testSumIds;
 
@@ -231,6 +235,10 @@ export class TestSummaryService {
             testSumIds,
           );
 
+          hgSummaryData = await this.hgSummaryService.export(
+            testSumIds,
+          );
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -270,6 +278,9 @@ export class TestSummaryService {
               i => i.testSumId === s.id,
             );
             s.transmitterTransducerData = transmitterTransducerAccuracyData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.hgSummaryData = hgSummaryData.filter(
               i => i.testSumId === s.id,
             );
           });

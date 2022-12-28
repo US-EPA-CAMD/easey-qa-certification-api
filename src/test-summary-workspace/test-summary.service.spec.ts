@@ -49,6 +49,8 @@ import { TransmitterTransducerAccuracyDTO } from '../dto/transmitter-transducer-
 import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
 import { UnitDefaultTest } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
+import { HgSummary } from '../entities/workspace/hg-summary.entity';
+import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-workspace.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -152,6 +154,10 @@ const mockTransmitterTransducerAccuracyWorkspaceService = () => ({
 const mockUnitDefaultTestWorkspaceService = () => ({
   export: jest.fn().mockResolvedValue([new UnitDefaultTest()]),
   import: jest.fn().mockResolvedValue(null),
+});
+
+const mockHgSummaryWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new HgSummary()]),
 });
 
 const unit = new Unit();
@@ -276,6 +282,10 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: UnitDefaultTestWorkspaceService,
           useFactory: mockUnitDefaultTestWorkspaceService,
+        },
+        {
+          provide: HgSummaryWorkspaceService,
+          useFactory: mockHgSummaryWorkspaceService,
         },
       ],
     }).compile();
