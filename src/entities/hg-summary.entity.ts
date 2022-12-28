@@ -4,10 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryColumn,
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { TestSummary } from './test-summary.entity';
+import { HgInjection } from './hg-injection.entity';
 
 @Entity({
   name: 'camdecmps.hg_test_summary',
@@ -105,4 +107,11 @@ export class HgSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
+
+  @OneToMany(
+    () => HgInjection,
+    o => o.HgSummary,
+  )
+  @JoinColumn({ name: 'hg_test_sum_id' })
+  HgInjection: HgInjection[];
 }
