@@ -23,6 +23,7 @@ import { FuelFlowmeterAccuracyModule } from '../fuel-flowmeter-accuracy/fuel-flo
 import { CycleTimeSummaryModule } from '../cycle-time-summary/cycle-time-summary.module';
 import { UnitDefaultTestModule } from '../unit-default-test/unit-default-test.module';
 import { TransmitterTransducerAccuracyModule } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.module';
+import { HgSummaryModule } from '../hg-summary/hg-summary.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { TransmitterTransducerAccuracyModule } from '../transmitter-transducer-a
     CycleTimeSummaryModule,
     UnitDefaultTestModule,
     TransmitterTransducerAccuracyModule,
+    HgSummaryModule,
   ],
   controllers: [TestSummaryController],
   providers: [TestSummaryMap, TestSummaryService],
