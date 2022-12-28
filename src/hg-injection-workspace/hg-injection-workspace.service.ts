@@ -18,8 +18,8 @@ export class HgInjectionWorkspaceService {
     private readonly repository: HgInjectionWorkspaceRepository,
   ) {}
 
-  async getHgInjectionsByHgTestSumId(hgTestSumId: string) {
-    const records = await this.repository.find({ where: { hgTestSumId } });
+  async getHgInjectionsByHgTestSumId(testSumId: string) {
+    const records = await this.repository.find({ where: { testSumId } });
 
     return this.map.many(records);
   }

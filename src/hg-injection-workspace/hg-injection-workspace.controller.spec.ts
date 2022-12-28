@@ -28,7 +28,8 @@ const mockService = () => ({
   createHgInjection: jest.fn().mockResolvedValue(dto),
   updateHgInjection: jest.fn().mockResolvedValue(dto),
   getHgInjection: jest.fn().mockResolvedValue(dto),
-  getHgInjections: jest.fn().mockResolvedValue([dto]),
+  getHgInjectionsByHgTestSumId: jest.fn().mockResolvedValue([dto]),
+  deleteHgInjection: jest.fn().mockResolvedValue(null),
 });
 
 describe('HgInjectionWorkspaceController', () => {
@@ -67,7 +68,7 @@ describe('HgInjectionWorkspaceController', () => {
 
   describe('getHgInjectionsByHgTestSumId', () => {
     it('Calls the service to many Hg Injection records', async () => {
-      const result = await controller.getHgInjections(
+      const result = await controller.getHgInjectionsByTestSumId(
         locId,
         testSumId,
         hgTestSumId,
