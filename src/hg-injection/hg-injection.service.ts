@@ -36,17 +36,17 @@ export class HgInjectionService {
     return this.map.one(result);
   }
 
-  async getHgInjectionsByHgTestSumIds(
-    hgTestSumIds: string[],
+  async getHgInjectionsByHgSumIds(
+    hgSumIds: string[],
   ): Promise<HgInjectionDTO[]> {
     const results = await this.repository.find({
-      where: { hgTestSumId: In(hgTestSumIds) },
+      where: { hgTestSumId: In(hgSumIds) },
     });
 
     return this.map.many(results);
   }
 
-  async export(hgTestSumIds: string[]): Promise<HgInjectionDTO[]> {
-    return await this.getHgInjectionsByHgTestSumIds(hgTestSumIds);
+  async export(hgSumIds: string[]): Promise<HgInjectionDTO[]> {
+    return await this.getHgInjectionsByHgSumIds(hgSumIds);
   }
 }

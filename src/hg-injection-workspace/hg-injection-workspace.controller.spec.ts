@@ -29,6 +29,9 @@ const mockService = () => ({
   updateHgInjection: jest.fn().mockResolvedValue(dto),
   getHgInjection: jest.fn().mockResolvedValue(dto),
   getHgInjections: jest.fn().mockResolvedValue([dto]),
+  getHgInjectionsByHgTestSumId: jest.fn().mockResolvedValue([dto]),
+  getHgInjectionsByHgSumIds: jest.fn().mockResolvedValue([dto]),
+  deleteHgInjection: jest.fn().mockResolvedValue(null),
 });
 
 describe('HgInjectionWorkspaceController', () => {
