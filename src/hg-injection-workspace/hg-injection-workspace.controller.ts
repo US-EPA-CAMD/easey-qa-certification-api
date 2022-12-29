@@ -109,7 +109,7 @@ export class HgInjectionWorkspaceController {
   async deleteHgInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-    @Param('hgTestSumId') _cycleTimeSumId: string,
+    @Param('hgTestSumId') _hgTestSumId: string,
     @Param('id') id: string,
     @User() user: CurrentUser,
   ): Promise<void> {

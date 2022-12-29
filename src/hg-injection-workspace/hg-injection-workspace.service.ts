@@ -106,7 +106,7 @@ export class HgInjectionWorkspaceService {
     isImport: boolean = false,
   ): Promise<void> {
     try {
-      await this.repository.delete({ id });
+      await this.repository.delete(id);
     } catch (e) {
       throw new LoggingException(
         `Error deleting HG Injection record Id [${id}]`,
