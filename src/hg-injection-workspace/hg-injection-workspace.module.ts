@@ -12,8 +12,8 @@ import { HgSummaryWorkspaceModule } from '../hg-summary-workspace/hg-summary-wor
 @Module({
   imports: [
     TypeOrmModule.forFeature([HgInjectionWorkspaceRepository]),
-    forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => HgInjectionModule),
+    forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => HgSummaryWorkspaceModule),
     HttpModule,
   ],
