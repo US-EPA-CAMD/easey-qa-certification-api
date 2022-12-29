@@ -66,13 +66,12 @@ describe('HgSummaryWorkspaceService', () => {
           useFactory: mockMap,
         },
         {
-<<<<<<< HEAD
           provide: HgSummaryRepository,
           useFactory: mockHistoricalRepo,
-=======
+        },
+        {
           provide: HgInjectionWorkspaceService,
           useFactory: mockHgInjectionWorkspaceService,
->>>>>>> 205cdc843c569c35f02bf73a94ae190eaf10afcc
         },
       ],
     }).compile();
