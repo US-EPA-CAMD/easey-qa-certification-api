@@ -1,13 +1,13 @@
 import {
   Body,
-  Controller,
+  Controller, Get,
   Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -27,6 +27,36 @@ import { UnitDefaultTestRunWorkspaceService } from './unit-default-test-run.serv
 @ApiTags('Unit Default Test Run')
 export class UnitDefaultTestRunWorkspaceController {
   constructor(private readonly service: UnitDefaultTestRunWorkspaceService) {}
+
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: UnitDefaultTestRunDTO,
+    description:
+      'Retrieves official Unit Default Test Run records by Unit Default Test Summary Id',
+  })
+  async getUnitDefaultTestRuns(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('unitDefaultTestSumId') unitDefaultTestSumId: string,
+  ): Promise<UnitDefaultTestRunDTO[]> {
+    return this.service.getUnitDefaultTestRuns(unitDefaultTestSumId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: UnitDefaultTestRunDTO,
+    description: 'Retrieves official Unit Default Test Run record by its Id',
+  })
+  async getUnitDefaultTestRun(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('unitDefaultTestSumId') unitDefaultTestSumId: string,
+    @Param('id') id: string,
+  ): Promise<UnitDefaultTestRunDTO> {
+    return this.service.getUnitDefaultTestRun(id, unitDefaultTestSumId);
+  }
 
   @Post()
   @UseGuards(AuthGuard)
