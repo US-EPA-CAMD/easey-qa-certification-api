@@ -35,6 +35,8 @@ import { UnitDefaultTest } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestService } from '../unit-default-test/unit-default-test.service';
 import { TransmitterTransducerAccuracy } from '../entities/transmitter-transducer-accuracy.entity';
 import { TransmitterTransducerAccuracyService } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.service';
+import { HgSummary } from '../entities/hg-summary.entity';
+import { HgSummaryService } from '../hg-summary/hg-summary.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -112,6 +114,10 @@ const mockTransmitterTransducerAccuracyService = () => ({
   export: jest.fn().mockResolvedValue([new TransmitterTransducerAccuracy()]),
 });
 
+const mockHgSummaryService = () => ({
+  export: jest.fn().mockResolvedValue([new HgSummary()]),
+});
+
 describe('TestSummaryService', () => {
   let service: TestSummaryService;
   let repository: TestSummaryRepository;
@@ -184,6 +190,10 @@ describe('TestSummaryService', () => {
         {
           provide: TransmitterTransducerAccuracyService,
           useFactory: mockTransmitterTransducerAccuracyService,
+        },
+        {
+          provide: HgSummaryService,
+          useFactory: mockHgSummaryService,
         },
       ],
     }).compile();
