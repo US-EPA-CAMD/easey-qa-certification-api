@@ -16,6 +16,16 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { HgSummaryRepository } from '../hg-summary/hg-summary.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { HgSummary } from '../entities/hg-summary.entity';
+import { v4 as uuid } from 'uuid';
+import { In } from 'typeorm';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { currentDateTime } from '../utilities/functions';
+import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
+import { HgSummaryMap } from '../maps/hg-summary.map';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
+import { HgInjectionWorkspaceService } from '../hg-injection-workspace/hg-injection-workspace.service';
+
 
 @Injectable()
 export class HgSummaryWorkspaceService {
@@ -23,6 +33,8 @@ export class HgSummaryWorkspaceService {
     private readonly map: HgSummaryMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
+    @Inject(forwardRef(() => HgInjectionWorkspaceService))
+    private readonly hgInjectionService: HgInjectionWorkspaceService,
     @InjectRepository(HgSummaryWorkspaceRepository)
     private readonly repository: HgSummaryWorkspaceRepository,
 
@@ -92,7 +104,17 @@ export class HgSummaryWorkspaceService {
   }
 
   async export(testSumIds: string[]): Promise<HgSummaryDTO[]> {
-    return this.getHgSummaryByTestSumIds(testSumIds);
+    const hgSummaries = await this.getHgSummaryByTestSumIds(testSumIds);
+
+    const hgInjections = await this.hgInjectionService.export(
+      hgSummaries.map(i => i.id),
+    );
+
+    hgSummaries.forEach(s => {
+      s.HgInjectionData = hgInjections.filter(i => i.hgTestSumId === s.id);
+    });
+
+    return hgSummaries;
   }
 
   async updateHgSummary(

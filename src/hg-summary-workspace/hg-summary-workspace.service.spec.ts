@@ -8,6 +8,7 @@ import { HgSummaryMap } from '../maps/hg-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
 import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
+import { HgInjectionWorkspaceService } from '../hg-injection-workspace/hg-injection-workspace.service';
 
 const id = '';
 const testSumId = '';
@@ -38,6 +39,11 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockHgInjectionWorkspaceService = () => ({
+  import: jest.fn().mockResolvedValue(null),
+  export: jest.fn().mockResolvedValue([dto]),
+});
+
 describe('HgSummaryWorkspaceService', () => {
   let service: HgSummaryWorkspaceService;
   let repository: HgSummaryWorkspaceRepository;
@@ -62,6 +68,10 @@ describe('HgSummaryWorkspaceService', () => {
         {
           provide: HgSummaryRepository,
           useFactory: mockHistoricalRepo,
+         },
+         {
+          provide: HgInjectionWorkspaceService,
+          useFactory: mockHgInjectionWorkspaceService,
         },
       ],
     }).compile();
