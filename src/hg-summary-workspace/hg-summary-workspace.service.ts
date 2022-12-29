@@ -1,35 +1,21 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-<<<<<<< HEAD
 import {
   HgSummaryBaseDTO,
   HgSummaryDTO,
   HgSummaryImportDTO,
-  HgSummaryRecordDTO,
 } from '../dto/hg-summary.dto';
-import { HgSummaryMap } from '../maps/hg-summary.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
-import { currentDateTime } from '../utilities/functions';
-import { v4 as uuid } from 'uuid';
-import { In } from 'typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { HgSummaryRepository } from '../hg-summary/hg-summary.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { HgSummary } from '../entities/hg-summary.entity';
-=======
 import { v4 as uuid } from 'uuid';
 import { In } from 'typeorm';
-
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
 import { currentDateTime } from '../utilities/functions';
-import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgSummaryMap } from '../maps/hg-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
 import { HgInjectionWorkspaceService } from '../hg-injection-workspace/hg-injection-workspace.service';
->>>>>>> 205cdc843c569c35f02bf73a94ae190eaf10afcc
 
 @Injectable()
 export class HgSummaryWorkspaceService {
