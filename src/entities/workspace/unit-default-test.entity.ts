@@ -3,11 +3,12 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToOne,
+  ManyToOne, OneToMany,
   PrimaryColumn,
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { TestSummary } from './test-summary.entity';
+import { UnitDefaultTestRun} from './unit-default-test-run.entity';
 
 @Entity({
   name: 'camdecmpswks.unit_default_test',
@@ -94,4 +95,11 @@ export class UnitDefaultTest extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
+
+  @OneToMany(
+    () => UnitDefaultTestRun,
+    o => o.unitDefaultTest,
+  )
+  @JoinColumn({ name: 'unit_default_test_sum_id' })
+  unitDefaultTestRuns: UnitDefaultTestRun[];
 }
