@@ -76,13 +76,17 @@ export class HgInjectionWorkspaceService {
 
   async updateHgInjection(
     testSumId: string,
+    hgTestSumId: string,
     id: string,
     payload: HgInjectionBaseDTO,
     userId: string,
     isImport: boolean = false,
   ): Promise<HgInjectionRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOne({
+      id,
+      hgTestSumId,
+    });
 
     if (!entity) {
       throw new LoggingException(

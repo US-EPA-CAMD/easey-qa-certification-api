@@ -92,12 +92,18 @@ export class HgInjectionWorkspaceController {
   updateHgInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-    @Param('hgTestSumId') _hgTestSumId: string,
+    @Param('hgTestSumId') hgTestSumId: string,
     @Param('id') id: string,
     @Body() payload: HgInjectionBaseDTO,
     @User() user: CurrentUser,
   ): Promise<HgInjectionRecordDTO> {
-    return this.service.updateHgInjection(testSumId, id, payload, user.userId);
+    return this.service.updateHgInjection(
+      testSumId,
+      hgTestSumId,
+      id,
+      payload,
+      user.userId,
+    );
   }
 
   @Delete(':id')

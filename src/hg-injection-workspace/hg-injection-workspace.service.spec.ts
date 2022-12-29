@@ -1,6 +1,5 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { HgInjectionRepository } from 'src/hg-injection/hg-injection.repository';
 import { HgInjectionBaseDTO, HgInjectionDTO } from '../dto/hg-injection.dto';
 import { HgInjection } from '../entities/hg-injection.entity';
 import { HgInjectionMap } from '../maps/hg-injection.map';

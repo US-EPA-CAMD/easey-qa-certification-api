@@ -6,8 +6,8 @@ import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.reposit
 import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
 import { HgInjectionWorkspaceController } from './hg-injection-workspace.controller';
 import { HgInjectionMap } from '../maps/hg-injection.map';
-import { HgInjectionModule } from 'src/hg-injection/hg-injection.module';
-import { HgSummaryWorkspaceModule } from 'src/hg-summary-workspace/hg-summary-workspace.module';
+import { HgInjectionModule } from '../hg-injection/hg-injection.module';
+import { HgSummaryWorkspaceModule } from '../hg-summary-workspace/hg-summary-workspace.module';
 
 @Module({
   imports: [
