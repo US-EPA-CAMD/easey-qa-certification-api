@@ -12,6 +12,7 @@ import {
 import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { UnitDefaultTestRunWorkspaceRepository } from './unit-default-test-run.repository';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class UnitDefaultTestRunWorkspaceService {
@@ -23,6 +24,31 @@ export class UnitDefaultTestRunWorkspaceService {
     private readonly repository: UnitDefaultTestRunWorkspaceRepository,
     private readonly logger: Logger,
   ) {}
+
+  async getUnitDefaultTestRuns(unitDefaultTestSumId: string): Promise<UnitDefaultTestRunDTO[]> {
+    const records = await this.repository.find({ where: { unitDefaultTestSumId } });
+
+    return this.map.many(records);
+  }
+
+  async getUnitDefaultTestRun(
+    id: string,
+    unitDefaultTestSumId: string,
+  ): Promise<UnitDefaultTestRunDTO> {
+    const result = await this.repository.findOne({
+      id,
+      unitDefaultTestSumId,
+    });
+
+    if (!result) {
+      throw new LoggingException(
+        `Unit Default Test Run record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
 
   async createUnitDefaultTestRun(
     testSumId: string,

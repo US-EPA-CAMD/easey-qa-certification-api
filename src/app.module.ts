@@ -69,8 +69,9 @@ import { TransmitterTransducerAccuracyModule } from './transmitter-transducer-ac
 import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.module';
 import { ReviewAndSubmitModule } from './review-and-submit/review-and-submit.module';
 import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/unit-default-test-workspace.module';
-import { UnitDefaultTestRunWorkspaceModule } from './unit-default-test-run-workspace/unit-default-test-run.module';
 import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.module';
+import { UnitDefaultTestRunWorkspaceModule } from './unit-default-test-run-workspace/unit-default-test-run.module';
+import { UnitDefaultTestRunModule } from './unit-default-test-run/unit-default-test-run.module';
 import { HgSummaryWorkspaceModule } from './hg-summary-workspace/hg-summary-workspace.module';
 import { HgInjectionWorkspaceModule } from './hg-injection-workspace/hg-injection-workspace.module';
 import { HgSummaryModule } from './hg-summary/hg-summary.module';
@@ -144,8 +145,9 @@ import { HgInjectionModule } from './hg-injection/hg-injection.module';
     CycleTimeInjectionModule,
     CycleTimeInjectionWorkspaceModule,
     UnitDefaultTestWorkspaceModule,
-    UnitDefaultTestRunWorkspaceModule,
     UnitDefaultTestModule,
+    UnitDefaultTestRunWorkspaceModule,
+    UnitDefaultTestRunModule,
     HgSummaryWorkspaceModule,
     HgInjectionModule,
     HgInjectionWorkspaceModule,
