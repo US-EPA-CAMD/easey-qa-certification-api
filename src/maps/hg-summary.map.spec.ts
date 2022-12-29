@@ -1,4 +1,5 @@
 import { HgSummary } from '../entities/hg-summary.entity';
+import { HgInjectionMap } from './hg-injection.map';
 import { HgSummaryMap } from './hg-summary.map';
 
 const string = '';
@@ -26,7 +27,7 @@ entity.updateDate = date;
 
 describe('HgSummaryMap', () => {
   it('maps an entity to a dto', async () => {
-    const map = new HgSummaryMap();
+    const map = new HgSummaryMap(new HgInjectionMap());
 
     const result = await map.one(entity);
     result.addDate = date.toLocaleString();
