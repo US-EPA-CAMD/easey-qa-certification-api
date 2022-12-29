@@ -10,8 +10,6 @@ const hgTestSumId = '';
 const entity = new HgInjection();
 const dto = new HgInjectionDTO();
 
-const hgInjDto = new HgInjectionDTO();
-
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
   findOne: jest.fn().mockResolvedValue(entity),
@@ -71,6 +69,22 @@ describe('HgInjectionService', () => {
       }
 
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('getHgInjectionsByHgSumIds', () => {
+    it('Should get Hg Injection records by Hg Summary Ids', async () => {
+      const result = await service.getHgInjectionsByHgSumIds([hgTestSumId]);
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Hg Injection record', async () => {
+      jest.spyOn(service, 'getHgInjectionsByHgSumIds').mockResolvedValue([]);
+
+      const result = await service.export([hgTestSumId]);
+      expect(result).toEqual([]);
     });
   });
 });

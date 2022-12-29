@@ -5,13 +5,12 @@ import { HgSummary } from '../entities/hg-summary.entity';
 import { HgSummaryMap } from '../maps/hg-summary.map';
 import { HgSummaryRepository } from './hg-summary.repository';
 import { HgSummaryService } from './hg-summary.service';
+import { HgInjectionService } from '../hg-injection/hg-injection.service';
 
 const id = '';
 const testSumId = '';
 const entity = new HgSummary();
 const dto = new HgSummaryDTO();
-
-const hgInjDto = new HgInjectionDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
@@ -21,6 +20,11 @@ const mockRepository = () => ({
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(dto),
   many: jest.fn().mockResolvedValue([dto]),
+});
+
+const mockHgInjectionService = () => ({
+  import: jest.fn().mockResolvedValue(null),
+  export: jest.fn().mockResolvedValue([dto]),
 });
 
 describe('HgSummaryService', () => {
@@ -38,6 +42,10 @@ describe('HgSummaryService', () => {
         {
           provide: HgSummaryMap,
           useFactory: mockMap,
+        },
+        {
+          provide: HgInjectionService,
+          useFactory: mockHgInjectionService,
         },
       ],
     }).compile();
@@ -84,9 +92,7 @@ describe('HgSummaryService', () => {
 
   describe('export', () => {
     it('Should export Hg Summary Record', async () => {
-      jest
-        .spyOn(service, 'getHgSummaryByTestSumIds')
-        .mockResolvedValue([]);
+      jest.spyOn(service, 'getHgSummaryByTestSumIds').mockResolvedValue([]);
 
       const result = await service.export([testSumId]);
       expect(result).toEqual([]);

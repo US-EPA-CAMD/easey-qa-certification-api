@@ -29,7 +29,7 @@ import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.s
 
 @Controller()
 @ApiSecurity('APIKey')
-@ApiTags('Unit Default Testing')
+@ApiTags('Unit Default Test')
 export class UnitDefaultTestWorkspaceController {
   constructor(private readonly service: UnitDefaultTestWorkspaceService) {}
 

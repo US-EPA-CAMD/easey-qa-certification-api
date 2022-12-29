@@ -25,7 +25,9 @@ const payload = new HgInjectionBaseDTO();
 
 const mockService = () => ({
   getHgInjection: jest.fn().mockResolvedValue(dto),
+  getHgInjections: jest.fn().mockResolvedValue([dto]),
   getHgInjectionsByHgTestSumId: jest.fn().mockResolvedValue([dto]),
+  getHgInjectionsByHgSumIds: jest.fn().mockResolvedValue([dto]),
 });
 
 describe('HgInjectionController', () => {

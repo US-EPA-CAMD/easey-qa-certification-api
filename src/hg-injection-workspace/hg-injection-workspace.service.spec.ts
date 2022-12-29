@@ -173,4 +173,20 @@ describe('HgInjectionWorkspaceService', () => {
       expect(errored).toEqual(true);
     });
   });
+
+  describe('getHgInjectionsByHgSumIds', () => {
+    it('Should get Hg Injection records by Hg Summary Ids', async () => {
+      const result = await service.getHgInjectionsByHgSumIds([hgTestSumId]);
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Hg Injection record', async () => {
+      jest.spyOn(service, 'getHgInjectionsByHgSumIds').mockResolvedValue([]);
+
+      const result = await service.export([hgTestSumId]);
+      expect(result).toEqual([]);
+    });
+  });
 });
