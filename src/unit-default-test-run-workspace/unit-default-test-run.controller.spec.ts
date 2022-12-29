@@ -10,6 +10,7 @@ import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
 
+const id = '';
 const locId = '';
 const testSumId = '';
 const unitDefaultTestSumId = '';
@@ -26,6 +27,8 @@ const dto = new UnitDefaultTestRunDTO();
 const payload = new UnitDefaultTestRunBaseDTO();
 
 const mockService = () => ({
+  getUnitDefaultTestRun: jest.fn().mockResolvedValue(dto),
+  getUnitDefaultTestRuns: jest.fn().mockResolvedValue([dto]),
   createUnitDefaultTestRun: jest.fn().mockResolvedValue(dto),
 });
 
@@ -49,6 +52,20 @@ describe('UnitDefaultTestRunWorkspaceController', () => {
     controller = module.get<UnitDefaultTestRunWorkspaceController>(
       UnitDefaultTestRunWorkspaceController,
     );
+  });
+
+  describe('getUnitDefaultTestRun', () => {
+    it('Calls the service to get a Unit Default Test Run record', async () => {
+      const result = await controller.getUnitDefaultTestRun(locId, testSumId, unitDefaultTestSumId, id);
+      expect(result).toEqual(dto);
+    });
+  });
+
+  describe('getUnitDefaultTestRuns', () => {
+    it('Calls the service to many Unit Default Test Run records', async () => {
+      const result = await controller.getUnitDefaultTestRuns(locId, testSumId, unitDefaultTestSumId);
+      expect(result).toEqual([dto]);
+    });
   });
 
   describe('createUnitDefaultTestRun', () => {

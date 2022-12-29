@@ -10,6 +10,7 @@ import { UnitDefaultTestRunWorkspaceRepository } from './unit-default-test-run.r
 import { UnitDefaultTestRunWorkspaceService } from './unit-default-test-run.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
+const id = '';
 const testSumId = '';
 const unitDefaultTestSumId ='';
 const userId = 'user';
@@ -20,6 +21,7 @@ const entity = new UnitDefaultTestRun();
 const dto = new UnitDefaultTestRunDTO();
 
 const mockRepository = () => ({
+  find: jest.fn().mockResolvedValue([entity]),
   findOne: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
@@ -27,6 +29,7 @@ const mockRepository = () => ({
 
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(dto),
+  many: jest.fn().mockResolvedValue([dto]),
 });
 
 const mockTestSumService = () => ({
@@ -63,6 +66,35 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
     repository = module.get<UnitDefaultTestRunWorkspaceRepository>(
       UnitDefaultTestRunWorkspaceRepository,
     );
+  });
+
+  describe('getUnitDefaultTestRuns', () => {
+    it('Should return UnitDefaultTestRun records by Unit Default Test Summary id', async () => {
+      const result = await service.getUnitDefaultTestRuns(unitDefaultTestSumId);
+
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('getUnitDefaultTestRun', () => {
+    it('Should return a UnitDefaultTestRun record', async () => {
+      const result = await service.getUnitDefaultTestRun(id, unitDefaultTestSumId);
+
+      expect(result).toEqual(dto);
+    });
+
+    it('Should throw error when a UnitDefaultTestRun record not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      let errored = false;
+
+      try {
+        await service.getUnitDefaultTestRun(id, unitDefaultTestSumId);
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
   });
 
   describe('createUnitDefaultTestRun', () => {
