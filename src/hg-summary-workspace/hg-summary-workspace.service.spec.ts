@@ -6,6 +6,7 @@ import { HgSummaryMap } from '../maps/hg-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
 import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
+import { HgInjectionWorkspaceService } from '../hg-injection-workspace/hg-injection-workspace.service';
 
 const id = '';
 const testSumId = '';
@@ -32,6 +33,11 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockHgInjectionWorkspaceService = () => ({
+  import: jest.fn().mockResolvedValue(null),
+  export: jest.fn().mockResolvedValue([dto]),
+});
+
 describe('HgSummaryWorkspaceService', () => {
   let service: HgSummaryWorkspaceService;
   let repository: HgSummaryWorkspaceRepository;
@@ -51,6 +57,10 @@ describe('HgSummaryWorkspaceService', () => {
         {
           provide: HgSummaryMap,
           useFactory: mockMap,
+        },
+        {
+          provide: HgInjectionWorkspaceService,
+          useFactory: mockHgInjectionWorkspaceService,
         },
       ],
     }).compile();
@@ -119,9 +129,7 @@ describe('HgSummaryWorkspaceService', () => {
 
   describe('export', () => {
     it('Should export Hg Summary Record', async () => {
-      jest
-        .spyOn(service, 'getHgSummaryByTestSumIds')
-        .mockResolvedValue([]);
+      jest.spyOn(service, 'getHgSummaryByTestSumIds').mockResolvedValue([]);
 
       const result = await service.export([testSumId]);
       expect(result).toEqual([]);

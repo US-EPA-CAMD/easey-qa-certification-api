@@ -10,7 +10,7 @@ import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { HgSummary } from './hg-summary.entity';
 
 @Entity({
-  name: 'camdecmpswks.hg_injection',
+  name: 'camdecmpswks.hg_test_injection',
 })
 export class HgInjection extends BaseEntity {
   @PrimaryColumn({
