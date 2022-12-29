@@ -59,7 +59,7 @@ export class HgSummaryWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
-  ): Promise<HgSummaryRecordDTO> {
+  ): Promise<HgSummaryDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
