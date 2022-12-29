@@ -7,6 +7,7 @@ import { HgInjectionBaseDTO, HgInjectionDTO } from '../dto/hg-injection.dto';
 import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.repository';
 import { HgInjectionMap } from '../maps/hg-injection.map';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
 
 @Injectable()
 export class HgInjectionWorkspaceService {
@@ -120,5 +121,19 @@ export class HgInjectionWorkspaceService {
       userId,
       isImport,
     );
+  }
+
+  async getHgInjectionsByHgTestSumIds(
+    hgTestSumIds: string[],
+  ): Promise<HgInjectionDTO[]> {
+    const results = await this.repository.find({
+      where: { hgTestSumId: In(hgTestSumIds) },
+    });
+
+    return this.map.many(results);
+  }
+
+  async export(hgTestSumIds: string[]): Promise<HgInjectionDTO[]> {
+    return await this.getHgInjectionsByHgTestSumIds(hgTestSumIds);
   }
 }
