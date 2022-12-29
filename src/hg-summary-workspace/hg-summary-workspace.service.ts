@@ -1,6 +1,11 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
+import {
+  HgSummaryBaseDTO,
+  HgSummaryDTO,
+  HgSummaryImportDTO,
+  HgSummaryRecordDTO,
+} from '../dto/hg-summary.dto';
 import { HgSummaryMap } from '../maps/hg-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
@@ -8,6 +13,9 @@ import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { In } from 'typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { HgSummaryRepository } from '../hg-summary/hg-summary.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { HgSummary } from '../entities/hg-summary.entity';
 
 @Injectable()
 export class HgSummaryWorkspaceService {
@@ -17,6 +25,10 @@ export class HgSummaryWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(HgSummaryWorkspaceRepository)
     private readonly repository: HgSummaryWorkspaceRepository,
+
+    @InjectRepository(HgSummaryRepository)
+    private readonly historicalRepo: HgSummaryRepository,
+    private readonly logger: Logger,
   ) {}
 
   async getHgSummaries(testSumId: string): Promise<HgSummaryDTO[]> {
@@ -47,7 +59,7 @@ export class HgSummaryWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
-  ): Promise<HgSummaryDTO> {
+  ): Promise<HgSummaryRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
@@ -82,7 +94,7 @@ export class HgSummaryWorkspaceService {
   async export(testSumIds: string[]): Promise<HgSummaryDTO[]> {
     return this.getHgSummaryByTestSumIds(testSumIds);
   }
-  
+
   async updateHgSummary(
     testSumId: string,
     id: string,
@@ -143,5 +155,35 @@ export class HgSummaryWorkspaceService {
       userId,
       isImport,
     );
+  }
+  async import(
+    testSumId: string,
+    payload: HgSummaryImportDTO,
+    userId: string,
+    isHistoricalRecord: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: HgSummary;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepo.findOne({
+        testSumId: testSumId,
+        gasLevelCode: payload.gasLevelCode,
+      });
+    }
+
+    const createdHgSummary = await this.createHgSummary(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Hg Summary Successfully Imported. Record Id: ${createdHgSummary.id}`,
+    );
+
+    return null;
   }
 }

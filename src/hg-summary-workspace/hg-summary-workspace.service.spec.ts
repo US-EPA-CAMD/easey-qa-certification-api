@@ -1,5 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { HgSummaryRepository } from '../hg-summary/hg-summary.repository';
 import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgSummary } from '../entities/workspace/hg-summary.entity';
 import { HgSummaryMap } from '../maps/hg-summary.map';
@@ -23,6 +25,10 @@ const mockRepository = () => ({
   delete: jest.fn().mockResolvedValue(null),
 });
 
+const mockHistoricalRepo = () => ({
+  findOne: jest.fn(),
+});
+
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(dto),
   many: jest.fn().mockResolvedValue([dto]),
@@ -39,6 +45,7 @@ describe('HgSummaryWorkspaceService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        Logger,
         HgSummaryWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
@@ -51,6 +58,10 @@ describe('HgSummaryWorkspaceService', () => {
         {
           provide: HgSummaryMap,
           useFactory: mockMap,
+        },
+        {
+          provide: HgSummaryRepository,
+          useFactory: mockHistoricalRepo,
         },
       ],
     }).compile();
@@ -119,9 +130,7 @@ describe('HgSummaryWorkspaceService', () => {
 
   describe('export', () => {
     it('Should export Hg Summary Record', async () => {
-      jest
-        .spyOn(service, 'getHgSummaryByTestSumIds')
-        .mockResolvedValue([]);
+      jest.spyOn(service, 'getHgSummaryByTestSumIds').mockResolvedValue([]);
 
       const result = await service.export([testSumId]);
       expect(result).toEqual([]);
@@ -174,6 +183,21 @@ describe('HgSummaryWorkspaceService', () => {
       }
 
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('import', () => {
+    const importDTO = new HgSummaryDTO();
+    it('should Import Hg Summary Data', async () => {
+      jest.spyOn(service, 'createHgSummary').mockResolvedValue(dto);
+
+      await service.import(testSumId, importDTO, userId, false);
+    });
+
+    it('Should Import Hg Summary Data from Historical Record', async () => {
+      jest.spyOn(service, 'createHgSummary').mockResolvedValue(dto);
+
+      await service.import(testSumId, importDTO, userId, true);
     });
   });
 });
