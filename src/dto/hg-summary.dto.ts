@@ -1,3 +1,5 @@
+import { Type } from 'class-transformer';
+import { ValidateNested } from 'class-validator';
 import { HgInjectionDTO, HgInjectionImportDTO } from './hg-injection.dto';
 
 export class HgSummaryBaseDTO {
@@ -21,6 +23,8 @@ export class HgSummaryRecordDTO extends HgSummaryBaseDTO {
 }
 
 export class HgSummaryImportDTO extends HgSummaryBaseDTO {
+  @ValidateNested({ each: true })
+  @Type(() => HgInjectionImportDTO)
   HgInjectionData: HgInjectionImportDTO[];
 }
 

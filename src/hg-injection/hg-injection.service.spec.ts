@@ -7,6 +7,7 @@ import { HgInjectionService } from './hg-injection.service';
 
 const id = '';
 const hgTestSumId = '';
+const hgTestInjId = '';
 const entity = new HgInjection();
 const dto = new HgInjectionDTO();
 

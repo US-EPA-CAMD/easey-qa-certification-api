@@ -12,9 +12,10 @@ import { HgInjectionService } from '../hg-injection/hg-injection.service';
 @Injectable()
 export class HgSummaryService {
   constructor(
+    private readonly map: HgSummaryMap,
     @Inject(forwardRef(() => HgInjectionService))
     private readonly hgInjectionService: HgInjectionService,
-    private readonly map: HgSummaryMap,
+
     @InjectRepository(HgSummaryRepository)
     private readonly repository: HgSummaryRepository,
   ) {}

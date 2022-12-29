@@ -35,7 +35,7 @@ export class HgInjectionWorkspaceController {
     isArray: true,
     type: HgInjectionRecordDTO,
     description:
-      'Retrieves workspace Hg Injection records by HG Test Summary Id',
+      'Retrieves workspace Hg Injection records by Hg Test Summary Id',
   })
   async getHgInjections(
     @Param('locId') _locationId: string,

@@ -24,11 +24,9 @@ export class HgInjectionWorkspaceService {
     private readonly repository: HgInjectionWorkspaceRepository,
   ) {}
 
-  async getHgInjectionsByHgTestSumId(
-    hgTestSumId: string,
-  ): Promise<HgInjectionDTO[]> {
+  async getHgInjectionsByHgTestSumId(hgTestSumId: string) {
     const records = await this.repository.find({
-      hgTestSumId: hgTestSumId,
+      where: { hgTestSumId },
     });
 
     return this.map.many(records);
@@ -82,7 +80,8 @@ export class HgInjectionWorkspaceService {
     payload: HgInjectionBaseDTO,
     userId: string,
     isImport: boolean = false,
-  ): Promise<HgInjectionDTO> {
+  ): Promise<HgInjectionRecordDTO> {
+    const timestamp = currentDateTime();
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
@@ -97,6 +96,8 @@ export class HgInjectionWorkspaceService {
     entity.injectionMinute = payload.injectionMinute;
     entity.measuredValue = payload.measuredValue;
     entity.referenceValue = payload.referenceValue;
+    entity.userId = userId;
+    entity.updateDate = timestamp;
 
     await this.repository.save(entity);
 
@@ -116,7 +117,7 @@ export class HgInjectionWorkspaceService {
     isImport: boolean = false,
   ): Promise<void> {
     try {
-      await this.repository.delete(id);
+      await this.repository.delete({ id });
     } catch (e) {
       throw new LoggingException(
         `Error deleting HG Injection record Id [${id}]`,

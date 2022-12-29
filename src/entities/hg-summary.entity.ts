@@ -103,15 +103,15 @@ export class HgSummary extends BaseEntity {
 
   @ManyToOne(
     () => TestSummary,
-    o => o.HgSummary,
+    o => o.hgSummary,
   )
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
 
   @OneToMany(
     () => HgInjection,
-    o => o.HgSummary,
+    o => o.hgSummary,
   )
   @JoinColumn({ name: 'hg_test_sum_id' })
-  HgInjection: HgInjection[];
+  hgInjection: HgInjection[];
 }

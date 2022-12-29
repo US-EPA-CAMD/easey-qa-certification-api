@@ -15,14 +15,12 @@ import { HgSummary } from './hg-summary.entity';
 export class HgInjection extends BaseEntity {
   @PrimaryColumn({
     type: 'varchar',
-    nullable: false,
     name: 'hg_test_inj_id',
   })
   id: string;
 
   @Column({
     type: 'varchar',
-    nullable: false,
     name: 'hg_test_sum_id',
   })
   hgTestSumId: string;
@@ -77,8 +75,8 @@ export class HgInjection extends BaseEntity {
 
   @ManyToOne(
     () => HgSummary,
-    o => o.HgInjection,
+    o => o.hgInjection,
   )
   @JoinColumn({ name: 'hg_test_sum_id' })
-  HgSummary: HgSummary;
+  hgSummary: HgSummary;
 }

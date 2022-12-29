@@ -1,7 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In } from 'typeorm';
-
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { HgInjectionMap } from '../maps/hg-injection.map';
 import { HgInjectionRepository } from './hg-injection.repository';
@@ -15,14 +14,14 @@ export class HgInjectionService {
     private readonly repository: HgInjectionRepository,
   ) {}
 
-  async getHgInjectionsByHgTestSumId(
-    hgTestSumId: string,
-  ): Promise<HgInjectionDTO[]> {
-    const results = await this.repository.find({ hgTestSumId });
+  async getHgInjectionsByHgTestSumId(hgTestSumId: string) {
+    const results = await this.repository.find({
+      where: { hgTestSumId },
+    });
     return this.map.many(results);
   }
 
-  async getHgInjection(id: string): Promise<HgInjectionDTO> {
+  async getHgInjection(id: string) {
     const result = await this.repository.findOne(id);
 
     if (!result) {

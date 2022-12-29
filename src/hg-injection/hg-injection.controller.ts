@@ -16,7 +16,7 @@ export class HgInjectionController {
     description:
       'Retrieves workspace Hg Injection records by Hg Test Summary Id',
   })
-  async getHgInjectionsByHgTestSumId(
+  async getHgInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('hgTestSumId') hgTestSumId: string,
@@ -28,7 +28,7 @@ export class HgInjectionController {
   @ApiOkResponse({
     isArray: false,
     type: HgInjectionRecordDTO,
-    description: 'Retrieves Injection Hg Injection record by its Id',
+    description: 'Retrieves workspace Hg Injection record by its Id',
   })
   async getHgInjection(
     @Param('locId') _locationId: string,

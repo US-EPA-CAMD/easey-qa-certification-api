@@ -252,7 +252,7 @@ export class TestSummary extends BaseEntity {
     o => o.testSummary,
   )
   @JoinColumn({ name: 'test_sum_id' })
-  HgSummary: HgSummary[];
+  hgSummary: HgSummary[];
 
   @OneToMany(
     () => UnitDefaultTest,

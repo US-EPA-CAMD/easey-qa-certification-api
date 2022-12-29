@@ -57,9 +57,9 @@ import { CycleTimeInjectionWorkspaceModule } from './cycle-time-injection-worksp
 import { ReviewAndSubmitModule } from './review-and-submit/review-and-submit.module';
 import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.module';
 import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/unit-default-test-workspace.module';
+import { HgSummaryModule } from './hg-summary/hg-summary.module';
 import { HgSummaryWorkspaceModule } from './hg-summary-workspace/hg-summary-workspace.module';
 import { HgInjectionWorkspaceModule } from './hg-injection-workspace/hg-injection-workspace.module';
-import { HgSummaryModule } from './hg-summary/hg-summary.module';
 import { HgInjectionModule } from './hg-injection/hg-injection.module';
 
 const routes: Routes = [
