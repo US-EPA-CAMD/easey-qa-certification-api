@@ -3,7 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
-import { HgInjectionBaseDTO, HgInjectionDTO } from '../dto/hg-injection.dto';
+import {
+  HgInjectionBaseDTO,
+  HgInjectionDTO,
+  HgInjectionImportDTO,
+  HgInjectionRecordDTO,
+} from '../dto/hg-injection.dto';
 import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.repository';
 import { HgInjectionMap } from '../maps/hg-injection.map';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
@@ -18,8 +23,12 @@ export class HgInjectionWorkspaceService {
     private readonly repository: HgInjectionWorkspaceRepository,
   ) {}
 
-  async getHgInjectionsByHgTestSumId(testSumId: string) {
-    const records = await this.repository.find({ where: { testSumId } });
+  async getHgInjectionsByHgTestSumId(
+    hgTestSumId: string,
+  ): Promise<HgInjectionDTO[]> {
+    const records = await this.repository.find({
+      hgTestSumId: hgTestSumId,
+    });
 
     return this.map.many(records);
   }
@@ -40,11 +49,11 @@ export class HgInjectionWorkspaceService {
   async createHgInjection(
     testSumId: string,
     hgTestSumId: string,
-    payload: HgInjectionBaseDTO,
+    payload: HgInjectionBaseDTO | HgInjectionImportDTO,
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
-  ): Promise<HgInjectionDTO> {
+  ): Promise<HgInjectionRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({

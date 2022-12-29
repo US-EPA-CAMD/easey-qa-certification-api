@@ -37,7 +37,7 @@ export class HgInjectionWorkspaceController {
     description:
       'Retrieves workspace Hg Injection records by HG Test Summary Id',
   })
-  async getHgInjectionsByTestSumId(
+  async getHgInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('hgTestSumId') hgTestSumId: string,

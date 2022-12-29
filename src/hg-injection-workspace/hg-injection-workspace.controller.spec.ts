@@ -66,9 +66,9 @@ describe('HgInjectionWorkspaceController', () => {
     });
   });
 
-  describe('getHgInjectionsByHgTestSumId', () => {
+  describe('getHgInjections', () => {
     it('Calls the service to many Hg Injection records', async () => {
-      const result = await controller.getHgInjectionsByTestSumId(
+      const result = await controller.getHgInjections(
         locId,
         testSumId,
         hgTestSumId,
