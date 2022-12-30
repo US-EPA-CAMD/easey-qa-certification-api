@@ -25,8 +25,12 @@ export class UnitDefaultTestRunWorkspaceService {
     private readonly logger: Logger,
   ) {}
 
-  async getUnitDefaultTestRuns(unitDefaultTestSumId: string): Promise<UnitDefaultTestRunDTO[]> {
-    const records = await this.repository.find({ where: { unitDefaultTestSumId } });
+  async getUnitDefaultTestRuns(
+    unitDefaultTestSumId: string,
+  ): Promise<UnitDefaultTestRunDTO[]> {
+    const records = await this.repository.find({
+      where: { unitDefaultTestSumId },
+    });
 
     return this.map.many(records);
   }
@@ -80,4 +84,25 @@ export class UnitDefaultTestRunWorkspaceService {
     return this.map.one(entity);
   }
 
+  async deleteUnitDefaultTestRun(
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<void> {
+    try {
+      await this.repository.delete(id);
+    } catch (e) {
+      throw new LoggingException(
+        `Error deleting Unit Default Test Run with record id [${id}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+  }
 }
