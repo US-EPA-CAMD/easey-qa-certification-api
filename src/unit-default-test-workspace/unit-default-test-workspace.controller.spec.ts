@@ -95,7 +95,7 @@ describe('UnitDefaultTestWorkspaceController', () => {
     });
   });
 
-  describe('deleteTestQualification', () => {
+  describe('deleteUnitDefaultTest', () => {
     it('Calls the service and deletes a Unit Default Test record', async () => {
       const result = await controller.deleteUnitDefaultTest(
         locId,

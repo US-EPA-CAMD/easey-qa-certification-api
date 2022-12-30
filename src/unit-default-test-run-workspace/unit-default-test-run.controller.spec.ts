@@ -30,6 +30,7 @@ const mockService = () => ({
   getUnitDefaultTestRun: jest.fn().mockResolvedValue(dto),
   getUnitDefaultTestRuns: jest.fn().mockResolvedValue([dto]),
   createUnitDefaultTestRun: jest.fn().mockResolvedValue(dto),
+  deleteUnitDefaultTestRun: jest.fn().mockResolvedValue(null),
 });
 
 describe('UnitDefaultTestRunWorkspaceController', () => {
@@ -56,14 +57,23 @@ describe('UnitDefaultTestRunWorkspaceController', () => {
 
   describe('getUnitDefaultTestRun', () => {
     it('Calls the service to get a Unit Default Test Run record', async () => {
-      const result = await controller.getUnitDefaultTestRun(locId, testSumId, unitDefaultTestSumId, id);
+      const result = await controller.getUnitDefaultTestRun(
+        locId,
+        testSumId,
+        unitDefaultTestSumId,
+        id,
+      );
       expect(result).toEqual(dto);
     });
   });
 
   describe('getUnitDefaultTestRuns', () => {
     it('Calls the service to many Unit Default Test Run records', async () => {
-      const result = await controller.getUnitDefaultTestRuns(locId, testSumId, unitDefaultTestSumId);
+      const result = await controller.getUnitDefaultTestRuns(
+        locId,
+        testSumId,
+        unitDefaultTestSumId,
+      );
       expect(result).toEqual([dto]);
     });
   });
@@ -81,4 +91,16 @@ describe('UnitDefaultTestRunWorkspaceController', () => {
     });
   });
 
+  describe('deleteUnitDefaultTestRun', () => {
+    it('Calls the service and deletes a Unit Default Test Run record', async () => {
+      const result = await controller.deleteUnitDefaultTestRun(
+        locId,
+        testSumId,
+        unitDefaultTestSumId,
+        id,
+        user,
+      );
+      expect(result).toEqual(null);
+    });
+  });
 });
