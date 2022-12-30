@@ -9,10 +9,12 @@ import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
 import { UnitDefaultTestRunWorkspaceRepository } from './unit-default-test-run.repository';
 import { UnitDefaultTestRunWorkspaceService } from './unit-default-test-run.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { HttpStatus } from '@nestjs/common';
 
 const id = '';
 const testSumId = '';
-const unitDefaultTestSumId ='';
+const unitDefaultTestSumId = '';
 const userId = 'user';
 
 const payload = new UnitDefaultTestRunBaseDTO();
@@ -25,6 +27,7 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
+  delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockMap = () => ({
@@ -78,7 +81,10 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
 
   describe('getUnitDefaultTestRun', () => {
     it('Should return a UnitDefaultTestRun record', async () => {
-      const result = await service.getUnitDefaultTestRun(id, unitDefaultTestSumId);
+      const result = await service.getUnitDefaultTestRun(
+        id,
+        unitDefaultTestSumId,
+      );
 
       expect(result).toEqual(dto);
     });
@@ -120,6 +126,33 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
       );
 
       expect(result).toEqual(dto);
+    });
+  });
+
+  describe('deleteUnitDefaultTestRun', () => {
+    it('Should delete a Unit Default Test Run record', async () => {
+      const result = await service.deleteUnitDefaultTestRun(
+        testSumId,
+        id,
+        userId,
+      );
+      expect(result).toEqual(undefined);
+    });
+
+    it('Should throw an error while deleting a Unit Default Test Run record', async () => {
+      const error = new LoggingException(
+        `Error deleting Unit Default Test Run with record Id [${testSumId}]`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+      jest.spyOn(repository, 'delete').mockRejectedValue(error);
+
+      let errored = false;
+      try {
+        await service.deleteUnitDefaultTestRun(testSumId, id, userId);
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
     });
   });
 });

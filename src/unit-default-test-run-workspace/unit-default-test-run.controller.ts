@@ -1,13 +1,16 @@
 import {
   Body,
-  Controller, Get,
+  Controller,
+  Delete,
+  Get,
   Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiCreatedResponse, ApiOkResponse,
+  ApiCreatedResponse,
+  ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -72,7 +75,27 @@ export class UnitDefaultTestRunWorkspaceController {
     @Body() payload: UnitDefaultTestRunBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitDefaultTestRunDTO> {
-    return this.service.createUnitDefaultTestRun(_testSumId, unitDefaultTestSumId, payload, user.userId);
+    return this.service.createUnitDefaultTestRun(
+      _testSumId,
+      unitDefaultTestSumId,
+      payload,
+      user.userId,
+    );
   }
 
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Deletes a Unit Default Test Run record from the workspace',
+  })
+  async deleteUnitDefaultTestRun(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('unitDefaultTestSumId') _unitDefaultTestSumId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteUnitDefaultTestRun(testSumId, id, user.userId);
+  }
 }
