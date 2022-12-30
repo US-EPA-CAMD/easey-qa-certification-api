@@ -3,7 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
-import { HgInjectionBaseDTO, HgInjectionDTO } from '../dto/hg-injection.dto';
+import {
+  HgInjectionBaseDTO,
+  HgInjectionDTO,
+  HgInjectionImportDTO,
+  HgInjectionRecordDTO,
+} from '../dto/hg-injection.dto';
 import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.repository';
 import { HgInjectionMap } from '../maps/hg-injection.map';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
@@ -41,11 +46,11 @@ export class HgInjectionWorkspaceService {
   async createHgInjection(
     testSumId: string,
     hgTestSumId: string,
-    payload: HgInjectionBaseDTO,
+    payload: HgInjectionBaseDTO | HgInjectionImportDTO,
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
-  ): Promise<HgInjectionDTO> {
+  ): Promise<HgInjectionRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
@@ -58,7 +63,9 @@ export class HgInjectionWorkspaceService {
     });
 
     await this.repository.save(entity);
+
     entity = await this.repository.findOne(entity.id);
+
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -73,7 +80,8 @@ export class HgInjectionWorkspaceService {
     payload: HgInjectionBaseDTO,
     userId: string,
     isImport: boolean = false,
-  ): Promise<HgInjectionDTO> {
+  ): Promise<HgInjectionRecordDTO> {
+    const timestamp = currentDateTime();
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
@@ -88,6 +96,8 @@ export class HgInjectionWorkspaceService {
     entity.injectionMinute = payload.injectionMinute;
     entity.measuredValue = payload.measuredValue;
     entity.referenceValue = payload.referenceValue;
+    entity.userId = userId;
+    entity.updateDate = timestamp;
 
     await this.repository.save(entity);
 

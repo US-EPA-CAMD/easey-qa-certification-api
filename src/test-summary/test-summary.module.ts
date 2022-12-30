@@ -24,6 +24,7 @@ import { CycleTimeSummaryModule } from '../cycle-time-summary/cycle-time-summary
 import { UnitDefaultTestModule } from '../unit-default-test/unit-default-test.module';
 import { TransmitterTransducerAccuracyModule } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.module';
 import { HgSummaryModule } from '../hg-summary/hg-summary.module';
+import { HgInjectionModule } from '../hg-injection/hg-injection.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { HgSummaryModule } from '../hg-summary/hg-summary.module';
     UnitDefaultTestModule,
     TransmitterTransducerAccuracyModule,
     HgSummaryModule,
+    HgInjectionModule,
   ],
   controllers: [TestSummaryController],
   providers: [TestSummaryMap, TestSummaryService],

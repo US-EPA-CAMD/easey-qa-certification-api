@@ -47,7 +47,6 @@ export class HgInjectionWorkspaceController {
 
   @Get(':id')
   @ApiOkResponse({
-    isArray: false,
     type: HgInjectionRecordDTO,
     description: 'Retrieves workspace Hg Injection record by its Id',
   })
