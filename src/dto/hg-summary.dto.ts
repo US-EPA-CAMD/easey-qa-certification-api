@@ -1,5 +1,7 @@
 import { HgInjectionDTO, HgInjectionImportDTO } from './hg-injection.dto';
 
+const KEY = 'Hg Test Summary';
+
 export class HgSummaryBaseDTO {
   gasLevelCode: string;
   meanMeasuredValue: number;

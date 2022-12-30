@@ -13,7 +13,7 @@ export class HgInjectionController {
   @ApiOkResponse({
     isArray: true,
     type: HgInjectionRecordDTO,
-    description: 'Retrieves workspace Hg Injection records by Test Summary Id',
+    description: 'Retrieves Hg Injection records by Test Summary Id',
   })
   async getHgInjections(
     @Param('locId') _locationId: string,
