@@ -1,3 +1,5 @@
+const KEY = 'Hg Test Injection';
+
 export class HgInjectionBaseDTO {
   injectionDate: Date;
   injectionHour: number;
