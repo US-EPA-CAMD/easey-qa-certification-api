@@ -158,6 +158,7 @@ const mockUnitDefaultTestWorkspaceService = () => ({
 
 const mockHgSummaryWorkspaceService = () => ({
   export: jest.fn().mockResolvedValue([new HgSummary()]),
+  import: jest.fn().mockResolvedValue(null),
 });
 
 const unit = new Unit();

@@ -6,12 +6,14 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
 import { HttpModule } from '@nestjs/axios';
 import { HgSummaryMap } from '../maps/hg-summary.map';
 import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
+import { HgSummaryModule } from '../hg-summary/hg-summary.module';
 import { HgInjectionWorkspaceModule } from '../hg-injection-workspace/hg-injection-workspace.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([HgSummaryWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
+    forwardRef(() => HgSummaryModule),
     forwardRef(() => HgInjectionWorkspaceModule),
     HttpModule,
   ],

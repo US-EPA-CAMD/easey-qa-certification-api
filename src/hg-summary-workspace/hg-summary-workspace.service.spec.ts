@@ -1,18 +1,27 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { HgSummaryRepository } from '../hg-summary/hg-summary.repository';
+import {
+  HgSummaryBaseDTO,
+  HgSummaryDTO,
+  HgSummaryImportDTO,
+  HgSummaryRecordDTO,
+} from '../dto/hg-summary.dto';
 import { HgSummary } from '../entities/workspace/hg-summary.entity';
 import { HgSummaryMap } from '../maps/hg-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
 import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
 import { HgInjectionWorkspaceService } from '../hg-injection-workspace/hg-injection-workspace.service';
+import { HgInjectionImportDTO } from 'src/dto/hg-injection.dto';
 
 const id = '';
 const testSumId = '';
 const userId = 'user';
 const entity = new HgSummary();
 const dto = new HgSummaryDTO();
+const hgSummaryRecordDto = new HgSummaryRecordDTO();
 
 const payload = new HgSummaryBaseDTO();
 
@@ -22,6 +31,10 @@ const mockRepository = () => ({
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
+});
+
+const mockHistoricalRepo = () => ({
+  findOne: jest.fn(),
 });
 
 const mockMap = () => ({
@@ -45,6 +58,7 @@ describe('HgSummaryWorkspaceService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        Logger,
         HgSummaryWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
@@ -57,6 +71,10 @@ describe('HgSummaryWorkspaceService', () => {
         {
           provide: HgSummaryMap,
           useFactory: mockMap,
+        },
+        {
+          provide: HgSummaryRepository,
+          useFactory: mockHistoricalRepo,
         },
         {
           provide: HgInjectionWorkspaceService,
@@ -182,6 +200,26 @@ describe('HgSummaryWorkspaceService', () => {
       }
 
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('import', () => {
+    const importPayload = payload;
+    importPayload.gasLevelCode = 'CODE';
+    it('should Import Hg Summary Data', async () => {
+      jest.spyOn(service, 'createHgSummary').mockResolvedValue(dto);
+      const result = await service.import(
+        testSumId,
+        new HgSummaryImportDTO(),
+        userId,
+        false,
+      );
+    });
+
+    it('Should Import Hg Summary Data from Historical Record', async () => {
+      jest.spyOn(service, 'createHgSummary').mockResolvedValue(dto);
+
+      await service.import(testSumId, new HgSummaryImportDTO(), userId, true);
     });
   });
 });

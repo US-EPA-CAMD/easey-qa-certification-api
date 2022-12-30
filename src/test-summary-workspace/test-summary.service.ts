@@ -318,9 +318,7 @@ export class TestSummaryWorkspaceService {
             s.transmitterTransducerData = transmitterTransducerAccuracyData.filter(
               i => i.testSumId === s.id,
             );
-            s.hgSummaryData = hgSummaryData.filter(
-              i => i.testSumId === s.id,
-            )
+            s.hgSummaryData = hgSummaryData.filter(i => i.testSumId === s.id);
           });
         }
 
@@ -678,6 +676,29 @@ export class TestSummaryWorkspaceService {
               this.unitDefaultTestWorkspaceService.import(
                 createdTestSummary.id,
                 unitDefaultTest,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.hgSummaryData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.HGLINE
+    ) {
+      for (const hgSummary of payload.hgSummaryData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.hgSummaryWorkspaceService.import(
+                createdTestSummary.id,
+                hgSummary,
                 userId,
                 historicalrecordId !== null ? true : false,
               ),
