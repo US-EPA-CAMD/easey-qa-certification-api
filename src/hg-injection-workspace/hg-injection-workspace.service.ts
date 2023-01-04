@@ -13,15 +13,22 @@ import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.reposit
 import { HgInjectionMap } from '../maps/hg-injection.map';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
+import { HgInjection } from '../entities/hg-injection.entity';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { HgInjectionRepository } from '../hg-injection/hg-injection.repository';
 
 @Injectable()
 export class HgInjectionWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     private readonly map: HgInjectionMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(HgInjectionWorkspaceRepository)
     private readonly repository: HgInjectionWorkspaceRepository,
+
+    @InjectRepository(HgInjectionRepository)
+    private readonly historicalRepository: HgInjectionRepository,
   ) {}
 
   async getHgInjectionsByHgTestSumId(hgTestSumId: string) {
@@ -145,5 +152,38 @@ export class HgInjectionWorkspaceService {
 
   async export(hgSumIds: string[]): Promise<HgInjectionDTO[]> {
     return await this.getHgInjectionsByHgSumIds(hgSumIds);
+  }
+
+  async import(
+    testSumId: string,
+    hgTestSumId: string,
+    payload: HgInjectionImportDTO,
+    userId: string,
+    isHistoricalRecord?: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: HgInjection;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepository.findOne({
+        hgTestSumId: hgTestSumId,
+        injectionDate: payload.injectionDate,
+      });
+    }
+
+    const createdHgInjection = await this.createHgInjection(
+      testSumId,
+      hgTestSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Hg Injection Successfully Imported. Record Id: ${createdHgInjection.id}`,
+    );
+
+    return null;
   }
 }
