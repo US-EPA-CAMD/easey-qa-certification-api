@@ -6,8 +6,10 @@ import {
   HgSummaryBaseDTO,
   HgSummaryDTO,
   HgSummaryImportDTO,
+  HgSummaryRecordDTO,
 } from '../dto/hg-summary.dto';
 import { HgSummary } from '../entities/workspace/hg-summary.entity';
+import { HgSummary as HgSummaryOffical } from '../entities/hg-summary.entity';
 import { HgSummaryMap } from '../maps/hg-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
@@ -21,10 +23,9 @@ const userId = 'user';
 const entity = new HgSummary();
 const dto = new HgSummaryDTO();
 const hgInjDto = new HgInjectionDTO();
-
 const payload = new HgSummaryBaseDTO();
 const importPayload = new HgSummaryImportDTO();
-hgInjDto.hgTestSumId = 'SOME_ID';
+hgInjDto.hgTestSumId = 'ID';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
@@ -35,7 +36,7 @@ const mockRepository = () => ({
 });
 
 const mockHistoricalRepo = () => ({
-  findOne: jest.fn(),
+  findOne: jest.fn().mockResolvedValue(new HgSummaryOffical()),
 });
 
 const mockMap = () => ({
@@ -54,6 +55,7 @@ const mockHgInjectionWorkspaceService = () => ({
 
 describe('HgSummaryWorkspaceService', () => {
   let service: HgSummaryWorkspaceService;
+  let testSummaryService: TestSummaryWorkspaceService;
   let repository: HgSummaryWorkspaceRepository;
 
   beforeEach(async () => {
@@ -87,6 +89,9 @@ describe('HgSummaryWorkspaceService', () => {
     service = module.get<HgSummaryWorkspaceService>(HgSummaryWorkspaceService);
     repository = module.get<HgSummaryWorkspaceRepository>(
       HgSummaryWorkspaceRepository,
+    );
+    testSummaryService = module.get<TestSummaryWorkspaceService>(
+      TestSummaryWorkspaceService,
     );
   });
 
@@ -148,7 +153,7 @@ describe('HgSummaryWorkspaceService', () => {
 
   describe('export', () => {
     it('Should export Hg Summary Record', async () => {
-      dto.id = 'SOME_ID';
+      dto.id = 'ID';
 
       jest.spyOn(service, 'getHgSummaryByTestSumIds').mockResolvedValue([dto]);
 
