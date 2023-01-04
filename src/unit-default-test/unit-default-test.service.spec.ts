@@ -1,4 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { UnitDefaultTestRunService } from '../unit-default-test-run/unit-default-test-run.service';
+import { UnitDefaultTestRunDTO } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestDTO } from '../dto/unit-default-test.dto';
 import { UnitDefaultTest } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
@@ -11,6 +13,9 @@ const testSumId = '';
 const entity = new UnitDefaultTest();
 const dto = new UnitDefaultTestDTO();
 
+const unitDefaultTestRunDto = new UnitDefaultTestRunDTO();
+unitDefaultTestRunDto.unitDefaultTestSumId = 'ID';
+
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
   findOne: jest.fn().mockResolvedValue(entity),
@@ -19,6 +24,10 @@ const mockRepository = () => ({
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(dto),
   many: jest.fn().mockResolvedValue([dto]),
+});
+
+const mockUnitDefaultTestRunService = () => ({
+  export: jest.fn().mockResolvedValue([unitDefaultTestRunDto]),
 });
 
 describe('UnitDefaultTestService', () => {
@@ -36,6 +45,10 @@ describe('UnitDefaultTestService', () => {
         {
           provide: UnitDefaultTestMap,
           useFactory: mockMap,
+        },
+        {
+          provide: UnitDefaultTestRunService,
+          useFactory: mockUnitDefaultTestRunService,
         },
       ],
     }).compile();
@@ -84,12 +97,15 @@ describe('UnitDefaultTestService', () => {
 
   describe('export', () => {
     it('Should export Unit Default Test Record', async () => {
+      dto.id = 'ID';
+
       jest
         .spyOn(service, 'getUnitDefaultTestsByTestSumIds')
-        .mockResolvedValue([]);
+        .mockResolvedValue([dto]);
 
       const result = await service.export([testSumId]);
-      expect(result).toEqual([]);
+      dto.unitDefaultTestRunData = [unitDefaultTestRunDto];
+      expect(result).toEqual([dto]);
     });
   });
 });

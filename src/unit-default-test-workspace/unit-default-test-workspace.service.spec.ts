@@ -14,6 +14,8 @@ import { HttpStatus } from '@nestjs/common';
 import { UnitDefaultTest as UnitDefaultTestOfficial } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestRepository } from '../unit-default-test/unit-default-test.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { UnitDefaultTestRunDTO } from '../dto/unit-default-test-run.dto';
+import { UnitDefaultTestRunWorkspaceService } from '../unit-default-test-run-workspace/unit-default-test-run.service';
 
 const id = '';
 const testSumId = '';
@@ -24,6 +26,9 @@ const importPayload = new UnitDefaultTestImportDTO();
 
 const entity = new UnitDefaultTest();
 const dto = new UnitDefaultTestDTO();
+
+const unitDefaultTestRunDto = new UnitDefaultTestRunDTO();
+unitDefaultTestRunDto.unitDefaultTestSumId = 'ID';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
@@ -44,6 +49,10 @@ const mockTestSumService = () => ({
 
 const mockHistoricalRepo = () => ({
   findOne: jest.fn().mockResolvedValue(new UnitDefaultTestOfficial()),
+});
+
+const mockUnitDefaultTestRunService = () => ({
+  export: jest.fn().mockResolvedValue([unitDefaultTestRunDto]),
 });
 
 describe('UnitDefaultTestWorkspaceService', () => {
@@ -70,6 +79,10 @@ describe('UnitDefaultTestWorkspaceService', () => {
         {
           provide: UnitDefaultTestRepository,
           useFactory: mockHistoricalRepo,
+        },
+        {
+          provide: UnitDefaultTestRunWorkspaceService,
+          useFactory: mockUnitDefaultTestRunService,
         },
       ],
     }).compile();
@@ -191,12 +204,15 @@ describe('UnitDefaultTestWorkspaceService', () => {
 
   describe('export', () => {
     it('Should export Unit Default Test Record', async () => {
+      dto.id = 'ID';
+
       jest
         .spyOn(service, 'getUnitDefaultTestsByTestSumIds')
-        .mockResolvedValue([]);
+        .mockResolvedValue([dto]);
 
       const result = await service.export([testSumId]);
-      expect(result).toEqual([]);
+      dto.unitDefaultTestRunData = [unitDefaultTestRunDto];
+      expect(result).toEqual([dto]);
     });
   });
 
