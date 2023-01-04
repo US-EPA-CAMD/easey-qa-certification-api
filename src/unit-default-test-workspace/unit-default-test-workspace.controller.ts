@@ -22,7 +22,6 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 import {
   UnitDefaultTestBaseDTO,
-  UnitDefaultTestDTO,
   UnitDefaultTestRecordDTO,
 } from '../dto/unit-default-test.dto';
 import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
@@ -36,28 +35,28 @@ export class UnitDefaultTestWorkspaceController {
   @Get()
   @ApiOkResponse({
     isArray: true,
-    type: UnitDefaultTestDTO,
+    type: UnitDefaultTestRecordDTO,
     description:
       'Retrieves workspace Unit Default Test records by Test Summary Id',
   })
   async getUnitDefaultTests(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<UnitDefaultTestDTO[]> {
+  ): Promise<UnitDefaultTestRecordDTO[]> {
     return this.service.getUnitDefaultTests(testSumId);
   }
 
   @Get(':id')
   @ApiOkResponse({
     isArray: false,
-    type: UnitDefaultTestDTO,
+    type: UnitDefaultTestRecordDTO,
     description: 'Retrieves workspace Unit Default Test record by its Id',
   })
   async getUnitDefaultTest(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('id') id: string,
-  ): Promise<UnitDefaultTestDTO> {
+  ): Promise<UnitDefaultTestRecordDTO> {
     return this.service.getUnitDefaultTest(id);
   }
 
@@ -65,7 +64,7 @@ export class UnitDefaultTestWorkspaceController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('Token')
   @ApiCreatedResponse({
-    type: UnitDefaultTestDTO,
+    type: UnitDefaultTestRecordDTO,
     description: 'Creates a workspace Unit Default Test record.',
   })
   createUnitDefaultTest(
@@ -73,7 +72,7 @@ export class UnitDefaultTestWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Body() payload: UnitDefaultTestBaseDTO,
     @User() user: CurrentUser,
-  ): Promise<UnitDefaultTestDTO> {
+  ): Promise<UnitDefaultTestRecordDTO> {
     return this.service.createUnitDefaultTest(testSumId, payload, user.userId);
   }
 
@@ -91,7 +90,7 @@ export class UnitDefaultTestWorkspaceController {
     @Param('id') id: string,
     @Body() payload: UnitDefaultTestBaseDTO,
     @User() user: CurrentUser,
-  ): Promise<UnitDefaultTestDTO> {
+  ): Promise<UnitDefaultTestRecordDTO> {
     return this.service.updateUnitDefaultTest(
       testSumId,
       id,

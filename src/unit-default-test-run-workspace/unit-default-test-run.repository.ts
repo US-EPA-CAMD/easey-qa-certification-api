@@ -4,4 +4,4 @@ import { EntityRepository, Repository } from 'typeorm';
 @EntityRepository(UnitDefaultTestRun)
 export class UnitDefaultTestRunWorkspaceRepository extends Repository<
   UnitDefaultTestRun
-  > {}
+> {}

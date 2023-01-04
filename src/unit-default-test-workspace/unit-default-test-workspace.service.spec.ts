@@ -3,7 +3,7 @@ import { UnitDefaultTest } from '../entities/workspace/unit-default-test.entity'
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import {
   UnitDefaultTestBaseDTO,
-  UnitDefaultTestDTO,
+  UnitDefaultTestRecordDTO,
   UnitDefaultTestImportDTO,
 } from '../dto/unit-default-test.dto';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
@@ -23,7 +23,7 @@ const payload = new UnitDefaultTestBaseDTO();
 const importPayload = new UnitDefaultTestImportDTO();
 
 const entity = new UnitDefaultTest();
-const dto = new UnitDefaultTestDTO();
+const dto = new UnitDefaultTestRecordDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),

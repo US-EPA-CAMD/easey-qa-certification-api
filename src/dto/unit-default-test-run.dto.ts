@@ -18,7 +18,6 @@ export class UnitDefaultTestRunRecordDTO extends UnitDefaultTestRunBaseDTO {
   userId: string;
   addDate: string;
   updateDate: string;
-
 }
 
 export class UnitDefaultTestRunImportDTO extends UnitDefaultTestRunBaseDTO {}

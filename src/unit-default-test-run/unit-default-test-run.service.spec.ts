@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnitDefaultTestRunDTO } from '../dto/unit-default-test-run.dto';
+import { UnitDefaultTestRunRecordDTO } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRun } from '../entities/unit-default-test-run.entity';
 import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
 import { UnitDefaultTestRunRepository } from './unit-default-test-run.repository';
@@ -9,7 +9,7 @@ const id = '';
 const unitDefaultTestSumId = '';
 
 const entity = new UnitDefaultTestRun();
-const dto = new UnitDefaultTestRunDTO();
+const dto = new UnitDefaultTestRunRecordDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
@@ -56,7 +56,10 @@ describe('UnitDefaultTestRunService', () => {
 
   describe('getUnitDefaultTestRun', () => {
     it('Should return a UnitDefaultTestRun record', async () => {
-      const result = await service.getUnitDefaultTestRun(id, unitDefaultTestSumId);
+      const result = await service.getUnitDefaultTestRun(
+        id,
+        unitDefaultTestSumId,
+      );
 
       expect(result).toEqual(dto);
     });

@@ -3,7 +3,7 @@ import { UnitDefaultTestRun } from '../entities/workspace/unit-default-test-run.
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import {
   UnitDefaultTestRunBaseDTO,
-  UnitDefaultTestRunDTO,
+  UnitDefaultTestRunRecordDTO,
 } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
 import { UnitDefaultTestRunWorkspaceRepository } from './unit-default-test-run.repository';
@@ -20,7 +20,7 @@ const userId = 'user';
 const payload = new UnitDefaultTestRunBaseDTO();
 
 const entity = new UnitDefaultTestRun();
-const dto = new UnitDefaultTestRunDTO();
+const dto = new UnitDefaultTestRunRecordDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
@@ -126,6 +126,30 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
       );
 
       expect(result).toEqual(dto);
+    });
+  });
+
+  describe('updateUnitDefaultTestRun', () => {
+    it('should update a Unit Default Test Run record', async () => {
+      const result = await service.updateUnitDefaultTestRun(
+        testSumId,
+        id,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(dto);
+    });
+
+    it('should throw error with invalid Unit Default Test Run', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+      try {
+        await service.updateUnitDefaultTestRun(testSumId, id, payload, userId);
+      } catch (e) {
+        errored = true;
+      }
+      expect(errored).toEqual(true);
     });
   });
 
