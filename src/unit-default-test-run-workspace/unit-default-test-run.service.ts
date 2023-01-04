@@ -29,7 +29,7 @@ export class UnitDefaultTestRunWorkspaceService {
 
   async getUnitDefaultTestRuns(
     unitDefaultTestSumId: string,
-  ): Promise<UnitDefaultTestRunDTO[]> {
+  ): Promise<UnitDefaultTestRunRecordDTO[]> {
     const records = await this.repository.find({
       where: { unitDefaultTestSumId },
     });
@@ -40,7 +40,7 @@ export class UnitDefaultTestRunWorkspaceService {
   async getUnitDefaultTestRun(
     id: string,
     unitDefaultTestSumId: string,
-  ): Promise<UnitDefaultTestRunDTO> {
+  ): Promise<UnitDefaultTestRunRecordDTO> {
     const result = await this.repository.findOne({
       id,
       unitDefaultTestSumId,
@@ -63,7 +63,7 @@ export class UnitDefaultTestRunWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
-  ): Promise<UnitDefaultTestRunDTO> {
+  ): Promise<UnitDefaultTestRunRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
@@ -83,6 +83,48 @@ export class UnitDefaultTestRunWorkspaceService {
       userId,
       isImport,
     );
+    return this.map.one(entity);
+  }
+
+  async updateUnitDefaultTestRun(
+    testSumId: string,
+    id: string,
+    payload: UnitDefaultTestRunBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<UnitDefaultTestRunRecordDTO> {
+    const timestamp = currentDateTime();
+    const entity = await this.repository.findOne(id);
+
+    if (!entity) {
+      throw new LoggingException(
+        `Unit Default Test Run record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    entity.operatingLevel = payload.operatingLevel;
+    entity.runNumber = payload.runNumber;
+    entity.beginDate = payload.beginDate;
+    entity.beginHour = payload.beginHour;
+    entity.beginMinute = payload.beginMinute;
+    entity.endDate = payload.endDate;
+    entity.endHour = payload.endHour;
+    entity.endMinute = payload.endMinute;
+    entity.responseTime = payload.responseTime;
+    entity.referenceValue = payload.referenceValue;
+    entity.runUsedIndicator = payload.runUsedIndicator;
+    entity.userId = userId;
+    entity.updateDate = timestamp;
+
+    await this.repository.save(entity);
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
+
     return this.map.one(entity);
   }
 
@@ -110,7 +152,7 @@ export class UnitDefaultTestRunWorkspaceService {
 
   async getUnitDefaultTestRunByUnitDefaultTestSumIds(
     unitDefaultTestSumIds: string[],
-  ): Promise<UnitDefaultTestRunRecordDTO[]> {
+  ): Promise<UnitDefaultTestRunDTO[]> {
     const results = await this.repository.find({
       where: { unitDefaultTestSumId: In(unitDefaultTestSumIds) },
     });
@@ -119,7 +161,7 @@ export class UnitDefaultTestRunWorkspaceService {
 
   async export(
     unitDefaultTestSumIds: string[],
-  ): Promise<UnitDefaultTestRunRecordDTO[]> {
+  ): Promise<UnitDefaultTestRunDTO[]> {
     return this.getUnitDefaultTestRunByUnitDefaultTestSumIds(
       unitDefaultTestSumIds,
     );

@@ -4,7 +4,7 @@ import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.s
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   UnitDefaultTestBaseDTO,
-  UnitDefaultTestDTO,
+  UnitDefaultTestRecordDTO,
 } from '../dto/unit-default-test.dto';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
@@ -21,7 +21,7 @@ const user: CurrentUser = {
   isAdmin: false,
   roles: [],
 };
-const dto = new UnitDefaultTestDTO();
+const dto = new UnitDefaultTestRecordDTO();
 
 const payload = new UnitDefaultTestBaseDTO();
 

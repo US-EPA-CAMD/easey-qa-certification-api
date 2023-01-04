@@ -1,7 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UnitDefaultTestRunService } from '../unit-default-test-run/unit-default-test-run.service';
 import { UnitDefaultTestRunDTO } from '../dto/unit-default-test-run.dto';
-import { UnitDefaultTestDTO } from '../dto/unit-default-test.dto';
+import {
+  UnitDefaultTestDTO,
+  UnitDefaultTestRecordDTO,
+} from '../dto/unit-default-test.dto';
 import { UnitDefaultTest } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { UnitDefaultTestRepository } from './unit-default-test.repository';
@@ -11,7 +14,7 @@ const id = '';
 const testSumId = '';
 
 const entity = new UnitDefaultTest();
-const dto = new UnitDefaultTestDTO();
+const dto = new UnitDefaultTestRecordDTO();
 
 const unitDefaultTestRunDto = new UnitDefaultTestRunDTO();
 unitDefaultTestRunDto.unitDefaultTestSumId = 'ID';
@@ -97,15 +100,17 @@ describe('UnitDefaultTestService', () => {
 
   describe('export', () => {
     it('Should export Unit Default Test Record', async () => {
-      dto.id = 'ID';
+      const exportDto = new UnitDefaultTestDTO();
+
+      exportDto.id = 'ID';
 
       jest
         .spyOn(service, 'getUnitDefaultTestsByTestSumIds')
-        .mockResolvedValue([dto]);
+        .mockResolvedValue([exportDto]);
 
       const result = await service.export([testSumId]);
-      dto.unitDefaultTestRunData = [unitDefaultTestRunDto];
-      expect(result).toEqual([dto]);
+      exportDto.unitDefaultTestRunData = [unitDefaultTestRunDto];
+      expect(result).toEqual([exportDto]);
     });
   });
 });

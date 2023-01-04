@@ -9,8 +9,9 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '../utilities/functions';
 import {
   UnitDefaultTestBaseDTO,
-  UnitDefaultTestDTO,
+  UnitDefaultTestRecordDTO,
   UnitDefaultTestImportDTO,
+  UnitDefaultTestDTO,
 } from '../dto/unit-default-test.dto';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -34,13 +35,15 @@ export class UnitDefaultTestWorkspaceService {
     private readonly unitDefaultTestRunService: UnitDefaultTestRunWorkspaceService,
   ) {}
 
-  async getUnitDefaultTests(testSumId: string): Promise<UnitDefaultTestDTO[]> {
+  async getUnitDefaultTests(
+    testSumId: string,
+  ): Promise<UnitDefaultTestRecordDTO[]> {
     const records = await this.repository.find({ where: { testSumId } });
 
     return this.map.many(records);
   }
 
-  async getUnitDefaultTest(id: string): Promise<UnitDefaultTestDTO> {
+  async getUnitDefaultTest(id: string): Promise<UnitDefaultTestRecordDTO> {
     const result = await this.repository.findOne({
       id,
     });
@@ -61,7 +64,7 @@ export class UnitDefaultTestWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
-  ): Promise<UnitDefaultTestDTO> {
+  ): Promise<UnitDefaultTestRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
@@ -89,7 +92,7 @@ export class UnitDefaultTestWorkspaceService {
     payload: UnitDefaultTestBaseDTO,
     userId: string,
     isImport: boolean = false,
-  ): Promise<UnitDefaultTestDTO> {
+  ): Promise<UnitDefaultTestRecordDTO> {
     const timestamp = currentDateTime().toLocaleString();
 
     const entity = await this.getUnitDefaultTest(id);

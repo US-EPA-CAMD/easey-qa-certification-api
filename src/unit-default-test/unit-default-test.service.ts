@@ -1,6 +1,9 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UnitDefaultTestDTO } from '../dto/unit-default-test.dto';
+import {
+  UnitDefaultTestDTO,
+  UnitDefaultTestRecordDTO,
+} from '../dto/unit-default-test.dto';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { UnitDefaultTestRepository } from './unit-default-test.repository';
@@ -17,7 +20,9 @@ export class UnitDefaultTestService {
     private readonly unitDefaultTestRunService: UnitDefaultTestRunService,
   ) {}
 
-  async getUnitDefaultTests(testSumId: string): Promise<UnitDefaultTestDTO[]> {
+  async getUnitDefaultTests(
+    testSumId: string,
+  ): Promise<UnitDefaultTestRecordDTO[]> {
     const records = await this.repository.find({ where: { testSumId } });
 
     return this.map.many(records);
@@ -26,7 +31,7 @@ export class UnitDefaultTestService {
   async getUnitDefaultTest(
     id: string,
     testSumId: string,
-  ): Promise<UnitDefaultTestDTO> {
+  ): Promise<UnitDefaultTestRecordDTO> {
     const result = await this.repository.findOne({
       id,
       testSumId,

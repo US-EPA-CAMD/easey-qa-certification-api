@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnitDefaultTestRunDTO } from '../dto/unit-default-test-run.dto';
+import { UnitDefaultTestRunRecordDTO } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRunController } from './unit-default-test-run.controller';
 import { UnitDefaultTestRunService } from './unit-default-test-run.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -16,7 +16,7 @@ const user: CurrentUser = {
   isAdmin: false,
   roles: [],
 };
-const dto = new UnitDefaultTestRunDTO();
+const dto = new UnitDefaultTestRunRecordDTO();
 
 const mockService = () => ({
   getUnitDefaultTestRun: jest.fn().mockResolvedValue(dto),

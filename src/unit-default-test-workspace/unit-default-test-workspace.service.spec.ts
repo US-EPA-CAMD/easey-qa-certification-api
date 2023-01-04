@@ -3,8 +3,9 @@ import { UnitDefaultTest } from '../entities/workspace/unit-default-test.entity'
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import {
   UnitDefaultTestBaseDTO,
-  UnitDefaultTestDTO,
+  UnitDefaultTestRecordDTO,
   UnitDefaultTestImportDTO,
+  UnitDefaultTestDTO,
 } from '../dto/unit-default-test.dto';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
@@ -25,7 +26,7 @@ const payload = new UnitDefaultTestBaseDTO();
 const importPayload = new UnitDefaultTestImportDTO();
 
 const entity = new UnitDefaultTest();
-const dto = new UnitDefaultTestDTO();
+const dto = new UnitDefaultTestRecordDTO();
 
 const unitDefaultTestRunDto = new UnitDefaultTestRunDTO();
 unitDefaultTestRunDto.unitDefaultTestSumId = 'ID';
@@ -204,15 +205,16 @@ describe('UnitDefaultTestWorkspaceService', () => {
 
   describe('export', () => {
     it('Should export Unit Default Test Record', async () => {
-      dto.id = 'ID';
+      const exportDto = new UnitDefaultTestDTO();
+      exportDto.id = 'ID';
+      exportDto.unitDefaultTestRunData = [unitDefaultTestRunDto];
 
       jest
         .spyOn(service, 'getUnitDefaultTestsByTestSumIds')
-        .mockResolvedValue([dto]);
+        .mockResolvedValue([exportDto]);
 
       const result = await service.export([testSumId]);
-      dto.unitDefaultTestRunData = [unitDefaultTestRunDto];
-      expect(result).toEqual([dto]);
+      expect(result).toEqual([exportDto]);
     });
   });
 

@@ -19,7 +19,7 @@ export class UnitDefaultTestRunService {
 
   async getUnitDefaultTestRuns(
     unitDefaultTestSumId: string,
-  ): Promise<UnitDefaultTestRunDTO[]> {
+  ): Promise<UnitDefaultTestRunRecordDTO[]> {
     const records = await this.repository.find({
       where: { unitDefaultTestSumId },
     });
@@ -30,7 +30,7 @@ export class UnitDefaultTestRunService {
   async getUnitDefaultTestRun(
     id: string,
     unitDefaultTestSumId: string,
-  ): Promise<UnitDefaultTestRunDTO> {
+  ): Promise<UnitDefaultTestRunRecordDTO> {
     const result = await this.repository.findOne({
       id,
       unitDefaultTestSumId,
@@ -48,7 +48,7 @@ export class UnitDefaultTestRunService {
 
   async getUnitDefaultTestRunByUnitDefaultTestSumIds(
     unitDefaultTestSumIds: string[],
-  ): Promise<UnitDefaultTestRunRecordDTO[]> {
+  ): Promise<UnitDefaultTestRunDTO[]> {
     const results = await this.repository.find({
       where: { unitDefaultTestSumId: In(unitDefaultTestSumIds) },
     });
@@ -57,7 +57,7 @@ export class UnitDefaultTestRunService {
 
   async export(
     unitDefaultTestSumIds: string[],
-  ): Promise<UnitDefaultTestRunRecordDTO[]> {
+  ): Promise<UnitDefaultTestRunDTO[]> {
     return this.getUnitDefaultTestRunByUnitDefaultTestSumIds(
       unitDefaultTestSumIds,
     );
