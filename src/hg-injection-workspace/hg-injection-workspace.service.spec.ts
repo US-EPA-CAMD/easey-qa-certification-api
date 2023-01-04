@@ -1,11 +1,18 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { HgInjectionBaseDTO, HgInjectionDTO } from '../dto/hg-injection.dto';
-import { HgInjection } from '../entities/hg-injection.entity';
+import { HgInjectionRepository } from '../hg-injection/hg-injection.repository';
+import {
+  HgInjectionBaseDTO,
+  HgInjectionDTO,
+  HgInjectionImportDTO,
+} from '../dto/hg-injection.dto';
+import { HgInjection } from '../entities/workspace/hg-injection.entity';
+import { HgInjection as HgInjectionOfficial } from '../entities/hg-injection.entity';
 import { HgInjectionMap } from '../maps/hg-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.repository';
 import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 const id = '';
 const hgTestSumId = '';
@@ -25,6 +32,10 @@ const mockRepository = () => ({
   delete: jest.fn().mockResolvedValue(null),
 });
 
+const mockHistoricalRepo = () => ({
+  findOne: jest.fn().mockResolvedValue(new HgInjectionOfficial()),
+});
+
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(dto),
   many: jest.fn().mockResolvedValue([dto]),
@@ -40,6 +51,7 @@ describe('HgInjectionWorkspaceService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         HgInjectionWorkspaceService,
         {
@@ -49,6 +61,10 @@ describe('HgInjectionWorkspaceService', () => {
         {
           provide: HgInjectionWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: HgInjectionRepository,
+          useFactory: mockHistoricalRepo,
         },
         {
           provide: HgInjectionMap,
@@ -113,6 +129,7 @@ describe('HgInjectionWorkspaceService', () => {
         payload,
         userId,
         false,
+        'historicalId',
       );
 
       expect(result).toEqual(dto);
@@ -158,7 +175,7 @@ describe('HgInjectionWorkspaceService', () => {
 
     it('should throw an error while deleting a Hg Injection record', async () => {
       const error = new InternalServerErrorException(
-        `Error deleting Cycle Time Injection record Id [${hgTestInjId}]`,
+        `Error deleting Hg Injection record Id [${hgTestInjId}]`,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);
 
@@ -187,6 +204,35 @@ describe('HgInjectionWorkspaceService', () => {
 
       const result = await service.export([hgTestSumId]);
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('import', () => {
+    const importPayload = new HgInjectionImportDTO();
+    it('Should Import Hg Injection', async () => {
+      jest.spyOn(service, 'createHgInjection').mockResolvedValue(dto);
+
+      const result = await service.import(
+        testSumId,
+        hgTestSumId,
+        importPayload,
+        userId,
+        false,
+      );
+      expect(result).toEqual(null);
+    });
+
+    it('Should Import Hg Injection from Historical Record', async () => {
+      jest.spyOn(service, 'createHgInjection').mockResolvedValue(dto);
+
+      const result = await service.import(
+        testSumId,
+        hgTestSumId,
+        importPayload,
+        userId,
+        true,
+      );
+      expect(result).toEqual(null);
     });
   });
 });
