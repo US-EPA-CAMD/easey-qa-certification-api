@@ -20,6 +20,7 @@ import { HgInjectionWorkspaceService } from '../hg-injection-workspace/hg-inject
 @Injectable()
 export class HgSummaryWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     private readonly map: HgSummaryMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
@@ -30,7 +31,6 @@ export class HgSummaryWorkspaceService {
 
     @InjectRepository(HgSummaryRepository)
     private readonly historicalRepo: HgSummaryRepository,
-    private readonly logger: Logger,
   ) {}
 
   async getHgSummaries(testSumId: string): Promise<HgSummaryDTO[]> {
@@ -174,6 +174,7 @@ export class HgSummaryWorkspaceService {
     userId: string,
     isHistoricalRecord: boolean,
   ) {
+    const promises = [];
     const isImport = true;
     let historicalRecord: HgSummary;
 
@@ -195,6 +196,29 @@ export class HgSummaryWorkspaceService {
     this.logger.info(
       `Hg Summary Successfully Imported. Record Id: ${createdHgSummary.id}`,
     );
+
+    if (payload.HgInjectionData?.length > 0) {
+      for (const hgInjection of payload.HgInjectionData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.hgInjectionService.import(
+                testSumId,
+                createdHgSummary.id,
+                hgInjection,
+                userId,
+                isHistoricalRecord,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    await Promise.all(promises);
 
     return null;
   }
