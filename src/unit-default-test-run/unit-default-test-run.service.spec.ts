@@ -56,7 +56,10 @@ describe('UnitDefaultTestRunService', () => {
 
   describe('getUnitDefaultTestRun', () => {
     it('Should return a UnitDefaultTestRun record', async () => {
-      const result = await service.getUnitDefaultTestRun(id, unitDefaultTestSumId);
+      const result = await service.getUnitDefaultTestRun(
+        id,
+        unitDefaultTestSumId,
+      );
 
       expect(result).toEqual(dto);
     });

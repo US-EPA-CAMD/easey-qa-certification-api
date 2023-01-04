@@ -44,14 +44,23 @@ describe('UnitDefaultTestRunController', () => {
 
   describe('getUnitDefaultTestRun', () => {
     it('Calls the service to get a Unit Default Test Run record', async () => {
-      const result = await controller.getUnitDefaultTestRun(locId, testSumId, unitDefaultTestSumId, id);
+      const result = await controller.getUnitDefaultTestRun(
+        locId,
+        testSumId,
+        unitDefaultTestSumId,
+        id,
+      );
       expect(result).toEqual(dto);
     });
   });
 
   describe('getUnitDefaultTestRuns', () => {
     it('Calls the service to many Unit Default Test Run records', async () => {
-      const result = await controller.getUnitDefaultTestRuns(locId, testSumId, unitDefaultTestSumId);
+      const result = await controller.getUnitDefaultTestRuns(
+        locId,
+        testSumId,
+        unitDefaultTestSumId,
+      );
       expect(result).toEqual([dto]);
     });
   });

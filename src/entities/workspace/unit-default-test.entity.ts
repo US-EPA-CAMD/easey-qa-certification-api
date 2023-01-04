@@ -3,12 +3,13 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToOne, OneToMany,
+  ManyToOne,
+  OneToMany,
   PrimaryColumn,
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import { TestSummary } from './test-summary.entity';
-import { UnitDefaultTestRun} from './unit-default-test-run.entity';
+import { UnitDefaultTestRun } from './unit-default-test-run.entity';
 
 @Entity({
   name: 'camdecmpswks.unit_default_test',

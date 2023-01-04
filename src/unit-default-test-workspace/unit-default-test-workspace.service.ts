@@ -17,6 +17,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
 import { UnitDefaultTest } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestRepository } from '../unit-default-test/unit-default-test.repository';
+import { UnitDefaultTestRunWorkspaceService } from '../unit-default-test-run-workspace/unit-default-test-run.service';
 
 @Injectable()
 export class UnitDefaultTestWorkspaceService {
@@ -29,6 +30,8 @@ export class UnitDefaultTestWorkspaceService {
     @InjectRepository(UnitDefaultTestRepository)
     private readonly historicalRepo: UnitDefaultTestRepository,
     private readonly logger: Logger,
+    @Inject(forwardRef(() => UnitDefaultTestRunWorkspaceService))
+    private readonly unitDefaultTestRunService: UnitDefaultTestRunWorkspaceService,
   ) {}
 
   async getUnitDefaultTests(testSumId: string): Promise<UnitDefaultTestDTO[]> {
@@ -144,7 +147,20 @@ export class UnitDefaultTestWorkspaceService {
   }
 
   async export(testSumIds: string[]): Promise<UnitDefaultTestDTO[]> {
-    return this.getUnitDefaultTestsByTestSumIds(testSumIds);
+    const unitDefaultTests = await this.getUnitDefaultTestsByTestSumIds(
+      testSumIds,
+    );
+
+    const unitDefaultTestRuns = await this.unitDefaultTestRunService.export(
+      unitDefaultTests.map(udtr => udtr.id),
+    );
+
+    unitDefaultTests.forEach(udt => {
+      udt.unitDefaultTestRunData = unitDefaultTestRuns.filter(
+        udtr => udtr.unitDefaultTestSumId === udt.id,
+      );
+    });
+    return unitDefaultTests;
   }
 
   async import(
