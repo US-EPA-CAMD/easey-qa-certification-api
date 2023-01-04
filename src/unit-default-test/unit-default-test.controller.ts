@@ -1,7 +1,7 @@
 import { UnitDefaultTestService } from './unit-default-test.service';
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { UnitDefaultTestDTO } from '../dto/unit-default-test.dto';
+import { UnitDefaultTestRecordDTO } from '../dto/unit-default-test.dto';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -12,28 +12,28 @@ export class UnitDefaultTestController {
   @Get()
   @ApiOkResponse({
     isArray: true,
-    type: UnitDefaultTestDTO,
+    type: UnitDefaultTestRecordDTO,
     description:
       'Retrieves official Unit Default Test records by Test Summary Id',
   })
   async getUnitDefaultTests(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<UnitDefaultTestDTO[]> {
+  ): Promise<UnitDefaultTestRecordDTO[]> {
     return this.service.getUnitDefaultTests(testSumId);
   }
 
   @Get(':id')
   @ApiOkResponse({
     isArray: false,
-    type: UnitDefaultTestDTO,
+    type: UnitDefaultTestRecordDTO,
     description: 'Retrieves official Unit Default Test record by its Id',
   })
   async getUnitDefaultTest(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
-  ): Promise<UnitDefaultTestDTO> {
+  ): Promise<UnitDefaultTestRecordDTO> {
     return this.service.getUnitDefaultTest(id, testSumId);
   }
 }

@@ -7,7 +7,7 @@ import { UnitDefaultTestRun } from '../entities/unit-default-test-run.entity';
 export class UnitDefaultTestRunMap extends BaseMap<
   UnitDefaultTestRun,
   UnitDefaultTestRunDTO
-  > {
+> {
   public async one(entity: UnitDefaultTestRun): Promise<UnitDefaultTestRunDTO> {
     return {
       id: entity.id,

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnitDefaultTestRunDTO } from '../dto/unit-default-test-run.dto';
+import { UnitDefaultTestRunRecordDTO } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRunController } from './unit-default-test-run.controller';
 import { UnitDefaultTestRunService } from './unit-default-test-run.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -16,7 +16,7 @@ const user: CurrentUser = {
   isAdmin: false,
   roles: [],
 };
-const dto = new UnitDefaultTestRunDTO();
+const dto = new UnitDefaultTestRunRecordDTO();
 
 const mockService = () => ({
   getUnitDefaultTestRun: jest.fn().mockResolvedValue(dto),
@@ -44,14 +44,23 @@ describe('UnitDefaultTestRunController', () => {
 
   describe('getUnitDefaultTestRun', () => {
     it('Calls the service to get a Unit Default Test Run record', async () => {
-      const result = await controller.getUnitDefaultTestRun(locId, testSumId, unitDefaultTestSumId, id);
+      const result = await controller.getUnitDefaultTestRun(
+        locId,
+        testSumId,
+        unitDefaultTestSumId,
+        id,
+      );
       expect(result).toEqual(dto);
     });
   });
 
   describe('getUnitDefaultTestRuns', () => {
     it('Calls the service to many Unit Default Test Run records', async () => {
-      const result = await controller.getUnitDefaultTestRuns(locId, testSumId, unitDefaultTestSumId);
+      const result = await controller.getUnitDefaultTestRuns(
+        locId,
+        testSumId,
+        unitDefaultTestSumId,
+      );
       expect(result).toEqual([dto]);
     });
   });

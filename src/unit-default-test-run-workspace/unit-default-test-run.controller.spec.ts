@@ -4,7 +4,7 @@ import { UnitDefaultTestRunWorkspaceService } from './unit-default-test-run.serv
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   UnitDefaultTestRunBaseDTO,
-  UnitDefaultTestRunDTO,
+  UnitDefaultTestRunRecordDTO,
 } from '../dto/unit-default-test-run.dto';
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
@@ -22,7 +22,7 @@ const user: CurrentUser = {
   isAdmin: false,
   roles: [],
 };
-const dto = new UnitDefaultTestRunDTO();
+const dto = new UnitDefaultTestRunRecordDTO();
 
 const payload = new UnitDefaultTestRunBaseDTO();
 
@@ -30,6 +30,7 @@ const mockService = () => ({
   getUnitDefaultTestRun: jest.fn().mockResolvedValue(dto),
   getUnitDefaultTestRuns: jest.fn().mockResolvedValue([dto]),
   createUnitDefaultTestRun: jest.fn().mockResolvedValue(dto),
+  updateUnitDefaultTestRun: jest.fn().mockResolvedValue(dto),
   deleteUnitDefaultTestRun: jest.fn().mockResolvedValue(null),
 });
 
@@ -88,6 +89,21 @@ describe('UnitDefaultTestRunWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(dto);
+    });
+  });
+
+  describe('updateUnitDefaultTestRun', () => {
+    it('should call the updateUnitDefaultTestRun and update Unit Default Test Run record', async () => {
+      expect(
+        await controller.updateUnitDefaultTestRun(
+          locId,
+          testSumId,
+          unitDefaultTestSumId,
+          id,
+          payload,
+          user,
+        ),
+      ).toEqual(dto);
     });
   });
 

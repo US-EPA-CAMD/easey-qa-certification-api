@@ -235,9 +235,7 @@ export class TestSummaryService {
             testSumIds,
           );
 
-          hgSummaryData = await this.hgSummaryService.export(
-            testSumIds,
-          );
+          hgSummaryData = await this.hgSummaryService.export(testSumIds);
 
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
@@ -280,9 +278,7 @@ export class TestSummaryService {
             s.transmitterTransducerData = transmitterTransducerAccuracyData.filter(
               i => i.testSumId === s.id,
             );
-            s.hgSummaryData = hgSummaryData.filter(
-              i => i.testSumId === s.id,
-            );
+            s.hgSummaryData = hgSummaryData.filter(i => i.testSumId === s.id);
           });
         }
 
