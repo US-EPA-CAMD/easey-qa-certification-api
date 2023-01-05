@@ -7,12 +7,14 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '../utilities/functions';
 import {
   UnitDefaultTestRunBaseDTO,
+  UnitDefaultTestRunDTO,
   UnitDefaultTestRunRecordDTO,
 } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { UnitDefaultTestRunWorkspaceRepository } from './unit-default-test-run.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
 
 @Injectable()
 export class UnitDefaultTestRunWorkspaceService {
@@ -145,6 +147,23 @@ export class UnitDefaultTestRunWorkspaceService {
       testSumId,
       userId,
       isImport,
+    );
+  }
+
+  async getUnitDefaultTestRunByUnitDefaultTestSumIds(
+    unitDefaultTestSumIds: string[],
+  ): Promise<UnitDefaultTestRunDTO[]> {
+    const results = await this.repository.find({
+      where: { unitDefaultTestSumId: In(unitDefaultTestSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(
+    unitDefaultTestSumIds: string[],
+  ): Promise<UnitDefaultTestRunDTO[]> {
+    return this.getUnitDefaultTestRunByUnitDefaultTestSumIds(
+      unitDefaultTestSumIds,
     );
   }
 }
