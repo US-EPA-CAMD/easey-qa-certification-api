@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -21,7 +22,7 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 import {
   UnitDefaultTestRunBaseDTO,
-  UnitDefaultTestRunDTO,
+  UnitDefaultTestRunRecordDTO,
 } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRunWorkspaceService } from './unit-default-test-run.service';
 
@@ -34,7 +35,7 @@ export class UnitDefaultTestRunWorkspaceController {
   @Get()
   @ApiOkResponse({
     isArray: true,
-    type: UnitDefaultTestRunDTO,
+    type: UnitDefaultTestRunRecordDTO,
     description:
       'Retrieves official Unit Default Test Run records by Unit Default Test Summary Id',
   })
@@ -42,14 +43,14 @@ export class UnitDefaultTestRunWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('unitDefaultTestSumId') unitDefaultTestSumId: string,
-  ): Promise<UnitDefaultTestRunDTO[]> {
+  ): Promise<UnitDefaultTestRunRecordDTO[]> {
     return this.service.getUnitDefaultTestRuns(unitDefaultTestSumId);
   }
 
   @Get(':id')
   @ApiOkResponse({
     isArray: false,
-    type: UnitDefaultTestRunDTO,
+    type: UnitDefaultTestRunRecordDTO,
     description: 'Retrieves official Unit Default Test Run record by its Id',
   })
   async getUnitDefaultTestRun(
@@ -57,7 +58,7 @@ export class UnitDefaultTestRunWorkspaceController {
     @Param('testSumId') testSumId: string,
     @Param('unitDefaultTestSumId') unitDefaultTestSumId: string,
     @Param('id') id: string,
-  ): Promise<UnitDefaultTestRunDTO> {
+  ): Promise<UnitDefaultTestRunRecordDTO> {
     return this.service.getUnitDefaultTestRun(id, unitDefaultTestSumId);
   }
 
@@ -65,7 +66,7 @@ export class UnitDefaultTestRunWorkspaceController {
   @UseGuards(AuthGuard)
   @ApiBearerAuth('Token')
   @ApiCreatedResponse({
-    type: UnitDefaultTestRunDTO,
+    type: UnitDefaultTestRunRecordDTO,
     description: 'Creates a workspace Unit Default Test Run record.',
   })
   createUnitDefaultTestRun(
@@ -74,10 +75,33 @@ export class UnitDefaultTestRunWorkspaceController {
     @Param('unitDefaultTestSumId') unitDefaultTestSumId: string,
     @Body() payload: UnitDefaultTestRunBaseDTO,
     @User() user: CurrentUser,
-  ): Promise<UnitDefaultTestRunDTO> {
+  ): Promise<UnitDefaultTestRunRecordDTO> {
     return this.service.createUnitDefaultTestRun(
       _testSumId,
       unitDefaultTestSumId,
+      payload,
+      user.userId,
+    );
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: UnitDefaultTestRunRecordDTO,
+    description: 'Updates a workspace Unit Default Test Run record.',
+  })
+  updateUnitDefaultTestRun(
+    @Param('locId') _locationId: string,
+    @Param('testSumId') testSumId: string,
+    @Param('unitDefaultTestSumId') _unitDefaultTestSumId: string,
+    @Param('id') id: string,
+    @Body() payload: UnitDefaultTestRunBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<UnitDefaultTestRunRecordDTO> {
+    return this.service.updateUnitDefaultTestRun(
+      testSumId,
+      id,
       payload,
       user.userId,
     );

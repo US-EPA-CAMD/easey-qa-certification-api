@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnitDefaultTestDTO } from '../dto/unit-default-test.dto';
+import { UnitDefaultTestRecordDTO } from '../dto/unit-default-test.dto';
 import { UnitDefaultTest } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { UnitDefaultTestRepository } from './unit-default-test.repository';
@@ -9,7 +9,7 @@ const id = '';
 const testSumId = '';
 
 const entity = new UnitDefaultTest();
-const dto = new UnitDefaultTestDTO();
+const dto = new UnitDefaultTestRecordDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),

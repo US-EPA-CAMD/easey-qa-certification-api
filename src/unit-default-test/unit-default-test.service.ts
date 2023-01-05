@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UnitDefaultTestDTO } from '../dto/unit-default-test.dto';
+import { UnitDefaultTestRecordDTO } from '../dto/unit-default-test.dto';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { UnitDefaultTestRepository } from './unit-default-test.repository';
@@ -14,7 +14,9 @@ export class UnitDefaultTestService {
     private readonly repository: UnitDefaultTestRepository,
   ) {}
 
-  async getUnitDefaultTests(testSumId: string): Promise<UnitDefaultTestDTO[]> {
+  async getUnitDefaultTests(
+    testSumId: string,
+  ): Promise<UnitDefaultTestRecordDTO[]> {
     const records = await this.repository.find({ where: { testSumId } });
 
     return this.map.many(records);
@@ -23,7 +25,7 @@ export class UnitDefaultTestService {
   async getUnitDefaultTest(
     id: string,
     testSumId: string,
-  ): Promise<UnitDefaultTestDTO> {
+  ): Promise<UnitDefaultTestRecordDTO> {
     const result = await this.repository.findOne({
       id,
       testSumId,
@@ -41,7 +43,7 @@ export class UnitDefaultTestService {
 
   async getUnitDefaultTestsByTestSumIds(
     testSumIds: string[],
-  ): Promise<UnitDefaultTestDTO[]> {
+  ): Promise<UnitDefaultTestRecordDTO[]> {
     const results = await this.repository.find({
       where: { testSumId: In(testSumIds) },
     });
@@ -49,7 +51,7 @@ export class UnitDefaultTestService {
     return this.map.many(results);
   }
 
-  async export(testSumIds: string[]): Promise<UnitDefaultTestDTO[]> {
+  async export(testSumIds: string[]): Promise<UnitDefaultTestRecordDTO[]> {
     return this.getUnitDefaultTestsByTestSumIds(testSumIds);
   }
 }

@@ -17,6 +17,10 @@ import { HttpModule } from '@nestjs/axios';
   ],
   controllers: [UnitDefaultTestRunWorkspaceController],
   providers: [UnitDefaultTestRunMap, UnitDefaultTestRunWorkspaceService],
-  exports: [TypeOrmModule, UnitDefaultTestRunMap, UnitDefaultTestRunWorkspaceService],
+  exports: [
+    TypeOrmModule,
+    UnitDefaultTestRunMap,
+    UnitDefaultTestRunWorkspaceService,
+  ],
 })
 export class UnitDefaultTestRunWorkspaceModule {}

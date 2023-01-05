@@ -271,7 +271,7 @@ const routes: Routes = [
                 path: ':unitDefaultTestSumId/unit-default-test-runs',
                 module: UnitDefaultTestRunWorkspaceModule,
               },
-            ]
+            ],
           },
           {
             path: ':testSumId/air-emission-testings',
