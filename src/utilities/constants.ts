@@ -36,6 +36,17 @@ export const BEGIN_DATE_TEST_TYPE_CODES = [
   TestTypeCodes.SEVENDAY.toString(),
 ];
 
+export const BEGIN_MINUTE_TEST_TYPE_CODES = [
+  TestTypeCodes.UNITDEF.toString(),
+  TestTypeCodes.APPE.toString(),
+  TestTypeCodes.RATA.toString(),
+  TestTypeCodes.HGSI3.toString(),
+  TestTypeCodes.HGLINE.toString(),
+  TestTypeCodes.LINE.toString(),
+  TestTypeCodes.CYCLE.toString(),
+  TestTypeCodes.SEVENDAY.toString(),
+];
+
 export const VALID_CODES_FOR_COMPONENT_ID_VALIDATION = [
   TestTypeCodes.FFACCTT,
   TestTypeCodes.FFACC,
