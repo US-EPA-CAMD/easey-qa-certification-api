@@ -100,6 +100,7 @@ import {
   YEAR_QUARTER_TEST_TYPE_CODES,
   GRACE_PERIOD_IND_TEST_TYPE_CODES,
   VALID_CODES_FOR_END_DATE_VALIDATION,
+  BEGIN_MINUTE_TEST_TYPE_CODES,
 } from '../utilities/constants';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
@@ -303,7 +304,7 @@ export class TestSummaryBaseDTO {
     message: (args: ValidationArguments) =>
       `The value [${args.value}] in the field [beginMinute] for [${KEY}] is not within the range of valid values from [${MIN_MINUTE}] to [${MAX_MINUTE}].`,
   })
-  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
+  @ValidateIf(o => BEGIN_MINUTE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginMinute?: number;
 
   @ApiProperty({
