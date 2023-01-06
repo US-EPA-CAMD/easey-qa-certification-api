@@ -1,5 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnitDefaultTestRecordDTO } from '../dto/unit-default-test.dto';
+import { UnitDefaultTestRunService } from '../unit-default-test-run/unit-default-test-run.service';
+import { UnitDefaultTestRunDTO } from '../dto/unit-default-test-run.dto';
+import {
+  UnitDefaultTestDTO,
+  UnitDefaultTestRecordDTO,
+} from '../dto/unit-default-test.dto';
 import { UnitDefaultTest } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { UnitDefaultTestRepository } from './unit-default-test.repository';
@@ -11,6 +16,9 @@ const testSumId = '';
 const entity = new UnitDefaultTest();
 const dto = new UnitDefaultTestRecordDTO();
 
+const unitDefaultTestRunDto = new UnitDefaultTestRunDTO();
+unitDefaultTestRunDto.unitDefaultTestSumId = 'ID';
+
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
   findOne: jest.fn().mockResolvedValue(entity),
@@ -19,6 +27,10 @@ const mockRepository = () => ({
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(dto),
   many: jest.fn().mockResolvedValue([dto]),
+});
+
+const mockUnitDefaultTestRunService = () => ({
+  export: jest.fn().mockResolvedValue([unitDefaultTestRunDto]),
 });
 
 describe('UnitDefaultTestService', () => {
@@ -36,6 +48,10 @@ describe('UnitDefaultTestService', () => {
         {
           provide: UnitDefaultTestMap,
           useFactory: mockMap,
+        },
+        {
+          provide: UnitDefaultTestRunService,
+          useFactory: mockUnitDefaultTestRunService,
         },
       ],
     }).compile();
@@ -84,12 +100,17 @@ describe('UnitDefaultTestService', () => {
 
   describe('export', () => {
     it('Should export Unit Default Test Record', async () => {
+      const exportDto = new UnitDefaultTestDTO();
+
+      exportDto.id = 'ID';
+
       jest
         .spyOn(service, 'getUnitDefaultTestsByTestSumIds')
-        .mockResolvedValue([]);
+        .mockResolvedValue([exportDto]);
 
       const result = await service.export([testSumId]);
-      expect(result).toEqual([]);
+      exportDto.unitDefaultTestRunData = [unitDefaultTestRunDto];
+      expect(result).toEqual([exportDto]);
     });
   });
 });

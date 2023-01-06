@@ -179,4 +179,24 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
       expect(errored).toEqual(true);
     });
   });
+
+  describe('getUnitDefaultTestRunByUnitDefaultTestSumIds', () => {
+    it('Should get Unit Default Test Run records by unitDefaultTestSumIds', async () => {
+      const result = await service.getUnitDefaultTestRunByUnitDefaultTestSumIds(
+        [unitDefaultTestSumId],
+      );
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Unit Default Test Run record', async () => {
+      jest
+        .spyOn(service, 'getUnitDefaultTestRunByUnitDefaultTestSumIds')
+        .mockResolvedValue([]);
+
+      const result = await service.export([unitDefaultTestSumId]);
+      expect(result).toEqual([]);
+    });
+  });
 });
