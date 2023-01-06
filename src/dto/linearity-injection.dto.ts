@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 import { IsNotEmpty, ValidationArguments } from 'class-validator';
 import { IsNotNegative } from '../pipes/is-not-negative.pipe';
@@ -29,8 +30,12 @@ export class LinearityInjectionBaseDTO {
     },
   })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
-    message: (args: ValidationArguments) =>
-      `The value [${args.value}] in the field [injectionHour] for [${KEY}] is not within the range of valid values from [${MIN_HOUR}] to [${MAX_HOUR}].`,
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('LINEAR-19-A', {
+        type: args.value,
+        key: KEY,
+      });
+    },
   })
   injectionHour: number;
 
@@ -43,8 +48,12 @@ export class LinearityInjectionBaseDTO {
     },
   })
   @IsInRange(MIN_MINUTE, MAX_MINUTE, {
-    message: (args: ValidationArguments) =>
-      `The value [${args.value}] in the field [injectionMinute] for [${KEY}] is not within the range of valid values from [${MIN_MINUTE}] to [${MAX_MINUTE}].`,
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('LINEAR-19-A', {
+        type: args.value,
+        key: KEY,
+      });
+    },
   })
   injectionMinute: number;
 
@@ -53,7 +62,10 @@ export class LinearityInjectionBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('LINEAR-20-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   measuredValue: number;
@@ -63,12 +75,19 @@ export class LinearityInjectionBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('LINEAR-21-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   @IsNotNegative({
     message: (args: ValidationArguments) => {
-      return `The value [${args.value}] in the field [${args.property}] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to zero.`;
+      return CheckCatalogService.formatResultMessage('LINEAR-21-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   referenceValue: number;
