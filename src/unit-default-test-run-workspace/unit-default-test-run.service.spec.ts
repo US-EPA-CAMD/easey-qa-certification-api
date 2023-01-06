@@ -1,5 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { HttpStatus } from '@nestjs/common';
+
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+
 import { UnitDefaultTestRun } from '../entities/workspace/unit-default-test-run.entity';
+import { UnitDefaultTestRun as UnitDefaultTestRunOfficial } from '../entities//unit-default-test-run.entity';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import {
   UnitDefaultTestRunBaseDTO,
@@ -8,9 +14,7 @@ import {
 import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
 import { UnitDefaultTestRunWorkspaceRepository } from './unit-default-test-run.repository';
 import { UnitDefaultTestRunWorkspaceService } from './unit-default-test-run.service';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { HttpStatus } from '@nestjs/common';
+import { UnitDefaultTestRunRepository } from '../unit-default-test-run/unit-default-test-run.repository';
 
 const id = '';
 const testSumId = '';
@@ -39,6 +43,10 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockOfficialRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(new UnitDefaultTestRunOfficial()),
+});
+
 describe('UnitDefaultTestRunWorkspaceService', () => {
   let service: UnitDefaultTestRunWorkspaceService;
   let repository: UnitDefaultTestRunWorkspaceRepository;
@@ -55,6 +63,10 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
         {
           provide: UnitDefaultTestRunWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: UnitDefaultTestRunRepository,
+          useFactory: mockOfficialRepository,
         },
         {
           provide: UnitDefaultTestRunMap,

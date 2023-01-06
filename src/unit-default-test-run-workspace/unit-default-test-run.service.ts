@@ -1,20 +1,23 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 import { currentDateTime } from '../utilities/functions';
 import {
   UnitDefaultTestRunBaseDTO,
   UnitDefaultTestRunDTO,
+  UnitDefaultTestRunImportDTO,
   UnitDefaultTestRunRecordDTO,
 } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { UnitDefaultTestRunWorkspaceRepository } from './unit-default-test-run.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
+import { UnitDefaultTestRun } from '../entities/unit-default-test-run.entity';
+import { UnitDefaultTestRunRepository } from '../unit-default-test-run/unit-default-test-run.repository';
 
 @Injectable()
 export class UnitDefaultTestRunWorkspaceService {
@@ -24,6 +27,8 @@ export class UnitDefaultTestRunWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(UnitDefaultTestRunWorkspaceRepository)
     private readonly repository: UnitDefaultTestRunWorkspaceRepository,
+    @InjectRepository(UnitDefaultTestRunRepository)
+    private readonly historicalRepository: UnitDefaultTestRunRepository,
     private readonly logger: Logger,
   ) {}
 
@@ -165,5 +170,39 @@ export class UnitDefaultTestRunWorkspaceService {
     return this.getUnitDefaultTestRunByUnitDefaultTestSumIds(
       unitDefaultTestSumIds,
     );
+  }
+
+  async import(
+    testSumId: string,
+    unitDefaultTestSumId: string,
+    payload: UnitDefaultTestRunImportDTO,
+    userId: string,
+    isHistoricalRecord?: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: UnitDefaultTestRun;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepository.findOne({
+        unitDefaultTestSumId,
+        operatingLevel: payload.operatingLevel,
+        runNumber: payload.runNumber,
+      });
+    }
+
+    const createdUnitDefaultTestRun = await this.createUnitDefaultTestRun(
+      testSumId,
+      unitDefaultTestSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Unit Default Test Run successfully imported. Record Id: ${createdUnitDefaultTestRun.id}`,
+    );
+
+    return null;
   }
 }
