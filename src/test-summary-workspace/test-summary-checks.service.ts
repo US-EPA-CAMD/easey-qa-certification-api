@@ -25,6 +25,7 @@ import { MonitorMethodRepository } from '../monitor-method/monitor-method.reposi
 import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
 import {
   BEGIN_DATE_TEST_TYPE_CODES,
+  BEGIN_MINUTE_TEST_TYPE_CODES,
   VALID_CODES_FOR_END_MINUTE_VALIDATION,
 } from '../utilities/constants';
 
@@ -783,22 +784,21 @@ export class TestSummaryChecksService {
     locationId: string,
     minuteField: string,
   ): Promise<string> {
-    let FIELDNAME: string = 'minuteField';
-
     const resultA = this.getMessage('TEST-3-A', {
-      fieldname: FIELDNAME,
+      fieldname: minuteField,
       key: KEY,
     });
     const resultB = this.getMessage('TEST-3-B', {
-      fieldname: FIELDNAME,
+      fieldname: minuteField,
       key: KEY,
     });
 
     if (
       minuteField === 'endMinute' &&
       summary.testTypeCode.toUpperCase() === TestTypeCodes.ONOFF
-    )
+    ) {
       return null;
+    }
 
     if (summary[minuteField] === null || summary[minuteField] === undefined) {
       const listOfCodes = [
@@ -823,16 +823,20 @@ export class TestSummaryChecksService {
           locationId,
           summary.unitId,
           summary.stackPipeId,
-          summary[minuteField],
+          summary['beginDate'],
         );
 
-        this.qaMonitorPlanRepository.find();
         if (mp) return resultA;
       } catch (e) {
         console.error(e);
       }
 
-      return resultB;
+      if (
+        minuteField === 'beginMinute' &&
+        BEGIN_MINUTE_TEST_TYPE_CODES.includes(summary.testTypeCode)
+      ) {
+        return resultB;
+      }
     }
 
     return null;
