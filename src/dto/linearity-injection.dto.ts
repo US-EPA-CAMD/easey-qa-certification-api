@@ -16,7 +16,10 @@ export class LinearityInjectionBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('LINEAR-19-A', {
+        type: args.value,
+        key: KEY,
+      });
     },
   })
   injectionDate: Date;
@@ -26,7 +29,10 @@ export class LinearityInjectionBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('LINEAR-19-A', {
+        type: args.value,
+        key: KEY,
+      });
     },
   })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
@@ -44,7 +50,10 @@ export class LinearityInjectionBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('LINEAR-19-A', {
+        type: args.value,
+        key: KEY,
+      });
     },
   })
   @IsInRange(MIN_MINUTE, MAX_MINUTE, {
