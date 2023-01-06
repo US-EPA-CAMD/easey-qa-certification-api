@@ -688,8 +688,9 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.hgSummaryData?.length > 0 &&
-      payload.testTypeCode === TestTypeCodes.HGLINE
+      (payload.hgSummaryData?.length > 0 &&
+        payload.testTypeCode === TestTypeCodes.HGLINE) ||
+      payload.testTypeCode === TestTypeCodes.HGSI3
     ) {
       for (const hgSummary of payload.hgSummaryData) {
         promises.push(

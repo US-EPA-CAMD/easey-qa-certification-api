@@ -11,12 +11,14 @@ import {
   UnitDefaultTestBaseDTO,
   UnitDefaultTestRecordDTO,
   UnitDefaultTestImportDTO,
+  UnitDefaultTestDTO,
 } from '../dto/unit-default-test.dto';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
 import { UnitDefaultTest } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestRepository } from '../unit-default-test/unit-default-test.repository';
+import { UnitDefaultTestRunWorkspaceService } from '../unit-default-test-run-workspace/unit-default-test-run.service';
 
 @Injectable()
 export class UnitDefaultTestWorkspaceService {
@@ -29,6 +31,8 @@ export class UnitDefaultTestWorkspaceService {
     @InjectRepository(UnitDefaultTestRepository)
     private readonly historicalRepo: UnitDefaultTestRepository,
     private readonly logger: Logger,
+    @Inject(forwardRef(() => UnitDefaultTestRunWorkspaceService))
+    private readonly unitDefaultTestRunService: UnitDefaultTestRunWorkspaceService,
   ) {}
 
   async getUnitDefaultTests(
@@ -137,7 +141,7 @@ export class UnitDefaultTestWorkspaceService {
 
   async getUnitDefaultTestsByTestSumIds(
     testSumIds: string[],
-  ): Promise<UnitDefaultTestRecordDTO[]> {
+  ): Promise<UnitDefaultTestDTO[]> {
     const results = await this.repository.find({
       where: { testSumId: In(testSumIds) },
     });
@@ -145,8 +149,21 @@ export class UnitDefaultTestWorkspaceService {
     return this.map.many(results);
   }
 
-  async export(testSumIds: string[]): Promise<UnitDefaultTestRecordDTO[]> {
-    return this.getUnitDefaultTestsByTestSumIds(testSumIds);
+  async export(testSumIds: string[]): Promise<UnitDefaultTestDTO[]> {
+    const unitDefaultTests = await this.getUnitDefaultTestsByTestSumIds(
+      testSumIds,
+    );
+
+    const unitDefaultTestRuns = await this.unitDefaultTestRunService.export(
+      unitDefaultTests.map(udtr => udtr.id),
+    );
+
+    unitDefaultTests.forEach(udt => {
+      udt.unitDefaultTestRunData = unitDefaultTestRuns.filter(
+        udtr => udtr.unitDefaultTestSumId === udt.id,
+      );
+    });
+    return unitDefaultTests;
   }
 
   async import(
