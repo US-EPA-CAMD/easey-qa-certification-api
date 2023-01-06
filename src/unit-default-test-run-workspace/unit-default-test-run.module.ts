@@ -7,12 +7,14 @@ import { UnitDefaultTestModule } from '../unit-default-test/unit-default-test.mo
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
+import { UnitDefaultTestRunModule } from '../unit-default-test-run/unit-default-test-run.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([UnitDefaultTestRunWorkspaceRepository]),
     forwardRef(() => UnitDefaultTestModule),
     forwardRef(() => TestSummaryWorkspaceModule),
+    forwardRef(() => UnitDefaultTestRunModule),
     HttpModule,
   ],
   controllers: [UnitDefaultTestRunWorkspaceController],
