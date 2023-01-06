@@ -170,10 +170,11 @@ export class UnitDefaultTestWorkspaceService {
     testSumId: string,
     payload: UnitDefaultTestImportDTO,
     userId: string,
-    isHistoricalRecord: boolean,
+    isHistoricalRecord?: boolean,
   ) {
     const isImport = true;
     let historicalRecord: UnitDefaultTest;
+    const promises = [];
 
     if (isHistoricalRecord) {
       historicalRecord = await this.historicalRepo.findOne({
@@ -182,7 +183,7 @@ export class UnitDefaultTestWorkspaceService {
       });
     }
 
-    const createdFlowToLoadReference = await this.createUnitDefaultTest(
+    const createdUnitDefaultTest = await this.createUnitDefaultTest(
       testSumId,
       payload,
       userId,
@@ -191,8 +192,32 @@ export class UnitDefaultTestWorkspaceService {
     );
 
     this.logger.info(
-      `Flow To Load Reference Successfully Imported.  Record Id: ${createdFlowToLoadReference.id}`,
+      `Flow To Load Reference Successfully Imported.  Record Id: ${createdUnitDefaultTest.id}`,
     );
+
+    if (payload.unitDefaultTestRunData?.length > 0) {
+      for (const unitDefaultTestRun of payload.unitDefaultTestRunData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.unitDefaultTestRunService.import(
+                testSumId,
+                createdUnitDefaultTest.id,
+                unitDefaultTestRun,
+                userId,
+                isHistoricalRecord,
+              ),
+            );
+
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    await Promise.all(promises);
 
     return null;
   }

@@ -15,7 +15,10 @@ import { HttpStatus } from '@nestjs/common';
 import { UnitDefaultTest as UnitDefaultTestOfficial } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestRepository } from '../unit-default-test/unit-default-test.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { UnitDefaultTestRunDTO } from '../dto/unit-default-test-run.dto';
+import {
+  UnitDefaultTestRunDTO,
+  UnitDefaultTestRunImportDTO,
+} from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRunWorkspaceService } from '../unit-default-test-run-workspace/unit-default-test-run.service';
 
 const id = '';
@@ -30,6 +33,9 @@ const dto = new UnitDefaultTestRecordDTO();
 
 const unitDefaultTestRunDto = new UnitDefaultTestRunDTO();
 unitDefaultTestRunDto.unitDefaultTestSumId = 'ID';
+
+const historicalUnitDefaulTest = new UnitDefaultTestOfficial();
+historicalUnitDefaulTest.id = 'HISTORICAL-ID';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
@@ -48,16 +54,18 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
-const mockHistoricalRepo = () => ({
-  findOne: jest.fn().mockResolvedValue(new UnitDefaultTestOfficial()),
+const mockOfficialRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(historicalUnitDefaulTest),
 });
 
 const mockUnitDefaultTestRunService = () => ({
   export: jest.fn().mockResolvedValue([unitDefaultTestRunDto]),
+  import: jest.fn().mockResolvedValue(null),
 });
 
 describe('UnitDefaultTestWorkspaceService', () => {
   let service: UnitDefaultTestWorkspaceService;
+  let testSummaryService: TestSummaryWorkspaceService;
   let repository: UnitDefaultTestWorkspaceRepository;
 
   beforeEach(async () => {
@@ -79,7 +87,7 @@ describe('UnitDefaultTestWorkspaceService', () => {
         },
         {
           provide: UnitDefaultTestRepository,
-          useFactory: mockHistoricalRepo,
+          useFactory: mockOfficialRepository,
         },
         {
           provide: UnitDefaultTestRunWorkspaceService,
@@ -90,6 +98,9 @@ describe('UnitDefaultTestWorkspaceService', () => {
 
     service = module.get<UnitDefaultTestWorkspaceService>(
       UnitDefaultTestWorkspaceService,
+    );
+    testSummaryService = module.get<TestSummaryWorkspaceService>(
+      TestSummaryWorkspaceService,
     );
     repository = module.get<UnitDefaultTestWorkspaceRepository>(
       UnitDefaultTestWorkspaceRepository,
@@ -134,6 +145,7 @@ describe('UnitDefaultTestWorkspaceService', () => {
       );
 
       expect(result).toEqual(dto);
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
 
     it('Should create and return a new Unit Default Test record with Historical Record Id', async () => {
@@ -219,16 +231,31 @@ describe('UnitDefaultTestWorkspaceService', () => {
   });
 
   describe('import', () => {
-    it('Should Import Unit Default Test', async () => {
+    importPayload.NOxDefaultRate = 1;
+
+    it('Should import Unit Default Test', async () => {
       jest.spyOn(service, 'createUnitDefaultTest').mockResolvedValue(dto);
 
-      await service.import(testSumId, importPayload, userId, false);
+      const result = await service.import(testSumId, importPayload, userId);
+
+      expect(result).toEqual(null);
     });
 
-    it('Should Import Cycle Time Summary from Historical Record', async () => {
+    it('Should import Unit Default Test from historical record', async () => {
       jest.spyOn(service, 'createUnitDefaultTest').mockResolvedValue(dto);
 
-      await service.import(testSumId, importPayload, userId, true);
+      importPayload.unitDefaultTestRunData = [
+        new UnitDefaultTestRunImportDTO(),
+      ];
+
+      const result = await service.import(
+        testSumId,
+        importPayload,
+        userId,
+        true,
+      );
+
+      expect(result).toEqual(null);
     });
   });
 });
