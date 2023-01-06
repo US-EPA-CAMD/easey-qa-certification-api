@@ -14,6 +14,7 @@ import {
 } from './linearity-injection.dto';
 import { GasLevelCode } from '../entities/workspace/gas-level-code.entity';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 const KEY = 'Linearity Summary';
 
@@ -23,12 +24,18 @@ export class LinearitySummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('LINEAR-15-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   @IsValidCode(GasLevelCode, {
     message: (args: ValidationArguments) => {
-      return `You reported an invalid gas level code of [${args.value}].`;
+      return CheckCatalogService.formatResultMessage('LINEAR-15-B', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   gasLevelCode: string;
@@ -38,7 +45,10 @@ export class LinearitySummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('LINEAR-16-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   meanMeasuredValue: number;
@@ -48,12 +58,19 @@ export class LinearitySummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('LINEAR-17-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   @IsNotNegative({
     message: (args: ValidationArguments) => {
-      return `The value [${args.value}] in the field [${args.property}] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to zero.`;
+      return CheckCatalogService.formatResultMessage('LINEAR-17-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   meanReferenceValue: number;
@@ -63,12 +80,19 @@ export class LinearitySummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('LINEAR-18-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   @IsNotNegative({
     message: (args: ValidationArguments) => {
-      return `The value [${args.value}] in the field [${args.property}] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to zero.`;
+      return CheckCatalogService.formatResultMessage('LINEAR-18-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   percentError: number;
@@ -78,7 +102,10 @@ export class LinearitySummaryBaseDTO {
   )
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('LINEAR-37-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   apsIndicator: number;
