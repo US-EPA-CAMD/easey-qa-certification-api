@@ -63,6 +63,7 @@ import { HgSummaryWorkspaceModule } from './hg-summary-workspace/hg-summary-work
 import { HgInjectionWorkspaceModule } from './hg-injection-workspace/hg-injection-workspace.module';
 import { HgSummaryModule } from './hg-summary/hg-summary.module';
 import { HgInjectionModule } from './hg-injection/hg-injection.module';
+import { QaCertificationEventWorkshopModule } from './qa-certification-event-workshop/qa-certification-event-workshop.module';
 
 const routes: Routes = [
   {
@@ -81,6 +82,10 @@ const routes: Routes = [
     path: '/locations',
     module: LocationModule,
     children: [
+      {
+        path: ':locId/qa-certification-events',
+        module: QaCertificationEventWorkshopModule,
+      },
       {
         path: ':locId/test-summary',
         module: TestSummaryModule,
