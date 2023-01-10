@@ -35,7 +35,7 @@ export class QACertificationService {
     const results = await Promise.all(promises);
 
     return {
-      orisCode: params.facilityId,
+      orisCode: Number(params.facilityId),
       testSummaryData: results[SUMMARIES],
       certificationEventData: results[EVENTS],
       testExtensionExemptionData: results[EXT_EXEMPTIONS],
