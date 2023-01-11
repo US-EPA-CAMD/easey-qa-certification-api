@@ -24,8 +24,8 @@ export class QACertificationEventMap extends BaseMap<
         entity.location && entity.location.unit
           ? entity.location.unit.name
           : null,
-      monitoringSystemID: entity.monitoringSystemID,
-      componentID: entity.componentID,
+      monitoringSystemID: entity.system ? entity.system.id : null,
+      componentID: entity.component ? entity.component.id : null,
       qaCertEventCode: entity.qaCertEventCode,
       qaCertEventDate: entity.qaCertEventDate,
       qaCertEventHour: entity.qaCertEventHour,
@@ -43,8 +43,8 @@ export class QACertificationEventMap extends BaseMap<
       pendindStatusCode: entity.pendindStatusCode,
       evalStatusCode: entity.evalStatusCode,
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
+      updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
     };
   }
 }

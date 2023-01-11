@@ -25,8 +25,8 @@ export class QACertificationEventRecordDTO extends QACertificationEventBaseDTO {
   pendindStatusCode: string;
   evalStatusCode: string;
   userId: string;
-  addDate: Date;
-  updateDate: Date;
+  addDate: string;
+  updateDate: string;
 }
 
 export class QACertificationEventImportDTO extends QACertificationEventBaseDTO {}

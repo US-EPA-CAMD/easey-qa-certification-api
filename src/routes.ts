@@ -83,10 +83,6 @@ const routes: Routes = [
     module: LocationModule,
     children: [
       {
-        path: ':locId/qa-certification-events',
-        module: QaCertificationEventWorkshopModule,
-      },
-      {
         path: ':locId/test-summary',
         module: TestSummaryModule,
         children: [
@@ -230,6 +226,10 @@ const routes: Routes = [
     path: 'workspace/locations',
     module: LocationWorkspaceModule,
     children: [
+      {
+        path: ':locId/qa-certification-events',
+        module: QaCertificationEventWorkshopModule,
+      },
       {
         path: ':locId/test-summary',
         module: TestSummaryWorkspaceModule,

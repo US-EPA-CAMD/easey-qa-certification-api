@@ -13,6 +13,7 @@ import { MonitorLocation } from './monitor-location.entity';
 import { QASuppData } from './qa-supp-data.entity';
 import { AppEHeatInputFromGas } from './app-e-heat-input-from-gas.entity';
 import { AppEHeatInputFromOil } from './app-e-heat-input-from-oil.entity';
+import { QACertificationEvent } from './qa-certification-event.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_system' })
 export class MonitorSystem extends BaseEntity {
@@ -76,4 +77,11 @@ export class MonitorSystem extends BaseEntity {
   )
   @JoinColumn({ name: 'mon_sys_id' })
   appEHeatInputFromOils: AppEHeatInputFromOil[];
+
+  @OneToMany(
+    () => QACertificationEvent,
+    o => o.system,
+  )
+  @JoinColumn({ name: 'mon_sys_id' })
+  qaCertEvents: QACertificationEvent[];
 }

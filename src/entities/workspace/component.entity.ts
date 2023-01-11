@@ -12,6 +12,7 @@ import { TestSummary } from './test-summary.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { QASuppData } from './qa-supp-data.entity';
 import { AnalyzerRange } from './analyzerRange.entity';
+import { QACertificationEvent } from './qa-certification-event.entity';
 
 @Entity({ name: 'camdecmpswks.component' })
 export class Component extends BaseEntity {
@@ -63,4 +64,11 @@ export class Component extends BaseEntity {
   )
   @JoinColumn({ name: 'component_id' })
   qaSuppData: QASuppData[];
+
+  @OneToMany(
+    () => QACertificationEvent,
+    o => o.component,
+  )
+  @JoinColumn({ name: 'component_id' })
+  qaCertEvents: QACertificationEvent[];
 }

@@ -77,6 +77,7 @@ import { HgInjectionWorkspaceModule } from './hg-injection-workspace/hg-injectio
 import { HgSummaryModule } from './hg-summary/hg-summary.module';
 import { HgInjectionModule } from './hg-injection/hg-injection.module';
 import { QaCertificationEventWorkshopModule } from './qa-certification-event-workshop/qa-certification-event-workshop.module';
+import { MonitorSystemWorkspaceModule } from './monitor-system-workspace/monitor-system-workspace.module';
 @Module({
   imports: [
     RouterModule.forRoutes(routes),
@@ -154,6 +155,7 @@ import { QaCertificationEventWorkshopModule } from './qa-certification-event-wor
     HgInjectionWorkspaceModule,
     HgSummaryModule,
     QaCertificationEventWorkshopModule,
+    MonitorSystemWorkspaceModule,
   ],
 })
 export class AppModule {}

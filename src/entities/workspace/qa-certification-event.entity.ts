@@ -8,6 +8,8 @@ import {
 } from 'typeorm';
 
 import { MonitorLocation } from './monitor-location.entity';
+import { Component } from './component.entity';
+import { MonitorSystem } from './monitor-system.entity';
 
 @Entity({ name: 'camdecmpswks.qa_cert_event' })
 export class QACertificationEvent extends BaseEntity {
@@ -155,4 +157,18 @@ export class QACertificationEvent extends BaseEntity {
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;
+
+  @ManyToOne(
+    () => Component,
+    o => o.qaCertEvents,
+  )
+  @JoinColumn({ name: 'component_id' })
+  component: Component;
+
+  @ManyToOne(
+    () => MonitorSystem,
+    o => o.qaCertEvents,
+  )
+  @JoinColumn({ name: 'mon_sys_id' })
+  system: MonitorSystem;
 }
