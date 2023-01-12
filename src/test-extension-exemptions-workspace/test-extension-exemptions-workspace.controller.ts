@@ -11,7 +11,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   TestExtensionExemptionBaseDTO,
   TestExtensionExemptionRecordDTO,
-} from 'src/dto/test-extension-exemption.dto';
+} from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
 
 @Controller()

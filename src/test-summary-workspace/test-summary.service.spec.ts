@@ -469,7 +469,7 @@ describe('TestSummaryWorkspaceService', () => {
 
       const result = await service.lookupValues(locationId, payload);
 
-      expect(result).toEqual([1, '1', ms]);
+      expect(result).toEqual([1, '1', '1']);
     });
   });
 

@@ -1,4 +1,4 @@
-import { addJoins } from 'src/utilities/test-extension-exemption.querybuilder';
+import { addJoins } from '../utilities/test-extension-exemption.querybuilder';
 import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
 import { TestExtensionExemption } from '../entities/workspace/test-extension-exemption.entity';
 
