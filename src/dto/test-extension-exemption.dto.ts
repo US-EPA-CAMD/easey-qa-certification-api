@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { RequireOne } from '../pipes/require-one.pipe';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
-import { IsNotEmpty, ValidateIf, ValidationArguments } from 'class-validator';
+import { ValidateIf, ValidationArguments } from 'class-validator';
 import { YEAR_QUARTER_TEST_TYPE_CODES } from '../utilities/constants';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { SpanScaleCode } from '../entities/span-scale-code.entity';
