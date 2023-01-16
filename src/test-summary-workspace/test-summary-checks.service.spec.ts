@@ -281,13 +281,13 @@ describe('Test Summary Check Service Test', () => {
       returnedQASupp.endDate = new Date();
 
       jest
-        .spyOn(repository, 'getTestSummaryByLocationId')
-        .mockResolvedValue(null);
+        .spyOn(qaRepository, 'getUnassociatedQASuppDataByTestTypeCodeComponentIdEndDateEndTime')
+        .mockResolvedValue(returnedQASupp);
 
       const result = await service.runChecks(locationId, payload, true, false, [
         payload,
       ]);
-      expect(result).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+      expect(result).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
     });
 
     it('Should get error LINEAR -31 Duplicate Test Summary record (Result A)', async () => {
@@ -762,7 +762,7 @@ describe('Test Summary Check Service Test', () => {
       );
       const summary = {
         ...summaryBase,
-        testTypeCode: TestTypeCodes.F2LCHK.toString(),
+        testTypeCode: TestTypeCodes.LINE.toString(),
         beginMinute: null,
       };
       const result = await service.testMinuteField(summary, '1', 'beginMinute');
