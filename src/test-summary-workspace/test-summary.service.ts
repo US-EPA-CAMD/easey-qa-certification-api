@@ -726,11 +726,8 @@ export class TestSummaryWorkspaceService {
     const [
       reportPeriodId,
       componentRecordId,
-      monitorSystem,
+      monitoringSystemRecordId,
     ] = await this.lookupValues(locationId, payload);
-
-    // Swap the DTO 3-char System ID for the Actual UID of the Monitor System
-    payload.monitoringSystemID = monitorSystem?.id;
 
     const location = await this.monitorLocationRepository.findOne(locationId);
 
@@ -760,6 +757,7 @@ export class TestSummaryWorkspaceService {
       id: historicalrecordId ? historicalrecordId : uuid(),
       locationId,
       componentRecordId,
+      monitoringSystemRecordId,
       reportPeriodId,
       userId,
       addDate: timestamp,
@@ -815,11 +813,8 @@ export class TestSummaryWorkspaceService {
     const [
       reportPeriodId,
       componentRecordId,
-      monitorSystem,
+      monitoringSystemRecordId,
     ] = await this.lookupValues(locationId, payload);
-
-    // Swap the DTO 3-char System ID for the Actual UID of the Monitor System
-    payload.monitoringSystemID = monitorSystem?.id;
 
     entity.beginDate = payload.beginDate;
     entity.beginHour = payload.beginHour;
@@ -830,7 +825,7 @@ export class TestSummaryWorkspaceService {
     entity.componentRecordId = componentRecordId;
     entity.gracePeriodIndicator = payload.gracePeriodIndicator;
     entity.injectionProtocolCode = payload.injectionProtocolCode;
-    entity.monitoringSystemID = payload.monitoringSystemID;
+    entity.monitoringSystemRecordId = monitoringSystemRecordId;
     entity.reportPeriodId = reportPeriodId;
     entity.spanScaleCode = payload.spanScaleCode;
     entity.testComment = payload.testComment;
@@ -884,7 +879,7 @@ export class TestSummaryWorkspaceService {
   async lookupValues(locationId: string, payload: TestSummaryBaseDTO) {
     let reportPeriodId = null;
     let componentRecordId = null;
-    let monitorSystem = null;
+    let monitoringSystemRecordId = null;
 
     if (payload.year && payload.quarter) {
       const rptPeriod = await this.reportingPeriodRepository.findOne({
@@ -905,12 +900,13 @@ export class TestSummaryWorkspaceService {
     }
 
     if (payload.monitoringSystemID) {
-      monitorSystem = await this.monSysRepository.findOne({
+      const monitorSystem = await this.monSysRepository.findOne({
         locationId: locationId,
         monitoringSystemID: payload.monitoringSystemID,
       });
+      monitoringSystemRecordId = monitorSystem ? monitorSystem.id : null;
     }
 
-    return [reportPeriodId, componentRecordId, monitorSystem];
+    return [reportPeriodId, componentRecordId, monitoringSystemRecordId];
   }
 }

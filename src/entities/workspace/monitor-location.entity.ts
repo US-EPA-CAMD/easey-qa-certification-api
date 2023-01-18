@@ -15,6 +15,7 @@ import { TestSummary } from './test-summary.entity';
 import { MonitorSystem } from './monitor-system.entity';
 import { QASuppData } from './qa-supp-data.entity';
 import { MonitorMethod } from './monitor-method.entity';
+import { QACertificationEvent } from './qa-certification-event.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_location' })
 export class MonitorLocation extends BaseEntity {
@@ -85,4 +86,11 @@ export class MonitorLocation extends BaseEntity {
   )
   @JoinColumn({ name: 'mon_loc_id' })
   qaSuppData: QASuppData[];
+
+  @OneToMany(
+    () => QACertificationEvent,
+    o => o.location,
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  qaCertEvents: QACertificationEvent[];
 }

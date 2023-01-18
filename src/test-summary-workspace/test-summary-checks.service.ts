@@ -145,7 +145,7 @@ export class TestSummaryChecksService {
       errorList.push(error);
     }
 
-    if (summary.testResultCode === TestTypeCodes.LINE) {
+    if (summary.testTypeCode === TestTypeCodes.LINE) {
       // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
       error = await this.linear4Check(
         locationId,
@@ -742,7 +742,7 @@ export class TestSummaryChecksService {
         fields = this.compareFields(duplicate, summary);
       }
 
-      if (summary.testResultCode === TestTypeCodes.LINE) {
+      if (summary.testTypeCode === TestTypeCodes.LINE) {
         // LINEAR-31 Duplicate Linearity (Result A)
         error = this.getMessage('LINEAR-31-A', null);
       }
@@ -758,7 +758,7 @@ export class TestSummaryChecksService {
         if (isImport) {
           fields = this.compareFields(duplicate, summary);
         }
-        if (summary.testResultCode === TestTypeCodes.LINE) {
+        if (summary.testTypeCode === TestTypeCodes.LINE) {
           // LINEAR-31 Duplicate Linearity (Result B)
           error = this.getMessage('LINEAR-31-B', null);
         }
@@ -1232,7 +1232,7 @@ export class TestSummaryChecksService {
   ): Promise<string> {
     let error: string = null;
     let FIELDNAME: string = 'testResultCode';
-    let KEY: 'Test Summary';
+    let KEY: string = 'Test Summary';
     const testSummaryMDRelationships = await this.testSummaryRelationshipsRepository.getTestTypeCodesRelationships(
       TestTypeCodes.LINE,
       'testResultCode',

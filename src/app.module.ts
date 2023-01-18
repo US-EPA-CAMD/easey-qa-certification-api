@@ -76,6 +76,9 @@ import { HgSummaryWorkspaceModule } from './hg-summary-workspace/hg-summary-work
 import { HgInjectionWorkspaceModule } from './hg-injection-workspace/hg-injection-workspace.module';
 import { HgSummaryModule } from './hg-summary/hg-summary.module';
 import { HgInjectionModule } from './hg-injection/hg-injection.module';
+import { QaCertificationEventWorkshopModule } from './qa-certification-event-workshop/qa-certification-event-workshop.module';
+import { MonitorSystemWorkspaceModule } from './monitor-system-workspace/monitor-system-workspace.module';
+import { TestExtensionExemptionsWorkspaceModule } from './test-extension-exemptions-workspace/test-extension-exemptions-workspace.module';
 @Module({
   imports: [
     RouterModule.forRoutes(routes),
@@ -152,6 +155,9 @@ import { HgInjectionModule } from './hg-injection/hg-injection.module';
     HgInjectionModule,
     HgInjectionWorkspaceModule,
     HgSummaryModule,
+    QaCertificationEventWorkshopModule,
+    MonitorSystemWorkspaceModule,
+    TestExtensionExemptionsWorkspaceModule,
   ],
 })
 export class AppModule {}
