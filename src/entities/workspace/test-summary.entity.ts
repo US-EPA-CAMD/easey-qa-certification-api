@@ -47,7 +47,7 @@ export class TestSummary extends BaseEntity {
   @Column({
     name: 'mon_sys_id',
   })
-  monitoringSystemID: string;
+  monitoringSystemRecordId: string;
 
   @Column({
     name: 'component_id',
