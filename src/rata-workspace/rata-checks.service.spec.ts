@@ -118,6 +118,7 @@ describe('Rata Checks Service Test', () => {
 
       let testSumRec = new TestSummary();
       testSumRec.testResultCode = 'AAA'
+      testSumRec.testTypeCode = TestTypeCodes.RATA;
 
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -139,6 +140,7 @@ describe('Rata Checks Service Test', () => {
 
       let testSumRec = new TestSummary();
       testSumRec.testResultCode = 'AAA'
+      testSumRec.testTypeCode = TestTypeCodes.RATA;
 
       let testResultRec = new TestResultCode();
 
@@ -153,17 +155,18 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
       }
     });
   });
 
   describe('RATA-102 Number of Load Levels Valid', () => {
     it('Should get [RATA-102-B] error ', async () => {
-      importPayload.numberOfLoadLevels = 5;
+      importPayload.numberOfLoadLevels = 656;
 
       let testSumRec = new TestSummary();
       testSumRec.system = new MonitorSystem();
+      testSumRec.testTypeCode = TestTypeCodes.RATA;
       testSumRec.system.systemTypeCode = 'FLOW'
 
       jest
@@ -173,7 +176,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
       }
     });
 
