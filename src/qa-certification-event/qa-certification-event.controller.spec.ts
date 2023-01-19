@@ -18,7 +18,7 @@ const mockService = () => ({
 
 describe('QaCertificationEventController', () => {
   let controller: QaCertificationEventController;
-  let service = QaCertificationEventService;
+  let service: QaCertificationEventService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -46,13 +46,6 @@ describe('QaCertificationEventController', () => {
       const result = await controller.getQACertEvent(locationId, qaCertEventId);
       expect(result).toEqual(qaCertEventDTO);
       expect(spyService).toHaveBeenCalled();
-    });
-  });
-
-  describe('getCycleTimeSummaries', () => {
-    it('Calls the service to many QA Certification Event records by Location Id', async () => {
-      const result = await controller.getQACertEvents(locationId);
-      expect(result).toEqual([qaCertEventDTO]);
     });
   });
 });

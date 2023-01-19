@@ -3,12 +3,17 @@ import { QaCertificationEventService } from './qa-certification-event.service';
 import { QACertificationEventRepository } from './qa-certification-event.repository';
 import { QACertificationEventMap } from '../maps/qa-certification-event.map';
 import { QACertificationEventDTO } from '../dto/qa-certification-event.dto';
+import { QACertificationEvent } from '../entities/qa-certification-event.entity';
 
+const locationId = '';
+const qaCertEventId = '';
+
+const entity = new QACertificationEvent();
 const qaCertEventDTO = new QACertificationEventDTO();
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue([qaCertEventDTO]),
-  findOne: jest.fn().mockResolvedValue(qaCertEventDTO),
+  find: jest.fn().mockResolvedValue([entity]),
+  findOne: jest.fn().mockResolvedValue(entity),
 });
 
 const mockMap = () => ({
@@ -28,7 +33,6 @@ describe('QaCertificationEventService', () => {
           provide: QACertificationEventRepository,
           useFactory: mockRepository,
         },
-        ,
         {
           provide: QACertificationEventMap,
           useFactory: mockMap,
@@ -39,9 +43,34 @@ describe('QaCertificationEventService', () => {
     service = module.get<QaCertificationEventService>(
       QaCertificationEventService,
     );
+    repository = module.get(QACertificationEventRepository);
   });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
+  describe('getCertEvent', () => {
+    it('calls the repository.findOne() and get QA Certification Event by id', async () => {
+      const result = await service.getQACertEvent(qaCertEventId);
+      expect(result).toEqual(qaCertEventDTO);
+    });
+
+    it('should throw error when QA Certification Event not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      let errored = false;
+
+      try {
+        await service.getQACertEvent(qaCertEventId);
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
+    });
+  });
+
+  describe('getQACertEvents', () => {
+    it('calls the repository.getQACertEvents() and get test Extension Exemptions by locationId', async () => {
+      const result = await service.getQACertEvents(locationId);
+      expect(result).toEqual([qaCertEventDTO]);
+    });
   });
 });
