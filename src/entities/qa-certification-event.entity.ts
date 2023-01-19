@@ -11,7 +11,7 @@ import { MonitorLocation } from './monitor-location.entity';
 import { Component } from './component.entity';
 import { MonitorSystem } from './monitor-system.entity';
 
-@Entity({ name: 'camdecmpswks.qa_cert_event' })
+@Entity({ name: 'camdecmps.qa_cert_event' })
 export class QACertificationEvent extends BaseEntity {
   @PrimaryColumn({
     name: 'qa_cert_event_id',
@@ -120,18 +120,6 @@ export class QACertificationEvent extends BaseEntity {
     type: 'varchar',
   })
   submissionAvailabilityCode: string;
-
-  @Column({
-    name: 'pending_status_cd',
-    type: 'varchar',
-  })
-  pendingStatusCode: string;
-
-  @Column({
-    name: 'eval_status_cd',
-    type: 'varchar',
-  })
-  evalStatusCode: string;
 
   @Column({
     name: 'userid',

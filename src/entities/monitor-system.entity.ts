@@ -10,8 +10,10 @@ import {
 
 import { TestSummary } from './test-summary.entity';
 import { MonitorLocation } from './monitor-location.entity';
+import { QASuppData } from './qa-supp-data.entity';
 import { AppEHeatInputFromGas } from './app-e-heat-input-from-gas.entity';
 import { AppEHeatInputFromOil } from './app-e-heat-input-from-oil.entity';
+import { QACertificationEvent } from './qa-certification-event.entity';
 
 @Entity({ name: 'camdecmps.monitor_system' })
 export class MonitorSystem extends BaseEntity {
@@ -43,17 +45,24 @@ export class MonitorSystem extends BaseEntity {
 
   @ManyToOne(
     () => MonitorLocation,
-    ml => ml.systems,
+    o => o.systems,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;
 
   @OneToMany(
     () => TestSummary,
-    ts => ts.system,
+    o => o.system,
   )
-  @JoinColumn({ name: 'mon_sys_id' })
+  @JoinColumn({ name: 'mon_loc_id' })
   testSummaries: TestSummary[];
+
+  @OneToMany(
+    () => QASuppData,
+    o => o.system,
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  qaSuppData: QASuppData[];
 
   @OneToMany(
     () => AppEHeatInputFromGas,
@@ -64,8 +73,15 @@ export class MonitorSystem extends BaseEntity {
 
   @OneToMany(
     () => AppEHeatInputFromOil,
-    aehig => aehig.system,
+    aehio => aehio.system,
   )
   @JoinColumn({ name: 'mon_sys_id' })
   appEHeatInputFromOils: AppEHeatInputFromOil[];
+
+  @OneToMany(
+    () => QACertificationEvent,
+    o => o.system,
+  )
+  @JoinColumn({ name: 'mon_sys_id' })
+  qaCertEvents: QACertificationEvent[];
 }
