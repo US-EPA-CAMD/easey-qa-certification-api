@@ -94,7 +94,7 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
   });
 
   describe('updateTestExtensionExemption', () => {
-    it('should update test summary record', async () => {
+    it('should update test Extension Exemption record', async () => {
       const spyService = jest.spyOn(service, 'updateTestExtensionExemption');
       const result = await controller.updateTestExtensionExemption(
         '1',

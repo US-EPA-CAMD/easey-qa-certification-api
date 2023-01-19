@@ -216,7 +216,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
   });
 
   describe('updateTestExtensionExemption', () => {
-    it('should call the updateTestExtensionExemption and update test summariy', async () => {
+    it('should call the updateTestExtensionExemption and update test Extension Exemption', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(entity);
@@ -231,7 +231,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
       expect(result).toEqual(dto);
     });
 
-    it('should call updateTestExtensionExemption and throw error while test summariy not found', async () => {
+    it('should call updateTestExtensionExemption and throw error while test Extension Exemption not found', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
 
       let errored = false;
@@ -258,7 +258,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
       expect(result).toEqual(undefined);
     });
 
-    it('should call the deleteTestExtensionExemption and throw error while deleting test summariy', async () => {
+    it('should call the deleteTestExtensionExemption and throw error while deleting test Extension Exemption', async () => {
       jest
         .spyOn(repository, 'delete')
         .mockRejectedValue(new InternalServerErrorException());

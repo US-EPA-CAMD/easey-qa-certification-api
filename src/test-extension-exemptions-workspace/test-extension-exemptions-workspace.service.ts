@@ -177,7 +177,7 @@ export class TestExtensionExemptionsWorkspaceService {
       await this.repository.delete(id);
     } catch (e) {
       throw new InternalServerErrorException(
-        `Error deleting Test Summary record Id [${id}]`,
+        `Error deleting Test Extension Exemption record Id [${id}]`,
         e.message,
       );
     }
