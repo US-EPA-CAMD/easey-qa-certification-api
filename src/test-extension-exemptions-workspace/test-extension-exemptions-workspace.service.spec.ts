@@ -21,6 +21,7 @@ import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exe
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
 
 const locationId = '121';
+const testExtExp = '1';
 const payload = new TestExtensionExemptionBaseDTO();
 payload.unitId = '1';
 payload.stackPipeId = '1';
@@ -42,6 +43,7 @@ const dto = new TestExtensionExemptionRecordDTO();
 
 const mockRepository = () => ({
   getTestExtensionExemptionById: jest.fn().mockResolvedValue(entity),
+  getTestExtensionExemptionsByLocationId: jest.fn().mockResolvedValue([entity]),
   delete: jest.fn().mockResolvedValue(null),
   findOne: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
@@ -118,6 +120,38 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
     unitRepository = module.get(UnitRepository);
     stackPipeRepository = module.get(StackPipeRepository);
     locationRepository = module.get(MonitorLocationRepository);
+  });
+
+  describe('getTestExtensionExemptionById', () => {
+    it('calls the repository.getTestExtensionExemptionById() and get test Extension Exemption by id', async () => {
+      const result = await service.getTestExtensionExemptionById(testExtExp);
+      expect(result).toEqual(dto);
+    });
+
+    it('should throw error when test Extension Exemption not found', async () => {
+      jest
+        .spyOn(repository, 'getTestExtensionExemptionById')
+        .mockResolvedValue(null);
+
+      let errored = false;
+
+      try {
+        await service.getTestExtensionExemptionById(testExtExp);
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
+    });
+  });
+
+  describe('getTestExtensionExemptionsByLocationId', () => {
+    it('calls the repository.getTestExtensionExemptionsByLocationId() and get test Extension Exemptions by locationId', async () => {
+      const result = await service.getTestExtensionExemptionsByLocationId(
+        locationId,
+      );
+      expect(result).toEqual([dto]);
+    });
   });
 
   describe('createTestExtensionExemption', () => {

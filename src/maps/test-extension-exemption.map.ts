@@ -36,10 +36,12 @@ export class TestExtensionExemptionMap extends BaseMap<
       checkSessionId: entity.checkSessionId,
       submissionId: entity.submissionId,
       submissionAvailabilityCode: entity.submissionAvailabilityCode,
-      pendingStatusCode: entity.pendingStatusCode
-        ? entity.pendingStatusCode
+      pendingStatusCode: entity['pendingStatusCode']
+        ? entity['pendingStatusCode']
         : null,
-      evalStatusCode: entity.evalStatusCode ? entity.evalStatusCode : null,
+      evalStatusCode: entity['evalStatusCode']
+        ? entity['evalStatusCode']
+        : null,
       userId: entity.userId,
       addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,

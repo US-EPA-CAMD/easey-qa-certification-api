@@ -281,7 +281,10 @@ describe('Test Summary Check Service Test', () => {
       returnedQASupp.endDate = new Date();
 
       jest
-        .spyOn(qaRepository, 'getUnassociatedQASuppDataByTestTypeCodeComponentIdEndDateEndTime')
+        .spyOn(
+          qaRepository,
+          'getUnassociatedQASuppDataByTestTypeCodeComponentIdEndDateEndTime',
+        )
         .mockResolvedValue(returnedQASupp);
 
       const result = await service.runChecks(locationId, payload, true, false, [

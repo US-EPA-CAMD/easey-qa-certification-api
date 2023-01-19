@@ -79,6 +79,7 @@ import { HgInjectionModule } from './hg-injection/hg-injection.module';
 import { QaCertificationEventWorkshopModule } from './qa-certification-event-workshop/qa-certification-event-workshop.module';
 import { MonitorSystemWorkspaceModule } from './monitor-system-workspace/monitor-system-workspace.module';
 import { TestExtensionExemptionsWorkspaceModule } from './test-extension-exemptions-workspace/test-extension-exemptions-workspace.module';
+import { TestExtensionExemptionsModule } from './test-extension-exemptions/test-extension-exemptions.module';
 @Module({
   imports: [
     RouterModule.forRoutes(routes),
@@ -158,6 +159,7 @@ import { TestExtensionExemptionsWorkspaceModule } from './test-extension-exempti
     QaCertificationEventWorkshopModule,
     MonitorSystemWorkspaceModule,
     TestExtensionExemptionsWorkspaceModule,
+    TestExtensionExemptionsModule,
   ],
 })
 export class AppModule {}

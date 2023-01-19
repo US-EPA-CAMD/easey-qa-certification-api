@@ -117,16 +117,14 @@ describe('Rata Checks Service Test', () => {
       importPayload.numberOfLoadLevels = 0;
 
       let testSumRec = new TestSummary();
-      testSumRec.testResultCode = 'AAA'
+      testSumRec.testResultCode = 'AAA';
       testSumRec.testTypeCode = TestTypeCodes.RATA;
 
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRec);
 
-      jest
-        .spyOn(testResultCodeRepository, 'findOne')
-        .mockResolvedValue(null)
+      jest.spyOn(testResultCodeRepository, 'findOne').mockResolvedValue(null);
 
       try {
         await service.runChecks(locationId, importPayload, testSumId);
@@ -139,7 +137,7 @@ describe('Rata Checks Service Test', () => {
       importPayload.numberOfLoadLevels = 0;
 
       let testSumRec = new TestSummary();
-      testSumRec.testResultCode = 'AAA'
+      testSumRec.testResultCode = 'AAA';
       testSumRec.testTypeCode = TestTypeCodes.RATA;
 
       let testResultRec = new TestResultCode();
@@ -150,7 +148,7 @@ describe('Rata Checks Service Test', () => {
 
       jest
         .spyOn(testResultCodeRepository, 'findOne')
-        .mockResolvedValue(testResultRec)
+        .mockResolvedValue(testResultRec);
 
       try {
         await service.runChecks(locationId, importPayload, testSumId);
@@ -167,7 +165,7 @@ describe('Rata Checks Service Test', () => {
       let testSumRec = new TestSummary();
       testSumRec.system = new MonitorSystem();
       testSumRec.testTypeCode = TestTypeCodes.RATA;
-      testSumRec.system.systemTypeCode = 'FLOW'
+      testSumRec.system.systemTypeCode = 'FLOW';
 
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')

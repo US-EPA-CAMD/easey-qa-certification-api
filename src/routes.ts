@@ -65,6 +65,7 @@ import { HgSummaryModule } from './hg-summary/hg-summary.module';
 import { HgInjectionModule } from './hg-injection/hg-injection.module';
 import { QaCertificationEventWorkshopModule } from './qa-certification-event-workshop/qa-certification-event-workshop.module';
 import { TestExtensionExemptionsWorkspaceModule } from './test-extension-exemptions-workspace/test-extension-exemptions-workspace.module';
+import { TestExtensionExemptionsModule } from './test-extension-exemptions/test-extension-exemptions.module';
 
 const routes: Routes = [
   {
@@ -220,6 +221,10 @@ const routes: Routes = [
             module: TransmitterTransducerAccuracyModule,
           },
         ],
+      },
+      {
+        path: ':locId/test-extension-exemptions',
+        module: TestExtensionExemptionsModule,
       },
     ],
   },

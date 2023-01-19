@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   TestExtensionExemptionBaseDTO,
   TestExtensionExemptionRecordDTO,
-} from 'src/dto/test-extension-exemption.dto';
+} from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionMap } from '../maps/test-extension-exemption.map';
 import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
 import { v4 as uuid } from 'uuid';
@@ -38,6 +38,33 @@ export class TestExtensionExemptionsWorkspaceService {
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
   ) {}
 
+  async getTestExtensionExemptionById(
+    testSumId: string,
+  ): Promise<TestExtensionExemptionRecordDTO> {
+    const result = await this.repository.getTestExtensionExemptionById(
+      testSumId,
+    );
+
+    if (!result) {
+      throw new LoggingException(
+        `A test extension exceptions record not found with Record Id [${testSumId}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
+
+  async getTestExtensionExemptionsByLocationId(
+    locationId: string,
+  ): Promise<TestExtensionExemptionRecordDTO[]> {
+    const results = await this.repository.getTestExtensionExemptionsByLocationId(
+      locationId,
+    );
+
+    return this.map.many(results);
+  }
+
   async createTestExtensionExemption(
     locationId: string,
     payload: TestExtensionExemptionBaseDTO,
@@ -50,8 +77,6 @@ export class TestExtensionExemptionsWorkspaceService {
       componentRecordId,
       monitoringSystemRecordId,
     ] = await this.lookupValues(locationId, payload);
-
-    // Swap the DTO 3-char System ID for the Actual UID of the Monitor System
 
     const location = await this.monitorLocationRepository.findOne(locationId);
 

@@ -1,15 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestExtensionExemptionsWorkspaceController } from './test-extension-exemptions-workspace.controller';
-import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
+import { TestExtensionExemptionsController } from './test-extension-exemptions.controller';
+import { TestExtensionExemptionsService } from './test-extension-exemptions.service';
 
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import {
-  TestExtensionExemptionBaseDTO,
-  TestExtensionExemptionRecordDTO,
-} from '../dto/test-extension-exemption.dto';
+import { TestExtensionExemptionRecordDTO } from '../dto/test-extension-exemption.dto';
 
 const user: CurrentUser = {
   userId: 'testUser',
@@ -22,39 +19,36 @@ const user: CurrentUser = {
 
 const testExtExp = new TestExtensionExemptionRecordDTO();
 
-const payload = new TestExtensionExemptionBaseDTO();
-
-const mockTestExtensionExemptionWorkspaceService = () => ({
-  createTestExtensionExemption: jest.fn().mockResolvedValue(testExtExp),
+const mockTestExtensionExemptionService = () => ({
   getTestExtensionExemptionById: jest.fn().mockResolvedValue(testExtExp),
   getTestExtensionExemptionsByLocationId: jest
     .fn()
     .mockResolvedValue([testExtExp]),
 });
 
-describe('TestExtensionExemptionsWorkspaceController', () => {
-  let controller: TestExtensionExemptionsWorkspaceController;
-  let service: TestExtensionExemptionsWorkspaceService;
+describe('TestExtensionExemptionsController', () => {
+  let controller: TestExtensionExemptionsController;
+  let service: TestExtensionExemptionsService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [HttpModule],
-      controllers: [TestExtensionExemptionsWorkspaceController],
+      controllers: [TestExtensionExemptionsController],
       providers: [
         ConfigService,
         AuthGuard,
 
         {
-          provide: TestExtensionExemptionsWorkspaceService,
-          useFactory: mockTestExtensionExemptionWorkspaceService,
+          provide: TestExtensionExemptionsService,
+          useFactory: mockTestExtensionExemptionService,
         },
       ],
     }).compile();
 
-    controller = module.get<TestExtensionExemptionsWorkspaceController>(
-      TestExtensionExemptionsWorkspaceController,
+    controller = module.get<TestExtensionExemptionsController>(
+      TestExtensionExemptionsController,
     );
-    service = module.get(TestExtensionExemptionsWorkspaceService);
+    service = module.get(TestExtensionExemptionsService);
   });
 
   describe('getTestSummary', () => {
@@ -75,18 +69,6 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
       const result = await controller.getTestExtensionExemptions('1');
       expect(result).toEqual([testExtExp]);
       expect(spyService).toHaveBeenCalled();
-    });
-  });
-
-  describe('createTestExtensionExemption', () => {
-    it('should create test summary record', async () => {
-      const spyService = jest.spyOn(service, 'createTestExtensionExemption');
-      const result = await controller.createTestExtensionExemption(
-        '1',
-        payload,
-        user,
-      );
-      expect(result).toEqual(testExtExp);
     });
   });
 });
