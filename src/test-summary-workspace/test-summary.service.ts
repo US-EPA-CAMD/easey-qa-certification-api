@@ -801,7 +801,7 @@ export class TestSummaryWorkspaceService {
     userId: string,
   ): Promise<TestSummaryRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.getTestSummaryById(id);
+    const entity = await this.repository.findOne(id);
 
     if (!entity) {
       throw new LoggingException(
@@ -842,7 +842,7 @@ export class TestSummaryWorkspaceService {
     entity.evalStatusCode = 'EVAL';
 
     await this.repository.save(entity);
-    return this.map.one(entity);
+    return this.getTestSummaryById(entity.id);
   }
 
   async deleteTestSummary(id: string): Promise<void> {

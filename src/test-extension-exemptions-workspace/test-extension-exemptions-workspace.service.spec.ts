@@ -219,9 +219,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
     it('should call the updateTestExtensionExemption and update test summariy', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
 
-      jest
-        .spyOn(repository, 'getTestExtensionExemptionById')
-        .mockResolvedValue(entity);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(entity);
 
       const result = await service.updateTestExtensionExemption(
         locationId,
@@ -234,9 +232,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
     });
 
     it('should call updateTestExtensionExemption and throw error while test summariy not found', async () => {
-      jest
-        .spyOn(repository, 'getTestExtensionExemptionById')
-        .mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
 
       let errored = false;
 

@@ -137,7 +137,7 @@ export class TestExtensionExemptionsWorkspaceService {
     userId: string,
   ): Promise<TestExtensionExemptionRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.getTestExtensionExemptionById(id);
+    const entity = await this.repository.findOne(id);
 
     if (!entity) {
       throw new LoggingException(
@@ -169,7 +169,7 @@ export class TestExtensionExemptionsWorkspaceService {
     entity.pendingStatusCode = 'PENDING';
 
     await this.repository.save(entity);
-    return this.map.one(entity);
+    return this.getTestExtensionExemptionById(entity.id);
   }
 
   async deleteTestExtensionExemption(id: string): Promise<void> {
