@@ -218,7 +218,9 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
 
   describe('deleteExtensionExemption', () => {
     it('should call the deleteExtensionExemption and delete test extension exemption', async () => {
-      const result = await service.deleteTestExtensionExemption(testExtensionExemptionId);
+      const result = await service.deleteTestExtensionExemption(
+        testExtensionExemptionId,
+      );
 
       expect(result).toEqual(undefined);
     });

@@ -51,7 +51,7 @@ describe('TestExtensionExemptionsController', () => {
     service = module.get(TestExtensionExemptionsService);
   });
 
-  describe('getTestSummary', () => {
+  describe('getTestExtensionExemption', () => {
     it('should call the TestSummaryWorkspaceService.getTestExtensionExemptionById', async () => {
       const spyService = jest.spyOn(service, 'getTestExtensionExemptionById');
       const result = await controller.getTestExtensionExemption('1', '1');
@@ -60,7 +60,7 @@ describe('TestExtensionExemptionsController', () => {
     });
   });
 
-  describe('getTestSummaries', () => {
+  describe('getTestExtensionExemptions', () => {
     it('should call the TestSummaryWorkspaceService.getTestExtensionExemptionsByLocationId', async () => {
       const spyService = jest.spyOn(
         service,

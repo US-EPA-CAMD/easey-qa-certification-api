@@ -58,7 +58,7 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
     service = module.get(TestExtensionExemptionsWorkspaceService);
   });
 
-  describe('getTestSummary', () => {
+  describe('getTestExtensionExemption', () => {
     it('should call the TestSummaryWorkspaceService.getTestExtensionExemptionById', async () => {
       const spyService = jest.spyOn(service, 'getTestExtensionExemptionById');
       const result = await controller.getTestExtensionExemption('1', '1');
@@ -67,7 +67,7 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
     });
   });
 
-  describe('getTestSummaries', () => {
+  describe('getTestExtensionExemptions', () => {
     it('should call the TestSummaryWorkspaceService.getTestExtensionExemptionsByLocationId', async () => {
       const spyService = jest.spyOn(
         service,
@@ -94,7 +94,11 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
   describe('deleteTestExtensionExemption', () => {
     it('should delete test extension exemption record', async () => {
       const spyService = jest.spyOn(service, 'deleteTestExtensionExemption');
-      const result = await controller.deleteTestExtensionExemption('1', '1', user);
+      const result = await controller.deleteTestExtensionExemption(
+        '1',
+        '1',
+        user,
+      );
       expect(result).toEqual('');
       expect(spyService).toHaveBeenCalled();
     });
