@@ -26,4 +26,12 @@ export class QaCertificationEventService {
 
     return this.map.one(result);
   }
+
+  async getQACertEvents(
+    locationId: string,
+  ): Promise<QACertificationEventRecordDTO[]> {
+    const results = await this.repository.find({ where: { locationId } });
+
+    return this.map.many(results);
+  }
 }

@@ -3,6 +3,7 @@ import { QaCertificationEventWorkshopService } from './qa-certification-event-wo
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -13,6 +14,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
   QACertificationEventBaseDTO,
+  QACertificationEventDTO,
   QACertificationEventRecordDTO,
 } from '../dto/qa-certification-event.dto';
 
@@ -21,6 +23,32 @@ import {
 @ApiTags('QA Certification Event')
 export class QaCertificationEventWorkshopController {
   constructor(private readonly service: QaCertificationEventWorkshopService) {}
+
+  @Get()
+  @ApiOkResponse({
+    isArray: true,
+    type: QACertificationEventDTO,
+    description:
+      'Retrieves workspace QA Certification Event records by Location Id',
+  })
+  async getCycleTimeSummaries(
+    @Param('locId') locationId: string,
+  ): Promise<QACertificationEventDTO[]> {
+    return this.service.getQACertEvents(locationId);
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    isArray: false,
+    type: QACertificationEventDTO,
+    description: 'Retrieves workspace QA Certification Event record by its Id',
+  })
+  getQACertEvent(
+    @Param('locId') _locationId: string,
+    @Param('id') id: string,
+  ): Promise<QACertificationEventDTO> {
+    return this.service.getQACertEvent(id);
+  }
 
   @Post()
   @UseGuards(AuthGuard)
@@ -35,10 +63,5 @@ export class QaCertificationEventWorkshopController {
     @User() user: CurrentUser,
   ): Promise<QACertificationEventRecordDTO> {
     return this.service.createQACertEvent(locationId, payload, user.userId);
-  }
-
-  @Get(':id')
-  getQACertEvent(@Param('locId') _locId: string, @Param('id') id: string) {
-    return this.service.getQACertEvent(id);
   }
 }
