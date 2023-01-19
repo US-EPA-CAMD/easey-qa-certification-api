@@ -30,6 +30,7 @@ const mockTestExtensionExemptionWorkspaceService = () => ({
   getTestExtensionExemptionsByLocationId: jest
     .fn()
     .mockResolvedValue([testExtExp]),
+  deleteTestExtensionExemption: jest.fn().mockResolvedValue(''),
 });
 
 describe('TestExtensionExemptionsWorkspaceController', () => {
@@ -87,6 +88,15 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(testExtExp);
+    });
+  });
+
+  describe('deleteTestExtensionExemption', () => {
+    it('should delete test extension exemption record', async () => {
+      const spyService = jest.spyOn(service, 'deleteTestExtensionExemption');
+      const result = await controller.deleteTestExtensionExemption('1', '1', user);
+      expect(result).toEqual('');
+      expect(spyService).toHaveBeenCalled();
     });
   });
 });

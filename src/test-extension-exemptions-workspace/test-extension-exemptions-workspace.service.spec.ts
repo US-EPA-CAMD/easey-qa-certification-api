@@ -1,3 +1,4 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import {
@@ -26,6 +27,7 @@ const payload = new TestExtensionExemptionBaseDTO();
 payload.unitId = '1';
 payload.stackPipeId = '1';
 const userId = 'testuser';
+const testExtensionExemptionId = 'testExtensionExemptionId';
 
 const unit = new Unit();
 unit.name = '1';
@@ -206,6 +208,30 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
 
       try {
         await service.createTestExtensionExemption(locationId, payload, userId);
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
+    });
+  });
+
+  describe('deleteExtensionExemption', () => {
+    it('should call the deleteExtensionExemption and delete test extension exemption', async () => {
+      const result = await service.deleteTestExtensionExemption(testExtensionExemptionId);
+
+      expect(result).toEqual(undefined);
+    });
+
+    it('should call the deleteTestSummary and throw error while deleting test summariy', async () => {
+      jest
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException());
+
+      let errored = false;
+
+      try {
+        await service.deleteTestExtensionExemption(testExtensionExemptionId);
       } catch (err) {
         errored = true;
       }

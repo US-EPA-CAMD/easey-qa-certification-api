@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -66,5 +66,19 @@ export class TestExtensionExemptionsWorkspaceController {
       payload,
       user.userId,
     );
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Deletes a Test Extension Exemption from the workspace',
+  })
+  async deleteTestExtensionExemption(
+    @Param('locId') _locationId: string,
+    @Param('id') id: string,
+    @User() user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteTestExtensionExemption(id);
   }
 }
