@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { QaCertificationEventWorkshopService } from './qa-certification-event-workshop.service';
 import {
   ApiBearerAuth,
@@ -35,5 +35,10 @@ export class QaCertificationEventWorkshopController {
     @User() user: CurrentUser,
   ): Promise<QACertificationEventRecordDTO> {
     return this.service.createQACertEvent(locationId, payload, user.userId);
+  }
+
+  @Get(':id')
+  getQACertEvent(@Param('locId') _locId: string, @Param('id') id: string) {
+    return this.service.getQACertEvent(id);
   }
 }

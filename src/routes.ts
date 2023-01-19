@@ -66,6 +66,7 @@ import { HgInjectionModule } from './hg-injection/hg-injection.module';
 import { QaCertificationEventWorkshopModule } from './qa-certification-event-workshop/qa-certification-event-workshop.module';
 import { TestExtensionExemptionsWorkspaceModule } from './test-extension-exemptions-workspace/test-extension-exemptions-workspace.module';
 import { TestExtensionExemptionsModule } from './test-extension-exemptions/test-extension-exemptions.module';
+import { QaCertificationEventModule } from './qa-certification-event/qa-certification-event.module';
 
 const routes: Routes = [
   {
@@ -84,6 +85,10 @@ const routes: Routes = [
     path: '/locations',
     module: LocationModule,
     children: [
+      {
+        path: ':locId/qa-certification-events',
+        module: QaCertificationEventModule,
+      },
       {
         path: ':locId/test-summary',
         module: TestSummaryModule,

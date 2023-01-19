@@ -107,4 +107,17 @@ export class QaCertificationEventWorkshopService {
 
     return await this.map.one(result);
   }
+
+  async getQACertEvent(id: string): Promise<QACertificationEventRecordDTO> {
+    const result = await this.repository.findOne(id);
+
+    if (!result) {
+      throw new LoggingException(
+        `A QA Certification Event record not found with Record Id [${id}]`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
 }

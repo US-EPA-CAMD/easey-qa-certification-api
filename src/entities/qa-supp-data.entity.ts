@@ -12,10 +12,10 @@ import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
 import { Component } from './component.entity';
 import { MonitorSystem } from './monitor-system.entity';
-import { ReportingPeriod } from '../reporting-period.entity';
 import { MonitorLocation } from './monitor-location.entity';
+import { ReportingPeriod } from './reporting-period.entity';
 
-@Entity({ name: 'camdecmpswks.qa_supp_data' })
+@Entity({ name: 'camdecmps.qa_supp_data' })
 export class QASuppData extends BaseEntity {
   @PrimaryColumn({
     name: 'qa_supp_data_id',

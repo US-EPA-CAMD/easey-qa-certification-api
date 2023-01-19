@@ -22,7 +22,7 @@ export class QACertificationEventRecordDTO extends QACertificationEventBaseDTO {
   checkSessionId: string;
   submissionId: number;
   submissionAvailabilityCode: string;
-  pendindStatusCode: string;
+  pendingStatusCode: string;
   evalStatusCode: string;
   userId: string;
   addDate: string;
