@@ -130,6 +130,48 @@ export class TestExtensionExemptionsWorkspaceService {
     return this.map.one(result);
   }
 
+  async updateTestExtensionExemption(
+    locationId: string,
+    id: string,
+    payload: TestExtensionExemptionBaseDTO,
+    userId: string,
+  ): Promise<TestExtensionExemptionRecordDTO> {
+    const timestamp = currentDateTime();
+    const entity = await this.repository.getTestExtensionExemptionById(id);
+
+    if (!entity) {
+      throw new LoggingException(
+        `A test extension exemption record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const [
+      reportPeriodId,
+      componentRecordId,
+      monitoringSystemRecordId,
+    ] = await this.lookupValues(locationId, payload);
+
+    entity.reportPeriodId = reportPeriodId;
+    entity.monitoringSystemRecordId = monitoringSystemRecordId;
+    entity.componentRecordId = componentRecordId;
+    entity.hoursUsed = payload.hoursUsed;
+    entity.spanScaleCode = payload.spanScaleCode;
+    entity.fuelCode = payload.fuelCode;
+    entity.extensionOrExemptionCode = payload.extensionOrExemptionCode;
+
+    entity.userId = userId;
+    entity.lastUpdated = timestamp;
+    entity.updateDate = timestamp;
+    entity.needsEvalFlag = 'Y';
+    entity.updatedStatusFlag = 'Y';
+    entity.evalStatusCode = 'EVAL';
+    entity.pendingStatusCode = 'PENDING';
+
+    await this.repository.save(entity);
+    return this.map.one(entity);
+  }
+
   async deleteTestExtensionExemption(id: string): Promise<void> {
     try {
       await this.repository.delete(id);
