@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   TestExtensionExemptionBaseDTO,
@@ -99,6 +99,17 @@ export class TestExtensionExemptionsWorkspaceService {
     );
 
     return this.map.one(result);
+  }
+
+  async deleteTestExtensionExemption(id: string): Promise<void> {
+    try {
+      await this.repository.delete(id);
+    } catch (e) {
+      throw new InternalServerErrorException(
+        `Error deleting Test Summary record Id [${id}]`,
+        e.message,
+      );
+    }
   }
 
   async lookupValues(
