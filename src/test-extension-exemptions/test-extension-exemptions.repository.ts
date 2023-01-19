@@ -1,9 +1,9 @@
 import { addJoins } from '../utilities/test-extension-exemption.querybuilder';
 import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
-import { TestExtensionExemption } from '../entities/workspace/test-extension-exemption.entity';
+import { TestExtensionExemption } from '../entities/test-extension-exemption.entity';
 
 @EntityRepository(TestExtensionExemption)
-export class TestExtensionExemptionsWorkspaceRepository extends Repository<
+export class TestExtensionExemptionsRepository extends Repository<
   TestExtensionExemption
 > {
   private buildBaseQuery(): SelectQueryBuilder<TestExtensionExemption> {

@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { SelectQueryBuilder } from 'typeorm';
-import { TestExtensionExemption } from '../entities/workspace/test-extension-exemption.entity';
+import { TestExtensionExemption } from '../entities/test-extension-exemption.entity';
 
 import * as testExtExpQueryBuilder from '../utilities/test-extension-exemption.querybuilder';
-import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
+import { TestExtensionExemptionsRepository } from './test-extension-exemptions.repository';
 
 const testExtExp = new TestExtensionExemption();
 
@@ -23,12 +23,12 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
-        TestExtensionExemptionsWorkspaceRepository,
+        TestExtensionExemptionsRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],
     }).compile();
 
-    repository = module.get(TestExtensionExemptionsWorkspaceRepository);
+    repository = module.get(TestExtensionExemptionsRepository);
     queryBuilder = module.get<SelectQueryBuilder<TestExtensionExemption>>(
       SelectQueryBuilder,
     );

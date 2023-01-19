@@ -26,6 +26,10 @@ const payload = new TestExtensionExemptionBaseDTO();
 
 const mockTestExtensionExemptionWorkspaceService = () => ({
   createTestExtensionExemption: jest.fn().mockResolvedValue(testExtExp),
+  getTestExtensionExemptionById: jest.fn().mockResolvedValue(testExtExp),
+  getTestExtensionExemptionsByLocationId: jest
+    .fn()
+    .mockResolvedValue([testExtExp]),
   deleteTestExtensionExemption: jest.fn().mockResolvedValue(''),
 });
 
@@ -54,6 +58,27 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
     service = module.get(TestExtensionExemptionsWorkspaceService);
   });
 
+  describe('getTestExtensionExemption', () => {
+    it('should call the TestSummaryWorkspaceService.getTestExtensionExemptionById', async () => {
+      const spyService = jest.spyOn(service, 'getTestExtensionExemptionById');
+      const result = await controller.getTestExtensionExemption('1', '1');
+      expect(result).toEqual(testExtExp);
+      expect(spyService).toHaveBeenCalled();
+    });
+  });
+
+  describe('getTestExtensionExemptions', () => {
+    it('should call the TestSummaryWorkspaceService.getTestExtensionExemptionsByLocationId', async () => {
+      const spyService = jest.spyOn(
+        service,
+        'getTestExtensionExemptionsByLocationId',
+      );
+      const result = await controller.getTestExtensionExemptions('1');
+      expect(result).toEqual([testExtExp]);
+      expect(spyService).toHaveBeenCalled();
+    });
+  });
+
   describe('createTestExtensionExemption', () => {
     it('should create test summary record', async () => {
       const spyService = jest.spyOn(service, 'createTestExtensionExemption');
@@ -69,7 +94,11 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
   describe('deleteTestExtensionExemption', () => {
     it('should delete test extension exemption record', async () => {
       const spyService = jest.spyOn(service, 'deleteTestExtensionExemption');
-      const result = await controller.deleteTestExtensionExemption('1', '1', user);
+      const result = await controller.deleteTestExtensionExemption(
+        '1',
+        '1',
+        user,
+      );
       expect(result).toEqual('');
       expect(spyService).toHaveBeenCalled();
     });
