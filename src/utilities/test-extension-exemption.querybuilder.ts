@@ -19,3 +19,17 @@ export const addJoins = (
     .leftJoinAndSelect('ml.stackPipe', 'sp')
     .leftJoin('sp.plant', 'spp');
 };
+
+export const addTestExtensionExemptionIdWhere = (
+  query: any,
+  testExtensionExemptionIds: string[],
+): SelectQueryBuilder<
+  TestExtensionExemption | WorkspaceTestExtensionExemption
+> => {
+  if (testExtensionExemptionIds) {
+    query.andWhere('tee.id IN (:...testExtensionExemptionIds)', {
+      testExtensionExemptionIds,
+    });
+  }
+  return query;
+};

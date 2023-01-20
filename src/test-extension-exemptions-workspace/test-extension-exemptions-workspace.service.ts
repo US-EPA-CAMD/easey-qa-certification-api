@@ -6,6 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   TestExtensionExemptionBaseDTO,
+  TestExtensionExemptionDTO,
   TestExtensionExemptionRecordDTO,
 } from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionMap } from '../maps/test-extension-exemption.map';
@@ -139,6 +140,38 @@ export class TestExtensionExemptionsWorkspaceService {
         e.message,
       );
     }
+  }
+
+  async getTestExtensionExemptions(
+    facilityId: number,
+    unitIds?: string[],
+    stackPipeIds?: string[],
+    testExtensionExemptionIds?: string[],
+  ): Promise<TestExtensionExemptionDTO[]> {
+    const results = await this.repository.getTestExtensionExemptionsByUnitStack(
+      facilityId,
+      unitIds,
+      stackPipeIds,
+      testExtensionExemptionIds,
+    );
+
+    return this.map.many(results);
+  }
+
+  async export(
+    facilityId: number,
+    unitIds?: string[],
+    stackPipeIds?: string[],
+    testExtensionExemptionIds?: string[],
+  ): Promise<TestExtensionExemptionDTO[]> {
+    const testSummaries = await this.getTestExtensionExemptions(
+      facilityId,
+      unitIds,
+      stackPipeIds,
+      testExtensionExemptionIds,
+    );
+
+    return testSummaries;
   }
 
   async lookupValues(
