@@ -110,10 +110,7 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
   describe('deleteTestExtensionExemption', () => {
     it('should delete test extension exemption record', async () => {
       const spyService = jest.spyOn(service, 'deleteTestExtensionExemption');
-      const result = await controller.deleteTestExtensionExemption(
-        '1',
-        '1',
-      );
+      const result = await controller.deleteTestExtensionExemption('1', '1');
       expect(result).toEqual('');
       expect(spyService).toHaveBeenCalled();
     });

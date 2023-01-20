@@ -176,7 +176,7 @@ export class TestSummaryChecksService {
       if (error) {
         errorList.push(error);
       }
-      
+
       error = await this.duplicateTestCheck(
         locationId,
         summary,
