@@ -26,6 +26,7 @@ const payload = new TestExtensionExemptionBaseDTO();
 
 const mockTestExtensionExemptionWorkspaceService = () => ({
   createTestExtensionExemption: jest.fn().mockResolvedValue(testExtExp),
+  updateTestExtensionExemption: jest.fn().mockResolvedValue(testExtExp),
   getTestExtensionExemptionById: jest.fn().mockResolvedValue(testExtExp),
   getTestExtensionExemptionsByLocationId: jest
     .fn()
@@ -80,7 +81,7 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
   });
 
   describe('createTestExtensionExemption', () => {
-    it('should create test summary record', async () => {
+    it('should create test extension exemption record', async () => {
       const spyService = jest.spyOn(service, 'createTestExtensionExemption');
       const result = await controller.createTestExtensionExemption(
         '1',
@@ -88,17 +89,28 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(testExtExp);
+      expect(spyService).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateTestExtensionExemption', () => {
+    it('should update test extension exemption record', async () => {
+      const spyService = jest.spyOn(service, 'updateTestExtensionExemption');
+      const result = await controller.updateTestExtensionExemption(
+        '1',
+        '1',
+        payload,
+        user,
+      );
+      expect(result).toEqual({});
+      expect(spyService).toHaveBeenCalled();
     });
   });
 
   describe('deleteTestExtensionExemption', () => {
     it('should delete test extension exemption record', async () => {
       const spyService = jest.spyOn(service, 'deleteTestExtensionExemption');
-      const result = await controller.deleteTestExtensionExemption(
-        '1',
-        '1',
-        user,
-      );
+      const result = await controller.deleteTestExtensionExemption('1', '1');
       expect(result).toEqual('');
       expect(spyService).toHaveBeenCalled();
     });
