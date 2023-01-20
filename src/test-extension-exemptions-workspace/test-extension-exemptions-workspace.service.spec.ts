@@ -28,6 +28,8 @@ payload.unitId = '1';
 payload.stackPipeId = '1';
 const userId = 'testuser';
 const testExtensionExemptionId = 'testExtensionExemptionId';
+const facilityId = 1;
+const unitId = '1';
 
 const unit = new Unit();
 unit.name = '1';
@@ -46,6 +48,7 @@ const dto = new TestExtensionExemptionRecordDTO();
 const mockRepository = () => ({
   getTestExtensionExemptionById: jest.fn().mockResolvedValue(entity),
   getTestExtensionExemptionsByLocationId: jest.fn().mockResolvedValue([entity]),
+  getTestExtensionExemptionsByUnitStack: jest.fn().mockResolvedValue([entity]),
   delete: jest.fn().mockResolvedValue(null),
   findOne: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
@@ -239,6 +242,28 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
       }
 
       expect(errored).toBe(true);
+    });
+  });
+
+  describe('getTestExtensionExemptions', () => {
+    it('calls the repository.getTestSummariesByUnitStack() and get test Extension Exemptions by locationId', async () => {
+      const result = await service.getTestExtensionExemptions(facilityId, [
+        unitId,
+      ]);
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('export', () => {
+    it('calls the service.getTestExtensionExemptions() and get test Extension Exemptions by locationId and unitId then export', async () => {
+      const spySummaries = jest
+        .spyOn(service, 'getTestExtensionExemptions')
+        .mockResolvedValue([dto]);
+
+      const result = await service.export(facilityId, [unitId]);
+
+      expect(spySummaries).toHaveBeenCalled();
+      expect(result).toEqual([dto]);
     });
   });
 

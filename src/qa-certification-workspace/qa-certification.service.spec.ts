@@ -10,8 +10,11 @@ import { QACertificationWorkspaceService } from './qa-certification.service';
 import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { TestExtensionExemptionsWorkspaceService } from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.service';
+import { TestExtensionExemptionDTO } from '../dto/test-extension-exemption.dto';
 
 const testSummary = new TestSummaryDTO();
+const testExtExem = new TestExtensionExemptionDTO();
 const qaCertDto = new QACertificationDTO();
 qaCertDto.testSummaryData = [testSummary];
 
@@ -38,6 +41,11 @@ const mockTestSummaryWorkspaceService = () => ({
   import: jest.fn().mockResolvedValue(undefined),
 });
 
+const mockTestExtExemWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([testExtExem]),
+  import: jest.fn().mockResolvedValue(undefined),
+});
+
 describe('QA Certification Workspace Service Test', () => {
   let service: QACertificationWorkspaceService;
 
@@ -50,6 +58,10 @@ describe('QA Certification Workspace Service Test', () => {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSummaryWorkspaceService,
         },
+        {
+          provide: TestExtensionExemptionsWorkspaceService,
+          useFactory: mockTestExtExemWorkspaceService,
+        },
       ],
     }).compile();
 
@@ -60,8 +72,8 @@ describe('QA Certification Workspace Service Test', () => {
     it('successfully calls export() service function', async () => {
       const expected = qaCertDto;
       expected.testSummaryData = [testSummary];
-      expected.testExtensionExemptionData = undefined;
-      expected.certificationEventData = undefined;
+      expected.testExtensionExemptionData = [testExtExem];
+      expected.certificationEventData = [];
       expected.orisCode = 1;
 
       const paramsDTO = new QACertificationParamsDTO();
