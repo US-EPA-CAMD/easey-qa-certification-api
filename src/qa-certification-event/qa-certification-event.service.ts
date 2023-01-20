@@ -30,7 +30,7 @@ export class QaCertificationEventService {
     return this.map.one(result);
   }
 
-  async getQACertEvents(
+  async getQACertEventsByLocationId(
     locationId: string,
   ): Promise<QACertificationEventRecordDTO[]> {
     const results = await this.repository.find({ where: { locationId } });
@@ -38,7 +38,7 @@ export class QaCertificationEventService {
     return this.map.many(results);
   }
 
-  async getQaCertEvents(
+  async getQACertEvents(
     facilityId: number,
     unitIds?: string[],
     stackPipeIds?: string[],
@@ -60,7 +60,7 @@ export class QaCertificationEventService {
     stackPipeIds?: string[],
     qaCertificationEventIds?: string[],
   ): Promise<QACertificationEventDTO[]> {
-    const testSummaries = await this.getQaCertEvents(
+    const testSummaries = await this.getQACertEvents(
       facilityId,
       unitIds,
       stackPipeIds,
