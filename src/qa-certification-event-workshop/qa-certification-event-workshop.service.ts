@@ -185,13 +185,13 @@ export class QaCertificationEventWorkshopService {
     stackPipeIds?: string[],
     qaCertificationEventIds?: string[],
   ): Promise<QACertificationEventDTO[]> {
-    const testSummaries = await this.getQACertEvents(
+    const qaCertEvents = await this.getQACertEvents(
       facilityId,
       unitIds,
       stackPipeIds,
       qaCertificationEventIds,
     );
 
-    return testSummaries;
+    return qaCertEvents;
   }
 }
