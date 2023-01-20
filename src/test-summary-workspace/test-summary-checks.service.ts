@@ -146,17 +146,6 @@ export class TestSummaryChecksService {
     }
 
     if (summary.testTypeCode === TestTypeCodes.LINE) {
-      // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
-      error = await this.linear4Check(
-        locationId,
-        summary,
-        historicalTestSumId,
-        isImport,
-      );
-      if (error) {
-        errorList.push(error);
-      }
-
       // LINEAR-10 Linearity Test Result Code Valid
       error = await this.linear10Check(summary);
       if (error) {
@@ -177,6 +166,17 @@ export class TestSummaryChecksService {
     }
 
     if (!isUpdate) {
+      // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
+      error = await this.linear4Check(
+        locationId,
+        summary,
+        historicalTestSumId,
+        isImport,
+      );
+      if (error) {
+        errorList.push(error);
+      }
+      
       error = await this.duplicateTestCheck(
         locationId,
         summary,
