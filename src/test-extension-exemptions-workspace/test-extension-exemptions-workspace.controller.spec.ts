@@ -102,7 +102,7 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
         payload,
         user,
       );
-      expect(result).toEqual('');
+      expect(result).toEqual({});
       expect(spyService).toHaveBeenCalled();
     });
   });
