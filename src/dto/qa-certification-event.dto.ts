@@ -1,16 +1,16 @@
 export class QACertificationEventBaseDTO {
   stackPipeId?: string;
   unitId?: string;
-  monitoringSystemID: string;
-  componentID: string;
+  monitoringSystemID?: string;
+  componentID?: string;
   qaCertEventCode: string;
   qaCertEventDate: Date;
-  qaCertEventHour: number;
-  requiredTestCode: string;
-  conditionalBeginDate: Date;
-  conditionalBeginHour: number;
-  completionTestDate: Date;
-  completionTestHour: number;
+  qaCertEventHour?: number;
+  requiredTestCode?: string;
+  conditionalBeginDate?: Date;
+  conditionalBeginHour?: number;
+  completionTestDate?: Date;
+  completionTestHour?: number;
 }
 
 export class QACertificationEventRecordDTO extends QACertificationEventBaseDTO {
