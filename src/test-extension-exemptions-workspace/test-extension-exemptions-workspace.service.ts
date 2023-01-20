@@ -146,7 +146,6 @@ export class TestExtensionExemptionsWorkspaceService {
       );
     }
 
-    // TODO:cw why is this done
     const [
       reportPeriodId,
       componentRecordId,
@@ -156,19 +155,13 @@ export class TestExtensionExemptionsWorkspaceService {
     record.userId = userId;
     record.lastUpdated = timestamp;
     record.updateDate = timestamp;
-
-    // TODO:cw why is this done
     record.reportPeriodId = reportPeriodId;
     record.monitoringSystemRecordId = monitoringSystemRecordId;
     record.componentRecordId = componentRecordId;
-
-    // TODO:cw why is this done
     record.hoursUsed = payload.hoursUsed;
     record.spanScaleCode = payload.spanScaleCode;
     record.fuelCode = payload.fuelCode;
     record.extensionOrExemptionCode = payload.extensionOrExemptionCode;
-
-    // TODO:cw why is this done
     record.needsEvalFlag = 'Y';
     record.updatedStatusFlag = 'Y';
     record.evalStatusCode = 'EVAL';
