@@ -22,6 +22,8 @@ import { InternalServerErrorException } from '@nestjs/common';
 
 const locationId = '';
 const qaCertEventId = '';
+const facilityId = 1;
+const unitId = '121';
 const payload = new QACertificationEventBaseDTO();
 payload.unitId = '1';
 payload.stackPipeId = '1';
@@ -43,6 +45,7 @@ const lookupValuesResult = {
 };
 
 const mockRepository = () => ({
+  getQaCertEventsByUnitStack: jest.fn().mockResolvedValue([entity]),
   find: jest.fn().mockResolvedValue([entity]),
   findOne: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
@@ -194,9 +197,9 @@ describe('QaCertificationEventWorkshopService', () => {
     });
   });
 
-  describe('getQACertEvents', () => {
+  describe('getQACertEventsByLocationId', () => {
     it('calls the repository.find() and gets QA Certification Events by locationId', async () => {
-      const result = await service.getQACertEvents(locationId);
+      const result = await service.getQACertEventsByLocationId(locationId);
       expect(result).toEqual([qaCertEventDTO]);
     });
   });
@@ -236,6 +239,29 @@ describe('QaCertificationEventWorkshopService', () => {
         componentID: '1',
         monitoringSystemID: '1',
       });
+    });
+  });
+
+  describe('getQACertEvents', () => {
+    it('calls the repository.getQACertEventsByUnitStack() and get qa certification events by locationId', async () => {
+      const result = await service.getQACertEvents(facilityId, [unitId]);
+      expect(result).toEqual([qaCertEventDTO]);
+    });
+  });
+
+  describe('export', () => {
+    it('calls the repository.getQACertEventsByUnitStack() and get qa certification events by locationId', async () => {
+      const returnedSummary = qaCertEventDTO;
+      returnedSummary.id = qaCertEventId;
+
+      const spySummaries = jest
+        .spyOn(service, 'getQACertEvents')
+        .mockResolvedValue([returnedSummary]);
+
+      const result = await service.export(facilityId, [unitId]);
+
+      expect(spySummaries).toHaveBeenCalled();
+      expect(result).toEqual([qaCertEventDTO]);
     });
   });
 });

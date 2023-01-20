@@ -42,7 +42,7 @@ const user: CurrentUser = {
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 describe('Transmitter Transducer Workspace Controller', () => {

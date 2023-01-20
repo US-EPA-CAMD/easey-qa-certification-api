@@ -22,13 +22,13 @@ const user: CurrentUser = {
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 const mockService = () => ({
   createQACertEvent: jest.fn().mockResolvedValue(qaCertEvent),
   getQACertEvent: jest.fn().mockResolvedValue(qaCertEvent),
-  getQACertEvents: jest.fn().mockResolvedValue([qaCertEvent]),
+  getQACertEventsByLocationId: jest.fn().mockResolvedValue([qaCertEvent]),
   deleteQACertEvent: jest.fn().mockResolvedValue(''),
 });
 
@@ -56,9 +56,9 @@ describe('QaCertificationEventWorkshopController', () => {
     service = module.get(QaCertificationEventWorkshopService);
   });
 
-  describe('getQACertEvents', () => {
+  describe('getQACertEventsByLocationId', () => {
     it('should call the QaCertificationEventWorkshopService.getQACertEvents', async () => {
-      const spyService = jest.spyOn(service, 'getQACertEvents');
+      const spyService = jest.spyOn(service, 'getQACertEventsByLocationId');
       const result = await controller.getQACertEvents('1');
       expect(result).toEqual([qaCertEvent]);
       expect(spyService).toHaveBeenCalled();

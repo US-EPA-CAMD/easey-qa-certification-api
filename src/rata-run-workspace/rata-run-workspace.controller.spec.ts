@@ -19,7 +19,7 @@ const user: CurrentUser = {
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 const payload: RataRunBaseDTO = {
   runNumber: 1,

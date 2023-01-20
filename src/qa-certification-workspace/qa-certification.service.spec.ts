@@ -10,10 +10,13 @@ import { QACertificationWorkspaceService } from './qa-certification.service';
 import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { QaCertificationEventWorkshopService } from '../qa-certification-event-workshop/qa-certification-event-workshop.service';
 
 const testSummary = new TestSummaryDTO();
+const qaCertEventDto = new QACertificationDTO();
 const qaCertDto = new QACertificationDTO();
 qaCertDto.testSummaryData = [testSummary];
+qaCertDto.certificationEventData = [qaCertEventDto];
 
 const payload = new QACertificationImportDTO();
 payload.testSummaryData = [new TestSummaryImportDTO()];
@@ -38,6 +41,10 @@ const mockTestSummaryWorkspaceService = () => ({
   import: jest.fn().mockResolvedValue(undefined),
 });
 
+const mockQACertEventService = () => ({
+  export: jest.fn().mockResolvedValue([qaCertEventDto]),
+});
+
 describe('QA Certification Workspace Service Test', () => {
   let service: QACertificationWorkspaceService;
 
@@ -50,6 +57,10 @@ describe('QA Certification Workspace Service Test', () => {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSummaryWorkspaceService,
         },
+        {
+          provide: QaCertificationEventWorkshopService,
+          useFactory: mockQACertEventService,
+        },
       ],
     }).compile();
 
@@ -60,8 +71,8 @@ describe('QA Certification Workspace Service Test', () => {
     it('successfully calls export() service function', async () => {
       const expected = qaCertDto;
       expected.testSummaryData = [testSummary];
+      expected.certificationEventData = [qaCertEventDto];
       expected.testExtensionExemptionData = undefined;
-      expected.certificationEventData = undefined;
       expected.orisCode = 1;
 
       const paramsDTO = new QACertificationParamsDTO();
