@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -62,7 +63,7 @@ export class TestExtensionExemptionsWorkspaceController {
   @ApiBearerAuth('Token')
   @ApiCreatedResponse({
     type: TestExtensionExemptionRecordDTO,
-    description: 'Creates a Test ExtensionExemption record in the workspace',
+    description: 'Creates a Test Extension Exemption record in the workspace',
   })
   async createTestExtensionExemption(
     @Param('locId') locationId: string,
@@ -71,6 +72,27 @@ export class TestExtensionExemptionsWorkspaceController {
   ): Promise<TestExtensionExemptionRecordDTO> {
     return this.service.createTestExtensionExemption(
       locationId,
+      payload,
+      user.userId,
+    );
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: TestExtensionExemptionRecordDTO,
+    description: 'Updates a Test Extension Exemption record in the workspace',
+  })
+  async updateTestExtensionExemption(
+    @Param('locId') locationId: string,
+    @Param('id') id: string,
+    @Body() payload: TestExtensionExemptionBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<TestExtensionExemptionRecordDTO> {
+    return this.service.updateTestExtensionExemption(
+      locationId,
+      id,
       payload,
       user.userId,
     );
@@ -85,7 +107,6 @@ export class TestExtensionExemptionsWorkspaceController {
   async deleteTestExtensionExemption(
     @Param('locId') _locationId: string,
     @Param('id') id: string,
-    @User() user: CurrentUser,
   ): Promise<void> {
     return this.service.deleteTestExtensionExemption(id);
   }
