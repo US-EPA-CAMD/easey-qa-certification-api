@@ -18,11 +18,14 @@ import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { Component } from '../entities/workspace/component.entity';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
+import { InternalServerErrorException } from '@nestjs/common';
 
 const locationId = '';
 const qaCertEventId = '';
 const payload = new QACertificationEventBaseDTO();
-const usersId = '';
+payload.unitId = '1';
+payload.stackPipeId = '1';
+const userId = '';
 const entity = new QACertificationEvent();
 const qaCertEventDTO = new QACertificationEventDTO();
 
@@ -30,6 +33,14 @@ const unit = new Unit();
 unit.name = '1';
 const stackPipe = new StackPipe();
 stackPipe.name = '1';
+const monitoringSystem = new MonitorSystem();
+monitoringSystem.id = '1';
+const component = new Component();
+component.id = '1';
+const lookupValuesResult = {
+  componentID: '1',
+  monitoringSystemID: '1',
+};
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
@@ -47,6 +58,9 @@ const mockMap = () => ({
 describe('QaCertificationEventWorkshopService', () => {
   let service: QaCertificationEventWorkshopService;
   let repository: QACertificationEventWorkspaceRepository;
+  let unitRepository: UnitRepository;
+  let stackPipeRepository: StackPipeRepository;
+  let locationRepository: MonitorLocationRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -75,19 +89,19 @@ describe('QaCertificationEventWorkshopService', () => {
         {
           provide: StackPipeRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(new StackPipe()),
+            findOne: jest.fn().mockResolvedValue(stackPipe),
           }),
         },
         {
           provide: ComponentWorkspaceRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(new Component()),
+            findOne: jest.fn().mockResolvedValue(component),
           }),
         },
         {
           provide: MonitorSystemWorkspaceRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
+            findOne: jest.fn().mockResolvedValue(monitoringSystem),
           }),
         },
       ],
@@ -99,17 +113,63 @@ describe('QaCertificationEventWorkshopService', () => {
     repository = module.get<QACertificationEventWorkspaceRepository>(
       QACertificationEventWorkspaceRepository,
     );
+    unitRepository = module.get<UnitRepository>(UnitRepository);
+    stackPipeRepository = module.get<StackPipeRepository>(StackPipeRepository);
+    locationRepository = module.get<MonitorLocationRepository>(
+      MonitorLocationRepository,
+    );
   });
 
   describe('createQAEventCert', () => {
-    it('calls the repository.create() and inserts a QA Certification Event', async () => {
+    it('calls the createQACertEvent and inserts a QA Certification Event', async () => {
+      jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
+
       const result = await service.createQACertEvent(
         locationId,
         payload,
-        usersId,
+        userId,
       );
       expect(result).toEqual(qaCertEventDTO);
-      expect(repository.create).toHaveBeenCalled();
+    });
+
+    it('should call the createQACertEvent and create QA Certification Event with historicalRecordId', async () => {
+      jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(entity);
+
+      const result = await service.createQACertEvent(
+        locationId,
+        payload,
+        userId,
+        'historicalRecordId',
+      );
+
+      expect(result).toEqual(qaCertEventDTO);
+    });
+
+    it('should call the createQACertEvent and throw error if Unit does not match', async () => {
+      jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
+
+      const pipe = new StackPipe();
+      pipe.name = '101';
+      const unit = new Unit();
+      unit.name = '101';
+      const loc = new MonitorLocation();
+      loc.unitId = '11';
+
+      jest.spyOn(unitRepository, 'findOne').mockResolvedValue(unit);
+      jest.spyOn(stackPipeRepository, 'findOne').mockResolvedValue(stackPipe);
+      jest.spyOn(locationRepository, 'findOne').mockResolvedValue(loc);
+
+      let errored = false;
+
+      try {
+        await service.createQACertEvent(locationId, payload, userId);
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
     });
   });
 
@@ -135,9 +195,47 @@ describe('QaCertificationEventWorkshopService', () => {
   });
 
   describe('getQACertEvents', () => {
-    it('calls the repository.getQACertEvents() and get test Extension Exemptions by locationId', async () => {
+    it('calls the repository.find() and gets QA Certification Events by locationId', async () => {
       const result = await service.getQACertEvents(locationId);
       expect(result).toEqual([qaCertEventDTO]);
+    });
+  });
+
+  describe('deleteQACertEvent', () => {
+    it('should call the repository.delete() and deletes QA Certification Event', async () => {
+      const result = await service.deleteQACertEvent(qaCertEventId);
+
+      expect(result).toEqual(undefined);
+    });
+
+    it('should call the deleteQACertEvent and throw error while deleting QA Certification Event record', async () => {
+      jest
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException());
+
+      let errored = false;
+
+      try {
+        await service.deleteQACertEvent(qaCertEventId);
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
+    });
+  });
+
+  describe('lookupValues', () => {
+    it('should return componentID, monitoringSystemID', async () => {
+      payload.componentID = '1';
+      payload.monitoringSystemID = 'abc';
+
+      const result = await service.lookupValues(locationId, payload);
+
+      expect(result).toEqual({
+        componentID: '1',
+        monitoringSystemID: '1',
+      });
     });
   });
 });

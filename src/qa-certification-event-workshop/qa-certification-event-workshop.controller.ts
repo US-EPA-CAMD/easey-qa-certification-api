@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { QaCertificationEventWorkshopService } from './qa-certification-event-workshop.service';
 import {
   ApiBearerAuth,
@@ -31,7 +39,7 @@ export class QaCertificationEventWorkshopController {
     description:
       'Retrieves workspace QA Certification Event records by Location Id',
   })
-  async getCycleTimeSummaries(
+  async getQACertEvents(
     @Param('locId') locationId: string,
   ): Promise<QACertificationEventDTO[]> {
     return this.service.getQACertEvents(locationId);
@@ -63,5 +71,19 @@ export class QaCertificationEventWorkshopController {
     @User() user: CurrentUser,
   ): Promise<QACertificationEventRecordDTO> {
     return this.service.createQACertEvent(locationId, payload, user.userId);
+  }
+
+  @Delete(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    description: 'Deletes a QA Certification Event from the workspace',
+  })
+  async deleteTestExtensionExemption(
+    @Param('locId') _locationId: string,
+    @Param('id') id: string,
+    @User() _user: CurrentUser,
+  ): Promise<void> {
+    return this.service.deleteQACertEvent(id);
   }
 }
