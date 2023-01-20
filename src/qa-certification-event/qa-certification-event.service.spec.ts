@@ -7,11 +7,14 @@ import { QACertificationEvent } from '../entities/qa-certification-event.entity'
 
 const locationId = '';
 const qaCertEventId = '';
+const facilityId = 1;
+const unitId = '121';
 
 const entity = new QACertificationEvent();
 const qaCertEventDTO = new QACertificationEventDTO();
 
 const mockRepository = () => ({
+  getQaCertEventsByUnitStack: jest.fn().mockResolvedValue([entity]),
   find: jest.fn().mockResolvedValue([entity]),
   findOne: jest.fn().mockResolvedValue(entity),
 });
@@ -67,9 +70,32 @@ describe('QaCertificationEventService', () => {
     });
   });
 
-  describe('getQACertEvents', () => {
+  describe('getQACertEventsByLocationId', () => {
     it('calls the repository.getQACertEvents() and get test Extension Exemptions by locationId', async () => {
-      const result = await service.getQACertEvents(locationId);
+      const result = await service.getQACertEventsByLocationId(locationId);
+      expect(result).toEqual([qaCertEventDTO]);
+    });
+  });
+
+  describe('getQACertEvents', () => {
+    it('calls the repository.getQACertEventsByUnitStack() and get qa certification events by locationId', async () => {
+      const result = await service.getQACertEvents(facilityId, [unitId]);
+      expect(result).toEqual([qaCertEventDTO]);
+    });
+  });
+
+  describe('export', () => {
+    it('calls the repository.getQACertEventsByUnitStack() and get qa certification events by locationId', async () => {
+      const returnedSummary = qaCertEventDTO;
+      returnedSummary.id = qaCertEventId;
+
+      const spySummaries = jest
+        .spyOn(service, 'getQACertEvents')
+        .mockResolvedValue([returnedSummary]);
+
+      const result = await service.export(facilityId, [unitId]);
+
+      expect(spySummaries).toHaveBeenCalled();
       expect(result).toEqual([qaCertEventDTO]);
     });
   });

@@ -4,7 +4,10 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 import { QACertificationEventMap } from '../maps/qa-certification-event.map';
 import { QACertificationEventRepository } from './qa-certification-event.repository';
-import { QACertificationEventRecordDTO } from '../dto/qa-certification-event.dto';
+import {
+  QACertificationEventDTO,
+  QACertificationEventRecordDTO,
+} from '../dto/qa-certification-event.dto';
 
 @Injectable()
 export class QaCertificationEventService {
@@ -27,11 +30,43 @@ export class QaCertificationEventService {
     return this.map.one(result);
   }
 
-  async getQACertEvents(
+  async getQACertEventsByLocationId(
     locationId: string,
   ): Promise<QACertificationEventRecordDTO[]> {
     const results = await this.repository.find({ where: { locationId } });
 
     return this.map.many(results);
+  }
+
+  async getQACertEvents(
+    facilityId: number,
+    unitIds?: string[],
+    stackPipeIds?: string[],
+    qaCertificationEventIds?: string[],
+  ): Promise<QACertificationEventDTO[]> {
+    const results = await this.repository.getQaCertEventsByUnitStack(
+      facilityId,
+      unitIds,
+      stackPipeIds,
+      qaCertificationEventIds,
+    );
+
+    return this.map.many(results);
+  }
+
+  async export(
+    facilityId: number,
+    unitIds?: string[],
+    stackPipeIds?: string[],
+    qaCertificationEventIds?: string[],
+  ): Promise<QACertificationEventDTO[]> {
+    const testSummaries = await this.getQACertEvents(
+      facilityId,
+      unitIds,
+      stackPipeIds,
+      qaCertificationEventIds,
+    );
+
+    return testSummaries;
   }
 }

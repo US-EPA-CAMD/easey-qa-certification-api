@@ -42,7 +42,7 @@ export class QaCertificationEventWorkshopController {
   async getQACertEvents(
     @Param('locId') locationId: string,
   ): Promise<QACertificationEventDTO[]> {
-    return this.service.getQACertEvents(locationId);
+    return this.service.getQACertEventsByLocationId(locationId);
   }
 
   @Get(':id')

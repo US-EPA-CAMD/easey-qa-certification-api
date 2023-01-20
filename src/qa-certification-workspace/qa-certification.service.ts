@@ -11,12 +11,14 @@ import { LocationIdentifiers } from '../interfaces/location-identifiers.interfac
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { QaCertificationEventWorkshopService } from '../qa-certification-event-workshop/qa-certification-event-workshop.service';
 
 @Injectable()
 export class QACertificationWorkspaceService {
   constructor(
     private readonly logger: Logger,
     private readonly testSummaryService: TestSummaryWorkspaceService,
+    private readonly qaCertEventService: QaCertificationEventWorkshopService,
   ) {}
 
   async export(params: QACertificationParamsDTO): Promise<QACertificationDTO> {
@@ -36,6 +38,14 @@ export class QACertificationWorkspaceService {
     );
 
     const EVENTS = SUMMARIES + 1;
+    promises.push(
+      this.qaCertEventService.export(
+        params.facilityId,
+        params.unitIds,
+        params.stackPipeIds,
+        params.qaCertificationEventIds,
+      ),
+    );
     const EXT_EXEMPTIONS = EVENTS + 1;
 
     const results = await Promise.all(promises);

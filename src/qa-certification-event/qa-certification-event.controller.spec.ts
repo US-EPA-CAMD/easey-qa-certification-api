@@ -13,7 +13,7 @@ const qaCertEventDTO = new QACertificationEventDTO();
 
 const mockService = () => ({
   getQACertEvent: jest.fn().mockResolvedValue(qaCertEventDTO),
-  getQACertEvents: jest.fn().mockResolvedValue([qaCertEventDTO]),
+  getQACertEventsByLocationId: jest.fn().mockResolvedValue([qaCertEventDTO]),
 });
 
 describe('QaCertificationEventController', () => {
@@ -45,6 +45,15 @@ describe('QaCertificationEventController', () => {
       const spyService = jest.spyOn(service, 'getQACertEvent');
       const result = await controller.getQACertEvent(locationId, qaCertEventId);
       expect(result).toEqual(qaCertEventDTO);
+      expect(spyService).toHaveBeenCalled();
+    });
+  });
+
+  describe('getQACertEventsByLocationId', () => {
+    it('should call the QaCertificationEventWorkshopService.getQACertEvents', async () => {
+      const spyService = jest.spyOn(service, 'getQACertEventsByLocationId');
+      const result = await controller.getQACertEvents('1');
+      expect(result).toEqual([qaCertEventDTO]);
       expect(spyService).toHaveBeenCalled();
     });
   });

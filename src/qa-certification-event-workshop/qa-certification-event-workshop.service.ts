@@ -11,8 +11,6 @@ import { currentDateTime } from '../utilities/functions';
 
 import { Unit } from '../entities/workspace/unit.entity';
 import { StackPipe } from '../entities/workspace/stack-pipe.entity';
-import { Component } from '../entities/workspace/component.entity';
-import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 
 import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workshop.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
@@ -23,6 +21,7 @@ import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/mo
 
 import {
   QACertificationEventBaseDTO,
+  QACertificationEventDTO,
   QACertificationEventRecordDTO,
 } from '../dto/qa-certification-event.dto';
 import { QACertificationEventMap } from '../maps/qa-certification-event.map';
@@ -117,7 +116,7 @@ export class QaCertificationEventWorkshopService {
     return this.map.one(result);
   }
 
-  async getQACertEvents(
+  async getQACertEventsByLocationId(
     locationId: string,
   ): Promise<QACertificationEventRecordDTO[]> {
     const results = await this.repository.find({ where: { locationId } });
@@ -162,5 +161,37 @@ export class QaCertificationEventWorkshopService {
         e.message,
       );
     }
+  }
+
+  async getQACertEvents(
+    facilityId: number,
+    unitIds?: string[],
+    stackPipeIds?: string[],
+    qaCertificationEventIds?: string[],
+  ): Promise<QACertificationEventDTO[]> {
+    const results = await this.repository.getQaCertEventsByUnitStack(
+      facilityId,
+      unitIds,
+      stackPipeIds,
+      qaCertificationEventIds,
+    );
+
+    return this.map.many(results);
+  }
+
+  async export(
+    facilityId: number,
+    unitIds?: string[],
+    stackPipeIds?: string[],
+    qaCertificationEventIds?: string[],
+  ): Promise<QACertificationEventDTO[]> {
+    const qaCertEvents = await this.getQACertEvents(
+      facilityId,
+      unitIds,
+      stackPipeIds,
+      qaCertificationEventIds,
+    );
+
+    return qaCertEvents;
   }
 }
