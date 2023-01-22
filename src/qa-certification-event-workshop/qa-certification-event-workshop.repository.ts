@@ -14,11 +14,29 @@ export class QACertificationEventWorkspaceRepository extends Repository<
     return addJoins(query) as SelectQueryBuilder<QACertificationEvent>;
   }
 
+  async getQACertificationEventById(
+    qaCertEventId: string,
+  ): Promise<QACertificationEvent> {
+    const query = this.buildBaseQuery().where('tee.id = :qaCertEventId', {
+      qaCertEventId,
+    });
+    return query.getOne();
+  }
+
+  async getQACertificationEventsByLocationId(
+    locationId: string,
+  ): Promise<QACertificationEvent[]> {
+    const query = this.buildBaseQuery().where('tee.locationId = :locationId', {
+      locationId,
+    });
+    return query.getMany();
+  }
+
   async getQaCertEventsByUnitStack(
     facilityId: number,
     unitIds?: string[],
     stackPipeIds?: string[],
-    qaCertificationEventIds?: string[],
+    qaCertEventIds?: string[],
   ): Promise<QACertificationEvent[]> {
     let unitsWhere =
       unitIds && unitIds.length > 0
@@ -46,10 +64,9 @@ export class QACertificationEventWorkspaceRepository extends Repository<
       stackPipeIds,
     });
 
-    query = addTestSummaryIdWhere(
-      query,
-      qaCertificationEventIds,
-    ) as SelectQueryBuilder<QACertificationEvent>;
+    query = addTestSummaryIdWhere(query, qaCertEventIds) as SelectQueryBuilder<
+      QACertificationEvent
+    >;
 
     return query.getMany();
   }

@@ -19,6 +19,7 @@ import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { Component } from '../entities/workspace/component.entity';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { InternalServerErrorException } from '@nestjs/common';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 const locationId = '';
 const qaCertEventId = '';
@@ -40,13 +41,14 @@ monitoringSystem.id = '1';
 const component = new Component();
 component.id = '1';
 const lookupValuesResult = {
-  componentID: '1',
-  monitoringSystemID: '1',
+  componentRecordId: '1',
+  monitoringSystemRecordId: '1',
 };
 
 const mockRepository = () => ({
   getQaCertEventsByUnitStack: jest.fn().mockResolvedValue([entity]),
-  find: jest.fn().mockResolvedValue([entity]),
+  getQACertificationEventsByLocationId: jest.fn().mockResolvedValue([entity]),
+  getQACertificationEventById: jest.fn().mockResolvedValue(entity),
   findOne: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
@@ -67,6 +69,7 @@ describe('QaCertificationEventWorkshopService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         QaCertificationEventWorkshopService,
         {
@@ -138,7 +141,9 @@ describe('QaCertificationEventWorkshopService', () => {
     it('should call the createQACertEvent and create QA Certification Event with historicalRecordId', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(entity);
+      jest
+        .spyOn(repository, 'getQACertificationEventById')
+        .mockResolvedValue(entity);
 
       const result = await service.createQACertEvent(
         locationId,
@@ -183,7 +188,9 @@ describe('QaCertificationEventWorkshopService', () => {
     });
 
     it('should throw error when QA Certification Event not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(repository, 'getQACertificationEventById')
+        .mockResolvedValue(null);
 
       let errored = false;
 
@@ -236,8 +243,8 @@ describe('QaCertificationEventWorkshopService', () => {
       const result = await service.lookupValues(locationId, payload);
 
       expect(result).toEqual({
-        componentID: '1',
-        monitoringSystemID: '1',
+        componentRecordId: '1',
+        monitoringSystemRecordId: '1',
       });
     });
   });
@@ -251,17 +258,36 @@ describe('QaCertificationEventWorkshopService', () => {
 
   describe('export', () => {
     it('calls the repository.getQACertEventsByUnitStack() and get qa certification events by locationId', async () => {
-      const returnedSummary = qaCertEventDTO;
-      returnedSummary.id = qaCertEventId;
+      const returnedQaCertEvent = qaCertEventDTO;
+      returnedQaCertEvent.id = qaCertEventId;
 
       const spySummaries = jest
         .spyOn(service, 'getQACertEvents')
-        .mockResolvedValue([returnedSummary]);
+        .mockResolvedValue([returnedQaCertEvent]);
 
       const result = await service.export(facilityId, [unitId]);
 
       expect(spySummaries).toHaveBeenCalled();
       expect(result).toEqual([qaCertEventDTO]);
+    });
+  });
+
+  describe('import', () => {
+    it('Should create QA Cert Event ', async () => {
+      const returnedQaCertEvent = qaCertEventDTO;
+      returnedQaCertEvent.id = qaCertEventId;
+
+      const creste = jest
+        .spyOn(service, 'createQACertEvent')
+        .mockResolvedValue(returnedQaCertEvent);
+
+      const importPayload = payload;
+
+      const result = await service.import(locationId, importPayload, userId);
+
+      expect(creste).toHaveBeenCalled();
+      expect(result).toEqual(null);
+      expect(creste).toHaveBeenCalled();
     });
   });
 });

@@ -11,9 +11,13 @@ import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { QaCertificationEventWorkshopService } from '../qa-certification-event-workshop/qa-certification-event-workshop.service';
+import {
+  QACertificationEventDTO,
+  QACertificationEventImportDTO,
+} from '../dto/qa-certification-event.dto';
 
 const testSummary = new TestSummaryDTO();
-const qaCertEventDto = new QACertificationDTO();
+const qaCertEventDto = new QACertificationEventDTO();
 const qaCertDto = new QACertificationDTO();
 qaCertDto.testSummaryData = [testSummary];
 qaCertDto.certificationEventData = [qaCertEventDto];
@@ -23,6 +27,9 @@ payload.testSummaryData = [new TestSummaryImportDTO()];
 payload.testSummaryData[0].unitId = '1';
 payload.testSummaryData[0].stackPipeId = '1';
 payload.orisCode = 1;
+payload.certificationEventData = [new QACertificationEventImportDTO()];
+payload.certificationEventData[0].unitId = '1';
+payload.certificationEventData[0].stackPipeId = '1';
 
 const userId = 'testUser';
 
@@ -43,6 +50,7 @@ const mockTestSummaryWorkspaceService = () => ({
 
 const mockQACertEventService = () => ({
   export: jest.fn().mockResolvedValue([qaCertEventDto]),
+  import: jest.fn().mockResolvedValue(undefined),
 });
 
 describe('QA Certification Workspace Service Test', () => {

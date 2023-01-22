@@ -37,6 +37,28 @@ describe('QACertificationEventWorkspaceRepository', () => {
     jest.spyOn(qaCertQueryBuilder, 'addJoins').mockReturnValue(queryBuilder);
   });
 
+  describe('getQACertificationEventById', () => {
+    it('calls buildBaseQuery and get one Test Extension Exemption from the repository with Id', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getOne.mockReturnValue(qaCertEvent);
+
+      const result = await repository.getQACertificationEventById('1');
+
+      expect(result).toEqual(qaCertEvent);
+    });
+  });
+
+  describe('getQACertificationEventsByLocationId', () => {
+    it('get many test Extension Exemption from the repository with locationId, testTypeCode, beginDate and endDate', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([qaCertEvent]);
+
+      const result = await repository.getQACertificationEventsByLocationId('1');
+
+      expect(result).toEqual([qaCertEvent]);
+    });
+  });
+
   describe('getQaCertEventsByUnitStack', () => {
     it('get one test summary from the repository with facilityId', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);

@@ -93,6 +93,28 @@ export class QACertificationWorkspaceService {
       );
     });
 
+    payload.certificationEventData.forEach((qaCertEvent, idx) => {
+      promises.push(
+        new Promise(async (resolve, _reject) => {
+          const locationId = locations.find(i => {
+            return (
+              i.unitId === qaCertEvent.unitId &&
+              i.stackPipeId === qaCertEvent.stackPipeId
+            );
+          }).locationId;
+
+          const results = this.qaCertEventService.import(
+            locationId,
+            qaCertEvent,
+            userId,
+            null,
+          );
+
+          resolve(results);
+        }),
+      );
+    });
+
     await Promise.all(promises);
 
     return {
