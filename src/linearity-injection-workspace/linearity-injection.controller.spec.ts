@@ -24,7 +24,7 @@ const user: CurrentUser = {
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 const payload: LinearityInjectionBaseDTO = {

@@ -396,10 +396,7 @@ describe('TestSummaryWorkspaceService', () => {
   describe('updateTestSummary', () => {
     it('should call the updateTestSummary and update test summariy', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
-
-      jest
-        .spyOn(repository, 'getTestSummaryById')
-        .mockResolvedValue(testSummary);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(testSummary);
 
       const result = await service.updateTestSummary(
         locationId,
@@ -412,7 +409,7 @@ describe('TestSummaryWorkspaceService', () => {
     });
 
     it('should call updateTestSummary and throw error while test summariy not found', async () => {
-      jest.spyOn(repository, 'getTestSummaryById').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
 
       let errored = false;
 
