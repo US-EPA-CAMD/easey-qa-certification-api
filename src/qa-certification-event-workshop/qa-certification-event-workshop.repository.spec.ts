@@ -47,7 +47,7 @@ describe('QACertificationEventWorkspaceRepository', () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([qaCertEvent]);
 
-      const result = await repository.getQaCertEventsByUnitStack('1');
+      const result = await repository.getQaCertEventsByUnitStack(1);
 
       expect(result).toEqual([qaCertEvent]);
     });
@@ -57,12 +57,13 @@ describe('QACertificationEventWorkspaceRepository', () => {
       queryBuilder.getMany.mockReturnValue([qaCertEvent]);
 
       const result = await repository.getQaCertEventsByUnitStack(
-        '1',
+        1,
         ['1'],
         ['1'],
       );
 
-    jest.spyOn(repository, 'addJoins').mockReturnValue(queryBuilder);
+      jest.spyOn(repository, 'addJoins').mockReturnValue(queryBuilder);
+    });
   });
 
   describe('getQACertificationEventById', () => {
