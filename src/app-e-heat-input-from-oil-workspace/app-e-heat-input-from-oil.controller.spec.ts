@@ -21,7 +21,7 @@ const user: CurrentUser = {
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 const aeHiOilRecord = new AppEHeatInputFromOilRecordDTO();
 const aeHiOilRecords = [aeHiOilRecord];

@@ -19,4 +19,13 @@ export class TestExtensionExemptionsWorkspaceRepository extends Repository<
     });
     return query.getOne();
   }
+
+  async getTestExtensionExemptionsByLocationId(
+    locationId: string,
+  ): Promise<TestExtensionExemption[]> {
+    const query = this.buildBaseQuery().where('tee.locationId = :locationId', {
+      locationId,
+    });
+    return query.getMany();
+  }
 }

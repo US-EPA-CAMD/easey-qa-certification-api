@@ -104,16 +104,6 @@ export class TestExtensionExemption extends BaseEntity {
   })
   submissionAvailabilityCode: string;
 
-  @Column({
-    name: 'pending_status_cd',
-  })
-  pendingStatusCode: string;
-
-  @Column({
-    name: 'eval_status_cd',
-  })
-  evalStatusCode: string;
-
   @ManyToOne(
     () => MonitorLocation,
     ml => ml.testSummaries,

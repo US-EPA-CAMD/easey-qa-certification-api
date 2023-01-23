@@ -1,8 +1,8 @@
-import { QACertificationEvent } from '../entities/workspace/qa-certification-event.entity';
+import { QACertificationEvent } from '../entities/qa-certification-event.entity';
 import { QACertificationEventMap } from './qa-certification-event.map';
-import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
-import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { Component } from '../entities/workspace/component.entity';
+import { MonitorLocation } from '../entities/monitor-location.entity';
+import { MonitorSystem } from '../entities/monitor-system.entity';
+import { Component } from '../entities/component.entity';
 
 const date = new Date();
 const someString = 'string';
@@ -42,27 +42,25 @@ entity.needsEvalFlag = someString;
 entity.checkSessionId = someString;
 entity.submissionId = someNumber;
 entity.submissionAvailabilityCode = someString;
-entity.pendindStatusCode = someString;
-entity.evalStatusCode = someString;
 entity.userId = someString;
 entity.addDate = date;
 entity.updateDate = date;
 
 describe('QACertificationEventMap', () => {
-  it('should map an entity to a dto', async () => {
+  it('maps an entity to a dto', async () => {
     const map = new QACertificationEventMap();
-
     const result = await map.one(entity);
-
-    result.stackPipeId = location.stackPipeId;
-    result.unitId = location.unitId;
-    result.componentID = component.componentID;
-    result.monitoringSystemID = system.monitoringSystemID;
+    result.unitId = someString;
+    result.stackPipeId = someString;
+    result.monitoringSystemID = someString;
+    result.componentID = someString;
+    result.evalStatusCode = someString;
+    result.pendingStatusCode = someString;
 
     expect(result.id).toEqual(someString);
     expect(result.locationId).toEqual(someString);
-    expect(result.unitId).toEqual(someString);
-    expect(result.stackPipeId).toEqual(someString);
+    expect(result.unitId).toEqual(someString || null);
+    expect(result.stackPipeId).toEqual(someString || null);
     expect(result.monitoringSystemID).toEqual(someString);
     expect(result.componentID).toEqual(someString);
     expect(result.qaCertEventCode).toEqual(someString);
@@ -79,22 +77,23 @@ describe('QACertificationEventMap', () => {
     expect(result.checkSessionId).toEqual(someString);
     expect(result.submissionId).toEqual(someNumber);
     expect(result.submissionAvailabilityCode).toEqual(someString);
-    expect(result.pendindStatusCode).toEqual(someString);
     expect(result.evalStatusCode).toEqual(someString);
+    expect(result.pendingStatusCode).toEqual(someString);
     expect(result.userId).toEqual(someString);
     expect(result.addDate).toEqual(date.toLocaleString());
     expect(result.updateDate).toEqual(date.toLocaleString());
   });
 
-  it('should return null when addDate and updateDate is undefined', async () => {
-    const map = new QACertificationEventMap();
-
+  it('should return null when addDate, updateDate, pendingStatusCode and evalStatusCode is undefined', async () => {
     entity.addDate = undefined;
     entity.updateDate = undefined;
 
+    const map = new QACertificationEventMap();
     const result = await map.one(entity);
 
     expect(result.addDate).toEqual(null);
     expect(result.updateDate).toEqual(null);
+    expect(result.pendingStatusCode).toEqual(null);
+    expect(result.evalStatusCode).toEqual(null);
   });
 });

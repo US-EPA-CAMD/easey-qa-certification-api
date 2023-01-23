@@ -1,9 +1,13 @@
-import { HttpStatus, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   TestExtensionExemptionBaseDTO,
   TestExtensionExemptionRecordDTO,
-} from 'src/dto/test-extension-exemption.dto';
+} from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionMap } from '../maps/test-extension-exemption.map';
 import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
 import { v4 as uuid } from 'uuid';
@@ -38,6 +42,33 @@ export class TestExtensionExemptionsWorkspaceService {
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
   ) {}
 
+  async getTestExtensionExemptionById(
+    testSumId: string,
+  ): Promise<TestExtensionExemptionRecordDTO> {
+    const result = await this.repository.getTestExtensionExemptionById(
+      testSumId,
+    );
+
+    if (!result) {
+      throw new LoggingException(
+        `A test extension exceptions record not found with Record Id [${testSumId}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return this.map.one(result);
+  }
+
+  async getTestExtensionExemptionsByLocationId(
+    locationId: string,
+  ): Promise<TestExtensionExemptionRecordDTO[]> {
+    const results = await this.repository.getTestExtensionExemptionsByLocationId(
+      locationId,
+    );
+
+    return this.map.many(results);
+  }
+
   async createTestExtensionExemption(
     locationId: string,
     payload: TestExtensionExemptionBaseDTO,
@@ -50,8 +81,6 @@ export class TestExtensionExemptionsWorkspaceService {
       componentRecordId,
       monitoringSystemRecordId,
     ] = await this.lookupValues(locationId, payload);
-
-    // Swap the DTO 3-char System ID for the Actual UID of the Monitor System
 
     const location = await this.monitorLocationRepository.findOne(locationId);
 
@@ -101,12 +130,53 @@ export class TestExtensionExemptionsWorkspaceService {
     return this.map.one(result);
   }
 
+  async updateTestExtensionExemption(
+    locationId: string,
+    id: string,
+    payload: TestExtensionExemptionBaseDTO,
+    userId: string,
+  ): Promise<TestExtensionExemptionRecordDTO> {
+    const timestamp = currentDateTime();
+    const record = await this.repository.findOne(id);
+
+    if (!record) {
+      throw new LoggingException(
+        `A test extension exemption record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const [
+      reportPeriodId,
+      componentRecordId,
+      monitoringSystemRecordId,
+    ] = await this.lookupValues(locationId, payload);
+
+    record.userId = userId;
+    record.lastUpdated = timestamp;
+    record.updateDate = timestamp;
+    record.reportPeriodId = reportPeriodId;
+    record.monitoringSystemRecordId = monitoringSystemRecordId;
+    record.componentRecordId = componentRecordId;
+    record.hoursUsed = payload.hoursUsed;
+    record.spanScaleCode = payload.spanScaleCode;
+    record.fuelCode = payload.fuelCode;
+    record.extensionOrExemptionCode = payload.extensionOrExemptionCode;
+    record.needsEvalFlag = 'Y';
+    record.updatedStatusFlag = 'Y';
+    record.evalStatusCode = 'EVAL';
+    record.pendingStatusCode = 'PENDING';
+
+    await this.repository.save(record);
+    return this.getTestExtensionExemptionById(record.id);
+  }
+
   async deleteTestExtensionExemption(id: string): Promise<void> {
     try {
       await this.repository.delete(id);
     } catch (e) {
       throw new InternalServerErrorException(
-        `Error deleting Test Summary record Id [${id}]`,
+        `Error deleting Test Extension Exemption record Id [${id}]`,
         e.message,
       );
     }

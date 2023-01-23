@@ -17,6 +17,7 @@ import { FlowRataRunWorkspaceModule } from '../flow-rata-run-workspace/flow-rata
 import { RataTraverseWorkspaceModule } from '../rata-traverse-workspace/rata-traverse-workspace.module';
 import { TestQualificationWorkspaceModule } from '../test-qualification-workspace/test-qualification-workspace.module';
 import { CycleTimeInjectionWorkspaceModule } from 'src/cycle-time-injection-workspace/cycle-time-injection-workspace.module';
+import { QaCertificationEventWorkshopModule } from '../qa-certification-event-workshop/qa-certification-event-workshop.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { CycleTimeInjectionWorkspaceModule } from 'src/cycle-time-injection-work
     QASuppDataWorkspaceModule,
     LocationWorkspaceModule,
     TestSummaryWorkspaceModule,
+    QaCertificationEventWorkshopModule,
     LinearitySummaryWorkspaceModule,
     LinearityInjectionWorkspaceModule,
     RataWorkspaceModule,

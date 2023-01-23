@@ -1,4 +1,4 @@
-import { ReportingPeriod } from '../entities/workspace/reporting-period.entity';
+import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { EntityRepository, Repository } from 'typeorm';
 
 @EntityRepository(ReportingPeriod)

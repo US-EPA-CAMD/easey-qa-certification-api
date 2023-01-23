@@ -15,21 +15,26 @@ import {
 const locationId = '';
 const payload = new QACertificationEventBaseDTO();
 const qaCertEvent = new QACertificationEventDTO();
+
 const user: CurrentUser = {
   userId: 'testUser',
   sessionId: '',
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 const mockService = () => ({
   createQACertEvent: jest.fn().mockResolvedValue(qaCertEvent),
+  getQACertEvent: jest.fn().mockResolvedValue(qaCertEvent),
+  getQACertEventsByLocationId: jest.fn().mockResolvedValue([qaCertEvent]),
+  deleteQACertEvent: jest.fn().mockResolvedValue(''),
 });
 
 describe('QaCertificationEventWorkshopController', () => {
   let controller: QaCertificationEventWorkshopController;
+  let service: QaCertificationEventWorkshopService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -48,6 +53,25 @@ describe('QaCertificationEventWorkshopController', () => {
     controller = module.get<QaCertificationEventWorkshopController>(
       QaCertificationEventWorkshopController,
     );
+    service = module.get(QaCertificationEventWorkshopService);
+  });
+
+  describe('getQACertEventsByLocationId', () => {
+    it('should call the QaCertificationEventWorkshopService.getQACertEvents', async () => {
+      const spyService = jest.spyOn(service, 'getQACertEventsByLocationId');
+      const result = await controller.getQACertEvents('1');
+      expect(result).toEqual([qaCertEvent]);
+      expect(spyService).toHaveBeenCalled();
+    });
+  });
+
+  describe('getQACertEvent', () => {
+    it('should call the QaCertificationEventWorkshopService.getQACertEvent', async () => {
+      const spyService = jest.spyOn(service, 'getQACertEvent');
+      const result = await controller.getQACertEvent('1', '1');
+      expect(result).toEqual(qaCertEvent);
+      expect(spyService).toHaveBeenCalled();
+    });
   });
 
   describe('createQACertEvent', () => {
@@ -58,6 +82,19 @@ describe('QaCertificationEventWorkshopController', () => {
         user,
       );
       expect(result).toEqual(qaCertEvent);
+    });
+  });
+
+  describe('deleteQACertEvent', () => {
+    it('should delete QA Certification Event record', async () => {
+      const spyService = jest.spyOn(service, 'deleteQACertEvent');
+      const result = await controller.deleteTestExtensionExemption(
+        '1',
+        '1',
+        user,
+      );
+      expect(result).toEqual('');
+      expect(spyService).toHaveBeenCalled();
     });
   });
 });

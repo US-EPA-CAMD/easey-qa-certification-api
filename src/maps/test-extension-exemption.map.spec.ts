@@ -34,8 +34,6 @@ entity.reportPeriodId = number;
 entity.checkSessionId = string;
 entity.submissionId = string;
 entity.submissionAvailabilityCode = string;
-entity.pendingStatusCode = string;
-entity.evalStatusCode = string;
 entity.userId = string;
 entity.addDate = date;
 entity.updateDate = date;
@@ -60,8 +58,8 @@ describe('TestExtensionExemptionMap', () => {
     expect(result.checkSessionId).toEqual(string);
     expect(result.submissionId).toEqual(string);
     expect(result.submissionAvailabilityCode).toEqual(string);
-    // expect(result.pendingStatusCode).toEqual(string);
-    // expect(result.evalStatusCode).toEqual(string);
+    expect(result.pendingStatusCode).toEqual(null);
+    expect(result.evalStatusCode).toEqual(null);
     expect(result.userId).toEqual(string);
     expect(result.addDate).toEqual(date.toLocaleString());
     expect(result.updateDate).toEqual(date.toLocaleString());
@@ -70,14 +68,10 @@ describe('TestExtensionExemptionMap', () => {
   it('should return null when addDate, updateDate, pendingStatusCode and evalStatusCode is undefined', async () => {
     entity.addDate = undefined;
     entity.updateDate = undefined;
-    entity.pendingStatusCode = undefined;
-    entity.evalStatusCode = undefined;
 
     const map = new TestExtensionExemptionMap();
     const result = await map.one(entity);
 
-    expect(result.pendingStatusCode).toEqual(null);
-    expect(result.evalStatusCode).toEqual(null);
     expect(result.addDate).toEqual(null);
     expect(result.updateDate).toEqual(null);
   });

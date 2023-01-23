@@ -49,4 +49,17 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
       expect(result).toEqual(testExtExp);
     });
   });
+
+  describe('getTestExtensionExemptionsByLocationId', () => {
+    it('get many test Extension Exemption from the repository with locationId, testTypeCode, beginDate and endDate', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([testExtExp]);
+
+      const result = await repository.getTestExtensionExemptionsByLocationId(
+        '1',
+      );
+
+      expect(result).toEqual([testExtExp]);
+    });
+  });
 });

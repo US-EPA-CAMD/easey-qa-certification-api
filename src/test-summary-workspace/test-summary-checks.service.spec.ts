@@ -19,7 +19,7 @@ import { ComponentWorkspaceRepository } from '../component-workspace/component.r
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { TestResultCode } from '../entities/test-result-code.entity';
-import { ReportingPeriod } from '../entities/workspace/reporting-period.entity';
+import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { RataImportDTO } from '../dto/rata.dto';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
@@ -281,7 +281,10 @@ describe('Test Summary Check Service Test', () => {
       returnedQASupp.endDate = new Date();
 
       jest
-        .spyOn(qaRepository, 'getUnassociatedQASuppDataByTestTypeCodeComponentIdEndDateEndTime')
+        .spyOn(
+          qaRepository,
+          'getUnassociatedQASuppDataByTestTypeCodeComponentIdEndDateEndTime',
+        )
         .mockResolvedValue(returnedQASupp);
 
       const result = await service.runChecks(locationId, payload, true, false, [

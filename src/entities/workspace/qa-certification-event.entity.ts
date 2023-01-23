@@ -125,7 +125,7 @@ export class QACertificationEvent extends BaseEntity {
     name: 'pending_status_cd',
     type: 'varchar',
   })
-  pendindStatusCode: string;
+  pendingStatusCode: string;
 
   @Column({
     name: 'eval_status_cd',
