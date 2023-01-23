@@ -12,6 +12,7 @@ import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { TestExtensionExemptionsWorkspaceService } from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.service';
+import { QaCertificationEventWorkshopService } from '../qa-certification-event-workshop/qa-certification-event-workshop.service';
 
 @Injectable()
 export class QACertificationWorkspaceService {
@@ -19,6 +20,7 @@ export class QACertificationWorkspaceService {
     private readonly logger: Logger,
     private readonly testSummaryService: TestSummaryWorkspaceService,
     private readonly testExtensionExemptionService: TestExtensionExemptionsWorkspaceService,
+    private readonly qaCertEventService: QaCertificationEventWorkshopService,
   ) {}
 
   async export(params: QACertificationParamsDTO): Promise<QACertificationDTO> {
@@ -38,6 +40,14 @@ export class QACertificationWorkspaceService {
     );
 
     const EVENTS = SUMMARIES + 1;
+    promises.push(
+      this.qaCertEventService.export(
+        params.facilityId,
+        params.unitIds,
+        params.stackPipeIds,
+        params.qaCertificationEventIds,
+      ),
+    );
     const EXT_EXEMPTIONS = EVENTS + 1;
     promises.push(
       this.testExtensionExemptionService.export(
@@ -88,29 +98,6 @@ export class QACertificationWorkspaceService {
               : null,
           );
 
-          resolve(results);
-        }),
-      );
-    });
-
-    payload.testExtensionExemptionData.forEach((summary, idx) => {
-      promises.push(
-        new Promise(async (resolve, _reject) => {
-          const locationId = locations.find(i => {
-            return (
-              i.unitId === summary.unitId &&
-              i.stackPipeId === summary.stackPipeId
-            );
-          }).locationId;
-
-          const results = this.testExtensionExemptionService.import(
-            locationId,
-            summary,
-            userId,
-            qaSupprecords[idx] !== undefined
-              ? qaSupprecords[idx]?.locationId
-              : null,
-          );
           resolve(results);
         }),
       );

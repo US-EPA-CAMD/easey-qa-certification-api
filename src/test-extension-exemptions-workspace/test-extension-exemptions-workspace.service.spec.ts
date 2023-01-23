@@ -8,7 +8,7 @@ import {
 import { Component } from '../entities/workspace/component.entity';
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { ReportingPeriod } from '../entities/workspace/reporting-period.entity';
+import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { TestExtensionExemption } from '../entities/workspace/test-extension-exemption.entity';
 import { Unit } from '../entities/workspace/unit.entity';
@@ -22,12 +22,11 @@ import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exe
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
 
 const locationId = '121';
-const testExtExp = '1';
+const testExtExpId = '1';
 const payload = new TestExtensionExemptionBaseDTO();
 payload.unitId = '1';
 payload.stackPipeId = '1';
 const userId = 'testuser';
-const testExtensionExemptionId = 'testExtensionExemptionId';
 
 const unit = new Unit();
 unit.name = '1';
@@ -126,7 +125,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
 
   describe('getTestExtensionExemptionById', () => {
     it('calls the repository.getTestExtensionExemptionById() and get test Extension Exemption by id', async () => {
-      const result = await service.getTestExtensionExemptionById(testExtExp);
+      const result = await service.getTestExtensionExemptionById(testExtExpId);
       expect(result).toEqual(dto);
     });
 
@@ -138,7 +137,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
       let errored = false;
 
       try {
-        await service.getTestExtensionExemptionById(testExtExp);
+        await service.getTestExtensionExemptionById(testExtExpId);
       } catch (err) {
         errored = true;
       }
@@ -216,16 +215,49 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
     });
   });
 
+  describe('updateTestExtensionExemption', () => {
+    it('should call the updateTestExtensionExemption and update test Extension Exemption', async () => {
+      jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(entity);
+
+      const result = await service.updateTestExtensionExemption(
+        locationId,
+        testExtExpId,
+        payload,
+        userId,
+      );
+
+      expect(result).toEqual(dto);
+    });
+
+    it('should call updateTestExtensionExemption and throw error while test Extension Exemption not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+
+      let errored = false;
+
+      try {
+        await service.updateTestExtensionExemption(
+          locationId,
+          testExtExpId,
+          payload,
+          userId,
+        );
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
+    });
+  });
+
   describe('deleteExtensionExemption', () => {
     it('should call the deleteExtensionExemption and delete test extension exemption', async () => {
-      const result = await service.deleteTestExtensionExemption(
-        testExtensionExemptionId,
-      );
+      const result = await service.deleteTestExtensionExemption(testExtExpId);
 
       expect(result).toEqual(undefined);
     });
 
-    it('should call the deleteTestSummary and throw error while deleting test summariy', async () => {
+    it('should call the deleteTestExtensionExemption and throw error while deleting test Extension Exemption', async () => {
       jest
         .spyOn(repository, 'delete')
         .mockRejectedValue(new InternalServerErrorException());
@@ -233,7 +265,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
       let errored = false;
 
       try {
-        await service.deleteTestExtensionExemption(testExtensionExemptionId);
+        await service.deleteTestExtensionExemption(testExtExpId);
       } catch (err) {
         errored = true;
       }

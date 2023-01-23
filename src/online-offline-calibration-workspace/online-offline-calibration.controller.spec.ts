@@ -18,7 +18,7 @@ const user: CurrentUser = {
   clientIp: '',
   expiration: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
   sessionId: '',
   userId: '',
 };

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 
-import { QACertificationEvent } from '../entities/workspace/qa-certification-event.entity';
 import { QACertificationEventDTO } from '../dto/qa-certification-event.dto';
+import { QACertificationEvent } from '../entities/qa-certification-event.entity';
 
 @Injectable()
 export class QACertificationEventMap extends BaseMap<
@@ -40,8 +40,8 @@ export class QACertificationEventMap extends BaseMap<
       checkSessionId: entity.checkSessionId,
       submissionId: entity.submissionId,
       submissionAvailabilityCode: entity.submissionAvailabilityCode,
-      pendindStatusCode: entity.pendindStatusCode,
-      evalStatusCode: entity.evalStatusCode,
+      pendingStatusCode: entity['pendingStatusCode'] || null,
+      evalStatusCode: entity['evalStatusCode'] || null,
       userId: entity.userId,
       addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,

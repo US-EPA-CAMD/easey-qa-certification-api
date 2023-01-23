@@ -80,6 +80,7 @@ import { QaCertificationEventWorkshopModule } from './qa-certification-event-wor
 import { MonitorSystemWorkspaceModule } from './monitor-system-workspace/monitor-system-workspace.module';
 import { TestExtensionExemptionsWorkspaceModule } from './test-extension-exemptions-workspace/test-extension-exemptions-workspace.module';
 import { TestExtensionExemptionsModule } from './test-extension-exemptions/test-extension-exemptions.module';
+import { QaCertificationEventModule } from './qa-certification-event/qa-certification-event.module';
 @Module({
   imports: [
     RouterModule.forRoutes(routes),
@@ -160,6 +161,7 @@ import { TestExtensionExemptionsModule } from './test-extension-exemptions/test-
     MonitorSystemWorkspaceModule,
     TestExtensionExemptionsWorkspaceModule,
     TestExtensionExemptionsModule,
+    QaCertificationEventModule,
   ],
 })
 export class AppModule {}

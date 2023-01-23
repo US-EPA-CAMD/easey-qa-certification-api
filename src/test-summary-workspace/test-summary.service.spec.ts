@@ -28,7 +28,7 @@ import { UnitRepository } from '../unit/unit.repository';
 import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
-import { ReportingPeriod } from '../entities/workspace/reporting-period.entity';
+import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { Component } from '../entities/workspace/component.entity';
@@ -396,10 +396,7 @@ describe('TestSummaryWorkspaceService', () => {
   describe('updateTestSummary', () => {
     it('should call the updateTestSummary and update test summariy', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
-
-      jest
-        .spyOn(repository, 'getTestSummaryById')
-        .mockResolvedValue(testSummary);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(testSummary);
 
       const result = await service.updateTestSummary(
         locationId,
@@ -412,7 +409,7 @@ describe('TestSummaryWorkspaceService', () => {
     });
 
     it('should call updateTestSummary and throw error while test summariy not found', async () => {
-      jest.spyOn(repository, 'getTestSummaryById').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
 
       let errored = false;
 

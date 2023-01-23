@@ -3,10 +3,10 @@ import {
   addTestSummaryIdWhere,
 } from '../utilities/qa-cert-events.querybuilder';
 import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
-import { QACertificationEvent } from '../entities/workspace/qa-certification-event.entity';
+import { QACertificationEvent } from '../entities/qa-certification-event.entity';
 
 @EntityRepository(QACertificationEvent)
-export class QACertificationEventWorkspaceRepository extends Repository<
+export class QACertificationEventRepository extends Repository<
   QACertificationEvent
 > {
   private buildBaseQuery(): SelectQueryBuilder<QACertificationEvent> {

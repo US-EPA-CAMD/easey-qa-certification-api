@@ -16,7 +16,7 @@ const user: CurrentUser = {
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 const locId = 'a1b2c3';
