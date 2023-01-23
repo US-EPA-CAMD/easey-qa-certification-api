@@ -85,7 +85,7 @@ export class QACertificationParamsDTO {
 
   @ApiProperty({
     isArray: true,
-    description: propertyMetadata.qaTestExtensionExemptiontId.description,
+    description: propertyMetadata.qaTestExtensionExemptionId.description,
   })
   @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
   qaTestExtensionExemptiontIds?: string[];
