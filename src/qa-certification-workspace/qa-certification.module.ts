@@ -16,9 +16,24 @@ import { RataRunWorkspaceModule } from '../rata-run-workspace/rata-run-workspace
 import { FlowRataRunWorkspaceModule } from '../flow-rata-run-workspace/flow-rata-run-workspace.module';
 import { RataTraverseWorkspaceModule } from '../rata-traverse-workspace/rata-traverse-workspace.module';
 import { TestQualificationWorkspaceModule } from '../test-qualification-workspace/test-qualification-workspace.module';
+import { CertEventReviewAndSubmitRepository } from './cert-event-review-and-submit.repository';
+import { CertEventReviewAndSubmitService } from './cert-event-review-and-submit.service';
+import { CertEventReviewAndSubmitMap } from '../maps/cert-event-review-and-submit.map';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { TestSummaryReviewAndSubmitRepository } from './test-summary-review-and-submit.repository';
+import { TestSummaryReviewAndSubmitService } from './test-summary-review-and-submit.service';
+import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
+import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository copy';
+import { TeeReviewAndSubmitService } from './tee-review-and-submit.service';
+import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([
+      CertEventReviewAndSubmitRepository,
+      TestSummaryReviewAndSubmitRepository,
+      TeeReviewAndSubmitRepository,
+    ]),
     HttpModule,
     QASuppDataWorkspaceModule,
     LocationWorkspaceModule,
@@ -33,7 +48,16 @@ import { TestQualificationWorkspaceModule } from '../test-qualification-workspac
     TestQualificationWorkspaceModule,
   ],
   controllers: [QACertificationWorkspaceController],
-  providers: [QACertificationChecksService, QACertificationWorkspaceService],
+  providers: [
+    QACertificationChecksService,
+    QACertificationWorkspaceService,
+    CertEventReviewAndSubmitService,
+    CertEventReviewAndSubmitMap,
+    TestSummaryReviewAndSubmitService,
+    ReviewAndSubmitTestSummaryMap,
+    TeeReviewAndSubmitService,
+    TeeReviewAndSubmitMap,
+  ],
   exports: [QACertificationChecksService, QACertificationWorkspaceService],
 })
 export class QACertificationWorkspaceModule {}

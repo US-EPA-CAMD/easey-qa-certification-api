@@ -67,7 +67,6 @@ import { CycleTimeInjectionModule } from './cycle-time-injection/cycle-time-inje
 import { CycleTimeInjectionWorkspaceModule } from './cycle-time-injection-workspace/cycle-time-injection-workspace.module';
 import { TransmitterTransducerAccuracyModule } from './transmitter-transducer-accuracy/transmitter-transducer-accuracy.module';
 import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.module';
-import { ReviewAndSubmitModule } from './review-and-submit/review-and-submit.module';
 import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/unit-default-test-workspace.module';
 import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.module';
 import { UnitDefaultTestRunWorkspaceModule } from './unit-default-test-run-workspace/unit-default-test-run.module';
@@ -133,7 +132,6 @@ import { QaCertificationEventModule } from './qa-certification-event/qa-certific
     FuelFlowToLoadBaselineWorkspaceModule,
     FuelFlowToLoadBaselineModule,
     CalibrationInjectionWorkspaceModule,
-    ReviewAndSubmitModule,
     CalibrationInjectionModule,
     OnlineOfflineCalibrationModule,
     OnlineOfflineCalibrationWorkspaceModule,

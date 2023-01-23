@@ -54,7 +54,6 @@ import { TransmitterTransducerAccuracyModule } from './transmitter-transducer-ac
 import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.module';
 import { CycleTimeInjectionModule } from './cycle-time-injection/cycle-time-injection.module';
 import { CycleTimeInjectionWorkspaceModule } from './cycle-time-injection-workspace/cycle-time-injection-workspace.module';
-import { ReviewAndSubmitModule } from './review-and-submit/review-and-submit.module';
 import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.module';
 import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/unit-default-test-workspace.module';
 import { UnitDefaultTestRunModule } from './unit-default-test-run/unit-default-test-run.module';
@@ -76,10 +75,6 @@ const routes: Routes = [
   {
     path: '/workspace',
     module: QACertificationWorkspaceModule,
-  },
-  {
-    path: '/review-and-submit',
-    module: ReviewAndSubmitModule,
   },
   {
     path: '/locations',
