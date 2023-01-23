@@ -11,6 +11,7 @@ import { ReportingPeriodRepository } from '../reporting-period/reporting-period.
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { UnitRepository } from '../unit/unit.repository';
 import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
+import { TestExtensionExemptionsChecksService } from './test-extension-exemptions-checks.service';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
   providers: [
     TestExtensionExemptionMap,
     TestExtensionExemptionsWorkspaceService,
+    TestExtensionExemptionsChecksService,
   ],
   exports: [
     TypeOrmModule,
