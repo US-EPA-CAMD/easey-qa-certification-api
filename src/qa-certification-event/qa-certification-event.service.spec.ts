@@ -15,6 +15,8 @@ const qaCertEventDTO = new QACertificationEventDTO();
 
 const mockRepository = () => ({
   getQaCertEventsByUnitStack: jest.fn().mockResolvedValue([entity]),
+  getQACertEventById: jest.fn().mockResolvedValue(entity),
+  getQACertEventsByLocationId: jest.fn().mockResolvedValue([entity]),
   find: jest.fn().mockResolvedValue([entity]),
   findOne: jest.fn().mockResolvedValue(entity),
 });
@@ -56,7 +58,7 @@ describe('QaCertificationEventService', () => {
     });
 
     it('should throw error when QA Certification Event not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'getQACertEventById').mockResolvedValue(null);
 
       let errored = false;
 
@@ -96,6 +98,12 @@ describe('QaCertificationEventService', () => {
       const result = await service.export(facilityId, [unitId]);
 
       expect(spySummaries).toHaveBeenCalled();
+    });
+  });
+
+  describe('getQACertEvents', () => {
+    it('calls the repository.getQACertEvents() and get QA Certification Event by locationId', async () => {
+      const result = await service.getQACertEvents(facilityId);
       expect(result).toEqual([qaCertEventDTO]);
     });
   });
