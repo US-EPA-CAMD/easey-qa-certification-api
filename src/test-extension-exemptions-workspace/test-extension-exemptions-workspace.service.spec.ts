@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import {
   TestExtensionExemptionBaseDTO,
+  TestExtensionExemptionDTO,
   TestExtensionExemptionRecordDTO,
 } from '../dto/test-extension-exemption.dto';
 import { Component } from '../entities/workspace/component.entity';
@@ -23,6 +24,8 @@ import { TestExtensionExemptionsWorkspaceService } from './test-extension-exempt
 
 const locationId = '121';
 const testExtExpId = '1';
+const facilityId = 1;
+const unitId = '121';
 const payload = new TestExtensionExemptionBaseDTO();
 payload.unitId = '1';
 payload.stackPipeId = '1';
@@ -45,6 +48,7 @@ const dto = new TestExtensionExemptionRecordDTO();
 const mockRepository = () => ({
   getTestExtensionExemptionById: jest.fn().mockResolvedValue(entity),
   getTestExtensionExemptionsByLocationId: jest.fn().mockResolvedValue([entity]),
+  getTestExtensionsByUnitStack: jest.fn().mockResolvedValue([entity]),
   delete: jest.fn().mockResolvedValue(null),
   findOne: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
@@ -284,6 +288,29 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
       const result = await service.lookupValues(locationId, payload);
 
       expect(result).toEqual([1, '1', '1']);
+    });
+  });
+
+  describe('getTestExtensions', () => {
+    it('calls the repository.getQACertEventsByUnitStack() and get qa certification events by locationId', async () => {
+      const result = await service.getTestExtensions(facilityId, [unitId]);
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('export', () => {
+    it('calls the repository.getQACertEventsByUnitStack() and get qa certification events by locationId', async () => {
+      const returnedSummary = dto;
+      returnedSummary.id = testExtExpId;
+
+      const spySummaries = jest
+        .spyOn(service, 'getTestExtensions')
+        .mockResolvedValue([returnedSummary]);
+
+      const result = await service.export(facilityId, [unitId]);
+
+      expect(spySummaries).toHaveBeenCalled();
+      expect(result).toEqual([dto]);
     });
   });
 });

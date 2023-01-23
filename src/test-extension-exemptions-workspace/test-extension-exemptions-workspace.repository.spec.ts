@@ -62,4 +62,28 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
       expect(result).toEqual([testExtExp]);
     });
   });
+
+  describe('getTestExtensionsByUnitStack', () => {
+    it('get one test summary from the repository with facilityId', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([testExtExp]);
+
+      const result = await repository.getTestExtensionsByUnitStack('1');
+
+      expect(result).toEqual([testExtExp]);
+    });
+
+    it('get one test summary from the repository with facilityId, unitids, stackPipeIds', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([testExtExp]);
+
+      const result = await repository.getTestExtensionsByUnitStack(
+        '1',
+        ['1'],
+        ['1'],
+      );
+
+      expect(result).toEqual([testExtExp]);
+    });
+  });
 });

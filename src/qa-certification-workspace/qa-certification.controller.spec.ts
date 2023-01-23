@@ -26,6 +26,7 @@ const user: CurrentUser = {
   clientIp: '',
   isAdmin: false,
   permissionSet: [],
+  roles: [],
 };
 
 const qaSuppData = new QASuppData();

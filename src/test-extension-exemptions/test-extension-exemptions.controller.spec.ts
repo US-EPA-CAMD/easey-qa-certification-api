@@ -14,6 +14,7 @@ const user: CurrentUser = {
   expiration: '',
   clientIp: '',
   isAdmin: false,
+  roles: [],
   permissionSet: [],
 };
 
@@ -62,6 +63,18 @@ describe('TestExtensionExemptionsController', () => {
 
   describe('getTestExtensionExemptions', () => {
     it('should call the TestSummaryWorkspaceService.getTestExtensionExemptionsByLocationId', async () => {
+      const spyService = jest.spyOn(
+        service,
+        'getTestExtensionExemptionsByLocationId',
+      );
+      const result = await controller.getTestExtensionExemptions('1');
+      expect(result).toEqual([testExtExp]);
+      expect(spyService).toHaveBeenCalled();
+    });
+  });
+
+  describe('getTestExtensionExemptionsByLocationId', () => {
+    it('should call the QaTestExtensionExemptionsWorkshopService.getTestExtensionExemptions', async () => {
       const spyService = jest.spyOn(
         service,
         'getTestExtensionExemptionsByLocationId',
