@@ -98,13 +98,13 @@ export class QaCertificationEventWorkshopService {
 
     await this.repository.save(entity);
 
-    const result = await this.repository.findOne(entity.id);
+    const result = await this.repository.getQACertEventById(entity.id);
 
     return this.map.one(result);
   }
 
   async getQACertEvent(id: string): Promise<QACertificationEventRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.getQACertEventById(id);
 
     if (!result) {
       throw new LoggingException(
@@ -119,7 +119,9 @@ export class QaCertificationEventWorkshopService {
   async getQACertEventsByLocationId(
     locationId: string,
   ): Promise<QACertificationEventRecordDTO[]> {
-    const results = await this.repository.find({ where: { locationId } });
+    const results = await this.repository.getQACertEventsByLocationId(
+      locationId,
+    );
 
     return this.map.many(results);
   }
@@ -177,6 +179,41 @@ export class QaCertificationEventWorkshopService {
     );
 
     return this.map.many(results);
+  }
+
+  async updateQACertEvent(
+    locationId: string,
+    id: string,
+    payload: QACertificationEventBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+  ): Promise<QACertificationEventDTO> {
+    const timestamp = currentDateTime();
+
+    const entity = await this.getQACertEvent(id);
+
+    const { componentID, monitoringSystemID } = await this.lookupValues(
+      locationId,
+      payload,
+    );
+
+    entity.componentID = componentID;
+    entity.monitoringSystemID = monitoringSystemID;
+    entity.qaCertEventCode = payload.qaCertEventCode;
+    entity.qaCertEventDate = payload.qaCertEventDate;
+    entity.qaCertEventHour = payload.qaCertEventHour;
+    entity.requiredTestCode = payload.requiredTestCode;
+    entity.requiredTestCode = payload.requiredTestCode;
+    entity.conditionalBeginDate = payload.conditionalBeginDate;
+    entity.conditionalBeginHour = payload.conditionalBeginHour;
+    entity.completionTestDate = payload.completionTestDate;
+    entity.completionTestHour = payload.completionTestHour;
+    entity.userId = userId;
+    entity.updateDate = timestamp.toLocaleString();
+
+    await this.repository.save(entity);
+
+    return this.getQACertEvent(entity.id);
   }
 
   async export(

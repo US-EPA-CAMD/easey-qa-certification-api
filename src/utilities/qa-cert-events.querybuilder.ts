@@ -8,9 +8,9 @@ export const addJoins = (
   >,
 ): SelectQueryBuilder<QACertificationEvent | WorkspaceQACertificationEvent> => {
   return query
-    .innerJoinAndSelect('qce.location', 'ml')
-    .leftJoinAndSelect('qce.system', 'ms')
-    .leftJoinAndSelect('qce.component', 'c')
+    .innerJoinAndSelect('qace.location', 'ml')
+    .leftJoinAndSelect('qace.system', 'ms')
+    .leftJoinAndSelect('qace.component', 'c')
     .leftJoinAndSelect('ml.unit', 'u')
     .leftJoin('u.plant', 'up')
     .leftJoinAndSelect('ml.stackPipe', 'sp')
