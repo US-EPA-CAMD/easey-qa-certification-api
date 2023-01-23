@@ -98,13 +98,13 @@ export class QaCertificationEventWorkshopService {
 
     await this.repository.save(entity);
 
-    const result = await this.repository.findOne(entity.id);
+    const result = await this.repository.getQACertEventById(entity.id);
 
     return this.map.one(result);
   }
 
   async getQACertEvent(id: string): Promise<QACertificationEventRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.getQACertEventById(id);
 
     if (!result) {
       throw new LoggingException(
@@ -119,7 +119,9 @@ export class QaCertificationEventWorkshopService {
   async getQACertEventsByLocationId(
     locationId: string,
   ): Promise<QACertificationEventRecordDTO[]> {
-    const results = await this.repository.find({ where: { locationId } });
+    const results = await this.repository.getQACertEventsByLocationId(
+      locationId,
+    );
 
     return this.map.many(results);
   }

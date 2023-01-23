@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
-import { QACertificationEvent } from '../entities/qa-certification-event.entity';
 import { SelectQueryBuilder } from 'typeorm';
 
 import * as qaCertQueryBuilder from '../utilities/qa-cert-events.querybuilder';
 import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workshop.repository';
+import { QACertificationEvent } from '../entities/workspace/qa-certification-event.entity';
 
 const qaCertEvent = new QACertificationEvent();
 
@@ -17,18 +17,23 @@ const mockQueryBuilder = () => ({
 });
 
 describe('QACertificationEventWorkspaceRepository', () => {
-  let repository;
+  let repository: QACertificationEventWorkspaceRepository;
   let queryBuilder;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
         QACertificationEventWorkspaceRepository,
-        { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
+        {
+          provide: SelectQueryBuilder,
+          useFactory: mockQueryBuilder,
+        },
       ],
     }).compile();
 
-    repository = module.get(QACertificationEventWorkspaceRepository);
+    repository = module.get<QACertificationEventWorkspaceRepository>(
+      QACertificationEventWorkspaceRepository,
+    );
     queryBuilder = module.get<SelectQueryBuilder<QACertificationEvent>>(
       SelectQueryBuilder,
     );
@@ -56,6 +61,27 @@ describe('QACertificationEventWorkspaceRepository', () => {
         ['1'],
         ['1'],
       );
+
+    jest.spyOn(repository, 'addJoins').mockReturnValue(queryBuilder);
+  });
+
+  describe('getQACertificationEventById', () => {
+    it('gets a QA Certification Event record from the workspace repository with Id', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getOne.mockReturnValue(qaCertEvent);
+
+      const result = await repository.getQACertEventById('1');
+
+      expect(result).toEqual(qaCertEvent);
+    });
+  });
+
+  describe('getTestExtensionExemptionsByLocationId', () => {
+    it('gets many QA Certification Event from the workspace repository with locationId', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([qaCertEvent]);
+
+      const result = await repository.getQACertEventsByLocationId('1');
 
       expect(result).toEqual([qaCertEvent]);
     });

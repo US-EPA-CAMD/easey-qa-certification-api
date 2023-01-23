@@ -46,6 +46,8 @@ const lookupValuesResult = {
 
 const mockRepository = () => ({
   getQaCertEventsByUnitStack: jest.fn().mockResolvedValue([entity]),
+  getQACertEventById: jest.fn().mockResolvedValue(entity),
+  getQACertEventsByLocationId: jest.fn().mockResolvedValue([entity]),
   find: jest.fn().mockResolvedValue([entity]),
   findOne: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
@@ -138,7 +140,7 @@ describe('QaCertificationEventWorkshopService', () => {
     it('should call the createQACertEvent and create QA Certification Event with historicalRecordId', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(entity);
+      jest.spyOn(repository, 'getQACertEventById').mockResolvedValue(entity);
 
       const result = await service.createQACertEvent(
         locationId,
@@ -177,13 +179,13 @@ describe('QaCertificationEventWorkshopService', () => {
   });
 
   describe('getCertEvent', () => {
-    it('calls the repository.findOne() and get QA Certification Event by id', async () => {
+    it('calls the repository.getQACertEventById() and get QA Certification Event by id', async () => {
       const result = await service.getQACertEvent(qaCertEventId);
       expect(result).toEqual(qaCertEventDTO);
     });
 
     it('should throw error when QA Certification Event not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'getQACertEventById').mockResolvedValue(null);
 
       let errored = false;
 

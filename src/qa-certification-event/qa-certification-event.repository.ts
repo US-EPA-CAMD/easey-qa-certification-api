@@ -53,4 +53,30 @@ export class QACertificationEventRepository extends Repository<
 
     return query.getMany();
   }
+  
+  async getQACertEventById(
+    qaCertEventId: string,
+  ): Promise<QACertificationEvent> {
+    const query = this.createQueryBuilder('qace').where(
+      'qace.id = :qaCertEventId',
+      {
+        qaCertEventId,
+      },
+    );
+
+    return addJoins(query).getOne();
+  }
+
+  async getQACertEventsByLocationId(
+    locationId: string,
+  ): Promise<QACertificationEvent[]> {
+    const query = this.createQueryBuilder('qace').where(
+      'qace.locationId = :locationId',
+      {
+        locationId,
+      },
+    );
+
+    return addJoins(query).getMany();
+  }
 }

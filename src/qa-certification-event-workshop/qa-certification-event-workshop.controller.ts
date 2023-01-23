@@ -52,7 +52,7 @@ export class QaCertificationEventWorkshopController {
     description: 'Retrieves workspace QA Certification Event record by its Id',
   })
   getQACertEvent(
-    @Param('locId') _locationId: string,
+    @Param('locId') locationId: string,
     @Param('id') id: string,
   ): Promise<QACertificationEventDTO> {
     return this.service.getQACertEvent(id);
