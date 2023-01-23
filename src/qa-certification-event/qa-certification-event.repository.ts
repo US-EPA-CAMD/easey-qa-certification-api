@@ -10,7 +10,7 @@ export class QACertificationEventRepository extends Repository<
   QACertificationEvent
 > {
   private buildBaseQuery(): SelectQueryBuilder<QACertificationEvent> {
-    const query = this.createQueryBuilder('qce');
+    const query = this.createQueryBuilder('qace');
     return addJoins(query) as SelectQueryBuilder<QACertificationEvent>;
   }
 
@@ -53,7 +53,7 @@ export class QACertificationEventRepository extends Repository<
 
     return query.getMany();
   }
-  
+
   async getQACertEventById(
     qaCertEventId: string,
   ): Promise<QACertificationEvent> {

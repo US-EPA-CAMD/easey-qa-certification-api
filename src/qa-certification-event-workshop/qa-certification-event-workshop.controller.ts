@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { QaCertificationEventWorkshopService } from './qa-certification-event-workshop.service';
@@ -71,6 +72,22 @@ export class QaCertificationEventWorkshopController {
     @User() user: CurrentUser,
   ): Promise<QACertificationEventRecordDTO> {
     return this.service.createQACertEvent(locationId, payload, user.userId);
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: QACertificationEventBaseDTO,
+    description: 'Updates a QA Certification Event record in the workspace',
+  })
+  updateQACertEvent(
+    @Param('locId') locationId: string,
+    @Param('id') id: string,
+    @Body() payload: QACertificationEventBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<QACertificationEventDTO> {
+    return this.service.updateQACertEvent(locationId, id, payload, user.userId);
   }
 
   @Delete(':id')

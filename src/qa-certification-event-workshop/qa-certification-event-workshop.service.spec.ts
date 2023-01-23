@@ -251,6 +251,38 @@ describe('QaCertificationEventWorkshopService', () => {
     });
   });
 
+  describe('updateQACertEvent', () => {
+    it('should update a QA Certification Event record', async () => {
+      const result = await service.updateQACertEvent(
+        locationId,
+        qaCertEventId,
+        payload,
+        userId,
+      );
+
+      expect(result).toEqual(qaCertEventDTO);
+    });
+
+    it('should throw an error while updating a QA Certification Event record', async () => {
+      jest.spyOn(service, 'getQACertEvent').mockResolvedValue(undefined);
+
+      let errored = false;
+
+      try {
+        await service.updateQACertEvent(
+          locationId,
+          qaCertEventId,
+          payload,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
+    });
+  });
+
   describe('export', () => {
     it('calls the repository.getQACertEventsByUnitStack() and get qa certification events by locationId', async () => {
       const returnedSummary = qaCertEventDTO;

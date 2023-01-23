@@ -3,7 +3,6 @@ import { QACertificationEvent } from '../entities/qa-certification-event.entity'
 import { SelectQueryBuilder } from 'typeorm';
 import * as qaCertQueryBuilder from '../utilities/qa-cert-events.querybuilder';
 import { QACertificationEventRepository } from './qa-certification-event.repository';
-import * as qaCertEventQueryBuilder from '../utilities/qa-certification-event.querybuilder';
 
 const qaCertEvent = new QACertificationEvent();
 
@@ -37,9 +36,7 @@ describe('QACertificationEventWorkspaceRepository', () => {
 
     repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
 
-    jest
-      .spyOn(qaCertEventQueryBuilder, 'addJoins')
-      .mockReturnValue(queryBuilder);
+    jest.spyOn(qaCertQueryBuilder, 'addJoins').mockReturnValue(queryBuilder);
   });
 
   describe('getQACertificationEventById', () => {
