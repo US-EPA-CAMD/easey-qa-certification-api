@@ -219,18 +219,25 @@ export class QaCertificationEventWorkshopService {
       },
     });
 
+    let importedQACertEvent;
     if (record) {
-      // update
+      // importedQACertEvent = await this.updateQACertEvent(
+      //   locationId,
+      //   record.id,
+      //   payload,
+      //   userId,
+      // );
+    } else {
+      importedQACertEvent = await this.createQACertEvent(
+        locationId,
+        payload,
+        userId,
+      );
     }
 
-    const createdQACertEvent = await this.createQACertEvent(
-      locationId,
-      payload,
-      userId,
-    );
 
     this.logger.info(
-      `QA Certification Record Successfully Imported. Record Id: ${createdQACertEvent.id}`,
+      `QA Certification Record Successfully Imported. Record Id: ${importedQACertEvent.id}`,
     );
 
     return null;
