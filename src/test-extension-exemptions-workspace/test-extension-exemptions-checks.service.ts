@@ -7,7 +7,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import {
   TestExtensionExemptionBaseDTO,
   TestExtensionExemptionImportDTO,
-} from 'src/dto/test-extension-exemption.dto';
+} from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
 
