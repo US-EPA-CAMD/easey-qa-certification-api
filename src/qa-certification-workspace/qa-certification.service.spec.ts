@@ -10,7 +10,7 @@ import { QACertificationWorkspaceService } from './qa-certification.service';
 import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
-import { QaCertificationEventWorkshopService } from '../qa-certification-event-workshop/qa-certification-event-workshop.service';
+import { QACertificationEventWorkspaceService } from '../qa-certification-event-workspace/qa-certification-event-workspace.service';
 import {
   QACertificationEventDTO,
   QACertificationEventImportDTO,
@@ -66,7 +66,7 @@ describe('QA Certification Workspace Service Test', () => {
           useFactory: mockTestSummaryWorkspaceService,
         },
         {
-          provide: QaCertificationEventWorkshopService,
+          provide: QACertificationEventWorkspaceService,
           useFactory: mockQACertEventService,
         },
       ],

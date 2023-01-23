@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { QaCertificationEventWorkshopService } from './qa-certification-event-workshop.service';
-import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workshop.repository';
+import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
+import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
@@ -60,8 +60,8 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue([qaCertEventDTO]),
 });
 
-describe('QaCertificationEventWorkshopService', () => {
-  let service: QaCertificationEventWorkshopService;
+describe('QACertificationEventWorkspaceService', () => {
+  let service: QACertificationEventWorkspaceService;
   let repository: QACertificationEventWorkspaceRepository;
   let unitRepository: UnitRepository;
   let stackPipeRepository: StackPipeRepository;
@@ -73,7 +73,7 @@ describe('QaCertificationEventWorkshopService', () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
       providers: [
-        QaCertificationEventWorkshopService,
+        QACertificationEventWorkspaceService,
         {
           provide: QACertificationEventMap,
           useFactory: mockMap,
@@ -115,8 +115,8 @@ describe('QaCertificationEventWorkshopService', () => {
       ],
     }).compile();
 
-    service = module.get<QaCertificationEventWorkshopService>(
-      QaCertificationEventWorkshopService,
+    service = module.get<QACertificationEventWorkspaceService>(
+      QACertificationEventWorkspaceService,
     );
     repository = module.get<QACertificationEventWorkspaceRepository>(
       QACertificationEventWorkspaceRepository,

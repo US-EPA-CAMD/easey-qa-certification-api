@@ -12,7 +12,7 @@ import { currentDateTime } from '../utilities/functions';
 import { Unit } from '../entities/workspace/unit.entity';
 import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 
-import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workshop.repository';
+import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { UnitRepository } from '../unit/unit.repository';
 import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
@@ -28,7 +28,7 @@ import {
 import { QACertificationEventMap } from '../maps/qa-certification-event.map';
 
 @Injectable()
-export class QaCertificationEventWorkshopService {
+export class QACertificationEventWorkspaceService {
   constructor(
     private readonly logger: Logger,
     private readonly map: QACertificationEventMap,

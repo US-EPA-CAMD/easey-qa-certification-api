@@ -5,8 +5,8 @@ import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
-import { QaCertificationEventWorkshopController } from './qa-certification-event-workshop.controller';
-import { QaCertificationEventWorkshopService } from './qa-certification-event-workshop.service';
+import { QACertificationEventWorkspaceController } from './qa-certification-event-workspace.controller';
+import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
 import {
   QACertificationEventBaseDTO,
   QACertificationEventDTO,
@@ -32,32 +32,32 @@ const mockService = () => ({
   deleteQACertEvent: jest.fn().mockResolvedValue(''),
 });
 
-describe('QaCertificationEventWorkshopController', () => {
-  let controller: QaCertificationEventWorkshopController;
-  let service: QaCertificationEventWorkshopService;
+describe('QACertificationEventWorkspaceController', () => {
+  let controller: QACertificationEventWorkspaceController;
+  let service: QACertificationEventWorkspaceService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [HttpModule],
-      controllers: [QaCertificationEventWorkshopController],
+      controllers: [QACertificationEventWorkspaceController],
       providers: [
         ConfigService,
         AuthGuard,
         {
-          provide: QaCertificationEventWorkshopService,
+          provide: QACertificationEventWorkspaceService,
           useFactory: mockService,
         },
       ],
     }).compile();
 
-    controller = module.get<QaCertificationEventWorkshopController>(
-      QaCertificationEventWorkshopController,
+    controller = module.get<QACertificationEventWorkspaceController>(
+      QACertificationEventWorkspaceController,
     );
-    service = module.get(QaCertificationEventWorkshopService);
+    service = module.get(QACertificationEventWorkspaceService);
   });
 
   describe('getQACertEventsByLocationId', () => {
-    it('should call the QaCertificationEventWorkshopService.getQACertEvents', async () => {
+    it('should call the QACertificationEventWorkspaceService.getQACertEvents', async () => {
       const spyService = jest.spyOn(service, 'getQACertEventsByLocationId');
       const result = await controller.getQACertEvents('1');
       expect(result).toEqual([qaCertEvent]);
@@ -66,7 +66,7 @@ describe('QaCertificationEventWorkshopController', () => {
   });
 
   describe('getQACertEvent', () => {
-    it('should call the QaCertificationEventWorkshopService.getQACertEvent', async () => {
+    it('should call the QACertificationEventWorkspaceService.getQACertEvent', async () => {
       const spyService = jest.spyOn(service, 'getQACertEvent');
       const result = await controller.getQACertEvent('1', '1');
       expect(result).toEqual(qaCertEvent);

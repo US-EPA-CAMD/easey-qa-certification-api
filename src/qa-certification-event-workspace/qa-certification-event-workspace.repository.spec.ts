@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import { SelectQueryBuilder } from 'typeorm';
 
 import * as qaCertQueryBuilder from '../utilities/qa-cert-events.querybuilder';
-import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workshop.repository';
+import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
 import { QACertificationEvent } from '../entities/workspace/qa-certification-event.entity';
 
 const qaCertEvent = new QACertificationEvent();
