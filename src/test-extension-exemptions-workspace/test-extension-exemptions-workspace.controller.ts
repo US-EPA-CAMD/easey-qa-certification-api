@@ -22,6 +22,7 @@ import {
   TestExtensionExemptionBaseDTO,
   TestExtensionExemptionRecordDTO,
 } from '../dto/test-extension-exemption.dto';
+import { TestExtensionExemptionsChecksService } from './test-extension-exemptions-checks.service';
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
 
 @Controller()
@@ -30,6 +31,7 @@ import { TestExtensionExemptionsWorkspaceService } from './test-extension-exempt
 export class TestExtensionExemptionsWorkspaceController {
   constructor(
     private readonly service: TestExtensionExemptionsWorkspaceService,
+    private readonly checksService: TestExtensionExemptionsChecksService,
   ) {}
 
   @Get()
@@ -70,6 +72,12 @@ export class TestExtensionExemptionsWorkspaceController {
     @Body() payload: TestExtensionExemptionBaseDTO,
     @User() user: CurrentUser,
   ): Promise<TestExtensionExemptionRecordDTO> {
+    await this.checksService.runChecks(
+      locationId,
+      payload,
+      false,
+      false,
+    )
     return this.service.createTestExtensionExemption(
       locationId,
       payload,
@@ -90,6 +98,12 @@ export class TestExtensionExemptionsWorkspaceController {
     @Body() payload: TestExtensionExemptionBaseDTO,
     @User() user: CurrentUser,
   ): Promise<TestExtensionExemptionRecordDTO> {
+    await this.checksService.runChecks(
+      locationId,
+      payload,
+      false,
+      true,
+    )
     return this.service.updateTestExtensionExemption(
       locationId,
       id,
