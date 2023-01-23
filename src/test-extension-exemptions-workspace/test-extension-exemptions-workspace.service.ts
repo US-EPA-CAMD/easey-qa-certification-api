@@ -6,6 +6,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   TestExtensionExemptionBaseDTO,
+  TestExtensionExemptionDTO,
+  TestExtensionExemptionImportDTO,
   TestExtensionExemptionRecordDTO,
 } from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionMap } from '../maps/test-extension-exemption.map';
@@ -21,10 +23,12 @@ import { ReportingPeriodRepository } from '../reporting-period/reporting-period.
 import { Unit } from './../entities/workspace/unit.entity';
 import { StackPipe } from './../entities/workspace/stack-pipe.entity';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class TestExtensionExemptionsWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     private readonly map: TestExtensionExemptionMap,
     @InjectRepository(TestExtensionExemptionsWorkspaceRepository)
     private readonly repository: TestExtensionExemptionsWorkspaceRepository,
@@ -43,15 +47,15 @@ export class TestExtensionExemptionsWorkspaceService {
   ) {}
 
   async getTestExtensionExemptionById(
-    testSumId: string,
+    testExtExpId: string,
   ): Promise<TestExtensionExemptionRecordDTO> {
     const result = await this.repository.getTestExtensionExemptionById(
-      testSumId,
+      testExtExpId,
     );
 
     if (!result) {
       throw new LoggingException(
-        `A test extension exceptions record not found with Record Id [${testSumId}].`,
+        `A test extension exceptions record not found with Record Id [${testExtExpId}].`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -67,6 +71,36 @@ export class TestExtensionExemptionsWorkspaceService {
     );
 
     return this.map.many(results);
+  }
+
+  async getTestExtensions(
+    facilityId: number,
+    unitIds?: string[],
+    stackPipeIds?: string[],
+    qaTestExtensionExemptionIds?: string[],
+  ): Promise<TestExtensionExemptionDTO[]> {
+    const results = await this.repository.getTestExtensionsByUnitStack(
+      facilityId,
+      unitIds,
+      stackPipeIds,
+      qaTestExtensionExemptionIds,
+    );
+    return this.map.many(results);
+  }
+
+  async export(
+    facilityId: number,
+    unitIds?: string[],
+    stackPipeIds?: string[],
+    qaTestExtensionExemptionIds?: string[],
+  ): Promise<TestExtensionExemptionDTO[]> {
+    const results = await this.getTestExtensions(
+      facilityId,
+      unitIds,
+      stackPipeIds,
+      qaTestExtensionExemptionIds,
+    );
+    return results;
   }
 
   async createTestExtensionExemption(

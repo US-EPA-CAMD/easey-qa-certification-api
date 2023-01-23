@@ -11,12 +11,14 @@ import { LocationIdentifiers } from '../interfaces/location-identifiers.interfac
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { TestExtensionExemptionsWorkspaceService } from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.service';
 
 @Injectable()
 export class QACertificationWorkspaceService {
   constructor(
     private readonly logger: Logger,
     private readonly testSummaryService: TestSummaryWorkspaceService,
+    private readonly testExtensionExemptionService: TestExtensionExemptionsWorkspaceService,
   ) {}
 
   async export(params: QACertificationParamsDTO): Promise<QACertificationDTO> {
@@ -37,6 +39,14 @@ export class QACertificationWorkspaceService {
 
     const EVENTS = SUMMARIES + 1;
     const EXT_EXEMPTIONS = EVENTS + 1;
+    promises.push(
+      this.testExtensionExemptionService.export(
+        params.facilityId,
+        params.unitIds,
+        params.stackPipeIds,
+        params.qaTestExtensionExemptiontIds,
+      ),
+    );
 
     const results = await Promise.all(promises);
 
@@ -78,6 +88,29 @@ export class QACertificationWorkspaceService {
               : null,
           );
 
+          resolve(results);
+        }),
+      );
+    });
+
+    payload.testExtensionExemptionData.forEach((summary, idx) => {
+      promises.push(
+        new Promise(async (resolve, _reject) => {
+          const locationId = locations.find(i => {
+            return (
+              i.unitId === summary.unitId &&
+              i.stackPipeId === summary.stackPipeId
+            );
+          }).locationId;
+
+          const results = this.testExtensionExemptionService.import(
+            locationId,
+            summary,
+            userId,
+            qaSupprecords[idx] !== undefined
+              ? qaSupprecords[idx]?.locationId
+              : null,
+          );
           resolve(results);
         }),
       );

@@ -28,4 +28,39 @@ export class TestExtensionExemptionsRepository extends Repository<
     });
     return query.getMany();
   }
+
+  async getTestExtensionsByUnitStack(
+    facilityId: number,
+    unitIds?: string[],
+    stackPipeIds?: string[],
+    qaTestExtensionExemptionIds?: string[],
+  ): Promise<TestExtensionExemption[]> {
+    let unitsWhere =
+      unitIds && unitIds.length > 0
+        ? 'up.orisCode = :facilityId AND u.name IN (:...unitIds)'
+        : '';
+
+    let stacksWhere =
+      stackPipeIds && stackPipeIds.length > 0
+        ? 'spp.orisCode = :facilityId AND sp.name IN (:...stackPipeIds)'
+        : '';
+
+    if (
+      unitIds &&
+      unitIds.length > 0 &&
+      stackPipeIds &&
+      stackPipeIds.length > 0
+    ) {
+      unitsWhere = `(${unitsWhere})`;
+      stacksWhere = ` OR (${stacksWhere})`;
+    }
+
+    let query = this.buildBaseQuery().where(`(${unitsWhere}${stacksWhere})`, {
+      facilityId,
+      unitIds,
+      stackPipeIds,
+      qaTestExtensionExemptionIds,
+    });
+    return query.getMany();
+  }
 }

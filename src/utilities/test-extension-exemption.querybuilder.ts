@@ -19,3 +19,17 @@ export const addJoins = (
     .leftJoinAndSelect('ml.stackPipe', 'sp')
     .leftJoin('sp.plant', 'spp');
 };
+
+export const addTestSummaryIdWhere = (
+  query: any,
+  qaCertificationEventIds: string[],
+): SelectQueryBuilder<
+  TestExtensionExemption | WorkspaceTestExtensionExemption
+> => {
+  if (qaCertificationEventIds) {
+    query.andWhere('qce.id IN (:...qaCertificationEventIds)', {
+      qaCertificationEventIds,
+    });
+  }
+  return query;
+};
