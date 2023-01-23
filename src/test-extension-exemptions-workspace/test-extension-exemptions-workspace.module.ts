@@ -36,6 +36,7 @@ import { TestExtensionExemptionsChecksService } from './test-extension-exemption
     TypeOrmModule,
     TestExtensionExemptionMap,
     TestExtensionExemptionsWorkspaceService,
+    TestExtensionExemptionsChecksService,
   ],
 })
 export class TestExtensionExemptionsWorkspaceModule {}
