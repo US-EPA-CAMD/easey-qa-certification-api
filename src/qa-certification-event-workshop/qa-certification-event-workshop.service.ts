@@ -182,6 +182,40 @@ export class QaCertificationEventWorkshopService {
     return this.map.many(results);
   }
 
+  async updateQACertEvent(
+    locationId: string,
+    id: string,
+    payload: QACertificationEventBaseDTO,
+    userId: string,
+  ): Promise<QACertificationEventDTO> {
+    const timestamp = currentDateTime();
+
+    const entity = await this.repository.findOne(id);
+
+    const {
+      componentRecordId,
+      monitoringSystemRecordId,
+    } = await this.lookupValues(locationId, payload);
+
+    entity.componentRecordId = componentRecordId;
+    entity.monitoringSystemRecordId = monitoringSystemRecordId;
+    entity.qaCertEventCode = payload.qaCertEventCode;
+    entity.qaCertEventDate = payload.qaCertEventDate;
+    entity.qaCertEventHour = payload.qaCertEventHour;
+    entity.requiredTestCode = payload.requiredTestCode;
+    entity.requiredTestCode = payload.requiredTestCode;
+    entity.conditionalBeginDate = payload.conditionalBeginDate;
+    entity.conditionalBeginHour = payload.conditionalBeginHour;
+    entity.completionTestDate = payload.completionTestDate;
+    entity.completionTestHour = payload.completionTestHour;
+    entity.userId = userId;
+    entity.updateDate = timestamp;
+
+    await this.repository.save(entity);
+
+    return this.getQACertEvent(entity.id);
+  }
+
   async export(
     facilityId: number,
     unitIds?: string[],
@@ -221,12 +255,12 @@ export class QaCertificationEventWorkshopService {
 
     let importedQACertEvent;
     if (record) {
-      // importedQACertEvent = await this.updateQACertEvent(
-      //   locationId,
-      //   record.id,
-      //   payload,
-      //   userId,
-      // );
+      importedQACertEvent = await this.updateQACertEvent(
+        locationId,
+        record.id,
+        payload,
+        userId,
+      );
     } else {
       importedQACertEvent = await this.createQACertEvent(
         locationId,
@@ -234,7 +268,6 @@ export class QaCertificationEventWorkshopService {
         userId,
       );
     }
-
 
     this.logger.info(
       `QA Certification Record Successfully Imported. Record Id: ${importedQACertEvent.id}`,

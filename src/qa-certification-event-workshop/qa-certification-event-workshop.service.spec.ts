@@ -182,7 +182,7 @@ describe('QaCertificationEventWorkshopService', () => {
   });
 
   describe('getCertEvent', () => {
-    it('calls the repository.findOne() and get QA Certification Event by id', async () => {
+    it('calls the repository.getQACertEventById() and get QA Certification Event by id', async () => {
       const result = await service.getQACertEvent(qaCertEventId);
       expect(result).toEqual(qaCertEventDTO);
     });
@@ -253,6 +253,38 @@ describe('QaCertificationEventWorkshopService', () => {
     it('calls the repository.getQACertEventsByUnitStack() and get qa certification events by locationId', async () => {
       const result = await service.getQACertEvents(facilityId, [unitId]);
       expect(result).toEqual([qaCertEventDTO]);
+    });
+  });
+
+  describe('updateQACertEvent', () => {
+    it('should update a QA Certification Event record', async () => {
+      const result = await service.updateQACertEvent(
+        locationId,
+        qaCertEventId,
+        payload,
+        userId,
+      );
+
+      expect(result).toEqual(qaCertEventDTO);
+    });
+
+    it('should throw an error while updating a QA Certification Event record', async () => {
+      jest.spyOn(service, 'getQACertEvent').mockResolvedValue(undefined);
+
+      let errored = false;
+
+      try {
+        await service.updateQACertEvent(
+          locationId,
+          qaCertEventId,
+          payload,
+          userId,
+        );
+      } catch (e) {
+        errored = true;
+      }
+
+      expect(errored).toEqual(true);
     });
   });
 

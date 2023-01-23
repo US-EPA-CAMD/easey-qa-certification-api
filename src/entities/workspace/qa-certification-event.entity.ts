@@ -6,6 +6,7 @@ import {
   ManyToOne,
   PrimaryColumn,
 } from 'typeorm';
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
 import { MonitorLocation } from './monitor-location.entity';
 import { Component } from './component.entity';
@@ -52,6 +53,7 @@ export class QACertificationEvent extends BaseEntity {
   @Column({
     name: 'qa_cert_event_hour',
     type: 'numeric',
+    transformer: new NumericColumnTransformer(),
   })
   qaCertEventHour: number;
 
@@ -70,6 +72,7 @@ export class QACertificationEvent extends BaseEntity {
   @Column({
     name: 'conditional_data_begin_hour',
     type: 'numeric',
+    transformer: new NumericColumnTransformer(),
   })
   conditionalBeginHour: number;
 
@@ -82,6 +85,7 @@ export class QACertificationEvent extends BaseEntity {
   @Column({
     name: 'last_test_completed_hour',
     type: 'numeric',
+    transformer: new NumericColumnTransformer(),
   })
   completionTestHour: number;
 
@@ -112,6 +116,7 @@ export class QACertificationEvent extends BaseEntity {
   @Column({
     name: 'submission_id',
     type: 'numeric',
+    transformer: new NumericColumnTransformer(),
   })
   submissionId: number;
 

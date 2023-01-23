@@ -98,6 +98,12 @@ describe('QaCertificationEventService', () => {
       const result = await service.export(facilityId, [unitId]);
 
       expect(spySummaries).toHaveBeenCalled();
+    });
+  });
+
+  describe('getQACertEvents', () => {
+    it('calls the repository.getQACertEvents() and get QA Certification Event by locationId', async () => {
+      const result = await service.getQACertEvents(facilityId);
       expect(result).toEqual([qaCertEventDTO]);
     });
   });

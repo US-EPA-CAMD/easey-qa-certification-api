@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
-
 import { QACertificationEventDTO } from '../dto/qa-certification-event.dto';
 import { QACertificationEvent } from '../entities/qa-certification-event.entity';
 
@@ -15,7 +13,7 @@ export class QACertificationEventMap extends BaseMap<
   ): Promise<QACertificationEventDTO> {
     return {
       id: entity.id,
-      locationId: entity.locationId,
+      locationId: entity.location.id,
       stackPipeId:
         entity.location && entity.location.stackPipe
           ? entity.location.stackPipe.name
