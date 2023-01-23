@@ -103,6 +103,29 @@ export class QACertificationWorkspaceService {
       );
     });
 
+    payload.testExtensionExemptionData.forEach((summary, idx) => {
+      promises.push(
+        new Promise(async (resolve, _reject) => {
+          const locationId = locations.find(i => {
+            return (
+              i.unitId === summary.unitId &&
+              i.stackPipeId === summary.stackPipeId
+            );
+          }).locationId;
+
+          const results = this.testExtensionExemptionService.import(
+            locationId,
+            summary,
+            userId,
+            qaSupprecords[idx] !== undefined
+              ? qaSupprecords[idx]?.locationId
+              : null,
+          );
+          resolve(results);
+        }),
+      );
+    });
+
     await Promise.all(promises);
 
     return {

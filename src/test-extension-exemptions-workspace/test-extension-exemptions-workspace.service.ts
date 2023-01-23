@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   TestExtensionExemptionBaseDTO,
   TestExtensionExemptionDTO,
+  TestExtensionExemptionImportDTO,
   TestExtensionExemptionRecordDTO,
 } from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionMap } from '../maps/test-extension-exemption.map';
@@ -22,10 +23,12 @@ import { ReportingPeriodRepository } from '../reporting-period/reporting-period.
 import { Unit } from './../entities/workspace/unit.entity';
 import { StackPipe } from './../entities/workspace/stack-pipe.entity';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class TestExtensionExemptionsWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     private readonly map: TestExtensionExemptionMap,
     @InjectRepository(TestExtensionExemptionsWorkspaceRepository)
     private readonly repository: TestExtensionExemptionsWorkspaceRepository,
@@ -98,6 +101,38 @@ export class TestExtensionExemptionsWorkspaceService {
       qaTestExtensionExemptionIds,
     );
     return results;
+  }
+
+  async import(
+    locationId: string,
+    payload: TestExtensionExemptionImportDTO,
+    userId: string,
+    historicalrecordId?: string,
+  ) {
+    const promises = [];
+
+    const summary = await this.repository.getTestExtensionExemptionByLocationId(
+      locationId,
+    );
+
+    if (summary) {
+      await this.deleteTestExtensionExemption(summary.id);
+    }
+
+    const createdTestExtensionExemption = await this.createTestExtensionExemption(
+      locationId,
+      payload,
+      userId,
+      historicalrecordId,
+    );
+
+    this.logger.info(
+      `Test Extension Exemption Successfully Imported. Record Id: ${createdTestExtensionExemption.id}`,
+    );
+
+    await Promise.all(promises);
+
+    return null;
   }
 
   async createTestExtensionExemption(
