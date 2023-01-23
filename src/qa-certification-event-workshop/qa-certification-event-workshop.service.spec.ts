@@ -149,7 +149,6 @@ describe('QaCertificationEventWorkshopService', () => {
         locationId,
         payload,
         userId,
-        'historicalRecordId',
       );
 
       expect(result).toEqual(qaCertEventDTO);
@@ -269,7 +268,7 @@ describe('QaCertificationEventWorkshopService', () => {
     });
 
     it('should throw an error while updating a QA Certification Event record', async () => {
-      jest.spyOn(service, 'getQACertEvent').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
 
       let errored = false;
 
@@ -306,20 +305,23 @@ describe('QaCertificationEventWorkshopService', () => {
 
   describe('import', () => {
     it('Should create QA Cert Event ', async () => {
-      const returnedQaCertEvent = qaCertEventDTO;
-      returnedQaCertEvent.id = qaCertEventId;
+      const importPayload = payload;
 
-      const creste = jest
-        .spyOn(service, 'createQACertEvent')
-        .mockResolvedValue(returnedQaCertEvent);
+      const result = await service.import(locationId, importPayload, userId);
+
+      expect(result).toEqual(null);
+    });
+
+    it('Should update QA Cert Event ', async () => {
+      entity.id = '1';
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(entity);
 
       const importPayload = payload;
 
       const result = await service.import(locationId, importPayload, userId);
 
-      expect(creste).toHaveBeenCalled();
       expect(result).toEqual(null);
-      expect(creste).toHaveBeenCalled();
     });
   });
 });

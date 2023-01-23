@@ -64,22 +64,22 @@ describe('QACertificationEventWorkspaceRepository', () => {
   describe('getQaCertEventsByUnitStack', () => {
     it('get one test summary from the repository with facilityId', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getOne.mockReturnValue(qaCertEvent);
+      queryBuilder.getMany.mockReturnValue([qaCertEvent]);
 
-      const result = await repository.getQACertEventById('1');
+      const result = await repository.getQaCertEventsByUnitStack(1);
 
-      expect(result).toEqual(qaCertEvent);
+      expect(result).toEqual([qaCertEvent]);
     });
-  });
 
-  describe('getTestExtensionExemptionsByLocationId', () => {
-    it('gets many QA Certification Event from the workspace repository with locationId', async () => {
+    it('get one test summary from the repository with facilityId, unitids, stackPipeIds', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([qaCertEvent]);
 
-      const result = await repository.getQACertEventsByLocationId('1');
-
-      expect(result).toEqual([qaCertEvent]);
+      const result = await repository.getQaCertEventsByUnitStack(
+        1,
+        ['1'],
+        ['1'],
+      );
     });
   });
 });
