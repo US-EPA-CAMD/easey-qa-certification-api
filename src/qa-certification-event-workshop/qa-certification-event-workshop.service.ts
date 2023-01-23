@@ -50,7 +50,6 @@ export class QaCertificationEventWorkshopService {
     locationId: string,
     payload: QACertificationEventBaseDTO,
     userId: string,
-    historicalRecordId?: string,
   ): Promise<QACertificationEventRecordDTO> {
     const timestamp = currentDateTime();
 
@@ -86,7 +85,7 @@ export class QaCertificationEventWorkshopService {
       ...payload,
       componentRecordId,
       monitoringSystemRecordId,
-      id: historicalRecordId || uuid(),
+      id: uuid(),
       locationId,
       userId,
       addDate: timestamp,
@@ -203,7 +202,6 @@ export class QaCertificationEventWorkshopService {
     locationId: string,
     payload: QACertificationEventImportDTO,
     userId: string,
-    historicalrecordId?: string,
   ) {
     const {
       componentRecordId,
@@ -222,14 +220,13 @@ export class QaCertificationEventWorkshopService {
     });
 
     if (record) {
-      await this.deleteQACertEvent(record.id);
+      // update
     }
 
     const createdQACertEvent = await this.createQACertEvent(
       locationId,
       payload,
       userId,
-      historicalrecordId,
     );
 
     this.logger.info(

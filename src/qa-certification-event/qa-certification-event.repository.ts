@@ -17,7 +17,7 @@ export class QACertificationEventRepository extends Repository<
   async getQACertificationEventById(
     qaCertEventId: string,
   ): Promise<QACertificationEvent> {
-    const query = this.buildBaseQuery().where('tee.id = :qaCertEventId', {
+    const query = this.buildBaseQuery().where('qce.id = :qaCertEventId', {
       qaCertEventId,
     });
     return query.getOne();
@@ -26,7 +26,7 @@ export class QACertificationEventRepository extends Repository<
   async getQACertificationEventsByLocationId(
     locationId: string,
   ): Promise<QACertificationEvent[]> {
-    const query = this.buildBaseQuery().where('tee.locationId = :locationId', {
+    const query = this.buildBaseQuery().where('qce.locationId = :locationId', {
       locationId,
     });
     return query.getMany();

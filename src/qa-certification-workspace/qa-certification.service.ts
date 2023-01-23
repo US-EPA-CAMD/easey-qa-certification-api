@@ -107,7 +107,6 @@ export class QACertificationWorkspaceService {
             locationId,
             qaCertEvent,
             userId,
-            null,
           );
 
           resolve(results);
