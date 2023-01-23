@@ -18,7 +18,7 @@ import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.serv
 import { FlowRataRunChecksService } from '../flow-rata-run-workspace/flow-rata-run-checks.service';
 import { RataTraverseChecksService } from '../rata-traverse-workspace/rata-traverse-checks.service';
 import { TestQualificationChecksService } from '../test-qualification-workspace/test-qualification-checks.service';
-import { TestExtensionExemptionsChecksService } from 'src/test-extension-exemptions-workspace/test-extension-exemptions-checks.service';
+import { TestExtensionExemptionsChecksService } from '../test-extension-exemptions-workspace/test-extension-exemptions-checks.service'
 
 @Injectable()
 export class QACertificationChecksService {
