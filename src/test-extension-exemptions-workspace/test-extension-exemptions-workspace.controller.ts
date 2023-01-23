@@ -72,12 +72,7 @@ export class TestExtensionExemptionsWorkspaceController {
     @Body() payload: TestExtensionExemptionBaseDTO,
     @User() user: CurrentUser,
   ): Promise<TestExtensionExemptionRecordDTO> {
-    await this.checksService.runChecks(
-      locationId,
-      payload,
-      false,
-      false,
-    )
+    await this.checksService.runChecks(locationId, payload, false, false);
     return this.service.createTestExtensionExemption(
       locationId,
       payload,
@@ -98,12 +93,7 @@ export class TestExtensionExemptionsWorkspaceController {
     @Body() payload: TestExtensionExemptionBaseDTO,
     @User() user: CurrentUser,
   ): Promise<TestExtensionExemptionRecordDTO> {
-    await this.checksService.runChecks(
-      locationId,
-      payload,
-      false,
-      true,
-    )
+    await this.checksService.runChecks(locationId, payload, false, true);
     return this.service.updateTestExtensionExemption(
       locationId,
       id,

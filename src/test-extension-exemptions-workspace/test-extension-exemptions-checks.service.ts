@@ -4,7 +4,10 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { TestExtensionExemptionBaseDTO, TestExtensionExemptionImportDTO } from 'src/dto/test-extension-exemption.dto';
+import {
+  TestExtensionExemptionBaseDTO,
+  TestExtensionExemptionImportDTO,
+} from 'src/dto/test-extension-exemption.dto';
 import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
 
@@ -27,9 +30,11 @@ export class TestExtensionExemptionsChecksService {
 
   async runChecks(
     locationId: string,
-    testExtensionExemption: TestExtensionExemptionBaseDTO | TestExtensionExemptionImportDTO,
+    testExtensionExemption:
+      | TestExtensionExemptionBaseDTO
+      | TestExtensionExemptionImportDTO,
     isImport: boolean = false,
-    isUpdate: boolean = false
+    isUpdate: boolean = false,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
@@ -37,9 +42,12 @@ export class TestExtensionExemptionsChecksService {
     this.logger.info('Running Test Extension Exemption Checks');
 
     if (!isUpdate) {
-      error = await this.extexem8DuplicateCheck(testExtensionExemption, locationId);
+      error = await this.extexem8DuplicateCheck(
+        testExtensionExemption,
+        locationId,
+      );
       if (error) {
-        errorList.push(error)
+        errorList.push(error);
       }
     }
 
@@ -49,7 +57,9 @@ export class TestExtensionExemptionsChecksService {
   }
 
   private async extexem8DuplicateCheck(
-    testExtensionExemption: TestExtensionExemptionBaseDTO | TestExtensionExemptionImportDTO,
+    testExtensionExemption:
+      | TestExtensionExemptionBaseDTO
+      | TestExtensionExemptionImportDTO,
     locationId: string,
   ) {
     let error = null;
@@ -57,7 +67,8 @@ export class TestExtensionExemptionsChecksService {
 
     const dupeErrorMsg = this.getErrorMessage('EXTEXEM-8-A', {
       recordtype: KEY,
-      fieldnames: 'extensionOrExemptionCode, reportPeriodId, monitoringSystemId, componentId, fuelCode',
+      fieldnames:
+        'extensionOrExemptionCode, reportPeriodId, monitoringSystemId, componentId, fuelCode',
     });
 
     const [
