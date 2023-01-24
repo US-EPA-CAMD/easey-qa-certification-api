@@ -1,6 +1,6 @@
 import {
   addJoins,
-  addTestSummaryIdWhere,
+  addQACertEventIdWhere,
 } from '../utilities/qa-cert-events.querybuilder';
 import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
 import { QACertificationEvent } from '../entities/qa-certification-event.entity';
@@ -64,7 +64,7 @@ export class QACertificationEventRepository extends Repository<
       stackPipeIds,
     });
 
-    query = addTestSummaryIdWhere(
+    query = addQACertEventIdWhere(
       query,
       qaCertificationEventIds,
     ) as SelectQueryBuilder<QACertificationEvent>;

@@ -17,7 +17,7 @@ export const addJoins = (
     .leftJoin('sp.plant', 'spp');
 };
 
-export const addTestSummaryIdWhere = (
+export const addQACertEventIdWhere = (
   query: any,
   qaCertificationEventIds: string[],
 ): SelectQueryBuilder<QACertificationEvent | WorkspaceQACertificationEvent> => {

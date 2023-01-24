@@ -40,7 +40,7 @@ describe('QACertificationEventWorkspaceRepository', () => {
   });
 
   describe('getQACertificationEventById', () => {
-    it('calls buildBaseQuery and get one Test Extension Exemption from the repository with Id', async () => {
+    it('calls buildBaseQuery and get one QA Certification Event from the repository with Id', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(qaCertEvent);
 
@@ -51,7 +51,7 @@ describe('QACertificationEventWorkspaceRepository', () => {
   });
 
   describe('getQACertificationEventsByLocationId', () => {
-    it('get many test Extension Exemption from the repository with locationId, testTypeCode, beginDate and endDate', async () => {
+    it('get many QA Certification Event from the repository with locationId, testTypeCode, beginDate and endDate', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([qaCertEvent]);
 
@@ -62,7 +62,7 @@ describe('QACertificationEventWorkspaceRepository', () => {
   });
 
   describe('getQaCertEventsByUnitStack', () => {
-    it('get one test summary from the repository with facilityId', async () => {
+    it('get QA Certification Event from the repository with facilityId', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([qaCertEvent]);
 
@@ -71,7 +71,7 @@ describe('QACertificationEventWorkspaceRepository', () => {
       expect(result).toEqual([qaCertEvent]);
     });
 
-    it('get one test summary from the repository with facilityId, unitids, stackPipeIds', async () => {
+    it('get QA Certification Event from the repository with facilityId, unitids, stackPipeIds', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([qaCertEvent]);
 
@@ -80,6 +80,7 @@ describe('QACertificationEventWorkspaceRepository', () => {
         ['1'],
         ['1'],
       );
+      expect(result).toEqual([qaCertEvent]);
     });
   });
 });
