@@ -3,15 +3,19 @@ import { QACertificationEventMap } from './qa-certification-event.map';
 import { MonitorLocation } from '../entities/monitor-location.entity';
 import { MonitorSystem } from '../entities/monitor-system.entity';
 import { Component } from '../entities/component.entity';
+import { StackPipe } from '../entities/stack-pipe.entity';
+import { Unit } from '../entities/unit.entity';
 
 const date = new Date();
 const someString = 'string';
 const someNumber = 1;
 
 const location = new MonitorLocation();
-location.unitId = someString;
-location.stackPipeId = someString;
-
+location.id = someString;
+location.stackPipe = new StackPipe();
+location.stackPipe.name = someString;
+location.unit = new Unit();
+location.unit.name = someString;
 const system = new MonitorSystem();
 system.monitoringSystemID = someString;
 
@@ -21,13 +25,10 @@ component.componentID = someString;
 const entity = new QACertificationEvent();
 entity.id = someString;
 entity.location = location;
-entity.location.id = someString;
 entity.component = component;
 entity.system = system;
 entity.location.unitId = someString;
 entity.location.stackPipeId = component.componentID;
-entity.monitoringSystemID = system.monitoringSystemID;
-entity.componentID = someString;
 entity.qaCertEventCode = someString;
 entity.qaCertEventDate = date;
 entity.qaCertEventHour = someNumber;
@@ -59,8 +60,8 @@ describe('QACertificationEventMap', () => {
 
     expect(result.id).toEqual(someString);
     expect(result.locationId).toEqual(someString);
-    expect(result.unitId).toEqual(someString || null);
-    expect(result.stackPipeId).toEqual(someString || null);
+    expect(result.unitId).toEqual(someString);
+    expect(result.stackPipeId).toEqual(someString);
     expect(result.monitoringSystemID).toEqual(someString);
     expect(result.componentID).toEqual(someString);
     expect(result.qaCertEventCode).toEqual(someString);
@@ -87,10 +88,18 @@ describe('QACertificationEventMap', () => {
   it('should return null when addDate, updateDate, pendingStatusCode and evalStatusCode is undefined', async () => {
     entity.addDate = undefined;
     entity.updateDate = undefined;
+    location.stackPipe = null;
+    location.unit = null;
+    entity.component = null;
+    entity.system = null;
 
     const map = new QACertificationEventMap();
     const result = await map.one(entity);
 
+    expect(result.stackPipeId).toEqual(null);
+    expect(result.unitId).toEqual(null);
+    expect(result.monitoringSystemID).toEqual(null);
+    expect(result.componentID).toEqual(null);
     expect(result.addDate).toEqual(null);
     expect(result.updateDate).toEqual(null);
     expect(result.pendingStatusCode).toEqual(null);

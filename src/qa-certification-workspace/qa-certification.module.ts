@@ -16,7 +16,7 @@ import { RataRunWorkspaceModule } from '../rata-run-workspace/rata-run-workspace
 import { FlowRataRunWorkspaceModule } from '../flow-rata-run-workspace/flow-rata-run-workspace.module';
 import { RataTraverseWorkspaceModule } from '../rata-traverse-workspace/rata-traverse-workspace.module';
 import { TestQualificationWorkspaceModule } from '../test-qualification-workspace/test-qualification-workspace.module';
-import { QaCertificationEventWorkshopModule } from '../qa-certification-event-workshop/qa-certification-event-workshop.module';
+import { QaCertificationEventWorkspaceModule } from '../qa-certification-event-workspace/qa-certification-event-workspace.module';
 
 @Module({
   imports: [
@@ -24,7 +24,7 @@ import { QaCertificationEventWorkshopModule } from '../qa-certification-event-wo
     QASuppDataWorkspaceModule,
     LocationWorkspaceModule,
     TestSummaryWorkspaceModule,
-    QaCertificationEventWorkshopModule,
+    QaCertificationEventWorkspaceModule,
     LinearitySummaryWorkspaceModule,
     LinearityInjectionWorkspaceModule,
     RataWorkspaceModule,
