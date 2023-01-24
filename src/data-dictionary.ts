@@ -27,7 +27,7 @@ export enum MetadataKeys {
   RATA_SUMMARY = 'rataSummary',
   RATA_RUN = 'rataRun',
   TEST_SUMMARY = 'testSummary',
-  TEST_EXTENSION_EXEMTION = 'qaTestExtensionExemptionId',
+  TEST_EXTENSION_EXEMPTION = 'qaTestExtensionExemptionId',
 }
 
 export const dataDictionary = {
