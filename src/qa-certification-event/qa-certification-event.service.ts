@@ -18,7 +18,7 @@ export class QaCertificationEventService {
   ) {}
 
   async getQACertEvent(id: string): Promise<QACertificationEventRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.getQACertificationEventById(id);
 
     if (!result) {
       throw new LoggingException(
@@ -33,7 +33,9 @@ export class QaCertificationEventService {
   async getQACertEventsByLocationId(
     locationId: string,
   ): Promise<QACertificationEventRecordDTO[]> {
-    const results = await this.repository.find({ where: { locationId } });
+    const results = await this.repository.getQACertificationEventsByLocationId(
+      locationId,
+    );
 
     return this.map.many(results);
   }

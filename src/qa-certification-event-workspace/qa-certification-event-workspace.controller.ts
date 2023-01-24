@@ -5,9 +5,10 @@ import {
   Get,
   Param,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
-import { QaCertificationEventWorkshopService } from './qa-certification-event-workshop.service';
+import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -29,8 +30,8 @@ import {
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('QA Certification Event')
-export class QaCertificationEventWorkshopController {
-  constructor(private readonly service: QaCertificationEventWorkshopService) {}
+export class QACertificationEventWorkspaceController {
+  constructor(private readonly service: QACertificationEventWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({
@@ -52,7 +53,7 @@ export class QaCertificationEventWorkshopController {
     description: 'Retrieves workspace QA Certification Event record by its Id',
   })
   getQACertEvent(
-    @Param('locId') _locationId: string,
+    @Param('locId') locationId: string,
     @Param('id') id: string,
   ): Promise<QACertificationEventDTO> {
     return this.service.getQACertEvent(id);
@@ -71,6 +72,22 @@ export class QaCertificationEventWorkshopController {
     @User() user: CurrentUser,
   ): Promise<QACertificationEventRecordDTO> {
     return this.service.createQACertEvent(locationId, payload, user.userId);
+  }
+
+  @Put(':id')
+  @UseGuards(AuthGuard)
+  @ApiBearerAuth('Token')
+  @ApiOkResponse({
+    type: QACertificationEventBaseDTO,
+    description: 'Updates a QA Certification Event record in the workspace',
+  })
+  updateQACertEvent(
+    @Param('locId') locationId: string,
+    @Param('id') id: string,
+    @Body() payload: QACertificationEventBaseDTO,
+    @User() user: CurrentUser,
+  ): Promise<QACertificationEventDTO> {
+    return this.service.updateQACertEvent(locationId, id, payload, user.userId);
   }
 
   @Delete(':id')

@@ -1,8 +1,9 @@
 import { Test } from '@nestjs/testing';
-import { QACertificationEvent } from '../entities/qa-certification-event.entity';
 import { SelectQueryBuilder } from 'typeorm';
+
 import * as qaCertQueryBuilder from '../utilities/qa-cert-events.querybuilder';
-import { QACertificationEventRepository } from './qa-certification-event.repository';
+import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
+import { QACertificationEvent } from '../entities/workspace/qa-certification-event.entity';
 
 const qaCertEvent = new QACertificationEvent();
 
@@ -16,26 +17,28 @@ const mockQueryBuilder = () => ({
 });
 
 describe('QACertificationEventWorkspaceRepository', () => {
-  let repository: QACertificationEventRepository;
+  let repository: QACertificationEventWorkspaceRepository;
   let queryBuilder;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
-        QACertificationEventRepository,
-        { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
+        QACertificationEventWorkspaceRepository,
+        {
+          provide: SelectQueryBuilder,
+          useFactory: mockQueryBuilder,
+        },
       ],
     }).compile();
 
-    repository = module.get<QACertificationEventRepository>(
-      QACertificationEventRepository,
+    repository = module.get<QACertificationEventWorkspaceRepository>(
+      QACertificationEventWorkspaceRepository,
     );
     queryBuilder = module.get<SelectQueryBuilder<QACertificationEvent>>(
       SelectQueryBuilder,
     );
 
     repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
-
     jest.spyOn(qaCertQueryBuilder, 'addJoins').mockReturnValue(queryBuilder);
   });
 
