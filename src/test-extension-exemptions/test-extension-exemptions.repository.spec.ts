@@ -16,7 +16,7 @@ const mockQueryBuilder = () => ({
   leftJoin: jest.fn(),
 });
 
-describe('TestExtensionExemptionsWorkspaceRepository', () => {
+describe('TestExtensionExemptionsRepository', () => {
   let repository: TestExtensionExemptionsRepository;
   let queryBuilder;
 

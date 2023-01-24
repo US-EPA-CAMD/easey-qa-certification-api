@@ -17,7 +17,7 @@ const mockQueryBuilder = () => ({
 });
 
 describe('TestExtensionExemptionsWorkspaceRepository', () => {
-  let repository;
+  let repository: TestExtensionExemptionsWorkspaceRepository;
   let queryBuilder;
 
   beforeEach(async () => {
@@ -28,7 +28,9 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
       ],
     }).compile();
 
-    repository = module.get(TestExtensionExemptionsWorkspaceRepository);
+    repository = module.get<TestExtensionExemptionsWorkspaceRepository>(
+      TestExtensionExemptionsWorkspaceRepository,
+    );
     queryBuilder = module.get<SelectQueryBuilder<TestExtensionExemption>>(
       SelectQueryBuilder,
     );
@@ -68,7 +70,7 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([testExtExp]);
 
-      const result = await repository.getTestExtensionsByUnitStack('1');
+      const result = await repository.getTestExtensionsByUnitStack(1);
 
       expect(result).toEqual([testExtExp]);
     });
@@ -78,7 +80,7 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
       queryBuilder.getMany.mockReturnValue([testExtExp]);
 
       const result = await repository.getTestExtensionsByUnitStack(
-        '1',
+        1,
         ['1'],
         ['1'],
       );
