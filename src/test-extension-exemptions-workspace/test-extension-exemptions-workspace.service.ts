@@ -199,7 +199,9 @@ export class TestExtensionExemptionsWorkspaceService {
 
     await this.repository.save(entity);
 
-    const result = await this.repository.findOne(entity.id);
+    const result = await this.repository.getTestExtensionExemptionById(
+      entity.id,
+    );
 
     return this.map.one(result);
   }
