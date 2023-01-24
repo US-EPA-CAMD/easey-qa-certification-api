@@ -14,16 +14,14 @@ export class QACertificationEventMap extends BaseMap<
     return {
       id: entity.id,
       locationId: entity.location.id,
-      stackPipeId:
-        entity.location && entity.location.stackPipe
-          ? entity.location.stackPipe.name
-          : null,
-      unitId:
-        entity.location && entity.location.unit
-          ? entity.location.unit.name
-          : null,
-      monitoringSystemID: entity.system ? entity.system.id : null,
-      componentID: entity.component ? entity.component.id : null,
+      stackPipeId: entity.location.stackPipe
+        ? entity.location.stackPipe.name
+        : null,
+      unitId: entity.location.unit ? entity.location.unit.name : null,
+      monitoringSystemID: entity.system
+        ? entity.system.monitoringSystemID
+        : null,
+      componentID: entity.component ? entity.component.componentID : null,
       qaCertEventCode: entity.qaCertEventCode,
       qaCertEventDate: entity.qaCertEventDate,
       qaCertEventHour: entity.qaCertEventHour,

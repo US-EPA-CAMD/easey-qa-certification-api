@@ -39,7 +39,7 @@ import { QaCertificationEventWorkshopModule } from '../qa-certification-event-wo
     QASuppDataWorkspaceModule,
     LocationWorkspaceModule,
     TestSummaryWorkspaceModule,
-    QaCertificationEventWorkshopModule,
+    QaCertificationEventWorkspaceModule,
     LinearitySummaryWorkspaceModule,
     LinearityInjectionWorkspaceModule,
     RataWorkspaceModule,

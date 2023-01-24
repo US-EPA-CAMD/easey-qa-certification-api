@@ -30,13 +30,13 @@ export class QACertificationEvent extends BaseEntity {
     name: 'mon_sys_id',
     type: 'varchar',
   })
-  monitoringSystemID: string;
+  monitoringSystemRecordId: string;
 
   @Column({
     name: 'component_id',
     type: 'varchar',
   })
-  componentID: string;
+  componentRecordId: string;
 
   @Column({
     name: 'qa_cert_event_cd',

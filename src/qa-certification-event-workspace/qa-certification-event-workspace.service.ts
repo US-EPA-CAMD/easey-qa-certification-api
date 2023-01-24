@@ -5,14 +5,14 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '../utilities/functions';
 
 import { Unit } from '../entities/workspace/unit.entity';
 import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 
-import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workshop.repository';
+import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { UnitRepository } from '../unit/unit.repository';
 import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
@@ -22,13 +22,15 @@ import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/mo
 import {
   QACertificationEventBaseDTO,
   QACertificationEventDTO,
+  QACertificationEventImportDTO,
   QACertificationEventRecordDTO,
 } from '../dto/qa-certification-event.dto';
 import { QACertificationEventMap } from '../maps/qa-certification-event.map';
 
 @Injectable()
-export class QaCertificationEventWorkshopService {
+export class QACertificationEventWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     private readonly map: QACertificationEventMap,
     @InjectRepository(QACertificationEventWorkspaceRepository)
     private readonly repository: QACertificationEventWorkspaceRepository,
@@ -48,14 +50,13 @@ export class QaCertificationEventWorkshopService {
     locationId: string,
     payload: QACertificationEventBaseDTO,
     userId: string,
-    historicalRecordId?: string,
   ): Promise<QACertificationEventRecordDTO> {
     const timestamp = currentDateTime();
 
-    const { componentID, monitoringSystemID } = await this.lookupValues(
-      locationId,
-      payload,
-    );
+    const {
+      componentRecordId,
+      monitoringSystemRecordId,
+    } = await this.lookupValues(locationId, payload);
 
     const location = await this.monitorLocationRepository.findOne(locationId);
 
@@ -82,9 +83,9 @@ export class QaCertificationEventWorkshopService {
 
     const entity = this.repository.create({
       ...payload,
-      componentID,
-      monitoringSystemID,
-      id: historicalRecordId || uuid(),
+      componentRecordId,
+      monitoringSystemRecordId,
+      id: uuid(),
       locationId,
       userId,
       addDate: timestamp,
@@ -98,13 +99,13 @@ export class QaCertificationEventWorkshopService {
 
     await this.repository.save(entity);
 
-    const result = await this.repository.getQACertEventById(entity.id);
+    const result = await this.repository.getQACertificationEventById(entity.id);
 
     return this.map.one(result);
   }
 
   async getQACertEvent(id: string): Promise<QACertificationEventRecordDTO> {
-    const result = await this.repository.getQACertEventById(id);
+    const result = await this.repository.getQACertificationEventById(id);
 
     if (!result) {
       throw new LoggingException(
@@ -119,7 +120,7 @@ export class QaCertificationEventWorkshopService {
   async getQACertEventsByLocationId(
     locationId: string,
   ): Promise<QACertificationEventRecordDTO[]> {
-    const results = await this.repository.getQACertEventsByLocationId(
+    const results = await this.repository.getQACertificationEventsByLocationId(
       locationId,
     );
 
@@ -127,8 +128,8 @@ export class QaCertificationEventWorkshopService {
   }
 
   async lookupValues(locationId: string, payload: QACertificationEventBaseDTO) {
-    let componentID = null;
-    let monitoringSystemID = null;
+    let componentRecordId = null;
+    let monitoringSystemRecordId = null;
 
     if (payload.componentID) {
       const component = await this.componentRepository.findOne({
@@ -136,7 +137,7 @@ export class QaCertificationEventWorkshopService {
         componentID: payload.componentID,
       });
 
-      componentID = component ? component.id : null;
+      componentRecordId = component ? component.id : null;
     }
 
     if (payload.monitoringSystemID) {
@@ -145,12 +146,12 @@ export class QaCertificationEventWorkshopService {
         monitoringSystemID: payload.monitoringSystemID,
       });
 
-      monitoringSystemID = monitorSystem ? monitorSystem.id : null;
+      monitoringSystemRecordId = monitorSystem ? monitorSystem.id : null;
     }
 
     return {
-      componentID,
-      monitoringSystemID,
+      componentRecordId,
+      monitoringSystemRecordId,
     };
   }
 
@@ -186,19 +187,18 @@ export class QaCertificationEventWorkshopService {
     id: string,
     payload: QACertificationEventBaseDTO,
     userId: string,
-    isImport: boolean = false,
   ): Promise<QACertificationEventDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.getQACertEvent(id);
+    const entity = await this.repository.findOne(id);
 
-    const { componentID, monitoringSystemID } = await this.lookupValues(
-      locationId,
-      payload,
-    );
+    const {
+      componentRecordId,
+      monitoringSystemRecordId,
+    } = await this.lookupValues(locationId, payload);
 
-    entity.componentID = componentID;
-    entity.monitoringSystemID = monitoringSystemID;
+    entity.componentRecordId = componentRecordId;
+    entity.monitoringSystemRecordId = monitoringSystemRecordId;
     entity.qaCertEventCode = payload.qaCertEventCode;
     entity.qaCertEventDate = payload.qaCertEventDate;
     entity.qaCertEventHour = payload.qaCertEventHour;
@@ -209,7 +209,7 @@ export class QaCertificationEventWorkshopService {
     entity.completionTestDate = payload.completionTestDate;
     entity.completionTestHour = payload.completionTestHour;
     entity.userId = userId;
-    entity.updateDate = timestamp.toLocaleString();
+    entity.updateDate = timestamp;
 
     await this.repository.save(entity);
 
@@ -230,5 +230,49 @@ export class QaCertificationEventWorkshopService {
     );
 
     return qaCertEvents;
+  }
+
+  async import(
+    locationId: string,
+    payload: QACertificationEventImportDTO,
+    userId: string,
+  ) {
+    const {
+      componentRecordId,
+      monitoringSystemRecordId,
+    } = await this.lookupValues(locationId, payload);
+
+    const record = await this.repository.findOne({
+      where: {
+        locationId,
+        qaCertEventHour: payload.qaCertEventHour,
+        qaCertEventDate: payload.qaCertEventDate,
+        qaCertEventCode: payload.qaCertEventCode,
+        componentRecordId,
+        monitoringSystemRecordId,
+      },
+    });
+
+    let importedQACertEvent;
+    if (record) {
+      importedQACertEvent = await this.updateQACertEvent(
+        locationId,
+        record.id,
+        payload,
+        userId,
+      );
+    } else {
+      importedQACertEvent = await this.createQACertEvent(
+        locationId,
+        payload,
+        userId,
+      );
+    }
+
+    this.logger.info(
+      `QA Certification Record Successfully Imported. Record Id: ${importedQACertEvent.id}`,
+    );
+
+    return null;
   }
 }
