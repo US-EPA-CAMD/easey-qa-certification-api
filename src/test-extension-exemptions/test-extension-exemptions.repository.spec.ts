@@ -63,7 +63,7 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
     });
   });
 
-  describe('getQaCertEventsByUnitStack', () => {
+  describe('getTestExtensionExemptionsByUnitStack', () => {
     it('get one test extension exemption record from the repository with facilityId', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([testExtExp]);
