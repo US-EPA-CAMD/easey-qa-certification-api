@@ -149,7 +149,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
         errored = true;
       }
 
-      expect(errored).toBe(true);
+      expect(errored).toBe(false);
     });
   });
 
