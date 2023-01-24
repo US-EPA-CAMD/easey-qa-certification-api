@@ -24,7 +24,6 @@ import {
   CycleTimeInjectionRecordDTO,
 } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-workspace.service';
-import { CycleTimeInjectionChecksService } from './cycle-time-injection-workspace-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -32,7 +31,6 @@ import { CycleTimeInjectionChecksService } from './cycle-time-injection-workspac
 export class CycleTimeInjectionWorkspaceController {
   constructor(
     private readonly service: CycleTimeInjectionWorkspaceService,
-    private readonly checksService: CycleTimeInjectionChecksService,
   ) {}
 
   @Get()
@@ -78,13 +76,6 @@ export class CycleTimeInjectionWorkspaceController {
     @Body() payload: CycleTimeInjectionBaseDTO,
     @User() user: CurrentUser,
   ): Promise<CycleTimeInjectionRecordDTO> {
-    await this.checksService.runChecks(
-      payload,
-      cycleTimeSumId,
-      testSumId,
-      false,
-      false,
-    );
     return this.service.createCycleTimeInjection(
       testSumId,
       cycleTimeSumId,
@@ -108,13 +99,6 @@ export class CycleTimeInjectionWorkspaceController {
     @Body() payload: CycleTimeInjectionBaseDTO,
     @User() user: CurrentUser,
   ): Promise<CycleTimeInjectionRecordDTO> {
-    await this.checksService.runChecks(
-      payload,
-      _cycleTimeSumId,
-      testSumId,
-      false,
-      true,
-    );
     return this.service.updateCycleTimeInjection(
       testSumId,
       id,
