@@ -10,15 +10,19 @@ import { QACertificationWorkspaceService } from './qa-certification.service';
 import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
-import { QaCertificationEventWorkshopService } from '../qa-certification-event-workshop/qa-certification-event-workshop.service';
 import {
   TestExtensionExemptionDTO,
   TestExtensionExemptionImportDTO,
 } from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionsWorkspaceService } from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.service';
+import { QACertificationEventWorkspaceService } from '../qa-certification-event-workspace/qa-certification-event-workspace.service';
+import {
+  QACertificationEventDTO,
+  QACertificationEventImportDTO,
+} from '../dto/qa-certification-event.dto';
 
 const testSummary = new TestSummaryDTO();
-const qaCertEventDto = new QACertificationDTO();
+const qaCertEventDto = new QACertificationEventDTO();
 const qaCertDto = new QACertificationDTO();
 const testExtExmtDto = new TestExtensionExemptionDTO();
 qaCertDto.testSummaryData = [testSummary];
@@ -33,6 +37,9 @@ payload.orisCode = 1;
 payload.testExtensionExemptionData = [new TestExtensionExemptionImportDTO()];
 payload.testExtensionExemptionData[0].unitId = '1';
 payload.testExtensionExemptionData[0].stackPipeId = '1';
+payload.certificationEventData = [new QACertificationEventImportDTO()];
+payload.certificationEventData[0].unitId = '1';
+payload.certificationEventData[0].stackPipeId = '1';
 
 const userId = 'testUser';
 
@@ -53,6 +60,7 @@ const mockTestSummaryWorkspaceService = () => ({
 
 const mockQACertEventService = () => ({
   export: jest.fn().mockResolvedValue([qaCertEventDto]),
+  import: jest.fn().mockResolvedValue(undefined),
 });
 
 const mockQATestExtensionExemptionService = () => ({
@@ -73,7 +81,7 @@ describe('QA Certification Workspace Service Test', () => {
           useFactory: mockTestSummaryWorkspaceService,
         },
         {
-          provide: QaCertificationEventWorkshopService,
+          provide: QACertificationEventWorkspaceService,
           useFactory: mockQACertEventService,
         },
         {

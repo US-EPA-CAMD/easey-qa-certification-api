@@ -40,23 +40,46 @@ describe('QACertificationEventWorkspaceRepository', () => {
   });
 
   describe('getQACertificationEventById', () => {
-    it('gets a QA Certification Event record from the workspace repository with Id', async () => {
+    it('calls buildBaseQuery and get one QA Certification Event from the repository with Id', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(qaCertEvent);
 
-      const result = await repository.getQACertEventById('1');
+      const result = await repository.getQACertificationEventById('1');
 
       expect(result).toEqual(qaCertEvent);
     });
   });
 
-  describe('getTestExtensionExemptionsByLocationId', () => {
-    it('gets many QA Certification Event from the workspace repository with locationId', async () => {
+  describe('getQACertificationEventsByLocationId', () => {
+    it('get many QA Certification Event from the repository with locationId, testTypeCode, beginDate and endDate', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([qaCertEvent]);
 
-      const result = await repository.getQACertEventsByLocationId('1');
+      const result = await repository.getQACertificationEventsByLocationId('1');
 
+      expect(result).toEqual([qaCertEvent]);
+    });
+  });
+
+  describe('getQaCertEventsByUnitStack', () => {
+    it('get QA Certification Event from the repository with facilityId', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([qaCertEvent]);
+
+      const result = await repository.getQaCertEventsByUnitStack(1);
+
+      expect(result).toEqual([qaCertEvent]);
+    });
+
+    it('get QA Certification Event from the repository with facilityId, unitids, stackPipeIds', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([qaCertEvent]);
+
+      const result = await repository.getQaCertEventsByUnitStack(
+        1,
+        ['1'],
+        ['1'],
+      );
       expect(result).toEqual([qaCertEvent]);
     });
   });

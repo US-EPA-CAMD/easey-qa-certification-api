@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 
-import { QaCertificationEventWorkshopService } from './qa-certification-event-workshop.service';
-import { QaCertificationEventWorkshopController } from './qa-certification-event-workshop.controller';
+import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
+import { QACertificationEventWorkspaceController } from './qa-certification-event-workspace.controller';
 import { QACertificationEventMap } from '../maps/qa-certification-event.map';
-import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workshop.repository';
+import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { UnitRepository } from '../unit/unit.repository';
 import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
@@ -24,12 +24,12 @@ import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/mo
     ]),
     HttpModule,
   ],
-  controllers: [QaCertificationEventWorkshopController],
-  providers: [QaCertificationEventWorkshopService, QACertificationEventMap],
+  controllers: [QACertificationEventWorkspaceController],
+  providers: [QACertificationEventWorkspaceService, QACertificationEventMap],
   exports: [
     TypeOrmModule,
     QACertificationEventMap,
-    QaCertificationEventWorkshopService,
+    QACertificationEventWorkspaceService,
   ],
 })
-export class QaCertificationEventWorkshopModule {}
+export class QaCertificationEventWorkspaceModule {}

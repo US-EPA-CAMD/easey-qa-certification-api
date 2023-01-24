@@ -2,7 +2,7 @@ import { Test } from '@nestjs/testing';
 import { SelectQueryBuilder } from 'typeorm';
 
 import * as qaCertQueryBuilder from '../utilities/qa-cert-events.querybuilder';
-import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workshop.repository';
+import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
 import { QACertificationEvent } from '../entities/workspace/qa-certification-event.entity';
 
 const qaCertEvent = new QACertificationEvent();
@@ -42,8 +42,30 @@ describe('QACertificationEventWorkspaceRepository', () => {
     jest.spyOn(qaCertQueryBuilder, 'addJoins').mockReturnValue(queryBuilder);
   });
 
+  describe('getQACertificationEventById', () => {
+    it('calls buildBaseQuery and get one QA Certification Event from the repository with Id', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getOne.mockReturnValue(qaCertEvent);
+
+      const result = await repository.getQACertificationEventById('1');
+
+      expect(result).toEqual(qaCertEvent);
+    });
+  });
+
+  describe('getQACertificationEventsByLocationId', () => {
+    it('get many QA Certification Event from the repository with locationId, testTypeCode, beginDate and endDate', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([qaCertEvent]);
+
+      const result = await repository.getQACertificationEventsByLocationId('1');
+
+      expect(result).toEqual([qaCertEvent]);
+    });
+  });
+
   describe('getQaCertEventsByUnitStack', () => {
-    it('get one test summary from the repository with facilityId', async () => {
+    it('get QA Certification Event from the repository with facilityId', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([qaCertEvent]);
 
@@ -52,7 +74,7 @@ describe('QACertificationEventWorkspaceRepository', () => {
       expect(result).toEqual([qaCertEvent]);
     });
 
-    it('get one test summary from the repository with facilityId, unitids, stackPipeIds', async () => {
+    it('get QA Certification Event from the repository with facilityId, unitids, stackPipeIds', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([qaCertEvent]);
 
@@ -61,29 +83,6 @@ describe('QACertificationEventWorkspaceRepository', () => {
         ['1'],
         ['1'],
       );
-
-      jest.spyOn(repository, 'addJoins').mockReturnValue(queryBuilder);
-    });
-  });
-
-  describe('getQACertificationEventById', () => {
-    it('gets a QA Certification Event record from the workspace repository with Id', async () => {
-      queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getOne.mockReturnValue(qaCertEvent);
-
-      const result = await repository.getQACertEventById('1');
-
-      expect(result).toEqual(qaCertEvent);
-    });
-  });
-
-  describe('getTestExtensionExemptionsByLocationId', () => {
-    it('gets many QA Certification Event from the workspace repository with locationId', async () => {
-      queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getMany.mockReturnValue([qaCertEvent]);
-
-      const result = await repository.getQACertEventsByLocationId('1');
-
       expect(result).toEqual([qaCertEvent]);
     });
   });

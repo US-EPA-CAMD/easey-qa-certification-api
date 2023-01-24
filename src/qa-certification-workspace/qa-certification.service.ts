@@ -12,7 +12,7 @@ import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { TestExtensionExemptionsWorkspaceService } from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.service';
-import { QaCertificationEventWorkshopService } from '../qa-certification-event-workshop/qa-certification-event-workshop.service';
+import { QACertificationEventWorkspaceService } from '../qa-certification-event-workspace/qa-certification-event-workspace.service';
 
 @Injectable()
 export class QACertificationWorkspaceService {
@@ -20,7 +20,7 @@ export class QACertificationWorkspaceService {
     private readonly logger: Logger,
     private readonly testSummaryService: TestSummaryWorkspaceService,
     private readonly testExtensionExemptionService: TestExtensionExemptionsWorkspaceService,
-    private readonly qaCertEventService: QaCertificationEventWorkshopService,
+    private readonly qaCertEventService: QACertificationEventWorkspaceService,
   ) {}
 
   async export(params: QACertificationParamsDTO): Promise<QACertificationDTO> {
@@ -124,6 +124,26 @@ export class QACertificationWorkspaceService {
         );
       },
     );
+    payload.certificationEventData.forEach((qaCertEvent, idx) => {
+      promises.push(
+        new Promise(async (resolve, _reject) => {
+          const locationId = locations.find(i => {
+            return (
+              i.unitId === qaCertEvent.unitId &&
+              i.stackPipeId === qaCertEvent.stackPipeId
+            );
+          }).locationId;
+
+          const results = this.qaCertEventService.import(
+            locationId,
+            qaCertEvent,
+            userId,
+          );
+
+          resolve(results);
+        }),
+      );
+    });
 
     await Promise.all(promises);
 

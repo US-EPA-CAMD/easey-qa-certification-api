@@ -8,16 +8,16 @@ export const addJoins = (
   >,
 ): SelectQueryBuilder<QACertificationEvent | WorkspaceQACertificationEvent> => {
   return query
-    .innerJoinAndSelect('qace.location', 'ml')
-    .leftJoinAndSelect('qace.system', 'ms')
-    .leftJoinAndSelect('qace.component', 'c')
+    .innerJoinAndSelect('qce.location', 'ml')
+    .leftJoinAndSelect('qce.system', 'ms')
+    .leftJoinAndSelect('qce.component', 'c')
     .leftJoinAndSelect('ml.unit', 'u')
     .leftJoin('u.plant', 'up')
     .leftJoinAndSelect('ml.stackPipe', 'sp')
     .leftJoin('sp.plant', 'spp');
 };
 
-export const addTestSummaryIdWhere = (
+export const addQACertEventIdWhere = (
   query: any,
   qaCertificationEventIds: string[],
 ): SelectQueryBuilder<QACertificationEvent | WorkspaceQACertificationEvent> => {
