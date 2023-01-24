@@ -21,6 +21,7 @@ import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
 import { UnitRepository } from '../unit/unit.repository';
 import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 const locationId = '121';
 const testExtExpId = '1';
@@ -70,6 +71,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
+      imports: [LoggerModule],
       providers: [
         TestExtensionExemptionsWorkspaceService,
         {
@@ -134,7 +136,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
       expect(result).toEqual(testExtensionExemptionDTO);
     });
 
-    it('should throw error when test Extension Exemption not found', async () => {
+    it('should throw error when Test Extension Exemption not found', async () => {
       jest
         .spyOn(repository, 'getTestExtensionExemptionById')
         .mockResolvedValue(null);
@@ -293,14 +295,14 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
   });
 
   describe('getTestExtensions', () => {
-    it('calls the repository.getQACertEventsByUnitStack() and get qa certification events by locationId', async () => {
+    it('calls the repository.getTestExtensionsByUnitStack() and get QA Test Extension Exemption by locationId', async () => {
       const result = await service.getTestExtensions(facilityId, [unitId]);
       expect(result).toEqual([dto]);
     });
   });
 
   describe('export', () => {
-    it('calls the repository.getQACertEventsByUnitStack() and get qa certification events by locationId', async () => {
+    it('calls the repository.getTestExtensionsByUnitStack() and get QA Test Extension Exemption by locationId', async () => {
       const returnedSummary = dto;
       returnedSummary.id = testExtExpId;
 
@@ -312,6 +314,29 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
 
       expect(spySummaries).toHaveBeenCalled();
       expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('import', () => {
+    it('Should create QA Test Extension Exemption ', async () => {
+      const importPayload = payload;
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      const result = await service.import(locationId, importPayload, userId);
+
+      expect(result).toEqual(null);
+    });
+
+    it('Should update QA Test Extension Exemption ', async () => {
+      entity.id = '1';
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(entity);
+
+      const importPayload = payload;
+
+      const result = await service.import(locationId, importPayload, userId);
+
+      expect(result).toEqual(null);
     });
   });
 });

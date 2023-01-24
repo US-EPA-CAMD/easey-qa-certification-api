@@ -58,7 +58,7 @@ describe('TestExtensionExemptionsService', () => {
       expect(result).toEqual(dto);
     });
 
-    it('should throw error when test Extension Exemption not found', async () => {
+    it('should throw error when Test Extension Exemption not found', async () => {
       jest
         .spyOn(repository, 'getTestExtensionExemptionById')
         .mockResolvedValue(null);
@@ -76,7 +76,7 @@ describe('TestExtensionExemptionsService', () => {
   });
 
   describe('getTestExtensionExemptionsByLocationId', () => {
-    it('calls the repository.getTestExtensionExemptionsByLocationId() and get test Extension Exemptions by locationId', async () => {
+    it('calls the repository.getTestExtensionExemptionsByLocationId() and get QA Test Extension Exemptions by locationId', async () => {
       const result = await service.getTestExtensionExemptionsByLocationId(
         locationId,
       );
@@ -85,14 +85,14 @@ describe('TestExtensionExemptionsService', () => {
   });
 
   describe('getTestExtensions', () => {
-    it('calls the repository.getQACertEventsByUnitStack() and get qa certification events by locationId', async () => {
+    it('calls the repository.getQACertEventsByUnitStack() and get QA Test Extension Exemptions by locationId', async () => {
       const result = await service.getTestExtensions(facilityId, [unitId]);
       expect(result).toEqual([dto]);
     });
   });
 
   describe('export', () => {
-    it('calls the repository.getQACertEventsByUnitStack() and get qa certification events by locationId', async () => {
+    it('Should export QA Test Extension Exemptions', async () => {
       const returnedSummary = dto;
       returnedSummary.id = testExtExpId;
 

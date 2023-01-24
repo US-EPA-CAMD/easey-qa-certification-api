@@ -23,7 +23,7 @@ export class TestExtensionExemptionsService {
 
     if (!result) {
       throw new LoggingException(
-        `A QA Certification Event record not found with Record Id [${id}]`,
+        `A QA Test Extension Exemption record not found with Record Id [${id}]`,
         HttpStatus.NOT_FOUND,
       );
     }

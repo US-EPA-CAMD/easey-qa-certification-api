@@ -11,11 +11,18 @@ import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { QaCertificationEventWorkshopService } from '../qa-certification-event-workshop/qa-certification-event-workshop.service';
+import {
+  TestExtensionExemptionDTO,
+  TestExtensionExemptionImportDTO,
+} from '../dto/test-extension-exemption.dto';
+import { TestExtensionExemptionsWorkspaceService } from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.service';
 
 const testSummary = new TestSummaryDTO();
 const qaCertEventDto = new QACertificationDTO();
 const qaCertDto = new QACertificationDTO();
+const testExtExmtDto = new TestExtensionExemptionDTO();
 qaCertDto.testSummaryData = [testSummary];
+qaCertDto.testExtensionExemptionData = [testExtExmtDto];
 qaCertDto.certificationEventData = [qaCertEventDto];
 
 const payload = new QACertificationImportDTO();
@@ -23,6 +30,9 @@ payload.testSummaryData = [new TestSummaryImportDTO()];
 payload.testSummaryData[0].unitId = '1';
 payload.testSummaryData[0].stackPipeId = '1';
 payload.orisCode = 1;
+payload.testExtensionExemptionData = [new TestExtensionExemptionImportDTO()];
+payload.testExtensionExemptionData[0].unitId = '1';
+payload.testExtensionExemptionData[0].stackPipeId = '1';
 
 const userId = 'testUser';
 
@@ -45,6 +55,11 @@ const mockQACertEventService = () => ({
   export: jest.fn().mockResolvedValue([qaCertEventDto]),
 });
 
+const mockQATestExtensionExemptionService = () => ({
+  export: jest.fn().mockResolvedValue([testExtExmtDto]),
+  import: jest.fn().mockResolvedValue(undefined),
+});
+
 describe('QA Certification Workspace Service Test', () => {
   let service: QACertificationWorkspaceService;
 
@@ -61,6 +76,10 @@ describe('QA Certification Workspace Service Test', () => {
           provide: QaCertificationEventWorkshopService,
           useFactory: mockQACertEventService,
         },
+        {
+          provide: TestExtensionExemptionsWorkspaceService,
+          useFactory: mockQATestExtensionExemptionService,
+        },
       ],
     }).compile();
 
@@ -72,7 +91,7 @@ describe('QA Certification Workspace Service Test', () => {
       const expected = qaCertDto;
       expected.testSummaryData = [testSummary];
       expected.certificationEventData = [qaCertEventDto];
-      expected.testExtensionExemptionData = undefined;
+      expected.testExtensionExemptionData = [testExtExmtDto];
       expected.orisCode = 1;
 
       const paramsDTO = new QACertificationParamsDTO();

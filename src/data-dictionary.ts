@@ -444,7 +444,7 @@ export const dataDictionary = {
     metadata: {
       default: {
         description:
-          'Unique Id for variances from prescribed testing requirements or extensions to thenormal QA testing schedule.',
+          'Unique Id for variances from prescribed testing requirements or extensions to the normal QA testing schedule.',
         example: '077065AJFR-3DE60EF3296844F2B5173ADEAA22B02E',
       },
     },

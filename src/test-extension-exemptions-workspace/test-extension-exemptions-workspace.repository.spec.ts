@@ -40,7 +40,7 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
   });
 
   describe('getTestExtensionExemptionById', () => {
-    it('calls buildBaseQuery and get one Test Extension Exemption from the repository with Id', async () => {
+    it('calls buildBaseQuery and get one Test Extension Exemption record from the repository with Id', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(testExtExp);
 
@@ -64,7 +64,7 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
   });
 
   describe('getTestExtensionsByUnitStack', () => {
-    it('get one test summary from the repository with facilityId', async () => {
+    it('get one Test Extension Exemption record from the repository with facilityId', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([testExtExp]);
 
@@ -73,7 +73,7 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
       expect(result).toEqual([testExtExp]);
     });
 
-    it('get one test summary from the repository with facilityId, unitids, stackPipeIds', async () => {
+    it('get one Test Extension Exemption record from the repository with facilityId, unitids, stackPipeIds', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([testExtExp]);
 
