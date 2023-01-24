@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { TestExtensionExemptionBaseDTO } from '../dto/test-extension-exemption.dto';
@@ -55,5 +56,16 @@ describe('TestExtensionExemptionsChecksService', () => {
       const result = await service.runChecks(locationId, payload, false, false);
       expect(result).toEqual([]);
     });
+
+    it('should return error message A for EXTEXEM-8', async () => {
+      let duplicate;
+      jest.spyOn(repository, 'find').mockImplementation(() => Promise.resolve([duplicate]))
+      try {
+        await service.runChecks(locationId, payload, false, false);
+      } catch (err) {
+        expect(err).toBeInstanceOf(LoggingException);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    })
   });
 });
