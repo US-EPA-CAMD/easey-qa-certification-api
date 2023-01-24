@@ -10,7 +10,7 @@ export class QACertificationEventRepository extends Repository<
   QACertificationEvent
 > {
   private buildBaseQuery(): SelectQueryBuilder<QACertificationEvent> {
-    const query = this.createQueryBuilder('qce');
+    const query = this.createQueryBuilder('qace');
     return addJoins(query) as SelectQueryBuilder<QACertificationEvent>;
   }
 
@@ -52,5 +52,31 @@ export class QACertificationEventRepository extends Repository<
     ) as SelectQueryBuilder<QACertificationEvent>;
 
     return query.getMany();
+  }
+
+  async getQACertEventById(
+    qaCertEventId: string,
+  ): Promise<QACertificationEvent> {
+    const query = this.createQueryBuilder('qace').where(
+      'qace.id = :qaCertEventId',
+      {
+        qaCertEventId,
+      },
+    );
+
+    return addJoins(query).getOne();
+  }
+
+  async getQACertEventsByLocationId(
+    locationId: string,
+  ): Promise<QACertificationEvent[]> {
+    const query = this.createQueryBuilder('qace').where(
+      'qace.locationId = :locationId',
+      {
+        locationId,
+      },
+    );
+
+    return addJoins(query).getMany();
   }
 }

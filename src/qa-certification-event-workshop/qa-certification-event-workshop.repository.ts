@@ -53,4 +53,41 @@ export class QACertificationEventWorkspaceRepository extends Repository<
 
     return query.getMany();
   }
+
+  addJoins(
+    query: SelectQueryBuilder<QACertificationEvent>,
+  ): SelectQueryBuilder<QACertificationEvent> {
+    return query
+      .innerJoinAndSelect('qace.location', 'ml')
+      .leftJoinAndSelect('qace.system', 'ms')
+      .leftJoinAndSelect('qace.component', 'c')
+      .leftJoinAndSelect('ml.unit', 'u')
+      .leftJoinAndSelect('ml.stackPipe', 'sp');
+  }
+
+  async getQACertEventById(
+    qaCertEventId: string,
+  ): Promise<QACertificationEvent> {
+    const query = this.createQueryBuilder('qace').where(
+      'qace.id = :qaCertEventId',
+      {
+        qaCertEventId,
+      },
+    );
+
+    return this.addJoins(query).getOne();
+  }
+
+  async getQACertEventsByLocationId(
+    locationId: string,
+  ): Promise<QACertificationEvent[]> {
+    const query = this.createQueryBuilder('qace').where(
+      'qace.locationId = :locationId',
+      {
+        locationId,
+      },
+    );
+
+    return this.addJoins(query).getMany();
+  }
 }

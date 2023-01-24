@@ -20,8 +20,8 @@ component.componentID = someString;
 
 const entity = new QACertificationEvent();
 entity.id = someString;
-entity.locationId = someString;
 entity.location = location;
+entity.location.id = someString;
 entity.component = component;
 entity.system = system;
 entity.location.unitId = someString;
