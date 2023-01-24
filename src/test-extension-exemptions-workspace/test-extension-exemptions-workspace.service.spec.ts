@@ -44,6 +44,7 @@ comp.id = '1';
 
 const entity = new TestExtensionExemption();
 const dto = new TestExtensionExemptionRecordDTO();
+const testExtensionExemptionDTO = new TestExtensionExemptionDTO();
 
 const mockRepository = () => ({
   getTestExtensionExemptionById: jest.fn().mockResolvedValue(entity),
@@ -130,7 +131,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
   describe('getTestExtensionExemptionById', () => {
     it('calls the repository.getTestExtensionExemptionById() and get test Extension Exemption by id', async () => {
       const result = await service.getTestExtensionExemptionById(testExtExpId);
-      expect(result).toEqual(dto);
+      expect(result).toEqual(testExtensionExemptionDTO);
     });
 
     it('should throw error when test Extension Exemption not found', async () => {

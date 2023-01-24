@@ -17,15 +17,13 @@ export class TestExtensionExemptionsService {
   ) {}
 
   async getTestExtensionExemptionById(
-    testSumId: string,
+    id: string,
   ): Promise<TestExtensionExemptionRecordDTO> {
-    const result = await this.repository.getTestExtensionExemptionById(
-      testSumId,
-    );
+    const result = await this.repository.getTestExtensionExemptionById(id);
 
     if (!result) {
       throw new LoggingException(
-        `A test extension exceptions record not found with Record Id [${testSumId}].`,
+        `A QA Certification Event record not found with Record Id [${id}]`,
         HttpStatus.NOT_FOUND,
       );
     }

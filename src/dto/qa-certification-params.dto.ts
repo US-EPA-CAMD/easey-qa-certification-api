@@ -85,10 +85,14 @@ export class QACertificationParamsDTO {
 
   @ApiProperty({
     isArray: true,
-    description: propertyMetadata.qaTestExtensionExemptiontId.description,
+    /* Uncommenting the line below causes the following error:  TypeError: Cannot read properties of undefined (reading 'description')  */
+    description: getMetadata(
+      dataDictionary.qaTestExtensionExemptionId,
+      MetadataKeys.TEST_EXTENSION_EXEMTION,
+    ).description,
   })
   @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
-  qaTestExtensionExemptiontIds?: string[];
+  qaTestExtensionExemptionIds?: string[];
 
   @ApiProperty({
     description: getMetadata(dataDictionary.beginDate, MetadataKeys.DEFAULT)

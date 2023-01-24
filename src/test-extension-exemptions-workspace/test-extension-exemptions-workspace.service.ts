@@ -44,15 +44,13 @@ export class TestExtensionExemptionsWorkspaceService {
   ) {}
 
   async getTestExtensionExemptionById(
-    testExtExpId: string,
+    id: string,
   ): Promise<TestExtensionExemptionRecordDTO> {
-    const result = await this.repository.getTestExtensionExemptionById(
-      testExtExpId,
-    );
+    const result = await this.repository.findOne(id);
 
     if (!result) {
       throw new LoggingException(
-        `A test extension exceptions record not found with Record Id [${testExtExpId}].`,
+        `A QA Certification Event record not found with Record Id [${id}]`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -154,9 +152,8 @@ export class TestExtensionExemptionsWorkspaceService {
     });
 
     await this.repository.save(entity);
-    const result = await this.repository.getTestExtensionExemptionById(
-      entity.id,
-    );
+
+    const result = await this.repository.findOne(entity.id);
 
     return this.map.one(result);
   }

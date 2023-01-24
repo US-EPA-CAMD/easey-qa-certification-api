@@ -1,4 +1,7 @@
-import { addJoins } from '../utilities/test-extension-exemption.querybuilder';
+import {
+  addJoins,
+  addTestSummaryIdWhere,
+} from '../utilities/test-extension-exemption.querybuilder';
 import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
 import { TestExtensionExemption } from '../entities/test-extension-exemption.entity';
 
@@ -12,11 +15,14 @@ export class TestExtensionExemptionsRepository extends Repository<
   }
 
   async getTestExtensionExemptionById(
-    testExtExpId: string,
+    qaTestExtensionExemptionId: string,
   ): Promise<TestExtensionExemption> {
-    const query = this.buildBaseQuery().where('tee.id = :testExtExpId', {
-      testExtExpId,
-    });
+    const query = this.buildBaseQuery().where(
+      'tee.id = :qaTestExtensionExemptionId',
+      {
+        qaTestExtensionExemptionId,
+      },
+    );
     return query.getOne();
   }
 
@@ -59,8 +65,12 @@ export class TestExtensionExemptionsRepository extends Repository<
       facilityId,
       unitIds,
       stackPipeIds,
-      qaTestExtensionExemptionIds,
     });
+
+    query = addTestSummaryIdWhere(
+      query,
+      qaTestExtensionExemptionIds,
+    ) as SelectQueryBuilder<TestExtensionExemption>;
     return query.getMany();
   }
 }

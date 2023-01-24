@@ -62,4 +62,30 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
       expect(result).toEqual([testExtExp]);
     });
   });
+
+  describe('getQaCertEventsByUnitStack', () => {
+    it('get one test extension exemption record from the repository with facilityId', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([testExtExp]);
+
+      const result = await repository.getTestExtensionExemptionsByLocationId(
+        '1',
+      );
+
+      expect(result).toEqual([testExtExp]);
+    });
+
+    it('get one test extension exemption from the repository with facilityId, unitids, stackPipeIds', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([testExtExp]);
+
+      const result = await repository.getTestExtensionExemptionsByLocationId(
+        '1',
+        ['1'],
+        ['1'],
+      );
+
+      expect(result).toEqual([testExtExp]);
+    });
+  });
 });

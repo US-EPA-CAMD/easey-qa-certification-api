@@ -27,6 +27,7 @@ export enum MetadataKeys {
   RATA_SUMMARY = 'rataSummary',
   RATA_RUN = 'rataRun',
   TEST_SUMMARY = 'testSummary',
+  TEST_EXTENSION_EXEMTION = 'qaTestExtensionExemptionId',
 }
 
 export const dataDictionary = {
@@ -431,6 +432,20 @@ export const dataDictionary = {
       appECorrelationTestRun: {
         description: 'Minute in which the run started.',
         example: 5,
+      },
+    },
+  },
+
+  qaTestExtensionExemptionId: {
+    fieldLabels: {
+      label: 'qaTestExtensionExemptionId',
+      value: 'qaTestExtensionExemptionId',
+    },
+    metadata: {
+      default: {
+        description:
+          'Unique Id for variances from prescribed testing requirements or extensions to thenormal QA testing schedule.',
+        example: '077065AJFR-3DE60EF3296844F2B5173ADEAA22B02E',
       },
     },
   },

@@ -49,7 +49,7 @@ export class QACertificationService {
         params.facilityId,
         params.unitIds,
         params.stackPipeIds,
-        params.qaTestExtensionExemptiontIds,
+        params.qaTestExtensionExemptionIds,
       ),
     );
 

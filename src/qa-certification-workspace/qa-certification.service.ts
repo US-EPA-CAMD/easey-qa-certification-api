@@ -54,7 +54,7 @@ export class QACertificationWorkspaceService {
         params.facilityId,
         params.unitIds,
         params.stackPipeIds,
-        params.qaTestExtensionExemptiontIds,
+        params.qaTestExtensionExemptionIds,
       ),
     );
 

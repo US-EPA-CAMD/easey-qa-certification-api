@@ -11,9 +11,9 @@ export const addJoins = (
 > => {
   return query
     .innerJoinAndSelect('tee.location', 'ml')
+    .leftJoinAndSelect('ts.reportingPeriod', 'rp')
     .leftJoinAndSelect('tee.system', 'ms')
     .leftJoinAndSelect('tee.component', 'c')
-    .leftJoinAndSelect('tee.reportingPeriod', 'rp')
     .leftJoinAndSelect('ml.unit', 'u')
     .leftJoin('u.plant', 'up')
     .leftJoinAndSelect('ml.stackPipe', 'sp')
@@ -22,13 +22,13 @@ export const addJoins = (
 
 export const addTestSummaryIdWhere = (
   query: any,
-  qaCertificationEventIds: string[],
+  qaTestExtensionExemptionIds: string[],
 ): SelectQueryBuilder<
   TestExtensionExemption | WorkspaceTestExtensionExemption
 > => {
-  if (qaCertificationEventIds) {
-    query.andWhere('qce.id IN (:...qaCertificationEventIds)', {
-      qaCertificationEventIds,
+  if (qaTestExtensionExemptionIds) {
+    query.andWhere('tee.id IN (:...qaTestExtensionExemptionIds)', {
+      qaTestExtensionExemptionIds,
     });
   }
   return query;
