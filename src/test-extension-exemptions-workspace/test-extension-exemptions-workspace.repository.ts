@@ -1,6 +1,6 @@
 import {
   addJoins,
-  addTestSummaryIdWhere,
+  addTestExtExemIdWhere,
 } from '../utilities/test-extension-exemption.querybuilder';
 import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
 import { TestExtensionExemption } from '../entities/workspace/test-extension-exemption.entity';
@@ -76,7 +76,7 @@ export class TestExtensionExemptionsWorkspaceRepository extends Repository<
       stackPipeIds,
     });
 
-    query = addTestSummaryIdWhere(
+    query = addTestExtExemIdWhere(
       query,
       qaTestExtensionExemptionIds,
     ) as SelectQueryBuilder<TestExtensionExemption>;

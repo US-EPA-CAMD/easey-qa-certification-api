@@ -20,7 +20,7 @@ export const addJoins = (
     .leftJoin('sp.plant', 'spp');
 };
 
-export const addTestSummaryIdWhere = (
+export const addTestExtExemIdWhere = (
   query: any,
   qaTestExtensionExemptionIds: string[],
 ): SelectQueryBuilder<
