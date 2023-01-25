@@ -106,7 +106,7 @@ import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { Type } from 'class-transformer';
 import { TestResultCodes } from '../enums/test-result-code.enum';
-import { ArrayContains } from 'src/pipes/array-contains.pipe';
+import { ArrayContains } from '../pipes/array-contains.pipe';
 
 const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';
