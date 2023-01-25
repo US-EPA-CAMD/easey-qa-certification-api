@@ -106,6 +106,7 @@ import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { Type } from 'class-transformer';
 import { TestResultCodes } from '../enums/test-result-code.enum';
+import { ArrayContains } from 'src/pipes/array-contains.pipe';
 
 const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -266,51 +267,39 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => { 
-      o => {
-        if(o.testTypeCode === TestTypeCodes.CYCLE) {
+      switch(args.object['testTypeCode']){
+        case '7DAY':
           return CheckCatalogService.formatResultMessage('SEVNDAY-28-A', {
-            value: args.value,
             fieldname: args.property,
             key: KEY,
           });
-        }
       }
       return `You did not provide [testResultCode], which is required for [${KEY}].`
     },
   })
   @IsValidCode(TestResultCode, {
     message: (args: ValidationArguments) => {
-      o => {
-        if(o.testTypeCode === TestTypeCodes.CYCLE) {
+      switch(args.object['testTypeCode']){
+        case '7DAY':
           return CheckCatalogService.formatResultMessage('SEVNDAY-28-B', {
-            value: args.value,
             fieldname: args.property,
             key: KEY,
           });
-        }
       }
       return `You reported the value [${args.value}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`;
     },
   })
+  @ArrayContains([TestResultCodes.PASSED, TestResultCodes.ABORTED, TestResultCodes.PASSAPS, TestResultCodes.FAILED], {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('SEVNDAY-28-C', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
+    }
+  })
   @ValidateIf(o =>
     VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE.includes(o.testTypeCode),
-  )
-  @ValidateIf(
-    o => {
-      if(VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE.includes(o.testTypeCode)){
-        if(o.testTypeCode === TestTypeCodes.CYCLE) {
-          return [TestResultCodes.ABORTED, TestResultCodes.PASSED, TestResultCodes.PASSAPS, TestResultCodes.FAILED].includes(o.testResultCode)
-        }
-      }
-    }, {
-      message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatResultMessage('SEVNDAY-28-C', {
-          value: args.value,
-          fieldname: args.property,
-          key: KEY,
-        });
-      },
-    }
   )
   testResultCode?: string;
 
