@@ -116,7 +116,7 @@ describe('QA Certification Check Service Test', () => {
           useFactory: () => ({
             runChecks: jest.fn().mockResolvedValue([]),
           }),
-        }
+        },
       ],
     }).compile();
 
