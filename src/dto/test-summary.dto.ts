@@ -266,32 +266,57 @@ export class TestSummaryBaseDTO {
     description: 'Test Result Code. ADD TO PROPERTY METADATA',
   })
   @IsNotEmpty({
-    message: (args: ValidationArguments) => { 
+    message: (args: ValidationArguments) => {
+      let code;
       switch(args.object['testTypeCode']){
         case '7DAY':
-          return CheckCatalogService.formatResultMessage('SEVNDAY-28-A', {
-            fieldname: args.property,
-            key: KEY,
-          });
+          code = 'SEVNDAY-28-A';
+          break;
+        case 'LINE':
+          code = 'LINEAR-10-A';
+          break;
+      }
+      if (code) {
+        return CheckCatalogService.formatResultMessage(code, {
+          fieldname: args.property,
+          key: KEY,
+        })
       }
       return `You did not provide [testResultCode], which is required for [${KEY}].`
     },
   })
   @IsValidCode(TestResultCode, {
     message: (args: ValidationArguments) => {
+      let code
       switch(args.object['testTypeCode']){
         case '7DAY':
-          return CheckCatalogService.formatResultMessage('SEVNDAY-28-B', {
-            fieldname: args.property,
-            key: KEY,
-          });
+          code = 'SEVNDAY-28-B'
+          break;
+        case 'LINE':
+          code = 'LINEAR-10-B';
+          break;
+      }
+      if (code) {
+        return CheckCatalogService.formatResultMessage(code, {
+          fieldname: args.property,
+          key: KEY
+        })
       }
       return `You reported the value [${args.value}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`;
     },
   })
   @ArrayContains([TestResultCodes.PASSED, TestResultCodes.ABORTED, TestResultCodes.PASSAPS, TestResultCodes.FAILED], {
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('SEVNDAY-28-C', {
+      let code
+      switch(args.object['testTypeCode']){
+        case '7DAY':
+          code = 'SEVNDAY-28-C'
+          break;
+        case 'LINE':
+          code = 'LINEAR-10-C';
+          break;
+      }
+      return CheckCatalogService.formatResultMessage(code, {
         value: args.value,
         fieldname: args.property,
         key: KEY,
