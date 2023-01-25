@@ -131,15 +131,13 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
   });
 
   describe('getTestExtensionExemptionById', () => {
-    it('calls the repository.getTestExtensionExemptionById() and get test Extension Exemption by id', async () => {
+    it('calls the repository.getTestExtensionExemptionById() and get Test Extension Exemption by id', async () => {
       const result = await service.getTestExtensionExemptionById(testExtExpId);
-      expect(result).toEqual(testExtensionExemptionDTO);
+      expect(result).toEqual(dto);
     });
 
     it('should throw error when Test Extension Exemption not found', async () => {
-      jest
-        .spyOn(repository, 'getTestExtensionExemptionById')
-        .mockResolvedValue(null);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
 
       let errored = false;
 
@@ -149,12 +147,12 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
         errored = true;
       }
 
-      expect(errored).toBe(false);
+      expect(errored).toBe(true);
     });
   });
 
   describe('getTestExtensionExemptionsByLocationId', () => {
-    it('calls the repository.getTestExtensionExemptionsByLocationId() and get test Extension Exemptions by locationId', async () => {
+    it('calls the repository.getTestExtensionExemptionsByLocationId() and get Test Extension Exemptions by locationId', async () => {
       const result = await service.getTestExtensionExemptionsByLocationId(
         locationId,
       );
@@ -163,7 +161,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
   });
 
   describe('createTestExtensionExemption', () => {
-    it('should call the createTestExtensionExemption and create test summariy', async () => {
+    it('should call the createTestExtensionExemption and create test extension', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
 
       jest
@@ -179,7 +177,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
       expect(result).toEqual(dto);
     });
 
-    it('should call the createTestExtensionExemption and create test summariy with historicalRecordId', async () => {
+    it('should call the createTestExtensionExemption and create test extension with historicalRecordId', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
 
       jest
@@ -223,7 +221,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
   });
 
   describe('updateTestExtensionExemption', () => {
-    it('should call the updateTestExtensionExemption and update test Extension Exemption', async () => {
+    it('should call the updateTestExtensionExemption and update Test Extension Exemption', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
       jest.spyOn(repository, 'findOne').mockResolvedValue(entity);
 
@@ -237,7 +235,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
       expect(result).toEqual(dto);
     });
 
-    it('should call updateTestExtensionExemption and throw error while test Extension Exemption not found', async () => {
+    it('should call updateTestExtensionExemption and throw error while Test Extension Exemption not found', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
 
       let errored = false;
