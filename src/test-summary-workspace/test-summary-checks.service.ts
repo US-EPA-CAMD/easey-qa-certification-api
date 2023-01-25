@@ -26,6 +26,7 @@ import { TestResultCodeRepository } from '../test-result-code/test-result-code.r
 import {
   BEGIN_DATE_TEST_TYPE_CODES,
   BEGIN_MINUTE_TEST_TYPE_CODES,
+  MISC_TEST_TYPE_CODES,
   VALID_CODES_FOR_END_MINUTE_VALIDATION,
 } from '../utilities/constants';
 
@@ -166,15 +167,17 @@ export class TestSummaryChecksService {
     }
 
     if (!isUpdate) {
-      // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
-      error = await this.linear4Check(
-        locationId,
-        summary,
-        historicalTestSumId,
-        isImport,
-      );
-      if (error) {
-        errorList.push(error);
+      if (summary.testTypeCode === TestTypeCodes.LINE) {
+        // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
+        error = await this.linear4Check(
+          locationId,
+          summary,
+          historicalTestSumId,
+          isImport,
+        );
+        if (error) {
+          errorList.push(error);
+        }
       }
 
       error = await this.duplicateTestCheck(
@@ -699,8 +702,6 @@ export class TestSummaryChecksService {
   }
 
   // IMPORT-20 Duplicate Test Check
-  // LINEAR-31 Duplicate Linearity (Result A)
-  // LINEAR-31 Duplicate Linearity (Result B)
   // IMPORT-21 Duplicate Test Number Check
   private async duplicateTestCheck(
     locationId: string,
@@ -742,10 +743,7 @@ export class TestSummaryChecksService {
         fields = this.compareFields(duplicate, summary);
       }
 
-      if (summary.testTypeCode === TestTypeCodes.LINE) {
-        // LINEAR-31 Duplicate Linearity (Result A)
-        error = this.getMessage('LINEAR-31-A', null);
-      }
+      error = await this.getDuplicateErrorMessage(summary.testTypeCode, 'A');
     } else {
       duplicate = await this.qaSuppDataRepository.getUnassociatedQASuppDataByLocationIdAndTestSum(
         locationId,
@@ -758,10 +756,7 @@ export class TestSummaryChecksService {
         if (isImport) {
           fields = this.compareFields(duplicate, summary);
         }
-        if (summary.testTypeCode === TestTypeCodes.LINE) {
-          // LINEAR-31 Duplicate Linearity (Result B)
-          error = this.getMessage('LINEAR-31-B', null);
-        }
+        error = await this.getDuplicateErrorMessage(summary.testTypeCode, 'B');
       }
     }
 
@@ -773,6 +768,44 @@ export class TestSummaryChecksService {
         testNumber: summary.testNumber,
         fieldname: fields,
       });
+    }
+
+    return error;
+  }
+
+  async getDuplicateErrorMessage(
+    testTypeCode: string,
+    checkType: string,
+  ): Promise<string> {
+    let error = null;
+
+    switch (true) {
+      case testTypeCode === TestTypeCodes.LINE:
+        // LINEAR-31 Duplicate Linearity
+        error = this.getMessage(`LINEAR-31-${checkType}`, null);
+        break;
+      case testTypeCode === TestTypeCodes.ONOFF:
+        // ONOFF-38 Duplicate Online Offline Calibration Test
+        error = this.getMessage(`ONOFF-38-${checkType}`, null);
+        break;
+      case testTypeCode === TestTypeCodes.FFACCTT:
+        // FFACCTT-13 Duplicate Transmitter Transducer Test
+        error = this.getMessage(`FFACCTT-13-${checkType}`, null);
+        break;
+      case testTypeCode === TestTypeCodes.UNITDEF:
+        // UNITDEF-28 Duplicate Unit Default Test
+        error = this.getMessage(`UNITDEF-28-${checkType}`, null);
+        break;
+      case testTypeCode === TestTypeCodes.RATA:
+        // RATA-106 Duplicate RATA
+        error = this.getMessage(`RATA-106-${checkType}`, null);
+        break;
+      case MISC_TEST_TYPE_CODES.includes(testTypeCode):
+        // TEST-19 Duplicate Miscellaneous Test
+        error = this.getMessage(`TEST-19-${checkType}`, null);
+        break;
+      default:
+        return error;
     }
 
     return error;

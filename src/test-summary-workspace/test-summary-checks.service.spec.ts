@@ -772,4 +772,66 @@ describe('Test Summary Check Service Test', () => {
       expect(result).toBe(MOCK_ERROR_MSG);
     });
   });
+
+  describe('getDuplicateErrorMessage', () => {
+    it('returns error message testTypeCode=LINE', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.LINE,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+
+    it('returns error message testTypeCode=ONOFF', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.ONOFF,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+
+    it('returns error message testTypeCode=FFACCTT', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.FFACCTT,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+
+    it('returns error message testTypeCode=UNITDEF', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.UNITDEF,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+
+    it('returns error message testTypeCode=RATA', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.RATA,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+
+    it('returns error message testTypeCode=OTHER', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.OTHER,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+  });
 });
