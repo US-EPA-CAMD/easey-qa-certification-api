@@ -5,6 +5,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { QACertificationDTO } from '../dto/qa-certification.dto';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { TestSummaryService } from '../test-summary/test-summary.service';
+import { TestExtensionExemptionsService } from '../test-extension-exemptions/test-extension-exemptions.service';
 import { QaCertificationEventService } from '../qa-certification-event/qa-certification-event.service';
 
 @Injectable()
@@ -12,6 +13,7 @@ export class QACertificationService {
   constructor(
     private readonly logger: Logger,
     private readonly testSummaryService: TestSummaryService,
+    private readonly testExtensionExemptionService: TestExtensionExemptionsService,
     private readonly qaCertEventService: QaCertificationEventService,
   ) {}
 
@@ -42,6 +44,14 @@ export class QACertificationService {
     );
 
     const EXT_EXEMPTIONS = EVENTS + 1;
+    promises.push(
+      this.testExtensionExemptionService.export(
+        params.facilityId,
+        params.unitIds,
+        params.stackPipeIds,
+        params.qaTestExtensionExemptionIds,
+      ),
+    );
 
     const results = await Promise.all(promises);
 

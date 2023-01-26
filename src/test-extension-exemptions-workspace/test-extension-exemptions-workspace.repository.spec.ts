@@ -17,7 +17,7 @@ const mockQueryBuilder = () => ({
 });
 
 describe('TestExtensionExemptionsWorkspaceRepository', () => {
-  let repository;
+  let repository: TestExtensionExemptionsWorkspaceRepository;
   let queryBuilder;
 
   beforeEach(async () => {
@@ -28,7 +28,9 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
       ],
     }).compile();
 
-    repository = module.get(TestExtensionExemptionsWorkspaceRepository);
+    repository = module.get<TestExtensionExemptionsWorkspaceRepository>(
+      TestExtensionExemptionsWorkspaceRepository,
+    );
     queryBuilder = module.get<SelectQueryBuilder<TestExtensionExemption>>(
       SelectQueryBuilder,
     );
@@ -40,7 +42,7 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
   });
 
   describe('getTestExtensionExemptionById', () => {
-    it('calls buildBaseQuery and get one Test Extension Exemption from the repository with Id', async () => {
+    it('calls buildBaseQuery and get one Test Extension Exemption record from the repository with Id', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(testExtExp);
 
@@ -57,6 +59,30 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
 
       const result = await repository.getTestExtensionExemptionsByLocationId(
         '1',
+      );
+
+      expect(result).toEqual([testExtExp]);
+    });
+  });
+
+  describe('getTestExtensionsByUnitStack', () => {
+    it('get one Test Extension Exemption record from the repository with facilityId', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([testExtExp]);
+
+      const result = await repository.getTestExtensionsByUnitStack(1);
+
+      expect(result).toEqual([testExtExp]);
+    });
+
+    it('get one Test Extension Exemption record from the repository with facilityId, unitids, stackPipeIds', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([testExtExp]);
+
+      const result = await repository.getTestExtensionsByUnitStack(
+        1,
+        ['1'],
+        ['1'],
       );
 
       expect(result).toEqual([testExtExp]);

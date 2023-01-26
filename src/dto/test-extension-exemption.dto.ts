@@ -99,14 +99,12 @@ export class TestExtensionExemptionBaseDTO {
 export class TestExtensionExemptionRecordDTO extends TestExtensionExemptionBaseDTO {
   id: string;
   locationId: string;
-
   reportPeriodId: number;
   checkSessionId: string;
   submissionId: string;
   submissionAvailabilityCode: string;
   pendingStatusCode: string;
   evalStatusCode: string;
-
   userId: string;
   addDate: string;
   updateDate: string;

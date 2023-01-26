@@ -71,4 +71,16 @@ describe('TestExtensionExemptionsController', () => {
       expect(spyService).toHaveBeenCalled();
     });
   });
+
+  describe('getTestExtensionExemptionsByLocationId', () => {
+    it('should call the QaTestExtensionExemptionsWorkshopService.getTestExtensionExemptions', async () => {
+      const spyService = jest.spyOn(
+        service,
+        'getTestExtensionExemptionsByLocationId',
+      );
+      const result = await controller.getTestExtensionExemptions('1');
+      expect(result).toEqual([testExtExp]);
+      expect(spyService).toHaveBeenCalled();
+    });
+  });
 });

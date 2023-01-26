@@ -71,11 +71,11 @@ export class TestExtensionExemptionsChecksService {
         'extensionOrExemptionCode, reportPeriodId, monitoringSystemId, componentId, fuelCode',
     });
 
-    const [
+    const {
       reportPeriodId,
       componentRecordId,
       monitoringSystemRecordId,
-    ] = await this.service.lookupValues(locationId, testExtensionExemption);
+    } = await this.service.lookupValues(locationId, testExtensionExemption);
 
     const { extensionOrExemptionCode, fuelCode } = testExtensionExemption;
     testExtExempts = await this.repository.find({

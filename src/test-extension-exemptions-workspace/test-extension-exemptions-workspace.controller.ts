@@ -39,7 +39,7 @@ export class TestExtensionExemptionsWorkspaceController {
     isArray: true,
     type: TestExtensionExemptionRecordDTO,
     description:
-      'Retrieves workspace Test Extension Exemption records per filter criteria',
+      'Retrieves workspace QA Test Extension Exemption records by Location Id',
   })
   async getTestExtensionExemptions(
     @Param('locId') locationId: string,
