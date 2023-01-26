@@ -150,7 +150,6 @@ export class TestExtensionExemptionsWorkspaceService {
     locationId: string,
     payload: TestExtensionExemptionBaseDTO,
     userId: string,
-    historicalRecordId?: string,
   ): Promise<TestExtensionExemptionRecordDTO> {
     const timestamp = currentDateTime();
     const {
@@ -184,7 +183,7 @@ export class TestExtensionExemptionsWorkspaceService {
 
     const entity = this.repository.create({
       ...payload,
-      id: historicalRecordId ? historicalRecordId : uuid(),
+      id: uuid(),
       locationId,
       monitoringSystemRecordId,
       componentRecordId,

@@ -210,7 +210,6 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
         locationId,
         payload,
         userId,
-        'historicalRecordId',
       );
 
       expect(result).toEqual(dto);
