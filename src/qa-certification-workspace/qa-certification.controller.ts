@@ -31,6 +31,13 @@ import { QACertificationChecksService } from './qa-certification-checks.service'
 import { FormatValidationErrorsInterceptor } from '../interceptors/format-validation-errors.interceptor';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
+import { ReviewAndSubmitMultipleParamsDTO } from '../dto/review-and-submit-multiple-params.dto';
+import { CertEventReviewAndSubmitService } from './cert-event-review-and-submit.service';
+import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
+import { TestSummaryReviewAndSubmitService } from './test-summary-review-and-submit.service';
+import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
+import { TeeReviewAndSubmitService } from './tee-review-and-submit.service';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -38,6 +45,9 @@ import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 export class QACertificationWorkspaceController {
   constructor(
     private readonly service: QACertificationWorkspaceService,
+    private readonly reviewSubmitServiceCert: CertEventReviewAndSubmitService,
+    private readonly reviewSubmitServiceTestSum: TestSummaryReviewAndSubmitService,
+    private readonly reviewSubmitServiceTee: TeeReviewAndSubmitService,
     private readonly checksService: QACertificationChecksService,
   ) {}
 
@@ -94,5 +104,110 @@ export class QACertificationWorkspaceController {
 
     [locations, qaSuppRecords] = await this.checksService.runChecks(payload);
     return this.service.import(locations, payload, user.userId, qaSuppRecords);
+  }
+
+  @Get('cert-events')
+  @ApiOkResponse({
+    isArray: true,
+    type: CertEventReviewAndSubmitDTO,
+    description:
+      'Retrieves workspace test summary records given a list of oris codes and or mon plan ids',
+  })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'orisCodes',
+    required: true,
+    explode: false,
+  })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'monPlanIds',
+    required: false,
+    explode: false,
+  })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'quarters',
+    required: false,
+    explode: false,
+  })
+  async getFilteredCerts(
+    @Query() dto: ReviewAndSubmitMultipleParamsDTO,
+  ): Promise<CertEventReviewAndSubmitDTO[]> {
+    return this.reviewSubmitServiceCert.getCertEventRecords(
+      dto.orisCodes,
+      dto.monPlanIds,
+      dto.quarters,
+    );
+  }
+
+  @Get('test-summary')
+  @ApiOkResponse({
+    isArray: true,
+    type: ReviewAndSubmitTestSummaryDTO,
+    description:
+      'Retrieves workspace test summary records given a list of oris codes and or mon plan ids',
+  })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'orisCodes',
+    required: true,
+    explode: false,
+  })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'monPlanIds',
+    required: false,
+    explode: false,
+  })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'quarters',
+    required: false,
+    explode: false,
+  })
+  async getFilteredTestSums(
+    @Query() dto: ReviewAndSubmitMultipleParamsDTO,
+  ): Promise<ReviewAndSubmitTestSummaryDTO[]> {
+    return this.reviewSubmitServiceTestSum.getTestSummaryRecords(
+      dto.orisCodes,
+      dto.monPlanIds,
+      dto.quarters,
+    );
+  }
+
+  @Get('test-extension-exemption')
+  @ApiOkResponse({
+    isArray: true,
+    type: TeeReviewAndSubmitDTO,
+    description:
+      'Retrieves workspace tee records given a list of oris codes and or mon plan ids',
+  })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'orisCodes',
+    required: true,
+    explode: false,
+  })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'monPlanIds',
+    required: false,
+    explode: false,
+  })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'quarters',
+    required: false,
+    explode: false,
+  })
+  async getFilteredTee(
+    @Query() dto: ReviewAndSubmitMultipleParamsDTO,
+  ): Promise<TeeReviewAndSubmitDTO[]> {
+    return this.reviewSubmitServiceTee.getTeeRecords(
+      dto.orisCodes,
+      dto.monPlanIds,
+      dto.quarters,
+    );
   }
 }
