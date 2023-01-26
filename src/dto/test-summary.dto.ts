@@ -166,10 +166,10 @@ export class TestSummaryBaseDTO {
     message: (args: ValidationArguments) => {
       let resultCode
       switch(args.object['testTypeCode']){
-        case 'APPE':
+        case TestTypeCodes.APPE:
           resultCode = 'APPE-47-A';
           break;
-        case 'RATA':
+        case TestTypeCodes.RATA:
           resultCode = 'RATA-117-A';
         default:
           return 'You did not Severity provide [fieldname], which is required for [key].'
@@ -192,10 +192,10 @@ export class TestSummaryBaseDTO {
     message: (args: ValidationArguments) => {
       let resultCode
       switch(args.object['testTypeCode']){
-        case 'CYCLE':
+        case TestTypeCodes.CYCLE:
           resultCode = 'CYCLE-22-A';
           break;
-        case '7DAY':
+        case TestTypeCodes.SEVENDAY:
           resultCode = 'SEVNDAY-30-A';
           break;
         default:
@@ -280,13 +280,13 @@ export class TestSummaryBaseDTO {
     message: (args: ValidationArguments) => {
       let resultCode
       switch(args.object['testTypeCode']){
-        case '7DAY':
+        case TestTypeCodes.SEVENDAY:
           resultCode = 'SEVNDAY-28-B'
           break;
-        case 'LINE':
+        case TestTypeCodes.LINE:
           resultCode = 'LINEAR-10-B';
           break;
-        case 'ONOFF':
+        case TestTypeCodes.ONOFF:
           resultCode = 'ONOFF-39-B'
           break;
         default:
