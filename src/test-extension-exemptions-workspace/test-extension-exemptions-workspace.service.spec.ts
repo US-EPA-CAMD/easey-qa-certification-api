@@ -22,6 +22,7 @@ import { UnitRepository } from '../unit/unit.repository';
 import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 const locationId = '121';
 const testExtExpId = '1';
@@ -42,6 +43,11 @@ const ms = new MonitorSystem();
 ms.id = '1';
 const comp = new Component();
 comp.id = '1';
+const lookupValuesResult = {
+  reportPeriodId: 1,
+  monitoringSystemRecordId: '1',
+  componentRecordId: '1',
+};
 
 const entity = new TestExtensionExemption();
 const dto = new TestExtensionExemptionRecordDTO();
@@ -68,6 +74,9 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
   let unitRepository: UnitRepository;
   let stackPipeRepository: StackPipeRepository;
   let locationRepository: MonitorLocationRepository;
+  let componentRepository: ComponentWorkspaceRepository;
+  let monSysRepository: MonitorSystemWorkspaceRepository;
+  let reportingPeriodRepository: ReportingPeriodRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -107,7 +116,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
           }),
         },
         {
-          provide: MonitorSystemRepository,
+          provide: MonitorSystemWorkspaceRepository,
           useFactory: () => ({
             findOne: jest.fn().mockResolvedValue(ms),
           }),
@@ -124,10 +133,23 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
     service = module.get<TestExtensionExemptionsWorkspaceService>(
       TestExtensionExemptionsWorkspaceService,
     );
-    repository = module.get(TestExtensionExemptionsWorkspaceRepository);
-    unitRepository = module.get(UnitRepository);
-    stackPipeRepository = module.get(StackPipeRepository);
-    locationRepository = module.get(MonitorLocationRepository);
+    repository = module.get<TestExtensionExemptionsWorkspaceRepository>(
+      TestExtensionExemptionsWorkspaceRepository,
+    );
+    unitRepository = module.get<UnitRepository>(UnitRepository);
+    stackPipeRepository = module.get<StackPipeRepository>(StackPipeRepository);
+    locationRepository = module.get<MonitorLocationRepository>(
+      MonitorLocationRepository,
+    );
+    componentRepository = module.get<ComponentWorkspaceRepository>(
+      ComponentWorkspaceRepository,
+    );
+    monSysRepository = module.get<MonitorSystemWorkspaceRepository>(
+      MonitorSystemWorkspaceRepository,
+    );
+    reportingPeriodRepository = module.get<ReportingPeriodRepository>(
+      ReportingPeriodRepository,
+    );
   });
 
   describe('getTestExtensionExemptionById', () => {
@@ -162,7 +184,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
 
   describe('createTestExtensionExemption', () => {
     it('should call the createTestExtensionExemption and create test extension', async () => {
-      jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
+      jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
 
       jest
         .spyOn(repository, 'getTestExtensionExemptionById')
@@ -174,11 +196,11 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
         userId,
       );
 
-      expect(result).toEqual(dto);
+      expect(result).toEqual(testExtensionExemptionDTO);
     });
 
     it('should call the createTestExtensionExemption and create test extension with historicalRecordId', async () => {
-      jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
+      jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
 
       jest
         .spyOn(repository, 'getTestExtensionExemptionById')
@@ -195,7 +217,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
     });
 
     it('should call the createTestExtensionExemption and throw error if Unit does not match', async () => {
-      jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
+      jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
 
       const pipe = new StackPipe();
       pipe.name = '101';
@@ -218,11 +240,33 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
 
       expect(errored).toBe(true);
     });
+    it('should call the createTestExtensionExemption and throw error if StackPipe does not match', async () => {
+      jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
+
+      const pipe = new StackPipe();
+      pipe.name = '101';
+      const loc = new MonitorLocation();
+      loc.stackPipeId = '11';
+
+      jest.spyOn(unitRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(stackPipeRepository, 'findOne').mockResolvedValue(pipe);
+      jest.spyOn(locationRepository, 'findOne').mockResolvedValue(loc);
+
+      let errored = false;
+
+      try {
+        await service.createTestExtensionExemption(locationId, payload, userId);
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
+    });
   });
 
   describe('updateTestExtensionExemption', () => {
     it('should call the updateTestExtensionExemption and update Test Extension Exemption', async () => {
-      jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
+      jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
       jest.spyOn(repository, 'findOne').mockResolvedValue(entity);
 
       const result = await service.updateTestExtensionExemption(
@@ -288,7 +332,29 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
 
       const result = await service.lookupValues(locationId, payload);
 
-      expect(result).toEqual([1, '1', '1']);
+      expect(result).toEqual({
+        componentRecordId: '1',
+        monitoringSystemRecordId: '1',
+        reportPeriodId: 1,
+      });
+    });
+    it('should return componentID, monitoringSystemID, and reportingPeriodId as null value', async () => {
+      payload.year = 2022;
+      payload.quarter = 1;
+      payload.componentID = '1';
+      payload.monitoringSystemID = 'abc';
+
+      jest.spyOn(componentRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(monSysRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(reportingPeriodRepository, 'findOne').mockResolvedValue(null);
+
+      const result = await service.lookupValues(locationId, payload);
+
+      expect(result).toEqual({
+        componentRecordId: null,
+        monitoringSystemRecordId: null,
+        reportPeriodId: null,
+      });
     });
   });
 

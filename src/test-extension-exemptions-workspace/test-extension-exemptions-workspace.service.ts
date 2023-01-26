@@ -18,12 +18,12 @@ import { UnitRepository } from '../unit/unit.repository';
 import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { Unit } from './../entities/workspace/unit.entity';
 import { StackPipe } from './../entities/workspace/stack-pipe.entity';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 @Injectable()
 export class TestExtensionExemptionsWorkspaceService {
@@ -40,8 +40,8 @@ export class TestExtensionExemptionsWorkspaceService {
     private readonly monitorLocationRepository: MonitorLocationRepository,
     @InjectRepository(ComponentWorkspaceRepository)
     private readonly componentRepository: ComponentWorkspaceRepository,
-    @InjectRepository(MonitorSystemRepository)
-    private readonly monSysRepository: MonitorSystemRepository,
+    @InjectRepository(MonitorSystemWorkspaceRepository)
+    private readonly monSysRepository: MonitorSystemWorkspaceRepository,
     @InjectRepository(ReportingPeriodRepository)
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
   ) {}
@@ -106,11 +106,11 @@ export class TestExtensionExemptionsWorkspaceService {
     payload: TestExtensionExemptionImportDTO,
     userId: string,
   ) {
-    const [
+    const {
       reportPeriodId,
       monitoringSystemRecordId,
       componentRecordId,
-    ] = await this.lookupValues(locationId, payload);
+    } = await this.lookupValues(locationId, payload);
 
     const record = await this.repository.findOne({
       where: {
@@ -153,11 +153,11 @@ export class TestExtensionExemptionsWorkspaceService {
     historicalRecordId?: string,
   ): Promise<TestExtensionExemptionRecordDTO> {
     const timestamp = currentDateTime();
-    const [
+    const {
       reportPeriodId,
       componentRecordId,
       monitoringSystemRecordId,
-    ] = await this.lookupValues(locationId, payload);
+    } = await this.lookupValues(locationId, payload);
 
     const location = await this.monitorLocationRepository.findOne(locationId);
 
@@ -224,11 +224,11 @@ export class TestExtensionExemptionsWorkspaceService {
       );
     }
 
-    const [
+    const {
       reportPeriodId,
       componentRecordId,
       monitoringSystemRecordId,
-    ] = await this.lookupValues(locationId, payload);
+    } = await this.lookupValues(locationId, payload);
 
     record.userId = userId;
     record.lastUpdated = timestamp;
@@ -295,6 +295,6 @@ export class TestExtensionExemptionsWorkspaceService {
       monitoringSystemRecordId = monitorSystem ? monitorSystem.id : null;
     }
 
-    return [reportPeriodId, componentRecordId, monitoringSystemRecordId];
+    return { reportPeriodId, componentRecordId, monitoringSystemRecordId };
   }
 }

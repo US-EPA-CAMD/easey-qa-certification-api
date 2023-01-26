@@ -6,19 +6,19 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
 import { TestExtensionExemptionMap } from '../maps/test-extension-exemption.map';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { UnitRepository } from '../unit/unit.repository';
 import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
 import { TestExtensionExemptionsChecksService } from './test-extension-exemptions-checks.service';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([
       TestExtensionExemptionsWorkspaceRepository,
       ComponentWorkspaceRepository,
-      MonitorSystemRepository,
+      MonitorSystemWorkspaceRepository,
       ReportingPeriodRepository,
       MonitorLocationRepository,
       UnitRepository,
