@@ -103,7 +103,7 @@ export class QACertificationWorkspaceService {
       );
     });
 
-    payload.testExtensionExemptionData.forEach(
+    payload.testExtensionExemptionData?.forEach(
       (qaTestExtensionExemptionId, idx) => {
         promises.push(
           new Promise(async (resolve, _reject) => {
