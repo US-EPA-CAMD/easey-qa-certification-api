@@ -11,14 +11,13 @@ import { DbLookup } from '../pipes/db-lookup.pipe';
 import { TestSummaryDTO, TestSummaryImportDTO } from './test-summary.dto';
 
 import {
-  CertificationEventDTO,
-  CertificationEventImportDTO,
-} from './certification-event.dto';
-
-import {
   TestExtensionExemptionDTO,
   TestExtensionExemptionImportDTO,
 } from './test-extension-exemption.dto';
+import {
+  QACertificationEventDTO,
+  QACertificationEventImportDTO,
+} from './qa-certification-event.dto';
 
 export class QACertificationBaseDTO {
   @ApiProperty({
@@ -46,8 +45,8 @@ export class QACertificationImportDTO extends QACertificationBaseDTO {
   testSummaryData: TestSummaryImportDTO[];
 
   @ValidateNested({ each: true })
-  @Type(() => CertificationEventImportDTO)
-  certificationEventData: CertificationEventImportDTO[];
+  @Type(() => QACertificationEventImportDTO)
+  certificationEventData: QACertificationEventImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => TestExtensionExemptionImportDTO)
@@ -56,6 +55,6 @@ export class QACertificationImportDTO extends QACertificationBaseDTO {
 
 export class QACertificationDTO extends QACertificationBaseDTO {
   testSummaryData: TestSummaryDTO[];
-  certificationEventData: CertificationEventDTO[];
+  certificationEventData: QACertificationEventDTO[];
   testExtensionExemptionData: TestExtensionExemptionDTO[];
 }

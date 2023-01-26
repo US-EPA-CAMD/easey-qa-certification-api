@@ -1,6 +1,6 @@
 import {
   addJoins,
-  addTestSummaryIdWhere,
+  addQACertEventIdWhere,
 } from '../utilities/qa-cert-events.querybuilder';
 import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
 import { QACertificationEvent } from '../entities/qa-certification-event.entity';
@@ -12,6 +12,24 @@ export class QACertificationEventRepository extends Repository<
   private buildBaseQuery(): SelectQueryBuilder<QACertificationEvent> {
     const query = this.createQueryBuilder('qce');
     return addJoins(query) as SelectQueryBuilder<QACertificationEvent>;
+  }
+
+  async getQACertificationEventById(
+    qaCertEventId: string,
+  ): Promise<QACertificationEvent> {
+    const query = this.buildBaseQuery().where('qce.id = :qaCertEventId', {
+      qaCertEventId,
+    });
+    return query.getOne();
+  }
+
+  async getQACertificationEventsByLocationId(
+    locationId: string,
+  ): Promise<QACertificationEvent[]> {
+    const query = this.buildBaseQuery().where('qce.locationId = :locationId', {
+      locationId,
+    });
+    return query.getMany();
   }
 
   async getQaCertEventsByUnitStack(
@@ -46,7 +64,7 @@ export class QACertificationEventRepository extends Repository<
       stackPipeIds,
     });
 
-    query = addTestSummaryIdWhere(
+    query = addQACertEventIdWhere(
       query,
       qaCertificationEventIds,
     ) as SelectQueryBuilder<QACertificationEvent>;

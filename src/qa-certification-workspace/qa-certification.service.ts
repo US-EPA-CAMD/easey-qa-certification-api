@@ -11,14 +11,14 @@ import { LocationIdentifiers } from '../interfaces/location-identifiers.interfac
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
-import { QaCertificationEventWorkshopService } from '../qa-certification-event-workshop/qa-certification-event-workshop.service';
+import { QACertificationEventWorkspaceService } from '../qa-certification-event-workspace/qa-certification-event-workspace.service';
 
 @Injectable()
 export class QACertificationWorkspaceService {
   constructor(
     private readonly logger: Logger,
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    private readonly qaCertEventService: QaCertificationEventWorkshopService,
+    private readonly qaCertEventService: QACertificationEventWorkspaceService,
   ) {}
 
   async export(params: QACertificationParamsDTO): Promise<QACertificationDTO> {
@@ -69,7 +69,7 @@ export class QACertificationWorkspaceService {
     );
 
     const promises = [];
-    payload.testSummaryData.forEach((summary, idx) => {
+    payload.testSummaryData?.forEach((summary, idx) => {
       promises.push(
         new Promise(async (resolve, _reject) => {
           const locationId = locations.find(i => {
@@ -86,6 +86,27 @@ export class QACertificationWorkspaceService {
             qaSupprecords[idx] !== undefined
               ? qaSupprecords[idx]?.testSumId
               : null,
+          );
+
+          resolve(results);
+        }),
+      );
+    });
+
+    payload.certificationEventData?.forEach((qaCertEvent, idx) => {
+      promises.push(
+        new Promise(async (resolve, _reject) => {
+          const locationId = locations.find(i => {
+            return (
+              i.unitId === qaCertEvent.unitId &&
+              i.stackPipeId === qaCertEvent.stackPipeId
+            );
+          }).locationId;
+
+          const results = this.qaCertEventService.import(
+            locationId,
+            qaCertEvent,
+            userId,
           );
 
           resolve(results);

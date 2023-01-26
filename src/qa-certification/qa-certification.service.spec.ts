@@ -4,6 +4,8 @@ import { TestSummaryService } from '../test-summary/test-summary.service';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { QACertificationService } from './qa-certification.service';
 import { QaCertificationEventService } from '../qa-certification-event/qa-certification-event.service';
+import { QACertificationDTO } from '../dto/qa-certification.dto';
+import { TestSummaryDTO } from '../dto/test-summary.dto';
 
 const mockTestSummaryService = () => ({
   export: jest.fn(),
@@ -42,14 +44,16 @@ describe('QA Certification Service', () => {
     it('successfully calls export() service function', async () => {
       const paramsDTO = new QACertificationParamsDTO();
       paramsDTO.facilityId = 1;
+      const qaCertEventDto = new QACertificationDTO();
+      const testSumDto = new TestSummaryDTO();
       const expected = {
         orisCode: 1,
-        certificationEventData: [],
+        certificationEventData: [qaCertEventDto],
         testExtensionExemptionData: undefined,
-        testSummaryData: [],
+        testSummaryData: [testSumDto],
       };
-      testSummaryService.export.mockResolvedValue([]);
-      qaCertEventService.export.mockResolvedValue([]);
+      testSummaryService.export.mockResolvedValue([testSumDto]);
+      qaCertEventService.export.mockResolvedValue([qaCertEventDto]);
       const result = await service.export(paramsDTO);
 
       expect(result).toEqual(expected);

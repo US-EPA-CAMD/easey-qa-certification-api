@@ -29,7 +29,9 @@ import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-works
 @ApiSecurity('APIKey')
 @ApiTags('Cycle Time Injection')
 export class CycleTimeInjectionWorkspaceController {
-  constructor(private readonly service: CycleTimeInjectionWorkspaceService) {}
+  constructor(
+    private readonly service: CycleTimeInjectionWorkspaceService,
+  ) {}
 
   @Get()
   @ApiOkResponse({

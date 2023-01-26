@@ -26,7 +26,8 @@ import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-su
 import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository copy';
 import { TeeReviewAndSubmitService } from './tee-review-and-submit.service';
 import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
-import { QaCertificationEventWorkshopModule } from '../qa-certification-event-workshop/qa-certification-event-workshop.module';
+import { QaCertificationEventWorkspaceModule } from '../qa-certification-event-workspace/qa-certification-event-workspace.module';
+import { TestExtensionExemptionsWorkspaceModule } from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.module';
 
 @Module({
   imports: [
@@ -39,7 +40,7 @@ import { QaCertificationEventWorkshopModule } from '../qa-certification-event-wo
     QASuppDataWorkspaceModule,
     LocationWorkspaceModule,
     TestSummaryWorkspaceModule,
-    QaCertificationEventWorkshopModule,
+    QaCertificationEventWorkspaceModule,
     LinearitySummaryWorkspaceModule,
     LinearityInjectionWorkspaceModule,
     RataWorkspaceModule,
@@ -48,6 +49,7 @@ import { QaCertificationEventWorkshopModule } from '../qa-certification-event-wo
     FlowRataRunWorkspaceModule,
     RataTraverseWorkspaceModule,
     TestQualificationWorkspaceModule,
+    TestExtensionExemptionsWorkspaceModule,
   ],
   controllers: [QACertificationWorkspaceController],
   providers: [

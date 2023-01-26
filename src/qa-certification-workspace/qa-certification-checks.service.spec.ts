@@ -18,6 +18,8 @@ import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.serv
 import { FlowRataRunChecksService } from '../flow-rata-run-workspace/flow-rata-run-checks.service';
 import { RataTraverseChecksService } from '../rata-traverse-workspace/rata-traverse-checks.service';
 import { TestQualificationChecksService } from '../test-qualification-workspace/test-qualification-checks.service';
+import { TestExtensionExemptionsChecksService } from '../test-extension-exemptions-workspace/test-extension-exemptions-checks.service';
+import { TestExtensionExemptionImportDTO } from '../dto/test-extension-exemption.dto';
 
 const returnLocationRunChecks = [
   {
@@ -109,6 +111,12 @@ describe('QA Certification Check Service Test', () => {
             runChecks: jest.fn().mockResolvedValue([]),
           }),
         },
+        {
+          provide: TestExtensionExemptionsChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
       ],
     }).compile();
 
@@ -130,6 +138,12 @@ describe('QA Certification Check Service Test', () => {
     linSum.linearityInjectionData = [linInj];
     testSumary.linearitySummaryData = [linSum];
     payload.testSummaryData = [testSumary];
+
+    const testExtExem = new TestExtensionExemptionImportDTO();
+    testExtExem.unitId = '51';
+    testExtExem.componentID = 'AA0';
+    testExtExem.stackPipeId = null;
+    payload.testExtensionExemptionData = [testExtExem];
 
     it('Should pass all checks', async () => {
       const result = await service.runChecks(payload);
