@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TestExtensionExemptionsModule } from '../test-extension-exemptions/test-extension-exemptions.module';
-import { QaCertificationEventModule } from 'src/qa-certification-event/qa-certification-event.module';
+import { QaCertificationEventModule } from '../qa-certification-event/qa-certification-event.module';
 
 import { TestSummaryModule } from '../test-summary/test-summary.module';
 

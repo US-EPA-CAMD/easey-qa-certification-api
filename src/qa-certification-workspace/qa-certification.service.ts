@@ -79,7 +79,7 @@ export class QACertificationWorkspaceService {
     );
 
     const promises = [];
-    payload.testSummaryData.forEach((summary, idx) => {
+    payload.testSummaryData?.forEach((summary, idx) => {
       promises.push(
         new Promise(async (resolve, _reject) => {
           const locationId = locations.find(i => {
@@ -124,7 +124,7 @@ export class QACertificationWorkspaceService {
         );
       },
     );
-    payload.certificationEventData.forEach((qaCertEvent, idx) => {
+    payload.certificationEventData?.forEach((qaCertEvent, idx) => {
       promises.push(
         new Promise(async (resolve, _reject) => {
           const locationId = locations.find(i => {

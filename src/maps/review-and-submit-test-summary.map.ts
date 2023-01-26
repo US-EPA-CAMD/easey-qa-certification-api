@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
-import { TestSummaryReviewAndSubmit } from '../entities/test-summary-review-and-submit.entity';
+import { TestSummaryReviewAndSubmit } from '../entities/workspace/test-summary-review-and-submit.entity';
 
 @Injectable()
 export class ReviewAndSubmitTestSummaryMap extends BaseMap<

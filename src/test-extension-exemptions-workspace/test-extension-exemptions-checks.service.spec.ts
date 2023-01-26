@@ -59,13 +59,15 @@ describe('TestExtensionExemptionsChecksService', () => {
 
     it('should return error message A for EXTEXEM-8', async () => {
       let duplicate;
-      jest.spyOn(repository, 'find').mockImplementation(() => Promise.resolve([duplicate]))
+      jest
+        .spyOn(repository, 'find')
+        .mockImplementation(() => Promise.resolve([duplicate]));
       try {
         await service.runChecks(locationId, payload, false, false);
       } catch (err) {
         expect(err).toBeInstanceOf(LoggingException);
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
-    })
+    });
   });
 });
