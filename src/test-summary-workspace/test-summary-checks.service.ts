@@ -166,6 +166,11 @@ export class TestSummaryChecksService {
       errorList.push(error);
     }
 
+    error = await this.validTestResultCode(summary);
+    if (error) {
+      errorList.push(error);
+    }
+
     if (!isUpdate) {
       if (summary.testTypeCode === TestTypeCodes.LINE) {
         // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
@@ -1289,6 +1294,51 @@ export class TestSummaryChecksService {
           key: KEY,
         });
         //    error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type [${summary.testTypeCode}], in the field [testResultCode] for [Test Summary].`;
+      }
+    }
+    return error;
+  }
+
+  private async validTestResultCode(
+    summary: TestSummaryBaseDTO | TestSummaryImportDTO,
+  ): Promise<string> {
+    let error: string = null;
+    const FIELDNAME: string = 'testResultCode';
+    const KEY: string = 'Test Summary';
+    let errorMessageCode = '';
+
+    const testSummaryMDRelationships = await this.testSummaryRelationshipsRepository.getTestTypeCodesRelationships(
+      summary.testTypeCode,
+      'testResultCode',
+    );
+
+    const testResultCodes = testSummaryMDRelationships.map(
+      s => s.testResultCode,
+    );
+    if (
+      !testResultCodes.includes(summary.testResultCode) && [
+        TestTypeCodes.SEVENDAY.toString(),
+        TestTypeCodes.ONOFF.toString(),
+      ].includes(summary.testTypeCode)
+    ) {
+      const option = this.testResultCodeRepository.findOne(
+        summary.testResultCode,
+      );
+
+      if (option) {
+        switch(summary.testTypeCode){
+          case TestTypeCodes.SEVENDAY.toString():
+            errorMessageCode = 'SEVNDAY-28-C'
+            break;
+          case TestTypeCodes.ONOFF.toString():
+            errorMessageCode = 'ONOFF-39-C'
+            break;
+        }
+        error = this.getMessage(errorMessageCode, {
+          value: summary.testResultCode,
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
       }
     }
     return error;

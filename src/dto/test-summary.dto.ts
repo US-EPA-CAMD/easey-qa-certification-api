@@ -105,8 +105,6 @@ import {
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { Type } from 'class-transformer';
-import { TestResultCodes } from '../enums/test-result-code.enum';
-import { ArrayContains } from '../pipes/array-contains.pipe';
 
 const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -166,14 +164,17 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
+      let resultCode
       switch(args.object['testTypeCode']){
-        case 'APPE':
-          return CheckCatalogService.formatResultMessage('APPE-47-A', {
-            fieldname: args.property,
-            key: KEY,
-          });
+        case TestTypeCodes.APPE:
+          resultCode = 'APPE-47-A';
+          break;
+        case TestTypeCodes.RATA:
+          resultCode = 'RATA-117-A';
+        default:
+          return 'You did not Severity provide [fieldname], which is required for [key].'
       }
-      return CheckCatalogService.formatResultMessage('RATA-117-A', {
+      return CheckCatalogService.formatResultMessage(resultCode, {
         fieldname: args.property,
         key: KEY,
       });
@@ -189,19 +190,21 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
+      let resultCode
       switch(args.object['testTypeCode']){
-        case 'CYCLE':
-          return CheckCatalogService.formatResultMessage('CYCLE-22-A', {
-            fieldname: args.property,
-            key: KEY,
-          });
-        case '7DAY':
-          return CheckCatalogService.formatResultMessage('SEVNDAY-30-A', {
-            fieldname: args.property,
-            key: KEY,
-          });
+        case TestTypeCodes.CYCLE:
+          resultCode = 'CYCLE-22-A';
+          break;
+        case TestTypeCodes.SEVENDAY:
+          resultCode = 'SEVNDAY-30-A';
+          break;
+        default:
+          return `You did not provide [${args.property}], which is required for [${KEY}].`;
       }
-      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage(resultCode, {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   @ValidateIf(o =>
@@ -267,61 +270,34 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      let code;
-      switch(args.object['testTypeCode']){
-        case '7DAY':
-          code = 'SEVNDAY-28-A';
-          break;
-        case 'LINE':
-          code = 'LINEAR-10-A';
-          break;
-      }
-      if (code) {
-        return CheckCatalogService.formatResultMessage(code, {
-          fieldname: args.property,
-          key: KEY,
-        })
-      }
-      return `You did not provide [testResultCode], which is required for [${KEY}].`
+      return CheckCatalogService.formatResultMessage('TEST-12-A', {
+        fieldname: args.property,
+        key: KEY,
+      })
     },
   })
   @IsValidCode(TestResultCode, {
     message: (args: ValidationArguments) => {
-      let code
+      let resultCode
       switch(args.object['testTypeCode']){
-        case '7DAY':
-          code = 'SEVNDAY-28-B'
+        case TestTypeCodes.SEVENDAY:
+          resultCode = 'SEVNDAY-28-B'
           break;
-        case 'LINE':
-          code = 'LINEAR-10-B';
+        case TestTypeCodes.LINE:
+          resultCode = 'LINEAR-10-B';
           break;
+        case TestTypeCodes.ONOFF:
+          resultCode = 'ONOFF-39-B'
+          break;
+        default:
+          return `You reported the value [${args.value}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`;
       }
-      if (code) {
-        return CheckCatalogService.formatResultMessage(code, {
-          fieldname: args.property,
-          key: KEY
-        })
-      }
-      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`;
-    },
-  })
-  @ArrayContains([TestResultCodes.PASSED, TestResultCodes.ABORTED, TestResultCodes.PASSAPS, TestResultCodes.FAILED], {
-    message: (args: ValidationArguments) => {
-      let code
-      switch(args.object['testTypeCode']){
-        case '7DAY':
-          code = 'SEVNDAY-28-C'
-          break;
-        case 'LINE':
-          code = 'LINEAR-10-C';
-          break;
-      }
-      return CheckCatalogService.formatResultMessage(code, {
+      return CheckCatalogService.formatResultMessage(resultCode, {
         value: args.value,
         fieldname: args.property,
-        key: KEY,
-      });
-    }
+        key: KEY
+      })
+    },
   })
   @ValidateIf(o =>
     VALID_TEST_TYPE_CODES_FOR_TEST_RESULT_CODE.includes(o.testTypeCode),

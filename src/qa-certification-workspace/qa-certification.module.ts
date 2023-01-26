@@ -28,6 +28,7 @@ import { TeeReviewAndSubmitService } from './tee-review-and-submit.service';
 import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
 import { QaCertificationEventWorkspaceModule } from '../qa-certification-event-workspace/qa-certification-event-workspace.module';
 import { TestExtensionExemptionsWorkspaceModule } from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.module';
+import { CycleTimeInjectionWorkspaceModule } from '../cycle-time-injection-workspace/cycle-time-injection-workspace.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { TestExtensionExemptionsWorkspaceModule } from '../test-extension-exempt
     RataTraverseWorkspaceModule,
     TestQualificationWorkspaceModule,
     TestExtensionExemptionsWorkspaceModule,
+    CycleTimeInjectionWorkspaceModule,
   ],
   controllers: [QACertificationWorkspaceController],
   providers: [
