@@ -36,8 +36,8 @@ const mockTestExtensionExemptionWorkspaceService = () => ({
 });
 
 const mockChecksService = () => ({
-  runChecks: jest.fn().mockResolvedValue([])
-})
+  runChecks: jest.fn().mockResolvedValue([]),
+});
 
 describe('TestExtensionExemptionsWorkspaceController', () => {
   let controller: TestExtensionExemptionsWorkspaceController;
@@ -58,7 +58,7 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
         {
           provide: TestExtensionExemptionsChecksService,
           useFactory: mockChecksService,
-        }
+        },
       ],
     }).compile();
 
