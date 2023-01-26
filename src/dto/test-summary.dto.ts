@@ -164,15 +164,15 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      let resultCode
-      switch(args.object['testTypeCode']){
+      let resultCode;
+      switch (args.object['testTypeCode']) {
         case TestTypeCodes.APPE:
           resultCode = 'APPE-47-A';
           break;
         case TestTypeCodes.RATA:
           resultCode = 'RATA-117-A';
         default:
-          return 'You did not Severity provide [fieldname], which is required for [key].'
+          return `You did not provide [${args.property}], which is required for [${KEY}].`;
       }
       return CheckCatalogService.formatResultMessage(resultCode, {
         fieldname: args.property,
@@ -190,14 +190,28 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      let resultCode
-      switch(args.object['testTypeCode']){
+      let resultCode;
+      switch (args.object['testTypeCode']) {
         case TestTypeCodes.CYCLE:
           resultCode = 'CYCLE-22-A';
           break;
         case TestTypeCodes.SEVENDAY:
           resultCode = 'SEVNDAY-30-A';
           break;
+        case TestTypeCodes.LINE:
+          resultCode = 'LINEAR-35-A';
+          break;
+        case TestTypeCodes.ONOFF:
+          resultCode = 'ONOFF-37-A';
+          break;
+        case TestTypeCodes.FFACCTT:
+          resultCode = 'FFACCTT-12-A';
+          break;
+        case TestTypeCodes.FFACC:
+          resultCode = 'FFACC-1-A';
+          // TODO: Check Result does not exists in DB views. 
+          return `[FFACC-1-A] - You did not provide [${args.property}], which is required for [${KEY}].`;
+          // break;
         default:
           return `You did not provide [${args.property}], which is required for [${KEY}].`;
       }
@@ -270,24 +284,38 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('TEST-12-A', {
+      let resultCode;
+      switch (args.object['testTypeCode']) {
+        case TestTypeCodes.SEVENDAY:
+          resultCode = 'SEVNDAY-28-A';
+          break;
+        case TestTypeCodes.LINE:
+          resultCode = 'LINEAR-10-A';
+          break;
+        default:
+          return CheckCatalogService.formatResultMessage('TEST-12-A', {
+            fieldname: args.property,
+            key: KEY,
+          });
+      }
+      return CheckCatalogService.formatResultMessage(resultCode, {
         fieldname: args.property,
         key: KEY,
-      })
+      });
     },
   })
   @IsValidCode(TestResultCode, {
     message: (args: ValidationArguments) => {
-      let resultCode
-      switch(args.object['testTypeCode']){
+      let resultCode;
+      switch (args.object['testTypeCode']) {
         case TestTypeCodes.SEVENDAY:
-          resultCode = 'SEVNDAY-28-B'
+          resultCode = 'SEVNDAY-28-B';
           break;
         case TestTypeCodes.LINE:
           resultCode = 'LINEAR-10-B';
           break;
         case TestTypeCodes.ONOFF:
-          resultCode = 'ONOFF-39-B'
+          resultCode = 'ONOFF-39-B';
           break;
         default:
           return `You reported the value [${args.value}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`;
@@ -295,8 +323,8 @@ export class TestSummaryBaseDTO {
       return CheckCatalogService.formatResultMessage(resultCode, {
         value: args.value,
         fieldname: args.property,
-        key: KEY
-      })
+        key: KEY,
+      });
     },
   })
   @ValidateIf(o =>

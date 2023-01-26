@@ -4,9 +4,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { CycleTimeInjection } from '../entities/workspace/cycle-time-injection.entity';
 import { CycleTimeSummaryWorkspaceRepository } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.repository';
-import { 
+import {
   CycleTimeInjectionBaseDTO,
-  CycleTimeInjectionImportDTO
+  CycleTimeInjectionImportDTO,
 } from '../dto/cycle-time-injection.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -38,7 +38,7 @@ export class CycleTimeInjectionChecksService {
     isUpdate: boolean = false,
     cycleTimeInjections?: CycleTimeInjectionImportDTO[],
     testSummary?: TestSummaryImportDTO,
-    ): Promise<string[]> {
+  ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
     let testSumRecord;
@@ -64,16 +64,16 @@ export class CycleTimeInjectionChecksService {
   }
 
   private async cycle21Check(
-    cycleTimeInjection: CycleTimeInjectionBaseDTO | CycleTimeInjectionImportDTO
+    cycleTimeInjection: CycleTimeInjectionBaseDTO | CycleTimeInjectionImportDTO,
   ): Promise<string> {
     let error: string = null;
     let KEY: string = 'Cycle Time Injection';
 
-    if(!['ZERO', 'HIGH'].includes(cycleTimeInjection.gasLevelCode)){
-      error = this.getMessage('CYCLE-21-B', { 
+    if (!['ZERO', 'HIGH'].includes(cycleTimeInjection.gasLevelCode)) {
+      error = this.getMessage('CYCLE-21-B', {
         key: KEY,
         value: cycleTimeInjection.gasLevelCode,
-        fieldname: 'gasLevelCode'
+        fieldname: 'gasLevelCode',
       });
     }
 

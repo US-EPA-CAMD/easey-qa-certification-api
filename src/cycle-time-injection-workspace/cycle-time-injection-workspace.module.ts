@@ -21,8 +21,8 @@ import { CycleTimeInjectionChecksService } from './cycle-time-injection-workspac
   ],
   controllers: [CycleTimeInjectionWorkspaceController],
   providers: [
-    CycleTimeInjectionWorkspaceService, 
-    CycleTimeInjectionMap, 
+    CycleTimeInjectionWorkspaceService,
+    CycleTimeInjectionMap,
     CycleTimeInjectionChecksService,
   ],
   exports: [

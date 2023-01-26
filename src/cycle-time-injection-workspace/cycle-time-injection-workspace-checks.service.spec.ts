@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { CycleTimeInjection } from '../entities/workspace/cycle-time-injection.entity';
-import { 
+import {
   CycleTimeInjectionBaseDTO,
-  CycleTimeInjectionImportDTO
+  CycleTimeInjectionImportDTO,
 } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjectionChecksService } from './cycle-time-injection-workspace-checks.service';
 import { CycleTimeInjectionWorkspaceRepository } from './cycle-time-injection-workspace.repository';
@@ -74,7 +74,11 @@ describe('Linearity Injection Check Service Test', () => {
     const payload = new CycleTimeInjectionBaseDTO();
     payload.gasLevelCode = 'ZERO';
     it('Should pass all checks', async () => {
-      const result = await service.runChecks(payload, cycleTimeSumId, testSumId);
+      const result = await service.runChecks(
+        payload,
+        cycleTimeSumId,
+        testSumId,
+      );
       expect(result).toEqual([]);
     });
   });
