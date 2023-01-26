@@ -1,8 +1,5 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import {
-  IsNotEmpty,
-  ValidationArguments,
-} from 'class-validator';
+import { IsNotEmpty, ValidationArguments } from 'class-validator';
 import { ArrayContains } from '../pipes/array-contains.pipe';
 
 const KEY = 'Cycle Time Injection';
