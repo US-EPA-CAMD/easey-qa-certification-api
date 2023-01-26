@@ -1,29 +1,29 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
 import { getManager, In } from 'typeorm';
-import { ReviewAndSubmitTestSummaryRepository } from './review-and-submit-test-summary.repository';
-import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
 import { ReportingPeriod } from '../entities/reporting-period.entity';
+import { CertEventReviewAndSubmitRepository } from './cert-event-review-and-submit.repository';
+import { CertEventReviewAndSubmitMap } from '../maps/cert-event-review-and-submit.map';
+import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
 
 @Injectable()
-export class ReviewAndSubmitService {
+export class CertEventReviewAndSubmitService {
   constructor(
-    @InjectRepository(ReviewAndSubmitTestSummaryRepository)
-    private readonly repository: ReviewAndSubmitTestSummaryRepository,
-    private readonly map: ReviewAndSubmitTestSummaryMap,
+    @InjectRepository(CertEventReviewAndSubmitRepository)
+    private readonly repository: CertEventReviewAndSubmitRepository,
+    private readonly map: CertEventReviewAndSubmitMap,
   ) {}
 
   returnManager(): any {
     return getManager();
   }
 
-  async getTestSummaryRecords(
+  async getCertEventRecords(
     orisCodes: number[],
     monPlanIds: string[],
     quarters: string[],
-  ): Promise<ReviewAndSubmitTestSummaryDTO[]> {
+  ): Promise<CertEventReviewAndSubmitDTO[]> {
     const filteredDates = [];
 
     let data;
@@ -59,8 +59,8 @@ export class ReviewAndSubmitService {
           }
 
           if (
-            new Date(d.beginDate) >= new Date(rp.beginDate) &&
-            new Date(d.endDate) <= new Date(rp.endDate)
+            new Date(d.eventDate.split(' ')[0]) >= new Date(rp.beginDate) &&
+            new Date(d.eventDate.split(' ')[0]) <= new Date(rp.endDate)
           ) {
             found = true;
             d.periodAbbreviation = rp.periodAbbreviation;
