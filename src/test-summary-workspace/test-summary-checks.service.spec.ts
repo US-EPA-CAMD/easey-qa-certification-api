@@ -681,7 +681,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('Should get error for validTestResultCode for ONOFF', async () => {
-      payload.testTypeCode = 'ONOFF'
+      payload.testTypeCode = 'ONOFF';
       payload.testResultCode = 'INC';
 
       jest
@@ -701,9 +701,9 @@ describe('Test Summary Check Service Test', () => {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
-    
+
     it('Should get error for validTestResultCode for SEVNDAY', async () => {
-      payload.testTypeCode = 'SEVNDAY'
+      payload.testTypeCode = 'SEVNDAY';
       payload.testResultCode = 'INC';
 
       jest
