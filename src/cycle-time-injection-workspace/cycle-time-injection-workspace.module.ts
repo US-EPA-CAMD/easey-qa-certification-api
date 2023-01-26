@@ -19,10 +19,7 @@ import { CycleTimeInjectionModule } from '../cycle-time-injection/cycle-time-inj
     HttpModule,
   ],
   controllers: [CycleTimeInjectionWorkspaceController],
-  providers: [
-    CycleTimeInjectionWorkspaceService, 
-    CycleTimeInjectionMap, 
-  ],
+  providers: [CycleTimeInjectionWorkspaceService, CycleTimeInjectionMap],
   exports: [
     TypeOrmModule,
     CycleTimeInjectionMap,

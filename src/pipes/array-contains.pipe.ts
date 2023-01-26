@@ -6,8 +6,8 @@ import {
 
 export function ArrayContains(
   property: string[],
-  validationOptions?: ValidationOptions
-  ) {
+  validationOptions?: ValidationOptions,
+) {
   return function(object: Object, propertyName: string) {
     registerDecorator({
       name: 'ArrayContains',

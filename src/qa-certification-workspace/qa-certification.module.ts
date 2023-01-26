@@ -17,7 +17,7 @@ import { FlowRataRunWorkspaceModule } from '../flow-rata-run-workspace/flow-rata
 import { RataTraverseWorkspaceModule } from '../rata-traverse-workspace/rata-traverse-workspace.module';
 import { TestQualificationWorkspaceModule } from '../test-qualification-workspace/test-qualification-workspace.module';
 import { QaCertificationEventWorkspaceModule } from '../qa-certification-event-workspace/qa-certification-event-workspace.module';
-import { TestExtensionExemptionsWorkspaceModule } from 'src/test-extension-exemptions-workspace/test-extension-exemptions-workspace.module';
+import { TestExtensionExemptionsWorkspaceModule } from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.module';
 
 @Module({
   imports: [
