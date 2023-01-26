@@ -1316,7 +1316,8 @@ export class TestSummaryChecksService {
       s => s.testResultCode,
     );
     if (
-      !testResultCodes.includes(summary.testResultCode) && [
+      !testResultCodes.includes(summary.testResultCode) &&
+      [
         TestTypeCodes.SEVENDAY.toString(),
         TestTypeCodes.ONOFF.toString(),
       ].includes(summary.testTypeCode)
@@ -1326,12 +1327,12 @@ export class TestSummaryChecksService {
       );
 
       if (option) {
-        switch(summary.testTypeCode){
+        switch (summary.testTypeCode) {
           case TestTypeCodes.SEVENDAY.toString():
-            errorMessageCode = 'SEVNDAY-28-C'
+            errorMessageCode = 'SEVNDAY-28-C';
             break;
           case TestTypeCodes.ONOFF.toString():
-            errorMessageCode = 'ONOFF-39-C'
+            errorMessageCode = 'ONOFF-39-C';
             break;
         }
         error = this.getMessage(errorMessageCode, {

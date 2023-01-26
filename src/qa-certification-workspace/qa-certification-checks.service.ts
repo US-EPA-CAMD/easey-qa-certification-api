@@ -18,7 +18,7 @@ import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.serv
 import { FlowRataRunChecksService } from '../flow-rata-run-workspace/flow-rata-run-checks.service';
 import { RataTraverseChecksService } from '../rata-traverse-workspace/rata-traverse-checks.service';
 import { TestQualificationChecksService } from '../test-qualification-workspace/test-qualification-checks.service';
-import { TestExtensionExemptionsChecksService } from '../test-extension-exemptions-workspace/test-extension-exemptions-checks.service'
+import { TestExtensionExemptionsChecksService } from '../test-extension-exemptions-workspace/test-extension-exemptions-checks.service';
 import { CycleTimeInjectionChecksService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace-checks.service';
 
 @Injectable()
@@ -264,21 +264,23 @@ export class QACertificationChecksService {
         });
 
         summary.cycleTimeSummaryData?.forEach(cycleTimeSummary => {
-          cycleTimeSummary.cycleTimeInjectionData?.forEach(cycleTimeInjection => {
-            promises.push(
-              new Promise(async (resolve, _reject) => {
-                const results = this.cycleTimeInjectionChecksService.runChecks(
-                  cycleTimeInjection,
-                  null,
-                  null,
-                  true,
-                  false,
-                );
-  
-                resolve(results);
-              }),
-            );
-          })
+          cycleTimeSummary.cycleTimeInjectionData?.forEach(
+            cycleTimeInjection => {
+              promises.push(
+                new Promise(async (resolve, _reject) => {
+                  const results = this.cycleTimeInjectionChecksService.runChecks(
+                    cycleTimeInjection,
+                    null,
+                    null,
+                    true,
+                    false,
+                  );
+
+                  resolve(results);
+                }),
+              );
+            },
+          );
         });
       }
     }
