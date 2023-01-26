@@ -679,6 +679,50 @@ describe('Test Summary Check Service Test', () => {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
+
+    it('Should get error for validTestResultCode for ONOFF', async () => {
+      payload.testTypeCode = 'ONOFF';
+      payload.testResultCode = 'INC';
+
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+      jest
+        .spyOn(
+          testSummaryRelationshipRepository,
+          'getTestTypeCodesRelationships',
+        )
+        .mockResolvedValue([]);
+      jest.spyOn(testResultCodeRepository, 'findOne').mockResolvedValue(null);
+
+      try {
+        await service.runChecks(locationId, payload, true, false, [payload]);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+
+    it('Should get error for validTestResultCode for SEVNDAY', async () => {
+      payload.testTypeCode = 'SEVNDAY';
+      payload.testResultCode = 'INC';
+
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+      jest
+        .spyOn(
+          testSummaryRelationshipRepository,
+          'getTestTypeCodesRelationships',
+        )
+        .mockResolvedValue([]);
+      jest.spyOn(testResultCodeRepository, 'findOne').mockResolvedValue(null);
+
+      try {
+        await service.runChecks(locationId, payload, true, false, [payload]);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
   });
 
   // TEST-7 Test Dates Consistent
