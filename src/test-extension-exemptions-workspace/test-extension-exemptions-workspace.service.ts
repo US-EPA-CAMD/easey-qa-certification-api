@@ -140,7 +140,7 @@ export class TestExtensionExemptionsWorkspaceService {
     }
 
     this.logger.info(
-      `QA Certification Record Successfully Imported. Record Id: ${importedTestExtensionExemption.id}`,
+      `QA Test Extension Exemption Record Successfully Imported. Record Id: ${importedTestExtensionExemption.id}`,
     );
 
     return null;
