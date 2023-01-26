@@ -11,6 +11,7 @@ import { AppECorrelationTestRunWorkspaceModule } from '../app-e-correlation-test
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { AppEHeatInputFromGasModule } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.module';
 import { AppEHeatInputFromOilModule } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.module';
+import { AppECorrelationTestSummaryChecksService } from './app-e-correlation-test-summary-checks.service';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AppEHeatInputFromOilModule } from '../app-e-heat-input-from-oil/app-e-h
   providers: [
     AppECorrelationTestSummaryMap,
     AppECorrelationTestSummaryWorkspaceService,
+    AppECorrelationTestSummaryChecksService,
   ],
   exports: [
     TypeOrmModule,

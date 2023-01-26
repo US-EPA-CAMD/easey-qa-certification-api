@@ -745,6 +745,11 @@ export class TestSummaryChecksService {
       if (summary.testTypeCode === TestTypeCodes.LINE) {
         // LINEAR-31 Duplicate Linearity (Result A)
         error = this.getMessage('LINEAR-31-A', null);
+      } else if (summary.testTypeCode === TestTypeCodes.APPE) {
+        // APPE-46 Duplicate Appendix E Test (Result A)
+        error = this.getMessage('APPE-46-A', {
+          testtype: summary.testTypeCode,
+        });
       }
     } else {
       duplicate = await this.qaSuppDataRepository.getUnassociatedQASuppDataByLocationIdAndTestSum(
@@ -761,6 +766,10 @@ export class TestSummaryChecksService {
         if (summary.testTypeCode === TestTypeCodes.LINE) {
           // LINEAR-31 Duplicate Linearity (Result B)
           error = this.getMessage('LINEAR-31-B', null);
+        } else if (summary.testTypeCode === TestTypeCodes.APPE) {
+          error = this.getMessage('APPE-46-B', {
+            testtype: summary.testTypeCode,
+          });
         }
       }
     }

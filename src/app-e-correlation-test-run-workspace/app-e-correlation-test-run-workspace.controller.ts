@@ -23,6 +23,7 @@ import {
   AppECorrelationTestRunRecordDTO,
 } from '../dto/app-e-correlation-test-run.dto';
 import { AppECorrelationTestRunWorkspaceService } from './app-e-correlation-test-run-workspace.service';
+import { AppECorrelationTestRunChecksService } from './app-e-correlation-test-run-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -30,6 +31,7 @@ import { AppECorrelationTestRunWorkspaceService } from './app-e-correlation-test
 export class AppECorrelationTestRunWorkspaceController {
   constructor(
     private readonly service: AppECorrelationTestRunWorkspaceService,
+    private readonly checkService: AppECorrelationTestRunChecksService,
   ) {}
 
   @Get()
@@ -77,6 +79,7 @@ export class AppECorrelationTestRunWorkspaceController {
     @Body() payload: AppECorrelationTestRunBaseDTO,
     @User() user: CurrentUser,
   ): Promise<AppECorrelationTestRunRecordDTO> {
+    await this.checkService.runChecks(payload, null, appECorrTestSumId, false);
     return this.service.createAppECorrelationTestRun(
       testSumId,
       appECorrTestSumId,
@@ -102,6 +105,7 @@ export class AppECorrelationTestRunWorkspaceController {
     @Body() payload: AppECorrelationTestRunBaseDTO,
     @User() user: CurrentUser,
   ): Promise<AppECorrelationTestRunRecordDTO> {
+    await this.checkService.runChecks(payload, id, appECorrTestSumId, false);
     return this.service.updateAppECorrelationTestRun(
       testSumId,
       appECorrTestSumId,
