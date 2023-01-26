@@ -209,7 +209,9 @@ export class TestSummaryBaseDTO {
           break;
         case TestTypeCodes.FFACC:
           resultCode = 'FFACC-1-A';
-          break;
+          // TODO: Check Result does not exists in DB views. 
+          return `[FFACC-1-A] - You did not provide [${args.property}], which is required for [${KEY}].`;
+          // break;
         default:
           return `You did not provide [${args.property}], which is required for [${KEY}].`;
       }
