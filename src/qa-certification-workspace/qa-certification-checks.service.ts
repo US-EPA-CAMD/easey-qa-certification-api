@@ -19,6 +19,7 @@ import { FlowRataRunChecksService } from '../flow-rata-run-workspace/flow-rata-r
 import { RataTraverseChecksService } from '../rata-traverse-workspace/rata-traverse-checks.service';
 import { TestQualificationChecksService } from '../test-qualification-workspace/test-qualification-checks.service';
 import { TestExtensionExemptionsChecksService } from '../test-extension-exemptions-workspace/test-extension-exemptions-checks.service'
+import { CycleTimeInjectionChecksService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -35,6 +36,7 @@ export class QACertificationChecksService {
     private readonly flowRataRunChecksService: FlowRataRunChecksService,
     private readonly rataTraverseChecksService: RataTraverseChecksService,
     private readonly testExtensionExemptionsChecksService: TestExtensionExemptionsChecksService,
+    private readonly cycleTimeInjectionChecksService: CycleTimeInjectionChecksService,
     @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
   ) {}
@@ -259,6 +261,24 @@ export class QACertificationChecksService {
               resolve(results);
             }),
           );
+        });
+
+        summary.cycleTimeSummaryData?.forEach(cycleTimeSummary => {
+          cycleTimeSummary.cycleTimeInjectionData?.forEach(cycleTimeInjection => {
+            promises.push(
+              new Promise(async (resolve, _reject) => {
+                const results = this.cycleTimeInjectionChecksService.runChecks(
+                  cycleTimeInjection,
+                  null,
+                  null,
+                  true,
+                  false,
+                );
+  
+                resolve(results);
+              }),
+            );
+          })
         });
       }
     }

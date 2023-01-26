@@ -9,6 +9,7 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
 import { CycleTimeSummaryWorkspaceModule } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.module';
 import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
 import { CycleTimeInjectionModule } from '../cycle-time-injection/cycle-time-injection.module';
+import { CycleTimeInjectionChecksService } from './cycle-time-injection-workspace-checks.service';
 
 @Module({
   imports: [
@@ -22,11 +23,13 @@ import { CycleTimeInjectionModule } from '../cycle-time-injection/cycle-time-inj
   providers: [
     CycleTimeInjectionWorkspaceService, 
     CycleTimeInjectionMap, 
+    CycleTimeInjectionChecksService,
   ],
   exports: [
     TypeOrmModule,
     CycleTimeInjectionMap,
     CycleTimeInjectionWorkspaceService,
+    CycleTimeInjectionChecksService,
   ],
 })
 export class CycleTimeInjectionWorkspaceModule {}
