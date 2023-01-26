@@ -164,14 +164,17 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
+      let resultCode
       switch(args.object['testTypeCode']){
         case 'APPE':
-          return CheckCatalogService.formatResultMessage('APPE-47-A', {
-            fieldname: args.property,
-            key: KEY,
-          });
+          resultCode = 'APPE-47-A';
+          break;
+        case 'RATA':
+          resultCode = 'RATA-117-A';
+        default:
+          return 'You did not Severity provide [fieldname], which is required for [key].'
       }
-      return CheckCatalogService.formatResultMessage('RATA-117-A', {
+      return CheckCatalogService.formatResultMessage(resultCode, {
         fieldname: args.property,
         key: KEY,
       });
@@ -282,6 +285,9 @@ export class TestSummaryBaseDTO {
           break;
         case 'LINE':
           resultCode = 'LINEAR-10-B';
+          break;
+        case 'ONOFF':
+          resultCode = 'ONOFF-39-B'
           break;
         default:
           return `You reported the value [${args.value}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`;
