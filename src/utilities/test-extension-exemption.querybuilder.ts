@@ -11,7 +11,7 @@ export const addJoins = (
 > => {
   return query
     .innerJoinAndSelect('tee.location', 'ml')
-    .leftJoinAndSelect('ts.reportingPeriod', 'rp')
+    .leftJoinAndSelect('tee.reportingPeriod', 'rp')
     .leftJoinAndSelect('tee.system', 'ms')
     .leftJoinAndSelect('tee.component', 'c')
     .leftJoinAndSelect('ml.unit', 'u')
