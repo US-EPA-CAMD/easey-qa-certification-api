@@ -13,6 +13,7 @@ import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-s
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestSummaryRepository } from '../test-summary/test-summary.repository';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -23,12 +24,11 @@ const rataSumId = '';
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 const monitorSystemRecord = new MonitorSystem();
-let testSumRecord = {
-  testTypeCode: TestTypeCodes.RATA,
-  system: {
-    systemTypeCode: 'FLOW',
-  },
-};
+
+let testSumRecord = new TestSummary();
+testSumRecord.testTypeCode = TestTypeCodes.RATA
+testSumRecord.system = new MonitorSystem();
+testSumRecord.system.systemTypeCode = 'FLOW';
 
 const importPayload = new RataRunImportDTO();
 importPayload.runNumber = 999;
@@ -37,13 +37,19 @@ importPayload.endMinute = 30;
 importPayload.cemValue = 1000;
 importPayload.rataReferenceValue = 1000;
 importPayload.runStatusCode = 'RUNUSED';
+importPayload.beginDate = new Date('2022-01-01');
+importPayload.beginHour = 0
+importPayload.beginMinute = 0
+importPayload.endDate = new Date('2023-01-01');
+importPayload.endHour = 0
+importPayload.endMinute = 0
 
 const mockTestSumRepository = () => ({
   getTestSummaryById: jest.fn().mockResolvedValue(new TestSummary()),
 });
 
 const mockTestSummaryRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(testSumRecord),
+  getTestSummaryById: jest.fn().mockResolvedValue(testSumRecord),
 });
 const mockMonitorSystemRepository = () => ({
   findOne: jest.fn().mockResolvedValue(monitorSystemRecord),
@@ -53,6 +59,7 @@ const mockRataSummaryWorkspaceRepository = () => ({
 });
 const mockRataRunWorkspaceRepository = () => ({
   findOne: jest.fn().mockResolvedValue(rataRunId),
+  find: jest.fn().mockResolvedValue([])
 });
 
 describe('Rata Run Check Service Test', () => {
@@ -97,12 +104,110 @@ describe('Rata Run Check Service Test', () => {
     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
 
+  describe('RATA-27 CEM Value Valid', () => {
+    it('Should get [RATA-27-C] error', async () => {
+      importPayload.cemValue = 1.0001;
+      
+      importPayload.rataReferenceValue = 1;
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(testSummaryRepository, 'getTestSummaryById').mockResolvedValue(testSumRecord)
+
+      try {
+        await service.runChecks(
+          importPayload,
+          locationId,
+          testSumId,
+          false,
+          false,
+        );
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+      }
+    });
+  });
+
+  describe('RATA-29 CEM Value Valid', () => {
+    it('Should get [RATA-29-C] error', async () => {
+      importPayload.cemValue = 1;
+      importPayload.runStatusCode = 'IGNORED';
+      importPayload.rataReferenceValue = 1;
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(testSummaryRepository, 'getTestSummaryById').mockResolvedValue(testSumRecord)
+
+      try {
+        await service.runChecks(
+          importPayload,
+          locationId,
+          testSumId,
+          false,
+          false,
+        );
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+  });
+
+  describe('RATA-31 Run End Time Valid', () => {
+    it('Should get [RATA-31-B] error', async () => {
+      importPayload.cemValue = 1;
+      importPayload.beginDate = new Date('2023-01-01');
+      importPayload.beginHour = 0
+      importPayload.beginMinute = 0
+      importPayload.endDate = new Date('2022-01-01');
+      importPayload.endHour = 0
+      importPayload.endMinute = 0
+      importPayload.rataReferenceValue = 1;
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(testSummaryRepository, 'getTestSummaryById').mockResolvedValue(testSumRecord)
+
+      try {
+        await service.runChecks(
+          importPayload,
+          locationId,
+          testSumId,
+          false,
+          false,
+        );
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+  });
+
+  describe('RATA-33 Run End Time Valid', () => {
+    it('Should get [RATA-33-C] error', async () => {
+      importPayload.cemValue = 1;
+      importPayload.rataReferenceValue = 1.0001
+      importPayload.rataReferenceValue = 1;
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(testSummaryRepository, 'getTestSummaryById').mockResolvedValue(testSumRecord)
+
+      try {
+        await service.runChecks(
+          importPayload,
+          locationId,
+          testSumId,
+          false,
+          false,
+        );
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+  });
+
   describe('RATA-101 RATA Run Values Valid', () => {
     it('Should get [RATA-101-A] error', async () => {
       importPayload.cemValue = 1;
       importPayload.rataReferenceValue = 1;
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(testSummaryRepository, 'getTestSummaryById').mockResolvedValue(testSumRecord)
 
       try {
         await service.runChecks(
@@ -117,10 +222,11 @@ describe('Rata Run Check Service Test', () => {
       }
     });
     it('Should get [RATA-101-B] error', async () => {
-      importPayload.cemValue = 0;
-      importPayload.rataReferenceValue = 0;
+      importPayload.cemValue = -1;
+      importPayload.rataReferenceValue = -1;
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(testSummaryRepository, 'getTestSummaryById').mockResolvedValue(testSumRecord)
 
       try {
         await service.runChecks(
@@ -139,13 +245,24 @@ describe('Rata Run Check Service Test', () => {
     it('Should get [RATA-108-A] error', async () => {
       const payload = new RataRunBaseDTO();
       payload.runNumber = 4;
+      payload.beginDate = new Date('2022-01-01');
+      payload.beginHour = 0
+      payload.beginMinute = 0
+      payload.endDate = new Date('2023-01-01');
+      payload.endHour = 0
+      payload.endMinute = 0
 
       const returnValue = new RataRun();
       payload.runNumber = 4;
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(returnValue);
+      const testSumImportRecord = new TestSummaryImportDTO();
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
+      jest.spyOn(testSummaryRepository, 'getTestSummaryById').mockResolvedValue(testSumRecord)
+
       try {
-        await service.runChecks(payload, locationId, testSumId);
+        await service.runChecks(payload, locationId, testSumId, false, false, testSumImportRecord, rataSumId);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
       }
@@ -154,6 +271,9 @@ describe('Rata Run Check Service Test', () => {
   describe('RATA-130 RATA Run valid for HG', () => {
     it('Should get [RATA-130-A] error', async () => {
       importPayload.endMinute = 0;
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(testSummaryRepository, 'getTestSummaryById').mockResolvedValue(testSumRecord)
 
       try {
         await service.runChecks(
@@ -169,6 +289,9 @@ describe('Rata Run Check Service Test', () => {
     });
     it('Should get [RATA-130-B] error', async () => {
       importPayload.endMinute = 0;
+
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(testSummaryRepository, 'getTestSummaryById').mockResolvedValue(testSumRecord)
 
       try {
         await service.runChecks(
