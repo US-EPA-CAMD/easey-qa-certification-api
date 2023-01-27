@@ -12,6 +12,7 @@ import { RataRun } from '../entities/workspace/rata-run.entity';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestSummaryRepository } from '../test-summary/test-summary.repository';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -23,6 +24,7 @@ const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 const monitorSystemRecord = new MonitorSystem();
 let testSumRecord = {
+  testTypeCode: TestTypeCodes.RATA,
   system: {
     systemTypeCode: 'FLOW',
   },
