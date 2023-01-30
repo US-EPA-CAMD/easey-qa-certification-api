@@ -1,6 +1,5 @@
 import { EntityRepository, Repository } from 'typeorm';
 import { AppEHeatInputFromGas } from '../entities/workspace/app-e-heat-input-from-gas.entity';
-import {AppEHeatInputFromOil} from "../entities/workspace/app-e-heat-input-from-oil.entity";
 
 @EntityRepository(AppEHeatInputFromGas)
 export class AppEHeatInputFromGasWorkspaceRepository extends Repository<

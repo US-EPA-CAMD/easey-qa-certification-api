@@ -84,7 +84,6 @@ export class CycleTimeInjectionWorkspaceController {
       cycleTimeSumId,
       testSumId,
       false,
-      false,
     );
     return this.service.createCycleTimeInjection(
       testSumId,
@@ -115,7 +114,6 @@ export class CycleTimeInjectionWorkspaceController {
       _cycleTimeSumId,
       testSumId,
       false,
-      true,
     );
     return this.service.updateCycleTimeInjection(
       testSumId,

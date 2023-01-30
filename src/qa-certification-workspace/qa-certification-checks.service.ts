@@ -274,7 +274,6 @@ export class QACertificationChecksService {
                     null,
                     null,
                     true,
-                    false,
                   );
 
                   resolve(results);

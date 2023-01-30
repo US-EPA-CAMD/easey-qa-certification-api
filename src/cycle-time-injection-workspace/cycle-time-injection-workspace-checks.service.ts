@@ -1,8 +1,7 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { CycleTimeInjection } from '../entities/workspace/cycle-time-injection.entity';
 import { CycleTimeSummaryWorkspaceRepository } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.repository';
 import {
   CycleTimeInjectionBaseDTO,
@@ -13,9 +12,6 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import {AppEHeatInputFromGasBaseDTO} from "../dto/app-e-heat-input-from-gas.dto";
-import {AppECorrelationTestRun} from "../entities/workspace/app-e-correlation-test-run.entity";
-import {CycleTimeSummary} from "../entities/workspace/cycle-time-summary.entity";
 import {CycleTimeInjectionWorkspaceRepository} from "./cycle-time-injection-workspace.repository";
 import {TestSummary} from "../entities/workspace/test-summary.entity";
 
@@ -43,7 +39,6 @@ export class CycleTimeInjectionChecksService {
     cycleTimeSumId: string,
     testSumId: string,
     isImport: boolean = false,
-    isUpdate: boolean = false,
     cycleTimeInjections?: CycleTimeInjectionImportDTO[],
     testSummary?: TestSummaryImportDTO,
   ): Promise<string[]> {
