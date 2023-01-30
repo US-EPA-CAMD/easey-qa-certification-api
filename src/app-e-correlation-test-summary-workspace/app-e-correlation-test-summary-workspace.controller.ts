@@ -23,6 +23,7 @@ import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-
 import { User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { AppECorrelationTestSummaryChecksService } from './app-e-correlation-test-summary-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -30,6 +31,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 export class AppendixETestSummaryWorkspaceController {
   constructor(
     private readonly service: AppECorrelationTestSummaryWorkspaceService,
+    private readonly checksService: AppECorrelationTestSummaryChecksService,
   ) {}
 
   @Get()
@@ -75,6 +77,7 @@ export class AppendixETestSummaryWorkspaceController {
     @Body() payload: AppECorrelationTestSummaryBaseDTO,
     @User() user: CurrentUser,
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
+    await this.checksService.runChecks(payload, null, testSumId);
     return this.service.createAppECorrelation(testSumId, payload, user.userId);
   }
 
@@ -85,13 +88,14 @@ export class AppendixETestSummaryWorkspaceController {
     type: AppECorrelationTestSummaryRecordDTO,
     description: 'Updates a workspace Appendix E Test Summary record',
   })
-  editAppECorrelation(
+  async editAppECorrelation(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
     @Body() payload: AppECorrelationTestSummaryBaseDTO,
     @User() user: CurrentUser,
   ) {
+    await this.checksService.runChecks(payload, id, testSumId, false);
     return this.service.editAppECorrelation(
       testSumId,
       id,

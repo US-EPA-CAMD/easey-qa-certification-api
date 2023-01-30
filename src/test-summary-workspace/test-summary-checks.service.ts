@@ -749,7 +749,8 @@ export class TestSummaryChecksService {
       }
 
       error = await this.getDuplicateErrorMessage(summary.testTypeCode, 'A');
-    } else {
+
+  } else {
       duplicate = await this.qaSuppDataRepository.getUnassociatedQASuppDataByLocationIdAndTestSum(
         locationId,
         historicalTestSumId,
@@ -761,6 +762,7 @@ export class TestSummaryChecksService {
         if (isImport) {
           fields = this.compareFields(duplicate, summary);
         }
+
         error = await this.getDuplicateErrorMessage(summary.testTypeCode, 'B');
       }
     }
@@ -804,6 +806,22 @@ export class TestSummaryChecksService {
       case testTypeCode === TestTypeCodes.RATA:
         // RATA-106 Duplicate RATA
         error = this.getMessage(`RATA-106-${checkType}`, null);
+        break;
+      case testTypeCode === TestTypeCodes.LINE:
+        // LINEAR-31 Duplicate Linearity
+        error = this.getMessage('LINEAR-31-${checkType}', null);
+        break;
+      case testTypeCode === TestTypeCodes.APPE:
+        // APPE-46 Duplicate Appendix E Correlation
+        error = this.getMessage('APPE-46-${checkType}', {testtype: testTypeCode,});
+        break;
+      case testTypeCode === TestTypeCodes.SEVENDAY:
+        // SEVNDAY-29 Duplicate Calibration Test
+        error = this.getMessage('SEVNDAY-29-${checkType}', {testtype: testTypeCode,});
+        break;
+      case testTypeCode === TestTypeCodes.CYCLE:
+        // CYCLE-19 Duplicate Cycle Time
+        error = this.getMessage('CYCLE-19-${checkType}', {testtype: testTypeCode,});
         break;
       case MISC_TEST_TYPE_CODES.includes(testTypeCode):
         // TEST-19 Duplicate Miscellaneous Test

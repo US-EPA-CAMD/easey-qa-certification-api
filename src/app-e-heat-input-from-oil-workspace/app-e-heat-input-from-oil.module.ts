@@ -8,17 +8,21 @@ import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oi
 import { AppEHeatInputFromOilWorkspaceController } from './app-e-heat-input-from-oil.controller';
 import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import {AppEHeatInputFromOilChecksService} from "./app-e-heat-input-from-oil-checks.service";
+import {
+  AppECorrelationTestRunWorkspaceModule
+} from "../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AppEHeatInputFromOilWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
+    forwardRef(() => AppECorrelationTestRunWorkspaceModule),
     forwardRef(() => AppEHeatInputFromOilModule),
     HttpModule,
   ],
   controllers: [AppEHeatInputFromOilWorkspaceController],
-  providers: [AppEHeatInputFromOilWorkspaceService, AppEHeatInputFromOilMap],
+  providers: [AppEHeatInputFromOilWorkspaceService, AppEHeatInputFromOilMap, AppEHeatInputFromOilChecksService],
   exports: [
     TypeOrmModule,
     AppEHeatInputFromOilMap,

@@ -80,9 +80,9 @@ export class CycleTimeInjectionWorkspaceController {
   ): Promise<CycleTimeInjectionRecordDTO> {
     await this.checksService.runChecks(
       payload,
+      null,
       cycleTimeSumId,
       testSumId,
-      false,
       false,
     );
     return this.service.createCycleTimeInjection(
@@ -110,10 +110,10 @@ export class CycleTimeInjectionWorkspaceController {
   ): Promise<CycleTimeInjectionRecordDTO> {
     await this.checksService.runChecks(
       payload,
+      id,
       _cycleTimeSumId,
       testSumId,
       false,
-      true,
     );
     return this.service.updateCycleTimeInjection(
       testSumId,
