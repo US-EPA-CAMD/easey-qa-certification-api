@@ -39,9 +39,9 @@ export class ProtocolGasChecksService {
     protocolGas: ProtocolGasBaseDTO | ProtocolGasImportDTO,
     locationId: string,
     testSumId?: string,
-    testSummary?: TestSummaryImportDTO,
     isImport: boolean = false,
     isUpdate: boolean = false,
+    testSummary?: TestSummaryImportDTO,
   ): Promise<string[]> {
     let errorList: string[] = [];
     let error: string;
