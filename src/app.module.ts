@@ -80,6 +80,7 @@ import { MonitorSystemWorkspaceModule } from './monitor-system-workspace/monitor
 import { TestExtensionExemptionsWorkspaceModule } from './test-extension-exemptions-workspace/test-extension-exemptions-workspace.module';
 import { TestExtensionExemptionsModule } from './test-extension-exemptions/test-extension-exemptions.module';
 import { QaCertificationEventModule } from './qa-certification-event/qa-certification-event.module';
+import { GasComponentCodeModule } from './gas-component-code/gas-component-code.module';
 @Module({
   imports: [
     RouterModule.forRoutes(routes),
@@ -160,6 +161,7 @@ import { QaCertificationEventModule } from './qa-certification-event/qa-certific
     TestExtensionExemptionsWorkspaceModule,
     TestExtensionExemptionsModule,
     QaCertificationEventModule,
+    GasComponentCodeModule,
   ],
 })
 export class AppModule {}
