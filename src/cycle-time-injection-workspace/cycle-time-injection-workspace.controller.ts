@@ -25,7 +25,6 @@ import {
 } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjectionChecksService } from './cycle-time-injection-workspace-checks.service';
 import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-workspace.service';
-import {CycleTimeInjectionChecksService} from "./cycle-time-injection-checks.service";
 
 @Controller()
 @ApiSecurity('APIKey')

@@ -807,21 +807,21 @@ export class TestSummaryChecksService {
         // RATA-106 Duplicate RATA
         error = this.getMessage(`RATA-106-${checkType}`, null);
         break;
-      case TestTypeCodes.LINE: 
-        // LINEAR-31 Duplicate Linearity (Result B)
-        error = this.getMessage('LINEAR-31-B', null);
+      case testTypeCode === TestTypeCodes.LINE:
+        // LINEAR-31 Duplicate Linearity
+        error = this.getMessage('LINEAR-31-${checkType}', null);
         break;
-      case TestTypeCodes.APPE:
-        // APPE-46 Duplicate Appendix E Correlation (Result B)
-        error = this.getMessage('APPE-46-B', {testtype: summary.testTypeCode,});
+      case testTypeCode === TestTypeCodes.APPE:
+        // APPE-46 Duplicate Appendix E Correlation
+        error = this.getMessage('APPE-46-${checkType}', {testtype: testTypeCode,});
         break;
-      case TestTypeCodes.SEVENDAY:
-        // SEVNDAY-29 Duplicate Calibration Test (Result B)
-        error = this.getMessage('SEVNDAY-29-B', {testtype: summary.testTypeCode,});
+      case testTypeCode === TestTypeCodes.SEVENDAY:
+        // SEVNDAY-29 Duplicate Calibration Test
+        error = this.getMessage('SEVNDAY-29-${checkType}', {testtype: testTypeCode,});
         break;
-      case TestTypeCodes.CYCLE:
-        // CYCLE-19 Duplicate Cycle Time (Result B)
-        error = this.getMessage('CYCLE-19-B', {testtype: summary.testTypeCode,});
+      case testTypeCode === TestTypeCodes.CYCLE:
+        // CYCLE-19 Duplicate Cycle Time
+        error = this.getMessage('CYCLE-19-${checkType}', {testtype: testTypeCode,});
         break;
       case MISC_TEST_TYPE_CODES.includes(testTypeCode):
         // TEST-19 Duplicate Miscellaneous Test
