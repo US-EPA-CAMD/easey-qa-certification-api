@@ -7,7 +7,7 @@ import {
   PrimaryColumn,
 } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
-import { AppECorrelationTestRun } from '../app-e-correlation-test-run.entity';
+import { AppECorrelationTestRun } from '../workspace/app-e-correlation-test-run.entity';
 import { MonitorSystem } from './monitor-system.entity';
 
 @Entity({ name: 'camdecmpswks.ae_hi_gas' })
