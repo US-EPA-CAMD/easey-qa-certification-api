@@ -11,6 +11,7 @@ import {
 import { CycleTimeInjectionWorkspaceController } from './cycle-time-injection-workspace.controller';
 import { CycleTimeInjectionWorkspaceRepository } from './cycle-time-injection-workspace.repository';
 import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-workspace.service';
+import {CycleTimeInjectionChecksService} from "./cycle-time-injection-checks.service";
 
 const locId = '';
 const testSumId = '';
@@ -51,6 +52,10 @@ const mockService = () => ({
   deleteCycleTimeInjection: jest.fn().mockResolvedValue(null),
 });
 
+const mockChecksService = () => ({
+  runChecks: jest.fn(),
+});
+
 describe('CycleTimeInjectionWorkspaceController', () => {
   let controller: CycleTimeInjectionWorkspaceController;
   let service: CycleTimeInjectionWorkspaceService;
@@ -66,6 +71,10 @@ describe('CycleTimeInjectionWorkspaceController', () => {
         {
           provide: CycleTimeInjectionWorkspaceService,
           useFactory: mockService,
+        },
+        {
+          provide: CycleTimeInjectionChecksService,
+          useFactory: mockChecksService,
         },
       ],
     }).compile();

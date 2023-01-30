@@ -33,4 +33,13 @@ export class AppECorrelationTestRunWorkspaceRepository extends Repository<
 
     return this.findOne(options);
   }
+
+  async findOneWithAncestors(id: string): Promise<AppECorrelationTestRun> {
+    return this.findOne({
+      relations: ['appECorrelationTestSummary', 'appECorrelationTestSummary.testSummary'],
+      where: {
+        id: id
+      }
+    })
+  }
 }

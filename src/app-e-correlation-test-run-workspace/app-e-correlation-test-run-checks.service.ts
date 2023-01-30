@@ -48,7 +48,7 @@ export class AppECorrelationTestRunChecksService {
     }
 
     this.throwIfErrors(errorList);
-    this.logger.info('Completed Appendix E Test Summary Checks');
+    this.logger.info('Completed Appendix E Test Run Checks');
     return errorList;
   }
 

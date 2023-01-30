@@ -38,4 +38,22 @@ export class AppEHeatInputFromOilWorkspaceRepository extends Repository<
 
     return query.getMany();
   }
+
+  async findDuplicate(aeHiOilId: string, testSumId: string, opLevel: number, runNumber: number, monSysId: string):
+      Promise<AppEHeatInputFromOil> {
+    const query = this.createQueryBuilder('aehio')
+        .innerJoin('aehio.appECorrelationTestRun', 'aerun')
+        .innerJoin('aerun.appECorrelationTestSummary', 'aesum')
+        .innerJoin('aesum.testSummary', 'testsum')
+        .innerJoin('aehio.system', 'monsys')
+        .where('testsum.id = :testsumid', {testsumid: testSumId})
+        .andWhere('aesum.operatingLevelForRun = :oplevel', {oplevel: opLevel})
+        .andWhere('aerun.runNumber = :runnumber', {runnumber: runNumber})
+        .andWhere('monsys.monitoringSystemID = :monsysid', {monsysid: monSysId})
+
+    if(aeHiOilId)
+      query.andWhere('aehio.id != :id', {id: aeHiOilId});
+
+    return query.getOne();
+  }
 }

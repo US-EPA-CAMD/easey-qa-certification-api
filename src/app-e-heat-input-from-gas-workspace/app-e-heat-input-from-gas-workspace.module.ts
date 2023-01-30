@@ -8,18 +8,23 @@ import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { AppECorrelationTestSummaryWorkspaceModule } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.module';
 import { AppEHeatInputFromGasModule } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.module';
+import {AppEHeatInputFromGasChecksService} from "./app-e-heat-input-from-gas-checks.service";
+import {
+  AppECorrelationTestRunWorkspaceModule
+} from "../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AppEHeatInputFromGasWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => AppECorrelationTestSummaryWorkspaceModule),
+    forwardRef(() => AppECorrelationTestRunWorkspaceModule),
     forwardRef(() => AppEHeatInputFromGasModule),
 
     HttpModule,
   ],
   controllers: [AppEHeatInputFromGasWorkspaceController],
-  providers: [AppEHeatInputFromGasWorkspaceService, AppEHeatInputFromGasMap],
+  providers: [AppEHeatInputFromGasWorkspaceService, AppEHeatInputFromGasMap, AppEHeatInputFromGasChecksService],
   exports: [
     TypeOrmModule,
     AppEHeatInputFromGasMap,

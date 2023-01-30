@@ -750,7 +750,18 @@ export class TestSummaryChecksService {
         error = this.getMessage('APPE-46-A', {
           testtype: summary.testTypeCode,
         });
+      } else if (summary.testTypeCode === TestTypeCodes.SEVENDAY) {
+        // SEVNDAY-29 Duplicate Calibration Test (Result A)
+        error = this.getMessage('SEVNDAY-29-A', {
+          testtype: summary.testTypeCode,
+        })
+      } else if (summary.testTypeCode === TestTypeCodes.CYCLE) {
+        // CYCLE-19 Duplicate Cycle Time (Result A)
+        error = this.getMessage('CYCLE-19-A', {
+          testtype: summary.testTypeCode,
+        })
       }
+
     } else {
       duplicate = await this.qaSuppDataRepository.getUnassociatedQASuppDataByLocationIdAndTestSum(
         locationId,
@@ -767,9 +778,20 @@ export class TestSummaryChecksService {
           // LINEAR-31 Duplicate Linearity (Result B)
           error = this.getMessage('LINEAR-31-B', null);
         } else if (summary.testTypeCode === TestTypeCodes.APPE) {
+          // APPE-46 Duplicate Appendix E Correlation (Result B)
           error = this.getMessage('APPE-46-B', {
             testtype: summary.testTypeCode,
           });
+        } else if (summary.testTypeCode === TestTypeCodes.SEVENDAY) {
+          // SEVNDAY-29 Duplicate Calibration Test (Result B)
+          error = this.getMessage('SEVNDAY-29-B', {
+            testtype: summary.testTypeCode,
+          })
+        } else if (summary.testTypeCode === TestTypeCodes.CYCLE) {
+          // CYCLE-19 Duplicate Cycle Time (Result B)
+          error = this.getMessage('CYCLE-19-B', {
+            testtype: summary.testTypeCode,
+          })
         }
       }
     }
