@@ -13,6 +13,7 @@ import {
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { GasComponentCodeRepository } from '../gas-component-code/gas-component-code.repository';
 
 const KEY = 'Protocol Gas';
 
@@ -24,6 +25,8 @@ export class ProtocolGasChecksService {
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
     @InjectRepository(MonitorSystemRepository)
     private readonly monitorSystemRepository: MonitorSystemRepository,
+    @InjectRepository(GasComponentCodeRepository)
+    private readonly gasComponentCodeRepository: GasComponentCodeRepository,
   ) {}
 
   private throwIfErrrors(errorList: string[]) {
@@ -36,9 +39,9 @@ export class ProtocolGasChecksService {
     protocolGas: ProtocolGasBaseDTO | ProtocolGasImportDTO,
     locationId: string,
     testSumId?: string,
-    testSummary?: TestSummaryImportDTO,
     isImport: boolean = false,
     isUpdate: boolean = false,
+    testSummary?: TestSummaryImportDTO,
   ): Promise<string[]> {
     let errorList: string[] = [];
     let error: string;
@@ -67,9 +70,21 @@ export class ProtocolGasChecksService {
     }
 
     // PGVP-9
-    error = this.pgvp9Check(protocolGas.gasTypeCode, testSummary.testTypeCode);
+    error = this.pgvp9Check(
+      protocolGas.gasTypeCode,
+      testSumRecord.testTypeCode,
+    );
     if (error) {
       errorList.push(error);
+    }
+
+    // PGVP-12 and PGVP-13
+    const errors = await this.pgvp12and13Checks(
+      protocolGas.gasTypeCode,
+      testSumRecord.testTypeCode,
+    );
+    if (errors.length > 0) {
+      errorList.push(...errors);
     }
 
     this.throwIfErrrors(errorList);
@@ -107,5 +122,160 @@ export class ProtocolGasChecksService {
     }
 
     return error;
+  }
+
+  private async pgvp12and13Checks(
+    gasTypeCode: string,
+    testTypeCode: string,
+  ): Promise<string[]> {
+    let error: string;
+    let errorList: string[] = [];
+
+    let pgApprovalRequested = false;
+    const pgInvalidComponentList = [];
+    const pgExclusiveComponentList = [];
+    const pgBalanceComponentList = [];
+    const pgDuplicateComponentList = [];
+    const pgComponentList = [];
+    let containsZERO = false;
+
+    const gasComponents = await this.gasComponentCodeRepository.find();
+
+    if (gasTypeCode) {
+      const gasTypeCodes = gasTypeCode.split(',');
+
+      const gasComponentCodes = gasComponents.map(gc => gc.gasComponentCode);
+
+      gasTypeCodes.forEach(el => {
+        const found = gasComponentCodes.includes(el);
+
+        if (!found) {
+          pgInvalidComponentList.push(el);
+        }
+
+        if (found) {
+          const filteredGasComponent = gasComponents.find(
+            gc => el === gc.gasComponentCode,
+          );
+
+          if (filteredGasComponent.canCombineIndicator === 0) {
+            pgExclusiveComponentList.push(el);
+          }
+
+          if (filteredGasComponent.balanceComponentIndicator === 1) {
+            pgBalanceComponentList.push(el);
+          }
+        }
+
+        if (el === 'APPVD') {
+          pgApprovalRequested = true;
+        }
+
+        if (el === 'ZERO') {
+          containsZERO = true;
+        }
+
+        if (!pgComponentList.includes(el)) {
+          pgComponentList.push(el);
+        } else {
+          pgDuplicateComponentList.push(el);
+        }
+
+        // pgvp-13
+        if (pgInvalidComponentList.length === 0 && !pgApprovalRequested) {
+          if (!['GMIS', 'NTRM', 'PRM', 'RGM', 'SRM', 'ZERO'].includes(el)) {
+            if (['SO2, CO2'].includes(el)) {
+              if (!found) {
+                error = CheckCatalogService.formatResultMessage('PGVP-13-A');
+                errorList.push(error);
+              }
+            }
+
+            if (el === 'O2') {
+              if (gasTypeCode !== 'AIR' && !gasTypeCodes.includes('O2')) {
+                error = CheckCatalogService.formatResultMessage('PGVP-13-B');
+                errorList.push(error);
+              }
+            }
+
+            if ((testTypeCode === 'LINE' && el === 'NOX') || el === 'NOXC') {
+              if (['NO', 'NO2', 'NOX'].includes(el)) {
+                error = CheckCatalogService.formatResultMessage('PGVP-13-C');
+                errorList.push(error);
+              }
+            }
+
+            if (
+              ['RATA', 'APPE', 'UNITDEF'].includes(testTypeCode) &&
+              ['NOX', 'NOXP'].includes(el)
+            ) {
+              if (
+                gasTypeCode !== 'AIR' &&
+                ['CO2', 'NO', 'NO2', 'O2'].includes(el)
+              ) {
+                error = CheckCatalogService.formatResultMessage('PGVP-13-D');
+                errorList.push(error);
+              }
+            }
+          }
+        }
+      });
+    }
+
+    if (pgInvalidComponentList.length > 0) {
+      error = CheckCatalogService.formatResultMessage('PGVP-12-B', {
+        invalidlist: pgInvalidComponentList,
+        fieldname: 'gasTypeCode',
+        key: KEY,
+      });
+      errorList.push(error);
+    }
+
+    if (pgDuplicateComponentList.length > 0) {
+      error = CheckCatalogService.formatResultMessage('PGVP-12-H');
+      errorList.push(error);
+    }
+
+    if (pgExclusiveComponentList.length > 1) {
+      error = CheckCatalogService.formatResultMessage('PGVP-12-C', {
+        exclusivelist: pgExclusiveComponentList,
+        fieldname: 'gasTypeCode',
+        key: KEY,
+      });
+      errorList.push(error);
+    }
+
+    if (containsZERO && !['RATA', 'APPE', 'UNITDEF'].includes(testTypeCode)) {
+      error = CheckCatalogService.formatResultMessage('PGVP-12-D');
+      errorList.push(error);
+    }
+
+    if (pgApprovalRequested) {
+      error = CheckCatalogService.formatResultMessage('PGVP-12-E', {
+        fieldname: 'gasTypeCode',
+        key: KEY,
+      });
+      errorList.push(error);
+    }
+
+    if (
+      pgExclusiveComponentList.length === 0 &&
+      pgBalanceComponentList.length === 0
+    ) {
+      error = CheckCatalogService.formatResultMessage('PGVP-12-F');
+      errorList.push(error);
+    }
+
+    if (
+      pgExclusiveComponentList.length === 0 &&
+      pgBalanceComponentList.length > 1
+    ) {
+      error = CheckCatalogService.formatResultMessage('PGVP-12-G', {
+        balancelist: pgBalanceComponentList,
+      });
+      errorList.push(error);
+    }
+
+    return errorList;
   }
 }
