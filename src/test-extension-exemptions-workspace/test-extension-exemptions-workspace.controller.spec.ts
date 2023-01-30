@@ -10,6 +10,7 @@ import {
   TestExtensionExemptionBaseDTO,
   TestExtensionExemptionRecordDTO,
 } from '../dto/test-extension-exemption.dto';
+import { TestExtensionExemptionsChecksService } from './test-extension-exemptions-checks.service';
 
 const user: CurrentUser = {
   userId: 'testUser',
@@ -34,6 +35,10 @@ const mockTestExtensionExemptionWorkspaceService = () => ({
   deleteTestExtensionExemption: jest.fn().mockResolvedValue(''),
 });
 
+const mockChecksService = () => ({
+  runChecks: jest.fn().mockResolvedValue([]),
+});
+
 describe('TestExtensionExemptionsWorkspaceController', () => {
   let controller: TestExtensionExemptionsWorkspaceController;
   let service: TestExtensionExemptionsWorkspaceService;
@@ -49,6 +54,10 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
         {
           provide: TestExtensionExemptionsWorkspaceService,
           useFactory: mockTestExtensionExemptionWorkspaceService,
+        },
+        {
+          provide: TestExtensionExemptionsChecksService,
+          useFactory: mockChecksService,
         },
       ],
     }).compile();

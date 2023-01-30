@@ -679,6 +679,50 @@ describe('Test Summary Check Service Test', () => {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
+
+    it('Should get error for validTestResultCode for ONOFF', async () => {
+      payload.testTypeCode = 'ONOFF';
+      payload.testResultCode = 'INC';
+
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+      jest
+        .spyOn(
+          testSummaryRelationshipRepository,
+          'getTestTypeCodesRelationships',
+        )
+        .mockResolvedValue([]);
+      jest.spyOn(testResultCodeRepository, 'findOne').mockResolvedValue(null);
+
+      try {
+        await service.runChecks(locationId, payload, true, false, [payload]);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+
+    it('Should get error for validTestResultCode for SEVNDAY', async () => {
+      payload.testTypeCode = 'SEVNDAY';
+      payload.testResultCode = 'INC';
+
+      jest
+        .spyOn(repository, 'getTestSummaryByLocationId')
+        .mockResolvedValue(null);
+      jest
+        .spyOn(
+          testSummaryRelationshipRepository,
+          'getTestTypeCodesRelationships',
+        )
+        .mockResolvedValue([]);
+      jest.spyOn(testResultCodeRepository, 'findOne').mockResolvedValue(null);
+
+      try {
+        await service.runChecks(locationId, payload, true, false, [payload]);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
   });
 
   // TEST-7 Test Dates Consistent
@@ -770,6 +814,68 @@ describe('Test Summary Check Service Test', () => {
       };
       const result = await service.testMinuteField(summary, '1', 'beginMinute');
       expect(result).toBe(MOCK_ERROR_MSG);
+    });
+  });
+
+  describe('getDuplicateErrorMessage', () => {
+    it('returns error message testTypeCode=LINE', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.LINE,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+
+    it('returns error message testTypeCode=ONOFF', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.ONOFF,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+
+    it('returns error message testTypeCode=FFACCTT', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.FFACCTT,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+
+    it('returns error message testTypeCode=UNITDEF', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.UNITDEF,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+
+    it('returns error message testTypeCode=RATA', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.RATA,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+
+    it('returns error message testTypeCode=OTHER', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.OTHER,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
     });
   });
 });

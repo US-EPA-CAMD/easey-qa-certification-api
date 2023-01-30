@@ -8,7 +8,7 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { QaCertificationEventWorkshopService } from './qa-certification-event-workshop.service';
+import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -30,8 +30,8 @@ import {
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('QA Certification Event')
-export class QaCertificationEventWorkshopController {
-  constructor(private readonly service: QaCertificationEventWorkshopService) {}
+export class QACertificationEventWorkspaceController {
+  constructor(private readonly service: QACertificationEventWorkspaceService) {}
 
   @Get()
   @ApiOkResponse({

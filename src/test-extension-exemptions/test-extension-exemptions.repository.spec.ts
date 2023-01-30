@@ -16,8 +16,8 @@ const mockQueryBuilder = () => ({
   leftJoin: jest.fn(),
 });
 
-describe('TestExtensionExemptionsWorkspaceRepository', () => {
-  let repository;
+describe('TestExtensionExemptionsRepository', () => {
+  let repository: TestExtensionExemptionsRepository;
   let queryBuilder;
 
   beforeEach(async () => {
@@ -28,7 +28,9 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
       ],
     }).compile();
 
-    repository = module.get(TestExtensionExemptionsRepository);
+    repository = module.get<TestExtensionExemptionsRepository>(
+      TestExtensionExemptionsRepository,
+    );
     queryBuilder = module.get<SelectQueryBuilder<TestExtensionExemption>>(
       SelectQueryBuilder,
     );
@@ -57,6 +59,30 @@ describe('TestExtensionExemptionsWorkspaceRepository', () => {
 
       const result = await repository.getTestExtensionExemptionsByLocationId(
         '1',
+      );
+
+      expect(result).toEqual([testExtExp]);
+    });
+  });
+
+  describe('getTestExtensionExemptionsByUnitStack', () => {
+    it('get one test extension exemption record from the repository with facilityId', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([testExtExp]);
+
+      const result = await repository.getTestExtensionsByUnitStack(1);
+
+      expect(result).toEqual([testExtExp]);
+    });
+
+    it('get one test extension exemption from the repository with facilityId, unitids, stackPipeIds', async () => {
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.getMany.mockReturnValue([testExtExp]);
+
+      const result = await repository.getTestExtensionsByUnitStack(
+        1,
+        ['1'],
+        ['1'],
       );
 
       expect(result).toEqual([testExtExp]);

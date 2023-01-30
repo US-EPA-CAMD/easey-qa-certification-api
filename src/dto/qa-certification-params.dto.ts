@@ -57,10 +57,10 @@ export class QACertificationParamsDTO {
   @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
   testSummaryIds?: string[];
 
-  // @ApiProperty({
-  //   isArray: true,
-  //   description: propertyMetadata.qaCertificationEventId.description,
-  // })
+  @ApiProperty({
+    isArray: true,
+    description: propertyMetadata.qaCertificationEventId.description,
+  })
   @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
   qaCertificationEventIds?: string[];
 
@@ -82,6 +82,16 @@ export class QACertificationParamsDTO {
     },
   )
   testTypeCodes?: string[];
+
+  @ApiProperty({
+    isArray: true,
+    description: getMetadata(
+      dataDictionary.qaTestExtensionExemptionId,
+      MetadataKeys.TEST_EXTENSION_EXEMPTION,
+    ).description,
+  })
+  @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
+  qaTestExtensionExemptionIds?: string[];
 
   @ApiProperty({
     description: getMetadata(dataDictionary.beginDate, MetadataKeys.DEFAULT)

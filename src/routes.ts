@@ -54,7 +54,6 @@ import { TransmitterTransducerAccuracyModule } from './transmitter-transducer-ac
 import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.module';
 import { CycleTimeInjectionModule } from './cycle-time-injection/cycle-time-injection.module';
 import { CycleTimeInjectionWorkspaceModule } from './cycle-time-injection-workspace/cycle-time-injection-workspace.module';
-import { ReviewAndSubmitModule } from './review-and-submit/review-and-submit.module';
 import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.module';
 import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/unit-default-test-workspace.module';
 import { UnitDefaultTestRunModule } from './unit-default-test-run/unit-default-test-run.module';
@@ -63,7 +62,7 @@ import { HgSummaryWorkspaceModule } from './hg-summary-workspace/hg-summary-work
 import { HgInjectionWorkspaceModule } from './hg-injection-workspace/hg-injection-workspace.module';
 import { HgSummaryModule } from './hg-summary/hg-summary.module';
 import { HgInjectionModule } from './hg-injection/hg-injection.module';
-import { QaCertificationEventWorkshopModule } from './qa-certification-event-workshop/qa-certification-event-workshop.module';
+import { QaCertificationEventWorkspaceModule } from './qa-certification-event-workspace/qa-certification-event-workspace.module';
 import { TestExtensionExemptionsWorkspaceModule } from './test-extension-exemptions-workspace/test-extension-exemptions-workspace.module';
 import { TestExtensionExemptionsModule } from './test-extension-exemptions/test-extension-exemptions.module';
 import { QaCertificationEventModule } from './qa-certification-event/qa-certification-event.module';
@@ -76,10 +75,6 @@ const routes: Routes = [
   {
     path: '/workspace',
     module: QACertificationWorkspaceModule,
-  },
-  {
-    path: '/review-and-submit',
-    module: ReviewAndSubmitModule,
   },
   {
     path: '/locations',
@@ -239,7 +234,7 @@ const routes: Routes = [
     children: [
       {
         path: ':locId/qa-certification-events',
-        module: QaCertificationEventWorkshopModule,
+        module: QaCertificationEventWorkspaceModule,
       },
       {
         path: ':locId/test-summary',

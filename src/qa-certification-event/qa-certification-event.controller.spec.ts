@@ -50,7 +50,7 @@ describe('QaCertificationEventController', () => {
   });
 
   describe('getQACertEventsByLocationId', () => {
-    it('should call the QaCertificationEventWorkshopService.getQACertEvents', async () => {
+    it('should call the QACertificationEventWorkspaceService.getQACertEvents', async () => {
       const spyService = jest.spyOn(service, 'getQACertEventsByLocationId');
       const result = await controller.getQACertEvents('1');
       expect(result).toEqual([qaCertEventDTO]);

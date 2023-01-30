@@ -6,6 +6,8 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   TestExtensionExemptionBaseDTO,
+  TestExtensionExemptionDTO,
+  TestExtensionExemptionImportDTO,
   TestExtensionExemptionRecordDTO,
 } from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionMap } from '../maps/test-extension-exemption.map';
@@ -16,15 +18,17 @@ import { UnitRepository } from '../unit/unit.repository';
 import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { Unit } from './../entities/workspace/unit.entity';
 import { StackPipe } from './../entities/workspace/stack-pipe.entity';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 @Injectable()
 export class TestExtensionExemptionsWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     private readonly map: TestExtensionExemptionMap,
     @InjectRepository(TestExtensionExemptionsWorkspaceRepository)
     private readonly repository: TestExtensionExemptionsWorkspaceRepository,
@@ -36,22 +40,20 @@ export class TestExtensionExemptionsWorkspaceService {
     private readonly monitorLocationRepository: MonitorLocationRepository,
     @InjectRepository(ComponentWorkspaceRepository)
     private readonly componentRepository: ComponentWorkspaceRepository,
-    @InjectRepository(MonitorSystemRepository)
-    private readonly monSysRepository: MonitorSystemRepository,
+    @InjectRepository(MonitorSystemWorkspaceRepository)
+    private readonly monSysRepository: MonitorSystemWorkspaceRepository,
     @InjectRepository(ReportingPeriodRepository)
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
   ) {}
 
   async getTestExtensionExemptionById(
-    testSumId: string,
+    id: string,
   ): Promise<TestExtensionExemptionRecordDTO> {
-    const result = await this.repository.getTestExtensionExemptionById(
-      testSumId,
-    );
+    const result = await this.repository.findOne(id);
 
     if (!result) {
       throw new LoggingException(
-        `A test extension exceptions record not found with Record Id [${testSumId}].`,
+        `A QA Test Extension Exemtion record not found with Record Id [${id}]`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -69,18 +71,92 @@ export class TestExtensionExemptionsWorkspaceService {
     return this.map.many(results);
   }
 
+  async getTestExtensions(
+    facilityId: number,
+    unitIds?: string[],
+    stackPipeIds?: string[],
+    qaTestExtensionExemptionIds?: string[],
+  ): Promise<TestExtensionExemptionDTO[]> {
+    const results = await this.repository.getTestExtensionsByUnitStack(
+      facilityId,
+      unitIds,
+      stackPipeIds,
+      qaTestExtensionExemptionIds,
+    );
+    return this.map.many(results);
+  }
+
+  async export(
+    facilityId: number,
+    unitIds?: string[],
+    stackPipeIds?: string[],
+    qaTestExtensionExemptionIds?: string[],
+  ): Promise<TestExtensionExemptionDTO[]> {
+    const results = await this.getTestExtensions(
+      facilityId,
+      unitIds,
+      stackPipeIds,
+      qaTestExtensionExemptionIds,
+    );
+    return results;
+  }
+
+  async import(
+    locationId: string,
+    payload: TestExtensionExemptionImportDTO,
+    userId: string,
+  ) {
+    const {
+      reportPeriodId,
+      monitoringSystemRecordId,
+      componentRecordId,
+    } = await this.lookupValues(locationId, payload);
+
+    const record = await this.repository.findOne({
+      where: {
+        locationId,
+        fuelCode: payload.fuelCode,
+        extensionOrExemptionCode: payload.extensionOrExemptionCode,
+        reportPeriodId,
+        monitoringSystemRecordId,
+        componentRecordId,
+      },
+    });
+
+    let importedTestExtensionExemption;
+    if (record) {
+      importedTestExtensionExemption = await this.updateTestExtensionExemption(
+        locationId,
+        record.id,
+        payload,
+        userId,
+      );
+    } else {
+      importedTestExtensionExemption = await this.createTestExtensionExemption(
+        locationId,
+        payload,
+        userId,
+      );
+    }
+
+    this.logger.info(
+      `QA Test Extension Exemption Record Successfully Imported. Record Id: ${importedTestExtensionExemption.id}`,
+    );
+
+    return null;
+  }
+
   async createTestExtensionExemption(
     locationId: string,
     payload: TestExtensionExemptionBaseDTO,
     userId: string,
-    historicalRecordId?: string,
   ): Promise<TestExtensionExemptionRecordDTO> {
     const timestamp = currentDateTime();
-    const [
+    const {
       reportPeriodId,
       componentRecordId,
       monitoringSystemRecordId,
-    ] = await this.lookupValues(locationId, payload);
+    } = await this.lookupValues(locationId, payload);
 
     const location = await this.monitorLocationRepository.findOne(locationId);
 
@@ -107,7 +183,7 @@ export class TestExtensionExemptionsWorkspaceService {
 
     const entity = this.repository.create({
       ...payload,
-      id: historicalRecordId ? historicalRecordId : uuid(),
+      id: uuid(),
       locationId,
       monitoringSystemRecordId,
       componentRecordId,
@@ -123,6 +199,7 @@ export class TestExtensionExemptionsWorkspaceService {
     });
 
     await this.repository.save(entity);
+
     const result = await this.repository.getTestExtensionExemptionById(
       entity.id,
     );
@@ -146,11 +223,11 @@ export class TestExtensionExemptionsWorkspaceService {
       );
     }
 
-    const [
+    const {
       reportPeriodId,
       componentRecordId,
       monitoringSystemRecordId,
-    ] = await this.lookupValues(locationId, payload);
+    } = await this.lookupValues(locationId, payload);
 
     record.userId = userId;
     record.lastUpdated = timestamp;
@@ -217,6 +294,6 @@ export class TestExtensionExemptionsWorkspaceService {
       monitoringSystemRecordId = monitorSystem ? monitorSystem.id : null;
     }
 
-    return [reportPeriodId, componentRecordId, monitoringSystemRecordId];
+    return { reportPeriodId, componentRecordId, monitoringSystemRecordId };
   }
 }
