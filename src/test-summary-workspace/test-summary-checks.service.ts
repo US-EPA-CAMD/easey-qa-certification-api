@@ -809,19 +809,19 @@ export class TestSummaryChecksService {
         break;
       case testTypeCode === TestTypeCodes.LINE:
         // LINEAR-31 Duplicate Linearity
-        error = this.getMessage('LINEAR-31-${checkType}', null);
+        error = this.getMessage(`LINEAR-31-${checkType}`, null);
         break;
       case testTypeCode === TestTypeCodes.APPE:
         // APPE-46 Duplicate Appendix E Correlation
-        error = this.getMessage('APPE-46-${checkType}', {testtype: testTypeCode,});
+        error = this.getMessage(`APPE-46-${checkType}`, {testtype: testTypeCode,});
         break;
       case testTypeCode === TestTypeCodes.SEVENDAY:
         // SEVNDAY-29 Duplicate Calibration Test
-        error = this.getMessage('SEVNDAY-29-${checkType}', {testtype: testTypeCode,});
+        error = this.getMessage(`SEVNDAY-29-${checkType}`, {testtype: testTypeCode,});
         break;
       case testTypeCode === TestTypeCodes.CYCLE:
         // CYCLE-19 Duplicate Cycle Time
-        error = this.getMessage('CYCLE-19-${checkType}', {testtype: testTypeCode,});
+        error = this.getMessage(`CYCLE-19-${checkType}`, {testtype: testTypeCode,});
         break;
       case MISC_TEST_TYPE_CODES.includes(testTypeCode):
         // TEST-19 Duplicate Miscellaneous Test
