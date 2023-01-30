@@ -100,6 +100,8 @@ export class ProtocolGasWorkspaceController {
     @Body() payload: ProtocolGasBaseDTO,
     @User() user: CurrentUser,
   ) {
+    console.log('CONTROLLER - run');
+
     await this.checksService.runChecks(
       payload,
       locationId,
