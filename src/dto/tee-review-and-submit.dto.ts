@@ -13,7 +13,7 @@ export class TeeReviewAndSubmitDTO {
 
   monLocIdentifier: string;
 
-  testInfo: string;
+  systemComponentIdentifier: string;
 
   rptPeriodIdentifier: number;
 
@@ -26,4 +26,10 @@ export class TeeReviewAndSubmitDTO {
   submissionAvailabilityCode: string;
 
   periodAbbreviation: string;
+
+  fuelCode: string;
+
+  hoursUsed: number;
+
+  spanScaleCode: string;
 }

@@ -21,7 +21,7 @@ export class ReviewAndSubmitTestSummaryMap extends BaseMap<
 
       locationInfo: entity.locationInfo,
 
-      testInfo: entity.testInfo,
+      systemComponentId: entity.systemComponentId,
 
       testTypeCode: entity.testTypeCode,
 
