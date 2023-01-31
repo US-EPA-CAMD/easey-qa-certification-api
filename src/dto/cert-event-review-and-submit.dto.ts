@@ -31,5 +31,7 @@ export class CertEventReviewAndSubmitDTO {
 
   submissionAvailabilityCode: string;
 
+  requiredTestCode: string;
+
   periodAbbreviation: string;
 }

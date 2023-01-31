@@ -29,6 +29,7 @@ export class CertEventReviewAndSubmitMap extends BaseMap<
       evalStatusCode: entity.evalStatusCode,
       submissionAvailabilityCode: entity.submissionAvailabilityCode,
       periodAbbreviation: entity.periodAbbreviation,
+      requiredTestCode: entity.requiredTestCode,
     };
   }
 }

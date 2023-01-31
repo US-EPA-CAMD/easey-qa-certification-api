@@ -40,6 +40,9 @@ export class CertEventReviewAndSubmit extends BaseEntity {
   @ViewColumn({ name: 'event_date' })
   eventDate: string;
 
+  @ViewColumn({ name: 'required_test_cd' })
+  requiredTestCode: string;
+
   @ViewColumn({ name: 'condition_date' })
   conditionDate: string;
 
