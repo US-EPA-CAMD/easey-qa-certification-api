@@ -11,6 +11,7 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { HttpModule } from '@nestjs/axios';
+import { ProtocolGasChecksService } from './protocol-gas-checks.service';
 
 const locId = '';
 const testSumId = '';
@@ -23,6 +24,10 @@ const mockService = () => ({
   getProtocolGas: jest.fn().mockResolvedValue(protocolGasRecord),
   getProtocolGases: jest.fn(),
   createProtocolGas: jest.fn(),
+});
+
+const mockCheckService = () => ({
+  runChecks: jest.fn().mockResolvedValue([]),
 });
 
 const payload: ProtocolGasBaseDTO = {
@@ -56,6 +61,10 @@ describe('Protocol Gas Workspace Controller', () => {
         {
           provide: ProtocolGasWorkspaceService,
           useFactory: mockService,
+        },
+        {
+          provide: ProtocolGasChecksService,
+          useFactory: mockCheckService,
         },
       ],
     }).compile();

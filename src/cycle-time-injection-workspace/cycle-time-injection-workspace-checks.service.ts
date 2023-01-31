@@ -12,8 +12,8 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import {CycleTimeInjectionWorkspaceRepository} from "./cycle-time-injection-workspace.repository";
-import {TestSummary} from "../entities/workspace/test-summary.entity";
+import { CycleTimeInjectionWorkspaceRepository } from './cycle-time-injection-workspace.repository';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
 
 @Injectable()
 export class CycleTimeInjectionChecksService {
@@ -61,8 +61,12 @@ export class CycleTimeInjectionChecksService {
       }
     }
 
-    error = await this.cycle20Check(cycleTimeInjectionId, cycleTimeInjection, testSumRecord);
-    if(error) {
+    error = await this.cycle20Check(
+      cycleTimeInjectionId,
+      cycleTimeInjection,
+      testSumRecord,
+    );
+    if (error) {
       errorList.push(error);
     }
 
@@ -72,17 +76,20 @@ export class CycleTimeInjectionChecksService {
   }
 
   async cycle20Check(
-      cycleTimeInjectionId: string,
-      dto: CycleTimeInjectionBaseDTO,
-      testSummary: TestSummary,
+    cycleTimeInjectionId: string,
+    dto: CycleTimeInjectionBaseDTO,
+    testSummary: TestSummary,
   ) {
     let error: string = null;
 
-    if(dto.gasLevelCode) {
-      const duplicate = await this.repo.findDuplicate(cycleTimeInjectionId,
-          testSummary.id, dto.gasLevelCode);
+    if (dto.gasLevelCode) {
+      const duplicate = await this.repo.findDuplicate(
+        cycleTimeInjectionId,
+        testSummary.id,
+        dto.gasLevelCode,
+      );
 
-      if(duplicate)
+      if (duplicate)
         error = this.getMessage('CYCLE-20-A', {
           recordtype: 'Cycle Time Injection',
           fieldnames: 'GasLevelCode',

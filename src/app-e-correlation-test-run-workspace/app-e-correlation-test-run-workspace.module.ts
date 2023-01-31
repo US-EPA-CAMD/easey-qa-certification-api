@@ -10,7 +10,7 @@ import { AppECorrelationTestSummaryWorkspaceModule } from '../app-e-correlation-
 import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.module';
 import { AppEHeatInputFromGasWorkspaceModule } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
 import { AppECorrelationTestRunModule } from '../app-e-correlation-test-run/app-e-correlation-test-run.module';
-import {AppECorrelationTestRunChecksService} from "./app-e-correlation-test-run-checks.service";
+import { AppECorrelationTestRunChecksService } from './app-e-correlation-test-run-checks.service';
 
 @Module({
   imports: [
@@ -26,7 +26,7 @@ import {AppECorrelationTestRunChecksService} from "./app-e-correlation-test-run-
   providers: [
     AppECorrelationTestRunMap,
     AppECorrelationTestRunWorkspaceService,
-    AppECorrelationTestRunChecksService
+    AppECorrelationTestRunChecksService,
   ],
   exports: [
     TypeOrmModule,

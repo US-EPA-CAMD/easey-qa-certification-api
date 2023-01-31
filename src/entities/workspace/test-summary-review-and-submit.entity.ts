@@ -1,7 +1,7 @@
 import { ViewColumn, ViewEntity } from 'typeorm';
 
 @ViewEntity({
-  name: 'camdecmpswks.vw_qa_test_summary_review_and_submit',
+  name: 'camdecmpswks.vw_test_summary_eval_and_submit',
 })
 export class TestSummaryReviewAndSubmit {
   @ViewColumn({
@@ -25,9 +25,9 @@ export class TestSummaryReviewAndSubmit {
   locationInfo: string;
 
   @ViewColumn({
-    name: 'test_info',
+    name: 'system_component_identifier',
   })
-  testInfo: string;
+  systemComponentId: string;
 
   @ViewColumn({
     name: 'test_sum_id',

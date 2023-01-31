@@ -17,13 +17,16 @@ export class TeeReviewAndSubmitMap extends BaseMap<
       testExtensionExemptionIdentifier: entity.testExtensionExemptionIdentifier,
       extensExemptCode: entity.extensExemptCode,
       monLocIdentifier: entity.monLocIdentifier,
-      testInfo: entity.testInfo,
+      systemComponentIdentifier: entity.systemComponentIdentifier,
       rptPeriodIdentifier: entity.rptPeriodIdentifier,
       userid: entity.userid,
       updateDate: entity.updateDate,
       evalStatusCode: entity.evalStatusCode,
       submissionAvailabilityCode: entity.submissionAvailabilityCode,
       periodAbbreviation: entity.periodAbbreviation,
+      fuelCode: entity.fuelCode,
+      hoursUsed: entity.hoursUsed,
+      spanScaleCode: entity.spanScaleCode,
     };
   }
 }

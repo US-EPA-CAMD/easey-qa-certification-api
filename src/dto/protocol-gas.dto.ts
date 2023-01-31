@@ -21,14 +21,6 @@ export class ProtocolGasBaseDTO {
       });
     },
   })
-  @IsValidCode(GasTypeCode, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('PGVP-9-B', {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
   gasTypeCode: string;
   cylinderIdentifier: string;
   vendorIdentifier: string;

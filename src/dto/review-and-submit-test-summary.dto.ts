@@ -9,7 +9,7 @@ export class ReviewAndSubmitTestSummaryDTO {
 
   testSumId: string;
 
-  testInfo: string;
+  systemComponentId: string;
 
   testTypeCode: string;
 

@@ -9,7 +9,7 @@ import { AppECorrelationTestRunWorkspaceService } from './app-e-correlation-test
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import {AppECorrelationTestRunChecksService} from "./app-e-correlation-test-run-checks.service";
+import { AppECorrelationTestRunChecksService } from './app-e-correlation-test-run-checks.service';
 
 const user: CurrentUser = {
   userId: 'testUser',
@@ -47,7 +47,7 @@ const mockService = () => ({
 
 const mockChecksService = () => ({
   runChecks: jest.fn(),
-})
+});
 
 describe('AppECorrelationTestRunWorkspaceController', () => {
   let controller: AppECorrelationTestRunWorkspaceController;
@@ -67,7 +67,7 @@ describe('AppECorrelationTestRunWorkspaceController', () => {
         {
           provide: AppECorrelationTestRunChecksService,
           useFactory: mockChecksService,
-        }
+        },
       ],
     }).compile();
 
