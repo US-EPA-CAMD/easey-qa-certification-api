@@ -23,16 +23,16 @@ import {
   AppEHeatInputFromGasRecordDTO,
 } from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-gas-workspace.service';
-import {AppEHeatInputFromGasChecksService} from "./app-e-heat-input-from-gas-checks.service";
+import { AppEHeatInputFromGasChecksService } from './app-e-heat-input-from-gas-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Heat Input From Gas')
 export class AppEHeatInputFromGasWorkspaceController {
   constructor(
-      private readonly service: AppEHeatInputFromGasWorkspaceService,
-      private readonly checksService: AppEHeatInputFromGasChecksService,
-  ){}
+    private readonly service: AppEHeatInputFromGasWorkspaceService,
+    private readonly checksService: AppEHeatInputFromGasChecksService,
+  ) {}
 
   @Get()
   @ApiOkResponse({

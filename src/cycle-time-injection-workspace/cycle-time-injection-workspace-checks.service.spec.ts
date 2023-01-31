@@ -1,9 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { CycleTimeInjection } from '../entities/workspace/cycle-time-injection.entity';
-import {
-  CycleTimeInjectionBaseDTO,
-} from '../dto/cycle-time-injection.dto';
+import { CycleTimeInjectionBaseDTO } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjectionChecksService } from './cycle-time-injection-workspace-checks.service';
 import { CycleTimeInjectionWorkspaceRepository } from './cycle-time-injection-workspace.repository';
 import { CycleTimeSummaryWorkspaceRepository } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.repository';
@@ -99,8 +97,7 @@ describe('Cycle Time Injection Check Service Test', () => {
     });
   });
 
-  describe('CYCLE-20 Duplicate Cycle Time Injection',  () => {
-
+  describe('CYCLE-20 Duplicate Cycle Time Injection', () => {
     it('Should not return error when no duplicate', async () => {
       const payload = new CycleTimeInjectionBaseDTO();
       payload.gasLevelCode = 'LOW';
@@ -108,7 +105,7 @@ describe('Cycle Time Injection Check Service Test', () => {
       let result = await service.cycle20Check(null, payload, testSummary);
 
       expect(result).toEqual(null);
-    })
+    });
 
     it('Should return error when there is a duplicate', async () => {
       const payload = new CycleTimeInjectionBaseDTO();
@@ -118,7 +115,6 @@ describe('Cycle Time Injection Check Service Test', () => {
 
       let result = await service.cycle20Check(null, payload, testSummary);
       expect(result).toEqual(MOCK_ERROR_MSG);
-
-    })
-  })
+    });
+  });
 });

@@ -6,7 +6,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { AppECorrelationTestSummaryBaseDTO } from '../dto/app-e-correlation-test-summary.dto';
 import { AppendixETestSummaryWorkspaceController } from './app-e-correlation-test-summary-workspace.controller';
 import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-test-summary-workspace.service';
-import {  AppECorrelationTestSummaryChecksService} from "./app-e-correlation-test-summary-checks.service";
+import { AppECorrelationTestSummaryChecksService } from './app-e-correlation-test-summary-checks.service';
 
 const locId = '';
 const testSumId = '';
@@ -31,7 +31,7 @@ const mockService = () => ({
 
 const mockChecksService = () => ({
   runChecks: jest.fn(),
-})
+});
 
 const payload = new AppECorrelationTestSummaryBaseDTO();
 
