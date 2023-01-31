@@ -8,10 +8,10 @@ import {
   CycleTimeInjectionBaseDTO,
   CycleTimeInjectionDTO,
 } from '../dto/cycle-time-injection.dto';
+import { CycleTimeInjectionChecksService } from './cycle-time-injection-workspace-checks.service';
 import { CycleTimeInjectionWorkspaceController } from './cycle-time-injection-workspace.controller';
 import { CycleTimeInjectionWorkspaceRepository } from './cycle-time-injection-workspace.repository';
 import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-workspace.service';
-import {CycleTimeInjectionChecksService} from "./cycle-time-injection-checks.service";
 
 const locId = '';
 const testSumId = '';
@@ -53,7 +53,7 @@ const mockService = () => ({
 });
 
 const mockChecksService = () => ({
-  runChecks: jest.fn(),
+  runChecks: jest.fn().mockResolvedValue([]),
 });
 
 describe('CycleTimeInjectionWorkspaceController', () => {
