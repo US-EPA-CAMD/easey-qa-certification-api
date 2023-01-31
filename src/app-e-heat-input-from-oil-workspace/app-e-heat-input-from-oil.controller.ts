@@ -24,15 +24,15 @@ import {
   AppEHeatInputFromOilRecordDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oil.service';
-import {AppEHeatInputFromOilChecksService} from "./app-e-heat-input-from-oil-checks.service";
+import { AppEHeatInputFromOilChecksService } from './app-e-heat-input-from-oil-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Heat Input From Oil')
 export class AppEHeatInputFromOilWorkspaceController {
   constructor(
-      private readonly service: AppEHeatInputFromOilWorkspaceService,
-      private readonly checksService: AppEHeatInputFromOilChecksService
+    private readonly service: AppEHeatInputFromOilWorkspaceService,
+    private readonly checksService: AppEHeatInputFromOilChecksService,
   ) {}
 
   @Get()

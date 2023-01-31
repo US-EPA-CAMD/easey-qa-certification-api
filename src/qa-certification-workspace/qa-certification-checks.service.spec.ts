@@ -20,6 +20,7 @@ import { RataTraverseChecksService } from '../rata-traverse-workspace/rata-trave
 import { TestQualificationChecksService } from '../test-qualification-workspace/test-qualification-checks.service';
 import { TestExtensionExemptionsChecksService } from '../test-extension-exemptions-workspace/test-extension-exemptions-checks.service';
 import { TestExtensionExemptionImportDTO } from '../dto/test-extension-exemption.dto';
+import { CycleTimeInjectionChecksService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace-checks.service';
 
 const returnLocationRunChecks = [
   {
@@ -113,6 +114,12 @@ describe('QA Certification Check Service Test', () => {
         },
         {
           provide: TestExtensionExemptionsChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
+        {
+          provide: CycleTimeInjectionChecksService,
           useFactory: () => ({
             runChecks: jest.fn().mockResolvedValue([]),
           }),
