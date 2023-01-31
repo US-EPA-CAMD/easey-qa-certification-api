@@ -1,5 +1,8 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+
 import {
   LinearityInjectionDTO,
   LinearityInjectionImportDTO,
@@ -9,7 +12,6 @@ import { LinearityInjectionWorkspaceService } from './linearity-injection.servic
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
 import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { InternalServerErrorException } from '@nestjs/common';
 import { LinearityInjectionRepository } from '../linearity-injection/linearity-injection.repository';
 import { LinearityInjection } from '../entities/workspace/linearity-injection.entity';
 
@@ -175,7 +177,7 @@ describe('LinearityInjectionWorkspaceService', () => {
       expect(result).toEqual(undefined);
     });
 
-    it('Should through error while deleting a Linearity Injection record', async () => {
+    it('Should throw error while deleting a Linearity Injection record', async () => {
       const error = new InternalServerErrorException(
         `Error deleting Linearity Injection record Id [${linInjId}]`,
       );

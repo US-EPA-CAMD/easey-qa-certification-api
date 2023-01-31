@@ -60,6 +60,7 @@ export class TestSummaryWorkspaceController {
     return this.service.getTestSummariesByLocationId(
       locationId,
       params.testTypeCodes,
+      params.systemTypeCodes,
       params.beginDate,
       params.endDate,
     );

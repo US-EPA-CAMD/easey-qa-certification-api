@@ -15,6 +15,7 @@ import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryWorkspaceService } from './test-summary.service';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
+import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
 
 const user: CurrentUser = {
   userId: 'testUser',
@@ -22,7 +23,7 @@ const user: CurrentUser = {
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 const testSummaryDto = new TestSummaryDTO();
@@ -72,6 +73,7 @@ describe('Test Summary Controller', () => {
         },
         TestSummaryWorkspaceRepository,
         QASuppDataWorkspaceRepository,
+        ReviewAndSubmitTestSummaryMap,
       ],
     }).compile();
 

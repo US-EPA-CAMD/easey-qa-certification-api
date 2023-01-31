@@ -54,7 +54,18 @@ import { TransmitterTransducerAccuracyModule } from './transmitter-transducer-ac
 import { TransmitterTransducerAccuracyWorkspaceModule } from './transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.module';
 import { CycleTimeInjectionModule } from './cycle-time-injection/cycle-time-injection.module';
 import { CycleTimeInjectionWorkspaceModule } from './cycle-time-injection-workspace/cycle-time-injection-workspace.module';
-import { ReviewAndSubmitModule } from './review-and-submit/review-and-submit.module';
+import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.module';
+import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/unit-default-test-workspace.module';
+import { UnitDefaultTestRunModule } from './unit-default-test-run/unit-default-test-run.module';
+import { UnitDefaultTestRunWorkspaceModule } from './unit-default-test-run-workspace/unit-default-test-run.module';
+import { HgSummaryWorkspaceModule } from './hg-summary-workspace/hg-summary-workspace.module';
+import { HgInjectionWorkspaceModule } from './hg-injection-workspace/hg-injection-workspace.module';
+import { HgSummaryModule } from './hg-summary/hg-summary.module';
+import { HgInjectionModule } from './hg-injection/hg-injection.module';
+import { QaCertificationEventWorkspaceModule } from './qa-certification-event-workspace/qa-certification-event-workspace.module';
+import { TestExtensionExemptionsWorkspaceModule } from './test-extension-exemptions-workspace/test-extension-exemptions-workspace.module';
+import { TestExtensionExemptionsModule } from './test-extension-exemptions/test-extension-exemptions.module';
+import { QaCertificationEventModule } from './qa-certification-event/qa-certification-event.module';
 
 const routes: Routes = [
   {
@@ -66,13 +77,13 @@ const routes: Routes = [
     module: QACertificationWorkspaceModule,
   },
   {
-    path: '/review-and-submit',
-    module: ReviewAndSubmitModule,
-  },
-  {
     path: '/locations',
     module: LocationModule,
     children: [
+      {
+        path: ':locId/qa-certification-events',
+        module: QaCertificationEventModule,
+      },
       {
         path: ':locId/test-summary',
         module: TestSummaryModule,
@@ -92,6 +103,16 @@ const routes: Routes = [
             module: ProtocolGasModule,
           },
           {
+            path: ':testSumId/hg-summaries',
+            module: HgSummaryModule,
+            children: [
+              {
+                path: ':hgTestSumId/hg-injections',
+                module: HgInjectionModule,
+              },
+            ],
+          },
+          {
             path: ':testSumId/cycle-time-summaries',
             module: CycleTimeSummaryModule,
             children: [
@@ -104,6 +125,16 @@ const routes: Routes = [
           {
             path: ':testSumId/test-qualifications',
             module: TestQualificationModule,
+          },
+          {
+            path: ':testSumId/unit-default-tests',
+            module: UnitDefaultTestModule,
+            children: [
+              {
+                path: ':unitDefaultTestSumId/unit-default-test-runs',
+                module: UnitDefaultTestRunModule,
+              },
+            ],
           },
           {
             path: ':testSumId/flow-to-load-checks',
@@ -191,12 +222,20 @@ const routes: Routes = [
           },
         ],
       },
+      {
+        path: ':locId/test-extension-exemptions',
+        module: TestExtensionExemptionsModule,
+      },
     ],
   },
   {
     path: 'workspace/locations',
     module: LocationWorkspaceModule,
     children: [
+      {
+        path: ':locId/qa-certification-events',
+        module: QaCertificationEventWorkspaceModule,
+      },
       {
         path: ':locId/test-summary',
         module: TestSummaryWorkspaceModule,
@@ -216,12 +255,32 @@ const routes: Routes = [
             module: ProtocolGasWorkspaceModule,
           },
           {
+            path: ':testSumId/hg-summaries',
+            module: HgSummaryWorkspaceModule,
+            children: [
+              {
+                path: ':hgTestSumId/hg-injections',
+                module: HgInjectionWorkspaceModule,
+              },
+            ],
+          },
+          {
             path: ':testSumId/cycle-time-summaries',
             module: CycleTimeSummaryWorkspaceModule,
             children: [
               {
                 path: ':cycleTimeSumId/cycle-time-injections',
                 module: CycleTimeInjectionWorkspaceModule,
+              },
+            ],
+          },
+          {
+            path: ':testSumId/unit-default-tests',
+            module: UnitDefaultTestWorkspaceModule,
+            children: [
+              {
+                path: ':unitDefaultTestSumId/unit-default-test-runs',
+                module: UnitDefaultTestRunWorkspaceModule,
               },
             ],
           },
@@ -314,6 +373,10 @@ const routes: Routes = [
             module: TransmitterTransducerAccuracyWorkspaceModule,
           },
         ],
+      },
+      {
+        path: ':locId/test-extension-exemptions',
+        module: TestExtensionExemptionsWorkspaceModule,
       },
     ],
   },

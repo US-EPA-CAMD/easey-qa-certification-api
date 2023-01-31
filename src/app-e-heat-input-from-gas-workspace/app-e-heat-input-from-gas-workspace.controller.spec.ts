@@ -5,8 +5,10 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios';
+import { AppEHeatInputFromGasChecksService } from './app-e-heat-input-from-gas-checks.service';
 
 const mockService = () => ({});
+const mockChecksService = () => ({});
 
 describe('AppEHeatInputFromGasWorkspaceController', () => {
   let controller: AppEHeatInputFromGasWorkspaceController;
@@ -22,6 +24,10 @@ describe('AppEHeatInputFromGasWorkspaceController', () => {
         {
           provide: AppEHeatInputFromGasWorkspaceService,
           useFactory: mockService,
+        },
+        {
+          provide: AppEHeatInputFromGasChecksService,
+          useFactory: mockChecksService,
         },
       ],
     }).compile();

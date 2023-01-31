@@ -6,11 +6,16 @@ import { CycleTimeSummaryDTO } from '../dto/cycle-time-summary.dto';
 import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { CycleTimeSummaryRepository } from './cycle-time-summary.repository';
+import { CycleTimeInjectionDTO } from '../dto/cycle-time-injection.dto';
+import { CycleTimeInjectionService } from '../cycle-time-injection/cycle-time-injection.service';
 
 const id = '';
 const testSumId = '';
 const entity = new CycleTimeSummary();
 const dto = new CycleTimeSummaryDTO();
+
+const cycleTimeInjDto = new CycleTimeInjectionDTO();
+cycleTimeInjDto.cycleTimeSumId = 'SOME_ID';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
@@ -22,6 +27,11 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue([dto]),
 });
 
+const mockCycleTimeInjectionService = () => ({
+  import: jest.fn(),
+  export: jest.fn().mockResolvedValue([cycleTimeInjDto]),
+});
+
 describe('CycleTimeSummaryService', () => {
   let service: CycleTimeSummaryService;
   let repository: CycleTimeSummaryRepository;
@@ -31,6 +41,10 @@ describe('CycleTimeSummaryService', () => {
       providers: [
         Logger,
         CycleTimeSummaryService,
+        {
+          provide: CycleTimeInjectionService,
+          useFactory: mockCycleTimeInjectionService,
+        },
         {
           provide: CycleTimeSummaryRepository,
           useFactory: mockRepository,
@@ -86,12 +100,14 @@ describe('CycleTimeSummaryService', () => {
 
   describe('export', () => {
     it('Should export Cycle Time Summary Record', async () => {
+      dto.id = 'SOME_ID';
       jest
         .spyOn(service, 'getCycleTimeSummaryByTestSumIds')
-        .mockResolvedValue([]);
+        .mockResolvedValue([dto]);
 
       const result = await service.export([testSumId]);
-      expect(result).toEqual([]);
+      dto.cycleTimeInjectionData = [cycleTimeInjDto];
+      expect(result).toEqual([dto]);
     });
   });
 });

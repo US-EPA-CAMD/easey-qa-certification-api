@@ -10,16 +10,36 @@ import { QACertificationWorkspaceService } from './qa-certification.service';
 import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import {
+  TestExtensionExemptionDTO,
+  TestExtensionExemptionImportDTO,
+} from '../dto/test-extension-exemption.dto';
+import { TestExtensionExemptionsWorkspaceService } from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.service';
+import { QACertificationEventWorkspaceService } from '../qa-certification-event-workspace/qa-certification-event-workspace.service';
+import {
+  QACertificationEventDTO,
+  QACertificationEventImportDTO,
+} from '../dto/qa-certification-event.dto';
 
 const testSummary = new TestSummaryDTO();
+const qaCertEventDto = new QACertificationEventDTO();
 const qaCertDto = new QACertificationDTO();
+const testExtExmtDto = new TestExtensionExemptionDTO();
 qaCertDto.testSummaryData = [testSummary];
+qaCertDto.testExtensionExemptionData = [testExtExmtDto];
+qaCertDto.certificationEventData = [qaCertEventDto];
 
 const payload = new QACertificationImportDTO();
 payload.testSummaryData = [new TestSummaryImportDTO()];
 payload.testSummaryData[0].unitId = '1';
 payload.testSummaryData[0].stackPipeId = '1';
 payload.orisCode = 1;
+payload.testExtensionExemptionData = [new TestExtensionExemptionImportDTO()];
+payload.testExtensionExemptionData[0].unitId = '1';
+payload.testExtensionExemptionData[0].stackPipeId = '1';
+payload.certificationEventData = [new QACertificationEventImportDTO()];
+payload.certificationEventData[0].unitId = '1';
+payload.certificationEventData[0].stackPipeId = '1';
 
 const userId = 'testUser';
 
@@ -38,6 +58,16 @@ const mockTestSummaryWorkspaceService = () => ({
   import: jest.fn().mockResolvedValue(undefined),
 });
 
+const mockQACertEventService = () => ({
+  export: jest.fn().mockResolvedValue([qaCertEventDto]),
+  import: jest.fn().mockResolvedValue(undefined),
+});
+
+const mockQATestExtensionExemptionService = () => ({
+  export: jest.fn().mockResolvedValue([testExtExmtDto]),
+  import: jest.fn().mockResolvedValue(undefined),
+});
+
 describe('QA Certification Workspace Service Test', () => {
   let service: QACertificationWorkspaceService;
 
@@ -50,6 +80,14 @@ describe('QA Certification Workspace Service Test', () => {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSummaryWorkspaceService,
         },
+        {
+          provide: QACertificationEventWorkspaceService,
+          useFactory: mockQACertEventService,
+        },
+        {
+          provide: TestExtensionExemptionsWorkspaceService,
+          useFactory: mockQATestExtensionExemptionService,
+        },
       ],
     }).compile();
 
@@ -60,8 +98,8 @@ describe('QA Certification Workspace Service Test', () => {
     it('successfully calls export() service function', async () => {
       const expected = qaCertDto;
       expected.testSummaryData = [testSummary];
-      expected.testExtensionExemptionData = undefined;
-      expected.certificationEventData = undefined;
+      expected.certificationEventData = [qaCertEventDto];
+      expected.testExtensionExemptionData = [testExtExmtDto];
       expected.orisCode = 1;
 
       const paramsDTO = new QACertificationParamsDTO();

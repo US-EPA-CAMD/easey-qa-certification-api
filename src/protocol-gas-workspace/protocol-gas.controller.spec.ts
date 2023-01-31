@@ -11,6 +11,7 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { HttpModule } from '@nestjs/axios';
+import { ProtocolGasChecksService } from './protocol-gas-checks.service';
 
 const locId = '';
 const testSumId = '';
@@ -25,11 +26,15 @@ const mockService = () => ({
   createProtocolGas: jest.fn(),
 });
 
+const mockCheckService = () => ({
+  runChecks: jest.fn().mockResolvedValue([]),
+});
+
 const payload: ProtocolGasBaseDTO = {
   gasLevelCode: '',
   gasTypeCode: '',
-  vendorID: '',
-  cylinderID: '',
+  vendorIdentifier: '',
+  cylinderIdentifier: '',
   expirationDate: new Date(),
 };
 const user: CurrentUser = {
@@ -38,7 +43,7 @@ const user: CurrentUser = {
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 describe('Protocol Gas Workspace Controller', () => {
@@ -56,6 +61,10 @@ describe('Protocol Gas Workspace Controller', () => {
         {
           provide: ProtocolGasWorkspaceService,
           useFactory: mockService,
+        },
+        {
+          provide: ProtocolGasChecksService,
+          useFactory: mockCheckService,
         },
       ],
     }).compile();

@@ -1,11 +1,13 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { HttpModule } from '@nestjs/axios';
+
+import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
 import { TransmitterTransducerAccuracyWorkspaceController } from './transmitter-transducer-accuracy.controller';
 import { TransmitterTransducerAccuracyWorkspaceService } from './transmitter-transducer-accuracy.service';
 import { TransmitterTransducerAccuracyWorkspaceRepository } from './transmitter-transducer-accuracy.repository';
+import { TransmitterTransducerAccuracyModule } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.module';
 
 @Module({
   imports: [
@@ -13,6 +15,7 @@ import { TransmitterTransducerAccuracyWorkspaceRepository } from './transmitter-
       TransmitterTransducerAccuracyWorkspaceRepository,
     ]),
     forwardRef(() => TestSummaryWorkspaceModule),
+    forwardRef(() => TransmitterTransducerAccuracyModule),
     HttpModule,
   ],
   controllers: [TransmitterTransducerAccuracyWorkspaceController],

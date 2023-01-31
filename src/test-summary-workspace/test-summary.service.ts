@@ -45,6 +45,9 @@ import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-w
 import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
 import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
 import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
+import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
+import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
+import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -89,6 +92,12 @@ export class TestSummaryWorkspaceService {
     private readonly onlineOfflineCalibrationWorkspaceService: OnlineOfflineCalibrationWorkspaceService,
     @Inject(forwardRef(() => CycleTimeSummaryWorkspaceService))
     private readonly cycleTimeSummaryWorkspaceService: CycleTimeSummaryWorkspaceService,
+    @Inject(forwardRef(() => TransmitterTransducerAccuracyWorkspaceService))
+    private readonly transmitterTransducerAccuracyWorkspaceService: TransmitterTransducerAccuracyWorkspaceService,
+    @Inject(forwardRef(() => UnitDefaultTestWorkspaceService))
+    private readonly unitDefaultTestWorkspaceService: UnitDefaultTestWorkspaceService,
+    @Inject(forwardRef(() => HgSummaryWorkspaceService))
+    private readonly hgSummaryWorkspaceService: HgSummaryWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -127,12 +136,14 @@ export class TestSummaryWorkspaceService {
   async getTestSummariesByLocationId(
     locationId: string,
     testTypeCode?: string[],
+    systemTypeCode?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
     const results = await this.repository.getTestSummariesByLocationId(
       locationId,
       testTypeCode,
+      systemTypeCode,
       beginDate,
       endDate,
     );
@@ -196,14 +207,19 @@ export class TestSummaryWorkspaceService {
           flowToLoadCheckData,
           flowToLoadReferenceData,
           appECorrelationTestSummaryData,
-          onlineOfflineCalibrationData;
+          onlineOfflineCalibrationData,
+          unitDefaultTestData,
+          transmitterTransducerAccuracyData,
+          hgSummaryData;
 
         let testSumIds;
+
         if (testTypeCodes?.length > 0) {
           testSumIds = testSummaries.filter(i =>
             testTypeCodes.includes(i.testTypeCode),
           );
         }
+
         testSumIds = testSummaries.map(i => i.id);
 
         if (testSumIds) {
@@ -249,6 +265,18 @@ export class TestSummaryWorkspaceService {
             testSumIds,
           );
 
+          unitDefaultTestData = await this.unitDefaultTestWorkspaceService.export(
+            testSumIds,
+          );
+
+          transmitterTransducerAccuracyData = await this.transmitterTransducerAccuracyWorkspaceService.export(
+            testSumIds,
+          );
+
+          hgSummaryData = await this.hgSummaryWorkspaceService.export(
+            testSumIds,
+          );
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -284,6 +312,13 @@ export class TestSummaryWorkspaceService {
             s.cycleTimeSummaryData = cycleTimeSummaryData.filter(
               i => i.testSumId === s.id,
             );
+            s.unitDefaultTestData = unitDefaultTestData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.transmitterTransducerData = transmitterTransducerAccuracyData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.hgSummaryData = hgSummaryData.filter(i => i.testSumId === s.id);
           });
         }
 
@@ -606,6 +641,76 @@ export class TestSummaryWorkspaceService {
       }
     }
 
+    if (
+      payload.transmitterTransducerData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.FFACCTT
+    ) {
+      for (const transmitterTransducerAccuracy of payload.transmitterTransducerData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.transmitterTransducerAccuracyWorkspaceService.import(
+                createdTestSummary.id,
+                transmitterTransducerAccuracy,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      payload.unitDefaultTestData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.UNITDEF
+    ) {
+      for (const unitDefaultTest of payload.unitDefaultTestData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.unitDefaultTestWorkspaceService.import(
+                createdTestSummary.id,
+                unitDefaultTest,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
+    if (
+      (payload.hgSummaryData?.length > 0 &&
+        payload.testTypeCode === TestTypeCodes.HGLINE) ||
+      payload.testTypeCode === TestTypeCodes.HGSI3
+    ) {
+      for (const hgSummary of payload.hgSummaryData) {
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const innerPromises = [];
+            innerPromises.push(
+              this.hgSummaryWorkspaceService.import(
+                createdTestSummary.id,
+                hgSummary,
+                userId,
+                historicalrecordId !== null ? true : false,
+              ),
+            );
+            await Promise.all(innerPromises);
+            resolve(true);
+          }),
+        );
+      }
+    }
+
     await Promise.all(promises);
 
     return null;
@@ -621,11 +726,8 @@ export class TestSummaryWorkspaceService {
     const [
       reportPeriodId,
       componentRecordId,
-      monitorSystem,
+      monitoringSystemRecordId,
     ] = await this.lookupValues(locationId, payload);
-
-    // Swap the DTO 3-char System ID for the Actual UID of the Monitor System
-    payload.monitoringSystemID = monitorSystem?.id;
 
     const location = await this.monitorLocationRepository.findOne(locationId);
 
@@ -655,6 +757,7 @@ export class TestSummaryWorkspaceService {
       id: historicalrecordId ? historicalrecordId : uuid(),
       locationId,
       componentRecordId,
+      monitoringSystemRecordId,
       reportPeriodId,
       userId,
       addDate: timestamp,
@@ -698,7 +801,7 @@ export class TestSummaryWorkspaceService {
     userId: string,
   ): Promise<TestSummaryRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.getTestSummaryById(id);
+    const entity = await this.repository.findOne(id);
 
     if (!entity) {
       throw new LoggingException(
@@ -710,11 +813,8 @@ export class TestSummaryWorkspaceService {
     const [
       reportPeriodId,
       componentRecordId,
-      monitorSystem,
+      monitoringSystemRecordId,
     ] = await this.lookupValues(locationId, payload);
-
-    // Swap the DTO 3-char System ID for the Actual UID of the Monitor System
-    payload.monitoringSystemID = monitorSystem?.id;
 
     entity.beginDate = payload.beginDate;
     entity.beginHour = payload.beginHour;
@@ -725,7 +825,7 @@ export class TestSummaryWorkspaceService {
     entity.componentRecordId = componentRecordId;
     entity.gracePeriodIndicator = payload.gracePeriodIndicator;
     entity.injectionProtocolCode = payload.injectionProtocolCode;
-    entity.monitoringSystemID = payload.monitoringSystemID;
+    entity.monitoringSystemRecordId = monitoringSystemRecordId;
     entity.reportPeriodId = reportPeriodId;
     entity.spanScaleCode = payload.spanScaleCode;
     entity.testComment = payload.testComment;
@@ -742,7 +842,7 @@ export class TestSummaryWorkspaceService {
     entity.evalStatusCode = 'EVAL';
 
     await this.repository.save(entity);
-    return this.map.one(entity);
+    return this.getTestSummaryById(entity.id);
   }
 
   async deleteTestSummary(id: string): Promise<void> {
@@ -779,7 +879,7 @@ export class TestSummaryWorkspaceService {
   async lookupValues(locationId: string, payload: TestSummaryBaseDTO) {
     let reportPeriodId = null;
     let componentRecordId = null;
-    let monitorSystem = null;
+    let monitoringSystemRecordId = null;
 
     if (payload.year && payload.quarter) {
       const rptPeriod = await this.reportingPeriodRepository.findOne({
@@ -800,12 +900,13 @@ export class TestSummaryWorkspaceService {
     }
 
     if (payload.monitoringSystemID) {
-      monitorSystem = await this.monSysRepository.findOne({
+      const monitorSystem = await this.monSysRepository.findOne({
         locationId: locationId,
         monitoringSystemID: payload.monitoringSystemID,
       });
+      monitoringSystemRecordId = monitorSystem ? monitorSystem.id : null;
     }
 
-    return [reportPeriodId, componentRecordId, monitorSystem];
+    return [reportPeriodId, componentRecordId, monitoringSystemRecordId];
   }
 }

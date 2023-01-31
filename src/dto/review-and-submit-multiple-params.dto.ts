@@ -18,4 +18,12 @@ export class ReviewAndSubmitMultipleParamsDTO {
   @ApiPropertyOptional()
   @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
   monPlanIds: string[];
+
+  @ApiProperty({
+    isArray: true,
+    description: 'Array of quarter abbreviations',
+  })
+  @ApiPropertyOptional()
+  @Transform(({ value }) => value.split('|').map((item: string) => item.trim()))
+  quarters: string[];
 }

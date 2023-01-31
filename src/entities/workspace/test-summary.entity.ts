@@ -12,7 +12,7 @@ import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
 import { Component } from './component.entity';
 import { MonitorSystem } from './monitor-system.entity';
-import { ReportingPeriod } from './reporting-period.entity';
+import { ReportingPeriod } from '../reporting-period.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { LinearitySummary } from './linearity-summary.entity';
 import { ProtocolGas } from './protocol-gas.entity';
@@ -29,6 +29,8 @@ import { OnlineOfflineCalibration } from './online-offline-calibration.entity';
 import { FuelFlowmeterAccuracy } from './fuel-flowmeter-accuracy.entity';
 import { CycleTimeSummary } from './cycle-time-summary.entity';
 import { TransmitterTransducerAccuracy } from './transmitter-transducer-accuracy.entity';
+import { UnitDefaultTest } from './unit-default-test.entity';
+import { HgSummary } from './hg-summary.entity';
 
 @Entity({ name: 'camdecmpswks.test_summary' })
 export class TestSummary extends BaseEntity {
@@ -45,7 +47,7 @@ export class TestSummary extends BaseEntity {
   @Column({
     name: 'mon_sys_id',
   })
-  monitoringSystemID: string;
+  monitoringSystemRecordId: string;
 
   @Column({
     name: 'component_id',
@@ -233,6 +235,20 @@ export class TestSummary extends BaseEntity {
   )
   @JoinColumn({ name: 'test_sum_id' })
   cycleTimeSummary: CycleTimeSummary[];
+
+  @OneToMany(
+    () => HgSummary,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  HgSummary: HgSummary[];
+
+  @OneToMany(
+    () => UnitDefaultTest,
+    o => o.testSummary,
+  )
+  @JoinColumn({ name: 'test_sum_id' })
+  unitDefaultTest: UnitDefaultTest[];
 
   @OneToMany(
     () => AirEmissionTesting,

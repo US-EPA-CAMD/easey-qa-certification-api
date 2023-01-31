@@ -8,6 +8,7 @@ import {
   CycleTimeInjectionBaseDTO,
   CycleTimeInjectionDTO,
 } from '../dto/cycle-time-injection.dto';
+import { CycleTimeInjectionChecksService } from './cycle-time-injection-workspace-checks.service';
 import { CycleTimeInjectionWorkspaceController } from './cycle-time-injection-workspace.controller';
 import { CycleTimeInjectionWorkspaceRepository } from './cycle-time-injection-workspace.repository';
 import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-workspace.service';
@@ -38,11 +39,21 @@ const user: CurrentUser = {
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 
 const mockService = () => ({
+  getCycleTimeInjectionsByCycleTimeSumId: jest
+    .fn()
+    .mockResolvedValue([cycleTimeInjDTO]),
+  getCycleTimeInjection: jest.fn().mockResolvedValue(cycleTimeInjDTO),
   createCycleTimeInjection: jest.fn().mockResolvedValue(cycleTimeInjDTO),
+  updateCycleTimeInjection: jest.fn().mockResolvedValue(cycleTimeInjDTO),
+  deleteCycleTimeInjection: jest.fn().mockResolvedValue(null),
+});
+
+const mockChecksService = () => ({
+  runChecks: jest.fn().mockResolvedValue([]),
 });
 
 describe('CycleTimeInjectionWorkspaceController', () => {
@@ -61,6 +72,10 @@ describe('CycleTimeInjectionWorkspaceController', () => {
           provide: CycleTimeInjectionWorkspaceService,
           useFactory: mockService,
         },
+        {
+          provide: CycleTimeInjectionChecksService,
+          useFactory: mockChecksService,
+        },
       ],
     }).compile();
 
@@ -70,6 +85,30 @@ describe('CycleTimeInjectionWorkspaceController', () => {
     service = module.get<CycleTimeInjectionWorkspaceService>(
       CycleTimeInjectionWorkspaceService,
     );
+  });
+
+  describe('getCycleTimeInjectionsByCycleTimeSumId', () => {
+    it('should get Cycle Time Injections by Cycle Time Summary Id', async () => {
+      const result = await controller.getCycleTimeInjections(
+        locId,
+        testSumId,
+        cycleTimeSumId,
+      );
+      expect(result).toEqual([cycleTimeInjDTO]);
+    });
+  });
+
+  describe('getCycleTimeInjection', () => {
+    it('should get Cycle Time Injection record', async () => {
+      const result = await controller.getCycleTimeInjection(
+        locId,
+        testSumId,
+        cycleTimeSumId,
+        cycleTimeInjId,
+      );
+
+      expect(result).toEqual(cycleTimeInjDTO);
+    });
   });
 
   describe('createLinearityInjection', () => {
@@ -82,6 +121,35 @@ describe('CycleTimeInjectionWorkspaceController', () => {
         user,
       );
       expect(result).toEqual(cycleTimeInjDTO);
+    });
+  });
+
+  describe('updateCycleTimeInjection', () => {
+    it('should update Cycle Time Injection record', async () => {
+      const result = await controller.updateCycleTimeInjection(
+        locId,
+        testSumId,
+        cycleTimeSumId,
+        cycleTimeInjId,
+        payload,
+        user,
+      );
+
+      expect(result).toEqual(cycleTimeInjDTO);
+    });
+  });
+
+  describe('deleteCycleTimeInjection', () => {
+    it('should delete Cycle Time Injection record', async () => {
+      const result = await controller.deleteCycleTimeInjection(
+        locId,
+        testSumId,
+        cycleTimeSumId,
+        cycleTimeInjId,
+        user,
+      );
+
+      expect(result).toEqual(null);
     });
   });
 });

@@ -2,12 +2,12 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
 import { TestSummaryDTO } from '../dto/test-summary.dto';
 import { TestSummaryMap } from '../maps/test-summary.map';
 import { TestSummaryRepository } from './test-summary.repository';
 import { LinearitySummaryService } from '../linearity-summary/linearity-summary.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { RataService } from '../rata/rata.service';
 import { ProtocolGasService } from '../protocol-gas/protocol-gas.service';
 import { AppECorrelationTestSummaryService } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.service';
@@ -19,6 +19,9 @@ import { OnlineOfflineCalibrationService } from '../online-offline-calibration/o
 import { FuelFlowToLoadBaselineService } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.service';
 import { CycleTimeSummaryService } from '../cycle-time-summary/cycle-time-summary.service';
 import { FuelFlowmeterAccuracyService } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.service';
+import { UnitDefaultTestService } from '../unit-default-test/unit-default-test.service';
+import { TransmitterTransducerAccuracyService } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.service';
+import { HgSummaryService } from '../hg-summary/hg-summary.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -51,6 +54,12 @@ export class TestSummaryService {
     private readonly onlineOfflineCalibrationService: OnlineOfflineCalibrationService,
     @Inject(forwardRef(() => CycleTimeSummaryService))
     private readonly cycleTimeSummaryService: CycleTimeSummaryService,
+    @Inject(forwardRef(() => UnitDefaultTestService))
+    private readonly unitDefaultTestService: UnitDefaultTestService,
+    @Inject(forwardRef(() => TransmitterTransducerAccuracyService))
+    private readonly transmitterTransducerAccuracyService: TransmitterTransducerAccuracyService,
+    @Inject(forwardRef(() => HgSummaryService))
+    private readonly hgSummaryService: HgSummaryService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -89,12 +98,14 @@ export class TestSummaryService {
   async getTestSummariesByLocationId(
     locationId: string,
     testTypeCode?: string[],
+    systemTypeCode?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
     const results = await this.repository.getTestSummariesByLocationId(
       locationId,
       testTypeCode,
+      systemTypeCode,
       beginDate,
       endDate,
     );
@@ -158,7 +169,11 @@ export class TestSummaryService {
           cycleTimeSummaryData,
           flowToLoadCheckData,
           flowToLoadReferenceData,
-          onlineOfflineCalibrationData;
+          onlineOfflineCalibrationData,
+          unitDefaultTestData,
+          transmitterTransducerAccuracyData,
+          hgSummaryData;
+
         let testSumIds;
 
         if (testTypeCodes?.length > 0) {
@@ -212,6 +227,16 @@ export class TestSummaryService {
             testSumIds,
           );
 
+          unitDefaultTestData = await this.unitDefaultTestService.export(
+            testSumIds,
+          );
+
+          transmitterTransducerAccuracyData = await this.transmitterTransducerAccuracyService.export(
+            testSumIds,
+          );
+
+          hgSummaryData = await this.hgSummaryService.export(testSumIds);
+
           testSummaries.forEach(s => {
             s.linearitySummaryData = linearitySummaryData.filter(
               i => i.testSumId === s.id,
@@ -247,6 +272,13 @@ export class TestSummaryService {
             s.cycleTimeSummaryData = cycleTimeSummaryData.filter(
               i => i.testSumId === s.id,
             );
+            s.unitDefaultTestData = unitDefaultTestData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.transmitterTransducerData = transmitterTransducerAccuracyData.filter(
+              i => i.testSumId === s.id,
+            );
+            s.hgSummaryData = hgSummaryData.filter(i => i.testSumId === s.id);
           });
         }
 

@@ -100,6 +100,7 @@ import {
   YEAR_QUARTER_TEST_TYPE_CODES,
   GRACE_PERIOD_IND_TEST_TYPE_CODES,
   VALID_CODES_FOR_END_DATE_VALIDATION,
+  BEGIN_MINUTE_TEST_TYPE_CODES,
 } from '../utilities/constants';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
@@ -163,7 +164,17 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-117-A', {
+      let resultCode;
+      switch (args.object['testTypeCode']) {
+        case TestTypeCodes.APPE:
+          resultCode = 'APPE-47-A';
+          break;
+        case TestTypeCodes.RATA:
+          resultCode = 'RATA-117-A';
+        default:
+          return `You did not provide [${args.property}], which is required for [${KEY}].`;
+      }
+      return CheckCatalogService.formatResultMessage(resultCode, {
         fieldname: args.property,
         key: KEY,
       });
@@ -179,7 +190,30 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+      let resultCode;
+      switch (args.object['testTypeCode']) {
+        case TestTypeCodes.CYCLE:
+          resultCode = 'CYCLE-22-A';
+          break;
+        case TestTypeCodes.SEVENDAY:
+          resultCode = 'SEVNDAY-30-A';
+          break;
+        case TestTypeCodes.LINE:
+          resultCode = 'LINEAR-35-A';
+          break;
+        case TestTypeCodes.ONOFF:
+          resultCode = 'ONOFF-37-A';
+          break;
+        case TestTypeCodes.FFACCTT:
+          resultCode = 'FFACCTT-12-A';
+          break;
+        default:
+          return `You did not provide [${args.property}], which is required for [${KEY}].`;
+      }
+      return CheckCatalogService.formatResultMessage(resultCode, {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   @ValidateIf(o =>
@@ -244,11 +278,48 @@ export class TestSummaryBaseDTO {
     description: 'Test Result Code. ADD TO PROPERTY METADATA',
   })
   @IsNotEmpty({
-    message: `You did not provide [testResultCode], which is required for [${KEY}].`,
+    message: (args: ValidationArguments) => {
+      let resultCode;
+      switch (args.object['testTypeCode']) {
+        case TestTypeCodes.SEVENDAY:
+          resultCode = 'SEVNDAY-28-A';
+          break;
+        case TestTypeCodes.LINE:
+          resultCode = 'LINEAR-10-A';
+          break;
+        default:
+          return CheckCatalogService.formatResultMessage('TEST-12-A', {
+            fieldname: args.property,
+            key: KEY,
+          });
+      }
+      return CheckCatalogService.formatResultMessage(resultCode, {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
   })
   @IsValidCode(TestResultCode, {
     message: (args: ValidationArguments) => {
-      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`;
+      let resultCode;
+      switch (args.object['testTypeCode']) {
+        case TestTypeCodes.SEVENDAY:
+          resultCode = 'SEVNDAY-28-B';
+          break;
+        case TestTypeCodes.LINE:
+          resultCode = 'LINEAR-10-B';
+          break;
+        case TestTypeCodes.ONOFF:
+          resultCode = 'ONOFF-39-B';
+          break;
+        default:
+          return `You reported the value [${args.value}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`;
+      }
+      return CheckCatalogService.formatResultMessage(resultCode, {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   @ValidateIf(o =>
@@ -303,7 +374,7 @@ export class TestSummaryBaseDTO {
     message: (args: ValidationArguments) =>
       `The value [${args.value}] in the field [beginMinute] for [${KEY}] is not within the range of valid values from [${MIN_MINUTE}] to [${MAX_MINUTE}].`,
   })
-  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
+  @ValidateIf(o => BEGIN_MINUTE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginMinute?: number;
 
   @ApiProperty({

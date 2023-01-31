@@ -38,6 +38,12 @@ import { ReportingPeriodRepository } from '../reporting-period/reporting-period.
 import { OnlineOfflineCalibrationWorkspaceModule } from '../online-offline-calibration-workspace/online-offline-calibration.module';
 import { FuelFlowmeterAccuracyWorkspaceModule } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
 import { CycleTimeSummaryWorkspaceModule } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.module';
+import { UnitDefaultTestWorkspaceModule } from '../unit-default-test-workspace/unit-default-test-workspace.module';
+import { TransmitterTransducerAccuracyRepository } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.repository';
+import { TransmitterTransducerAccuracyWorkspaceModule } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.module';
+import { HgSummaryWorkspaceModule } from '../hg-summary-workspace/hg-summary-workspace.module';
+import { HgSummaryRepository } from '../hg-summary/hg-summary.repository';
+import { HgInjectionWorkspaceModule } from '../hg-injection-workspace/hg-injection-workspace.module';
 
 @Module({
   imports: [
@@ -55,6 +61,8 @@ import { CycleTimeSummaryWorkspaceModule } from '../cycle-time-summary-workspace
       StackPipeRepository,
       MonitorMethodRepository,
       CalibrationInjectionRepository,
+      TransmitterTransducerAccuracyRepository,
+      HgSummaryRepository,
     ]),
     forwardRef(() => LinearitySummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),
@@ -73,6 +81,10 @@ import { CycleTimeSummaryWorkspaceModule } from '../cycle-time-summary-workspace
     forwardRef(() => FuelFlowToLoadBaselineWorkspaceModule),
     forwardRef(() => OnlineOfflineCalibrationWorkspaceModule),
     forwardRef(() => CycleTimeSummaryWorkspaceModule),
+    forwardRef(() => UnitDefaultTestWorkspaceModule),
+    forwardRef(() => TransmitterTransducerAccuracyWorkspaceModule),
+    forwardRef(() => HgSummaryWorkspaceModule),
+    forwardRef(() => HgInjectionWorkspaceModule),
     TestResultCodeModule,
     HttpModule,
   ],

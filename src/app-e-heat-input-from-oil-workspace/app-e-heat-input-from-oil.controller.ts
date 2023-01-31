@@ -24,12 +24,16 @@ import {
   AppEHeatInputFromOilRecordDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oil.service';
+import { AppEHeatInputFromOilChecksService } from './app-e-heat-input-from-oil-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Heat Input From Oil')
 export class AppEHeatInputFromOilWorkspaceController {
-  constructor(private readonly service: AppEHeatInputFromOilWorkspaceService) {}
+  constructor(
+    private readonly service: AppEHeatInputFromOilWorkspaceService,
+    private readonly checksService: AppEHeatInputFromOilChecksService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -80,6 +84,7 @@ export class AppEHeatInputFromOilWorkspaceController {
     @Body() payload: AppEHeatInputFromOilBaseDTO,
     @User() user: CurrentUser,
   ): Promise<AppEHeatInputFromOilRecordDTO> {
+    await this.checksService.runChecks(payload, null, aeCorrTestRunId);
     return this.service.createAppEHeatInputFromOilRecord(
       locationId,
       testSumId,
@@ -98,7 +103,7 @@ export class AppEHeatInputFromOilWorkspaceController {
     description:
       'Updates an Appendix E Heat Input from Oil record in the workspace',
   })
-  editAppEHeatInputFromOil(
+  async editAppEHeatInputFromOil(
     @Param('locid') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('appECorrTestSumId') _aeCorrTestSumId: string,
@@ -107,6 +112,7 @@ export class AppEHeatInputFromOilWorkspaceController {
     @Body() payload: AppEHeatInputFromOilBaseDTO,
     @User() user: CurrentUser,
   ) {
+    await this.checksService.runChecks(payload, id, aeCorrTestRunId);
     return this.service.updateAppEHeatInputFromOilRecord(
       testSumId,
       id,

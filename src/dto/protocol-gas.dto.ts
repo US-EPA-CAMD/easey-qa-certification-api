@@ -1,8 +1,29 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, ValidationArguments } from 'class-validator';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+
+import { IsValidCode } from '../pipes/is-valid-code.pipe';
+import { GasTypeCode } from '../entities/workspace/gas-type-code.entity';
+
+const KEY = 'Protocol Gas';
+
 export class ProtocolGasBaseDTO {
   gasLevelCode: string;
+
+  @ApiProperty({
+    description: 'gasTypeCode. ADD TO PROPERTY METADATA',
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('PGVP-9-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   gasTypeCode: string;
-  vendorID: string;
-  cylinderID: string;
+  cylinderIdentifier: string;
+  vendorIdentifier: string;
   expirationDate: Date;
 }
 

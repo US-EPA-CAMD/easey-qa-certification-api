@@ -1,15 +1,19 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { InternalServerErrorException } from '@nestjs/common';
 
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import { TransmitterTransducerAccuracyWorkspaceService } from './transmitter-transducer-accuracy.service';
 import { TransmitterTransducerAccuracyWorkspaceRepository } from './transmitter-transducer-accuracy.repository';
 import { TransmitterTransducerAccuracy } from '../entities/workspace/transmitter-transducer-accuracy.entity';
+import { TransmitterTransducerAccuracy as TransmitterTransducerAccuracyOfficial } from '../entities/transmitter-transducer-accuracy.entity';
 import {
   TransmitterTransducerAccuracyBaseDTO,
   TransmitterTransducerAccuracyRecordDTO,
 } from '../dto/transmitter-transducer-accuracy.dto';
 import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { TransmitterTransducerAccuracyRepository } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.repository';
 
 const testSumID = 'TEST-SUM-ID';
 const userID = 'USER-ID';
@@ -34,6 +38,12 @@ const mockTestSummaryService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockHistoricalRepo = () => ({
+  findOne: jest
+    .fn()
+    .mockResolvedValue(new TransmitterTransducerAccuracyOfficial()),
+});
+
 describe('TransmitterTransducerAccuracyWorkspaceService', () => {
   let service: TransmitterTransducerAccuracyWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
@@ -42,10 +52,15 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        Logger,
         TransmitterTransducerAccuracyWorkspaceService,
         {
           provide: TransmitterTransducerAccuracyWorkspaceRepository,
           useFactory: mockRepo,
+        },
+        {
+          provide: TransmitterTransducerAccuracyRepository,
+          useFactory: mockHistoricalRepo,
         },
         {
           provide: TransmitterTransducerAccuracyMap,
@@ -143,6 +158,44 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
       }
 
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('import', () => {
+    it('Should Import Transmitter Transducer Accuracy', async () => {
+      jest
+        .spyOn(service, 'createTransmitterTransducerAccuracy')
+        .mockResolvedValue(recordDTO);
+
+      await service.import(testSumID, baseDTO, userID, false);
+    });
+
+    it('Should Import Calibration Injection from Historical Record', async () => {
+      jest
+        .spyOn(service, 'createTransmitterTransducerAccuracy')
+        .mockResolvedValue(recordDTO);
+
+      await service.import(testSumID, baseDTO, userID, true);
+    });
+  });
+
+  describe('getTransmitterTransducerAccuraciesByTestSumIds', () => {
+    it('Should get UTransmitter Transducer Accuracy records by Test Summary Ids', async () => {
+      const result = await service.getTransmitterTransducerAccuraciesByTestSumIds(
+        [testSumID],
+      );
+      expect(result).toEqual([recordDTO]);
+    });
+  });
+
+  describe('export', () => {
+    it('Should export Unit Default Test Record', async () => {
+      jest
+        .spyOn(service, 'getTransmitterTransducerAccuraciesByTestSumIds')
+        .mockResolvedValue([]);
+
+      const result = await service.export([testSumID]);
+      expect(result).toEqual([]);
     });
   });
 });

@@ -14,6 +14,8 @@ import { FlowToLoadReferenceMap } from './flow-to-load-reference.map';
 import { CalibrationInjectionMap } from './calibration-injection.map';
 import { CycleTimeSummaryMap } from './cycle-time-summary.map';
 import { FuelFlowmeterAccuracyMap } from './fuel-flowmeter-accuracy.map';
+import { UnitDefaultTestMap } from './unit-default-test.map';
+import { HgSummaryMap } from './hg-summary.map';
 
 @Injectable()
 export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
@@ -30,6 +32,8 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
     private readonly calibrationInjectionMap: CalibrationInjectionMap,
     private readonly cycleTimeSummaryMap: CycleTimeSummaryMap,
     private readonly fuelFlowmeterAccuracyMap: FuelFlowmeterAccuracyMap,
+    private readonly unitDefaultTestMap: UnitDefaultTestMap,
+    private readonly hgSummaryMap: HgSummaryMap,
   ) {
     super();
   }
@@ -82,6 +86,14 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
 
     const cycleTimeSummary = entity.cycleTimeSummary
       ? await this.cycleTimeSummaryMap.many(entity.cycleTimeSummary)
+      : [];
+
+    const unitDefaultTestMap = entity.unitDefaultTest
+      ? await this.unitDefaultTestMap.many(entity.unitDefaultTest)
+      : [];
+
+    const hgSummary = entity.HgSummary
+      ? await this.hgSummaryMap.many(entity.HgSummary)
       : [];
 
     if (entity['evalStatusCode']) {
@@ -141,8 +153,8 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       fuelFlowToLoadBaselineData: [],
       appECorrelationTestSummaryData: appECorrelationTestSummaries,
       fuelFlowToLoadTestData: fuelFlowToloadTest,
-      unitDefaultTestData: [],
-      hgSummaryData: [],
+      unitDefaultTestData: unitDefaultTestMap,
+      hgSummaryData: hgSummary,
       testQualificationData: testQuals,
       protocolGasData: protocolGases,
       airEmissionTestingData: airEmissionTestings,

@@ -9,6 +9,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { HttpModule } from '@nestjs/axios';
+import { AppEHeatInputFromOilChecksService } from './app-e-heat-input-from-oil-checks.service';
 
 const locId = '';
 const testSumId = '';
@@ -21,7 +22,7 @@ const user: CurrentUser = {
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 const aeHiOilRecord = new AppEHeatInputFromOilRecordDTO();
 const aeHiOilRecords = [aeHiOilRecord];
@@ -32,6 +33,10 @@ const mockService = () => ({
   getAppEHeatInputFromOilRecords: jest.fn(),
   createAppEHeatInputFromOilRecord: jest.fn(),
   updateAppEHeatInputFromOilRecord: jest.fn(),
+});
+
+const mockChecksService = () => ({
+  runChecks: jest.fn(),
 });
 
 const payload: AppEHeatInputFromOilDTO = new AppEHeatInputFromOilDTO();
@@ -50,6 +55,10 @@ describe('Appendix E Heat Input from Oil Controller', () => {
         {
           provide: AppEHeatInputFromOilWorkspaceService,
           useFactory: mockService,
+        },
+        {
+          provide: AppEHeatInputFromOilChecksService,
+          useFactory: mockChecksService,
         },
       ],
     }).compile();

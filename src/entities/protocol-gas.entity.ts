@@ -38,13 +38,13 @@ export class ProtocolGas extends BaseEntity {
   gasTypeCode: string;
 
   @Column({ type: 'varchar', name: 'vendor_id' })
-  vendorID: string;
+  vendorIdentifier: string;
 
   @Column({
     type: 'varchar',
     name: 'cylinder_id',
   })
-  cylinderID: string;
+  cylinderIdentifier: string;
 
   @Column({
     type: 'date',

@@ -6,6 +6,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { AppECorrelationTestSummaryBaseDTO } from '../dto/app-e-correlation-test-summary.dto';
 import { AppendixETestSummaryWorkspaceController } from './app-e-correlation-test-summary-workspace.controller';
 import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-test-summary-workspace.service';
+import { AppECorrelationTestSummaryChecksService } from './app-e-correlation-test-summary-checks.service';
 
 const locId = '';
 const testSumId = '';
@@ -15,7 +16,7 @@ const user: CurrentUser = {
   expiration: '',
   clientIp: '',
   isAdmin: false,
-  roles: [],
+  permissionSet: [],
 };
 const appendixECorrelationTestSummaryId = '';
 const appECorrelationTest = new AppECorrelationTestSummaryBaseDTO();
@@ -26,6 +27,10 @@ const mockService = () => ({
   getAppECorrelation: jest.fn().mockResolvedValue(appECorrelationTest),
   createAppECorrelation: jest.fn().mockResolvedValue(appECorrelationTest),
   editAppECorrelation: jest.fn().mockResolvedValue(appECorrelationTest),
+});
+
+const mockChecksService = () => ({
+  runChecks: jest.fn(),
 });
 
 const payload = new AppECorrelationTestSummaryBaseDTO();
@@ -43,6 +48,10 @@ describe('AppendixETestSummaryWorkspaceController', () => {
         {
           provide: AppECorrelationTestSummaryWorkspaceService,
           useFactory: mockService,
+        },
+        {
+          provide: AppECorrelationTestSummaryChecksService,
+          useFactory: mockChecksService,
         },
       ],
     }).compile();

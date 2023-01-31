@@ -25,12 +25,16 @@ import {
   ProtocolGasRecordDTO,
 } from '../dto/protocol-gas.dto';
 import { ProtocolGasWorkspaceService } from './protocol-gas.service';
+import { ProtocolGasChecksService } from './protocol-gas-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Protocol Gas')
 export class ProtocolGasWorkspaceController {
-  constructor(private readonly service: ProtocolGasWorkspaceService) {}
+  constructor(
+    private readonly service: ProtocolGasWorkspaceService,
+    private readonly checksService: ProtocolGasChecksService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -67,11 +71,18 @@ export class ProtocolGasWorkspaceController {
     description: 'Creates a Protocol Gas record in the workspace',
   })
   async createProtocolGas(
-    @Param('locId') _locationId: string,
+    @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Body() payload: ProtocolGasBaseDTO,
     @User() user: CurrentUser,
   ): Promise<ProtocolGasRecordDTO> {
+    await this.checksService.runChecks(
+      payload,
+      locationId,
+      testSumId,
+      false,
+      true,
+    );
     return this.service.createProtocolGas(testSumId, payload, user.userId);
   }
 
@@ -82,13 +93,22 @@ export class ProtocolGasWorkspaceController {
     type: ProtocolGasRecordDTO,
     description: 'Updates a Protocol Gas record in the workspace',
   })
-  editProtolGas(
-    @Param('locid') _locationId: string,
+  async editProtolGas(
+    @Param('locid') locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
     @Body() payload: ProtocolGasBaseDTO,
     @User() user: CurrentUser,
   ) {
+    console.log('CONTROLLER - run');
+
+    await this.checksService.runChecks(
+      payload,
+      locationId,
+      testSumId,
+      false,
+      true,
+    );
     return this.service.updateProtocolGas(testSumId, id, payload, user.userId);
   }
 

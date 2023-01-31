@@ -1,7 +1,30 @@
-export class UnitDefaultTestBaseDTO {}
+import {
+  UnitDefaultTestRunDTO,
+  UnitDefaultTestRunImportDTO,
+} from './unit-default-test-run.dto';
 
-export class UnitDefaultTestRecordDTO extends UnitDefaultTestBaseDTO {}
+export class UnitDefaultTestBaseDTO {
+  fuelCode: string;
+  NOxDefaultRate: number;
+  operatingConditionCode: string;
+  groupID: string;
+  numberOfUnitsInGroup: number;
+  numberOfTestsForGroup: number;
+}
 
-export class UnitDefaultTestImportDTO extends UnitDefaultTestBaseDTO {}
+export class UnitDefaultTestRecordDTO extends UnitDefaultTestBaseDTO {
+  id: string;
+  testSumId: string;
+  calculatedNOxDefaultRate: number;
+  userId: string;
+  addDate: string;
+  updateDate: string;
+}
 
-export class UnitDefaultTestDTO extends UnitDefaultTestRecordDTO {}
+export class UnitDefaultTestImportDTO extends UnitDefaultTestBaseDTO {
+  unitDefaultTestRunData: UnitDefaultTestRunImportDTO[];
+}
+
+export class UnitDefaultTestDTO extends UnitDefaultTestRecordDTO {
+  unitDefaultTestRunData: UnitDefaultTestRunDTO[];
+}

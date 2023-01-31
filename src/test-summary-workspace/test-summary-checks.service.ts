@@ -25,6 +25,8 @@ import { MonitorMethodRepository } from '../monitor-method/monitor-method.reposi
 import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
 import {
   BEGIN_DATE_TEST_TYPE_CODES,
+  BEGIN_MINUTE_TEST_TYPE_CODES,
+  MISC_TEST_TYPE_CODES,
   VALID_CODES_FOR_END_MINUTE_VALIDATION,
 } from '../utilities/constants';
 
@@ -144,18 +146,7 @@ export class TestSummaryChecksService {
       errorList.push(error);
     }
 
-    if (summary.testResultCode === TestTypeCodes.LINE) {
-      // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
-      error = await this.linear4Check(
-        locationId,
-        summary,
-        historicalTestSumId,
-        isImport,
-      );
-      if (error) {
-        errorList.push(error);
-      }
-
+    if (summary.testTypeCode === TestTypeCodes.LINE) {
       // LINEAR-10 Linearity Test Result Code Valid
       error = await this.linear10Check(summary);
       if (error) {
@@ -175,7 +166,25 @@ export class TestSummaryChecksService {
       errorList.push(error);
     }
 
+    error = await this.validTestResultCode(summary);
+    if (error) {
+      errorList.push(error);
+    }
+
     if (!isUpdate) {
+      if (summary.testTypeCode === TestTypeCodes.LINE) {
+        // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
+        error = await this.linear4Check(
+          locationId,
+          summary,
+          historicalTestSumId,
+          isImport,
+        );
+        if (error) {
+          errorList.push(error);
+        }
+      }
+
       error = await this.duplicateTestCheck(
         locationId,
         summary,
@@ -698,8 +707,6 @@ export class TestSummaryChecksService {
   }
 
   // IMPORT-20 Duplicate Test Check
-  // LINEAR-31 Duplicate Linearity (Result A)
-  // LINEAR-31 Duplicate Linearity (Result B)
   // IMPORT-21 Duplicate Test Number Check
   private async duplicateTestCheck(
     locationId: string,
@@ -741,10 +748,7 @@ export class TestSummaryChecksService {
         fields = this.compareFields(duplicate, summary);
       }
 
-      if (summary.testResultCode === TestTypeCodes.LINE) {
-        // LINEAR-31 Duplicate Linearity (Result A)
-        error = this.getMessage('LINEAR-31-A', null);
-      }
+      error = await this.getDuplicateErrorMessage(summary.testTypeCode, 'A');
     } else {
       duplicate = await this.qaSuppDataRepository.getUnassociatedQASuppDataByLocationIdAndTestSum(
         locationId,
@@ -757,10 +761,8 @@ export class TestSummaryChecksService {
         if (isImport) {
           fields = this.compareFields(duplicate, summary);
         }
-        if (summary.testResultCode === TestTypeCodes.LINE) {
-          // LINEAR-31 Duplicate Linearity (Result B)
-          error = this.getMessage('LINEAR-31-B', null);
-        }
+
+        error = await this.getDuplicateErrorMessage(summary.testTypeCode, 'B');
       }
     }
 
@@ -777,28 +779,91 @@ export class TestSummaryChecksService {
     return error;
   }
 
+  async getDuplicateErrorMessage(
+    testTypeCode: string,
+    checkType: string,
+  ): Promise<string> {
+    let error = null;
+
+    switch (true) {
+      case testTypeCode === TestTypeCodes.LINE:
+        // LINEAR-31 Duplicate Linearity
+        error = this.getMessage(`LINEAR-31-${checkType}`, null);
+        break;
+      case testTypeCode === TestTypeCodes.ONOFF:
+        // ONOFF-38 Duplicate Online Offline Calibration Test
+        error = this.getMessage(`ONOFF-38-${checkType}`, {
+          testtype: 'Online Offline Calibration Test',
+        });
+        break;
+      case testTypeCode === TestTypeCodes.FFACCTT:
+        // FFACCTT-13 Duplicate Transmitter Transducer Test
+        error = this.getMessage(`FFACCTT-13-${checkType}`, {
+          testtype: 'Transmitter Transducer Test',
+        });
+        break;
+      case testTypeCode === TestTypeCodes.UNITDEF:
+        // UNITDEF-28 Duplicate Unit Default Test
+        error = this.getMessage(`UNITDEF-28-${checkType}`, {
+          testtype: 'Unit Default Test',
+        });
+        break;
+      case testTypeCode === TestTypeCodes.RATA:
+        // RATA-106 Duplicate RATA
+        error = this.getMessage(`RATA-106-${checkType}`, {
+          testtype: 'Relative Accuracy Test Audit(RATA) Test',
+        });
+        break;
+      case testTypeCode === TestTypeCodes.APPE:
+        // APPE-46 Duplicate Appendix E Correlation
+        error = this.getMessage(`APPE-46-${checkType}`, {
+          testtype: 'Appendix E Test',
+        });
+        break;
+      case testTypeCode === TestTypeCodes.SEVENDAY:
+        // SEVNDAY-29 Duplicate Calibration Test
+        error = this.getMessage(`SEVNDAY-29-${checkType}`, {
+          testtype: '7-Day Calibration Error Test',
+        });
+        break;
+      case testTypeCode === TestTypeCodes.CYCLE:
+        // CYCLE-19 Duplicate Cycle Time
+        error = this.getMessage(`CYCLE-19-${checkType}`, {
+          testtype: 'Cycle Time Test',
+        });
+        break;
+      case MISC_TEST_TYPE_CODES.includes(testTypeCode):
+        // TEST-19 Duplicate Miscellaneous Test
+        error = this.getMessage(`TEST-19-${checkType}`, null);
+        break;
+      default:
+        return error;
+    }
+
+    return error;
+  }
+
   // TEST-3 & TEST-6: Test Begin/End Minute Valid
   async testMinuteField(
     summary: TestSummaryBaseDTO,
     locationId: string,
     minuteField: string,
   ): Promise<string> {
-    let FIELDNAME: string = 'minuteField';
-
     const resultA = this.getMessage('TEST-3-A', {
-      fieldname: FIELDNAME,
+      fieldname: minuteField,
       key: KEY,
     });
     const resultB = this.getMessage('TEST-3-B', {
-      fieldname: FIELDNAME,
+      fieldname: minuteField,
       key: KEY,
     });
 
     if (
       minuteField === 'endMinute' &&
       summary.testTypeCode.toUpperCase() === TestTypeCodes.ONOFF
-    )
+    ) {
       return null;
+    }
 
     if (summary[minuteField] === null || summary[minuteField] === undefined) {
       const listOfCodes = [
@@ -823,16 +888,20 @@ export class TestSummaryChecksService {
           locationId,
           summary.unitId,
           summary.stackPipeId,
-          summary[minuteField],
+          summary['beginDate'],
         );
 
-        this.qaMonitorPlanRepository.find();
         if (mp) return resultA;
       } catch (e) {
         console.error(e);
       }
 
-      return resultB;
+      if (
+        minuteField === 'beginMinute' &&
+        BEGIN_MINUTE_TEST_TYPE_CODES.includes(summary.testTypeCode)
+      ) {
+        return resultB;
+      }
     }
 
     return null;
@@ -906,7 +975,8 @@ export class TestSummaryChecksService {
       if (
         component &&
         component.componentTypeCode !== 'FLOW' &&
-        summary.testTypeCode !== 'FFACC'
+        summary.testTypeCode !== TestTypeCodes.FFACC &&
+        summary.testTypeCode !== TestTypeCodes.FFACCTT
       ) {
         if (summary.spanScaleCode === null) {
           return this.getMessage('TEST-8-A', {
@@ -1227,7 +1297,7 @@ export class TestSummaryChecksService {
   ): Promise<string> {
     let error: string = null;
     let FIELDNAME: string = 'testResultCode';
-    let KEY: 'Test Summary';
+    let KEY: string = 'Test Summary';
     const testSummaryMDRelationships = await this.testSummaryRelationshipsRepository.getTestTypeCodesRelationships(
       TestTypeCodes.LINE,
       'testResultCode',
@@ -1251,6 +1321,52 @@ export class TestSummaryChecksService {
           key: KEY,
         });
         //    error = `You reported the value [${summary.testResultCode}], which is not in the list of valid values for this test type [${summary.testTypeCode}], in the field [testResultCode] for [Test Summary].`;
+      }
+    }
+    return error;
+  }
+
+  private async validTestResultCode(
+    summary: TestSummaryBaseDTO | TestSummaryImportDTO,
+  ): Promise<string> {
+    let error: string = null;
+    const FIELDNAME: string = 'testResultCode';
+    const KEY: string = 'Test Summary';
+    let errorMessageCode = '';
+
+    const testSummaryMDRelationships = await this.testSummaryRelationshipsRepository.getTestTypeCodesRelationships(
+      summary.testTypeCode,
+      'testResultCode',
+    );
+
+    const testResultCodes = testSummaryMDRelationships.map(
+      s => s.testResultCode,
+    );
+    if (
+      !testResultCodes.includes(summary.testResultCode) &&
+      [
+        TestTypeCodes.SEVENDAY.toString(),
+        TestTypeCodes.ONOFF.toString(),
+      ].includes(summary.testTypeCode)
+    ) {
+      const option = this.testResultCodeRepository.findOne(
+        summary.testResultCode,
+      );
+
+      if (option) {
+        switch (summary.testTypeCode) {
+          case TestTypeCodes.SEVENDAY.toString():
+            errorMessageCode = 'SEVNDAY-28-C';
+            break;
+          case TestTypeCodes.ONOFF.toString():
+            errorMessageCode = 'ONOFF-39-C';
+            break;
+        }
+        error = this.getMessage(errorMessageCode, {
+          value: summary.testResultCode,
+          fieldname: FIELDNAME,
+          key: KEY,
+        });
       }
     }
     return error;

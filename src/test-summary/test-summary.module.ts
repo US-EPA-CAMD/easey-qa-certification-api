@@ -21,6 +21,10 @@ import { OnlineOfflineCalibrationModule } from '../online-offline-calibration/on
 import { FuelFlowToLoadBaselineModule } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.module';
 import { FuelFlowmeterAccuracyModule } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.module';
 import { CycleTimeSummaryModule } from '../cycle-time-summary/cycle-time-summary.module';
+import { UnitDefaultTestModule } from '../unit-default-test/unit-default-test.module';
+import { TransmitterTransducerAccuracyModule } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.module';
+import { HgSummaryModule } from '../hg-summary/hg-summary.module';
+import { HgInjectionModule } from '../hg-injection/hg-injection.module';
 
 @Module({
   imports: [
@@ -40,6 +44,10 @@ import { CycleTimeSummaryModule } from '../cycle-time-summary/cycle-time-summary
     CalibrationInjectionModule,
     OnlineOfflineCalibrationModule,
     CycleTimeSummaryModule,
+    UnitDefaultTestModule,
+    TransmitterTransducerAccuracyModule,
+    HgSummaryModule,
+    HgInjectionModule,
   ],
   controllers: [TestSummaryController],
   providers: [TestSummaryMap, TestSummaryService],

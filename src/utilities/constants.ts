@@ -1,5 +1,18 @@
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 
+export const MISC_TEST_TYPE_CODES = [
+  TestTypeCodes.DAHS.toString(),
+  TestTypeCodes.DGFMCAL.toString(),
+  TestTypeCodes.MFMCAL.toString(),
+  TestTypeCodes.TSCAL.toString(),
+  TestTypeCodes.BCAL.toString(),
+  TestTypeCodes.QGA.toString(),
+  TestTypeCodes.LEAK.toString(),
+  TestTypeCodes.OTHER.toString(),
+  TestTypeCodes.PEI.toString(),
+  TestTypeCodes.PEMSACC.toString(),
+];
+
 export const VALID_CODES_FOR_MON_SYS_ID_VALIDATION = [
   TestTypeCodes.RATA,
   TestTypeCodes.F2LREF,
@@ -28,6 +41,17 @@ export const BEGIN_DATE_TEST_TYPE_CODES = [
   TestTypeCodes.FF2LBAS.toString(),
   TestTypeCodes.APPE.toString(),
   TestTypeCodes.ONOFF.toString(),
+  TestTypeCodes.RATA.toString(),
+  TestTypeCodes.HGSI3.toString(),
+  TestTypeCodes.HGLINE.toString(),
+  TestTypeCodes.LINE.toString(),
+  TestTypeCodes.CYCLE.toString(),
+  TestTypeCodes.SEVENDAY.toString(),
+];
+
+export const BEGIN_MINUTE_TEST_TYPE_CODES = [
+  TestTypeCodes.UNITDEF.toString(),
+  TestTypeCodes.APPE.toString(),
   TestTypeCodes.RATA.toString(),
   TestTypeCodes.HGSI3.toString(),
   TestTypeCodes.HGLINE.toString(),

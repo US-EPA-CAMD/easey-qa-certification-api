@@ -1,6 +1,7 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { CycleTimeInjectionService } from '../cycle-time-injection/cycle-time-injection.service';
 import { In } from 'typeorm';
 import { CycleTimeSummaryDTO } from '../dto/cycle-time-summary.dto';
 import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
@@ -12,6 +13,8 @@ export class CycleTimeSummaryService {
     private readonly map: CycleTimeSummaryMap,
     @InjectRepository(CycleTimeSummaryRepository)
     private readonly repository: CycleTimeSummaryRepository,
+    @Inject(forwardRef(() => CycleTimeInjectionService))
+    private readonly cycleTimeInjectionService: CycleTimeInjectionService,
   ) {}
 
   async getCycleTimeSummaries(
@@ -51,7 +54,20 @@ export class CycleTimeSummaryService {
   }
 
   async export(testSumIds: string[]): Promise<CycleTimeSummaryDTO[]> {
-    const calInjs = await this.getCycleTimeSummaryByTestSumIds(testSumIds);
-    return calInjs;
+    const cycleTimeSummaries = await this.getCycleTimeSummaryByTestSumIds(
+      testSumIds,
+    );
+
+    const cycleTimeInjections = await this.cycleTimeInjectionService.export(
+      cycleTimeSummaries.map(i => i.id),
+    );
+
+    cycleTimeSummaries.forEach(s => {
+      s.cycleTimeInjectionData = cycleTimeInjections.filter(
+        i => i.cycleTimeSumId === s.id,
+      );
+    });
+
+    return cycleTimeSummaries;
   }
 }

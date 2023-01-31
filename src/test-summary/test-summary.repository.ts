@@ -6,6 +6,7 @@ import {
   addTestNumberWhere,
   addBeginAndEndDateWhere,
   addTestSummaryIdWhere,
+  addSystemTypeWhere,
 } from '../utilities/test-summary.querybuilder';
 
 import { TestSummary } from '../entities/test-summary.entity';
@@ -46,6 +47,7 @@ export class TestSummaryRepository extends Repository<TestSummary> {
   async getTestSummariesByLocationId(
     locationId: string,
     testTypeCode?: string[],
+    systemTypeCode?: string[],
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummary[]> {
@@ -54,6 +56,9 @@ export class TestSummaryRepository extends Repository<TestSummary> {
     });
 
     query = addTestTypeWhere(query, testTypeCode) as SelectQueryBuilder<
+      TestSummary
+    >;
+    query = addSystemTypeWhere(query, systemTypeCode) as SelectQueryBuilder<
       TestSummary
     >;
     query = addBeginAndEndDateWhere(

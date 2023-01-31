@@ -20,16 +20,19 @@ import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   AppEHeatInputFromGasBaseDTO,
-  AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasRecordDTO,
 } from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-gas-workspace.service';
+import { AppEHeatInputFromGasChecksService } from './app-e-heat-input-from-gas-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Heat Input From Gas')
 export class AppEHeatInputFromGasWorkspaceController {
-  constructor(private readonly service: AppEHeatInputFromGasWorkspaceService) {}
+  constructor(
+    private readonly service: AppEHeatInputFromGasWorkspaceService,
+    private readonly checksService: AppEHeatInputFromGasChecksService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -78,6 +81,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     @Body() payload: AppEHeatInputFromGasBaseDTO,
     @User() user: CurrentUser,
   ): Promise<AppEHeatInputFromGasRecordDTO> {
+    await this.checksService.runChecks(payload, null, appECorrTestRunId);
     return this.service.createAppEHeatInputFromGas(
       locationId,
       testSumId,
@@ -104,6 +108,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     @Body() payload: AppEHeatInputFromGasBaseDTO,
     @User() user: CurrentUser,
   ): Promise<AppEHeatInputFromGasRecordDTO> {
+    await this.checksService.runChecks(payload, null, _appECorrTestRunId);
     return this.service.updateAppEHeatInputFromGas(
       testSumId,
       id,

@@ -13,28 +13,33 @@ import { Component } from './component.entity';
 import { StackPipe } from './stack-pipe.entity';
 import { TestSummary } from './test-summary.entity';
 import { MonitorSystem } from './monitor-system.entity';
+import { QASuppData } from './qa-supp-data.entity';
 import { MonitorMethod } from './monitor-method.entity';
+import { QACertificationEvent } from './qa-certification-event.entity';
 
 @Entity({ name: 'camdecmps.monitor_location' })
 export class MonitorLocation extends BaseEntity {
   @PrimaryColumn({
     name: 'mon_loc_id',
+    type: 'varchar',
   })
   id: string;
 
   @Column({
     name: 'unit_id',
+    type: 'varchar',
   })
   unitId: string;
 
   @Column({
     name: 'stack_pipe_id',
+    type: 'varchar',
   })
   stackPipeId: string;
 
   @OneToOne(
     () => StackPipe,
-    stackPipe => stackPipe.location,
+    o => o.location,
     { eager: true },
   )
   @JoinColumn({ name: 'stack_pipe_id' })
@@ -42,7 +47,7 @@ export class MonitorLocation extends BaseEntity {
 
   @OneToOne(
     () => Unit,
-    unit => unit.location,
+    o => o.location,
     { eager: true },
   )
   @JoinColumn({ name: 'unit_id' })
@@ -50,14 +55,14 @@ export class MonitorLocation extends BaseEntity {
 
   @OneToMany(
     () => Component,
-    c => c.location,
+    o => o.location,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   components: Component[];
 
   @OneToMany(
     () => MonitorSystem,
-    ms => ms.location,
+    o => o.location,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   systems: MonitorSystem[];
@@ -70,8 +75,22 @@ export class MonitorLocation extends BaseEntity {
 
   @OneToMany(
     () => TestSummary,
-    ts => ts.location,
+    o => o.location,
   )
   @JoinColumn({ name: 'mon_loc_id' })
   testSummaries: TestSummary[];
+
+  @OneToMany(
+    () => QASuppData,
+    o => o.location,
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  qaSuppData: QASuppData[];
+
+  @OneToMany(
+    () => QACertificationEvent,
+    o => o.location,
+  )
+  @JoinColumn({ name: 'mon_loc_id' })
+  qaCertEvents: QACertificationEvent[];
 }
