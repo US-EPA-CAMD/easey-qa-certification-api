@@ -2,7 +2,9 @@ import { BaseEntity, ViewColumn, ViewEntity } from 'typeorm';
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
-@ViewEntity({ name: 'camdecmpswks.vw_qa_tee_review_and_submit' })
+@ViewEntity({
+  name: 'camdecmpswks.vw_test_extension_exemption_eval_and_submit',
+})
 export class TeeReviewAndSubmit extends BaseEntity {
   @ViewColumn({
     name: 'oris_code',
@@ -28,8 +30,8 @@ export class TeeReviewAndSubmit extends BaseEntity {
   @ViewColumn({ name: 'mon_loc_id' })
   monLocIdentifier: string;
 
-  @ViewColumn({ name: 'test_info' })
-  testInfo: string;
+  @ViewColumn({ name: 'system_component_identifier' })
+  systemComponentIdentifier: string;
 
   @ViewColumn({
     name: 'rpt_period_id',
@@ -51,4 +53,16 @@ export class TeeReviewAndSubmit extends BaseEntity {
 
   @ViewColumn({ name: 'period_abbreviation' })
   periodAbbreviation: string;
+
+  @ViewColumn({ name: 'fuel_cd' })
+  fuelCode: string;
+
+  @ViewColumn({
+    name: 'hours_used',
+    transformer: new NumericColumnTransformer(),
+  })
+  hoursUsed: number;
+
+  @ViewColumn({ name: 'span_scale_cd' })
+  spanScaleCode: string;
 }
