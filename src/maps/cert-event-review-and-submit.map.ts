@@ -19,7 +19,7 @@ export class CertEventReviewAndSubmitMap extends BaseMap<
       qaCertEventIdentifier: entity.qaCertEventIdentifier,
       qaCertEventCode: entity.qaCertEventCode,
       monLocIdentifier: entity.monLocIdentifier,
-      testInfo: entity.testInfo,
+      systemComponentIdentifier: entity.systemComponentIdentifier,
       rptPeriodIdentifier: entity.rptPeriodIdentifier,
       eventDate: entity.eventDate,
       conditionDate: entity.conditionDate,

@@ -2,7 +2,7 @@ import { BaseEntity, ViewEntity, ViewColumn } from 'typeorm';
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
-@ViewEntity({ name: 'camdecmpswks.vw_qa_cert_event_review_and_submit' })
+@ViewEntity({ name: 'camdecmpswks.vw_qa_cert_event_eval_and_submit' })
 export class CertEventReviewAndSubmit extends BaseEntity {
   @ViewColumn({
     name: 'oris_code',
@@ -28,8 +28,8 @@ export class CertEventReviewAndSubmit extends BaseEntity {
   @ViewColumn({ name: 'mon_loc_id' })
   monLocIdentifier: string;
 
-  @ViewColumn({ name: 'test_info' })
-  testInfo: string;
+  @ViewColumn({ name: 'system_component_identifier' })
+  systemComponentIdentifier: string;
 
   @ViewColumn({
     name: 'rpt_period_id',

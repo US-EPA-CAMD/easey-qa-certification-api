@@ -13,7 +13,7 @@ export class CertEventReviewAndSubmitDTO {
 
   monLocIdentifier: string;
 
-  testInfo: string;
+  systemComponentIdentifier: string;
 
   rptPeriodIdentifier: number;
 
