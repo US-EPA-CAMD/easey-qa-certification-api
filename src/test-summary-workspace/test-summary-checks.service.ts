@@ -832,6 +832,12 @@ export class TestSummaryChecksService {
           testtype: 'Cycle Time Test',
         });
         break;
+      case testTypeCode === TestTypeCodes.FF2LBAS:
+        // FF2LBAS-20 Duplicate FuelFlow to Load Baseline Data
+        error = this.getMessage(`FF2LBAS-20-${checkType}`, {
+          testtype: 'FuelFlow to Load Baseline Data'
+        })
+        break;
       case MISC_TEST_TYPE_CODES.includes(testTypeCode):
         // TEST-19 Duplicate Miscellaneous Test
         error = this.getMessage(`TEST-19-${checkType}`, null);
