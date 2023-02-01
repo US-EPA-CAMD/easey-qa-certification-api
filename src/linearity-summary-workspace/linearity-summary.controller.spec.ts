@@ -53,7 +53,9 @@ describe('Linearity Summary Controller', () => {
         },
         {
           provide: LinearitySummaryChecksService,
-          useFactory: () => ({}),
+          useFactory: () => ({
+            runChecks: jest.fn(),
+          }),
         },
       ],
     }).compile();

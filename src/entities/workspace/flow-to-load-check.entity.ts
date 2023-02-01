@@ -51,7 +51,7 @@ export class FlowToLoadCheck extends BaseEntity {
     name: 'avg_abs_pct_diff',
     transformer: new NumericColumnTransformer(),
   })
-  averageAbsolutePercentDifference: number;
+  avgAbsolutePercentDiff: number;
 
   @Column({
     name: 'num_hrs',
@@ -69,19 +69,19 @@ export class FlowToLoadCheck extends BaseEntity {
     name: 'nhe_ramping',
     transformer: new NumericColumnTransformer(),
   })
-  numberOfHoursExcludedForRamping: number;
+  numberOfHoursExcludedRamping: number;
 
   @Column({
     name: 'nhe_bypass',
     transformer: new NumericColumnTransformer(),
   })
-  numberOfHoursExcludedForBypass: number;
+  numberOfHoursExcludedBypass: number;
 
   @Column({
     name: 'nhe_pre_rata',
     transformer: new NumericColumnTransformer(),
   })
-  numberOfHoursExcludedPreRata: number;
+  numberOfHoursExcludedPreRATA: number;
 
   @Column({
     name: 'nhe_test',
@@ -93,7 +93,7 @@ export class FlowToLoadCheck extends BaseEntity {
     name: 'nhe_main_bypass',
     transformer: new NumericColumnTransformer(),
   })
-  numberOfHoursExcludedForMainAndBypass: number;
+  numberOfHoursExcMainBypass: number;
 
   @Column({
     type: 'timestamp',
