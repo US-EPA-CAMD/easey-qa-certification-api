@@ -838,7 +838,7 @@ export class TestSummaryChecksService {
           testtype: 'Flow to Load Check Test',
         });
         break;
-      case testTypeCode === TestTypeCodes.F2LCHK:
+      case testTypeCode === TestTypeCodes.F2LREF:
         // F2LREF-14 Duplicate Flow to Load Reference Data
         error = this.getMessage(`F2LREF-14-${checkType}`, {
           testtype: 'Flow to Load Reference Data Test',
