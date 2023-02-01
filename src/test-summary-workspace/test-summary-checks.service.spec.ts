@@ -868,6 +868,16 @@ describe('Test Summary Check Service Test', () => {
       expect(result).toEqual(MOCK_ERROR_MSG);
     });
 
+    it('returns error message testTypeCode=FF2LBAS', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.OTHER,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+
     it('returns error message testTypeCode=OTHER', async () => {
       jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
 
