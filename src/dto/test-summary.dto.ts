@@ -207,6 +207,9 @@ export class TestSummaryBaseDTO {
         case TestTypeCodes.FFACCTT:
           resultCode = 'FFACCTT-12-A';
           break;
+        case TestTypeCodes.FFACC:
+          resultCode = 'FFACC-12-A';
+          break;
         default:
           return `You did not provide [${args.property}], which is required for [${KEY}].`;
       }

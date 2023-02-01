@@ -843,6 +843,11 @@ export class TestSummaryChecksService {
         error = this.getMessage(`F2LREF-14-${checkType}`, {
           testtype: 'Flow to Load Reference Data Test',
         });
+      case testTypeCode === TestTypeCodes.FF2LBAS:
+        // FF2LBAS-20 Duplicate FuelFlow to Load Baseline Data
+        error = this.getMessage(`FF2LBAS-20-${checkType}`, {
+          testtype: 'FuelFlow to Load Baseline Data'
+        })
         break;
       case MISC_TEST_TYPE_CODES.includes(testTypeCode):
         // TEST-19 Duplicate Miscellaneous Test
