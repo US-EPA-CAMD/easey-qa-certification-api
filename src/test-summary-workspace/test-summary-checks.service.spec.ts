@@ -877,5 +877,25 @@ describe('Test Summary Check Service Test', () => {
       );
       expect(result).toEqual(MOCK_ERROR_MSG);
     });
+
+    it('returns error message testTypeCode=F2LCHK', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.F2LCHK,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+
+    it('returns error message testTypeCode=F2LREF', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.F2LREF,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
   });
 });

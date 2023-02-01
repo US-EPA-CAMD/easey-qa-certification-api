@@ -832,6 +832,18 @@ export class TestSummaryChecksService {
           testtype: 'Cycle Time Test',
         });
         break;
+      case testTypeCode === TestTypeCodes.F2LCHK:
+        // F2LCHK-18 Duplicate Flow to Load Check
+        error = this.getMessage(`F2LCHK-18-${checkType}`, {
+          testtype: 'Flow to Load Check Test',
+        });
+        break;
+      case testTypeCode === TestTypeCodes.F2LCHK:
+        // F2LREF-14 Duplicate Flow to Load Reference Data
+        error = this.getMessage(`F2LREF-14-${checkType}`, {
+          testtype: 'Flow to Load Reference Data Test',
+        });
+        break;
       case MISC_TEST_TYPE_CODES.includes(testTypeCode):
         // TEST-19 Duplicate Miscellaneous Test
         error = this.getMessage(`TEST-19-${checkType}`, null);
