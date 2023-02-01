@@ -872,7 +872,7 @@ describe('Test Summary Check Service Test', () => {
       jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
 
       const result = await service.getDuplicateErrorMessage(
-        TestTypeCodes.OTHER,
+        TestTypeCodes.FF2LBAS,
         'A',
       );
       expect(result).toEqual(MOCK_ERROR_MSG);
