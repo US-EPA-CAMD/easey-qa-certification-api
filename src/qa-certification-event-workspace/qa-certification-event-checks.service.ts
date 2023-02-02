@@ -5,8 +5,10 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
 import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
-import { QACertificationBaseDTO } from 'src/dto/qa-certification.dto';
-import { QACertificationEventImportDTO } from 'src/dto/qa-certification-event.dto';
+import {
+  QACertificationEventBaseDTO,
+  QACertificationEventImportDTO,
+} from '../dto/qa-certification-event.dto';
 
 const KEY = 'QA Certification Event';
 
@@ -26,9 +28,9 @@ export class QACertificationEventChecksService {
   }
 
   async runChecks(
-    loctionId: string,
+    locationId: string,
     qaCertificationEvent:
-      | QACertificationBaseDTO
+      | QACertificationEventBaseDTO
       | QACertificationEventImportDTO,
     isImport: boolean = false,
     isUpdate: boolean = false,
@@ -36,14 +38,26 @@ export class QACertificationEventChecksService {
     let error: string = null;
     const errorList: string[] = [];
 
+    this.logger.info('Running QA Certification Event Checks');
+
+    if (!isUpdate) {
+      error = await this.QACertEvent11DuplicateCheck(
+        qaCertificationEvent,
+        locationId,
+      );
+      if (error) {
+        errorList.push(error);
+      }
+    }
+
     this.throwIfErrors(errorList);
-    this.logger.info('Completed Test Extension Exemption Checks');
+    this.logger.info('Completed QA Certification Event Checks');
     return errorList;
   }
 
   private async QACertEvent11DuplicateCheck(
     qaCertificationEvent:
-      | QACertificationBaseDTO
+      | QACertificationEventBaseDTO
       | QACertificationEventImportDTO,
     locationId: string,
   ) {
@@ -55,6 +69,30 @@ export class QACertificationEventChecksService {
       fieldnames:
         'qaCertEventCode, qaCertEventHour, qaCertEventDate, monitoringSystemId, componentId,',
     });
+
+    const {
+      componentRecordId,
+      monitoringSystemRecordId,
+    } = await this.service.lookupValues(locationId, qaCertificationEvent);
+
+    const {
+      qaCertEventDate,
+      qaCertEventHour,
+      qaCertEventCode,
+    } = qaCertificationEvent;
+
+    // Locate another QA Cert Event record for the location with the following parameters:
+    qaCertEvents = await this.repository.find({
+      qaCertEventCode,
+      qaCertEventHour,
+      qaCertEventDate,
+      monitoringSystemRecordId,
+      componentRecordId,
+    });
+
+    if (qaCertEvents.length > 0) {
+      error = duplicateQACertEvent;
+    }
 
     return error;
   }

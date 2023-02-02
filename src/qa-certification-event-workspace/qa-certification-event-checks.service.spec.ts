@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { QACertificationEventBaseDTO } from 'src/dto/qa-certification-event.dto';
+import { QACertificationEventBaseDTO } from '../dto/qa-certification-event.dto';
 import { QACertificationEventChecksService } from './qa-certification-event-checks.service';
 import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
 import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
