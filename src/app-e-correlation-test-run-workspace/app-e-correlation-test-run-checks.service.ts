@@ -59,7 +59,7 @@ export class AppECorrelationTestRunChecksService {
   ) {
     let error: string = null;
 
-    if (appETestSummary.operatingLevelForRun && dto.runNumber) {
+    if (appETestSummary.operatingLevelForRun != null && dto.runNumber != null) {
       let duplicate = this.repository.findDuplicate(
         appETestRunId,
         appETestSummary.id,

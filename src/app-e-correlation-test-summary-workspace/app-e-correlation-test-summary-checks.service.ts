@@ -2,13 +2,11 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
-import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryImportDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
-import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 @Injectable()
@@ -17,8 +15,6 @@ export class AppECorrelationTestSummaryChecksService {
     private readonly logger: Logger,
     @InjectRepository(AppendixETestSummaryWorkspaceRepository)
     private readonly repository: AppendixETestSummaryWorkspaceRepository,
-    @InjectRepository(TestSummaryWorkspaceRepository)
-    private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
   ) {}
 
   private throwIfErrors(errorList: string[]) {
@@ -57,7 +53,7 @@ export class AppECorrelationTestSummaryChecksService {
   async appE48Check(appETestSumId: string, testSumId: string, opLevel: number) {
     let error: string = null;
 
-    if (opLevel) {
+    if (opLevel != null) {
       let duplicate = await this.repository.findDuplicate(
         appETestSumId,
         testSumId,
