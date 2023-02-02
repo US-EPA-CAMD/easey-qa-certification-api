@@ -25,12 +25,16 @@ import {
   UnitDefaultTestRunRecordDTO,
 } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRunWorkspaceService } from './unit-default-test-run.service';
+import { UnitDefaultTestRunChecksService } from './unit-default-test-run-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Default Test Run')
 export class UnitDefaultTestRunWorkspaceController {
-  constructor(private readonly service: UnitDefaultTestRunWorkspaceService) {}
+  constructor(
+    private readonly service: UnitDefaultTestRunWorkspaceService,
+    private readonly checksService: UnitDefaultTestRunChecksService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -69,13 +73,14 @@ export class UnitDefaultTestRunWorkspaceController {
     type: UnitDefaultTestRunRecordDTO,
     description: 'Creates a workspace Unit Default Test Run record.',
   })
-  createUnitDefaultTestRun(
+  async createUnitDefaultTestRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('unitDefaultTestSumId') unitDefaultTestSumId: string,
     @Body() payload: UnitDefaultTestRunBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitDefaultTestRunRecordDTO> {
+    await this.checksService.runChecks(payload, false, false, unitDefaultTestSumId, _testSumId);
     return this.service.createUnitDefaultTestRun(
       _testSumId,
       unitDefaultTestSumId,
@@ -91,7 +96,7 @@ export class UnitDefaultTestRunWorkspaceController {
     type: UnitDefaultTestRunRecordDTO,
     description: 'Updates a workspace Unit Default Test Run record.',
   })
-  updateUnitDefaultTestRun(
+  async updateUnitDefaultTestRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('unitDefaultTestSumId') _unitDefaultTestSumId: string,
@@ -99,6 +104,7 @@ export class UnitDefaultTestRunWorkspaceController {
     @Body() payload: UnitDefaultTestRunBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitDefaultTestRunRecordDTO> {
+    await this.checksService.runChecks(payload, false, true, _unitDefaultTestSumId, testSumId);
     return this.service.updateUnitDefaultTestRun(
       testSumId,
       id,
