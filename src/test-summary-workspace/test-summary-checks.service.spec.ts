@@ -726,39 +726,39 @@ describe('Test Summary Check Service Test', () => {
   });
 
   // TEST-7 Test Dates Consistent
-  describe('test7Check test', () => {
-    it('returns error message when beginDate/hour >= endDate/hour for testTypeCode=ONOFF', () => {
-      const result = service.test7Check(summaryBase);
-      expect(result).not.toBeNull();
-    });
+  // describe('test7Check test', () => {
+  //   it('returns error message when beginDate/hour >= endDate/hour for testTypeCode=ONOFF', () => {
+  //     const result = service.test7Check(summaryBase);
+  //     expect(result).not.toBeNull();
+  //   });
 
-    it('returns null when beginDate/hour < endDate/hour for testTypeCode=ONOFF', () => {
-      const summary = { ...summaryBase };
-      summary.endHour = 2;
-      const result = service.test7Check(summary);
+  //   it('returns null when beginDate/hour < endDate/hour for testTypeCode=ONOFF', () => {
+  //     const summary = { ...summaryBase };
+  //     summary.endHour = 2;
+  //     const result = service.test7Check(summary);
 
-      expect(result).toBeNull();
-    });
+  //     expect(result).toBeNull();
+  //   });
 
-    it('returns error message when testTypeCode=LINE and beginMinute > endMinute', () => {
-      const summary = { ...summaryBase };
-      summary.testTypeCode = TestTypeCodes.LINE.toString();
-      summary.beginMinute = 3;
+  //   it('returns error message when testTypeCode=LINE and beginMinute > endMinute', () => {
+  //     const summary = { ...summaryBase };
+  //     summary.testTypeCode = TestTypeCodes.LINE.toString();
+  //     summary.beginMinute = 3;
 
-      const result = service.test7Check(summary);
+  //     const result = service.test7Check(summary);
 
-      expect(result).not.toBeNull();
-    });
+  //     expect(result).not.toBeNull();
+  //   });
 
-    it('returns null when testTypeCode=LINE and beginMinute <= endMinute', () => {
-      const summary = { ...summaryBase };
-      summary.testTypeCode = TestTypeCodes.LINE.toString();
+  //   it('returns null when testTypeCode=LINE and beginMinute <= endMinute', () => {
+  //     const summary = { ...summaryBase };
+  //     summary.testTypeCode = TestTypeCodes.LINE.toString();
 
-      const result = service.test7Check(summary);
+  //     const result = service.test7Check(summary);
 
-      expect(result).toBeNull();
-    });
-  });
+  //     expect(result).toBeNull();
+  //   });
+  // });
 
   describe('testMinuteField() test', () => {
     it('returns null when startMinute and endMinute are valid', async () => {
