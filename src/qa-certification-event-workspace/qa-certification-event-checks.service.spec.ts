@@ -17,11 +17,7 @@ const mockRepository = () => ({
 const mockService = () => ({
   lookupValues: jest
     .fn()
-    .mockReturnValue([
-      'reportPeriodId',
-      'componentRecordId',
-      'monitoringSystemRecordId',
-    ]),
+    .mockReturnValue(['componentRecordId', 'monitoringSystemRecordId']),
 });
 
 describe('QACertificationEventChecksService', () => {
