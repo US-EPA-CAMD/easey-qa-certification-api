@@ -8,6 +8,7 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 import { UnitDefaultTestRunModule } from '../unit-default-test-run/unit-default-test-run.module';
+import { UnitDefaultTestRunChecksService } from './unit-default-test-run-checks.service';
 
 @Module({
   imports: [
@@ -18,11 +19,16 @@ import { UnitDefaultTestRunModule } from '../unit-default-test-run/unit-default-
     HttpModule,
   ],
   controllers: [UnitDefaultTestRunWorkspaceController],
-  providers: [UnitDefaultTestRunMap, UnitDefaultTestRunWorkspaceService],
+  providers: [
+    UnitDefaultTestRunMap, 
+    UnitDefaultTestRunWorkspaceService,
+    UnitDefaultTestRunChecksService,
+  ],
   exports: [
     TypeOrmModule,
     UnitDefaultTestRunMap,
     UnitDefaultTestRunWorkspaceService,
+    UnitDefaultTestRunChecksService,
   ],
 })
 export class UnitDefaultTestRunWorkspaceModule {}
