@@ -972,6 +972,8 @@ export class TestSummaryChecksService {
       const endDateHour = new Date(`${endDate}T${endHour}:00`);
 
       console.log('beginDateHour >= endDateHour', beginDateHour >= endDateHour);
+      console.log('beginDateHour', beginDateHour);
+      console.log('endDateHour', endDateHour);
 
       if (beginDateHour >= endDateHour) return errorResponse;
     } else {
@@ -984,6 +986,9 @@ export class TestSummaryChecksService {
         'beginDateHourMinute >= endDateHourMinute',
         beginDateHourMinute >= endDateHourMinute,
       );
+      console.log('beginDateHourMinute', beginDateHourMinute);
+      console.log('endDateHourMinute', endDateHourMinute);
+
       if (beginDateHourMinute >= endDateHourMinute) return errorResponse;
     }
 
