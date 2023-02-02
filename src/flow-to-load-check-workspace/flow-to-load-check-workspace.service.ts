@@ -87,24 +87,20 @@ export class FlowToLoadCheckWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<FlowToLoadCheckDTO> {
-    const timestamp = currentDateTime().toLocaleString();
+    const timestamp = currentDateTime();
 
-    const entity = await this.getFlowToLoadCheck(id);
+    const entity = await this.repository.findOne(id);
 
     entity.testBasisCode = payload.testBasisCode;
     entity.biasAdjustedIndicator = payload.biasAdjustedIndicator;
-    entity.averageAbsolutePercentDifference =
-      payload.averageAbsolutePercentDifference;
+    entity.avgAbsolutePercentDiff = payload.avgAbsolutePercentDiff;
     entity.numberOfHours = payload.numberOfHours;
     entity.numberOfHoursExcludedForFuel = payload.numberOfHoursExcludedForFuel;
-    entity.numberOfHoursExcludedForRamping =
-      payload.numberOfHoursExcludedForRamping;
-    entity.numberOfHoursExcludedForBypass =
-      payload.numberOfHoursExcludedForBypass;
-    entity.numberOfHoursExcludedPreRata = payload.numberOfHoursExcludedPreRata;
+    entity.numberOfHoursExcludedRamping = payload.numberOfHoursExcludedRamping;
+    entity.numberOfHoursExcludedBypass = payload.numberOfHoursExcludedBypass;
+    entity.numberOfHoursExcludedPreRATA = payload.numberOfHoursExcludedPreRATA;
     entity.numberOfHoursExcludedTest = payload.numberOfHoursExcludedTest;
-    entity.numberOfHoursExcludedForMainAndBypass =
-      payload.numberOfHoursExcludedForMainAndBypass;
+    entity.numberOfHoursExcMainBypass = payload.numberOfHoursExcMainBypass;
     entity.operatingLevelCode = payload.operatingLevelCode;
     entity.userId = userId;
     entity.updateDate = timestamp;
