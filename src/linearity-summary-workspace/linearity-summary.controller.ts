@@ -77,7 +77,7 @@ export class LinearitySummaryWorkspaceController {
     @Body() payload: LinearitySummaryBaseDTO,
     @User() user: CurrentUser,
   ): Promise<LinearitySummaryRecordDTO> {
-    //await this.checksService.runChecks(payload, testSumId);
+    await this.checksService.runChecks(payload, testSumId);
     return this.service.createSummary(testSumId, payload, user.userId);
   }
 
@@ -95,7 +95,7 @@ export class LinearitySummaryWorkspaceController {
     @Body() payload: LinearitySummaryBaseDTO,
     @User() user: CurrentUser,
   ): Promise<LinearitySummaryRecordDTO> {
-    // await this.checksService.runChecks(payload, testSumId, false, true);
+    await this.checksService.runChecks(payload, testSumId, false, true);
     return this.service.updateSummary(testSumId, id, payload, user.userId);
   }
 

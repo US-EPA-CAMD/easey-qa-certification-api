@@ -3,14 +3,14 @@ const Key = 'Flow To Load Check';
 export class FlowToLoadCheckBaseDTO {
   testBasisCode: string;
   biasAdjustedIndicator: number;
-  averageAbsolutePercentDifference: number;
+  avgAbsolutePercentDiff: number;
   numberOfHours: number;
   numberOfHoursExcludedForFuel: number;
-  numberOfHoursExcludedForRamping: number;
-  numberOfHoursExcludedForBypass: number;
-  numberOfHoursExcludedPreRata: number;
+  numberOfHoursExcludedRamping: number;
+  numberOfHoursExcludedBypass: number;
+  numberOfHoursExcludedPreRATA: number;
   numberOfHoursExcludedTest: number;
-  numberOfHoursExcludedForMainAndBypass: number;
+  numberOfHoursExcMainBypass: number;
   operatingLevelCode: string;
 }
 

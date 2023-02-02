@@ -9,6 +9,7 @@ import {
 import { HttpModule } from '@nestjs/axios';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
+import { UnitDefaultTestRunChecksService } from './unit-default-test-run-checks.service';
 
 const id = '';
 const locId = '';
@@ -47,6 +48,12 @@ describe('UnitDefaultTestRunWorkspaceController', () => {
         {
           provide: UnitDefaultTestRunWorkspaceService,
           useFactory: mockService,
+        },
+        {
+          provide: UnitDefaultTestRunChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn(),
+          }),
         },
       ],
     }).compile();
