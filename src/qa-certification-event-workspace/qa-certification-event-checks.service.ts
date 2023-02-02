@@ -41,6 +41,24 @@ export class QACertificationEventChecksService {
     return errorList;
   }
 
+  private async QACertEvent11DuplicateCheck(
+    qaCertificationEvent:
+      | QACertificationBaseDTO
+      | QACertificationEventImportDTO,
+    locationId: string,
+  ) {
+    let error = null;
+    let qaCertEvents = [];
+
+    const duplicateQACertEvent = this.getErrorMessage('QACERT-11-A', {
+      recordType: KEY,
+      fieldnames:
+        'qaCertEventCode, qaCertEventHour, qaCertEventDate, monitoringSystemId, componentId,',
+    });
+
+    return error;
+  }
+
   getErrorMessage(errorCode: string, options?: object): string {
     return CheckCatalogService.formatResultMessage(errorCode, options);
   }
