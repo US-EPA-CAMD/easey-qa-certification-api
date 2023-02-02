@@ -5,6 +5,8 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
 import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
+import { QACertificationBaseDTO } from 'src/dto/qa-certification.dto';
+import { QACertificationEventImportDTO } from 'src/dto/qa-certification-event.dto';
 
 const KEY = 'QA Certification Event';
 
@@ -21,6 +23,20 @@ export class QACertificationEventChecksService {
     if (errorList.length > 0) {
       throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
+  }
+
+  async runChecks(
+    loctionId: string,
+    qaCertificationEvent:
+      | QACertificationBaseDTO
+      | QACertificationEventImportDTO,
+    isImport: boolean = false,
+    isUpdate: boolean = false,
+  ): Promise<string[]> {
+    let error: string = null;
+    const errorList: string[] = [];
+
+    return errorList;
   }
 
   getErrorMessage(errorCode: string, options?: object): string {
