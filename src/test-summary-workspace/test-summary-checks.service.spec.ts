@@ -726,44 +726,44 @@ describe('Test Summary Check Service Test', () => {
   });
 
   // TEST-7 Test Dates Consistent
-  describe('test7Check test', () => {
-    // it.only('returns error message when beginDate/hour >= endDate/hour for testTypeCode=ONOFF', () => {
-    //   jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-    //   console.log('summaryBase', summaryBase);
-    //   const result = service.test7Check(summaryBase);
-    //   expect(result).toEqual(MOCK_ERROR_MSG);
-    // });
+  // describe('test7Check test', () => {
+  //   it.only('returns error message when beginDate/hour >= endDate/hour for testTypeCode=ONOFF', () => {
+  //     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+  //     console.log('summaryBase', summaryBase);
+  //     const result = service.test7Check(summaryBase);
+  //     expect(result).toEqual(MOCK_ERROR_MSG);
+  //   });
 
-    it('returns null when beginDate/hour < endDate/hour for testTypeCode=ONOFF', () => {
-      const summary = { ...summaryBase };
-      summary.endHour = 2;
-      const result = service.test7Check(summary);
+  //   it('returns null when beginDate/hour < endDate/hour for testTypeCode=ONOFF', () => {
+  //     const summary = { ...summaryBase };
+  //     summary.endHour = 2;
+  //     const result = service.test7Check(summary);
 
-      expect(result).toBeNull();
-    });
+  //     expect(result).toBeNull();
+  //   });
 
-    // it.only('returns error message when testTypeCode=LINE and beginMinute > endMinute', () => {
-    //   jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+  //   it.only('returns error message when testTypeCode=LINE and beginMinute > endMinute', () => {
+  //     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
 
-    //   const summary = { ...summaryBase };
-    //   summary.testTypeCode = TestTypeCodes.LINE.toString();
-    //   summary.beginMinute = 3;
-    //   console.log('summary', summary);
+  //     const summary = { ...summaryBase };
+  //     summary.testTypeCode = TestTypeCodes.LINE.toString();
+  //     summary.beginMinute = 3;
+  //     console.log('summary', summary);
 
-    //   const result = service.test7Check(summary);
+  //     const result = service.test7Check(summary);
 
-    //   expect(result).toEqual(MOCK_ERROR_MSG);;
-    // });
+  //     expect(result).toEqual(MOCK_ERROR_MSG);;
+  //   });
 
-    it('returns null when testTypeCode=LINE and beginMinute <= endMinute', () => {
-      const summary = { ...summaryBase };
-      summary.testTypeCode = TestTypeCodes.LINE.toString();
+  //   it('returns null when testTypeCode=LINE and beginMinute <= endMinute', () => {
+  //     const summary = { ...summaryBase };
+  //     summary.testTypeCode = TestTypeCodes.LINE.toString();
 
-      const result = service.test7Check(summary);
+  //     const result = service.test7Check(summary);
 
-      expect(result).toBeNull();
-    });
-  });
+  //     expect(result).toBeNull();
+  //   });
+  // });
 
   describe('testMinuteField() test', () => {
     it('returns null when startMinute and endMinute are valid', async () => {
