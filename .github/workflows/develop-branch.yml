@@ -23,7 +23,7 @@ jobs:
           repository: US-EPA-CAMD/devops
           path: devops
       - name: Setup & Configure Node
-        uses: actions/checkout@v3actions/setup-node@v3
+        uses: actions/setup-node@v3
         with:
           node-version: 16
           registry-url: https://npm.pkg.github.com/
