@@ -36,6 +36,8 @@ export class QACertificationEventChecksService {
     let error: string = null;
     const errorList: string[] = [];
 
+    this.throwIfErrors(errorList);
+    this.logger.info('Completed Test Extension Exemption Checks');
     return errorList;
   }
 
