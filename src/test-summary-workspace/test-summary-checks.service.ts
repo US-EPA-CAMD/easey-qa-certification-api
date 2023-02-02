@@ -930,7 +930,6 @@ export class TestSummaryChecksService {
     const errorResponse = this.getMessage('TEST-7-A', { key: KEY });
     const testTypeCode = summary.testTypeCode.toUpperCase();
 
-    console.log(summary);
     // cannot call getFullYear and other functions unless we do new Date
     const summaryBeginDate = new Date(summary.beginDate);
 
@@ -957,12 +956,6 @@ export class TestSummaryChecksService {
       summaryEndDate.getDay() < 10 ? '0' : ''
     }${summaryEndDate.getDay()}`;
 
-    console.log(
-      'ONOFF || FF2LBAS',
-      testTypeCode === TestTypeCodes.ONOFF.toString() ||
-        testTypeCode === TestTypeCodes.FF2LBAS.toString(),
-    );
-
     if (
       testTypeCode === TestTypeCodes.ONOFF.toString() ||
       testTypeCode === TestTypeCodes.FF2LBAS.toString()
@@ -971,23 +964,12 @@ export class TestSummaryChecksService {
       const beginDateHour = new Date(`${beginDate}T${beginHour}:00`);
       const endDateHour = new Date(`${endDate}T${endHour}:00`);
 
-      console.log('beginDateHour >= endDateHour', beginDateHour >= endDateHour);
-      console.log('beginDateHour', beginDateHour);
-      console.log('endDateHour', endDateHour);
-
       if (beginDateHour >= endDateHour) return errorResponse;
     } else {
       const beginDateHourMinute = new Date(
         `${beginDate}T${beginHour}:${beginMinute}`,
       );
       const endDateHourMinute = new Date(`${endDate}T${endHour}:${endMinute}`);
-
-      console.log(
-        'beginDateHourMinute >= endDateHourMinute',
-        beginDateHourMinute >= endDateHourMinute,
-      );
-      console.log('beginDateHourMinute', beginDateHourMinute);
-      console.log('endDateHourMinute', endDateHourMinute);
 
       if (beginDateHourMinute >= endDateHourMinute) return errorResponse;
     }

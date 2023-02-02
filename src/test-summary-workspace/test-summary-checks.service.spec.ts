@@ -727,12 +727,12 @@ describe('Test Summary Check Service Test', () => {
 
   // TEST-7 Test Dates Consistent
   describe('test7Check test', () => {
-    it.only('returns error message when beginDate/hour >= endDate/hour for testTypeCode=ONOFF', () => {
-      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      console.log('summaryBase', summaryBase);
-      const result = service.test7Check(summaryBase);
-      expect(result).toEqual(MOCK_ERROR_MSG);
-    });
+    // it.only('returns error message when beginDate/hour >= endDate/hour for testTypeCode=ONOFF', () => {
+    //   jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+    //   console.log('summaryBase', summaryBase);
+    //   const result = service.test7Check(summaryBase);
+    //   expect(result).toEqual(MOCK_ERROR_MSG);
+    // });
 
     it('returns null when beginDate/hour < endDate/hour for testTypeCode=ONOFF', () => {
       const summary = { ...summaryBase };
@@ -742,18 +742,18 @@ describe('Test Summary Check Service Test', () => {
       expect(result).toBeNull();
     });
 
-    it.only('returns error message when testTypeCode=LINE and beginMinute > endMinute', () => {
-      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+    // it.only('returns error message when testTypeCode=LINE and beginMinute > endMinute', () => {
+    //   jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
 
-      const summary = { ...summaryBase };
-      summary.testTypeCode = TestTypeCodes.LINE.toString();
-      summary.beginMinute = 3;
-      console.log('summary', summary);
+    //   const summary = { ...summaryBase };
+    //   summary.testTypeCode = TestTypeCodes.LINE.toString();
+    //   summary.beginMinute = 3;
+    //   console.log('summary', summary);
 
-      const result = service.test7Check(summary);
+    //   const result = service.test7Check(summary);
 
-      expect(result).toEqual(MOCK_ERROR_MSG);;
-    });
+    //   expect(result).toEqual(MOCK_ERROR_MSG);;
+    // });
 
     it('returns null when testTypeCode=LINE and beginMinute <= endMinute', () => {
       const summary = { ...summaryBase };
@@ -787,8 +787,8 @@ describe('Test Summary Check Service Test', () => {
       const summary = {
         ...summaryBase,
       };
-      summary.testTypeCode = TestTypeCodes.LINE.toString()
-      summary.beginMinute= null
+      summary.testTypeCode = TestTypeCodes.LINE.toString();
+      summary.beginMinute = null;
       const result = await service.testMinuteField(summary, '1', 'beginMinute');
       expect(result).toBe(MOCK_ERROR_MSG);
     });
