@@ -728,6 +728,8 @@ describe('Test Summary Check Service Test', () => {
   // TEST-7 Test Dates Consistent
   describe('test7Check test', () => {
     it('returns error message when beginDate/hour >= endDate/hour for testTypeCode=ONOFF', () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
       const result = service.test7Check(summaryBase);
       expect(result).not.toBeNull();
     });
@@ -741,6 +743,8 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('returns error message when testTypeCode=LINE and beginMinute > endMinute', () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
       const summary = { ...summaryBase };
       summary.testTypeCode = TestTypeCodes.LINE.toString();
       summary.beginMinute = 3;
