@@ -941,8 +941,8 @@ export class TestSummaryChecksService {
     ) {
       // Checks if beginDate-hour is same or after endDate-hour
       if (
-        beginDate.isSameOrAfter(endDate) &&
-        summary.beginHour >= summary.endHour
+        beginDate.isAfter(endDate) ||
+        (beginDate.isSame(endDate) && summary.beginHour >= summary.endHour)
       ) {
         return errorResponse;
       }
@@ -950,9 +950,11 @@ export class TestSummaryChecksService {
       // Checks if beginDate-hour-minute is same or after endDate-hour-minute
 
       if (
-        beginDate.isSameOrAfter(endDate) &&
-        summary.beginHour >= summary.endHour &&
-        summary.beginMinute >= summary.endMinute
+        beginDate.isAfter(endDate) ||
+        (beginDate.isSame(endDate) && summary.beginHour >= summary.endHour) ||
+        (beginDate.isSame(endDate) &&
+          summary.beginHour >= summary.endHour &&
+          summary.beginMinute >= summary.endMinute)
       ) {
         return errorResponse;
       }
