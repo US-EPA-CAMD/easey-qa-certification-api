@@ -21,6 +21,8 @@ import { TestQualificationChecksService } from '../test-qualification-workspace/
 import { TestExtensionExemptionsChecksService } from '../test-extension-exemptions-workspace/test-extension-exemptions-checks.service';
 import { TestExtensionExemptionImportDTO } from '../dto/test-extension-exemption.dto';
 import { CycleTimeInjectionChecksService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace-checks.service';
+import { QACertificationEventImportDTO } from '../dto/qa-certification-event.dto';
+import { QACertificationEventChecksService } from '../qa-certification-event-workspace/qa-certification-event-checks.service';
 
 const returnLocationRunChecks = [
   {
@@ -124,6 +126,12 @@ describe('QA Certification Check Service Test', () => {
             runChecks: jest.fn().mockResolvedValue([]),
           }),
         },
+        {
+          provide: QACertificationEventChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
       ],
     }).compile();
 
@@ -151,6 +159,12 @@ describe('QA Certification Check Service Test', () => {
     testExtExem.componentID = 'AA0';
     testExtExem.stackPipeId = null;
     payload.testExtensionExemptionData = [testExtExem];
+
+    const qaCertEvent = new QACertificationEventImportDTO();
+    qaCertEvent.unitId = '51';
+    qaCertEvent.componentID = 'AA0';
+    qaCertEvent.stackPipeId = null;
+    payload.certificationEventData = [qaCertEvent];
 
     it('Should pass all checks', async () => {
       const result = await service.runChecks(payload);

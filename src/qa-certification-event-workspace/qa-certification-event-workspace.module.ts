@@ -11,6 +11,7 @@ import { UnitRepository } from '../unit/unit.repository';
 import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { QACertificationEventChecksService } from './qa-certification-event-checks.service';
 
 @Module({
   imports: [
@@ -25,11 +26,16 @@ import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/mo
     HttpModule,
   ],
   controllers: [QACertificationEventWorkspaceController],
-  providers: [QACertificationEventWorkspaceService, QACertificationEventMap],
+  providers: [
+    QACertificationEventWorkspaceService,
+    QACertificationEventMap,
+    QACertificationEventChecksService,
+  ],
   exports: [
     TypeOrmModule,
     QACertificationEventMap,
     QACertificationEventWorkspaceService,
+    QACertificationEventChecksService,
   ],
 })
 export class QaCertificationEventWorkspaceModule {}
