@@ -26,12 +26,16 @@ import {
   QACertificationEventDTO,
   QACertificationEventRecordDTO,
 } from '../dto/qa-certification-event.dto';
+import { QACertificationEventChecksService } from './qa-certification-event-checks.service';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('QA Certification Event')
 export class QACertificationEventWorkspaceController {
-  constructor(private readonly service: QACertificationEventWorkspaceService) {}
+  constructor(
+    private readonly service: QACertificationEventWorkspaceService,
+    private readonly checksService: QACertificationEventChecksService,
+  ) {}
 
   @Get()
   @ApiOkResponse({
@@ -66,11 +70,12 @@ export class QACertificationEventWorkspaceController {
     type: QACertificationEventBaseDTO,
     description: 'Create a QA Certification Event record in the workspace',
   })
-  createQACertEvent(
+  async createQACertEvent(
     @Param('locId') locationId: string,
     @Body() payload: QACertificationEventBaseDTO,
     @User() user: CurrentUser,
   ): Promise<QACertificationEventRecordDTO> {
+    await this.checksService.runChecks(locationId, payload, false, false);
     return this.service.createQACertEvent(locationId, payload, user.userId);
   }
 
@@ -81,12 +86,13 @@ export class QACertificationEventWorkspaceController {
     type: QACertificationEventBaseDTO,
     description: 'Updates a QA Certification Event record in the workspace',
   })
-  updateQACertEvent(
+  async updateQACertEvent(
     @Param('locId') locationId: string,
     @Param('id') id: string,
     @Body() payload: QACertificationEventBaseDTO,
     @User() user: CurrentUser,
   ): Promise<QACertificationEventDTO> {
+    await this.checksService.runChecks(locationId, payload, false, true);
     return this.service.updateQACertEvent(locationId, id, payload, user.userId);
   }
 
