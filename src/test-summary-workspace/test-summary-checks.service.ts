@@ -30,6 +30,7 @@ import {
   VALID_CODES_FOR_END_MINUTE_VALIDATION,
 } from '../utilities/constants';
 
+const moment = require('moment');
 const KEY = 'Test Summary';
 
 @Injectable()
@@ -940,50 +941,34 @@ export class TestSummaryChecksService {
   // TEST-7 Test Dates Consistent
   test7Check(summary: TestSummaryBaseDTO): string {
     const errorResponse = this.getMessage('TEST-7-A', { key: KEY });
-    const testTypeCode = summary.testTypeCode.toUpperCase();
 
-    // cannot call getFullYear and other functions unless we do new Date
-    const summaryBeginDate = new Date(summary.beginDate);
-
-    const summaryEndDate = new Date(summary.endDate);
-    // need to add a 0 in front if the hour is a single digit or else new Date() will through error
-    const beginHour =
-      summary.beginHour > 9 ? summary.beginHour : `0${summary.beginHour}`;
-    const endHour =
-      summary.endHour > 9 ? summary.endHour : `0${summary.endHour}`;
-    const beginMinute =
-      summary.beginMinute > 9 ? summary.beginMinute : `0${summary.beginMinute}`;
-    const endMinute =
-      summary.endMinute > 9 ? summary.endMinute : `0${summary.endMinute}`;
-
-    // creates a date string in format yyyy-mm-dd
-    const beginDate = `${summaryBeginDate.getFullYear()}-${
-      summaryBeginDate.getMonth() < 10 ? '0' : ''
-    }${summaryBeginDate.getMonth()}-${
-      summaryBeginDate.getDay() < 10 ? '0' : ''
-    }${summaryBeginDate.getDay()}`;
-    const endDate = `${summaryEndDate.getFullYear()}-${
-      summaryEndDate.getMonth() < 10 ? '0' : ''
-    }${summaryEndDate.getMonth()}-${
-      summaryEndDate.getDay() < 10 ? '0' : ''
-    }${summaryEndDate.getDay()}`;
+    const beginDate = moment(summary.beginDate);
+    const endDate = moment(summary.endDate);
 
     if (
-      testTypeCode === TestTypeCodes.ONOFF.toString() ||
-      testTypeCode === TestTypeCodes.FF2LBAS.toString()
+      [
+        TestTypeCodes.ONOFF.toString(),
+        TestTypeCodes.FF2LBAS.toString(),
+      ].includes(summary.testTypeCode)
     ) {
-      // then create a datetime string in format yyyy-mm-dd:hh:mm
-      const beginDateHour = new Date(`${beginDate}T${beginHour}:00`);
-      const endDateHour = new Date(`${endDate}T${endHour}:00`);
-
-      if (beginDateHour >= endDateHour) return errorResponse;
+      // Checks if beginDate-hour is same or after endDate-hour
+      if (
+        beginDate.isAfter(endDate) ||
+        (beginDate.isSame(endDate) && summary.beginHour >= summary.endHour)
+      ) {
+        return errorResponse;
+      }
     } else {
-      const beginDateHourMinute = new Date(
-        `${beginDate}T${beginHour}:${beginMinute}`,
-      );
-      const endDateHourMinute = new Date(`${endDate}T${endHour}:${endMinute}`);
-
-      if (beginDateHourMinute >= endDateHourMinute) return errorResponse;
+      // Checks if beginDate-hour-minute is same or after endDate-hour-minute
+      if (
+        beginDate.isAfter(endDate) ||
+        (beginDate.isSame(endDate) && summary.beginHour > summary.endHour) ||
+        (beginDate.isSame(endDate) &&
+          summary.beginHour === summary.endHour &&
+          summary.beginMinute >= summary.endMinute)
+      ) {
+        return errorResponse;
+      }
     }
 
     return null;
