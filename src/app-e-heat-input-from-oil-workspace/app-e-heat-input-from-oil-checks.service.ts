@@ -62,8 +62,8 @@ export class AppEHeatInputFromOilChecksService {
 
     if (
       dto.monitoringSystemID &&
-      appETestRun.runNumber &&
-      appETestSummary.operatingLevelForRun
+      appETestRun.runNumber != null &&
+      appETestSummary.operatingLevelForRun != null
     ) {
       const duplicate = await this.repo.findDuplicate(
         aehiOilId,

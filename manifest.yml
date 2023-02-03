@@ -4,7 +4,7 @@ applications:
     disk_quota: ((disk))M
     instances: ((instances))
     buildpacks:
-      - https://github.com/cloudfoundry/nodejs-buildpack.git#v1.8.3
+      - nodejs_buildpack
     env:
       OPTIMIZE_MEMORY: true
       EASEY_QA_CERTIFICATION_API_HOST: ((host))
