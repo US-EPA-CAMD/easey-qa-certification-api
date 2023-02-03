@@ -934,9 +934,12 @@ export class TestSummaryChecksService {
     const endDate = moment(summary.endDate);
 
     if (
-      summary.testTypeCode === TestTypeCodes.ONOFF.toString() ||
-      summary.testTypeCode === TestTypeCodes.FF2LBAS.toString()
+      [
+        TestTypeCodes.ONOFF.toString(),
+        TestTypeCodes.FF2LBAS.toString(),
+      ].includes(summary.testTypeCode)
     ) {
+      // Checks if beginDate-hour is same or after endDate-hour
       if (
         beginDate.isSameOrAfter(endDate) &&
         summary.beginHour >= summary.endHour
@@ -944,6 +947,8 @@ export class TestSummaryChecksService {
         return errorResponse;
       }
     } else {
+      // Checks if beginDate-hour-minute is same or after endDate-hour-minute
+
       if (
         beginDate.isSameOrAfter(endDate) &&
         summary.beginHour >= summary.endHour &&
