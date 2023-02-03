@@ -171,6 +171,19 @@ export class TestSummaryBaseDTO {
           break;
         case TestTypeCodes.RATA:
           resultCode = 'RATA-117-A';
+          break;
+        case TestTypeCodes.F2LCHK:
+          resultCode = 'F2LCHK-19-A';
+          break;
+        case TestTypeCodes.F2LREF:
+          resultCode = 'F2LREF-15-A';
+          break;
+        case TestTypeCodes.FF2LBAS:
+          resultCode = 'FF2LBAS-19-A';
+          break;
+        case TestTypeCodes.FF2LTST:
+          resultCode = 'FF2LTST-1-A';
+          break;
         default:
           return `You did not provide [${args.property}], which is required for [${KEY}].`;
       }
