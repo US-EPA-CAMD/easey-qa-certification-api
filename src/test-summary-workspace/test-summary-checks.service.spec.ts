@@ -912,5 +912,25 @@ describe('Test Summary Check Service Test', () => {
       );
       expect(result).toEqual(MOCK_ERROR_MSG);
     });
+
+    it('returns error message testTypeCode=FFACC', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.FFACC,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+
+    it('returns error message testTypeCode=FF2LTST', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.FF2LTST,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
   });
 });
