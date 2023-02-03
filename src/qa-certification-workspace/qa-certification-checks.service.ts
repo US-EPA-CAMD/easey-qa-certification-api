@@ -20,6 +20,7 @@ import { RataTraverseChecksService } from '../rata-traverse-workspace/rata-trave
 import { TestQualificationChecksService } from '../test-qualification-workspace/test-qualification-checks.service';
 import { TestExtensionExemptionsChecksService } from '../test-extension-exemptions-workspace/test-extension-exemptions-checks.service';
 import { CycleTimeInjectionChecksService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace-checks.service';
+import { QACertificationEventChecksService } from '../qa-certification-event-workspace/qa-certification-event-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -37,6 +38,7 @@ export class QACertificationChecksService {
     private readonly rataTraverseChecksService: RataTraverseChecksService,
     private readonly testExtensionExemptionsChecksService: TestExtensionExemptionsChecksService,
     private readonly cycleTimeInjectionChecksService: CycleTimeInjectionChecksService,
+    private readonly qaCertificationEventChecksService: QACertificationEventChecksService,
     @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
   ) {}
@@ -299,6 +301,29 @@ export class QACertificationChecksService {
             const results = this.testExtensionExemptionsChecksService.runChecks(
               locationId,
               testExtExem,
+              true,
+              false,
+            );
+            resolve(results);
+          }),
+        );
+      }
+    }
+
+    if (payload.certificationEventData) {
+      for (const qaCertEvent of payload.certificationEventData) {
+        const locationId = locations.find(i => {
+          return (
+            i.unitId === qaCertEvent.unitId &&
+            i.stackPipeId === qaCertEvent.stackPipeId
+          );
+        }).locationId;
+
+        promises.push(
+          new Promise(async (resolve, _reject) => {
+            const results = this.qaCertificationEventChecksService.runChecks(
+              locationId,
+              qaCertEvent,
               true,
               false,
             );
