@@ -842,13 +842,25 @@ export class TestSummaryChecksService {
       case testTypeCode === TestTypeCodes.F2LREF:
         // F2LREF-14 Duplicate Flow to Load Reference Data
         error = this.getMessage(`F2LREF-14-${checkType}`, {
-          testtype: 'Flow to Load Reference Data Test',
+          testtype: 'Flow to Load Reference Test',
         });
         break;
       case testTypeCode === TestTypeCodes.FF2LBAS:
         // FF2LBAS-20 Duplicate FuelFlow to Load Baseline Data
         error = this.getMessage(`FF2LBAS-20-${checkType}`, {
-          testtype: 'FuelFlow to Load Baseline Data',
+          testtype: 'FuelFlow to Load Baseline Test',
+        });
+        break;
+      case testTypeCode === TestTypeCodes.FFACC:
+        // FFACC-13 Duplicate Fuel Flowmeter Accuracy Test
+        error = this.getMessage(`FFACC-13-${checkType}`, {
+          testtype: 'Fuel Flowmeter Accuracy Test',
+        });
+        break;
+      case testTypeCode === TestTypeCodes.FF2LTST:
+        // FF2LTST-14 Duplicate FuelFlow to Load Test
+        error = this.getMessage(`FF2LTST-14-${checkType}`, {
+          testtype: 'FuelFlow to Load Test',
         });
         break;
       case MISC_TEST_TYPE_CODES.includes(testTypeCode):
