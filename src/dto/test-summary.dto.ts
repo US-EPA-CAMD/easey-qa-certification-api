@@ -182,7 +182,7 @@ export class TestSummaryBaseDTO {
           resultCode = 'FF2LBAS-19-A';
           break;
         case TestTypeCodes.FF2LTST:
-          resultCode = 'FF2LTST-1-A';
+          resultCode = 'FF2LTST-13-A';
           break;
         default:
           return `You did not provide [${args.property}], which is required for [${KEY}].`;
