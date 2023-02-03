@@ -196,6 +196,8 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.ARTIFACTS_STORAGE_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.ARTIFACTS_STORAGE_SECRET_ACCESS_KEY }}
+      - name: Init Application
+        run: devops/scripts/cf-app-init.sh
       - name: Configure Env Vars (secrets)
         run: scripts/environment-variables-secrets.sh
         env:
