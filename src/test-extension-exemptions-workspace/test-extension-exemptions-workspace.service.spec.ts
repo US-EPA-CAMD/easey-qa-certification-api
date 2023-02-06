@@ -159,7 +159,9 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
     });
 
     it('should throw error when Test Extension Exemption not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest
+        .spyOn(repository, 'getTestExtensionExemptionById')
+        .mockResolvedValue(undefined);
 
       let errored = false;
 

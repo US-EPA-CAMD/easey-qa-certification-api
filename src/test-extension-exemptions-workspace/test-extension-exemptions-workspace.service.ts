@@ -49,7 +49,7 @@ export class TestExtensionExemptionsWorkspaceService {
   async getTestExtensionExemptionById(
     id: string,
   ): Promise<TestExtensionExemptionRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.getTestExtensionExemptionById(id);
 
     if (!result) {
       throw new LoggingException(
