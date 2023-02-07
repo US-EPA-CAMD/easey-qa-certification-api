@@ -11,6 +11,10 @@ import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-mas
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { ReferenceMethodCode } from '../entities/workspace/reference-method-code.entity';
+import { ReferenceMethodCodeRepository } from '../reference-method-code/reference-method-code.repository';
+import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
+import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -20,6 +24,8 @@ const rataSumId = '';
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 const monitorSystemRecord = new MonitorSystem();
+const mp = new MonitorPlan();
+const referenceMethodCode = new ReferenceMethodCode();
 
 const mockTestSumRepository = () => ({
   getTestSummaryByLocationId: jest.fn().mockResolvedValue(null),
@@ -35,6 +41,14 @@ const mockTestSummaryRelationshipRepository = () => ({
   getTestTypeCodesRelationships: jest
     .fn()
     .mockResolvedValue([{ testResultCode: 'PASSED' }]),
+});
+
+const mockQAMonitorPlanRepository = () => ({
+  getMonitorPlanWithALowerBeginDate: jest.fn().mockResolvedValue([mp]),
+});
+
+const mockReferenceMethodCodeRepository = () => ({
+  find: jest.fn().mockResolvedValue([referenceMethodCode]),
 });
 
 describe('Rata Summary Check Service Test', () => {
@@ -63,6 +77,14 @@ describe('Rata Summary Check Service Test', () => {
         },
         {
           provide: MonitorSystemRepository,
+          useFactory: mockMonitorSystemRepository,
+        },
+        {
+          provide: QAMonitorPlanWorkspaceRepository,
+          useFactory: mockQAMonitorPlanRepository,
+        },
+        {
+          provide: ReferenceMethodCodeRepository,
           useFactory: mockMonitorSystemRepository,
         },
       ],
