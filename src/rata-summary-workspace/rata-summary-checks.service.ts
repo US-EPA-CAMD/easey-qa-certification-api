@@ -144,12 +144,15 @@ export class RataSummaryChecksService {
     );
 
     const referenceMethodCodeDataSet = await this.referenceMethodCodeRepository.find();
+
     const referenceMethodCodes: string[] = [];
     const parameterCodes: string[] = [];
+
     referenceMethodCodeDataSet.forEach(ds => {
       referenceMethodCodes.push(ds.referenceMethodCode);
 
-      const paraCodes = ds.parameterCode.split(',');
+      const paramCodes = ds.parameterCode.split(',');
+      parameterCodes.push(...paramCodes);
     });
 
     if (summary.system.systemTypeCode !== 'FLOW') {
