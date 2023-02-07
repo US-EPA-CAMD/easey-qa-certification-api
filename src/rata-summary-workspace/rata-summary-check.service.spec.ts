@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { BadRequestException } from '@nestjs/common';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { RataSummaryImportDTO } from '../dto/rata-summary.dto';
 
@@ -85,7 +86,7 @@ describe('Rata Summary Check Service Test', () => {
         },
         {
           provide: ReferenceMethodCodeRepository,
-          useFactory: mockMonitorSystemRepository,
+          useFactory: mockReferenceMethodCodeRepository,
         },
       ],
     }).compile();
