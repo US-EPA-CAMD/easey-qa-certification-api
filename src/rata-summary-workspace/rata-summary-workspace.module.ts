@@ -10,10 +10,14 @@ import { RataWorkspaceModule } from '../rata-workspace/rata-workspace.module';
 import { RataSummaryChecksService } from './rata-summary-checks.service';
 import { RataSummaryModule } from '../rata-summary/rata-summary.module';
 import { RataRunWorkspaceModule } from '../rata-run-workspace/rata-run-workspace.module';
+import { ReferenceMethodCodeRepository } from '../reference-method-code/reference-method-code.repository';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RataSummaryWorkspaceRepository]),
+    TypeOrmModule.forFeature([
+      RataSummaryWorkspaceRepository,
+      ReferenceMethodCodeRepository,
+    ]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => RataWorkspaceModule),
     forwardRef(() => RataSummaryModule),

@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ReferenceMethodCodeService } from './reference-method-code.service';
-import { ReferenceMethodCodeController } from './reference-method-code.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ReferenceMethodCodeRepository } from './reference-method-code.repository';
 
 @Module({
-  controllers: [ReferenceMethodCodeController],
-  providers: [ReferenceMethodCodeService]
+  imports: [TypeOrmModule.forFeature([ReferenceMethodCodeRepository])],
+  controllers: [],
+  providers: [],
+  exports: [TypeOrmModule],
 })
 export class ReferenceMethodCodeModule {}
