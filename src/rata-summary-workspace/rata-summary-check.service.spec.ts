@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing';
-import { BadRequestException } from '@nestjs/common';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { RataSummaryImportDTO } from '../dto/rata-summary.dto';
 
@@ -16,6 +15,7 @@ import { ReferenceMethodCode } from '../entities/workspace/reference-method-code
 import { ReferenceMethodCodeRepository } from '../reference-method-code/reference-method-code.repository';
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -25,8 +25,10 @@ const rataSumId = '';
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 const monitorSystemRecord = new MonitorSystem();
+monitorSystemRecord.systemTypeCode = 'FLOW';
 const mp = new MonitorPlan();
 const referenceMethodCode = new ReferenceMethodCode();
+referenceMethodCode.parameterCode = '2F';
 
 const mockTestSumRepository = () => ({
   getTestSummaryByLocationId: jest.fn().mockResolvedValue(null),
@@ -110,19 +112,22 @@ describe('Rata Summary Check Service Test', () => {
     it('Should get Result A', async () => {
       const testSummary = new TestSummary();
       testSummary.testTypeCode = TestTypeCodes.RATA;
+      testSummary.monitoringSystemRecordId = '';
+      testSummary.system = new MonitorSystem();
+      testSummary.system.systemTypeCode = 'NONFLOW';
+
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
       jest
         .spyOn(testSumRepository, 'getTestSummaryById')
         .mockResolvedValue(testSummary);
-      try {
-        await service.runChecks(testSumId, payload);
-      } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
-      }
+
+      const testSumImportDTO = new TestSummaryImportDTO();
+      testSumImportDTO.monitoringSystemID = '001';
 
       try {
-        await service.runChecks(
+        const results = await service.runChecks(
           locationId,
           payload,
           false,
@@ -130,9 +135,12 @@ describe('Rata Summary Check Service Test', () => {
           rataSumId,
           testSumId,
           [payload],
+          testSumImportDTO,
         );
-      } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+
+        console.log(results);
+      } catch (error) {
+        expect(error.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
   });

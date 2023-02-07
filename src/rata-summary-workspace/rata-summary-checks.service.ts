@@ -37,8 +37,8 @@ export class RataSummaryChecksService {
     private readonly referenceMethodCodeRepository: ReferenceMethodCodeRepository,
   ) {}
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
+  private throwIfErrors(errorList: string[], isImport: boolean = false) {
+    if (!isImport && errorList.length > 0) {
       throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }
@@ -60,6 +60,10 @@ export class RataSummaryChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
+      testSumRecord.system = await this.monitorSystemRepository.findOne({
+        monitoringSystemID: testSummary.monitoringSystemID,
+        locationId: locationId,
+      });
       // IMPORT-30 Extraneous RATA Summary Data Check
       error = await this.import30Check(rataSummary, testSumRecord);
       if (error) {
@@ -70,11 +74,6 @@ export class RataSummaryChecksService {
         testSumId,
       );
     }
-
-    testSumRecord.system = await this.monitorSystemRepository.findOne({
-      monitoringSystemID: testSummary.monitoringSystemID,
-      locationId: locationId,
-    });
 
     if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
       // RATA-17 Mean CEM Value Valid
@@ -106,7 +105,7 @@ export class RataSummaryChecksService {
       }
     }
 
-    this.throwIfErrors(errorList);
+    this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed RATA Summary Checks');
     return errorList;
   }
