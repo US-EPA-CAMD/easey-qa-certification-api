@@ -83,6 +83,15 @@ export class RataSummaryChecksService {
         errorList.push(error);
       }
 
+      error = await this.rata16Check(
+        testSumRecord,
+        locationId,
+        rataSummary.referenceMethodCode,
+      );
+      if (error) {
+        errorList.push(error);
+      }
+
       if (!isUpdate) {
         // RATA-107 Duplicate RATA Summary
         error = await this.rata107Check(
@@ -102,7 +111,7 @@ export class RataSummaryChecksService {
     return errorList;
   }
 
-  private async rata16(
+  private async rata16Check(
     summary,
     locationId: string,
     referenceMethodCode: string,
@@ -152,16 +161,16 @@ export class RataSummaryChecksService {
         }
       }
 
+      if (referenceMethodCode.split(',').includes('20') && mp) {
+        return resultE;
+      }
+
       if (!parameterCodes.includes(summary?.system.systemTypeCode)) {
         if (mp) {
           return resultC;
         } else {
           return resultD;
         }
-      }
-
-      if (referenceMethodCode.split(',').includes('20') && mp) {
-        return resultE;
       }
     }
 
