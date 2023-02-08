@@ -1,11 +1,7 @@
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-import {
-  IsOrisCode,
-  IsValidDate,
-  IsIsoFormat,
-} from '@us-epa-camd/easey-common/pipes';
+import { IsOrisCode, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 
 import {
   ErrorMessages,
