@@ -54,9 +54,17 @@ describe('Linearity Summary Check Service Test', () => {
     it('Should pass all checks', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
-      jest.spyOn(testSumRepository, 'getTestSummaryById').mockResolvedValue(testSumRecord);
+      jest
+        .spyOn(testSumRepository, 'getTestSummaryById')
+        .mockResolvedValue(testSumRecord);
 
-      const result = await service.runChecks(payload, false, false, unitDefaultTestSumId, testSumId);
+      const result = await service.runChecks(
+        payload,
+        false,
+        false,
+        unitDefaultTestSumId,
+        testSumId,
+      );
 
       expect(result).toEqual([]);
     });
@@ -73,9 +81,17 @@ describe('Linearity Summary Check Service Test', () => {
 
     it('Should get already exists error', async () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(returnValue);
-      jest.spyOn(testSumRepository, 'getTestSummaryById').mockResolvedValue(testSumRecord);
+      jest
+        .spyOn(testSumRepository, 'getTestSummaryById')
+        .mockResolvedValue(testSumRecord);
       try {
-        await service.runChecks(payload, false, false, unitDefaultTestSumId, testSumId);
+        await service.runChecks(
+          payload,
+          false,
+          false,
+          unitDefaultTestSumId,
+          testSumId,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }

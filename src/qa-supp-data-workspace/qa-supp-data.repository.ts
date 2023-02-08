@@ -29,8 +29,7 @@ export class QASuppDataWorkspaceRepository extends Repository<QASuppData> {
       .andWhere('ts.testTypeCode = :testTypeCode', { testTypeCode })
       .andWhere('ts.testNumber = :testNumber', { testNumber });
 
-    if(testSumId)
-      query.andWhere('ts.testSumId != :testSumId', { testSumId });
+    if (testSumId) query.andWhere('ts.testSumId != :testSumId', { testSumId });
 
     return query.getOne();
   }

@@ -31,6 +31,7 @@ import { AppECorrelationTestRunWorkspaceModule } from '../app-e-correlation-test
     TypeOrmModule,
     AppEHeatInputFromGasMap,
     AppEHeatInputFromGasWorkspaceService,
+    AppEHeatInputFromGasChecksService,
   ],
 })
 export class AppEHeatInputFromGasWorkspaceModule {}

@@ -34,6 +34,7 @@ import { AppECorrelationTestSummaryChecksService } from './app-e-correlation-tes
     TypeOrmModule,
     AppECorrelationTestSummaryMap,
     AppECorrelationTestSummaryWorkspaceService,
+    AppECorrelationTestSummaryChecksService,
   ],
 })
 export class AppECorrelationTestSummaryWorkspaceModule {}
