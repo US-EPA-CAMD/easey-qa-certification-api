@@ -1,7 +1,9 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes/is-iso-format.pipe';
 import { IsNotEmpty, ValidationArguments } from 'class-validator';
 
 const KEY = 'Cycle Time Injection';
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class CycleTimeInjectionBaseDTO {
   @IsNotEmpty({
@@ -14,9 +16,21 @@ export class CycleTimeInjectionBaseDTO {
   })
   gasLevelCode: string;
   calibrationGasValue: number;
+
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
+    },
+  })
   beginDate: Date;
   beginHour: number;
   beginMinute: number;
+
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
+    },
+  })
   endDate: Date;
   endHour: number;
   endMinute: number;
