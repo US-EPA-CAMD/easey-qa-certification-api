@@ -97,11 +97,10 @@ export class QACertificationParamsDTO {
     description: getMetadata(dataDictionary.beginDate, MetadataKeys.DEFAULT)
       .description,
   })
-  @IsValidDate({
-    message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`,
-  })
   @IsIsoFormat({
-    message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`,
+    message: (args: ValidationArguments) => {
+      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT}.`;
+    },
   })
   @IsInDateRange('1993-01-01', null, {
     message: `Begin Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,
@@ -111,11 +110,10 @@ export class QACertificationParamsDTO {
   @ApiProperty({
     description: propertyMetadata.endDate.description,
   })
-  @IsValidDate({
-    message: `End Date must be a valid date in the format of ${DATE_FORMAT}.`,
-  })
   @IsIsoFormat({
-    message: `End Date must be a valid date in the format of ${DATE_FORMAT}.`,
+    message: (args: ValidationArguments) => {
+      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT}.`;
+    },
   })
   @IsInDateRange('1993-01-01', null, {
     message: `End Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,

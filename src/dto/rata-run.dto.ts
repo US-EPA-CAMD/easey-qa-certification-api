@@ -11,7 +11,7 @@ import { RunStatusCode } from '../entities/run-status-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { FlowRataRunDTO, FlowRataRunImportDTO } from './flow-rata-run.dto';
 import { IsNotNegative } from '../pipes/is-not-negative.pipe';
-import { IsInRange } from '@us-epa-camd/easey-common/pipes';
+import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { Type } from 'class-transformer';
 
 const KEY = 'RATA Run';
@@ -21,6 +21,7 @@ const MIN_HOUR = 0;
 const MAX_HOUR = 23;
 const MIN_MINUTE = 0;
 const MAX_MINUTE = 59;
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class RataRunBaseDTO {
   @IsNotEmpty({
@@ -50,6 +51,11 @@ export class RataRunBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
+    },
+  })
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
     },
   })
   beginDate: Date;
@@ -96,6 +102,11 @@ export class RataRunBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
+    },
+  })
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
     },
   })
   endDate: Date;
