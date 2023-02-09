@@ -32,6 +32,7 @@ import { AppECorrelationTestRunChecksService } from './app-e-correlation-test-ru
     TypeOrmModule,
     AppECorrelationTestRunMap,
     AppECorrelationTestRunWorkspaceService,
+    AppECorrelationTestRunChecksService,
   ],
 })
 export class AppECorrelationTestRunWorkspaceModule {}

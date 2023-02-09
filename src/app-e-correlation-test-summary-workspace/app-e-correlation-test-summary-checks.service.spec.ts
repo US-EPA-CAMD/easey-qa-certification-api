@@ -2,7 +2,10 @@ import { Test } from '@nestjs/testing';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { AppECorrelationTestSummaryChecksService } from './app-e-correlation-test-summary-checks.service';
-import { AppECorrelationTestSummaryBaseDTO } from '../dto/app-e-correlation-test-summary.dto';
+import {
+  AppECorrelationTestSummaryBaseDTO,
+  AppECorrelationTestSummaryImportDTO,
+} from '../dto/app-e-correlation-test-summary.dto';
 import { AppECorrelationTestRun } from '../entities/workspace/app-e-correlation-test-run.entity';
 import { AppECorrelationTestSummary } from '../entities/workspace/app-e-correlation-test-summary.entity';
 import { AppendixETestSummaryWorkspaceRepository } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.repository';
@@ -10,7 +13,6 @@ import { AppendixETestSummaryWorkspaceRepository } from '../app-e-correlation-te
 const MOCK_ERROR_MSG = 'ERROR MSG';
 const mockAppETestSummary = new AppECorrelationTestSummary();
 mockAppETestSummary.operatingLevelForRun = 1;
-const mockAppETestRun = new AppECorrelationTestRun();
 const mockDTO = new AppECorrelationTestSummaryBaseDTO();
 mockDTO.operatingLevelForRun = 1;
 const testSumId = '1';
@@ -55,6 +57,30 @@ describe('Appendix E Correlation Test Summary Checks Service Test', () => {
       let result;
       try {
         result = await service.runChecks(mockDTO, null, testSumId);
+      } catch (err) {
+        result = err.response.message;
+      }
+
+      expect(result).toEqual([MOCK_ERROR_MSG]);
+    });
+  });
+
+  describe('Appendix E Test Summary - Duplicate Check on Import', () => {
+    let importDTO1 = new AppECorrelationTestSummaryImportDTO();
+    importDTO1.operatingLevelForRun = 1;
+    let importDTO2 = new AppECorrelationTestSummaryImportDTO();
+    importDTO2.operatingLevelForRun = 2;
+
+    it('Should pass when no duplicates in import payload', async () => {
+      const result = await service.runImportChecks([importDTO1, importDTO2]);
+      expect(result).toEqual([]); // No error messages
+    });
+
+    it('Should fail when there are duplicates in import payload', async () => {
+      importDTO2.operatingLevelForRun = importDTO1.operatingLevelForRun;
+      let result;
+      try {
+        result = await service.runImportChecks([importDTO1, importDTO2]);
       } catch (err) {
         result = err.response.message;
       }

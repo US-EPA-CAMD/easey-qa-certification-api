@@ -29,6 +29,10 @@ import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
 import { QaCertificationEventWorkspaceModule } from '../qa-certification-event-workspace/qa-certification-event-workspace.module';
 import { TestExtensionExemptionsWorkspaceModule } from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.module';
 import { CycleTimeInjectionWorkspaceModule } from '../cycle-time-injection-workspace/cycle-time-injection-workspace.module';
+import { AppECorrelationTestRunWorkspaceModule } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.module';
+import { AppECorrelationTestSummaryWorkspaceModule } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.module';
+import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.module';
+import { AppEHeatInputFromGasWorkspaceModule } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
 
 @Module({
   imports: [
@@ -52,6 +56,10 @@ import { CycleTimeInjectionWorkspaceModule } from '../cycle-time-injection-works
     TestQualificationWorkspaceModule,
     TestExtensionExemptionsWorkspaceModule,
     CycleTimeInjectionWorkspaceModule,
+    AppECorrelationTestSummaryWorkspaceModule,
+    AppECorrelationTestRunWorkspaceModule,
+    AppEHeatInputFromOilWorkspaceModule,
+    AppEHeatInputFromGasWorkspaceModule,
   ],
   controllers: [QACertificationWorkspaceController],
   providers: [
