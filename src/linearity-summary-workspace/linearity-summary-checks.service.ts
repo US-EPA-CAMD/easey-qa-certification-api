@@ -40,6 +40,7 @@ export class LinearitySummaryChecksService {
     isImport: boolean = false,
     isUpdate: boolean = false,
     testSummary?: TestSummaryImportDTO,
+    linearitySummaries?: LinearitySummaryImportDTO[],
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
@@ -48,6 +49,7 @@ export class LinearitySummaryChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
+      testSumId = testSumRecord.id
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
@@ -60,6 +62,7 @@ export class LinearitySummaryChecksService {
           testSumId,
           linearitySummary,
           isImport,
+          linearitySummaries,
         );
         if (error) {
           errorList.push(error);
@@ -105,10 +108,25 @@ export class LinearitySummaryChecksService {
     testSumId: string,
     linearitySummary: LinearitySummaryBaseDTO | LinearitySummaryImportDTO,
     _isImport: boolean = false,
+    linearitySummaies: LinearitySummaryImportDTO[] = [],
   ): Promise<string> {
     let error: string = null;
     let RECORDTYPE: string = 'linearitySummary';
     let FIELDNAME: string = 'gasLevelCode';
+
+    const duplicates = linearitySummaies.filter(i => {
+      return (
+        i.gasLevelCode === linearitySummary.gasLevelCode
+      );
+    });
+
+    // IMPORT-20 Duplicate Test Check
+    if (_isImport && duplicates.length > 1) {
+      error = this.getMessage('LINEAR-32-A', {
+        recordtype: RECORDTYPE,
+        fieldnames: FIELDNAME,
+      });
+    }
 
     const record: LinearitySummary = await this.repository.findOne({
       testSumId: testSumId,

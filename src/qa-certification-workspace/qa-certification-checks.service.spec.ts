@@ -27,6 +27,7 @@ import { AppECorrelationTestSummaryChecksService} from "../app-e-correlation-tes
 import { AppECorrelationTestRunChecksService} from "../app-e-correlation-test-run-workspace/app-e-correlation-test-run-checks.service";
 import { AppEHeatInputFromGasChecksService} from "../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-checks.service";
 import { AppEHeatInputFromOilChecksService} from "../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil-checks.service";
+import { UnitDefaultTestRunChecksService } from '../unit-default-test-run-workspace/unit-default-test-run-checks.service';
 
 const returnLocationRunChecks = [
   {
@@ -156,6 +157,12 @@ describe('QA Certification Check Service Test', () => {
         },
         {
           provide: AppEHeatInputFromGasChecksService,
+          useFactory: () => ({
+            runImportChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
+        {
+          provide: UnitDefaultTestRunChecksService,
           useFactory: () => ({
             runImportChecks: jest.fn().mockResolvedValue([]),
           }),

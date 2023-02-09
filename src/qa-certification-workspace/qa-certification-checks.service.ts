@@ -25,6 +25,7 @@ import { AppECorrelationTestRunChecksService } from '../app-e-correlation-test-r
 import { AppECorrelationTestSummaryChecksService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-checks.service';
 import { AppEHeatInputFromGasChecksService } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-checks.service';
 import { AppEHeatInputFromOilChecksService } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil-checks.service';
+import { UnitDefaultTestRunChecksService } from '../unit-default-test-run-workspace/unit-default-test-run-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -47,6 +48,7 @@ export class QACertificationChecksService {
     private readonly appETestRunChecksService: AppECorrelationTestRunChecksService,
     private readonly appEGasChecksService: AppEHeatInputFromGasChecksService,
     private readonly appEOilChecksService: AppEHeatInputFromOilChecksService,
+    private readonly unitDefaultTestRunChecksService: UnitDefaultTestRunChecksService,
     @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
   ) {}
@@ -131,6 +133,7 @@ export class QACertificationChecksService {
                 true,
                 false,
                 summary,
+                summary.linearitySummaryData
               );
 
               resolve(results);
@@ -333,6 +336,30 @@ export class QACertificationChecksService {
               );
             });
           });
+
+          
+
+        summary.unitDefaultTestData?.forEach(unitDefaultTest => {
+          unitDefaultTest.unitDefaultTestRunData?.forEach(
+            unitDefaultTestRun => {
+              promises.push(
+                new Promise(async (resolve, _reject) => {
+                  const results = this.unitDefaultTestRunChecksService.runChecks(
+                    unitDefaultTestRun,
+                    true,
+                    false,
+                    null,
+                    null,
+                    summary,
+                    unitDefaultTest.unitDefaultTestRunData
+                  );
+
+                  resolve(results);
+                }),
+              );
+            }
+          )
+        })
         }
       }
     }
