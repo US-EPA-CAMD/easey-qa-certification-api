@@ -26,6 +26,7 @@ import { AppECorrelationTestSummaryChecksService } from '../app-e-correlation-te
 import { AppEHeatInputFromGasChecksService } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-checks.service';
 import { AppEHeatInputFromOilChecksService } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil-checks.service';
 import { UnitDefaultTestRunChecksService } from '../unit-default-test-run-workspace/unit-default-test-run-checks.service';
+import { ProtocolGasChecksService } from '../protocol-gas-workspace/protocol-gas-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -49,6 +50,7 @@ export class QACertificationChecksService {
     private readonly appEGasChecksService: AppEHeatInputFromGasChecksService,
     private readonly appEOilChecksService: AppEHeatInputFromOilChecksService,
     private readonly unitDefaultTestRunChecksService: UnitDefaultTestRunChecksService,
+    private readonly protocolGasChecksService: ProtocolGasChecksService,
     @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
   ) {}
@@ -133,7 +135,7 @@ export class QACertificationChecksService {
                 true,
                 false,
                 summary,
-                summary.linearitySummaryData
+                summary.linearitySummaryData,
               );
 
               resolve(results);
@@ -337,29 +339,44 @@ export class QACertificationChecksService {
             });
           });
 
-          
+          summary.unitDefaultTestData?.forEach(unitDefaultTest => {
+            unitDefaultTest.unitDefaultTestRunData?.forEach(
+              unitDefaultTestRun => {
+                promises.push(
+                  new Promise(async (resolve, _reject) => {
+                    const results = this.unitDefaultTestRunChecksService.runChecks(
+                      unitDefaultTestRun,
+                      true,
+                      false,
+                      null,
+                      null,
+                      summary,
+                      unitDefaultTest.unitDefaultTestRunData,
+                    );
 
-        summary.unitDefaultTestData?.forEach(unitDefaultTest => {
-          unitDefaultTest.unitDefaultTestRunData?.forEach(
-            unitDefaultTestRun => {
-              promises.push(
-                new Promise(async (resolve, _reject) => {
-                  const results = this.unitDefaultTestRunChecksService.runChecks(
-                    unitDefaultTestRun,
-                    true,
-                    false,
-                    null,
-                    null,
-                    summary,
-                    unitDefaultTest.unitDefaultTestRunData
-                  );
+                    resolve(results);
+                  }),
+                );
+              },
+            );
+          });
 
-                  resolve(results);
-                }),
-              );
-            }
-          )
-        })
+          summary.protocolGasData?.forEach(protocolGas => {
+            promises.push(
+              new Promise(async (resolve, _reject) => {
+                const results = this.protocolGasChecksService.runChecks(
+                  protocolGas,
+                  locationId,
+                  undefined,
+                  true,
+                  false,
+                  summary,
+                );
+
+                resolve(results);
+              }),
+            );
+          });
         }
       }
     }

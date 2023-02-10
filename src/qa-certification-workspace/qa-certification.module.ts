@@ -34,6 +34,7 @@ import { AppECorrelationTestSummaryWorkspaceModule } from '../app-e-correlation-
 import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.module';
 import { AppEHeatInputFromGasWorkspaceModule } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
 import { UnitDefaultTestRunWorkspaceModule } from '../unit-default-test-run-workspace/unit-default-test-run.module';
+import { ProtocolGasWorkspaceModule } from '../protocol-gas-workspace/protocol-gas.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { UnitDefaultTestRunWorkspaceModule } from '../unit-default-test-run-work
     AppEHeatInputFromOilWorkspaceModule,
     AppEHeatInputFromGasWorkspaceModule,
     UnitDefaultTestRunWorkspaceModule,
+    ProtocolGasWorkspaceModule,
   ],
   controllers: [QACertificationWorkspaceController],
   providers: [
