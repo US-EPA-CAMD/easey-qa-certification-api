@@ -357,10 +357,7 @@ export class TestSummaryBaseDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return formatTestSummaryValidationError(
-        args,
-        `Begin Date must be a valid date in the format of ${DATE_FORMAT}. You reported an improperly formatted date of [${args.value}]`,
-      );
+      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
     },
   })
   @IsInDateRange(MIN_DATE, new Date(Date.now()).toISOString(), {
@@ -400,7 +397,9 @@ export class TestSummaryBaseDTO {
     message: ErrorMessages.DateValidity(),
   })
   @IsIsoFormat({
-    message: ErrorMessages.SingleFormat('endDate', 'YYYY-MM-DD format'),
+    message: (args: ValidationArguments) => {
+      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
+    },
   })
   @IsInDateRange(MIN_DATE, new Date(Date.now()).toISOString(), {
     message: (args: ValidationArguments) => {

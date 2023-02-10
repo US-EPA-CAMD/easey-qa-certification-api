@@ -1,9 +1,26 @@
+import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import { ValidationArguments } from 'class-validator';
+
+const DATE_FORMAT = 'YYYY-MM-DD';
+const KEY = 'Unit Default Test Run';
 export class UnitDefaultTestRunBaseDTO {
   operatingLevel: number;
   runNumber: number;
+
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
+    },
+  })
   beginDate: Date;
   beginHour: number;
   beginMinute: number;
+
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
+    },
+  })
   endDate: Date;
   endHour: number;
   endMinute: number;

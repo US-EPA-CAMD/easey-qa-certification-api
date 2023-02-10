@@ -37,7 +37,7 @@ const mockMonitorSystemRepository = () => ({
 });
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue([])
+  find: jest.fn().mockResolvedValue([]),
 });
 
 describe('TestQualificationChecksService', () => {
@@ -67,7 +67,9 @@ describe('TestQualificationChecksService', () => {
     }).compile();
 
     service = module.get(TestQualificationChecksService);
-    repository = module.get<TestQualificationWorkspaceRepository>(TestQualificationWorkspaceRepository);
+    repository = module.get<TestQualificationWorkspaceRepository>(
+      TestQualificationWorkspaceRepository,
+    );
     monitorSystemRepository = module.get(MonitorSystemRepository);
     testSummaryRepository = module.get(TestSummaryWorkspaceRepository);
 
@@ -76,15 +78,16 @@ describe('TestQualificationChecksService', () => {
 
   describe('Test Qualification Checks', () => {
     it('Should pass all checks', async () => {
-
-      payload.testClaimCode = 'SLC'
+      payload.testClaimCode = 'SLC';
 
       const returnValue = new TestQualification();
       jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
-      monSysRec.systemTypeCode = 'FLOW'
-      jest.spyOn(monitorSystemRepository, 'findOne').mockResolvedValue(monSysRec);
+      monSysRec.systemTypeCode = 'FLOW';
+      jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(monSysRec);
 
       const result = await service.runChecks(
         locationId,
@@ -93,7 +96,7 @@ describe('TestQualificationChecksService', () => {
         testSumId,
         testSumRecord,
         rata,
-        true
+        true,
       );
       expect(result).toEqual([]);
     });
@@ -101,7 +104,7 @@ describe('TestQualificationChecksService', () => {
 
   describe('RATA-9 Single-Level Claim High Load Percentage Valid', () => {
     it('Should get [RATA-9-E] error', async () => {
-      payload.testClaimCode = 'NOTSLC'
+      payload.testClaimCode = 'NOTSLC';
       payload.highLoadPercentage = 1;
 
       let testSumRec = new TestSummary();
@@ -111,23 +114,33 @@ describe('TestQualificationChecksService', () => {
       jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
-      monSysRec.systemTypeCode = 'FLOW'
-      jest.spyOn(monitorSystemRepository, 'findOne').mockResolvedValue(monSysRec);
+      monSysRec.systemTypeCode = 'FLOW';
+      jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(locationId, payload, testQualificationRecords, testSumId, testSumRecord, rata, true);
+        await service.runChecks(
+          locationId,
+          payload,
+          testQualificationRecords,
+          testSumId,
+          testSumRecord,
+          rata,
+          true,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
-    })
+    });
   });
 
   describe('RATA-10 Single-Level Claim Mid Load Percentage Valid', () => {
     it('Should get [RATA-10-E] error', async () => {
-      payload.testClaimCode = 'NOTSLC'
+      payload.testClaimCode = 'NOTSLC';
       payload.midLoadPercentage = 1;
 
       let testSumRec = new TestSummary();
@@ -137,23 +150,33 @@ describe('TestQualificationChecksService', () => {
       jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
-      monSysRec.systemTypeCode = 'FLOW'
-      jest.spyOn(monitorSystemRepository, 'findOne').mockResolvedValue(monSysRec);
+      monSysRec.systemTypeCode = 'FLOW';
+      jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(locationId, payload, testQualificationRecords, testSumId, testSumRecord, rata, true);
+        await service.runChecks(
+          locationId,
+          payload,
+          testQualificationRecords,
+          testSumId,
+          testSumRecord,
+          rata,
+          true,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
-    })
+    });
   });
 
   describe('RATA-11 Single-Level Claim Low Load Percentage Valid', () => {
     it('Should get [RATA-11-E] error', async () => {
-      payload.testClaimCode = 'NOTSLC'
+      payload.testClaimCode = 'NOTSLC';
       payload.lowLoadPercentage = 1;
 
       let testSumRec = new TestSummary();
@@ -163,23 +186,33 @@ describe('TestQualificationChecksService', () => {
       jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
-      monSysRec.systemTypeCode = 'FLOW'
-      jest.spyOn(monitorSystemRepository, 'findOne').mockResolvedValue(monSysRec);
+      monSysRec.systemTypeCode = 'FLOW';
+      jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(locationId, payload, testQualificationRecords, testSumId, testSumRecord, rata, true);
+        await service.runChecks(
+          locationId,
+          payload,
+          testQualificationRecords,
+          testSumId,
+          testSumRecord,
+          rata,
+          true,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
-    })
+    });
   });
 
   describe('RATA-118 Test Claim Code Valid', () => {
     it('Should get [RATA-118-B] error', async () => {
-      payload.testClaimCode = 'NOTSLC'
+      payload.testClaimCode = 'NOTSLC';
 
       let testSumRec = new TestSummary();
       testSumRec.testTypeCode = TestTypeCodes.RATA;
@@ -188,21 +221,31 @@ describe('TestQualificationChecksService', () => {
       jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
-      monSysRec.systemTypeCode = 'FLOW'
-      jest.spyOn(monitorSystemRepository, 'findOne').mockResolvedValue(monSysRec);
+      monSysRec.systemTypeCode = 'FLOW';
+      jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(locationId, payload, testQualificationRecords, testSumId, testSumRecord, rata, true);
+        await service.runChecks(
+          locationId,
+          payload,
+          testQualificationRecords,
+          testSumId,
+          testSumRecord,
+          rata,
+          true,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
-    })
+    });
 
     it('Should get [RATA-118-C] error', async () => {
-      payload.testClaimCode = 'SLC'
+      payload.testClaimCode = 'SLC';
 
       let testSumRec = new TestSummary();
       testSumRec.testTypeCode = TestTypeCodes.RATA;
@@ -211,21 +254,31 @@ describe('TestQualificationChecksService', () => {
       jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
-      monSysRec.systemTypeCode = 'NOTFLOW'
-      jest.spyOn(monitorSystemRepository, 'findOne').mockResolvedValue(monSysRec);
+      monSysRec.systemTypeCode = 'NOTFLOW';
+      jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(locationId, payload, testQualificationRecords, testSumId, testSumRecord, rata, true);
+        await service.runChecks(
+          locationId,
+          payload,
+          testQualificationRecords,
+          testSumId,
+          testSumRecord,
+          rata,
+          true,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
-    })
+    });
 
     it('Should also get [RATA-118-C] error', async () => {
-      payload.testClaimCode = 'ORE'
+      payload.testClaimCode = 'ORE';
 
       let testSumRec = new TestSummary();
       testSumRec.testTypeCode = TestTypeCodes.RATA;
@@ -234,21 +287,31 @@ describe('TestQualificationChecksService', () => {
       jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
-      monSysRec.systemTypeCode = 'NOTFLOW'
-      jest.spyOn(monitorSystemRepository, 'findOne').mockResolvedValue(monSysRec);
+      monSysRec.systemTypeCode = 'NOTFLOW';
+      jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(locationId, payload, testQualificationRecords, testSumId, testSumRecord, rata, true);
+        await service.runChecks(
+          locationId,
+          payload,
+          testQualificationRecords,
+          testSumId,
+          testSumRecord,
+          rata,
+          true,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
-    })
+    });
 
     it('Should get [RATA-118-D] error', async () => {
-      payload.testClaimCode = 'SLC'
+      payload.testClaimCode = 'SLC';
       rata.numberOfLoadLevels = 3;
 
       let testSumRec = new TestSummary();
@@ -258,21 +321,31 @@ describe('TestQualificationChecksService', () => {
       jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
-      monSysRec.systemTypeCode = 'FLOW'
-      jest.spyOn(monitorSystemRepository, 'findOne').mockResolvedValue(monSysRec);
+      monSysRec.systemTypeCode = 'FLOW';
+      jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(locationId, payload, testQualificationRecords, testSumId, testSumRecord, rata, true);
+        await service.runChecks(
+          locationId,
+          payload,
+          testQualificationRecords,
+          testSumId,
+          testSumRecord,
+          rata,
+          true,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
-    })
+    });
 
     it('Should get [RATA-118-D] error', async () => {
-      payload.testClaimCode = 'NLE'
+      payload.testClaimCode = 'NLE';
       rata.numberOfLoadLevels = 3;
 
       let testSumRec = new TestSummary();
@@ -282,21 +355,31 @@ describe('TestQualificationChecksService', () => {
       jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
-      monSysRec.systemTypeCode = 'FLOW'
-      jest.spyOn(monitorSystemRepository, 'findOne').mockResolvedValue(monSysRec);
+      monSysRec.systemTypeCode = 'FLOW';
+      jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(locationId, payload, testQualificationRecords, testSumId, testSumRecord, rata, true);
+        await service.runChecks(
+          locationId,
+          payload,
+          testQualificationRecords,
+          testSumId,
+          testSumRecord,
+          rata,
+          true,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
-    })
+    });
 
     it('Should get [RATA-118-E] error', async () => {
-      payload.testClaimCode = 'ORE'
+      payload.testClaimCode = 'ORE';
       rata.numberOfLoadLevels = 3;
 
       let testSumRec = new TestSummary();
@@ -306,24 +389,34 @@ describe('TestQualificationChecksService', () => {
       jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
-      monSysRec.systemTypeCode = 'FLOW'
-      jest.spyOn(monitorSystemRepository, 'findOne').mockResolvedValue(monSysRec);
+      monSysRec.systemTypeCode = 'FLOW';
+      jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(locationId, payload, testQualificationRecords, testSumId, testSumRecord, rata, true);
+        await service.runChecks(
+          locationId,
+          payload,
+          testQualificationRecords,
+          testSumId,
+          testSumRecord,
+          rata,
+          true,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
-    })
+    });
   });
 
   describe('RATA-119 Single-Level Claim Begin Date Valid', () => {
     it('Should get [RATA-119-B] error', async () => {
-      payload.testClaimCode = 'SLC'
-      payload.beginDate = new Date('1990-01-01')
+      payload.testClaimCode = 'SLC';
+      payload.beginDate = new Date('1990-01-01');
 
       let testSumRec = new TestSummary();
       testSumRec.testTypeCode = TestTypeCodes.RATA;
@@ -332,93 +425,138 @@ describe('TestQualificationChecksService', () => {
       jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
-      monSysRec.systemTypeCode = 'FLOW'
-      jest.spyOn(monitorSystemRepository, 'findOne').mockResolvedValue(monSysRec);
+      monSysRec.systemTypeCode = 'FLOW';
+      jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(locationId, payload, testQualificationRecords, testSumId, testSumRecord, rata, true);
+        await service.runChecks(
+          locationId,
+          payload,
+          testQualificationRecords,
+          testSumId,
+          testSumRecord,
+          rata,
+          true,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
-    })
+    });
   });
 
   describe('RATA-120 Single-Level Claim End Date Valid', () => {
     it('Should get [RATA-120-B] error', async () => {
-      payload.testClaimCode = 'SLC'
-      payload.endDate = new Date('2020-01-01')
+      payload.testClaimCode = 'SLC';
+      payload.endDate = new Date('2020-01-01');
 
       let testSumRec = new TestSummary();
-      testSumRecord.beginDate = new Date('2000-01-01')
+      testSumRecord.beginDate = new Date('2000-01-01');
 
       const returnValue = new TestQualification();
       jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
-      monSysRec.systemTypeCode = 'FLOW'
-      jest.spyOn(monitorSystemRepository, 'findOne').mockResolvedValue(monSysRec);
+      monSysRec.systemTypeCode = 'FLOW';
+      jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(locationId, payload, testQualificationRecords, testSumId, testSumRecord, rata, true);
+        await service.runChecks(
+          locationId,
+          payload,
+          testQualificationRecords,
+          testSumId,
+          testSumRecord,
+          rata,
+          true,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
-    })
+    });
 
     it('Should get [RATA-120-C] error', async () => {
-      payload.testClaimCode = 'SLC'
-      payload.endDate = new Date('2020-01-01')
+      payload.testClaimCode = 'SLC';
+      payload.endDate = new Date('2020-01-01');
 
       let testSumRec = new TestSummary();
-      testSumRecord.beginDate = new Date('2020-01-01')
+      testSumRecord.beginDate = new Date('2020-01-01');
 
       const returnValue = new TestQualification();
       jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
-      monSysRec.systemTypeCode = 'FLOW'
-      jest.spyOn(monitorSystemRepository, 'findOne').mockResolvedValue(monSysRec);
+      monSysRec.systemTypeCode = 'FLOW';
+      jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(locationId, payload, testQualificationRecords, testSumId, testSumRecord, rata, true);
+        await service.runChecks(
+          locationId,
+          payload,
+          testQualificationRecords,
+          testSumId,
+          testSumRecord,
+          rata,
+          true,
+        );
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
-    })
+    });
   });
 
   describe('RATA-121 Duplicate Test Claim', () => {
     it('Should get [RATA-121-A] error', async () => {
-      payload.testClaimCode = 'thesame'
+      payload.testClaimCode = 'thesame';
 
       let testSumRec = new TestSummary();
       testSumRec.testTypeCode = TestTypeCodes.RATA;
 
       const returnValue = new TestQualification();
-      returnValue.testClaimCode = 'thesame'
+      returnValue.testClaimCode = 'thesame';
       jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
-      monSysRec.systemTypeCode = 'FLOW'
-      jest.spyOn(monitorSystemRepository, 'findOne').mockResolvedValue(monSysRec);
+      monSysRec.systemTypeCode = 'FLOW';
+      jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRec);
 
       try {
-        await service.runChecks(locationId, payload, testQualificationRecords, testSumId, testSumRecord, rata);
+        await service.runChecks(
+          locationId,
+          payload,
+          testQualificationRecords,
+          testSumId,
+          testSumRecord,
+          rata,
+        );
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG, MOCK_ERROR_MSG, MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual([
+          MOCK_ERROR_MSG,
+          MOCK_ERROR_MSG,
+          MOCK_ERROR_MSG,
+          MOCK_ERROR_MSG,
+          MOCK_ERROR_MSG,
+        ]);
       }
-    })
+    });
   });
 });

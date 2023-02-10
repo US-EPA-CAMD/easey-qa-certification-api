@@ -23,6 +23,13 @@ import { TestExtensionExemptionImportDTO } from '../dto/test-extension-exemption
 import { CycleTimeInjectionChecksService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace-checks.service';
 import { QACertificationEventImportDTO } from '../dto/qa-certification-event.dto';
 import { QACertificationEventChecksService } from '../qa-certification-event-workspace/qa-certification-event-checks.service';
+import { AppECorrelationTestSummaryChecksService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-checks.service';
+import { AppECorrelationTestRunChecksService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-checks.service';
+import { AppEHeatInputFromGasChecksService } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-checks.service';
+import { AppEHeatInputFromOilChecksService } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil-checks.service';
+import { UnitDefaultTestRunChecksService } from '../unit-default-test-run-workspace/unit-default-test-run-checks.service';
+import { ProtocolGasChecksService } from '../protocol-gas-workspace/protocol-gas-checks.service';
+import { ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
 
 const returnLocationRunChecks = [
   {
@@ -132,6 +139,42 @@ describe('QA Certification Check Service Test', () => {
             runChecks: jest.fn().mockResolvedValue([]),
           }),
         },
+        {
+          provide: AppECorrelationTestSummaryChecksService,
+          useFactory: () => ({
+            runImportChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
+        {
+          provide: AppECorrelationTestRunChecksService,
+          useFactory: () => ({
+            runImportChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
+        {
+          provide: AppEHeatInputFromOilChecksService,
+          useFactory: () => ({
+            runImportChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
+        {
+          provide: AppEHeatInputFromGasChecksService,
+          useFactory: () => ({
+            runImportChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
+        {
+          provide: UnitDefaultTestRunChecksService,
+          useFactory: () => ({
+            runImportChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
+        {
+          provide: ProtocolGasChecksService,
+          useFactory: () => ({
+            runChecks: jest.fn().mockResolvedValue([]),
+          }),
+        },
       ],
     }).compile();
 
@@ -165,6 +208,9 @@ describe('QA Certification Check Service Test', () => {
     qaCertEvent.componentID = 'AA0';
     qaCertEvent.stackPipeId = null;
     payload.certificationEventData = [qaCertEvent];
+
+    const protocolGas = new ProtocolGasImportDTO();
+    testSumary.protocolGasData = [protocolGas];
 
     it('Should pass all checks', async () => {
       const result = await service.runChecks(payload);

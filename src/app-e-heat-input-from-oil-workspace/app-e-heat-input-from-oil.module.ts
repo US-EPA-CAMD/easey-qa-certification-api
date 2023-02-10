@@ -29,6 +29,7 @@ import { AppECorrelationTestRunWorkspaceModule } from '../app-e-correlation-test
     TypeOrmModule,
     AppEHeatInputFromOilMap,
     AppEHeatInputFromOilWorkspaceService,
+    AppEHeatInputFromOilChecksService,
   ],
 })
 export class AppEHeatInputFromOilWorkspaceModule {}

@@ -11,6 +11,8 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 @Injectable()
 export class AppECorrelationTestSummaryChecksService {
+  APPE_48_A_MSG;
+
   constructor(
     private readonly logger: Logger,
     @InjectRepository(AppendixETestSummaryWorkspaceRepository)
@@ -48,6 +50,26 @@ export class AppECorrelationTestSummaryChecksService {
     this.throwIfErrors(errorList);
     this.logger.info('Completed Appendix E Test Summary Checks');
     return errorList;
+  }
+
+  async runImportChecks(
+    importDTOs: AppECorrelationTestSummaryImportDTO[],
+  ): Promise<string[]> {
+    let errors: string[] = [];
+    let opLevelCodes = [];
+
+    for (let dto of importDTOs) {
+      if (opLevelCodes.includes(dto.operatingLevelForRun)) {
+        errors = [
+          this.getMessage('APPE-48-A', {
+            recordtype: 'Appendix E Summary',
+            fieldnames: 'OperatingLevelForRun',
+          }),
+        ];
+      } else opLevelCodes.push(dto.operatingLevelForRun);
+    }
+
+    return errors;
   }
 
   async appE48Check(appETestSumId: string, testSumId: string, opLevel: number) {

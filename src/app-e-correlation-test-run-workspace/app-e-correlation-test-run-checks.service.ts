@@ -52,6 +52,26 @@ export class AppECorrelationTestRunChecksService {
     return errorList;
   }
 
+  async runImportChecks(
+    importDTOs: AppECorrelationTestRunImportDTO[] = [],
+  ): Promise<string[]> {
+    let errors: string[] = [];
+    let runNumbers = [];
+
+    for (let dto of importDTOs) {
+      if (runNumbers.includes(dto.runNumber)) {
+        errors = [
+          this.getMessage('APPE-49-A', {
+            recordtype: 'Appendix E Test Run',
+            fieldnames: 'RunNumber',
+          }),
+        ];
+      } else runNumbers.push(dto.runNumber);
+    }
+
+    return errors;
+  }
+
   async appE49Check(
     appETestRunId: string,
     dto: AppECorrelationTestRunBaseDTO,

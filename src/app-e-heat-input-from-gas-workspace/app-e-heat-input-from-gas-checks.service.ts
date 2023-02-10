@@ -51,6 +51,26 @@ export class AppEHeatInputFromGasChecksService {
     return errorList;
   }
 
+  async runImportChecks(
+    importDTOs: AppEHeatInputFromGasImportDTO[] = [],
+  ): Promise<string[]> {
+    let errors: string[] = [];
+    let monSysIDs = [];
+
+    for (let dto of importDTOs) {
+      if (monSysIDs.includes(dto.monitoringSystemID)) {
+        errors = [
+          this.getMessage('APPE-51-A', {
+            recordtype: 'Appendix E Heat Input from Gas',
+            fieldnames: 'MonitoringSystemID',
+          }),
+        ];
+      } else monSysIDs.push(dto.monitoringSystemID);
+    }
+
+    return errors;
+  }
+
   async appE51Check(
     aehiGasId: string,
     dto: AppEHeatInputFromGasBaseDTO,

@@ -38,6 +38,7 @@ export class UnitDefaultTestRunChecksService {
     unitDefaultTestSumId?: string,
     testSumId?: string,
     testSummary?: TestSummaryImportDTO,
+    unitDefaultTestRuns?: UnitDefaultTestRunImportDTO[],
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
@@ -58,6 +59,7 @@ export class UnitDefaultTestRunChecksService {
           unitDefaultTestSumId,
           unitDefaultTestRun,
           isImport,
+          unitDefaultTestRuns,
         );
         if (error) {
           errorList.push(error);
@@ -74,10 +76,27 @@ export class UnitDefaultTestRunChecksService {
     unitDefaultTestSumId: string,
     unitDefaultTestRun: UnitDefaultTestRunBaseDTO | UnitDefaultTestRunImportDTO,
     _isImport: boolean = false,
+    unitDefaultTestRuns: UnitDefaultTestRunImportDTO[] = [],
   ): Promise<string> {
     let error: string = null;
     let RECORDTYPE: string = 'unitDefaultTestRun';
     let FIELDNAME: string = 'OperatingLevelforRun,RunNumber';
+
+    const duplicates = unitDefaultTestRuns.filter(i => {
+      return (
+        i.operatingLevel === unitDefaultTestRun.operatingLevel,
+        i.runNumber === unitDefaultTestRun.runNumber
+      );
+    });
+
+    // IMPORT-20 Duplicate Test Check
+    if (_isImport && duplicates.length > 1) {
+      error = this.getMessage('UNITDEF-29-A', {
+        recordtype: RECORDTYPE,
+        fieldnames: FIELDNAME,
+      });
+    }
+
 
     const record: UnitDefaultTestRun = await this.repository.findOne({
       unitDefaultTestSumId: unitDefaultTestSumId,

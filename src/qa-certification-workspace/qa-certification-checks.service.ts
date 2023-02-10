@@ -21,6 +21,12 @@ import { TestQualificationChecksService } from '../test-qualification-workspace/
 import { TestExtensionExemptionsChecksService } from '../test-extension-exemptions-workspace/test-extension-exemptions-checks.service';
 import { CycleTimeInjectionChecksService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace-checks.service';
 import { QACertificationEventChecksService } from '../qa-certification-event-workspace/qa-certification-event-checks.service';
+import { AppECorrelationTestRunChecksService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-checks.service';
+import { AppECorrelationTestSummaryChecksService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-checks.service';
+import { AppEHeatInputFromGasChecksService } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-checks.service';
+import { AppEHeatInputFromOilChecksService } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil-checks.service';
+import { UnitDefaultTestRunChecksService } from '../unit-default-test-run-workspace/unit-default-test-run-checks.service';
+import { ProtocolGasChecksService } from '../protocol-gas-workspace/protocol-gas-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -39,6 +45,12 @@ export class QACertificationChecksService {
     private readonly testExtensionExemptionsChecksService: TestExtensionExemptionsChecksService,
     private readonly cycleTimeInjectionChecksService: CycleTimeInjectionChecksService,
     private readonly qaCertificationEventChecksService: QACertificationEventChecksService,
+    private readonly appETestSummaryChecksService: AppECorrelationTestSummaryChecksService,
+    private readonly appETestRunChecksService: AppECorrelationTestRunChecksService,
+    private readonly appEGasChecksService: AppEHeatInputFromGasChecksService,
+    private readonly appEOilChecksService: AppEHeatInputFromOilChecksService,
+    private readonly unitDefaultTestRunChecksService: UnitDefaultTestRunChecksService,
+    private readonly protocolGasChecksService: ProtocolGasChecksService,
     @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
   ) {}
@@ -123,6 +135,7 @@ export class QACertificationChecksService {
                 true,
                 false,
                 summary,
+                summary.linearitySummaryData,
               );
 
               resolve(results);
@@ -284,6 +297,87 @@ export class QACertificationChecksService {
             },
           );
         });
+
+        if (summary.appECorrelationTestSummaryData) {
+          promises.push(
+            new Promise(async (resolve, _reject) => {
+              const results = this.appETestSummaryChecksService.runImportChecks(
+                summary.appECorrelationTestSummaryData,
+              );
+              resolve(results);
+            }),
+          );
+
+          summary.appECorrelationTestSummaryData.forEach(appESummary => {
+            promises.push(
+              new Promise(async (resolve, _reject) => {
+                const results = this.appETestRunChecksService.runImportChecks(
+                  appESummary.appECorrelationTestRunData,
+                );
+                resolve(results);
+              }),
+            );
+
+            appESummary.appECorrelationTestRunData?.forEach(appETestRun => {
+              promises.push(
+                new Promise(async (resolve, _reject) => {
+                  const results = this.appEGasChecksService.runImportChecks(
+                    appETestRun.appEHeatInputFromGasData,
+                  );
+                  resolve(results);
+                }),
+              );
+
+              promises.push(
+                new Promise(async (resolve, _reject) => {
+                  const results = this.appEOilChecksService.runImportChecks(
+                    appETestRun.appEHeatInputFromOilData,
+                  );
+                  resolve(results);
+                }),
+              );
+            });
+          });
+
+          summary.unitDefaultTestData?.forEach(unitDefaultTest => {
+            unitDefaultTest.unitDefaultTestRunData?.forEach(
+              unitDefaultTestRun => {
+                promises.push(
+                  new Promise(async (resolve, _reject) => {
+                    const results = this.unitDefaultTestRunChecksService.runChecks(
+                      unitDefaultTestRun,
+                      true,
+                      false,
+                      null,
+                      null,
+                      summary,
+                      unitDefaultTest.unitDefaultTestRunData,
+                    );
+
+                    resolve(results);
+                  }),
+                );
+              },
+            );
+          });
+
+          summary.protocolGasData?.forEach(protocolGas => {
+            promises.push(
+              new Promise(async (resolve, _reject) => {
+                const results = this.protocolGasChecksService.runChecks(
+                  protocolGas,
+                  locationId,
+                  undefined,
+                  true,
+                  false,
+                  summary,
+                );
+
+                resolve(results);
+              }),
+            );
+          });
+        }
       }
     }
 

@@ -81,4 +81,28 @@ describe('Appendix E Heat Input From Oil Checks Service Test', () => {
       expect(result).toEqual([MOCK_ERROR_MSG]);
     });
   });
+
+  describe('Appendix E Heat Input from Oil - Duplicate Check on Import', () => {
+    let importDTO1 = new AppEHeatInputFromOilImportDTO();
+    importDTO1.monitoringSystemID = 'ID1';
+    let importDTO2 = new AppEHeatInputFromOilImportDTO();
+    importDTO2.monitoringSystemID = 'ID2';
+
+    it('Should pass when no duplicates in import payload', async () => {
+      const result = await service.runImportChecks([importDTO1, importDTO2]);
+      expect(result).toEqual([]); // No error messages
+    });
+
+    it('Should fail when there are duplicates in import payload', async () => {
+      importDTO2.monitoringSystemID = importDTO1.monitoringSystemID;
+      let result;
+      try {
+        result = await service.runImportChecks([importDTO1, importDTO2]);
+      } catch (err) {
+        result = err.response.message;
+      }
+
+      expect(result).toEqual([MOCK_ERROR_MSG]);
+    });
+  });
 });

@@ -6,10 +6,12 @@ import {
   AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasImportDTO,
 } from './app-e-heat-input-from-gas.dto';
-import { ValidateNested } from 'class-validator';
+import { ValidateNested, ValidationArguments } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes/is-iso-format.pipe';
 
 const KEY = 'Appendix E Correlation Test Run';
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class AppECorrelationTestRunBaseDTO {
   runNumber: number;
@@ -17,9 +19,21 @@ export class AppECorrelationTestRunBaseDTO {
   hourlyHeatInputRate: number;
   totalHeatInput: number;
   responseTime: number;
+
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
+    },
+  })
   beginDate: Date;
   beginHour: number;
   beginMinute: number;
+
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
+    },
+  })
   endDate: Date;
   endHour: number;
   endMinute: number;
