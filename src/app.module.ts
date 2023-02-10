@@ -81,6 +81,7 @@ import { TestExtensionExemptionsWorkspaceModule } from './test-extension-exempti
 import { TestExtensionExemptionsModule } from './test-extension-exemptions/test-extension-exemptions.module';
 import { QaCertificationEventModule } from './qa-certification-event/qa-certification-event.module';
 import { GasComponentCodeModule } from './gas-component-code/gas-component-code.module';
+import { ReferenceMethodCodeModule } from './reference-method-code/reference-method-code.module';
 @Module({
   imports: [
     RouterModule.forRoutes(routes),
@@ -162,6 +163,7 @@ import { GasComponentCodeModule } from './gas-component-code/gas-component-code.
     TestExtensionExemptionsModule,
     QaCertificationEventModule,
     GasComponentCodeModule,
+    ReferenceMethodCodeModule,
   ],
 })
 export class AppModule {}
