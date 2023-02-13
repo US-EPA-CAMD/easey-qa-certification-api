@@ -16,6 +16,7 @@ import { RataSummaryRepository } from '../rata-summary/rata-summary.repository';
 import { RataRun } from '../entities/workspace/rata-run.entity';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -33,13 +34,16 @@ let rataSumRecord = {
   },
 };
 
+const testSumRecord = new TestSummary();
+testSumRecord.testTypeCode = TestTypeCodes.RATA
+
 const importPayload = new FlowRataRunImportDTO();
 importPayload.averageVelocityWithWallEffects = 1;
 importPayload.averageStackFlowRate = 1;
 const rataSummaryImportPayload = new RataSummaryImportDTO();
 
 const mockTestSumRepository = () => ({
-  getTestSummaryById: jest.fn().mockResolvedValue(new TestSummary()),
+  getTestSummaryById: jest.fn().mockResolvedValue(testSumRecord),
 });
 
 const mockRataSummaryRepository = () => ({
@@ -108,7 +112,7 @@ describe('Flow Rata Run Check Service Test', () => {
     it('Should get [RATA-94-C] error', async () => {
       importPayload.averageStackFlowRate = 1;
       let rataRunRec = new RataRun();
-      rataRunRec.rataReferenceValue = null;
+      rataRunRec.rataReferenceValue = 2;
 
       jest.spyOn(rataRunRepository, 'findOne').mockResolvedValue(rataRunRec);
       try {
@@ -161,6 +165,7 @@ describe('Flow Rata Run Check Service Test', () => {
     });
     it('Should get [RATA-114-C] error', async () => {
       importPayload.calculatedWAF = 1;
+      importPayload.averageVelocityWithWallEffects = null;
 
       let rataSumRec = new RataSummary();
       rataSumRec.referenceMethodCode = 'M2H';
@@ -176,9 +181,27 @@ describe('Flow Rata Run Check Service Test', () => {
       }
     });
   });
+  describe('RATA-115 Average Velocity Without Wall Effects Valid', () => {
+    it('Should get [RATA-115-A] error', async () => {
+      importPayload.averageVelocityWithoutWallEffects = 0;
+
+      try {
+        await service.runChecks(
+          importPayload,
+          false,
+          false,
+          rataSumId,
+          rataSummaryImportPayload,
+          rataRunId,
+        );
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+  });
   describe('RATA-124 Flow RATA Record Valid', () => {
     it('Should get [RATA-124-A] error', async () => {
-      importPayload.averageVelocityWithWallEffects = null;
+      importPayload.averageVelocityWithoutWallEffects = 1;
 
       let rataSumRec = new RataSummary();
       rataSumRec.referenceMethodCode = 'A';
@@ -201,7 +224,7 @@ describe('Flow Rata Run Check Service Test', () => {
       }
     });
     it('Should get [RATA-124-B] error', async () => {
-      importPayload.averageVelocityWithWallEffects = null;
+      importPayload.averageVelocityWithoutWallEffects = 1;
 
       let testSumRec = new RataRun();
       testSumRec.runStatusCode = 'NOTUSED';
