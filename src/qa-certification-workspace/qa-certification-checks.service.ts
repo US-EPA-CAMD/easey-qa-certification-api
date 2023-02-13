@@ -298,6 +298,23 @@ export class QACertificationChecksService {
           );
         });
 
+        summary.protocolGasData?.forEach(protocolGas => {
+          promises.push(
+            new Promise(async (resolve, _reject) => {
+              const results = this.protocolGasChecksService.runChecks(
+                protocolGas,
+                locationId,
+                undefined,
+                true,
+                false,
+                summary,
+              );
+
+              resolve(results);
+            }),
+          );
+        });
+
         if (summary.appECorrelationTestSummaryData) {
           promises.push(
             new Promise(async (resolve, _reject) => {
@@ -358,23 +375,6 @@ export class QACertificationChecksService {
                   }),
                 );
               },
-            );
-          });
-
-          summary.protocolGasData?.forEach(protocolGas => {
-            promises.push(
-              new Promise(async (resolve, _reject) => {
-                const results = this.protocolGasChecksService.runChecks(
-                  protocolGas,
-                  locationId,
-                  undefined,
-                  true,
-                  false,
-                  summary,
-                );
-
-                resolve(results);
-              }),
             );
           });
         }
