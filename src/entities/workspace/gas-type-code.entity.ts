@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'camdecmpsmd.gas_type_code' })
 export class GasTypeCode {
   @PrimaryColumn({
     name: 'gas_type_cd',
@@ -8,7 +8,7 @@ export class GasTypeCode {
   gasTypeCode: string;
 
   @Column({
-    name: 'gas_type_cd',
+    name: 'gas_type_description',
   })
   gasTypeCodeDescription: string;
 }

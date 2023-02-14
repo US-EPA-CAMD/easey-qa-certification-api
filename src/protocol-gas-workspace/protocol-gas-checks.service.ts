@@ -14,6 +14,7 @@ import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { GasComponentCodeRepository } from '../gas-component-code/gas-component-code.repository';
+import { GasTypeCodeRepository } from '../gas-type-code/gas-type-code.repository';
 
 const KEY = 'Protocol Gas';
 
@@ -27,6 +28,8 @@ export class ProtocolGasChecksService {
     private readonly monitorSystemRepository: MonitorSystemRepository,
     @InjectRepository(GasComponentCodeRepository)
     private readonly gasComponentCodeRepository: GasComponentCodeRepository,
+    @InjectRepository(GasTypeCodeRepository)
+    private readonly gasTypeCodeRepository: GasTypeCodeRepository,
   ) {}
 
   private throwIfErrrors(errorList: string[]) {
@@ -70,7 +73,7 @@ export class ProtocolGasChecksService {
     }
 
     // PGVP-9
-    error = this.pgvp9Check(
+    error = await this.pgvp9Check(
       protocolGas.gasTypeCode,
       testSumRecord.testTypeCode,
     );
@@ -104,15 +107,34 @@ export class ProtocolGasChecksService {
     return error;
   }
 
-  private pgvp9Check(gasTypeCode: string, testTypeCode: string): string {
+  private async pgvp9Check(
+    gasTypeCode: string,
+    testTypeCode: string,
+  ): Promise<string> {
     let error: string = null;
+
+    const gasTypeCodes = (await this.gasTypeCodeRepository.find()).map(
+      gtc => gtc.gasTypeCode,
+    );
 
     if (gasTypeCode === 'ZERO') {
       if (!['RATA', 'APPE', 'UNITDEF'].includes(testTypeCode)) {
-        error = this.getMessage('PGVP-9-F', {});
+        error = CheckCatalogService.formatMessage(
+          `[PGVP-9-F] - You reported a GasTypeCode of "ZERO" which is only appropriate for the low level calibration of a reference analyzer used in Reference Method 3A, 6C, or 7E testing.`,
+        );
       }
     } else {
       if (!['GMIS', 'PRM', 'RGM', 'SRM'].includes(gasTypeCode)) {
+        const codes = gasTypeCode.split(',');
+
+        codes.forEach(code => {
+          if (!gasTypeCodes.includes(code)) {
+            error = this.getMessage('PGVP-9-B', {
+              fieldname: 'gasTypeCode',
+            });
+          }
+        });
+
         if (gasTypeCode === 'ZAM') {
           error = this.getMessage('PGVP-9-B', {
             fieldname: 'gasTypeCode',
@@ -253,7 +275,9 @@ export class ProtocolGasChecksService {
     }
 
     if (containsZERO && !['RATA', 'APPE', 'UNITDEF'].includes(testTypeCode)) {
-      error = this.getMessage('PGVP-12-D', {});
+      error = CheckCatalogService.formatMessage(
+        `[PGVP-12-D] - You reported a GasTypeCode of "ZERO" which is only appropriate for the low level calibration of a reference analyzer used in Reference Method 3A, 6C, or 7E testing.`,
+      );
       errorList.push(error);
     }
 
