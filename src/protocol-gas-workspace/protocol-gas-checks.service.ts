@@ -261,7 +261,9 @@ export class ProtocolGasChecksService {
     }
 
     if (pgDuplicateComponentList.length > 0) {
-      error = this.getMessage('PGVP-12-H', {});
+      error = CheckCatalogService.formatMessage(
+        `[PGVP-12-H] - You reported one or more duplicate GasTypeCode components.`,
+      );
       errorList.push(error);
     }
 
@@ -293,7 +295,9 @@ export class ProtocolGasChecksService {
       pgExclusiveComponentList.length === 0 &&
       pgBalanceComponentList.length === 0
     ) {
-      error = this.getMessage('PGVP-12-F', {});
+      error = CheckCatalogService.formatMessage(
+        `[PGVP-12-F] - You did not report a required PGVP balance component. A single balance component is required when reporting other individual gas components.`,
+      );
       errorList.push(error);
     }
 
