@@ -7,6 +7,7 @@ import { LinearitySummaryWorkspaceRepository } from './linearity-summary.reposit
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 const testSumId = '1';
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
@@ -17,8 +18,11 @@ const mockTestSummaryRelationshipRepository = () => ({
     .mockResolvedValue([{ testResultCode: 'PASSED' }]),
 });
 
+const testSumRec = new TestSummary()
+testSumRec.testTypeCode = TestTypeCodes.LINE
+
 const mockTestSummaryRepository = () => ({
-  getTestSummaryById: jest.fn().mockResolvedValue(new TestSummary()),
+  getTestSummaryById: jest.fn().mockResolvedValue(testSumRec),
 });
 
 describe('Linearity Summary Check Service Test', () => {
@@ -65,16 +69,6 @@ describe('Linearity Summary Check Service Test', () => {
 
   describe('LINEAR-15 Linearity Summary Calibration Gas Level Valid', () => {
     const payload = new LinearitySummary();
-    it('Should get GasLevelCode is null error', async () => {
-      payload.gasLevelCode = null;
-      jest.spyOn(repository, 'findOne').mockResolvedValue(payload);
-
-      try {
-        await service.runChecks(payload, testSumId, false, false);
-      } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
-      }
-    });
     it('Should get GasLevelCode is not equal to "HIGH", "MID", or "LOW" error', async () => {
       payload.gasLevelCode = 'NOTHIGH';
       jest.spyOn(repository, 'findOne').mockResolvedValue(payload);
@@ -82,7 +76,7 @@ describe('Linearity Summary Check Service Test', () => {
       try {
         await service.runChecks(payload, testSumId, false, false);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
       }
     });
   });

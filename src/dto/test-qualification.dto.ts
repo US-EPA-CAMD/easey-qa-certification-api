@@ -5,12 +5,13 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { IsInRange } from '@us-epa-camd/easey-common/pipes';
+import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 
 const KEY = 'Test Qualification';
 const LOAD_PERCENTAGE_MIN_VALUE = 0;
 const LOAD_PERCENTAGE_MAX_VALUE = 100;
 const MIN_BEGIN_DATE = '1993-01-01';
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class TestQualificationBaseDTO {
   @IsNotEmpty({
@@ -32,6 +33,11 @@ export class TestQualificationBaseDTO {
     },
   })
   @ValidateIf(o => o.testClaimCode === 'SLC')
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
+    },
+  })
   beginDate: Date;
 
   @IsNotEmpty({
@@ -43,6 +49,11 @@ export class TestQualificationBaseDTO {
     },
   })
   @ValidateIf(o => o.testClaimCode === 'SLC')
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
+    },
+  })
   endDate: Date;
 
   @IsNotEmpty({

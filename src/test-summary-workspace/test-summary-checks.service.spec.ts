@@ -726,44 +726,42 @@ describe('Test Summary Check Service Test', () => {
   });
 
   // TEST-7 Test Dates Consistent
-  // describe('test7Check test', () => {
-  //   it.only('returns error message when beginDate/hour >= endDate/hour for testTypeCode=ONOFF', () => {
-  //     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-  //     console.log('summaryBase', summaryBase);
-  //     const result = service.test7Check(summaryBase);
-  //     expect(result).toEqual(MOCK_ERROR_MSG);
-  //   });
+  describe('test7Check test', () => {
+    it('returns error message when beginDate/hour >= endDate/hour for testTypeCode=ONOFF', () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+      const result = service.test7Check(summaryBase);
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
 
-  //   it('returns null when beginDate/hour < endDate/hour for testTypeCode=ONOFF', () => {
-  //     const summary = { ...summaryBase };
-  //     summary.endHour = 2;
-  //     const result = service.test7Check(summary);
+    it('returns null when beginDate/hour < endDate/hour for testTypeCode=ONOFF', () => {
+      const summary = { ...summaryBase };
+      summary.endHour = 2;
+      const result = service.test7Check(summary);
 
-  //     expect(result).toBeNull();
-  //   });
+      expect(result).toBeNull();
+    });
 
-  //   it.only('returns error message when testTypeCode=LINE and beginMinute > endMinute', () => {
-  //     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+    it('returns error message when testTypeCode=LINE and beginMinute > endMinute', () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
 
-  //     const summary = { ...summaryBase };
-  //     summary.testTypeCode = TestTypeCodes.LINE.toString();
-  //     summary.beginMinute = 3;
-  //     console.log('summary', summary);
+      const summary = { ...summaryBase };
+      summary.testTypeCode = TestTypeCodes.LINE.toString();
+      summary.beginMinute = 3;
 
-  //     const result = service.test7Check(summary);
+      const result = service.test7Check(summary);
 
-  //     expect(result).toEqual(MOCK_ERROR_MSG);;
-  //   });
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
 
-  //   it('returns null when testTypeCode=LINE and beginMinute <= endMinute', () => {
-  //     const summary = { ...summaryBase };
-  //     summary.testTypeCode = TestTypeCodes.LINE.toString();
+    it('returns null when testTypeCode=LINE and beginMinute <= endMinute', () => {
+      const summary = { ...summaryBase };
+      summary.testTypeCode = TestTypeCodes.LINE.toString();
 
-  //     const result = service.test7Check(summary);
+      const result = service.test7Check(summary);
 
-  //     expect(result).toBeNull();
-  //   });
-  // });
+      expect(result).toBeNull();
+    });
+  });
 
   describe('testMinuteField() test', () => {
     it('returns null when startMinute and endMinute are valid', async () => {
@@ -908,6 +906,26 @@ describe('Test Summary Check Service Test', () => {
 
       const result = await service.getDuplicateErrorMessage(
         TestTypeCodes.F2LREF,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+
+    it('returns error message testTypeCode=FFACC', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.FFACC,
+        'A',
+      );
+      expect(result).toEqual(MOCK_ERROR_MSG);
+    });
+
+    it('returns error message testTypeCode=FF2LTST', async () => {
+      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+
+      const result = await service.getDuplicateErrorMessage(
+        TestTypeCodes.FF2LTST,
         'A',
       );
       expect(result).toEqual(MOCK_ERROR_MSG);

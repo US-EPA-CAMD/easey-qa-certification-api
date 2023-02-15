@@ -11,6 +11,7 @@ import {
   QACertificationEventBaseDTO,
   QACertificationEventDTO,
 } from '../dto/qa-certification-event.dto';
+import { QACertificationEventChecksService } from './qa-certification-event-checks.service';
 
 const locationId = '';
 const payload = new QACertificationEventBaseDTO();
@@ -24,6 +25,10 @@ const user: CurrentUser = {
   isAdmin: false,
   permissionSet: [],
 };
+
+const mockChecksService = () => ({
+  runChecks: jest.fn().mockResolvedValue([]),
+});
 
 const mockService = () => ({
   createQACertEvent: jest.fn().mockResolvedValue(qaCertEvent),
@@ -46,6 +51,10 @@ describe('QACertificationEventWorkspaceController', () => {
         {
           provide: QACertificationEventWorkspaceService,
           useFactory: mockService,
+        },
+        {
+          provide: QACertificationEventChecksService,
+          useFactory: mockChecksService,
         },
       ],
     }).compile();

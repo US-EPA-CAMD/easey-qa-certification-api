@@ -20,7 +20,7 @@ import { UnitDefaultTestRunChecksService } from './unit-default-test-run-checks.
   ],
   controllers: [UnitDefaultTestRunWorkspaceController],
   providers: [
-    UnitDefaultTestRunMap, 
+    UnitDefaultTestRunMap,
     UnitDefaultTestRunWorkspaceService,
     UnitDefaultTestRunChecksService,
   ],

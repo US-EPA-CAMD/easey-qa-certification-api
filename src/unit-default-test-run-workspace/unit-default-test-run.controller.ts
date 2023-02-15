@@ -80,7 +80,13 @@ export class UnitDefaultTestRunWorkspaceController {
     @Body() payload: UnitDefaultTestRunBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitDefaultTestRunRecordDTO> {
-    await this.checksService.runChecks(payload, false, false, unitDefaultTestSumId, _testSumId);
+    await this.checksService.runChecks(
+      payload,
+      false,
+      false,
+      unitDefaultTestSumId,
+      _testSumId,
+    );
     return this.service.createUnitDefaultTestRun(
       _testSumId,
       unitDefaultTestSumId,
@@ -104,7 +110,13 @@ export class UnitDefaultTestRunWorkspaceController {
     @Body() payload: UnitDefaultTestRunBaseDTO,
     @User() user: CurrentUser,
   ): Promise<UnitDefaultTestRunRecordDTO> {
-    await this.checksService.runChecks(payload, false, true, _unitDefaultTestSumId, testSumId);
+    await this.checksService.runChecks(
+      payload,
+      false,
+      true,
+      _unitDefaultTestSumId,
+      testSumId,
+    );
     return this.service.updateUnitDefaultTestRun(
       testSumId,
       id,
