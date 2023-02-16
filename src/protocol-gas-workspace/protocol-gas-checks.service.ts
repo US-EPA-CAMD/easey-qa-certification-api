@@ -226,7 +226,7 @@ export class ProtocolGasChecksService {
             }
 
             if ((testTypeCode === 'LINE' && el === 'NOX') || el === 'NOXC') {
-              if (['NO', 'NO2', 'NOX'].includes(el)) {
+              if (!['NO', 'NO2', 'NOX'].includes(el)) {
                 error = this.getMessage('PGVP-13-C');
                 errorList.push(error);
               }

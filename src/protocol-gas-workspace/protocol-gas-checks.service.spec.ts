@@ -6,7 +6,6 @@ import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
-import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { GasComponentCodeRepository } from '../gas-component-code/gas-component-code.repository';
 import { GasComponentCode } from '../entities/gas-component-code.entity';
 import { GasTypeCode } from '../entities/workspace/gas-type-code.entity';
@@ -15,7 +14,6 @@ import { GasTypeCodeRepository } from '../gas-type-code/gas-type-code.repository
 const locationId = '';
 const testSumId = '';
 const protolGas = new ProtocolGasImportDTO();
-const testSummary = new TestSummaryImportDTO();
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 let testSumRecord = new TestSummary();
@@ -115,9 +113,6 @@ describe('Protocol Gas Checks Service', () => {
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRecord);
       jest
-        .spyOn(gasComponentCodeRepository, 'find')
-        .mockResolvedValue([new GasComponentCode()]);
-      jest
         .spyOn(gasTypeCodeRepository, 'find')
         .mockResolvedValue([new GasTypeCode()]);
 
@@ -196,9 +191,6 @@ describe('Protocol Gas Checks Service', () => {
       jest
         .spyOn(gasComponentCodeRepository, 'find')
         .mockResolvedValue([new GasComponentCode()]);
-      jest
-        .spyOn(gasTypeCodeRepository, 'find')
-        .mockResolvedValue([new GasTypeCode()]);
 
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
@@ -223,9 +215,6 @@ describe('Protocol Gas Checks Service', () => {
       jest
         .spyOn(gasComponentCodeRepository, 'find')
         .mockResolvedValue([new GasComponentCode()]);
-      jest
-        .spyOn(gasTypeCodeRepository, 'find')
-        .mockResolvedValue([new GasTypeCode()]);
 
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
@@ -255,9 +244,6 @@ describe('Protocol Gas Checks Service', () => {
       jest
         .spyOn(gasComponentCodeRepository, 'find')
         .mockResolvedValue([gasCompCode]);
-      jest
-        .spyOn(gasTypeCodeRepository, 'find')
-        .mockResolvedValue([new GasTypeCode()]);
 
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
@@ -309,7 +295,6 @@ describe('Protocol Gas Checks Service', () => {
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRecord);
-      jest;
 
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
@@ -370,7 +355,7 @@ describe('Protocol Gas Checks Service', () => {
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
