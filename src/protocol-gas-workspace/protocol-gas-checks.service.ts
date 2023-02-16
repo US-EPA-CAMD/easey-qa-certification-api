@@ -14,6 +14,7 @@ import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { GasComponentCodeRepository } from '../gas-component-code/gas-component-code.repository';
+import { GasTypeCodeRepository } from '../gas-type-code/gas-type-code.repository';
 
 const KEY = 'Protocol Gas';
 
@@ -27,6 +28,8 @@ export class ProtocolGasChecksService {
     private readonly monitorSystemRepository: MonitorSystemRepository,
     @InjectRepository(GasComponentCodeRepository)
     private readonly gasComponentCodeRepository: GasComponentCodeRepository,
+    @InjectRepository(GasTypeCodeRepository)
+    private readonly gasTypeCodeRepository: GasTypeCodeRepository,
   ) {}
 
   private throwIfErrrors(errorList: string[]) {
@@ -70,7 +73,7 @@ export class ProtocolGasChecksService {
     }
 
     // PGVP-9
-    error = this.pgvp9Check(
+    error = await this.pgvp9Check(
       protocolGas.gasTypeCode,
       testSumRecord.testTypeCode,
     );
@@ -104,15 +107,32 @@ export class ProtocolGasChecksService {
     return error;
   }
 
-  private pgvp9Check(gasTypeCode: string, testTypeCode: string): string {
+  private async pgvp9Check(
+    gasTypeCode: string,
+    testTypeCode: string,
+  ): Promise<string> {
     let error: string = null;
+
+    const gasTypeCodes = (await this.gasTypeCodeRepository.find()).map(
+      gtc => gtc.gasTypeCode,
+    );
 
     if (gasTypeCode === 'ZERO') {
       if (!['RATA', 'APPE', 'UNITDEF'].includes(testTypeCode)) {
-        error = this.getMessage('PGVP-9-F', {});
+        error = this.getMessage('PGVP-9-F');
       }
     } else {
       if (!['GMIS', 'PRM', 'RGM', 'SRM'].includes(gasTypeCode)) {
+        const codes = gasTypeCode.split(',');
+
+        codes.forEach(code => {
+          if (!gasTypeCodes.includes(code)) {
+            error = this.getMessage('PGVP-9-B', {
+              fieldname: 'gasTypeCode',
+            });
+          }
+        });
+
         if (gasTypeCode === 'ZAM') {
           error = this.getMessage('PGVP-9-B', {
             fieldname: 'gasTypeCode',
@@ -193,21 +213,21 @@ export class ProtocolGasChecksService {
           if (!['GMIS', 'NTRM', 'PRM', 'RGM', 'SRM', 'ZERO'].includes(el)) {
             if (['SO2, CO2'].includes(el)) {
               if (!found) {
-                error = this.getMessage('PGVP-13-A', {});
+                error = this.getMessage('PGVP-13-A');
                 errorList.push(error);
               }
             }
 
             if (el === 'O2') {
               if (gasTypeCode !== 'AIR' && !gasTypeCodes.includes('O2')) {
-                error = this.getMessage('PGVP-13-B', {});
+                error = this.getMessage('PGVP-13-B');
                 errorList.push(error);
               }
             }
 
             if ((testTypeCode === 'LINE' && el === 'NOX') || el === 'NOXC') {
               if (['NO', 'NO2', 'NOX'].includes(el)) {
-                error = this.getMessage('PGVP-13-C', {});
+                error = this.getMessage('PGVP-13-C');
                 errorList.push(error);
               }
             }
@@ -220,7 +240,7 @@ export class ProtocolGasChecksService {
                 gasTypeCode !== 'AIR' &&
                 ['CO2', 'NO', 'NO2', 'O2'].includes(el)
               ) {
-                error = this.getMessage('PGVP-13-D', {});
+                error = this.getMessage('PGVP-13-D');
                 errorList.push(error);
               }
             }
@@ -239,7 +259,7 @@ export class ProtocolGasChecksService {
     }
 
     if (pgDuplicateComponentList.length > 0) {
-      error = this.getMessage('PGVP-12-H', {});
+      error = this.getMessage('PGVP-12-H');
       errorList.push(error);
     }
 
@@ -253,7 +273,7 @@ export class ProtocolGasChecksService {
     }
 
     if (containsZERO && !['RATA', 'APPE', 'UNITDEF'].includes(testTypeCode)) {
-      error = this.getMessage('PGVP-12-D', {});
+      error = this.getMessage('PGVP-12-D');
       errorList.push(error);
     }
 
@@ -269,7 +289,7 @@ export class ProtocolGasChecksService {
       pgExclusiveComponentList.length === 0 &&
       pgBalanceComponentList.length === 0
     ) {
-      error = this.getMessage('PGVP-12-F', {});
+      error = this.getMessage('PGVP-12-F');
       errorList.push(error);
     }
 
@@ -286,7 +306,7 @@ export class ProtocolGasChecksService {
     return errorList;
   }
 
-  getMessage(messageKey: string, messageArgs: object): string {
+  getMessage(messageKey: string, messageArgs?: object): string {
     return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
   }
 }
