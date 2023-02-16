@@ -119,9 +119,7 @@ export class ProtocolGasChecksService {
 
     if (gasTypeCode === 'ZERO') {
       if (!['RATA', 'APPE', 'UNITDEF'].includes(testTypeCode)) {
-        error = CheckCatalogService.formatMessage(
-          `[PGVP-9-F] - You reported a GasTypeCode of "ZERO" which is only appropriate for the low level calibration of a reference analyzer used in Reference Method 3A, 6C, or 7E testing.`,
-        );
+        error = this.getMessage('PGVP-9-F');
       }
     } else {
       if (!['GMIS', 'PRM', 'RGM', 'SRM'].includes(gasTypeCode)) {
@@ -215,21 +213,21 @@ export class ProtocolGasChecksService {
           if (!['GMIS', 'NTRM', 'PRM', 'RGM', 'SRM', 'ZERO'].includes(el)) {
             if (['SO2, CO2'].includes(el)) {
               if (!found) {
-                error = this.getMessage('PGVP-13-A', {});
+                error = this.getMessage('PGVP-13-A');
                 errorList.push(error);
               }
             }
 
             if (el === 'O2') {
               if (gasTypeCode !== 'AIR' && !gasTypeCodes.includes('O2')) {
-                error = this.getMessage('PGVP-13-B', {});
+                error = this.getMessage('PGVP-13-B');
                 errorList.push(error);
               }
             }
 
             if ((testTypeCode === 'LINE' && el === 'NOX') || el === 'NOXC') {
               if (['NO', 'NO2', 'NOX'].includes(el)) {
-                error = this.getMessage('PGVP-13-C', {});
+                error = this.getMessage('PGVP-13-C');
                 errorList.push(error);
               }
             }
@@ -242,7 +240,7 @@ export class ProtocolGasChecksService {
                 gasTypeCode !== 'AIR' &&
                 ['CO2', 'NO', 'NO2', 'O2'].includes(el)
               ) {
-                error = this.getMessage('PGVP-13-D', {});
+                error = this.getMessage('PGVP-13-D');
                 errorList.push(error);
               }
             }
@@ -261,9 +259,7 @@ export class ProtocolGasChecksService {
     }
 
     if (pgDuplicateComponentList.length > 0) {
-      error = CheckCatalogService.formatMessage(
-        `[PGVP-12-H] - You reported one or more duplicate GasTypeCode components.`,
-      );
+      error = this.getMessage('PGVP-12-H');
       errorList.push(error);
     }
 
@@ -277,9 +273,7 @@ export class ProtocolGasChecksService {
     }
 
     if (containsZERO && !['RATA', 'APPE', 'UNITDEF'].includes(testTypeCode)) {
-      error = CheckCatalogService.formatMessage(
-        `[PGVP-12-D] - You reported a GasTypeCode of "ZERO" which is only appropriate for the low level calibration of a reference analyzer used in Reference Method 3A, 6C, or 7E testing.`,
-      );
+      error = this.getMessage('PGVP-12-D');
       errorList.push(error);
     }
 
@@ -295,9 +289,7 @@ export class ProtocolGasChecksService {
       pgExclusiveComponentList.length === 0 &&
       pgBalanceComponentList.length === 0
     ) {
-      error = CheckCatalogService.formatMessage(
-        `[PGVP-12-F] - You did not report a required PGVP balance component. A single balance component is required when reporting other individual gas components.`,
-      );
+      error = this.getMessage('PGVP-12-F');
       errorList.push(error);
     }
 
@@ -314,7 +306,7 @@ export class ProtocolGasChecksService {
     return errorList;
   }
 
-  getMessage(messageKey: string, messageArgs: object): string {
+  getMessage(messageKey: string, messageArgs?: object): string {
     return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
   }
 }
