@@ -113,9 +113,9 @@ export class ProtocolGasChecksService {
   ): Promise<string> {
     let error: string = null;
 
-    const gasComponentCodes = (
-      await this.gasComponentCodeRepository.find()
-    ).map(gc => gc.gasComponentCode);
+    const gasTypeCodes = (await this.gasTypeCodeRepository.find()).map(
+      gtc => gtc.gasTypeCode,
+    );
 
     if (gasTypeCode === 'ZERO') {
       if (!['RATA', 'APPE', 'UNITDEF'].includes(testTypeCode)) {
@@ -126,7 +126,7 @@ export class ProtocolGasChecksService {
         const codes = gasTypeCode.split(',');
 
         codes.forEach(code => {
-          if (!gasComponentCodes.includes(code)) {
+          if (!gasTypeCodes.includes(code)) {
             error = this.getMessage('PGVP-9-B', {
               fieldname: 'gasTypeCode',
             });
