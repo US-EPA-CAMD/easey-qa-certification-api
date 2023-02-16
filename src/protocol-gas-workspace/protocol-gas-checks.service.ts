@@ -72,15 +72,14 @@ export class ProtocolGasChecksService {
       errorList.push(error);
     }
 
-    // PGVP-9 -
-    // PGVP-12 and PGVP-13 is a replacement for PGVP-9
-    // error = await this.pgvp9Check(
-    //   protocolGas.gasTypeCode,
-    //   testSumRecord.testTypeCode,
-    // );
-    // if (error) {
-    //   errorList.push(error);
-    // }
+    // PGVP-9
+    error = await this.pgvp9Check(
+      protocolGas.gasTypeCode,
+      testSumRecord.testTypeCode,
+    );
+    if (error) {
+      errorList.push(error);
+    }
 
     // PGVP-12 and PGVP-13
     const errors = await this.pgvp12and13Checks(
