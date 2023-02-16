@@ -248,7 +248,11 @@ describe('Protocol Gas Checks Service', () => {
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual([
+          MOCK_ERROR_MSG,
+          MOCK_ERROR_MSG,
+          MOCK_ERROR_MSG,
+        ]);
       }
     });
 
@@ -272,7 +276,11 @@ describe('Protocol Gas Checks Service', () => {
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual([
+          MOCK_ERROR_MSG,
+          MOCK_ERROR_MSG,
+          MOCK_ERROR_MSG,
+        ]);
       }
     });
   });
@@ -347,7 +355,7 @@ describe('Protocol Gas Checks Service', () => {
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
