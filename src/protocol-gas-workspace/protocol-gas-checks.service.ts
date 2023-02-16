@@ -72,14 +72,15 @@ export class ProtocolGasChecksService {
       errorList.push(error);
     }
 
-    // PGVP-9
-    error = await this.pgvp9Check(
-      protocolGas.gasTypeCode,
-      testSumRecord.testTypeCode,
-    );
-    if (error) {
-      errorList.push(error);
-    }
+    // PGVP-9 -
+    // PGVP-12 and PGVP-13 is a replacement for PGVP-9
+    // error = await this.pgvp9Check(
+    //   protocolGas.gasTypeCode,
+    //   testSumRecord.testTypeCode,
+    // );
+    // if (error) {
+    //   errorList.push(error);
+    // }
 
     // PGVP-12 and PGVP-13
     const errors = await this.pgvp12and13Checks(
@@ -113,9 +114,9 @@ export class ProtocolGasChecksService {
   ): Promise<string> {
     let error: string = null;
 
-    const gasTypeCodes = (await this.gasTypeCodeRepository.find()).map(
-      gtc => gtc.gasTypeCode,
-    );
+    const gasComponentCodes = (
+      await this.gasComponentCodeRepository.find()
+    ).map(gc => gc.gasComponentCode);
 
     if (gasTypeCode === 'ZERO') {
       if (!['RATA', 'APPE', 'UNITDEF'].includes(testTypeCode)) {
@@ -126,7 +127,7 @@ export class ProtocolGasChecksService {
         const codes = gasTypeCode.split(',');
 
         codes.forEach(code => {
-          if (!gasTypeCodes.includes(code)) {
+          if (!gasComponentCodes.includes(code)) {
             error = this.getMessage('PGVP-9-B', {
               fieldname: 'gasTypeCode',
             });
@@ -226,7 +227,7 @@ export class ProtocolGasChecksService {
             }
 
             if ((testTypeCode === 'LINE' && el === 'NOX') || el === 'NOXC') {
-              if (['NO', 'NO2', 'NOX'].includes(el)) {
+              if (!['NO', 'NO2', 'NOX'].includes(el)) {
                 error = this.getMessage('PGVP-13-C');
                 errorList.push(error);
               }
