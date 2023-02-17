@@ -17,7 +17,7 @@ import {
 } from '@nestjs/swagger';
 
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -26,6 +26,7 @@ import {
   TransmitterTransducerAccuracyRecordDTO,
 } from '../dto/transmitter-transducer-accuracy.dto';
 import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -42,6 +43,7 @@ export class TransmitterTransducerAccuracyWorkspaceController {
     description:
       'Retrieves workspace Transmitter Transducer Accuracy records by Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getTransmitterTransducerAccuracies(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -56,6 +58,7 @@ export class TransmitterTransducerAccuracyWorkspaceController {
     description:
       'Retrieves official Transmitter Transducer Accuracy record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getTransmitterTransducerAccuracy(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -65,8 +68,7 @@ export class TransmitterTransducerAccuracyWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: TransmitterTransducerAccuracyRecordDTO,
     description:
@@ -86,8 +88,7 @@ export class TransmitterTransducerAccuracyWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: TransmitterTransducerAccuracyRecordDTO,
     description: 'Updates a workspace Transmitter Transducer Accuracy record',
@@ -108,8 +109,7 @@ export class TransmitterTransducerAccuracyWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: TransmitterTransducerAccuracyRecordDTO,
     description: 'Deletes a workspace Transmitter Transducer Accuracy record',

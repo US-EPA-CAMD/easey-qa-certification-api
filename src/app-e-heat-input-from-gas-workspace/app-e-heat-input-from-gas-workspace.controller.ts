@@ -15,7 +15,7 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -24,6 +24,7 @@ import {
 } from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-gas-workspace.service';
 import { AppEHeatInputFromGasChecksService } from './app-e-heat-input-from-gas-checks.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -41,6 +42,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     description:
       'Retrieves a workspace Appendix E Heat Input From Gas records by Appendix E Correlation Test Run Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getAppEHeatInputFromGases(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -56,6 +58,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     type: AppEHeatInputFromGasRecordDTO,
     description: `Retrieves a workspace Appendix E Heat Input From Gas record by it's Id`,
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getAppEHeatInputFromGas(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -67,8 +70,7 @@ export class AppEHeatInputFromGasWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
-  @UseGuards(AuthGuard)
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: AppEHeatInputFromGasRecordDTO,
     description: 'Creates a workspace Appendix E Heat Input From Gas record.',
@@ -93,8 +95,7 @@ export class AppEHeatInputFromGasWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: AppEHeatInputFromGasRecordDTO,
     description: 'Updates a workspace Appendix E Heat Input From Gas record.',
@@ -118,8 +119,7 @@ export class AppEHeatInputFromGasWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a workspace Appendix E Correlation Test Run record.',
   })

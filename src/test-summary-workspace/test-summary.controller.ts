@@ -19,7 +19,7 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -31,6 +31,7 @@ import {
 import { TestSummaryParamsDTO } from '../dto/test-summary-params.dto';
 import { TestSummaryWorkspaceService } from './test-summary.service';
 import { TestSummaryChecksService } from './test-summary-checks.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -53,6 +54,7 @@ export class TestSummaryWorkspaceController {
     required: false,
     explode: false,
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getTestSummaries(
     @Param('locId') locationId: string,
     @Query() params: TestSummaryParamsDTO,
@@ -71,6 +73,7 @@ export class TestSummaryWorkspaceController {
     type: TestSummaryRecordDTO,
     description: 'Retrieves workspace Test Summary record by its id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getTestSummary(
     @Param('locId') _locationId: string,
     @Param('id') id: string,
@@ -79,8 +82,7 @@ export class TestSummaryWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: TestSummaryRecordDTO,
     description: 'Creates a Test Summary record in the workspace',
@@ -95,8 +97,7 @@ export class TestSummaryWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: TestSummaryRecordDTO,
     description: 'Updates a Test Summary record in the workspace',
@@ -112,8 +113,7 @@ export class TestSummaryWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a Test Summary record from the workspace',
   })

@@ -15,7 +15,7 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -24,6 +24,7 @@ import {
 } from '../dto/app-e-correlation-test-run.dto';
 import { AppECorrelationTestRunWorkspaceService } from './app-e-correlation-test-run-workspace.service';
 import { AppECorrelationTestRunChecksService } from './app-e-correlation-test-run-checks.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -41,6 +42,7 @@ export class AppECorrelationTestRunWorkspaceController {
     description:
       'Retrieves aworkspace Appendix E Correlation Test Run records by Appendix E Correlation Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getAppECorrelationTestRuns(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -56,6 +58,7 @@ export class AppECorrelationTestRunWorkspaceController {
     description:
       'Retrieves aworkspace Appendix E Correlation Test Run record by its unique Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getAppECorrelationTestRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -66,8 +69,7 @@ export class AppECorrelationTestRunWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
-  @UseGuards(AuthGuard)
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: AppECorrelationTestRunRecordDTO,
     description: 'Creates a workspace Appendix E Correlation Test Run record.',
@@ -91,8 +93,7 @@ export class AppECorrelationTestRunWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: AppECorrelationTestRunRecordDTO,
     description: 'Updates a workspace Appendix E Correlation Test Run record.',
@@ -116,8 +117,7 @@ export class AppECorrelationTestRunWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a workspace Appendix E Correlation Test Run record.',
   })

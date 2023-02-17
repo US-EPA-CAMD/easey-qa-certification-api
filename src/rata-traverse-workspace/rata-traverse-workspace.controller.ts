@@ -15,7 +15,8 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -41,6 +42,7 @@ export class RataTraverseWorkspaceController {
     description:
       'Retrieves a workspace Rata Traverse records by Flow Rata Run ID',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getRataTraverses(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -58,6 +60,7 @@ export class RataTraverseWorkspaceController {
     type: RataTraverseRecordDTO,
     description: 'Retrieves a workspace Rata Traverse record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getRataTraverse(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -71,8 +74,7 @@ export class RataTraverseWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: RataTraverseRecordDTO,
     description: 'Creates a workspace RATA Traverse record.',
@@ -107,8 +109,7 @@ export class RataTraverseWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: RataTraverseRecordDTO,
     description: 'Updates a RATA Traverse record in the workspace',
@@ -139,8 +140,7 @@ export class RataTraverseWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a RATA Traverse record from the workspace',
   })

@@ -20,10 +20,11 @@ import {
   AppECorrelationTestSummaryRecordDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
 import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-test-summary-workspace.service';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { AppECorrelationTestSummaryChecksService } from './app-e-correlation-test-summary-checks.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -41,6 +42,7 @@ export class AppendixETestSummaryWorkspaceController {
     description:
       'Retrieves workspace Appendix E Correlation Test Summary records by Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getAppECorrelations(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -55,6 +57,7 @@ export class AppendixETestSummaryWorkspaceController {
     description:
       'Retrieves a workspace Appendix E Correlation Test Summary record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getAppECorrelation(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -64,8 +67,7 @@ export class AppendixETestSummaryWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
-  @UseGuards(AuthGuard)
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: AppECorrelationTestSummaryRecordDTO,
     description:
@@ -82,8 +84,7 @@ export class AppendixETestSummaryWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: AppECorrelationTestSummaryRecordDTO,
     description: 'Updates a workspace Appendix E Test Summary record',
@@ -105,8 +106,7 @@ export class AppendixETestSummaryWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description:
       'Deletes a workspace Appendix E Correlation Test Summary record',

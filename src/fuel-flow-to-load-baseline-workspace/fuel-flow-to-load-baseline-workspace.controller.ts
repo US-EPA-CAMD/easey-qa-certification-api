@@ -15,7 +15,8 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -39,6 +40,7 @@ export class FuelFlowToLoadBaselineWorkspaceController {
     description:
       'Retrieves workspace Fuel Flow To Load Baseline records by Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getFuelFlowToLoadBaselines(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -53,6 +55,7 @@ export class FuelFlowToLoadBaselineWorkspaceController {
     description:
       'Retrieves workspace Fuel Flow To Load Baseline record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getFuelFlowToLoadBaseline(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -62,8 +65,7 @@ export class FuelFlowToLoadBaselineWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
-  @UseGuards(AuthGuard)
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: FuelFlowToLoadBaselineDTO,
     description: 'Creates a workspace Fuel Flow To Load Baseline record.',
@@ -82,8 +84,7 @@ export class FuelFlowToLoadBaselineWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: FuelFlowToLoadBaselineDTO,
     description: 'Updates a workspace Fuel Flow To Load Baseline record.',
@@ -104,8 +105,7 @@ export class FuelFlowToLoadBaselineWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description:
       'Deletes a Fuel Flow To Load Baseline record from the workspace',

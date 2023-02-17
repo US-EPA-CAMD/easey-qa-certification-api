@@ -15,7 +15,8 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -41,6 +42,7 @@ export class TestExtensionExemptionsWorkspaceController {
     description:
       'Retrieves workspace QA Test Extension Exemption records by Location Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getTestExtensionExemptions(
     @Param('locId') locationId: string,
   ): Promise<TestExtensionExemptionRecordDTO[]> {
@@ -53,6 +55,7 @@ export class TestExtensionExemptionsWorkspaceController {
     description:
       'Retrieves workspace Test Extension Exemption record by its id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getTestExtensionExemption(
     @Param('locId') _locationId: string,
     @Param('id') id: string,
@@ -61,8 +64,7 @@ export class TestExtensionExemptionsWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: TestExtensionExemptionRecordDTO,
     description: 'Creates a Test Extension Exemption record in the workspace',
@@ -81,8 +83,7 @@ export class TestExtensionExemptionsWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: TestExtensionExemptionRecordDTO,
     description: 'Updates a Test Extension Exemption record in the workspace',
@@ -103,8 +104,7 @@ export class TestExtensionExemptionsWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a Test Extension Exemption from the workspace',
   })
