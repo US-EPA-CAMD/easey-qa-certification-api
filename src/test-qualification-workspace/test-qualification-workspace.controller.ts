@@ -15,7 +15,8 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -41,6 +42,7 @@ export class TestQualificationWorkspaceController {
     description:
       'Retrieves official Test Qualification records by Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getTestQualifications(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -54,6 +56,7 @@ export class TestQualificationWorkspaceController {
     type: TestQualificationRecordDTO,
     description: 'Retrieves official Test Qualification record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getTestQualification(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -63,8 +66,7 @@ export class TestQualificationWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: TestQualificationRecordDTO,
     description: 'Creates a workspace Test Qualification record.',
@@ -93,8 +95,7 @@ export class TestQualificationWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: TestQualificationRecordDTO,
     description: 'Updates a test qualification record in the workspace',
@@ -125,8 +126,7 @@ export class TestQualificationWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a test qualification record from the workspace',
   })

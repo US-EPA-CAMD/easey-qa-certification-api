@@ -17,7 +17,8 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -44,6 +45,7 @@ export class LinearitySummaryWorkspaceController {
     description:
       'Retrieves workspace Linearity Summary records by Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getSummariesByTestSumId(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -56,6 +58,7 @@ export class LinearitySummaryWorkspaceController {
     type: LinearitySummaryRecordDTO,
     description: 'Retrieves workspace Linearity Summary record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getSummaryById(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -65,8 +68,7 @@ export class LinearitySummaryWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: LinearitySummaryRecordDTO,
     description: 'Creates a Linearity Summary record in the workspace',
@@ -82,8 +84,7 @@ export class LinearitySummaryWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: LinearitySummaryRecordDTO,
     description: 'Updates a Linearity Summary record in the workspace',
@@ -100,8 +101,7 @@ export class LinearitySummaryWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a Linearity Summary record from the workspace',
   })

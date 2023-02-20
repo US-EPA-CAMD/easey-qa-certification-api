@@ -17,7 +17,8 @@ import {
   ApiBearerAuth,
 } from '@nestjs/swagger';
 
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -45,6 +46,7 @@ export class LinearityInjectionWorkspaceController {
     description:
       'Retrieves workspace Linearity Injection records by Linearity Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -58,6 +60,7 @@ export class LinearityInjectionWorkspaceController {
     type: LinearityInjectionRecordDTO,
     description: 'Retrieves workspace Linearity Injection record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getLinearityInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -68,8 +71,7 @@ export class LinearityInjectionWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: LinearityInjectionRecordDTO,
     description: 'Creates a Linearity Injection record in the workspace',
@@ -91,8 +93,7 @@ export class LinearityInjectionWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: LinearityInjectionRecordDTO,
     description: 'Updates a Linearity Injection record in the workspace',
@@ -116,8 +117,7 @@ export class LinearityInjectionWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a Linearity Injection record from the workspace',
   })

@@ -16,7 +16,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -38,6 +38,7 @@ import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-sum
 import { TestSummaryReviewAndSubmitService } from './test-summary-review-and-submit.service';
 import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
 import { TeeReviewAndSubmitService } from './tee-review-and-submit.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -80,6 +81,7 @@ export class QACertificationWorkspaceController {
     required: false,
     explode: false,
   })
+  @RoleGuard({ queryParam: 'facilityId' }, LookupType.Facility)
   async export(
     @Query() params: QACertificationParamsDTO,
   ): Promise<QACertificationDTO> {
@@ -87,8 +89,7 @@ export class QACertificationWorkspaceController {
   }
 
   @Post('import')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ bodyParam: 'orisCode' }, LookupType.Facility)
   @ApiOkResponse({
     type: QACertificationDTO,
     description:
@@ -131,6 +132,10 @@ export class QACertificationWorkspaceController {
     required: false,
     explode: false,
   })
+  @RoleGuard(
+    { queryParam: 'orisCodes', isPipeDelimitted: true },
+    LookupType.Facility,
+  )
   async getFilteredCerts(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
   ): Promise<CertEventReviewAndSubmitDTO[]> {
@@ -166,6 +171,10 @@ export class QACertificationWorkspaceController {
     required: false,
     explode: false,
   })
+  @RoleGuard(
+    { queryParam: 'orisCodes', isPipeDelimitted: true },
+    LookupType.Facility,
+  )
   async getFilteredTestSums(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
   ): Promise<ReviewAndSubmitTestSummaryDTO[]> {
@@ -201,6 +210,10 @@ export class QACertificationWorkspaceController {
     required: false,
     explode: false,
   })
+  @RoleGuard(
+    { queryParam: 'orisCodes', isPipeDelimitted: true },
+    LookupType.Facility,
+  )
   async getFilteredTee(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
   ): Promise<TeeReviewAndSubmitDTO[]> {

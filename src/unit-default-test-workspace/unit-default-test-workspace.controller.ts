@@ -16,7 +16,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
@@ -25,6 +25,7 @@ import {
   UnitDefaultTestRecordDTO,
 } from '../dto/unit-default-test.dto';
 import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -39,6 +40,7 @@ export class UnitDefaultTestWorkspaceController {
     description:
       'Retrieves workspace Unit Default Test records by Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getUnitDefaultTests(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -52,6 +54,7 @@ export class UnitDefaultTestWorkspaceController {
     type: UnitDefaultTestRecordDTO,
     description: 'Retrieves workspace Unit Default Test record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getUnitDefaultTest(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -61,8 +64,7 @@ export class UnitDefaultTestWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: UnitDefaultTestRecordDTO,
     description: 'Creates a workspace Unit Default Test record.',
@@ -77,8 +79,7 @@ export class UnitDefaultTestWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     isArray: true,
     type: UnitDefaultTestRecordDTO,
@@ -100,8 +101,7 @@ export class UnitDefaultTestWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a unit default test record from the workspace',
   })

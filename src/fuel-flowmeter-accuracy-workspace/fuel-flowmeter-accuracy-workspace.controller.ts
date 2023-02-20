@@ -15,7 +15,8 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -39,6 +40,7 @@ export class FuelFlowmeterAccuracyWorkspaceController {
     description:
       'Retrieves Workspace Fuel Flowmeter Accuracy records by Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getFuelFlowmeterAccuracies(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -53,6 +55,7 @@ export class FuelFlowmeterAccuracyWorkspaceController {
     description:
       'Retrieves a Workspace Fuel Flowmeter Accuracy record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getFuelFlowmeterAccuracy(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -62,8 +65,7 @@ export class FuelFlowmeterAccuracyWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
-  @UseGuards(AuthGuard)
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: FuelFlowmeterAccuracyDTO,
     description: 'Creates a workspace Fuel Flowmeter Accuracy record.',
@@ -82,8 +84,7 @@ export class FuelFlowmeterAccuracyWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: FuelFlowmeterAccuracyDTO,
     description: 'Updates a workspace Fuel FLowmeter Accuracy record',
@@ -104,8 +105,7 @@ export class FuelFlowmeterAccuracyWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a Fuel Flowmeter record from the workspace',
   })

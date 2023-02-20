@@ -16,7 +16,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
@@ -26,6 +26,7 @@ import {
 } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRunWorkspaceService } from './unit-default-test-run.service';
 import { UnitDefaultTestRunChecksService } from './unit-default-test-run-checks.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -43,6 +44,7 @@ export class UnitDefaultTestRunWorkspaceController {
     description:
       'Retrieves official Unit Default Test Run records by Unit Default Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getUnitDefaultTestRuns(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -57,6 +59,7 @@ export class UnitDefaultTestRunWorkspaceController {
     type: UnitDefaultTestRunRecordDTO,
     description: 'Retrieves official Unit Default Test Run record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getUnitDefaultTestRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -67,8 +70,7 @@ export class UnitDefaultTestRunWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: UnitDefaultTestRunRecordDTO,
     description: 'Creates a workspace Unit Default Test Run record.',
@@ -96,8 +98,7 @@ export class UnitDefaultTestRunWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: UnitDefaultTestRunRecordDTO,
     description: 'Updates a workspace Unit Default Test Run record.',
@@ -126,8 +127,7 @@ export class UnitDefaultTestRunWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a Unit Default Test Run record from the workspace',
   })

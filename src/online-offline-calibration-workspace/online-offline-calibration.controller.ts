@@ -16,7 +16,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
@@ -24,6 +24,7 @@ import {
   OnlineOfflineCalibrationBaseDTO,
   OnlineOfflineCalibrationRecordDTO,
 } from '../dto/online-offline-calibration.dto';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -40,6 +41,7 @@ export class OnlineOfflineCalibrationWorkspaceController {
     description:
       'Retrieves workspace Online Offline Calibration records by Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getOnlineOfflineCalibrations(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -54,6 +56,7 @@ export class OnlineOfflineCalibrationWorkspaceController {
     description:
       'Retrieves workspace Online Offline Calibration record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getOnlineOfflineCalibration(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -63,8 +66,7 @@ export class OnlineOfflineCalibrationWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: OnlineOfflineCalibrationRecordDTO,
     description:
@@ -84,8 +86,7 @@ export class OnlineOfflineCalibrationWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Delete a workspace Online Offline Calibration record',
   })
@@ -103,8 +104,7 @@ export class OnlineOfflineCalibrationWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: OnlineOfflineCalibrationRecordDTO,
     description:

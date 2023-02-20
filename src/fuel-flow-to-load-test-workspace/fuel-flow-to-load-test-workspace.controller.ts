@@ -15,7 +15,8 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -37,6 +38,7 @@ export class FuelFlowToLoadTestWorkspaceController {
     description:
       'Retrieves workspace Fuel Flow To Load Test records by Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getFuelFlowToLoadTests(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -50,6 +52,7 @@ export class FuelFlowToLoadTestWorkspaceController {
     type: FuelFlowToLoadTestRecordDTO,
     description: 'Retrieves workspace Fuel Flow To Load Test record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getFuelFlowToLoadTest(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -59,8 +62,7 @@ export class FuelFlowToLoadTestWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
-  @UseGuards(AuthGuard)
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: FuelFlowToLoadTestRecordDTO,
     description: 'Creates a workspace Fuel Flow To Load Test record.',
@@ -79,8 +81,7 @@ export class FuelFlowToLoadTestWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: FuelFlowToLoadTestRecordDTO,
     description: 'Updates a Fuel Flow To Load Test record from the workspace',
@@ -101,8 +102,7 @@ export class FuelFlowToLoadTestWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a Fuel Flow To Load Test record from the workspace',
   })

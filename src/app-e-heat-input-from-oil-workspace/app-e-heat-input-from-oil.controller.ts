@@ -16,7 +16,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -25,6 +25,7 @@ import {
 } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oil.service';
 import { AppEHeatInputFromOilChecksService } from './app-e-heat-input-from-oil-checks.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -42,6 +43,7 @@ export class AppEHeatInputFromOilWorkspaceController {
     description:
       'Retrieves workspace Appendix E Heat Input from Oil records by Appendix E CorrelationTestRun Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getAppEHeatInputFromOilRecords(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -58,6 +60,7 @@ export class AppEHeatInputFromOilWorkspaceController {
     description:
       'Retrieves workspace Appendix E Heat Input from Oil record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getAppEHeatInputFromOilRecord(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -69,8 +72,7 @@ export class AppEHeatInputFromOilWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: AppEHeatInputFromOilRecordDTO,
     description:
@@ -96,8 +98,7 @@ export class AppEHeatInputFromOilWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: AppEHeatInputFromOilRecordDTO,
     description:
@@ -122,8 +123,7 @@ export class AppEHeatInputFromOilWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a workspace Appendix E Correlation Test Run record.',
   })

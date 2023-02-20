@@ -15,7 +15,8 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -42,6 +43,7 @@ export class CycleTimeInjectionWorkspaceController {
     description:
       'Retreives workspace Cycle Time Injection records by Cycle Time Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getCycleTimeInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -55,6 +57,7 @@ export class CycleTimeInjectionWorkspaceController {
     type: CycleTimeInjectionRecordDTO,
     description: 'Retrieves workspace Cycle Time Injection record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getCycleTimeInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -65,8 +68,7 @@ export class CycleTimeInjectionWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: CycleTimeInjectionRecordDTO,
     description: 'Creates a Cycle Time Injection record in the workspace',
@@ -94,8 +96,7 @@ export class CycleTimeInjectionWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: CycleTimeInjectionRecordDTO,
     description: ' Updates a Cycle Time Injection record in the workspace',
@@ -124,8 +125,7 @@ export class CycleTimeInjectionWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a workspace Cycle Time Injection record',
   })
