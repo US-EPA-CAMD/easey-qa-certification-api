@@ -72,15 +72,6 @@ export class ProtocolGasChecksService {
       errorList.push(error);
     }
 
-    // PGVP-9
-    error = await this.pgvp9Check(
-      protocolGas.gasTypeCode,
-      testSumRecord.testTypeCode,
-    );
-    if (error) {
-      errorList.push(error);
-    }
-
     // PGVP-12 and PGVP-13
     const errors = await this.pgvp12and13Checks(
       protocolGas.gasTypeCode,
@@ -102,50 +93,6 @@ export class ProtocolGasChecksService {
       error = this.getMessage('PGVP-8-A', {
         key: KEY,
       });
-    }
-
-    return error;
-  }
-
-  private async pgvp9Check(
-    gasTypeCode: string,
-    testTypeCode: string,
-  ): Promise<string> {
-    let error: string = null;
-
-    const gasTypeCodes = (await this.gasTypeCodeRepository.find()).map(
-      gtc => gtc.gasTypeCode,
-    );
-
-    if (gasTypeCode === 'ZERO') {
-      if (!['RATA', 'APPE', 'UNITDEF'].includes(testTypeCode)) {
-        error = this.getMessage('PGVP-9-F');
-      }
-    } else {
-      if (!['GMIS', 'PRM', 'RGM', 'SRM'].includes(gasTypeCode)) {
-        const codes = gasTypeCode.split(',');
-
-        codes.forEach(code => {
-          if (!gasTypeCodes.includes(code)) {
-            error = this.getMessage('PGVP-9-B', {
-              fieldname: 'gasTypeCode',
-            });
-          }
-        });
-
-        if (gasTypeCode === 'ZAM') {
-          error = this.getMessage('PGVP-9-B', {
-            fieldname: 'gasTypeCode',
-          });
-        }
-
-        if (gasTypeCode === 'APPVD') {
-          error = this.getMessage('PGVP-9-C', {
-            key: KEY,
-            fieldname: 'gasTypeCode',
-          });
-        }
-      }
     }
 
     return error;
