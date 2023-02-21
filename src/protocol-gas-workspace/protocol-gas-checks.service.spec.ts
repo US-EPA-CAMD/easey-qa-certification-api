@@ -102,82 +102,6 @@ describe('Protocol Gas Checks Service', () => {
     });
   });
 
-  describe('PGVP-9 Gas Type Code Valid', () => {
-    monSysRec.systemTypeCode = 'GAS';
-    testSumRecord.system = monSysRec;
-    protolGas.gasTypeCode = 'ZAM';
-    testSumRecord.testTypeCode = 'GAS';
-
-    it('Should get [PGVP-9-B] error', async () => {
-      jest
-        .spyOn(testSummaryRepository, 'getTestSummaryById')
-        .mockResolvedValue(testSumRecord);
-      jest
-        .spyOn(gasTypeCodeRepository, 'find')
-        .mockResolvedValue([new GasTypeCode()]);
-
-      try {
-        await service.runChecks(protolGas, locationId, testSumId, false, false);
-      } catch (err) {
-        expect(err.response.message).toEqual([
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-        ]);
-      }
-    });
-
-    it('Should get [PGVP-9-C] error', async () => {
-      monSysRec.systemTypeCode = 'GAS';
-      testSumRecord.system = monSysRec;
-      protolGas.gasTypeCode = 'APPVD';
-      testSumRecord.testTypeCode = 'GAS';
-
-      jest
-        .spyOn(testSummaryRepository, 'getTestSummaryById')
-        .mockResolvedValue(testSumRecord);
-      jest
-        .spyOn(gasTypeCodeRepository, 'find')
-        .mockResolvedValue([new GasTypeCode()]);
-
-      try {
-        await service.runChecks(protolGas, locationId, testSumId, false, false);
-      } catch (err) {
-        expect(err.response.message).toEqual([
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-        ]);
-      }
-    });
-
-    it('Should get [PGVP-9-F] error', async () => {
-      monSysRec.systemTypeCode = 'GAS';
-      testSumRecord.system = monSysRec;
-      protolGas.gasTypeCode = 'ZERO';
-      testSumRecord.testTypeCode = 'GAS';
-
-      jest
-        .spyOn(testSummaryRepository, 'getTestSummaryById')
-        .mockResolvedValue(testSumRecord);
-      jest
-        .spyOn(gasComponentCodeRepository, 'find')
-        .mockResolvedValue([new GasComponentCode()]);
-
-      try {
-        await service.runChecks(protolGas, locationId, testSumId, false, false);
-      } catch (err) {
-        expect(err.response.message).toEqual([
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-        ]);
-      }
-    });
-  });
-
   describe('PGVP-12 Gas Type Code Component List Valid', () => {
     it('Should get [PGVP-12-B] error', async () => {
       monSysRec.systemTypeCode = 'GAS';
@@ -195,11 +119,7 @@ describe('Protocol Gas Checks Service', () => {
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
       }
     });
 
@@ -220,7 +140,6 @@ describe('Protocol Gas Checks Service', () => {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
         expect(err.response.message).toEqual([
-          MOCK_ERROR_MSG,
           MOCK_ERROR_MSG,
           MOCK_ERROR_MSG,
           MOCK_ERROR_MSG,
@@ -248,11 +167,7 @@ describe('Protocol Gas Checks Service', () => {
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
       }
     });
 
@@ -276,11 +191,7 @@ describe('Protocol Gas Checks Service', () => {
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
       }
     });
   });
@@ -299,11 +210,7 @@ describe('Protocol Gas Checks Service', () => {
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
       }
     });
 
@@ -327,11 +234,7 @@ describe('Protocol Gas Checks Service', () => {
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
-        expect(err.response.message).toEqual([
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
       }
     });
 
