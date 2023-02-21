@@ -12,7 +12,7 @@ import { RataRunDTO, RataRunImportDTO } from './rata-run.dto';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Type } from 'class-transformer';
-import { IsNotNegative } from 'src/pipes/is-not-negative.pipe';
+import { IsNotNegative } from '../pipes/is-not-negative.pipe';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 
 const KEY = 'RATA Summary';
