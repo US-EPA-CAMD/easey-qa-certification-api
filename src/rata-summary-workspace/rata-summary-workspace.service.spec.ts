@@ -17,6 +17,9 @@ import { RataSummaryWorkspaceService } from './rata-summary-workspace.service';
 import { RataRunDTO, RataRunImportDTO } from '../dto/rata-run.dto';
 import { RataSummaryRepository } from '../rata-summary/rata-summary.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { Rata } from '../entities/workspace/rata.entity';
 
 const dto = new RataSummaryDTO();
 
@@ -58,6 +61,11 @@ const mockRepository = () => ({
 
 const mockTestSummaryService = () => ({
   resetToNeedsEvaluation: jest.fn(),
+  getTestSummaryById: jest.fn().mockResolvedValue(new TestSummary()),
+});
+
+const mockRataService = () => ({
+  getRataById: jest.fn().mockResolvedValue(new Rata()),
 });
 
 const mockRataRunService = () => ({
@@ -90,6 +98,10 @@ describe('RataSummaryWorkspaceService', () => {
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSummaryService,
+        },
+        {
+          provide: RataWorkspaceService,
+          useFactory: mockRataService,
         },
         {
           provide: RataSummaryWorkspaceRepository,

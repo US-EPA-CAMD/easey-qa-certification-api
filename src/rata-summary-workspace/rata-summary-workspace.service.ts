@@ -18,6 +18,7 @@ import { RataRunWorkspaceService } from '../rata-run-workspace/rata-run-workspac
 import { RataSummary } from '../entities/rata-summary.entity';
 import { RataSummaryRepository } from '../rata-summary/rata-summary.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
 
 @Injectable()
 export class RataSummaryWorkspaceService {
@@ -26,6 +27,8 @@ export class RataSummaryWorkspaceService {
     private readonly map: RataSummaryMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
+    @Inject(forwardRef(() => RataWorkspaceService))
+    private readonly rataService: RataWorkspaceService,
     @InjectRepository(RataSummaryWorkspaceRepository)
     private readonly repository: RataSummaryWorkspaceRepository,
     @InjectRepository(RataSummaryRepository)
@@ -64,6 +67,11 @@ export class RataSummaryWorkspaceService {
     historicalRecordId?: string,
   ): Promise<RataSummaryRecordDTO> {
     const timestamp = currentDateTime();
+
+    // Checks if Test Summary is valid.
+    await this.testSummaryService.getTestSummaryById(testSumId);
+    // Checks if RATA Test is valid.
+    await this.rataService.getRataById(rataId);
 
     let entity = this.repository.create({
       ...payload,

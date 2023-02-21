@@ -73,9 +73,16 @@ export class RataSummaryChecksService {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
       );
+
+      if (!testSumRecord) {
+        throw new LoggingException(
+          `A test summary record not found with Record Id [${testSumId}].`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
     }
 
-    if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
+    if (testSumRecord?.testTypeCode === TestTypeCodes.RATA) {
       // RATA-17 Mean CEM Value Valid
       error = this.rata17Check(testSumRecord, rataSummary.meanCEMValue);
       if (error) {
@@ -190,9 +197,7 @@ export class RataSummaryChecksService {
         key: KEY,
         fieldname: 'meanCEMValue',
       });
-    }
-
-    if (meanCEMValue < 0) {
+    } else if (meanCEMValue <= 0 || meanCEMValue >= 20000) {
       error = CheckCatalogService.formatResultMessage('RATA-17-B', {
         key: KEY,
         fieldname: 'meanCEMValue',
