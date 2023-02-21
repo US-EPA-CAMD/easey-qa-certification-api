@@ -49,7 +49,6 @@ export class LinearityInjectionChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
@@ -84,12 +83,11 @@ export class LinearityInjectionChecksService {
     linSumId: string,
     linearityInjection: LinearityInjectionBaseDTO | LinearityInjectionImportDTO,
     _isImport: boolean = false,
-    linearityInjections: LinearityInjectionImportDTO[] = []
+    linearityInjections: LinearityInjectionImportDTO[] = [],
   ): Promise<string> {
     let error: string = null;
     const RECORDTYPE: string = 'Linearity Injection';
 
-    
     const duplicates = linearityInjections.filter(i => {
       return (
         i.injectionDate === linearityInjection.injectionDate,
@@ -109,7 +107,6 @@ export class LinearityInjectionChecksService {
         ],
       });
     }
-
 
     const record: LinearityInjection = await this.linearityInjectionRepository.findOne(
       {

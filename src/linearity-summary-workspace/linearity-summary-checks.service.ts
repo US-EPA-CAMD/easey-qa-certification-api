@@ -49,7 +49,7 @@ export class LinearitySummaryChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-      testSumId = testSumRecord.id
+      testSumId = testSumRecord.id;
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
@@ -115,9 +115,7 @@ export class LinearitySummaryChecksService {
     let FIELDNAME: string = 'gasLevelCode';
 
     const duplicates = linearitySummaies.filter(i => {
-      return (
-        i.gasLevelCode === linearitySummary.gasLevelCode
-      );
+      return i.gasLevelCode === linearitySummary.gasLevelCode;
     });
 
     // IMPORT-20 Duplicate Test Check
