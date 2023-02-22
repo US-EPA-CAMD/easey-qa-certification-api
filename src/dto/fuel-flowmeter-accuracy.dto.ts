@@ -1,9 +1,26 @@
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import { ValidationArguments } from 'class-validator';
+
 const KEY = 'Fuel Flowmeter Accuracy';
+const DATE_FORMAT = 'YYYY-MM-DD';
 export class FuelFlowmeterAccuracyBaseDTO {
   accuracyTestMethodCode: string;
   lowFuelAccuracy: number;
   midFuelAccuracy: number;
   highFuelAccuracy: number;
+
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `You reported [fieldname] which must be a valid ISO date format of ${DATE_FORMAT} for [key].`,
+        {
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
+    },
+  })
   reinstallationDate: string;
   reinstallationHour: number;
 }

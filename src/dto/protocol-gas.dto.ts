@@ -1,11 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, ValidationArguments } from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-
-import { IsValidCode } from '../pipes/is-valid-code.pipe';
-import { GasTypeCode } from '../entities/workspace/gas-type-code.entity';
+import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 
 const KEY = 'Protocol Gas';
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class ProtocolGasBaseDTO {
   gasLevelCode: string;
@@ -24,6 +23,18 @@ export class ProtocolGasBaseDTO {
   gasTypeCode: string;
   cylinderIdentifier: string;
   vendorIdentifier: string;
+
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `You reported [fieldname] which must be a valid ISO date format of ${DATE_FORMAT} for [key].`,
+        {
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
+    },
+  })
   expirationDate: Date;
 }
 
