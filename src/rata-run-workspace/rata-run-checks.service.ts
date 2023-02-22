@@ -13,6 +13,7 @@ import { RataRun } from '../entities/workspace/rata-run.entity';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 
+const moment = require('moment');
 const KEY = 'RATA Run';
 @Injectable()
 export class RataRunChecksService {
@@ -289,14 +290,17 @@ export class RataRunChecksService {
 
   private rata31Check(rataRun: RataRunBaseDTO) {
     let error: string = null;
-    const beginTime = `${rataRun.beginDate +
-      rataRun.beginHour.toString() +
-      rataRun.beginMinute.toString()}`;
-    const endTime = `${rataRun.endDate +
-      rataRun.endHour.toString() +
-      rataRun.endMinute.toString()}`;
 
-    if (beginTime > endTime) {
+    const beginDate = moment(rataRun.beginDate);
+    const endDate = moment(rataRun.endDate);
+
+    if (
+      beginDate.isAfter(endDate) ||
+      (beginDate.isSame(endDate) && rataRun.beginHour > rataRun.endHour) ||
+      (beginDate.isSame(endDate) &&
+        rataRun.beginHour === rataRun.endHour &&
+        rataRun.beginMinute >= rataRun.endMinute)
+    ) {
       error = CheckCatalogService.formatResultMessage('RATA-31-B', {
         key: KEY,
       });
