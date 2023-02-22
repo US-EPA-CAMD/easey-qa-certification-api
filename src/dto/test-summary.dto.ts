@@ -185,7 +185,13 @@ export class TestSummaryBaseDTO {
           resultCode = 'FF2LTST-13-A';
           break;
         default:
-          return `You did not provide [${args.property}], which is required for [${KEY}].`;
+          return CheckCatalogService.formatMessage(
+            `You did not provide [fieldname], which is required for [key].`,
+            {
+              fieldname: args.property,
+              key: KEY,
+            },
+          );
       }
       return CheckCatalogService.formatResultMessage(resultCode, {
         fieldname: args.property,
@@ -224,7 +230,13 @@ export class TestSummaryBaseDTO {
           resultCode = 'FFACC-12-A';
           break;
         default:
-          return `You did not provide [${args.property}], which is required for [${KEY}].`;
+          return CheckCatalogService.formatMessage(
+            `You did not provide [fieldname], which is required for [key].`,
+            {
+              fieldname: args.property,
+              key: KEY,
+            },
+          );
       }
       return CheckCatalogService.formatResultMessage(resultCode, {
         fieldname: args.property,
