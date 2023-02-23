@@ -78,9 +78,8 @@ export class AppECorrelationTestRunChecksService {
     appETestSummary: AppECorrelationTestSummary,
   ) {
     let error: string = null;
-
     if (appETestSummary.operatingLevelForRun != null && dto.runNumber != null) {
-      let duplicate = this.repository.findDuplicate(
+      let duplicate = await this.repository.findDuplicate(
         appETestRunId,
         appETestSummary.id,
         appETestSummary.operatingLevelForRun,
@@ -92,8 +91,7 @@ export class AppECorrelationTestRunChecksService {
           recordtype: 'Appendix E Run',
           fieldnames: 'OperatingLevelForRun, RunNumber',
         });
-    }
-
+  }
     return error;
   }
 
