@@ -11,6 +11,7 @@ import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { ProtocolGasChecksService } from './protocol-gas-checks.service';
 import { GasComponentCodeRepository } from '../gas-component-code/gas-component-code.repository';
 import { GasTypeCodeRepository } from '../gas-type-code/gas-type-code.repository';
+import { CrossCheckCatalogValueRepository } from '../cross-check-catalog-value/cross-check-catalog-value.repository';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { GasTypeCodeRepository } from '../gas-type-code/gas-type-code.repository
       ProtocolGasWorkspaceRepository,
       GasComponentCodeRepository,
       GasTypeCodeRepository,
+      CrossCheckCatalogValueRepository,
     ]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => ProtocolGasModule),

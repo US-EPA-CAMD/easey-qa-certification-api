@@ -15,6 +15,7 @@ import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-s
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { GasComponentCodeRepository } from '../gas-component-code/gas-component-code.repository';
 import { GasTypeCodeRepository } from '../gas-type-code/gas-type-code.repository';
+import { CrossCheckCatalogValueRepository } from '../cross-check-catalog-value/cross-check-catalog-value.repository';
 
 const KEY = 'Protocol Gas';
 
@@ -30,7 +31,11 @@ export class ProtocolGasChecksService {
     private readonly gasComponentCodeRepository: GasComponentCodeRepository,
     @InjectRepository(GasTypeCodeRepository)
     private readonly gasTypeCodeRepository: GasTypeCodeRepository,
+    @InjectRepository(CrossCheckCatalogValueRepository)
+    private readonly crossCheckCatalogValueRepository: CrossCheckCatalogValueRepository,
   ) {}
+
+  protocolGasParameter: string = null;
 
   private throwIfErrrors(errorList: string[]) {
     if (errorList.length > 0) {
@@ -89,10 +94,20 @@ export class ProtocolGasChecksService {
   private pgvp8Check(testSumRecord: TestSummary): string {
     let error: string = null;
 
-    if (testSumRecord.system?.systemTypeCode === 'FLOW') {
-      error = this.getMessage('PGVP-8-A', {
-        key: KEY,
-      });
+    this.protocolGasParameter = testSumRecord.component.componentTypeCode;
+
+    if (testSumRecord.testTypeCode === 'RATA') {
+      if (testSumRecord.system?.systemTypeCode === 'FLOW') {
+        error = this.getMessage('PGVP-8-A', {
+          key: KEY,
+        });
+      } else {
+        this.protocolGasParameter = testSumRecord.system.systemTypeCode;
+      }
+    }
+
+    if (['APPE', 'UNITDEF'].includes(testSumRecord.testTypeCode)) {
+      this.protocolGasParameter = 'NOX';
     }
 
     return error;
@@ -115,139 +130,148 @@ export class ProtocolGasChecksService {
 
     const gasComponents = await this.gasComponentCodeRepository.find();
 
-    if (gasTypeCode) {
-      const gasTypeCodes = gasTypeCode.split(',');
+    // const protocolGasParameters = await this.crossCheckCatalogValueRepository.getParameterAndTypes(
+    //   'C02',
+    //   'Protocol Gas Parameter Type',
+    // );
 
-      const gasComponentCodes = gasComponents.map(gc => gc.gasComponentCode);
+    // console.log(protocolGasParameters);
 
-      gasTypeCodes.forEach(el => {
-        const found = gasComponentCodes.includes(el);
+    if (!this.protocolGasParameter) {
+      if (gasTypeCode) {
+        const gasTypeCodes = gasTypeCode.split(',');
 
-        if (!found) {
-          pgInvalidComponentList.push(el);
-        }
+        const gasComponentCodes = gasComponents.map(gc => gc.gasComponentCode);
 
-        if (found) {
-          const filteredGasComponent = gasComponents.find(
-            gc => el === gc.gasComponentCode,
-          );
+        gasTypeCodes.forEach(el => {
+          const found = gasComponentCodes.includes(el);
 
-          if (filteredGasComponent.canCombineIndicator === 0) {
-            pgExclusiveComponentList.push(el);
+          if (!found) {
+            pgInvalidComponentList.push(el);
           }
 
-          if (filteredGasComponent.balanceComponentIndicator === 1) {
-            pgBalanceComponentList.push(el);
+          if (found) {
+            const filteredGasComponent = gasComponents.find(
+              gc => el === gc.gasComponentCode,
+            );
+
+            if (filteredGasComponent.canCombineIndicator === 0) {
+              pgExclusiveComponentList.push(el);
+            }
+
+            if (filteredGasComponent.balanceComponentIndicator === 1) {
+              pgBalanceComponentList.push(el);
+            }
           }
-        }
 
-        if (el === 'APPVD') {
-          pgApprovalRequested = true;
-        }
+          if (el === 'APPVD') {
+            pgApprovalRequested = true;
+          }
 
-        if (el === 'ZERO') {
-          containsZERO = true;
-        }
+          if (el === 'ZERO') {
+            containsZERO = true;
+          }
 
-        if (!pgComponentList.includes(el)) {
-          pgComponentList.push(el);
-        } else {
-          pgDuplicateComponentList.push(el);
-        }
+          if (!pgComponentList.includes(el)) {
+            pgComponentList.push(el);
+          } else {
+            pgDuplicateComponentList.push(el);
+          }
 
-        // pgvp-13
-        if (pgInvalidComponentList.length === 0 && !pgApprovalRequested) {
-          if (!['GMIS', 'NTRM', 'PRM', 'RGM', 'SRM', 'ZERO'].includes(el)) {
-            if (['SO2, CO2'].includes(el)) {
-              if (!found) {
-                error = this.getMessage('PGVP-13-A');
-                errorList.push(error);
+          // pgvp-13
+          if (pgInvalidComponentList.length === 0 && !pgApprovalRequested) {
+            if (!['GMIS', 'NTRM', 'PRM', 'RGM', 'SRM', 'ZERO'].includes(el)) {
+              if (['SO2, CO2'].includes(el)) {
+                if (!found) {
+                  error = this.getMessage('PGVP-13-A');
+                  errorList.push(error);
+                }
               }
-            }
 
-            if (el === 'O2') {
-              if (gasTypeCode !== 'AIR' && !gasTypeCodes.includes('O2')) {
-                error = this.getMessage('PGVP-13-B');
-                errorList.push(error);
+              if (el === 'O2') {
+                if (gasTypeCode !== 'AIR' && !gasTypeCodes.includes('O2')) {
+                  error = this.getMessage('PGVP-13-B');
+                  errorList.push(error);
+                }
               }
-            }
 
-            if ((testTypeCode === 'LINE' && el === 'NOX') || el === 'NOXC') {
-              if (!['NO', 'NO2', 'NOX'].includes(el)) {
-                error = this.getMessage('PGVP-13-C');
-                errorList.push(error);
+              if ((testTypeCode === 'LINE' && el === 'NOX') || el === 'NOXC') {
+                if (!['NO', 'NO2', 'NOX'].includes(el)) {
+                  error = this.getMessage('PGVP-13-C');
+                  errorList.push(error);
+                }
               }
-            }
 
-            if (
-              ['RATA', 'APPE', 'UNITDEF'].includes(testTypeCode) &&
-              ['NOX', 'NOXP'].includes(el)
-            ) {
               if (
-                gasTypeCode !== 'AIR' &&
-                ['CO2', 'NO', 'NO2', 'O2'].includes(el)
+                ['RATA', 'APPE', 'UNITDEF'].includes(testTypeCode) &&
+                ['NOX', 'NOXP'].includes(el)
               ) {
-                error = this.getMessage('PGVP-13-D');
-                errorList.push(error);
+                if (
+                  gasTypeCode !== 'AIR' &&
+                  ['CO2', 'NO', 'NO2', 'O2'].includes(el)
+                ) {
+                  error = this.getMessage('PGVP-13-D');
+                  errorList.push(error);
+                }
               }
             }
           }
-        }
-      });
-    }
+        });
+      }
 
-    if (pgInvalidComponentList.length > 0) {
-      error = this.getMessage('PGVP-12-B', {
-        invalidlist: pgInvalidComponentList,
-        fieldname: 'gasTypeCode',
-        key: KEY,
-      });
-      errorList.push(error);
-    }
+      if (pgInvalidComponentList.length > 0) {
+        error = this.getMessage('PGVP-12-B', {
+          invalidlist: pgInvalidComponentList,
+          fieldname: 'gasTypeCode',
+          key: KEY,
+        });
+        errorList.push(error);
+      }
 
-    if (pgDuplicateComponentList.length > 0) {
-      error = this.getMessage('PGVP-12-H');
-      errorList.push(error);
-    }
+      if (pgDuplicateComponentList.length > 0) {
+        error = this.getMessage('PGVP-12-H');
+        errorList.push(error);
+      }
 
-    if (pgExclusiveComponentList.length > 1) {
-      error = this.getMessage('PGVP-12-C', {
-        exclusivelist: pgExclusiveComponentList,
-        fieldname: 'gasTypeCode',
-        key: KEY,
-      });
-      errorList.push(error);
-    }
+      if (pgExclusiveComponentList.length > 1) {
+        error = this.getMessage('PGVP-12-C', {
+          exclusivelist: pgExclusiveComponentList,
+          fieldname: 'gasTypeCode',
+          key: KEY,
+        });
+        errorList.push(error);
+      }
 
-    if (containsZERO && !['RATA', 'APPE', 'UNITDEF'].includes(testTypeCode)) {
-      error = this.getMessage('PGVP-12-D');
-      errorList.push(error);
-    }
+      if (containsZERO && !['RATA', 'APPE', 'UNITDEF'].includes(testTypeCode)) {
+        error = this.getMessage('PGVP-12-D');
+        errorList.push(error);
+      }
 
-    if (pgApprovalRequested) {
-      error = this.getMessage('PGVP-12-E', {
-        fieldname: 'gasTypeCode',
-        key: KEY,
-      });
-      errorList.push(error);
-    }
+      if (pgApprovalRequested) {
+        error = this.getMessage('PGVP-12-E', {
+          fieldname: 'gasTypeCode',
+          key: KEY,
+        });
+        errorList.push(error);
+      }
 
-    if (
-      pgExclusiveComponentList.length === 0 &&
-      pgBalanceComponentList.length === 0
-    ) {
-      error = this.getMessage('PGVP-12-F');
-      errorList.push(error);
-    }
+      if (
+        pgExclusiveComponentList.length === 0 &&
+        pgBalanceComponentList.length === 0
+      ) {
+        error = this.getMessage('PGVP-12-F');
+        errorList.push(error);
+      }
 
-    if (
-      pgExclusiveComponentList.length === 0 &&
-      pgBalanceComponentList.length > 1
-    ) {
-      error = this.getMessage('PGVP-12-G', {
-        balancelist: pgBalanceComponentList,
-      });
-      errorList.push(error);
+      if (
+        pgExclusiveComponentList.length === 0 &&
+        pgBalanceComponentList.length > 1
+      ) {
+        error = this.getMessage('PGVP-12-G', {
+          balancelist: pgBalanceComponentList,
+        });
+        errorList.push(error);
+      }
     }
 
     return errorList;
