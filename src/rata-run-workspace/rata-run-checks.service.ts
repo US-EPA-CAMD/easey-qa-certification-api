@@ -13,6 +13,7 @@ import { RataRun } from '../entities/workspace/rata-run.entity';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 
+const moment = require('moment');
 const KEY = 'RATA Run';
 @Injectable()
 export class RataRunChecksService {
@@ -224,19 +225,16 @@ export class RataRunChecksService {
     testSumRecord: TestSummary,
   ): string {
     let error: string = null;
-    let beginDate = new Date(rataRun.beginDate);
-    let endDate = new Date(rataRun.endDate);
-    beginDate.setHours(rataRun.beginHour);
-    endDate.setHours(rataRun.endHour);
-    beginDate.setMinutes(rataRun.beginMinute);
-    endDate.setMinutes(rataRun.endMinute);
+    let beginDate = moment(rataRun.beginDate);
+    let endDate = moment(rataRun.endDate);
+    beginDate.hours(rataRun.beginHour);
+    endDate.hours(rataRun.endHour);
+    beginDate.minutes(rataRun.beginMinute);
+    endDate.minutes(rataRun.endMinute);
 
     if (rataRun.runStatusCode === 'RUNUSED') {
       if (testSumRecord.system?.systemTypeCode === 'FLOW') {
-        if (
-          Math.abs(endDate.getTime() - beginDate.getTime()) / (1000 * 60) <
-          5
-        ) {
+        if (endDate.diff(beginDate, 'minute') < 5) {
           error = CheckCatalogService.formatResultMessage('RATA-130-A', {
             key: KEY,
           });
@@ -245,10 +243,7 @@ export class RataRunChecksService {
         !testSumRecord.system?.systemTypeCode.startsWith('HG') &&
         testSumRecord.system?.systemTypeCode !== 'FLOW'
       ) {
-        if (
-          Math.abs(endDate.getTime() - beginDate.getTime()) / (1000 * 60) <
-          21
-        ) {
+        if (endDate.diff(beginDate, 'minute') < 21) {
           error = CheckCatalogService.formatResultMessage('RATA-130-B', {
             key: KEY,
           });
@@ -289,14 +284,17 @@ export class RataRunChecksService {
 
   private rata31Check(rataRun: RataRunBaseDTO) {
     let error: string = null;
-    const beginTime = `${rataRun.beginDate +
-      rataRun.beginHour.toString() +
-      rataRun.beginMinute.toString()}`;
-    const endTime = `${rataRun.endDate +
-      rataRun.endHour.toString() +
-      rataRun.endMinute.toString()}`;
 
-    if (beginTime > endTime) {
+    const beginDate = moment(rataRun.beginDate);
+    const endDate = moment(rataRun.endDate);
+
+    if (
+      beginDate.isAfter(endDate) ||
+      (beginDate.isSame(endDate) && rataRun.beginHour > rataRun.endHour) ||
+      (beginDate.isSame(endDate) &&
+        rataRun.beginHour === rataRun.endHour &&
+        rataRun.beginMinute >= rataRun.endMinute)
+    ) {
       error = CheckCatalogService.formatResultMessage('RATA-31-B', {
         key: KEY,
       });
