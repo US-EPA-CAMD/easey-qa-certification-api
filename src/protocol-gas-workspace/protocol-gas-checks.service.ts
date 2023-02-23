@@ -12,7 +12,8 @@ import {
 } from '../dto/protocol-gas.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { GasComponentCodeRepository } from '../gas-component-code/gas-component-code.repository';
 import { GasTypeCodeRepository } from '../gas-type-code/gas-type-code.repository';
 import { CrossCheckCatalogValueRepository } from '../cross-check-catalog-value/cross-check-catalog-value.repository';
@@ -25,8 +26,10 @@ export class ProtocolGasChecksService {
     private readonly logger: Logger,
     @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
-    @InjectRepository(MonitorSystemRepository)
-    private readonly monitorSystemRepository: MonitorSystemRepository,
+    @InjectRepository(MonitorSystemWorkspaceRepository)
+    private readonly monitorSystemWorkspaceRepository: MonitorSystemWorkspaceRepository,
+    @InjectRepository(ComponentWorkspaceRepository)
+    private readonly componentWorkspaceRepository: ComponentWorkspaceRepository,
     @InjectRepository(GasComponentCodeRepository)
     private readonly gasComponentCodeRepository: GasComponentCodeRepository,
     @InjectRepository(GasTypeCodeRepository)
@@ -59,12 +62,22 @@ export class ProtocolGasChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-      testSumRecord.system = await this.monitorSystemRepository.findOne({
-        where: {
-          monitoringSystemID: testSummary.monitoringSystemID,
-          locationId,
+      testSumRecord.system = await this.monitorSystemWorkspaceRepository.findOne(
+        {
+          where: {
+            monitoringSystemID: testSummary.monitoringSystemID,
+            locationId,
+          },
         },
-      });
+      );
+      testSumRecord.component = await this.componentWorkspaceRepository.findOne(
+        {
+          where: {
+            componentID: testSummary.componentID,
+            locationId,
+          },
+        },
+      );
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
@@ -130,12 +143,10 @@ export class ProtocolGasChecksService {
 
     const gasComponents = await this.gasComponentCodeRepository.find();
 
-    // const protocolGasParameters = await this.crossCheckCatalogValueRepository.getParameterAndTypes(
-    //   'C02',
-    //   'Protocol Gas Parameter Type',
-    // );
-
-    // console.log(protocolGasParameters);
+    const protocolGasParameters = await this.crossCheckCatalogValueRepository.getParameterAndTypes(
+      'Protocol Gas Parameter to Type',
+      'CO2',
+    );
 
     if (!this.protocolGasParameter) {
       if (gasTypeCode) {

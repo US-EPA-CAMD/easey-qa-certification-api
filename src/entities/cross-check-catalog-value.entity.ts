@@ -30,7 +30,7 @@ export class CrossCheckCatalogValue extends BaseEntity {
   @Column({
     name: 'value1',
   })
-  parameter: string;
+  value1: string;
 
   @Column({
     name: 'value2',
