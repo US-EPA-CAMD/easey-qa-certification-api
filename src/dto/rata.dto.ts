@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
@@ -15,7 +16,10 @@ export class RataBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `[RATA-102-A] You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('RATA-102-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   numberOfLoadLevels: number;
