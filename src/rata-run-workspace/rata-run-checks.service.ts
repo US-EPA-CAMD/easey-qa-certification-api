@@ -225,19 +225,16 @@ export class RataRunChecksService {
     testSumRecord: TestSummary,
   ): string {
     let error: string = null;
-    let beginDate = new Date(rataRun.beginDate);
-    let endDate = new Date(rataRun.endDate);
-    beginDate.setHours(rataRun.beginHour);
-    endDate.setHours(rataRun.endHour);
-    beginDate.setMinutes(rataRun.beginMinute);
-    endDate.setMinutes(rataRun.endMinute);
+    let beginDate = moment(rataRun.beginDate);
+    let endDate = moment(rataRun.endDate);
+    beginDate.hours(rataRun.beginHour);
+    endDate.hours(rataRun.endHour);
+    beginDate.minutes(rataRun.beginMinute);
+    endDate.minutes(rataRun.endMinute);
 
     if (rataRun.runStatusCode === 'RUNUSED') {
       if (testSumRecord.system?.systemTypeCode === 'FLOW') {
-        if (
-          Math.abs(endDate.getTime() - beginDate.getTime()) / (1000 * 60) <
-          5
-        ) {
+        if (endDate.diff(beginDate, 'minute') < 5) {
           error = CheckCatalogService.formatResultMessage('RATA-130-A', {
             key: KEY,
           });
@@ -246,10 +243,7 @@ export class RataRunChecksService {
         !testSumRecord.system?.systemTypeCode.startsWith('HG') &&
         testSumRecord.system?.systemTypeCode !== 'FLOW'
       ) {
-        if (
-          Math.abs(endDate.getTime() - beginDate.getTime()) / (1000 * 60) <
-          21
-        ) {
+        if (endDate.diff(beginDate, 'minute') < 21) {
           error = CheckCatalogService.formatResultMessage('RATA-130-B', {
             key: KEY,
           });
