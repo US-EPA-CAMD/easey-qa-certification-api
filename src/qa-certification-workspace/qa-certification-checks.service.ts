@@ -289,6 +289,8 @@ export class QACertificationChecksService {
                     null,
                     null,
                     true,
+                    cycleTimeSummary.cycleTimeInjectionData,
+                    summary,
                   );
 
                   resolve(results);
