@@ -163,40 +163,43 @@ export class ProtocolGasChecksService {
 
         const gasComponentCodes = gasComponents.map(gc => gc.gasComponentCode);
 
+        let gcCodeFromGasType: string;
+
         gasTypeCodes.forEach(el => {
-          const found = gasComponentCodes.includes(el.trim());
+          gcCodeFromGasType = el.trim();
+          const found = gasComponentCodes.includes(gcCodeFromGasType);
 
           if (!found) {
-            pgInvalidComponentList.push(el.trim());
+            pgInvalidComponentList.push(gcCodeFromGasType);
           }
 
           if (found) {
             const filteredGasComponent = gasComponents.find(
-              gc => el.trim() === gc.gasComponentCode,
+              gc => gcCodeFromGasType === gc.gasComponentCode,
             );
 
             if (filteredGasComponent.canCombineIndicator === 0) {
-              pgExclusiveComponentList.push(el.trim());
+              pgExclusiveComponentList.push(gcCodeFromGasType);
             }
 
             if (filteredGasComponent.balanceComponentIndicator === 1) {
-              pgBalanceComponentList.push(el.trim());
+              pgBalanceComponentList.push(gcCodeFromGasType);
               balanceComponentCount += 1;
             }
           }
 
-          if (el.trim() === 'APPVD') {
+          if (gcCodeFromGasType === 'APPVD') {
             pgApprovalRequested = true;
           }
 
-          if (el.trim() === 'ZERO') {
+          if (gcCodeFromGasType === 'ZERO') {
             containsZERO = true;
           }
 
-          if (!pgComponentList.includes(el.trim())) {
-            pgComponentList.push(el);
+          if (!pgComponentList.includes(gcCodeFromGasType)) {
+            pgComponentList.push(gcCodeFromGasType);
           } else {
-            pgDuplicateComponentList.push(el.trim());
+            pgDuplicateComponentList.push(gcCodeFromGasType);
           }
 
           pgComponentCount += 1;
@@ -204,7 +207,9 @@ export class ProtocolGasChecksService {
           // PGVP-13
           if (pgInvalidComponentList.length === 0 && !pgApprovalRequested) {
             if (
-              !['GMIS', 'NTRM', 'PRM', 'RGM', 'SRM', 'ZERO'].includes(el.trim())
+              !['GMIS', 'NTRM', 'PRM', 'RGM', 'SRM', 'ZERO'].includes(
+                gcCodeFromGasType,
+              )
             ) {
               if (['SO2', 'CO2'].includes(this.protocolGasParameter)) {
                 if (
@@ -230,7 +235,7 @@ export class ProtocolGasChecksService {
                   this.protocolGasParameter === 'NOX') ||
                 this.protocolGasParameter === 'NOXC'
               ) {
-                if (!['NO', 'NO2', 'NOX'].includes(el.trim())) {
+                if (!['NO', 'NO2', 'NOX'].includes(gcCodeFromGasType)) {
                   error = this.getMessage('PGVP-13-C');
                   errorList.push(error);
                 }
