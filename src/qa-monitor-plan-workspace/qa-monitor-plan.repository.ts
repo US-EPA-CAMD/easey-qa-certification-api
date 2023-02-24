@@ -26,9 +26,9 @@ export class QAMonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
 
     // Check for either unitId or stackPipeId
     if (unitId !== null && unitId !== undefined) {
-      query.andWhere('u.unitId = :unitId', { unitId });
+      query.andWhere('u.name = :unitId', { unitId });
     } else {
-      query.andWhere('sp.stackPipeId = :stackPipeId', { stackPipeId });
+      query.andWhere('sp.name = :stackPipeId', { stackPipeId });
     }
 
     return query.getOne();
