@@ -92,7 +92,9 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
         {
           provide: MonitorLocationRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(monLoc),
+            getLocationByIdUnitIdStackPipeId: jest
+              .fn()
+              .mockResolvedValue(monLoc),
           }),
         },
         {
@@ -213,7 +215,9 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
       loc.unit = unit;
       loc.stackPipe = pipe;
 
-      jest.spyOn(locationRepository, 'findOne').mockResolvedValue(loc);
+      jest
+        .spyOn(locationRepository, 'getLocationByIdUnitIdStackPipeId')
+        .mockResolvedValue(null);
 
       let errored = false;
 
@@ -235,7 +239,9 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
       loc.unit = null;
       loc.stackPipe = pipe;
 
-      jest.spyOn(locationRepository, 'findOne').mockResolvedValue(loc);
+      jest
+        .spyOn(locationRepository, 'getLocationByIdUnitIdStackPipeId')
+        .mockResolvedValue(null);
 
       let errored = false;
 

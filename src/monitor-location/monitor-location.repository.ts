@@ -3,7 +3,7 @@ import { MonitorLocation } from '../entities/monitor-location.entity';
 
 @EntityRepository(MonitorLocation)
 export class MonitorLocationRepository extends Repository<MonitorLocation> {
-  async getLocationsById(
+  async getLocationByIdUnitIdStackPipeId(
     locationId: string,
     unitId?: string,
     stackPipeId?: string,

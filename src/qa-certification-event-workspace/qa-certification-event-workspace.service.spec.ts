@@ -84,7 +84,9 @@ describe('QACertificationEventWorkspaceService', () => {
         {
           provide: MonitorLocationRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(monLoc),
+            getLocationByIdUnitIdStackPipeId: jest
+              .fn()
+              .mockResolvedValue(monLoc),
           }),
         },
         {
@@ -139,7 +141,9 @@ describe('QACertificationEventWorkspaceService', () => {
       loc.stackPipeId = '1';
       loc.stackPipe.name = '1';
 
-      jest.spyOn(locationRepository, 'findOne').mockResolvedValue(loc);
+      jest
+        .spyOn(locationRepository, 'getLocationByIdUnitIdStackPipeId')
+        .mockResolvedValue(loc);
 
       const result = await service.createQACertEvent(
         locationId,
@@ -161,7 +165,9 @@ describe('QACertificationEventWorkspaceService', () => {
       loc.unit = unit;
       loc.stackPipe = pipe;
 
-      jest.spyOn(locationRepository, 'findOne').mockResolvedValue(loc);
+      jest
+        .spyOn(locationRepository, 'getLocationByIdUnitIdStackPipeId')
+        .mockResolvedValue(null);
 
       let errored = false;
 
@@ -182,7 +188,9 @@ describe('QACertificationEventWorkspaceService', () => {
       const loc = new MonitorLocation();
       loc.stackPipe = pipe;
 
-      jest.spyOn(locationRepository, 'findOne').mockResolvedValue(loc);
+      jest
+        .spyOn(locationRepository, 'getLocationByIdUnitIdStackPipeId')
+        .mockResolvedValue(null);
 
       let errored = false;
 

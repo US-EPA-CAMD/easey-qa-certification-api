@@ -49,7 +49,7 @@ export class QACertificationEventWorkspaceService {
       monitoringSystemRecordId,
     } = await this.lookupValues(locationId, payload);
 
-    const location = await this.monitorLocationRepository.getLocationsById(
+    const location = await this.monitorLocationRepository.getLocationByIdUnitIdStackPipeId(
       locationId,
       payload.unitId,
       payload.stackPipeId,

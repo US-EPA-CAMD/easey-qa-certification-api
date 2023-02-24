@@ -230,7 +230,9 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: MonitorLocationRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(monLocation),
+            getLocationByIdUnitIdStackPipeId: jest
+              .fn()
+              .mockResolvedValue(monLocation),
           }),
         },
         {
@@ -356,10 +358,14 @@ describe('TestSummaryWorkspaceService', () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
 
       const loc = new MonitorLocation();
+      loc.stackPipe = new StackPipe();
       loc.stackPipe.name = '101';
+      loc.unit = new Unit();
       loc.unit.name = '101';
 
-      jest.spyOn(locationRepository, 'findOne').mockResolvedValue(loc);
+      jest
+        .spyOn(locationRepository, 'getLocationByIdUnitIdStackPipeId')
+        .mockResolvedValue(null);
 
       let errored = false;
 
