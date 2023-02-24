@@ -234,7 +234,7 @@ export class RataRunChecksService {
 
     if (rataRun.runStatusCode === 'RUNUSED') {
       if (testSumRecord.system?.systemTypeCode === 'FLOW') {
-        if (endDate.diff(beginDate, 'minute') < 5) {
+        if (endDate.diff(beginDate, 'minute') < 4) {
           error = CheckCatalogService.formatResultMessage('RATA-130-A', {
             key: KEY,
           });
@@ -243,7 +243,7 @@ export class RataRunChecksService {
         !testSumRecord.system?.systemTypeCode.startsWith('HG') &&
         testSumRecord.system?.systemTypeCode !== 'FLOW'
       ) {
-        if (endDate.diff(beginDate, 'minute') < 21) {
+        if (endDate.diff(beginDate, 'minute') < 20) {
           error = CheckCatalogService.formatResultMessage('RATA-130-B', {
             key: KEY,
           });
