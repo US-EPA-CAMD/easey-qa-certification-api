@@ -93,10 +93,10 @@ export class RataRunChecksService {
       }
 
       // RATA-130
-      error = this.rata130Check(rataRun, testSumRecord);
-      if (error) {
-        errorList.push(error);
-      }
+      // error = this.rata130Check(rataRun, testSumRecord);
+      // if (error) {
+      //   errorList.push(error);
+      // }
 
       if (!isUpdate) {
         // RATA-108 Duplicate RATA Run

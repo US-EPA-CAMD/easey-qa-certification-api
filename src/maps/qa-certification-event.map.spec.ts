@@ -25,10 +25,10 @@ component.componentID = someString;
 const entity = new QACertificationEvent();
 entity.id = someString;
 entity.location = location;
+location.unit.name = someString;
+location.stackPipe.name = someString;
 entity.component = component;
 entity.system = system;
-entity.location.unitId = someString;
-entity.location.stackPipeId = component.componentID;
 entity.qaCertEventCode = someString;
 entity.qaCertEventDate = date;
 entity.qaCertEventHour = someNumber;
@@ -51,13 +51,6 @@ describe('QACertificationEventMap', () => {
   it('maps an entity to a dto', async () => {
     const map = new QACertificationEventMap();
     const result = await map.one(entity);
-    result.unitId = someString;
-    result.stackPipeId = someString;
-    result.monitoringSystemID = someString;
-    result.componentID = someString;
-    result.evalStatusCode = someString;
-    result.pendingStatusCode = someString;
-
     expect(result.id).toEqual(someString);
     expect(result.locationId).toEqual(someString);
     expect(result.unitId).toEqual(someString);

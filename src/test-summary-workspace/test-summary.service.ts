@@ -24,8 +24,6 @@ import { TestSummaryMap } from '../maps/test-summary.map';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { LinearitySummaryWorkspaceService } from '../linearity-summary-workspace/linearity-summary.service';
 
-import { Unit } from './../entities/workspace/unit.entity';
-import { StackPipe } from './../entities/workspace/stack-pipe.entity';
 import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
 
 import { TestTypeCodes } from '../enums/test-type-code.enum';
@@ -33,8 +31,6 @@ import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
 import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
 import { CalibrationInjectionWorkspaceService } from '../calibration-injection-workspace/calibration-injection-workspace.service';
-import { UnitRepository } from '../unit/unit.repository';
-import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
@@ -68,10 +64,6 @@ export class TestSummaryWorkspaceService {
     private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
     @Inject(forwardRef(() => CalibrationInjectionWorkspaceService))
     private readonly calInjWorkspaceService: CalibrationInjectionWorkspaceService,
-    @InjectRepository(UnitRepository)
-    private readonly unitRepository: UnitRepository,
-    @InjectRepository(StackPipeRepository)
-    private readonly stackPipeRepository: StackPipeRepository,
     @InjectRepository(MonitorLocationRepository)
     private readonly monitorLocationRepository: MonitorLocationRepository,
     @InjectRepository(ComponentWorkspaceRepository)
@@ -729,20 +721,13 @@ export class TestSummaryWorkspaceService {
       monitoringSystemRecordId,
     ] = await this.lookupValues(locationId, payload);
 
-    const location = await this.monitorLocationRepository.findOne(locationId);
-
-    let unit: Unit;
-    let stackPipe: StackPipe;
-
-    if (location.unitId) {
-      unit = await this.unitRepository.findOne(location.unitId);
-    } else {
-      stackPipe = await this.stackPipeRepository.findOne(location.stackPipeId);
-    }
+    const location = await this.monitorLocationRepository.getLocationsById(
+      locationId,
+    );
 
     if (
-      (unit && payload.unitId !== unit.name) ||
-      (stackPipe && payload.stackPipeId !== stackPipe.name)
+      (location.unit && payload.unitId !== location.unit.name) ||
+      (location.stackPipe && payload.stackPipeId !== location.stackPipe.name)
     ) {
       throw new LoggingException(
         `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${

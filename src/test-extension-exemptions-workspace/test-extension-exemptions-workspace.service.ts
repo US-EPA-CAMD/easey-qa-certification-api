@@ -14,13 +14,9 @@ import { TestExtensionExemptionMap } from '../maps/test-extension-exemption.map'
 import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
 import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '../utilities/functions';
-import { UnitRepository } from '../unit/unit.repository';
-import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
-import { Unit } from './../entities/workspace/unit.entity';
-import { StackPipe } from './../entities/workspace/stack-pipe.entity';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
@@ -32,10 +28,6 @@ export class TestExtensionExemptionsWorkspaceService {
     private readonly map: TestExtensionExemptionMap,
     @InjectRepository(TestExtensionExemptionsWorkspaceRepository)
     private readonly repository: TestExtensionExemptionsWorkspaceRepository,
-    @InjectRepository(UnitRepository)
-    private readonly unitRepository: UnitRepository,
-    @InjectRepository(StackPipeRepository)
-    private readonly stackPipeRepository: StackPipeRepository,
     @InjectRepository(MonitorLocationRepository)
     private readonly monitorLocationRepository: MonitorLocationRepository,
     @InjectRepository(ComponentWorkspaceRepository)
@@ -158,20 +150,13 @@ export class TestExtensionExemptionsWorkspaceService {
       monitoringSystemRecordId,
     } = await this.lookupValues(locationId, payload);
 
-    const location = await this.monitorLocationRepository.findOne(locationId);
-
-    let unit: Unit;
-    let stackPipe: StackPipe;
-
-    if (location.unitId) {
-      unit = await this.unitRepository.findOne(location.unitId);
-    } else {
-      stackPipe = await this.stackPipeRepository.findOne(location.stackPipeId);
-    }
+    const location = await this.monitorLocationRepository.getLocationsById(
+      locationId,
+    );
 
     if (
-      (unit && payload.unitId !== unit.name) ||
-      (stackPipe && payload.stackPipeId !== stackPipe.name)
+      (location.unit && payload.unitId !== location.unit.name) ||
+      (location.stackPipe && payload.stackPipeId !== location.stackPipe.name)
     ) {
       throw new LoggingException(
         `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${

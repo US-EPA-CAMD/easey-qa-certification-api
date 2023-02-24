@@ -15,8 +15,7 @@ import { TypeOrmConfigService } from './config/typeorm.config';
 import { QACertificationModule } from './qa-certification/qa-certification.module';
 import { QACertificationWorkspaceModule } from './qa-certification-workspace/qa-certification.module';
 
-import { LocationModule } from './location/location.module';
-import { LocationWorkspaceModule } from './location-workspace/location.module';
+import { LocationWorkspaceModule } from './monitor-location-workspace/monitor-location.module';
 import { ComponentModule } from './component-workspace/component.module';
 import { AnalyzerRangeModule } from './analyzer-range-workspace/analyzer-range.module';
 import { RataModule } from './rata/rata.module';
@@ -55,8 +54,6 @@ import { CalibrationInjectionWorkspaceModule } from './calibration-injection-wor
 import { CalibrationInjectionModule } from './calibration-injection/calibration-injection.module';
 import { OnlineOfflineCalibrationModule } from './online-offline-calibration/online-offline-calibration.module';
 import { OnlineOfflineCalibrationWorkspaceModule } from './online-offline-calibration-workspace/online-offline-calibration.module';
-import { UnitModule } from './unit/unit.module';
-import { StackPipeModule } from './stack-pipe/stack-pipe.module';
 import { MonitorLocationModule } from './monitor-location/monitor-location.module';
 import { ReportingPeriodModule } from './reporting-period/reporting-period.module';
 import { FuelFlowmeterAccuracyWorkspaceModule } from './fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.module';
@@ -98,7 +95,6 @@ import { GasTypeCodeModule } from './gas-type-code/gas-type-code.module';
     CorsOptionsModule,
     QACertificationModule,
     QACertificationWorkspaceModule,
-    LocationModule,
     LocationWorkspaceModule,
     ComponentModule,
     AnalyzerRangeModule,
@@ -138,8 +134,6 @@ import { GasTypeCodeModule } from './gas-type-code/gas-type-code.module';
     CalibrationInjectionModule,
     OnlineOfflineCalibrationModule,
     OnlineOfflineCalibrationWorkspaceModule,
-    UnitModule,
-    StackPipeModule,
     MonitorLocationModule,
     ReportingPeriodModule,
     FuelFlowmeterAccuracyModule,

@@ -7,6 +7,8 @@ export class QAMonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
     return this.createQueryBuilder('mp')
       .innerJoin('mp.monitorPlanLocations', 'mpl')
       .leftJoinAndSelect('mpl.monitorLocations', 'ml')
+      .leftJoinAndSelect('ml.unit', 'u')
+      .leftJoinAndSelect('ml.stackPipe', 'sp')
       .leftJoinAndSelect('mp.beginRptPeriod', 'rp');
   }
 
@@ -24,9 +26,9 @@ export class QAMonitorPlanWorkspaceRepository extends Repository<MonitorPlan> {
 
     // Check for either unitId or stackPipeId
     if (unitId !== null && unitId !== undefined) {
-      query.andWhere('ml.unitId = :unitId', { unitId });
+      query.andWhere('u.unitId = :unitId', { unitId });
     } else {
-      query.andWhere('ml.stackPipeId = :stackPipeId', { stackPipeId });
+      query.andWhere('sp.stackPipeId = :stackPipeId', { stackPipeId });
     }
 
     return query.getOne();
