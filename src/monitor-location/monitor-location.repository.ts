@@ -3,7 +3,11 @@ import { MonitorLocation } from '../entities/monitor-location.entity';
 
 @EntityRepository(MonitorLocation)
 export class MonitorLocationRepository extends Repository<MonitorLocation> {
-  async getLocationsById(locationId: string): Promise<MonitorLocation> {
+  async getLocationsById(
+    locationId: string,
+    unitId?: string,
+    stackPipeId?: string,
+  ): Promise<MonitorLocation> {
     const query = this.createQueryBuilder('ml')
       .leftJoinAndSelect('ml.unit', 'u')
       .leftJoinAndSelect('ml.stackPipe', 'sp')
@@ -11,6 +15,13 @@ export class MonitorLocationRepository extends Repository<MonitorLocation> {
         locationId,
       });
 
+    if (unitId) {
+      query.andWhere(`u.name = :unitId`, { unitId });
+    }
+
+    if (stackPipeId) {
+      query.andWhere(`sp.name = :stackPipeId`, { stackPipeId });
+    }
     return query.getOne();
   }
 }

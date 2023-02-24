@@ -723,12 +723,11 @@ export class TestSummaryWorkspaceService {
 
     const location = await this.monitorLocationRepository.getLocationsById(
       locationId,
+      payload.unitId,
+      payload.stackPipeId,
     );
 
-    if (
-      (location.unit && payload.unitId !== location.unit.name) ||
-      (location.stackPipe && payload.stackPipeId !== location.stackPipe.name)
-    ) {
+    if (!location) {
       throw new LoggingException(
         `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${
           payload.unitId ? payload.unitId : payload.stackPipeId

@@ -24,8 +24,6 @@ import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-wo
 import { CalibrationInjectionWorkspaceService } from '../calibration-injection-workspace/calibration-injection-workspace.service';
 import { CalibrationInjection } from '../entities/workspace/calibration-injection.entity';
 import { FuelFlowToLoadTest } from '../entities/workspace/fuel-flow-to-load-test.entity';
-import { UnitRepository } from '../unit/unit.repository';
-import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { ReportingPeriod } from '../entities/reporting-period.entity';
@@ -161,10 +159,13 @@ const mockHgSummaryWorkspaceService = () => ({
   import: jest.fn().mockResolvedValue(null),
 });
 
+const monLocation = new MonitorLocation();
 const unit = new Unit();
 unit.name = '1';
+monLocation.unit = unit;
 const stackPipe = new StackPipe();
 stackPipe.name = '1';
+monLocation.stackPipe = stackPipe;
 const rp = new ReportingPeriod();
 rp.id = 1;
 const ms = new MonitorSystem();
@@ -175,8 +176,6 @@ comp.id = '1';
 describe('TestSummaryWorkspaceService', () => {
   let service: TestSummaryWorkspaceService;
   let repository: TestSummaryWorkspaceRepository;
-  let unitRepository: UnitRepository;
-  let stackPipeRepository: StackPipeRepository;
   let locationRepository: MonitorLocationRepository;
 
   beforeEach(async () => {
@@ -231,19 +230,7 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: MonitorLocationRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(new MonitorLocation()),
-          }),
-        },
-        {
-          provide: UnitRepository,
-          useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(unit),
-          }),
-        },
-        {
-          provide: StackPipeRepository,
-          useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(stackPipe),
+            findOne: jest.fn().mockResolvedValue(monLocation),
           }),
         },
         {
@@ -293,8 +280,6 @@ describe('TestSummaryWorkspaceService', () => {
 
     service = module.get(TestSummaryWorkspaceService);
     repository = module.get(TestSummaryWorkspaceRepository);
-    unitRepository = module.get(UnitRepository);
-    stackPipeRepository = module.get(StackPipeRepository);
     locationRepository = module.get(MonitorLocationRepository);
   });
 
@@ -370,15 +355,10 @@ describe('TestSummaryWorkspaceService', () => {
     it('should call the createTestSummary and throw error if Unit does not match', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
 
-      const pipe = new StackPipe();
-      pipe.name = '101';
-      const unit = new Unit();
-      unit.name = '101';
       const loc = new MonitorLocation();
-      loc.unitId = '11';
+      loc.stackPipe.name = '101';
+      loc.unit.name = '101';
 
-      jest.spyOn(unitRepository, 'findOne').mockResolvedValue(unit);
-      jest.spyOn(stackPipeRepository, 'findOne').mockResolvedValue(stackPipe);
       jest.spyOn(locationRepository, 'findOne').mockResolvedValue(loc);
 
       let errored = false;

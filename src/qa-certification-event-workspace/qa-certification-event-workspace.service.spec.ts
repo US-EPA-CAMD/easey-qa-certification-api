@@ -3,7 +3,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
 import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
-import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import {
@@ -13,7 +12,6 @@ import {
 import { QACertificationEventMap } from '../maps/qa-certification-event.map';
 import { QACertificationEvent } from '../entities/workspace/qa-certification-event.entity';
 import { Unit } from '../entities/workspace/unit.entity';
-import { UnitRepository } from '../unit/unit.repository';
 import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { Component } from '../entities/workspace/component.entity';
@@ -32,10 +30,13 @@ const userId = '';
 const entity = new QACertificationEvent();
 const qaCertEventDTO = new QACertificationEventDTO();
 
+const monLoc = new MonitorLocation();
 const unit = new Unit();
 unit.name = '1';
 const stackPipe = new StackPipe();
 stackPipe.name = '1';
+monLoc.unit = unit;
+monLoc.stackPipe = stackPipe;
 const monitoringSystem = new MonitorSystem();
 monitoringSystem.id = '1';
 const component = new Component();
@@ -63,8 +64,6 @@ const mockMap = () => ({
 describe('QACertificationEventWorkspaceService', () => {
   let service: QACertificationEventWorkspaceService;
   let repository: QACertificationEventWorkspaceRepository;
-  let unitRepository: UnitRepository;
-  let stackPipeRepository: StackPipeRepository;
   let locationRepository: MonitorLocationRepository;
   let componentRepository: ComponentWorkspaceRepository;
   let monSysRepository: MonitorSystemWorkspaceRepository;
@@ -85,19 +84,7 @@ describe('QACertificationEventWorkspaceService', () => {
         {
           provide: MonitorLocationRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(new MonitorLocation()),
-          }),
-        },
-        {
-          provide: UnitRepository,
-          useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(unit),
-          }),
-        },
-        {
-          provide: StackPipeRepository,
-          useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(stackPipe),
+            findOne: jest.fn().mockResolvedValue(monLoc),
           }),
         },
         {
@@ -121,8 +108,6 @@ describe('QACertificationEventWorkspaceService', () => {
     repository = module.get<QACertificationEventWorkspaceRepository>(
       QACertificationEventWorkspaceRepository,
     );
-    unitRepository = module.get<UnitRepository>(UnitRepository);
-    stackPipeRepository = module.get<StackPipeRepository>(StackPipeRepository);
     locationRepository = module.get<MonitorLocationRepository>(
       MonitorLocationRepository,
     );
@@ -155,9 +140,6 @@ describe('QACertificationEventWorkspaceService', () => {
       loc.stackPipe.name = '1';
 
       jest.spyOn(locationRepository, 'findOne').mockResolvedValue(loc);
-      jest
-        .spyOn(stackPipeRepository, 'findOne')
-        .mockResolvedValue(loc.stackPipe);
 
       const result = await service.createQACertEvent(
         locationId,
@@ -176,10 +158,9 @@ describe('QACertificationEventWorkspaceService', () => {
       const unit = new Unit();
       unit.name = '101';
       const loc = new MonitorLocation();
-      loc.unitId = '11';
+      loc.unit = unit;
+      loc.stackPipe = pipe;
 
-      jest.spyOn(unitRepository, 'findOne').mockResolvedValue(unit);
-      jest.spyOn(stackPipeRepository, 'findOne').mockResolvedValue(stackPipe);
       jest.spyOn(locationRepository, 'findOne').mockResolvedValue(loc);
 
       let errored = false;
@@ -199,10 +180,8 @@ describe('QACertificationEventWorkspaceService', () => {
       const pipe = new StackPipe();
       pipe.name = '101';
       const loc = new MonitorLocation();
-      loc.stackPipeId = '11';
+      loc.stackPipe = pipe;
 
-      jest.spyOn(unitRepository, 'findOne').mockResolvedValue(null);
-      jest.spyOn(stackPipeRepository, 'findOne').mockResolvedValue(pipe);
       jest.spyOn(locationRepository, 'findOne').mockResolvedValue(loc);
 
       let errored = false;
