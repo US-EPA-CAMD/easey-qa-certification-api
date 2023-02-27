@@ -83,6 +83,7 @@ import { QaCertificationEventModule } from './qa-certification-event/qa-certific
 import { GasComponentCodeModule } from './gas-component-code/gas-component-code.module';
 import { ReferenceMethodCodeModule } from './reference-method-code/reference-method-code.module';
 import { GasTypeCodeModule } from './gas-type-code/gas-type-code.module';
+import { CrossCheckCatalogValueModule } from './cross-check-catalog-value/cross-check-catalog-value.module';
 @Module({
   imports: [
     RouterModule.forRoutes(routes),
@@ -166,6 +167,7 @@ import { GasTypeCodeModule } from './gas-type-code/gas-type-code.module';
     GasComponentCodeModule,
     ReferenceMethodCodeModule,
     GasTypeCodeModule,
+    CrossCheckCatalogValueModule,
   ],
 })
 export class AppModule {}

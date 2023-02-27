@@ -14,7 +14,7 @@ export class ProtocolGasBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('PGVP-9-A', {
+      return CheckCatalogService.formatResultMessage('PGVP-12-A', {
         fieldname: args.property,
         key: KEY,
       });
