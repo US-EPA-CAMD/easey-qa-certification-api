@@ -15,7 +15,6 @@ import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-s
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { GasComponentCodeRepository } from '../gas-component-code/gas-component-code.repository';
-import { GasTypeCodeRepository } from '../gas-type-code/gas-type-code.repository';
 import { CrossCheckCatalogValueRepository } from '../cross-check-catalog-value/cross-check-catalog-value.repository';
 
 const KEY = 'Protocol Gas';
@@ -33,8 +32,6 @@ export class ProtocolGasChecksService {
     private readonly componentWorkspaceRepository: ComponentWorkspaceRepository,
     @InjectRepository(GasComponentCodeRepository)
     private readonly gasComponentCodeRepository: GasComponentCodeRepository,
-    @InjectRepository(GasTypeCodeRepository)
-    private readonly gasTypeCodeRepository: GasTypeCodeRepository,
     @InjectRepository(CrossCheckCatalogValueRepository)
     private readonly crossCheckCatalogValueRepository: CrossCheckCatalogValueRepository,
   ) {}

@@ -4,12 +4,14 @@ import { ProtocolGasChecksService } from './protocol-gas-checks.service';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
 import { GasComponentCodeRepository } from '../gas-component-code/gas-component-code.repository';
 import { GasComponentCode } from '../entities/gas-component-code.entity';
-import { GasTypeCode } from '../entities/workspace/gas-type-code.entity';
-import { GasTypeCodeRepository } from '../gas-type-code/gas-type-code.repository';
+import { CrossCheckCatalogValueRepository } from '../cross-check-catalog-value/cross-check-catalog-value.repository';
+import { CrossCheckCatalogValue } from '../entities/cross-check-catalog-value.entity';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { Component } from '../entities/workspace/component.entity';
 
 const locationId = '';
 const testSumId = '';
@@ -18,6 +20,10 @@ const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 let testSumRecord = new TestSummary();
 let monSysRec = new MonitorSystem();
+let component = new Component();
+let crossCheckCatalogValue = new CrossCheckCatalogValue();
+let pgParameterGasTypeCodes: CrossCheckCatalogValue = crossCheckCatalogValue;
+let protocolGasParameter: string = null;
 
 const mockTestSumRepository = () => ({
   getTestSummaryById: jest.fn().mockResolvedValue(new TestSummary()),
@@ -31,15 +37,22 @@ const mockGasComponentCodeRepository = () => ({
   find: jest.fn().mockResolvedValue([new GasComponentCode()]),
 });
 
-const mockGasTypeCodeRepository = () => ({
-  find: jest.fn().mockResolvedValue([new GasTypeCode()]),
+const mockComponentWorkspaceRepository = () => ({
+  find: jest.fn().mockResolvedValue([component]),
+  findOne: jest.fn().mockResolvedValue(component),
+});
+
+const mockCrossCheckCatalogValueRepository = () => ({
+  getParameterAndTypes: jest.fn().mockResolvedValue([crossCheckCatalogValue]),
 });
 
 describe('Protocol Gas Checks Service', () => {
   let service: ProtocolGasChecksService;
   let testSummaryRepository: TestSummaryWorkspaceRepository;
+  let monitorSystemWorkspaceRepository: MonitorSystemWorkspaceRepository;
+  let componentWorkspaceRepository: ComponentWorkspaceRepository;
   let gasComponentCodeRepository: GasComponentCodeRepository;
-  let gasTypeCodeRepository: GasTypeCodeRepository;
+  let crossCheckCatalogValueRepository: CrossCheckCatalogValueRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -51,16 +64,20 @@ describe('Protocol Gas Checks Service', () => {
           useFactory: mockTestSumRepository,
         },
         {
-          provide: MonitorSystemRepository,
+          provide: MonitorSystemWorkspaceRepository,
           useFactory: mockMonitorSystemRepository,
+        },
+        {
+          provide: ComponentWorkspaceRepository,
+          useFactory: mockComponentWorkspaceRepository,
         },
         {
           provide: GasComponentCodeRepository,
           useFactory: mockGasComponentCodeRepository,
         },
         {
-          provide: GasTypeCodeRepository,
-          useFactory: mockGasTypeCodeRepository,
+          provide: CrossCheckCatalogValueRepository,
+          useFactory: mockCrossCheckCatalogValueRepository,
         },
       ],
     }).compile();
@@ -69,12 +86,18 @@ describe('Protocol Gas Checks Service', () => {
     testSummaryRepository = module.get<TestSummaryWorkspaceRepository>(
       TestSummaryWorkspaceRepository,
     );
+    monitorSystemWorkspaceRepository = module.get<
+      MonitorSystemWorkspaceRepository
+    >(MonitorSystemWorkspaceRepository);
+    componentWorkspaceRepository = module.get<ComponentWorkspaceRepository>(
+      ComponentWorkspaceRepository,
+    );
     gasComponentCodeRepository = module.get<GasComponentCodeRepository>(
       GasComponentCodeRepository,
     );
-    gasTypeCodeRepository = module.get<GasTypeCodeRepository>(
-      GasTypeCodeRepository,
-    );
+    crossCheckCatalogValueRepository = module.get<
+      CrossCheckCatalogValueRepository
+    >(CrossCheckCatalogValueRepository);
 
     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
   });
@@ -83,16 +106,24 @@ describe('Protocol Gas Checks Service', () => {
     it('Should get [PGVP-8-A] error', async () => {
       testSumRecord.testTypeCode = 'RATA';
       monSysRec.systemTypeCode = 'FLOW';
+      component.componentTypeCode = 'NOX';
       testSumRecord.system = monSysRec;
+      testSumRecord.component = component;
       protolGas.gasTypeCode = 'GMIS';
+      pgParameterGasTypeCodes.value2 = '';
 
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRecord);
+      jest
+        .spyOn(crossCheckCatalogValueRepository, 'getParameterAndTypes')
+        .mockResolvedValue(crossCheckCatalogValue);
 
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
+        console.log(err);
+
         expect(err.response.message).toEqual([
           MOCK_ERROR_MSG,
           MOCK_ERROR_MSG,
@@ -115,6 +146,9 @@ describe('Protocol Gas Checks Service', () => {
       jest
         .spyOn(gasComponentCodeRepository, 'find')
         .mockResolvedValue([new GasComponentCode()]);
+      jest
+        .spyOn(crossCheckCatalogValueRepository, 'getParameterAndTypes')
+        .mockResolvedValue(crossCheckCatalogValue);
 
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
@@ -135,6 +169,9 @@ describe('Protocol Gas Checks Service', () => {
       jest
         .spyOn(gasComponentCodeRepository, 'find')
         .mockResolvedValue([new GasComponentCode()]);
+      jest
+        .spyOn(crossCheckCatalogValueRepository, 'getParameterAndTypes')
+        .mockResolvedValue(crossCheckCatalogValue);
 
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
@@ -163,6 +200,9 @@ describe('Protocol Gas Checks Service', () => {
       jest
         .spyOn(gasComponentCodeRepository, 'find')
         .mockResolvedValue([gasCompCode]);
+      jest
+        .spyOn(crossCheckCatalogValueRepository, 'getParameterAndTypes')
+        .mockResolvedValue(crossCheckCatalogValue);
 
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
@@ -187,6 +227,9 @@ describe('Protocol Gas Checks Service', () => {
       jest
         .spyOn(gasComponentCodeRepository, 'find')
         .mockResolvedValue([gasCompCode]);
+      jest
+        .spyOn(crossCheckCatalogValueRepository, 'getParameterAndTypes')
+        .mockResolvedValue(crossCheckCatalogValue);
 
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
@@ -206,6 +249,9 @@ describe('Protocol Gas Checks Service', () => {
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRecord);
+      jest
+        .spyOn(crossCheckCatalogValueRepository, 'getParameterAndTypes')
+        .mockResolvedValue(crossCheckCatalogValue);
 
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
@@ -230,6 +276,9 @@ describe('Protocol Gas Checks Service', () => {
       jest
         .spyOn(gasComponentCodeRepository, 'find')
         .mockResolvedValue([gasCompCode]);
+      jest
+        .spyOn(crossCheckCatalogValueRepository, 'getParameterAndTypes')
+        .mockResolvedValue(crossCheckCatalogValue);
 
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
@@ -254,6 +303,9 @@ describe('Protocol Gas Checks Service', () => {
       jest
         .spyOn(gasComponentCodeRepository, 'find')
         .mockResolvedValue([gasCompCode]);
+      jest
+        .spyOn(crossCheckCatalogValueRepository, 'getParameterAndTypes')
+        .mockResolvedValue(crossCheckCatalogValue);
 
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
@@ -278,6 +330,9 @@ describe('Protocol Gas Checks Service', () => {
       jest
         .spyOn(gasComponentCodeRepository, 'find')
         .mockResolvedValue([gasCompCode]);
+      jest
+        .spyOn(crossCheckCatalogValueRepository, 'getParameterAndTypes')
+        .mockResolvedValue(crossCheckCatalogValue);
 
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
