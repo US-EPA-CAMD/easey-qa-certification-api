@@ -1,6 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { SelectQueryBuilder } from 'typeorm';
-import { LocationWorkspaceRepository } from './location.repository';
+import { LocationWorkspaceRepository } from './monitor-location.repository';
 
 const mockQueryBuilder = () => ({
   innerJoinAndSelect: jest.fn(),

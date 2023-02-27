@@ -82,7 +82,7 @@ export class LinearityInjectionChecksService {
   private async duplicateTestCheck(
     linSumId: string,
     linearityInjection: LinearityInjectionBaseDTO | LinearityInjectionImportDTO,
-    _isImport: boolean = false,
+    isImport: boolean = false,
     linearityInjections: LinearityInjectionImportDTO[] = [],
   ): Promise<string> {
     let error: string = null;
@@ -90,14 +90,14 @@ export class LinearityInjectionChecksService {
 
     const duplicates = linearityInjections.filter(i => {
       return (
-        i.injectionDate === linearityInjection.injectionDate,
-        i.injectionHour === linearityInjection.injectionHour,
+        i.injectionDate === linearityInjection.injectionDate &&
+        i.injectionHour === linearityInjection.injectionHour &&
         i.injectionMinute === linearityInjection.injectionMinute
       );
     });
 
     // IMPORT-20 Duplicate Test Check
-    if (_isImport && duplicates.length > 1) {
+    if (isImport && duplicates.length > 1) {
       error = this.getMessage('LINEAR-33-A', {
         recordtype: RECORDTYPE,
         fieldnames: [

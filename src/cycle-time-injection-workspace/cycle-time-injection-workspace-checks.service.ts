@@ -54,7 +54,8 @@ export class CycleTimeInjectionChecksService {
         testSumId,
       );
     }
-    if (testSumRecord.testTypeCode === TestTypeCodes.CYCLE) {
+
+    if (testSumRecord?.testTypeCode === TestTypeCodes.CYCLE) {
       error = await this.cycle21Check(cycleTimeInjection);
       if (error) {
         errorList.push(error);

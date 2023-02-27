@@ -447,7 +447,7 @@ export class TestSummaryBaseDTO {
   @IsInDateRange(MIN_DATE, new Date(Date.now()).toISOString(), {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-1-B`, {
-        value: args.value,
+        date: args.value,
         fieldname: args.property,
         key: KEY,
       });
@@ -534,7 +534,7 @@ export class TestSummaryBaseDTO {
   @IsInDateRange(MIN_DATE, new Date(Date.now()).toISOString(), {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-4-B`, {
-        value: args.value,
+        date: args.value,
         fieldname: args.property,
         key: KEY,
       });
