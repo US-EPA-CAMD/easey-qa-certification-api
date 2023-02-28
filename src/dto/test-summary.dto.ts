@@ -101,6 +101,7 @@ import {
   GRACE_PERIOD_IND_TEST_TYPE_CODES,
   VALID_CODES_FOR_END_DATE_VALIDATION,
   BEGIN_MINUTE_TEST_TYPE_CODES,
+  MISC_TEST_TYPE_CODES,
 } from '../utilities/constants';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
@@ -303,27 +304,33 @@ export class TestSummaryBaseDTO {
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       let resultCode;
-      switch (args.object['testTypeCode']) {
-        case TestTypeCodes.SEVENDAY:
+      switch (true) {
+        case TestTypeCodes.SEVENDAY === args.object['testTypeCode']:
           resultCode = 'SEVNDAY-3-A';
           break;
-        case TestTypeCodes.CYCLE:
+        case TestTypeCodes.CYCLE === args.object['testTypeCode']:
           resultCode = 'CYCLE-4-A';
           break;
-        case TestTypeCodes.LINE:
+        case TestTypeCodes.LINE === args.object['testTypeCode']:
           resultCode = 'LINEAR-9-A';
           break;
-        case TestTypeCodes.ONOFF:
+        case TestTypeCodes.ONOFF === args.object['testTypeCode']:
           resultCode = 'ONOFF-3-A';
           break;
-        case TestTypeCodes.RATA:
+        case TestTypeCodes.RATA === args.object['testTypeCode']:
           resultCode = 'RATA-4-A';
           break;
+        case MISC_TEST_TYPE_CODES.includes(args.object['testTypeCode']):
+          resultCode = 'TEST-17-A';
+          break;
         default:
-          return CheckCatalogService.formatResultMessage('TEST-17-A', {
-            fieldname: args.property,
-            key: KEY,
-          });
+          return CheckCatalogService.formatMessage(
+            'You did not provide [fieldname], which is required for [key].',
+            {
+              fieldname: args.property,
+              key: KEY,
+            },
+          );
       }
       return CheckCatalogService.formatResultMessage(resultCode, {
         fieldname: args.property,
