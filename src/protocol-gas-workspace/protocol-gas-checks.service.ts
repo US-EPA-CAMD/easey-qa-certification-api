@@ -105,7 +105,8 @@ export class ProtocolGasChecksService {
   private pgvp8Check(testSumRecord: TestSummary): string {
     let error: string = null;
 
-    this.protocolGasParameter = testSumRecord.component.componentTypeCode;
+    this.protocolGasParameter =
+      testSumRecord.component?.componentTypeCode || null;
 
     if (testSumRecord.testTypeCode === 'RATA') {
       if (testSumRecord.system?.systemTypeCode === 'FLOW') {
@@ -113,7 +114,8 @@ export class ProtocolGasChecksService {
           key: KEY,
         });
       } else {
-        this.protocolGasParameter = testSumRecord.system.systemTypeCode;
+        this.protocolGasParameter =
+          testSumRecord.system?.systemTypeCode || null;
       }
     }
 
