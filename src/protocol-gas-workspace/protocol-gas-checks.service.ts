@@ -114,7 +114,8 @@ export class ProtocolGasChecksService {
           key: KEY,
         });
       } else {
-        this.protocolGasParameter = testSumRecord.system?.systemTypeCode;
+        this.protocolGasParameter =
+          testSumRecord.system?.systemTypeCode || null;
       }
     }
 
