@@ -89,6 +89,11 @@ export class RataSummaryChecksService {
         errorList.push(error);
       }
 
+      error = this.rata55Check(rataSummary);
+      if (error) {
+        errorList.push(error);
+      }
+
       error = await this.rata16Check(
         testSumRecord,
         locationId,
@@ -115,6 +120,34 @@ export class RataSummaryChecksService {
     this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed RATA Summary Checks');
     return errorList;
+  }
+
+  private rata55Check(rataSummary: RataSummaryBaseDTO | RataSummaryImportDTO) {
+    let error: string = null;
+
+    if (rataSummary.referenceMethodCode.startsWith('2F' || '2G' || 'M2H')) {
+      if (!rataSummary.co2OrO2ReferenceMethodCode) {
+        error = this.getMessage('RATA-55-A', {
+          fieldname: 'co2OrO2ReferenceMethodCode',
+          key: KEY,
+        });
+      } else if (
+        !['3', '3A'].includes(rataSummary.co2OrO2ReferenceMethodCode)
+      ) {
+        error = this.getMessage('RATA-55-B', {
+          value: rataSummary.co2OrO2ReferenceMethodCode,
+          fieldname: 'co2OrO2ReferenceMethodCode',
+          key: KEY,
+        });
+      }
+    } else if (rataSummary.co2OrO2ReferenceMethodCode !== null) {
+      error = this.getMessage('RATA-55-C', {
+        fieldname: 'co2OrO2ReferenceMethodCode',
+        key: KEY,
+      });
+    }
+
+    return error;
   }
 
   private async rata16Check(
@@ -299,7 +332,7 @@ export class RataSummaryChecksService {
     return error;
   }
 
-  getMessage(messageKey: string, messageArgs: object): string {
+  getMessage(messageKey: string, messageArgs?: object): string {
     return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
   }
 }
