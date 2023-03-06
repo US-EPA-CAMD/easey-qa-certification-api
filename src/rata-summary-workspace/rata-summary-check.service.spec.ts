@@ -102,7 +102,8 @@ describe('Rata Summary Check Service Test', () => {
 
   describe('IMPORT-30 (Result A)', () => {
     const payload = new RataSummaryImportDTO();
-    (payload.co2OrO2ReferenceMethodCode = ''),
+    (payload.referenceMethodCode = '2F'),
+      (payload.co2OrO2ReferenceMethodCode = '3'),
       payload.stackDiameter == 2,
       payload.stackArea == 2,
       payload.numberOfTraversePoints == 1,
@@ -126,6 +127,7 @@ describe('Rata Summary Check Service Test', () => {
       const testSumImportDTO = new TestSummaryImportDTO();
       testSumImportDTO.monitoringSystemID = '001';
 
+      let errored = false;
       try {
         const results = await service.runChecks(
           locationId,
@@ -140,8 +142,10 @@ describe('Rata Summary Check Service Test', () => {
 
         console.log(results);
       } catch (error) {
+        errored = true;
         expect(error.response.message).toEqual([MOCK_ERROR_MSG]);
       }
+      expect(errored).toEqual(true);
     });
   });
 });
