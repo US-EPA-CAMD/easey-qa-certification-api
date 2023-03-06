@@ -241,11 +241,14 @@ export class RataSummaryBaseDTO {
   })
   @IsValidCode(ReferenceMethodCode, {
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-55-B', {
-        value: args.value,
-        fieldname: args.property,
-        key: KEY,
-      });
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value], which is not in the list of valid values, in the field [fieldname] for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
   })
   @ValidateIf(o => o.co2OrO2ReferenceMethodCode !== null)
