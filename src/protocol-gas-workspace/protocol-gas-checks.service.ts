@@ -155,7 +155,13 @@ export class ProtocolGasChecksService {
         containsZERO = false;
         balanceComponentCount = 0;
 
-        const gasTypeCodes = gasTypeCode.split(',');
+        let gasTypeCodes;
+        console.log('gasTypeCode', gasTypeCode);
+        if (gasTypeCode.includes(',')) {
+          gasTypeCodes = gasTypeCode.split(',');
+        } else {
+          gasTypeCodes = [gasTypeCode];
+        }
 
         const gasComponents = await this.gasComponentCodeRepository.find();
 
@@ -257,9 +263,14 @@ export class ProtocolGasChecksService {
 
           let pgParameterGasTypeCodes: string[];
 
+          console.log(
+            'protocolGasParameters',
+            protocolGasParameters.value2.split(','),
+          );
           if (protocolGasParameters) {
             pgParameterGasTypeCodes = protocolGasParameters.value2.split(',');
           }
+          console.log('pgParameterGasTypeCodes', pgParameterGasTypeCodes);
 
           if (pgComponentListValid && !pgApprovalRequested) {
             if (

@@ -26,7 +26,7 @@ let pgParameterGasTypeCodes: CrossCheckCatalogValue = crossCheckCatalogValue;
 let protocolGasParameter: string = null;
 
 const mockTestSumRepository = () => ({
-  getTestSummaryById: jest.fn().mockResolvedValue(new TestSummary()),
+  getTestSummaryById: jest.fn().mockResolvedValue(testSumRecord),
 });
 
 const mockMonitorSystemRepository = () => ({
@@ -106,15 +106,54 @@ describe('Protocol Gas Checks Service', () => {
     it('Should get [PGVP-8-A] error', async () => {
       testSumRecord.testTypeCode = 'RATA';
       monSysRec.systemTypeCode = 'FLOW';
-      component.componentTypeCode = 'NOX';
       testSumRecord.system = monSysRec;
-      testSumRecord.component = component;
-      protolGas.gasTypeCode = 'GMIS';
-      pgParameterGasTypeCodes.value2 = '';
 
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRecord);
+      let errored = false;
+      try {
+        await service.runChecks(protolGas, locationId, testSumId, false, false);
+      } catch (err) {
+        errored = true;
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+      expect(errored).toEqual(true);
+    });
+  });
+
+  describe('PGVP-12 Gas Type Code Component List Valid', () => {
+    it('Should get [PGVP-12-A] error', async () => {
+      component.componentTypeCode = 'GAS';
+      testSumRecord.component = component;
+      protolGas.gasTypeCode = null;
+      testSumRecord.testTypeCode = 'LINE';
+      crossCheckCatalogValue.value2 = 'GAS,SO2';
+
+      jest
+        .spyOn(testSummaryRepository, 'getTestSummaryById')
+        .mockResolvedValue(testSumRecord);
+
+      try {
+        await service.runChecks(protolGas, locationId, testSumId, false, false);
+      } catch (err) {
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+      }
+    });
+
+    it('Should get [PGVP-12-B] error', async () => {
+      monSysRec.systemTypeCode = 'GAS';
+      testSumRecord.system = monSysRec;
+      protolGas.gasTypeCode = 'ZAM';
+      testSumRecord.testTypeCode = 'GAS';
+      crossCheckCatalogValue.value2 = 'GAS,SO2';
+
+      jest
+        .spyOn(testSummaryRepository, 'getTestSummaryById')
+        .mockResolvedValue(testSumRecord);
+      jest
+        .spyOn(gasComponentCodeRepository, 'find')
+        .mockResolvedValue([new GasComponentCode()]);
       jest
         .spyOn(crossCheckCatalogValueRepository, 'getParameterAndTypes')
         .mockResolvedValue(crossCheckCatalogValue);
@@ -122,23 +161,16 @@ describe('Protocol Gas Checks Service', () => {
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
-        console.log(err);
-
-        expect(err.response.message).toEqual([
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-        ]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
-  });
 
-  describe('PGVP-12 Gas Type Code Component List Valid', () => {
-    it('Should get [PGVP-12-B] error', async () => {
+    it('Should get [PGVP-12-H] error', async () => {
       monSysRec.systemTypeCode = 'GAS';
       testSumRecord.system = monSysRec;
-      protolGas.gasTypeCode = 'ZAM';
+      protolGas.gasTypeCode = 'ZAM,ZAM';
       testSumRecord.testTypeCode = 'GAS';
+      crossCheckCatalogValue.value2 = 'GAS,SO2';
 
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -157,33 +189,6 @@ describe('Protocol Gas Checks Service', () => {
       }
     });
 
-    it('Should get [PGVP-12-H] error', async () => {
-      monSysRec.systemTypeCode = 'GAS';
-      testSumRecord.system = monSysRec;
-      protolGas.gasTypeCode = 'ZAM,ZAM';
-      testSumRecord.testTypeCode = 'GAS';
-
-      jest
-        .spyOn(testSummaryRepository, 'getTestSummaryById')
-        .mockResolvedValue(testSumRecord);
-      jest
-        .spyOn(gasComponentCodeRepository, 'find')
-        .mockResolvedValue([new GasComponentCode()]);
-      jest
-        .spyOn(crossCheckCatalogValueRepository, 'getParameterAndTypes')
-        .mockResolvedValue(crossCheckCatalogValue);
-
-      try {
-        await service.runChecks(protolGas, locationId, testSumId, false, false);
-      } catch (err) {
-        expect(err.response.message).toEqual([
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-        ]);
-      }
-    });
-
     it('Should get [PGVP-12-C] error', async () => {
       monSysRec.systemTypeCode = 'GAS';
       testSumRecord.system = monSysRec;
@@ -193,6 +198,7 @@ describe('Protocol Gas Checks Service', () => {
       let gasCompCode = new GasComponentCode();
       gasCompCode.gasComponentCode = 'ZAM';
       gasCompCode.canCombineIndicator = 0;
+      crossCheckCatalogValue.value2 = 'GAS,SO2';
 
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -207,7 +213,7 @@ describe('Protocol Gas Checks Service', () => {
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -221,6 +227,8 @@ describe('Protocol Gas Checks Service', () => {
       gasCompCode.gasComponentCode = 'ZAM';
       gasCompCode.balanceComponentIndicator = 1;
 
+      crossCheckCatalogValue.value2 = 'GAS,SO2';
+
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRecord);
@@ -234,7 +242,7 @@ describe('Protocol Gas Checks Service', () => {
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
   });
@@ -245,6 +253,7 @@ describe('Protocol Gas Checks Service', () => {
       testSumRecord.system = monSysRec;
       protolGas.gasTypeCode = 'SO2';
       testSumRecord.testTypeCode = 'GAS';
+      crossCheckCatalogValue.value2 = 'GAS,SO2';
 
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -256,7 +265,7 @@ describe('Protocol Gas Checks Service', () => {
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -269,6 +278,7 @@ describe('Protocol Gas Checks Service', () => {
       let gasCompCode = new GasComponentCode();
       gasCompCode.gasComponentCode = 'NOX';
       gasCompCode.canCombineIndicator = 0;
+      crossCheckCatalogValue.value2 = 'GAS,SO2,O2';
 
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -283,7 +293,7 @@ describe('Protocol Gas Checks Service', () => {
       try {
         await service.runChecks(protolGas, locationId, testSumId, false, false);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
 
@@ -296,6 +306,7 @@ describe('Protocol Gas Checks Service', () => {
       let gasCompCode = new GasComponentCode();
       gasCompCode.gasComponentCode = 'NOX';
       gasCompCode.canCombineIndicator = 0;
+      crossCheckCatalogValue.value2 = 'NOX,SO2';
 
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -323,6 +334,8 @@ describe('Protocol Gas Checks Service', () => {
       let gasCompCode = new GasComponentCode();
       gasCompCode.gasComponentCode = 'NOX';
       gasCompCode.balanceComponentIndicator = 1;
+
+      crossCheckCatalogValue.value2 = 'NOX,SO2';
 
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
