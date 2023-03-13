@@ -281,7 +281,9 @@ export class ProtocolGasChecksService {
                   protocolGasParameter === 'NOX') ||
                 protocolGasParameter === 'NOXC'
               ) {
-                if (!['NO', 'NO2', 'NOX'].includes(gtc)) {
+                if (
+                  !gasTypeCodes.some(cd => ['NO', 'NO2', 'NOX'].includes(cd))
+                ) {
                   errorCodes.push({ code: 'PGVP-13-C' });
                 }
               } else if (
@@ -293,7 +295,7 @@ export class ProtocolGasChecksService {
                 const requiredCodes = ['CO2', 'NO', 'NO2', 'NOX', 'O2'];
                 if (
                   gtc !== 'AIR' &&
-                  !gasTypeCodes.some(gtc => requiredCodes.includes(gtc))
+                  !gasTypeCodes.some(cd => requiredCodes.includes(cd))
                 ) {
                   errorCodes.push({ code: 'PGVP-13-D' });
                 }
