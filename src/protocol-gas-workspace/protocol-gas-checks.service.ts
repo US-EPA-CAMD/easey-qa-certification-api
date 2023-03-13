@@ -199,37 +199,64 @@ export class ProtocolGasChecksService {
 
         if (pgInvalidComponentList.length > 0) {
           pgComponentListValid = false;
-          errorCodes.push('PGVP-12-B');
+          errorCodes.push({
+            code: 'PGVP-12-B',
+            options: {
+              invalidlist: pgInvalidComponentList,
+              fieldname: GAS_TYPE_CODE_FIELDNAME,
+              key: KEY,
+            },
+          });
         } else if (pgDuplicateComponentList.length > 0) {
           pgComponentListValid = false;
-          errorCodes.push('PGVP-12-H');
+          errorCodes.push({
+            code: 'PGVP-12-H',
+          });
         } else if (
           pgExclusiveComponentList.length > 0 &&
           pgComponentCount > 1
         ) {
           pgComponentListValid = false;
-          errorCodes.push('PGVP-12-C');
+          errorCodes.push({
+            code: 'PGVP-12-C',
+            options: {
+              exclusivelist: pgExclusiveComponentList,
+              fieldname: GAS_TYPE_CODE_FIELDNAME,
+              key: KEY,
+            },
+          });
         } else if (
           containsZERO &&
           !['RATA', 'APPE', 'UNITDEF'].includes(testSumRecord.testTypeCode)
         ) {
           pgComponentListValid = false;
-          errorCodes.push('PGVP-12-D');
+          errorCodes.push({ code: 'PGVP-12-D' });
         } else if (pgApprovalRequested) {
           pgComponentListValid = false;
-          errorCodes.push('PGVP-12-E');
+          errorCodes.push({
+            code: 'PGVP-12-E',
+            options: {
+              fieldname: GAS_TYPE_CODE_FIELDNAME,
+              key: KEY,
+            },
+          });
         } else if (
           pgExclusiveComponentList.length === 0 &&
           balanceComponentCount === 0
         ) {
           pgComponentListValid = false;
-          errorCodes.push('PGVP-12-F');
+          errorCodes.push({ code: 'PGVP-12-F' });
         } else if (
           pgExclusiveComponentList.length === 0 &&
           balanceComponentCount > 1
         ) {
           pgComponentListValid = false;
-          errorCodes.push('PGVP-12-G');
+          errorCodes.push({
+            code: 'PGVP-12-G',
+            options: {
+              balancelist: pgBalanceComponentList,
+            },
+          });
         } else {
           pgComponentListValid = true;
         }
@@ -242,20 +269,20 @@ export class ProtocolGasChecksService {
                 ['SO2', 'CO2'].includes(protocolGasParameter) &&
                 !gasTypeCodes.includes(protocolGasParameter)
               ) {
-                errorCodes.push('PGVP-13-A');
+                errorCodes.push({ code: 'PGVP-13-A' });
               } else if (
                 protocolGasParameter === 'O2' &&
                 gtc !== 'AIR' &&
                 !gasTypeCodes.includes('O2')
               ) {
-                errorCodes.push('PGVP-13-B');
+                errorCodes.push({ code: 'PGVP-13-B' });
               } else if (
                 (testSumRecord.testTypeCode === 'LINE' &&
                   protocolGasParameter === 'NOX') ||
                 protocolGasParameter === 'NOXC'
               ) {
                 if (!['NO', 'NO2', 'NOX'].includes(gtc)) {
-                  errorCodes.push('PGVP-13-C');
+                  errorCodes.push({ code: 'PGVP-13-C' });
                 }
               } else if (
                 ['RATA', 'APPE', 'UNITDEF'].includes(
@@ -268,7 +295,7 @@ export class ProtocolGasChecksService {
                   gtc !== 'AIR' &&
                   !gasTypeCodes.some(gtc => requiredCodes.includes(gtc))
                 ) {
-                  errorCodes.push('PGVP-13-D');
+                  errorCodes.push({ code: 'PGVP-13-D' });
                 }
               }
             }
@@ -277,18 +304,12 @@ export class ProtocolGasChecksService {
       }
     }
 
-    const distintErrorCodes = [...new Set(errorCodes)];
+    const distintErrorCodes = [
+      ...new Map(errorCodes.map(item => [item['code'], item])).values(),
+    ];
 
     distintErrorCodes.forEach(dec => {
-      errorList.push(
-        this.getMessage(dec, {
-          invalidlist: pgInvalidComponentList,
-          fieldname: GAS_TYPE_CODE_FIELDNAME,
-          key: KEY,
-          exclusivelist: pgExclusiveComponentList,
-          balancelist: pgBalanceComponentList,
-        }),
-      );
+      errorList.push(this.getMessage(dec.code, dec.options));
     });
 
     return errorList;
