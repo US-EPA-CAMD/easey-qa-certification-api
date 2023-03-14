@@ -152,15 +152,12 @@ export class ProtocolGasChecksService {
         containsZERO = false;
         balanceComponentCount = 0;
 
-        let gasTypeCodes;
+        let gasTypeCodes = [];
 
         if (gasTypeCode.includes(',')) {
-          let gtCds = gasTypeCode.split(',');
-          let cds = [];
-          gtCds.forEach(cd => cds.push(cd.trim()));
-          gasTypeCodes = cds;
+          gasTypeCode.split(',').forEach(c => gasTypeCodes.push(c.trim()));
         } else {
-          gasTypeCodes = [gasTypeCode.trim()];
+          gasTypeCodes.push(gasTypeCode.trim());
         }
 
         const gasComponents = await this.gasComponentCodeRepository.find();
