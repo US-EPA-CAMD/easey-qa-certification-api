@@ -139,8 +139,6 @@ describe('Rata Summary Check Service Test', () => {
           [payload],
           testSumImportDTO,
         );
-
-        console.log(results);
       } catch (error) {
         errored = true;
         expect(error.response.message).toEqual([MOCK_ERROR_MSG]);
