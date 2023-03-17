@@ -1,11 +1,6 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
-import {
-  IsEmpty,
-  IsNotEmpty,
-  ValidateIf,
-  ValidationArguments,
-} from 'class-validator';
+import { IsNotEmpty, ValidationArguments } from 'class-validator';
 import { PressureMeasureCode } from '../entities/workspace/pressure-measure-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 

@@ -17,7 +17,6 @@ import {
 } from '@nestjs/swagger';
 
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {

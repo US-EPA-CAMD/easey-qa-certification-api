@@ -299,7 +299,7 @@ export class RataSummaryChecksService {
     return error;
   }
 
-  getMessage(messageKey: string, messageArgs: object): string {
+  getMessage(messageKey: string, messageArgs?: object): string {
     return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
   }
 }

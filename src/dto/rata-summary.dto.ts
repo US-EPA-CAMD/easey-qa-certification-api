@@ -5,6 +5,7 @@ import { OperatingLevelCode } from '../entities/workspace/operating-level-code.e
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import {
   IsNotEmpty,
+  ValidateIf,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
@@ -241,15 +242,16 @@ export class RataSummaryBaseDTO {
   @IsValidCode(ReferenceMethodCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `[errorCode] - You have provided a value for [fieldname] for [key], which is not appropriate for a test using this reference method.`,
+        'You reported the value [value], which is not in the list of valid values, in the field [fieldname] for [key].',
         {
-          errorCode: 'RATA-55-C',
+          value: args.value,
           fieldname: args.property,
           key: KEY,
         },
       );
     },
   })
+  @ValidateIf(o => o.co2OrO2ReferenceMethodCode !== null)
   co2OrO2ReferenceMethodCode: string;
 
   @ApiProperty({

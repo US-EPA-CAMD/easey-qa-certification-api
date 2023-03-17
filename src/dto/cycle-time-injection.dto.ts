@@ -19,7 +19,13 @@ export class CycleTimeInjectionBaseDTO {
 
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
+      return CheckCatalogService.formatMessage(
+        `You reported [fieldname] which must be a valid ISO date format of ${DATE_FORMAT} for [key].`,
+        {
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
   })
   beginDate: Date;
@@ -28,7 +34,13 @@ export class CycleTimeInjectionBaseDTO {
 
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
+      return CheckCatalogService.formatMessage(
+        `You reported [fieldname] which must be a valid ISO date format of ${DATE_FORMAT} for [key].`,
+        {
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
   })
   endDate: Date;

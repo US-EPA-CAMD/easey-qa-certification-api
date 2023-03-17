@@ -5,7 +5,7 @@ import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { QACertificationImportDTO } from '../dto/qa-certification.dto';
 import { LinearityInjectionChecksService } from '../linearity-injection-workspace/linearity-injection-checks.service';
 import { LinearitySummaryChecksService } from '../linearity-summary-workspace/linearity-summary-checks.service';
-import { LocationChecksService } from '../location-workspace/location-checks.service';
+import { LocationChecksService } from '../monitor-location-workspace/monitor-location-checks.service';
 import { TestSummaryChecksService } from '../test-summary-workspace/test-summary-checks.service';
 import { QACertificationChecksService } from './qa-certification-checks.service';
 import { LinearitySummaryImportDTO } from '../dto/linearity-summary.dto';

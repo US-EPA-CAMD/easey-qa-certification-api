@@ -101,6 +101,7 @@ import {
   GRACE_PERIOD_IND_TEST_TYPE_CODES,
   VALID_CODES_FOR_END_DATE_VALIDATION,
   BEGIN_MINUTE_TEST_TYPE_CODES,
+  MISC_TEST_TYPE_CODES,
 } from '../utilities/constants';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
@@ -185,7 +186,13 @@ export class TestSummaryBaseDTO {
           resultCode = 'FF2LTST-13-A';
           break;
         default:
-          return `You did not provide [${args.property}], which is required for [${KEY}].`;
+          return CheckCatalogService.formatMessage(
+            `You did not provide [fieldname], which is required for [key].`,
+            {
+              fieldname: args.property,
+              key: KEY,
+            },
+          );
       }
       return CheckCatalogService.formatResultMessage(resultCode, {
         fieldname: args.property,
@@ -224,7 +231,13 @@ export class TestSummaryBaseDTO {
           resultCode = 'FFACC-12-A';
           break;
         default:
-          return `You did not provide [${args.property}], which is required for [${KEY}].`;
+          return CheckCatalogService.formatMessage(
+            `You did not provide [fieldname], which is required for [key].`,
+            {
+              fieldname: args.property,
+              key: KEY,
+            },
+          );
       }
       return CheckCatalogService.formatResultMessage(resultCode, {
         fieldname: args.property,
@@ -262,7 +275,26 @@ export class TestSummaryBaseDTO {
     description: 'Test Number. ADD TO PROPERTY METADATA',
   })
   @IsNotEmpty({
-    message: `You did not provide [testNumber], which is required for [${KEY}].`,
+    message: (args: ValidationArguments) => {
+      let resultCode;
+      switch (args.object['testTypeCode']) {
+        case TestTypeCodes.RATA:
+          resultCode = 'TEST-13-A';
+          break;
+        default:
+          return CheckCatalogService.formatMessage(
+            `You did not provide [fieldname], which is required for [key].`,
+            {
+              fieldname: args.property,
+              key: KEY,
+            },
+          );
+      }
+      return CheckCatalogService.formatResultMessage(resultCode, {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
   })
   testNumber: string;
 
@@ -271,12 +303,51 @@ export class TestSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `You did not provide [${args.property}], which is required for [${KEY}].`;
+      let resultCode;
+      switch (true) {
+        case TestTypeCodes.SEVENDAY === args.object['testTypeCode']:
+          resultCode = 'SEVNDAY-3-A';
+          break;
+        case TestTypeCodes.CYCLE === args.object['testTypeCode']:
+          resultCode = 'CYCLE-4-A';
+          break;
+        case TestTypeCodes.LINE === args.object['testTypeCode']:
+          resultCode = 'LINEAR-9-A';
+          break;
+        case TestTypeCodes.ONOFF === args.object['testTypeCode']:
+          resultCode = 'ONOFF-3-A';
+          break;
+        case TestTypeCodes.RATA === args.object['testTypeCode']:
+          resultCode = 'RATA-4-A';
+          break;
+        case MISC_TEST_TYPE_CODES.includes(args.object['testTypeCode']):
+          resultCode = 'TEST-17-A';
+          break;
+        default:
+          return CheckCatalogService.formatMessage(
+            'You did not provide [fieldname], which is required for [key].',
+            {
+              fieldname: args.property,
+              key: KEY,
+            },
+          );
+      }
+      return CheckCatalogService.formatResultMessage(resultCode, {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   @IsValidCode(TestReasonCode, {
     message: (args: ValidationArguments) => {
-      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
+      return CheckCatalogService.formatMessage(
+        `You reported the value [value], which is not in the list of valid values, in the field [fieldname] for [key].`,
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
   })
   @ValidateIf(o =>
@@ -329,7 +400,14 @@ export class TestSummaryBaseDTO {
           resultCode = 'ONOFF-39-B';
           break;
         default:
-          return `You reported the value [${args.value}], which is not in the list of valid values, in the field [testResultCode] for [Test Summary].`;
+          return CheckCatalogService.formatMessage(
+            `You reported the value [value], which is not in the list of valid values, in the field [fieldname] for [key].`,
+            {
+              value: args.value,
+              fieldname: args.property,
+              key: KEY,
+            },
+          );
       }
       return CheckCatalogService.formatResultMessage(resultCode, {
         value: args.value,
@@ -345,24 +423,42 @@ export class TestSummaryBaseDTO {
 
   @ApiProperty(getMetadata(dataDictionary.beginDate, MetadataKeys.TEST_SUMMARY))
   @IsNotEmpty({
-    message: `You did not provide [beginDate], which is required for [${KEY}].`,
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(`TEST-1-A`, {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
   })
   @IsValidDate({
     message: (args: ValidationArguments) => {
-      return formatTestSummaryValidationError(
-        args,
-        `Begin Date must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      return CheckCatalogService.formatMessage(
+        `Begin Date must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [value]`,
+        {
+          value: args.value,
+        },
       );
     },
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
+      return CheckCatalogService.formatMessage(
+        `You reported [fieldname] which must be a valid ISO date format of ${DATE_FORMAT} for [key].`,
+        {
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
   })
   @IsInDateRange(MIN_DATE, new Date(Date.now()).toISOString(), {
-    message: (args: ValidationArguments) =>
-      `You reported a [beginDate] of [${args.value}] which is outside the range of acceptable values for this date for [${KEY}].`,
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(`TEST-1-B`, {
+        date: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
   })
   @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginDate?: Date;
@@ -371,11 +467,23 @@ export class TestSummaryBaseDTO {
     description: 'Begin Hour. ADD TO PROPERTY METADATA',
   })
   @IsNotEmpty({
-    message: `You did not provide [beginHour], which is required for [${KEY}].`,
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(`TEST-2-A`, {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
   })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
-    message: (args: ValidationArguments) =>
-      `The value [${args.value}] in the field [beginHour] for [${KEY}] is not within the range of valid values from [${MIN_HOUR}] to [${MAX_HOUR}].`,
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(`TEST-2-B`, {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+        minvalue: MIN_HOUR,
+        maxvalue: MAX_HOUR,
+      });
+    },
   })
   @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginHour?: number;
@@ -383,9 +491,24 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Begin Minute. ADD TO PROPERTY METADATA',
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(`TEST-3-A`, {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInRange(MIN_MINUTE, MAX_MINUTE, {
-    message: (args: ValidationArguments) =>
-      `The value [${args.value}] in the field [beginMinute] for [${KEY}] is not within the range of valid values from [${MIN_MINUTE}] to [${MAX_MINUTE}].`,
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(`TEST-3-C`, {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+        minvalue: MIN_MINUTE,
+        maxvalue: MAX_MINUTE,
+      });
+    },
   })
   @ValidateIf(o => BEGIN_MINUTE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginMinute?: number;
@@ -396,17 +519,32 @@ export class TestSummaryBaseDTO {
   @IsValidDate({
     message: ErrorMessages.DateValidity(),
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(`TEST-4-A`, {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
+      return CheckCatalogService.formatMessage(
+        `You reported [fieldname] which must be a valid ISO date format of ${DATE_FORMAT} for [key].`,
+        {
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
   })
   @IsInDateRange(MIN_DATE, new Date(Date.now()).toISOString(), {
     message: (args: ValidationArguments) => {
-      args.object['locationId'] = args.object['unitId']
-        ? args.object['unitId']
-        : args.object['stackPipeId'];
-      return `You reported an invalid EndDate in the Test Summary record for Location [${args.object['locationId']}], TestTypeCode [${args.object['testTypeCode']}] and TestNumber [${args.object['testNumber']}].`;
+      return CheckCatalogService.formatResultMessage(`TEST-4-B`, {
+        date: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
@@ -416,11 +554,23 @@ export class TestSummaryBaseDTO {
     description: 'End Hour. ADD TO PROPERTY METADATA',
   })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
-    message: (args: ValidationArguments) =>
-      `The value [${args.value}] in the field [endHour] for [${KEY}] is not within the range of valid values from [${MIN_HOUR}] to [${MAX_HOUR}].`,
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(`TEST-5-B`, {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+        minvalue: MIN_HOUR,
+        maxvalue: MAX_HOUR,
+      });
+    },
   })
   @IsNotEmpty({
-    message: `You did not provide [endHour], which is required for [${KEY}].`,
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(`TEST-5-A`, {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
   })
   @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
   endHour?: number;
@@ -428,9 +578,24 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'End Minute. ADD TO PROPERTY METADATA',
   })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(`TEST-6-A`, {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInRange(MIN_MINUTE, MAX_MINUTE, {
-    message: (args: ValidationArguments) =>
-      `The value [${args.value}] in the field [endMinute] for [${KEY}] is not within the range of valid values from [${MIN_MINUTE}] to [${MAX_MINUTE}].`,
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(`TEST-6-C`, {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+        minvalue: MIN_MINUTE,
+        maxvalue: MAX_MINUTE,
+      });
+    },
   })
   @ValidateIf(o =>
     VALID_CODES_FOR_END_MINUTE_VALIDATION.includes(o.testTypeCode),
@@ -442,15 +607,17 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `Grace Period Indicator must be a numeric number from 0 to 1. You reported an invalid value of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
+      return CheckCatalogService.formatMessage(
+        `Grace Period Indicator must be a numeric number from 0 to 1. You reported an invalid value of [${
+          args.value
+        }] in Test Summary record for Unit/Stack [${
+          args.object['unitId']
+            ? args.object['unitId']
+            : args.object['stackPipeId']
+        }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+          args.object['testNumber']
+        }]`,
+      );
     },
   })
   @ValidateIf(o => GRACE_PERIOD_IND_TEST_TYPE_CODES.includes(o.testTypeCode))
@@ -461,15 +628,17 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(1993, new Date().getFullYear(), {
     message: (args: ValidationArguments) => {
-      return `Year must be greater than or equal to 1993 and less than or equal to ${new Date().getFullYear()}. You reported an invalid year of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
+      return CheckCatalogService.formatMessage(
+        `Year must be greater than or equal to 1993 and less than or equal to ${new Date().getFullYear()}. You reported an invalid year of [${
+          args.value
+        }] in Test Summary record for Unit/Stack [${
+          args.object['unitId']
+            ? args.object['unitId']
+            : args.object['stackPipeId']
+        }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+          args.object['testNumber']
+        }]`,
+      );
     },
   })
   @ValidateIf(o => YEAR_QUARTER_TEST_TYPE_CODES.includes(o.testTypeCode))
@@ -480,15 +649,17 @@ export class TestSummaryBaseDTO {
   })
   @IsInRange(1, 4, {
     message: (args: ValidationArguments) => {
-      return `Quarter must be a numeric number from 1 to 4. You reported an invalid quarter of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
+      return CheckCatalogService.formatMessage(
+        `Quarter must be a numeric number from 1 to 4. You reported an invalid quarter of [${
+          args.value
+        }] in Test Summary record for Unit/Stack [${
+          args.object['unitId']
+            ? args.object['unitId']
+            : args.object['stackPipeId']
+        }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+          args.object['testNumber']
+        }]`,
+      );
     },
   })
   @ValidateIf(o => YEAR_QUARTER_TEST_TYPE_CODES.includes(o.testTypeCode))
@@ -505,15 +676,17 @@ export class TestSummaryBaseDTO {
   })
   @IsValidCode(InjectionProtocolCode, {
     message: (args: ValidationArguments) => {
-      return `You reported an invalid Injection Protocol Code of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
+      return CheckCatalogService.formatMessage(
+        `You reported an invalid Injection Protocol Code of [${
+          args.value
+        }] in Test Summary record for Unit/Stack [${
+          args.object['unitId']
+            ? args.object['unitId']
+            : args.object['stackPipeId']
+        }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+          args.object['testNumber']
+        }]`,
+      );
     },
   })
   @ValidateIf(o =>
