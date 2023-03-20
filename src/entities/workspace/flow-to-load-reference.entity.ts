@@ -63,7 +63,7 @@ export class FlowToLoadReference extends BaseEntity {
     name: 'ref_flow_load_ratio',
     transformer: new NumericColumnTransformer(),
   })
-  referenceFlowToLoadRatio: number;
+  referenceFlowLoadRatio: number;
 
   @Column({
     name: 'calc_ref_flow_load_ratio',
@@ -93,7 +93,7 @@ export class FlowToLoadReference extends BaseEntity {
     name: 'calc_sep_ref_ind',
     transformer: new NumericColumnTransformer(),
   })
-  calculatedSeparateReferenceIndicator: number;
+  calcSeparateReferenceIndicator: number;
 
   @Column({
     type: 'varchar',

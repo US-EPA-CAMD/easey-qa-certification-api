@@ -5,10 +5,10 @@ export class FlowToLoadReferenceBaseDTO {
   operatingLevelCode: string;
   averageGrossUnitLoad: number;
   averageReferenceMethodFlow: number;
-  referenceFlowToLoadRatio: number;
+  referenceFlowLoadRatio: number;
   averageHourlyHeatInputRate: number;
   referenceGrossHeatRate: number;
-  calculatedSeparateReferenceIndicator: number;
+  calcSeparateReferenceIndicator: number;
 }
 
 export class FlowToLoadReferenceRecordDTO extends FlowToLoadReferenceBaseDTO {

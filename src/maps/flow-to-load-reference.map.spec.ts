@@ -13,10 +13,10 @@ entity.operatingLevelCode = string;
 entity.rataTestNumber = string;
 entity.averageGrossUnitLoad = number;
 entity.averageReferenceMethodFlow = number;
-entity.referenceFlowToLoadRatio = number;
+entity.referenceFlowLoadRatio = number;
 entity.averageHourlyHeatInputRate = number;
 entity.referenceGrossHeatRate = number;
-entity.calculatedSeparateReferenceIndicator = number;
+entity.calcSeparateReferenceIndicator = number;
 
 entity.calculatedAverageGrossUnitLoad = number;
 entity.calculatedAverageReferenceMethodFlow = number;
@@ -37,10 +37,10 @@ describe('FlowToLoadReferenceMap', () => {
     expect(result.rataTestNumber).toEqual(string);
     expect(result.averageGrossUnitLoad).toEqual(number);
     expect(result.averageReferenceMethodFlow).toEqual(number);
-    expect(result.referenceFlowToLoadRatio).toEqual(number);
+    expect(result.referenceFlowLoadRatio).toEqual(number);
     expect(result.averageHourlyHeatInputRate).toEqual(number);
     expect(result.referenceGrossHeatRate).toEqual(number);
-    expect(result.calculatedSeparateReferenceIndicator).toEqual(number);
+    expect(result.calcSeparateReferenceIndicator).toEqual(number);
     expect(result.calculatedAverageGrossUnitLoad).toEqual(number);
     expect(result.calculatedAverageReferenceMethodFlow).toEqual(number);
     expect(result.calculatedReferenceFlowToLoadRatio).toEqual(number);
