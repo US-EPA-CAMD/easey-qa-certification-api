@@ -95,11 +95,11 @@ export class FlowToLoadReferenceWorkspaceService {
     entity.operatingLevelCode = payload.operatingLevelCode;
     entity.averageGrossUnitLoad = payload.averageGrossUnitLoad;
     entity.averageReferenceMethodFlow = payload.averageReferenceMethodFlow;
-    entity.referenceFlowToLoadRatio = payload.referenceFlowToLoadRatio;
+    entity.referenceFlowLoadRatio = payload.referenceFlowLoadRatio;
     entity.averageHourlyHeatInputRate = payload.averageHourlyHeatInputRate;
     entity.referenceGrossHeatRate = payload.referenceGrossHeatRate;
-    entity.calculatedSeparateReferenceIndicator =
-      payload.calculatedSeparateReferenceIndicator;
+    entity.calcSeparateReferenceIndicator =
+      payload.calcSeparateReferenceIndicator;
     entity.userId = userId;
     entity.updateDate = timestamp;
 

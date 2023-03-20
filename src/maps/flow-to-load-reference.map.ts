@@ -21,14 +21,14 @@ export class FlowToLoadReferenceMap extends BaseMap<
       averageReferenceMethodFlow: entity.averageReferenceMethodFlow,
       calculatedAverageReferenceMethodFlow:
         entity.calculatedAverageReferenceMethodFlow,
-      referenceFlowToLoadRatio: entity.referenceFlowToLoadRatio,
+      referenceFlowLoadRatio: entity.referenceFlowLoadRatio,
       calculatedReferenceFlowToLoadRatio:
         entity.calculatedReferenceFlowToLoadRatio,
       averageHourlyHeatInputRate: entity.averageHourlyHeatInputRate,
       referenceGrossHeatRate: entity.referenceGrossHeatRate,
       calculatedReferenceGrossHeatRate: entity.calculatedReferenceGrossHeatRate,
-      calculatedSeparateReferenceIndicator:
-        entity.calculatedSeparateReferenceIndicator,
+      calcSeparateReferenceIndicator:
+        entity.calcSeparateReferenceIndicator,
       userId: entity.userId,
       addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
