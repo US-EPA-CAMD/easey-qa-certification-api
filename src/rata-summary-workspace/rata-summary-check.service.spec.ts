@@ -16,6 +16,8 @@ import { ReferenceMethodCodeRepository } from '../reference-method-code/referenc
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
+import { LocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -29,6 +31,9 @@ monitorSystemRecord.systemTypeCode = 'FLOW';
 const mp = new MonitorPlan();
 const referenceMethodCode = new ReferenceMethodCode();
 referenceMethodCode.parameterCode = '2F';
+
+const location = new MonitorLocation();
+location.unit;
 
 const mockTestSumRepository = () => ({
   getTestSummaryByLocationId: jest.fn().mockResolvedValue(null),
@@ -52,6 +57,12 @@ const mockQAMonitorPlanRepository = () => ({
 
 const mockReferenceMethodCodeRepository = () => ({
   find: jest.fn().mockResolvedValue([referenceMethodCode]),
+});
+
+const mockLocationWorkspaceRepository = () => ({
+  buildBaseQuery: jest.fn(),
+  getLocationsByUnitStackPipeIds: jest.fn().mockResolvedValue([location]),
+  getLocationById: jest.fn().mockResolvedValue(location),
 });
 
 describe('Rata Summary Check Service Test', () => {
@@ -89,6 +100,10 @@ describe('Rata Summary Check Service Test', () => {
         {
           provide: ReferenceMethodCodeRepository,
           useFactory: mockReferenceMethodCodeRepository,
+        },
+        {
+          provide: LocationWorkspaceRepository,
+          useFactory: mockLocationWorkspaceRepository,
         },
       ],
     }).compile();
@@ -139,8 +154,6 @@ describe('Rata Summary Check Service Test', () => {
           [payload],
           testSumImportDTO,
         );
-
-        console.log(results);
       } catch (error) {
         errored = true;
         expect(error.response.message).toEqual([MOCK_ERROR_MSG]);

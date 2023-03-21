@@ -18,6 +18,7 @@ import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { ReferenceMethodCodeRepository } from '../reference-method-code/reference-method-code.repository';
+import { LocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 
 const KEY = 'RATA Summary';
 
@@ -35,6 +36,8 @@ export class RataSummaryChecksService {
     private readonly qaMonitorPlanRepository: QAMonitorPlanWorkspaceRepository,
     @InjectRepository(ReferenceMethodCodeRepository)
     private readonly referenceMethodCodeRepository: ReferenceMethodCodeRepository,
+    @InjectRepository(LocationWorkspaceRepository)
+    private readonly monitorLocationRepository: LocationWorkspaceRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -64,6 +67,11 @@ export class RataSummaryChecksService {
         monitoringSystemID: testSummary.monitoringSystemID,
         locationId: locationId,
       });
+      testSumRecord.location = await this.monitorLocationRepository.getLocationById(
+        locationId,
+        testSumRecord.unitId,
+        testSumRecord.stackPipeId,
+      );
       // IMPORT-30 Extraneous RATA Summary Data Check
       error = await this.import30Check(rataSummary, testSumRecord);
       if (error) {
@@ -144,9 +152,9 @@ export class RataSummaryChecksService {
 
     const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(
       locationId,
-      summary.unitId,
-      summary.stackPipeId,
-      summary['endDate'],
+      summary.location?.unit?.name,
+      summary.location?.stackPipe?.name,
+      summary.endDate,
     );
 
     const referenceMethodCodeDataSet = await this.referenceMethodCodeRepository.find();
@@ -174,7 +182,7 @@ export class RataSummaryChecksService {
         return resultE;
       }
 
-      if (!parameterCodes.includes(summary?.system.systemTypeCode)) {
+      if (!parameterCodes.includes(summary.system.systemTypeCode)) {
         if (mp) {
           return resultC;
         } else {

@@ -5,7 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { MonitorLocation } from '../monitor-location.entity';
+import { MonitorLocation } from '../workspace/monitor-location.entity';
 import { MonitorPlan } from './monitor-plan.entity';
 
 @Entity({ name: 'camdecmpswks.monitor_plan_location' })

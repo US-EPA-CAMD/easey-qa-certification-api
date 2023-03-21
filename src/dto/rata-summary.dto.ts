@@ -69,14 +69,6 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'referenceMethodCode. ADD TO PROPERTY METADATA',
   })
-  @IsNotEmpty({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-16-A', {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
   @IsValidCode(ReferenceMethodCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-16-B', {

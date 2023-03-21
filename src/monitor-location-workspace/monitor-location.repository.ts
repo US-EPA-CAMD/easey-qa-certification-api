@@ -4,6 +4,16 @@ import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 
 @EntityRepository(MonitorLocation)
 export class LocationWorkspaceRepository extends Repository<MonitorLocation> {
+  private buildBaseQuery() {
+    return this.createQueryBuilder('ml')
+      .innerJoinAndSelect('ml.systems', 'ms')
+      .innerJoinAndSelect('ml.components', 'c')
+      .leftJoinAndSelect('ml.unit', 'u')
+      .leftJoin('u.plant', 'up')
+      .leftJoinAndSelect('ml.stackPipe', 'sp')
+      .leftJoin('sp.plant', 'spp');
+  }
+
   async getLocationsByUnitStackPipeIds(
     facilityId: number,
     unitIds: string[],
@@ -24,19 +34,31 @@ export class LocationWorkspaceRepository extends Repository<MonitorLocation> {
       stacksWhere = ` OR (${stacksWhere})`;
     }
 
-    const query = this.createQueryBuilder('ml')
-      .innerJoinAndSelect('ml.systems', 'ms')
-      .innerJoinAndSelect('ml.components', 'c')
-      .leftJoinAndSelect('ml.unit', 'u')
-      .leftJoin('u.plant', 'up')
-      .leftJoinAndSelect('ml.stackPipe', 'sp')
-      .leftJoin('sp.plant', 'spp')
-      .where(`${unitsWhere}${stacksWhere}`, {
-        facilityId,
-        unitIds,
-        stackPipeIds,
-      });
+    const query = this.buildBaseQuery().where(`${unitsWhere}${stacksWhere}`, {
+      facilityId,
+      unitIds,
+      stackPipeIds,
+    });
 
     return query.getMany();
+  }
+
+  async getLocationById(
+    locationId: string,
+    unitId: string,
+    stackPipeId: string,
+  ) {
+    const query = this.buildBaseQuery().where('ml.id = :locationId', {
+      locationId,
+    });
+
+    // Check for either unitId or stackPipeId
+    if (unitId !== null && unitId !== undefined) {
+      query.andWhere('u.name = :unitId', { unitId });
+    } else {
+      query.andWhere('sp.name = :stackPipeId', { stackPipeId });
+    }
+
+    return query.getOne();
   }
 }
