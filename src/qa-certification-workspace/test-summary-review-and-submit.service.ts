@@ -7,6 +7,8 @@ import { TestSummaryReviewAndSubmitRepository } from './test-summary-review-and-
 import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
 import { ReportingPeriod } from '../entities/reporting-period.entity';
 
+const moment = require('moment');
+
 @Injectable()
 export class TestSummaryReviewAndSubmitService {
   constructor(
@@ -59,8 +61,8 @@ export class TestSummaryReviewAndSubmitService {
           }
 
           if (
-            new Date(d.beginDate) >= new Date(rp.beginDate) &&
-            new Date(d.endDate) <= new Date(rp.endDate)
+            moment(d.beginDate).isSameOrAfter(rp.beginDate, 'day') &&
+            moment(d.endDate).isSameOrBefore(rp.endDate, 'day')
           ) {
             found = true;
             d.periodAbbreviation = rp.periodAbbreviation;
