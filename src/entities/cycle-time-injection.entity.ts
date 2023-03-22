@@ -1,3 +1,4 @@
+import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import {
   BaseEntity,
   Column,
@@ -31,6 +32,7 @@ export class CycleTimeInjection extends BaseEntity {
   @Column({
     type: 'numeric',
     name: 'cal_gas_value',
+    transformer: new NumericColumnTransformer(),
   })
   calibrationGasValue: number;
 
@@ -43,12 +45,14 @@ export class CycleTimeInjection extends BaseEntity {
   @Column({
     type: 'numeric',
     name: 'begin_hour',
+    transformer: new NumericColumnTransformer(),
   })
   beginHour: number;
 
   @Column({
     type: 'numeric',
     name: 'begin_min',
+    transformer: new NumericColumnTransformer(),
   })
   beginMinute: number;
 
@@ -61,36 +65,42 @@ export class CycleTimeInjection extends BaseEntity {
   @Column({
     type: 'numeric',
     name: 'end_hour',
+    transformer: new NumericColumnTransformer(),
   })
   endHour: number;
 
   @Column({
     type: 'numeric',
     name: 'end_min',
+    transformer: new NumericColumnTransformer(),
   })
   endMinute: number;
 
   @Column({
     type: 'numeric',
     name: 'injection_cycle_time',
+    transformer: new NumericColumnTransformer(),
   })
   injectionCycleTime: number;
 
   @Column({
     type: 'numeric',
     name: 'calc_injection_cycle_time',
+    transformer: new NumericColumnTransformer(),
   })
   calculatedInjectionCycleTime: number;
 
   @Column({
     type: 'numeric',
     name: 'begin_monitor_value',
+    transformer: new NumericColumnTransformer(),
   })
   beginMonitorValue: number;
 
   @Column({
     type: 'numeric',
     name: 'end_monitor_value',
+    transformer: new NumericColumnTransformer(),
   })
   endMonitorValue: number;
 
