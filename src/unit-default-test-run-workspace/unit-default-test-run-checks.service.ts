@@ -97,7 +97,6 @@ export class UnitDefaultTestRunChecksService {
       });
     }
 
-
     const record: UnitDefaultTestRun = await this.repository.findOne({
       unitDefaultTestSumId: unitDefaultTestSumId,
       operatingLevel: unitDefaultTestRun.operatingLevel,

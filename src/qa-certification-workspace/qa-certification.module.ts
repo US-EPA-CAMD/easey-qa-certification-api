@@ -1,7 +1,7 @@
 import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 
-import { LocationWorkspaceModule } from '../location-workspace/location.module';
+import { LocationWorkspaceModule } from '../monitor-location-workspace/monitor-location.module';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 
 import { QACertificationWorkspaceController } from './qa-certification.controller';

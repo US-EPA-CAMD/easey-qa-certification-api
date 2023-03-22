@@ -18,6 +18,7 @@ import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { ReferenceMethodCodeRepository } from '../reference-method-code/reference-method-code.repository';
+import { LocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 
 const KEY = 'RATA Summary';
 
@@ -35,6 +36,8 @@ export class RataSummaryChecksService {
     private readonly qaMonitorPlanRepository: QAMonitorPlanWorkspaceRepository,
     @InjectRepository(ReferenceMethodCodeRepository)
     private readonly referenceMethodCodeRepository: ReferenceMethodCodeRepository,
+    @InjectRepository(LocationWorkspaceRepository)
+    private readonly monitorLocationRepository: LocationWorkspaceRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -64,6 +67,11 @@ export class RataSummaryChecksService {
         monitoringSystemID: testSummary.monitoringSystemID,
         locationId: locationId,
       });
+      testSumRecord.location = await this.monitorLocationRepository.getLocationById(
+        locationId,
+        testSumRecord.unitId,
+        testSumRecord.stackPipeId,
+      );
       // IMPORT-30 Extraneous RATA Summary Data Check
       error = await this.import30Check(rataSummary, testSumRecord);
       if (error) {
@@ -73,9 +81,16 @@ export class RataSummaryChecksService {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
       );
+
+      if (!testSumRecord) {
+        throw new LoggingException(
+          `A test summary record not found with Record Id [${testSumId}].`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
     }
 
-    if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
+    if (testSumRecord?.testTypeCode === TestTypeCodes.RATA) {
       // RATA-17 Mean CEM Value Valid
       error = this.rata17Check(testSumRecord, rataSummary.meanCEMValue);
       if (error) {
@@ -137,9 +152,9 @@ export class RataSummaryChecksService {
 
     const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(
       locationId,
-      summary.unitId,
-      summary.stackPipeId,
-      summary['endDate'],
+      summary.location?.unit?.name,
+      summary.location?.stackPipe?.name,
+      summary.endDate,
     );
 
     const referenceMethodCodeDataSet = await this.referenceMethodCodeRepository.find();
@@ -167,7 +182,7 @@ export class RataSummaryChecksService {
         return resultE;
       }
 
-      if (!parameterCodes.includes(summary?.system.systemTypeCode)) {
+      if (!parameterCodes.includes(summary.system.systemTypeCode)) {
         if (mp) {
           return resultC;
         } else {
@@ -190,9 +205,7 @@ export class RataSummaryChecksService {
         key: KEY,
         fieldname: 'meanCEMValue',
       });
-    }
-
-    if (meanCEMValue < 0) {
+    } else if (meanCEMValue <= 0 || meanCEMValue >= 20000) {
       error = CheckCatalogService.formatResultMessage('RATA-17-B', {
         key: KEY,
         fieldname: 'meanCEMValue',
@@ -294,7 +307,7 @@ export class RataSummaryChecksService {
     return error;
   }
 
-  getMessage(messageKey: string, messageArgs: object): string {
+  getMessage(messageKey: string, messageArgs?: object): string {
     return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
   }
 }

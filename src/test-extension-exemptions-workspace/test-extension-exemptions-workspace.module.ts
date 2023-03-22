@@ -8,8 +8,6 @@ import { TestExtensionExemptionMap } from '../maps/test-extension-exemption.map'
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
-import { UnitRepository } from '../unit/unit.repository';
-import { StackPipeRepository } from '../stack-pipe/stack-pipe.repository';
 import { TestExtensionExemptionsChecksService } from './test-extension-exemptions-checks.service';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
@@ -21,8 +19,6 @@ import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/mo
       MonitorSystemWorkspaceRepository,
       ReportingPeriodRepository,
       MonitorLocationRepository,
-      UnitRepository,
-      StackPipeRepository,
     ]),
     HttpModule,
   ],

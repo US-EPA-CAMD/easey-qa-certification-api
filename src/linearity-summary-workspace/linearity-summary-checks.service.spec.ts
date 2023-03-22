@@ -18,8 +18,8 @@ const mockTestSummaryRelationshipRepository = () => ({
     .mockResolvedValue([{ testResultCode: 'PASSED' }]),
 });
 
-const testSumRec = new TestSummary()
-testSumRec.testTypeCode = TestTypeCodes.LINE
+const testSumRec = new TestSummary();
+testSumRec.testTypeCode = TestTypeCodes.LINE;
 
 const mockTestSummaryRepository = () => ({
   getTestSummaryById: jest.fn().mockResolvedValue(testSumRec),

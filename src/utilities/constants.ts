@@ -73,16 +73,6 @@ export const VALID_CODES_FOR_COMPONENT_ID_VALIDATION = [
 ];
 
 export const VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION = [
-  TestTypeCodes.MFMCAL,
-  TestTypeCodes.TSCAL,
-  TestTypeCodes.BCAL,
-  TestTypeCodes.QGA,
-  TestTypeCodes.LEAK,
-  TestTypeCodes.OTHER,
-  TestTypeCodes.PEI,
-  TestTypeCodes.PEMSACC,
-  TestTypeCodes.DGFMCAL,
-  TestTypeCodes.DAHS,
   TestTypeCodes.UNITDEF,
   TestTypeCodes.FF2LTST,
   TestTypeCodes.FFACCTT,
@@ -96,6 +86,7 @@ export const VALID_CODES_FOR_TEST_REASON_CODE_VALIDATION = [
   TestTypeCodes.LINE,
   TestTypeCodes.CYCLE,
   TestTypeCodes.SEVENDAY,
+  ...MISC_TEST_TYPE_CODES,
 ];
 
 export const VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION = [

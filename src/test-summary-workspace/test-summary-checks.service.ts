@@ -990,8 +990,11 @@ export class TestSummaryChecksService {
       if (
         component &&
         component.componentTypeCode !== 'FLOW' &&
-        summary.testTypeCode !== TestTypeCodes.FFACC &&
-        summary.testTypeCode !== TestTypeCodes.FFACCTT
+        ![
+          TestTypeCodes.FFACC.toString(),
+          TestTypeCodes.FFACCTT.toString(),
+          TestTypeCodes.PEI.toString(),
+        ].includes(summary.testTypeCode)
       ) {
         if (summary.spanScaleCode === null) {
           return this.getMessage('TEST-8-A', {

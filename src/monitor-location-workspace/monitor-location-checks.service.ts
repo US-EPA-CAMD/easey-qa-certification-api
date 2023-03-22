@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
-import { LocationWorkspaceRepository } from './location.repository';
+import { LocationWorkspaceRepository } from './monitor-location.repository';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { QACertificationImportDTO } from '../dto/qa-certification.dto';
 

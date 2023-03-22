@@ -9,6 +9,7 @@ import {
 import { ValidateNested, ValidationArguments } from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes/is-iso-format.pipe';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 const KEY = 'Appendix E Correlation Test Run';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -22,7 +23,13 @@ export class AppECorrelationTestRunBaseDTO {
 
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
+      return CheckCatalogService.formatMessage(
+        `You reported [fieldname] which must be a valid ISO date format of ${DATE_FORMAT} for [key].`,
+        {
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
   })
   beginDate: Date;
@@ -31,7 +38,13 @@ export class AppECorrelationTestRunBaseDTO {
 
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT} for [${KEY}].`;
+      return CheckCatalogService.formatMessage(
+        `You reported [fieldname] which must be a valid ISO date format of ${DATE_FORMAT} for [key].`,
+        {
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
   })
   endDate: Date;

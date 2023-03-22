@@ -14,9 +14,11 @@ import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { SystemTypeCode } from '../entities/system-type-code.entity';
 import { SystemTypeCodes } from '../enums/system-type-code.enum';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 const MIN_DATE = '1993-01-01';
 const DATE_FORMAT = 'YYYY-MM-DD';
+const KEY = 'Test Summary Params';
 
 export class TestSummaryParamsDTO {
   @ApiProperty({
@@ -64,15 +66,32 @@ export class TestSummaryParamsDTO {
     ).description,
   })
   @IsValidDate({
-    message: `Begin Date must be a valid date in the format of ${DATE_FORMAT}.`,
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `Begin Date must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [value]`,
+        {
+          value: args.value,
+        },
+      );
+    },
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT}.`;
+      return CheckCatalogService.formatMessage(
+        `You reported [fieldname] which must be a valid ISO date format of ${DATE_FORMAT} for [key].`,
+        {
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
   })
-  @IsInDateRange('1993-01-01', null, {
-    message: `Begin Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,
+  @IsInDateRange(MIN_DATE, null, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `Begin Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,
+      );
+    },
   })
   beginDate?: Date;
 
@@ -80,15 +99,32 @@ export class TestSummaryParamsDTO {
     description: propertyMetadata.endDate.description,
   })
   @IsValidDate({
-    message: `End Date must be a valid date in the format of ${DATE_FORMAT}.`,
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `End Date must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [value]`,
+        {
+          value: args.value,
+        },
+      );
+    },
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT}.`;
+      return CheckCatalogService.formatMessage(
+        `You reported [fieldname] which must be a valid ISO date format of ${DATE_FORMAT} for [key].`,
+        {
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
   })
-  @IsInDateRange('1993-01-01', null, {
-    message: `End Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,
+  @IsInDateRange(MIN_DATE, null, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `End Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,
+      );
+    },
   })
   endDate?: Date;
 }

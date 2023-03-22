@@ -5,7 +5,7 @@ import { OperatingLevelCode } from '../entities/workspace/operating-level-code.e
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import {
   IsNotEmpty,
-  Min,
+  ValidateIf,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
@@ -13,6 +13,8 @@ import { RataRunDTO, RataRunImportDTO } from './rata-run.dto';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Type } from 'class-transformer';
+import { IsNotNegative } from '../pipes/is-not-negative.pipe';
+import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 
 const KEY = 'RATA Summary';
 
@@ -22,12 +24,17 @@ export class RataSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `RATA-112-A: You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('RATA-112-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   @IsValidCode(OperatingLevelCode, {
     message: (args: ValidationArguments) => {
-      return `RATA-112-B: You reported a [${args.property}] that is not in the list of valid values.`;
+      return CheckCatalogService.formatResultMessage('RATA-112-B', {
+        fieldname: args.property,
+      });
     },
   })
   operatingLevelCode: string;
@@ -37,26 +44,30 @@ export class RataSummaryBaseDTO {
   )
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `RATA-23-A: You did not provide [${args.property}], which is required for [${KEY}].`;
-    },
-  })
-  @Min(1, {
-    message: (args: ValidationArguments) => {
-      return `RATA-23-B: You defined an invalid [${args.property}] for [${KEY}]. This value must be greater than zero and less than 20,000.`;
-    },
-  })
-  averageGrossUnitLoad: number;
-
-  @ApiProperty({
-    description: 'referenceMethodCode. ADD TO PROPERTY METADATA',
-  })
-  @IsNotEmpty({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-16-A', {
+      return CheckCatalogService.formatResultMessage('RATA-23-A', {
         fieldname: args.property,
         key: KEY,
       });
     },
+  })
+  @IsInRange(
+    0,
+    20000,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatResultMessage('RATA-23-B', {
+          fieldname: args.property,
+          key: KEY,
+        });
+      },
+    },
+    false,
+    false,
+  )
+  averageGrossUnitLoad: number;
+
+  @ApiProperty({
+    description: 'referenceMethodCode. ADD TO PROPERTY METADATA',
   })
   @IsValidCode(ReferenceMethodCode, {
     message: (args: ValidationArguments) => {
@@ -74,7 +85,10 @@ export class RataSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `RATA-17: You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('RATA-17-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   meanCEMValue: number;
@@ -84,14 +98,26 @@ export class RataSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `RATA-18-A: You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('RATA-18-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
-  @Min(1, {
-    message: (args: ValidationArguments) => {
-      return `RATA-18-B: You defined an invalid [${args.property}] for [${KEY}]. This value must be greater than zero and less than 20,000.`;
+  @IsInRange(
+    0,
+    20000,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatResultMessage('RATA-18-B', {
+          fieldname: args.property,
+          key: KEY,
+        });
+      },
     },
-  })
+    false,
+    false,
+  )
   meanRATAReferenceValue: number;
 
   @ApiProperty({
@@ -99,7 +125,10 @@ export class RataSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `RATA-19-A: You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('RATA-19-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   meanDifference: number;
@@ -109,7 +138,10 @@ export class RataSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `RATA-20-A: You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('RATA-20-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   standardDeviationDifference: number;
@@ -119,7 +151,10 @@ export class RataSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `RATA-21-A: You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('RATA-21-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   confidenceCoefficient: number;
@@ -129,7 +164,10 @@ export class RataSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `RATA-22-A: You have not reported the required value in the field [${args.property}] for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('RATA-22-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   tValue: number;
@@ -139,7 +177,10 @@ export class RataSummaryBaseDTO {
   )
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `RATA-123-A: You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('RATA-123-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   apsIndicator: number;
@@ -147,7 +188,15 @@ export class RataSummaryBaseDTO {
   @ApiProperty(getMetadata(dataDictionary.apsCode, MetadataKeys.RATA_SUMMARY))
   @IsValidCode(ApsCode, {
     message: (args: ValidationArguments) => {
-      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
+      return CheckCatalogService.formatMessage(
+        `[errorCode] - You reported the value [value], which is not in the list of valid values, in the field [fieldname] for [key].`,
+        {
+          errorCode: 'RATA-131-C',
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
   })
   apsCode: string;
@@ -157,12 +206,19 @@ export class RataSummaryBaseDTO {
   })
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
-      return `RATA-24-A: You did not provide [${args.property}], which is required for [${KEY}].`;
+      return CheckCatalogService.formatResultMessage('RATA-24-A', {
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
-  @Min(0, {
+  @IsNotNegative({
     message: (args: ValidationArguments) => {
-      return `RATA-24-B: The value [${args.value}] in the field [${args.property}] for [${KEY}] is not within the range of valid values. This value must be greater than or equal to zero.`;
+      return CheckCatalogService.formatResultMessage('RATA-24-B', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
     },
   })
   relativeAccuracy: number;
@@ -177,9 +233,17 @@ export class RataSummaryBaseDTO {
   })
   @IsValidCode(ReferenceMethodCode, {
     message: (args: ValidationArguments) => {
-      return `You reported the value [${args.value}], which is not in the list of valid values, in the field [${args.property}] for [${KEY}].`;
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value], which is not in the list of valid values, in the field [fieldname] for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
   })
+  @ValidateIf(o => o.co2OrO2ReferenceMethodCode !== null)
   co2OrO2ReferenceMethodCode: string;
 
   @ApiProperty({
