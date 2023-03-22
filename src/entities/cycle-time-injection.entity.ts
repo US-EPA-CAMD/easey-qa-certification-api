@@ -79,24 +79,28 @@ export class CycleTimeInjection extends BaseEntity {
   @Column({
     type: 'numeric',
     name: 'injection_cycle_time',
+    transformer: new NumericColumnTransformer(),
   })
   injectionCycleTime: number;
 
   @Column({
     type: 'numeric',
     name: 'calc_injection_cycle_time',
+    transformer: new NumericColumnTransformer(),
   })
   calculatedInjectionCycleTime: number;
 
   @Column({
     type: 'numeric',
     name: 'begin_monitor_value',
+    transformer: new NumericColumnTransformer(),
   })
   beginMonitorValue: number;
 
   @Column({
     type: 'numeric',
     name: 'end_monitor_value',
+    transformer: new NumericColumnTransformer(),
   })
   endMonitorValue: number;
 
