@@ -180,7 +180,7 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     );
 
     this.logger.info(
-      `Flow To Load Reference Successfully Imported.  Record Id: ${createdFlowToLoadReference.id}`,
+      `Fuel to Flowmeter Accuracy Successfully Imported.  Record Id: ${createdFlowToLoadReference.id}`,
     );
   }
 }

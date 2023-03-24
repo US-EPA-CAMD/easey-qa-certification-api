@@ -5,7 +5,7 @@ import { ValidationArguments } from 'class-validator';
 const DATE_FORMAT = 'YYYY-MM-DD';
 const KEY = 'Unit Default Test Run';
 export class UnitDefaultTestRunBaseDTO {
-  operatingLevel: number;
+  operatingLevelForRun: number;
   runNumber: number;
 
   @IsIsoFormat({

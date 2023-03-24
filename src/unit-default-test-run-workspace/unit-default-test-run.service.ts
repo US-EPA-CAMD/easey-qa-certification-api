@@ -108,7 +108,7 @@ export class UnitDefaultTestRunWorkspaceService {
       );
     }
 
-    entity.operatingLevel = payload.operatingLevel;
+    entity.operatingLevelForRun = payload.operatingLevelForRun;
     entity.runNumber = payload.runNumber;
     entity.beginDate = payload.beginDate;
     entity.beginHour = payload.beginHour;
@@ -185,7 +185,7 @@ export class UnitDefaultTestRunWorkspaceService {
     if (isHistoricalRecord) {
       historicalRecord = await this.historicalRepository.findOne({
         unitDefaultTestSumId,
-        operatingLevel: payload.operatingLevel,
+        operatingLevelForRun: payload.operatingLevelForRun,
         runNumber: payload.runNumber,
       });
     }

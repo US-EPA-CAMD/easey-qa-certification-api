@@ -31,7 +31,7 @@ export class UnitDefaultTestRun extends BaseEntity {
     name: 'op_level_num',
     transformer: new NumericColumnTransformer(),
   })
-  operatingLevel: number;
+  operatingLevelForRun: number;
 
   @Column({
     name: 'run_num',

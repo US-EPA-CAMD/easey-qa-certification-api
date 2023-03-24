@@ -82,12 +82,11 @@ export class UnitDefaultTestRunChecksService {
     let RECORDTYPE: string = 'unitDefaultTestRun';
     let FIELDNAME: string = 'OperatingLevelforRun,RunNumber';
 
-    const duplicates = unitDefaultTestRuns.filter(i => {
-      return (
-        i.operatingLevel === unitDefaultTestRun.operatingLevel,
-        i.runNumber === unitDefaultTestRun.runNumber
-      );
-    });
+    const duplicates = unitDefaultTestRuns.filter(
+      i =>
+        i.operatingLevelForRun === unitDefaultTestRun.operatingLevelForRun &&
+        i.runNumber === unitDefaultTestRun.runNumber,
+    );
 
     // IMPORT-20 Duplicate Test Check
     if (_isImport && duplicates.length > 1) {
@@ -99,7 +98,7 @@ export class UnitDefaultTestRunChecksService {
 
     const record: UnitDefaultTestRun = await this.repository.findOne({
       unitDefaultTestSumId: unitDefaultTestSumId,
-      operatingLevel: unitDefaultTestRun.operatingLevel,
+      operatingLevelForRun: unitDefaultTestRun.operatingLevelForRun,
       runNumber: unitDefaultTestRun.runNumber,
     });
 
