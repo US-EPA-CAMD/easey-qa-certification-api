@@ -192,7 +192,7 @@ export class UnitDefaultTestWorkspaceService {
     );
 
     this.logger.info(
-      `Flow To Load Reference Successfully Imported.  Record Id: ${createdUnitDefaultTest.id}`,
+      `Unit Default Successfully Imported.  Record Id: ${createdUnitDefaultTest.id}`,
     );
 
     if (payload.unitDefaultTestRunData?.length > 0) {
