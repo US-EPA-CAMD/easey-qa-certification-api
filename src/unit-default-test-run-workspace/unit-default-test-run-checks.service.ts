@@ -84,7 +84,7 @@ export class UnitDefaultTestRunChecksService {
 
     const duplicates = unitDefaultTestRuns.filter(i => {
       return (
-        i.operatingLevel === unitDefaultTestRun.operatingLevel,
+        i.operatingLevelForRun === unitDefaultTestRun.operatingLevelForRun,
         i.runNumber === unitDefaultTestRun.runNumber
       );
     });
@@ -99,7 +99,7 @@ export class UnitDefaultTestRunChecksService {
 
     const record: UnitDefaultTestRun = await this.repository.findOne({
       unitDefaultTestSumId: unitDefaultTestSumId,
-      operatingLevel: unitDefaultTestRun.operatingLevel,
+      operatingLevelForRun: unitDefaultTestRun.operatingLevelForRun,
       runNumber: unitDefaultTestRun.runNumber,
     });
 
