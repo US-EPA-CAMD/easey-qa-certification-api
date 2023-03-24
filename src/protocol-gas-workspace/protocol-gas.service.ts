@@ -152,7 +152,6 @@ export class ProtocolGasWorkspaceService {
       historicalRecord = await this.historicalRepo.findOne({
         testSumId: testSumId,
         gasLevelCode: payload.gasLevelCode,
-        vendorIdentifier: payload.vendorIdentifier,
         cylinderIdentifier: payload.cylinderIdentifier,
       });
     }
