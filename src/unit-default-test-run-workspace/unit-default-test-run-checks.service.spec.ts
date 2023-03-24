@@ -72,11 +72,11 @@ describe('Linearity Summary Check Service Test', () => {
 
   describe('UNITDEF-29 Duplicate Unit Default Test Run (Result A)', () => {
     const payload = new UnitDefaultTestRunBaseDTO();
-    payload.operatingLevel = 1;
+    payload.operatingLevelForRun = 1;
     payload.runNumber = 1;
 
     const returnValue = new UnitDefaultTestRun();
-    returnValue.operatingLevel = 1;
+    returnValue.operatingLevelForRun = 1;
     returnValue.runNumber = 1;
 
     it('Should get already exists error', async () => {
