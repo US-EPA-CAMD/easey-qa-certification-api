@@ -102,6 +102,7 @@ export class RataSummaryChecksService {
         locationId,
         rataSummary.referenceMethodCode,
       );
+
       if (error) {
         errorList.push(error);
       }
@@ -132,8 +133,6 @@ export class RataSummaryChecksService {
   ): Promise<string> {
     let error: string = null;
 
-    console.log(summary['system']);
-
     const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(
       locationId,
       summary.location?.unit?.name,
@@ -143,30 +142,40 @@ export class RataSummaryChecksService {
 
     const referenceMethodCodeDataSet = await this.referenceMethodCodeRepository.find();
 
-    const parameterCodes = referenceMethodCodeDataSet.reduce(
-      (acc: string[], ds) => {
-        const paramCodes = ds.parameterCode.split(',');
-        return [...acc, ...paramCodes];
-      },
-      [],
-    );
+    const parameterCodes = referenceMethodCodeDataSet.reduce((acc, ds) => {
+      const paramCodes = ds.parameterCode.split(',');
+      paramCodes.forEach(code => {
+        if (!acc.includes(code)) {
+          acc.push(code);
+        }
+      });
+      return acc;
+    }, []);
 
     if (summary.system.systemTypeCode !== 'FLOW') {
-      if (!referenceMethodCode && !mp) {
-        error = this.getMessage('RATA-16-D', {
-          key: KEY,
-          systemtype: summary['system'],
-        });
-      } else if (!referenceMethodCode) {
+      if (!referenceMethodCode && mp) {
         error = this.getMessage('RATA-16-A', {
           fieldname: 'referenceMethodCode',
           key: KEY,
         });
-      } else if (referenceMethodCode.split(',').includes('20') && mp) {
+      } else {
+        error = this.getMessage('RATA-16-D', {
+          key: KEY,
+          systemtype: summary['system'],
+        });
+      }
+
+      if (
+        referenceMethodCode &&
+        referenceMethodCode.split(',').includes('20') &&
+        mp
+      ) {
         error = this.getMessage('RATA-16-E', {
           key: KEY,
         });
-      } else if (!parameterCodes.includes(summary.system.systemTypeCode)) {
+      }
+
+      if (!parameterCodes.includes(summary.system.systemTypeCode) && mp) {
         error = this.getMessage('RATA-16-C', {
           value: referenceMethodCode,
           key: KEY,
