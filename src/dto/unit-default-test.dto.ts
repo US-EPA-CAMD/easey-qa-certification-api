@@ -5,7 +5,7 @@ import {
 
 export class UnitDefaultTestBaseDTO {
   fuelCode: string;
-  NOxDefaultRate: number;
+  noxDefaultRate: number;
   operatingConditionCode: string;
   groupID: string;
   numberOfUnitsInGroup: number;
@@ -15,7 +15,7 @@ export class UnitDefaultTestBaseDTO {
 export class UnitDefaultTestRecordDTO extends UnitDefaultTestBaseDTO {
   id: string;
   testSumId: string;
-  calculatedNOxDefaultRate: number;
+  calculatedNoxDefaultRate: number;
   userId: string;
   addDate: string;
   updateDate: string;

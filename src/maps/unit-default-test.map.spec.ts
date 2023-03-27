@@ -10,8 +10,8 @@ entity.id = string;
 entity.testSumId = string;
 
 entity.fuelCode = string;
-entity.NOxDefaultRate = number;
-entity.calculatedNOxDefaultRate = number;
+entity.noxDefaultRate = number;
+entity.calculatedNoxDefaultRate = number;
 entity.operatingConditionCode = string;
 entity.groupID = string;
 entity.numberOfUnitsInGroup = number;
@@ -29,8 +29,8 @@ describe('UnitDefaultTestMap', () => {
     expect(result.testSumId).toEqual(string);
 
     expect(result.fuelCode).toEqual(string);
-    expect(result.NOxDefaultRate).toEqual(number);
-    expect(result.calculatedNOxDefaultRate).toEqual(number);
+    expect(result.noxDefaultRate).toEqual(number);
+    expect(result.calculatedNoxDefaultRate).toEqual(number);
     expect(result.operatingConditionCode).toEqual(string);
     expect(result.groupID).toEqual(string);
     expect(result.numberOfUnitsInGroup).toEqual(number);

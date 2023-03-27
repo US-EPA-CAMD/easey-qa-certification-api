@@ -231,7 +231,7 @@ describe('UnitDefaultTestWorkspaceService', () => {
   });
 
   describe('import', () => {
-    importPayload.NOxDefaultRate = 1;
+    importPayload.noxDefaultRate = 1;
 
     it('Should import Unit Default Test', async () => {
       jest.spyOn(service, 'createUnitDefaultTest').mockResolvedValue(dto);
