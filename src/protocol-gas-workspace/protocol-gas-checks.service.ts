@@ -33,8 +33,8 @@ export class ProtocolGasChecksService {
     private readonly gasComponentCodeRepository: GasComponentCodeRepository,
   ) {}
 
-  private throwIfErrrors(errorList: string[]) {
-    if (errorList.length > 0) {
+  private throwIfErrors(errorList: string[], isImport: boolean = false) {
+    if (!isImport && errorList.length > 0) {
       throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }
@@ -85,7 +85,7 @@ export class ProtocolGasChecksService {
       errorList.push(...errors);
     }
 
-    this.throwIfErrrors(errorList);
+    this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed Protocol Gas Checks');
     return errorList;
   }
