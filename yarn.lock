@@ -1161,15 +1161,9 @@
     eslint-visitor-keys "^3.0.0"
 
 "@us-epa-camd/easey-common@^15.2.0":
-<<<<<<< HEAD
-  version "15.3.0"
-  resolved "https://npm.pkg.github.com/download/@US-EPA-CAMD/easey-common/15.3.0/a900424eb3a761479daa3bc41869349eb5960e3c#a900424eb3a761479daa3bc41869349eb5960e3c"
-  integrity sha512-H/N0cZSWIOGam64N/iP7ctWao9LPgwkFTIRZ1M8oZF0T9BmM8P+MVU3E8HJMCBpxXZ7qb7pC1Ueo7NDrJWH7rg==
-=======
   version "15.2.0"
   resolved "https://npm.pkg.github.com/download/@US-EPA-CAMD/easey-common/15.2.0/c399a562bd7edf486a05cb74a2d4f8553d3780c9#c399a562bd7edf486a05cb74a2d4f8553d3780c9"
   integrity sha512-hzDO6/Z/v8zvBFwU76qkzSK8aLM3fX5TOgT9ZM9keokGpj3vzcx+g1TtWa2PSGDraje/7AcUM5SkSjbFbA8nBA==
->>>>>>> a14c5c3 (refactor)
   dependencies:
     "@golevelup/ts-jest" "^0.3.4"
     "@nestjs/axios" "0.0.3"

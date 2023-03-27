@@ -38,8 +38,8 @@ export class RataTraverseChecksService {
     private readonly rataSummaryRepository: RataSummaryWorkspaceRepository,
   ) {}
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
+  private throwIfErrors(errorList: string[], isImport: boolean = false) {
+    if (!isImport && errorList.length > 0) {
       throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }
@@ -142,7 +142,7 @@ export class RataTraverseChecksService {
       }
     }
 
-    this.throwIfErrors(errorList);
+    this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed RATA Traverse Checks');
     return errorList;
   }

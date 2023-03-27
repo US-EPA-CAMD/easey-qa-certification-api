@@ -67,6 +67,7 @@ export class RataSummaryChecksService {
         monitoringSystemID: testSummary.monitoringSystemID,
         locationId: locationId,
       });
+
       testSumRecord.location = await this.monitorLocationRepository.getLocationById(
         locationId,
         testSumRecord.unitId,
@@ -123,6 +124,7 @@ export class RataSummaryChecksService {
 
     this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed RATA Summary Checks');
+
     return errorList;
   }
 
@@ -140,7 +142,13 @@ export class RataSummaryChecksService {
       summary.endDate,
     );
 
-    const referenceMethodCodeDataSet = await this.referenceMethodCodeRepository.find();
+    const referenceMethodCodeDataSet = await this.referenceMethodCodeRepository.find(
+      {
+        where: {
+          referenceMethodCode,
+        },
+      },
+    );
 
     const parameterCodes = referenceMethodCodeDataSet.reduce((acc, ds) => {
       const paramCodes = ds.parameterCode.split(',');
@@ -152,6 +160,14 @@ export class RataSummaryChecksService {
       return acc;
     }, []);
 
+    if (!parameterCodes.includes(summary.system.systemTypeCode) && mp) {
+      error = this.getMessage('RATA-16-C', {
+        value: referenceMethodCode,
+        key: KEY,
+        systemType: summary['system'].systemTypeCode,
+      });
+    }
+
     if (summary.system.systemTypeCode !== 'FLOW') {
       if (!referenceMethodCode && mp) {
         error = this.getMessage('RATA-16-A', {
@@ -161,7 +177,7 @@ export class RataSummaryChecksService {
       } else {
         error = this.getMessage('RATA-16-D', {
           key: KEY,
-          systemtype: summary['system'],
+          systemType: summary['system'].systemTypeCode,
         });
       }
 
@@ -174,12 +190,11 @@ export class RataSummaryChecksService {
           key: KEY,
         });
       }
-
-      if (!parameterCodes.includes(summary.system.systemTypeCode) && mp) {
-        error = this.getMessage('RATA-16-C', {
-          value: referenceMethodCode,
+    } else {
+      if (!referenceMethodCode) {
+        error = this.getMessage('RATA-16-A', {
+          fieldname: 'referenceMethodCode',
           key: KEY,
-          systemType: summary['system'].systemTypeCode,
         });
       }
     }
