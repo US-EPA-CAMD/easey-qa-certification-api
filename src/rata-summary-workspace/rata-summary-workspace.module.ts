@@ -13,6 +13,7 @@ import { RataRunWorkspaceModule } from '../rata-run-workspace/rata-run-workspace
 import { ReferenceMethodCodeRepository } from '../reference-method-code/reference-method-code.repository';
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { LocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { LocationWorkspaceRepository } from '../monitor-location-workspace/monit
       ReferenceMethodCodeRepository,
       QAMonitorPlanWorkspaceRepository,
       LocationWorkspaceRepository,
+      MonitorSystemWorkspaceRepository,
     ]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => RataWorkspaceModule),
