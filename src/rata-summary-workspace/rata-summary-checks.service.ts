@@ -15,7 +15,7 @@ import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-s
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { ReferenceMethodCodeRepository } from '../reference-method-code/reference-method-code.repository';
 import { LocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
@@ -30,8 +30,8 @@ export class RataSummaryChecksService {
     private readonly repository: RataSummaryWorkspaceRepository,
     @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
-    @InjectRepository(MonitorSystemRepository)
-    private readonly monitorSystemRepository: MonitorSystemRepository,
+    @InjectRepository(MonitorSystemWorkspaceRepository)
+    private readonly monitorSystemRepository: MonitorSystemWorkspaceRepository,
     @InjectRepository(QAMonitorPlanWorkspaceRepository)
     private readonly qaMonitorPlanRepository: QAMonitorPlanWorkspaceRepository,
     @InjectRepository(ReferenceMethodCodeRepository)
@@ -67,6 +67,7 @@ export class RataSummaryChecksService {
         monitoringSystemID: testSummary.monitoringSystemID,
         locationId: locationId,
       });
+
       testSumRecord.location = await this.monitorLocationRepository.getLocationById(
         locationId,
         testSumRecord.unitId,
@@ -102,6 +103,7 @@ export class RataSummaryChecksService {
         locationId,
         rataSummary.referenceMethodCode,
       );
+
       if (error) {
         errorList.push(error);
       }
@@ -122,6 +124,7 @@ export class RataSummaryChecksService {
 
     this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed RATA Summary Checks');
+
     return errorList;
   }
 
@@ -130,25 +133,7 @@ export class RataSummaryChecksService {
     locationId: string,
     referenceMethodCode: string,
   ): Promise<string> {
-    const resultA = this.getMessage('RATA-16-A', {
-      fieldname: 'referenceMethodCode',
-      key: KEY,
-    });
-
-    const resultC = this.getMessage('RATA-16-C', {
-      value: referenceMethodCode,
-      key: KEY,
-      systemType: summary['system'].systemTypeCode,
-    });
-
-    const resultD = this.getMessage('RATA-16-D', {
-      key: KEY,
-      systemtype: summary['system'],
-    });
-
-    const resultE = this.getMessage('RATA-16-E', {
-      key: KEY,
-    });
+    let error: string = null;
 
     const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(
       locationId,
@@ -157,41 +142,64 @@ export class RataSummaryChecksService {
       summary.endDate,
     );
 
-    const referenceMethodCodeDataSet = await this.referenceMethodCodeRepository.find();
+    const referenceMethodCodeDataSet = await this.referenceMethodCodeRepository.find(
+      {
+        where: {
+          referenceMethodCode,
+        },
+      },
+    );
 
-    const referenceMethodCodes: string[] = [];
-    const parameterCodes: string[] = [];
-
-    referenceMethodCodeDataSet.forEach(ds => {
-      referenceMethodCodes.push(ds.referenceMethodCode);
-
+    const parameterCodes = referenceMethodCodeDataSet.reduce((acc, ds) => {
       const paramCodes = ds.parameterCode.split(',');
-      parameterCodes.push(...paramCodes);
-    });
+      paramCodes.forEach(code => {
+        if (!acc.includes(code)) {
+          acc.push(code);
+        }
+      });
+      return acc;
+    }, []);
+
+    if (!parameterCodes.includes(summary.system.systemTypeCode) && mp) {
+      error = this.getMessage('RATA-16-C', {
+        value: referenceMethodCode,
+        key: KEY,
+        systemType: summary['system'].systemTypeCode,
+      });
+    }
 
     if (summary.system.systemTypeCode !== 'FLOW') {
+      if (!referenceMethodCode && mp) {
+        error = this.getMessage('RATA-16-A', {
+          fieldname: 'referenceMethodCode',
+          key: KEY,
+        });
+      } else {
+        error = this.getMessage('RATA-16-D', {
+          key: KEY,
+          systemType: summary['system'].systemTypeCode,
+        });
+      }
+
+      if (
+        referenceMethodCode &&
+        referenceMethodCode.split(',').includes('20') &&
+        mp
+      ) {
+        error = this.getMessage('RATA-16-E', {
+          key: KEY,
+        });
+      }
+    } else {
       if (!referenceMethodCode) {
-        if (mp) {
-          return resultA;
-        } else {
-          return resultD;
-        }
-      }
-
-      if (referenceMethodCode.split(',').includes('20') && mp) {
-        return resultE;
-      }
-
-      if (!parameterCodes.includes(summary.system.systemTypeCode)) {
-        if (mp) {
-          return resultC;
-        } else {
-          return resultD;
-        }
+        error = this.getMessage('RATA-16-A', {
+          fieldname: 'referenceMethodCode',
+          key: KEY,
+        });
       }
     }
 
-    return null;
+    return error;
   }
 
   private rata17Check(

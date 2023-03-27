@@ -8,7 +8,7 @@ import { RataSummaryChecksService } from './rata-summary-checks.service';
 
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { ReferenceMethodCode } from '../entities/workspace/reference-method-code.entity';
@@ -90,7 +90,7 @@ describe('Rata Summary Check Service Test', () => {
           useFactory: mockTestSumRepository,
         },
         {
-          provide: MonitorSystemRepository,
+          provide: MonitorSystemWorkspaceRepository,
           useFactory: mockMonitorSystemRepository,
         },
         {

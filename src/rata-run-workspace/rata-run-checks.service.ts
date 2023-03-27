@@ -27,8 +27,8 @@ export class RataRunChecksService {
     private readonly monitorSystemRepository: MonitorSystemRepository,
   ) {}
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
+  private throwIfErrors(errorList: string[], isImport: boolean = false) {
+    if (!isImport && errorList.length > 0) {
       throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }
@@ -107,7 +107,7 @@ export class RataRunChecksService {
       }
     }
 
-    this.throwIfErrors(errorList);
+    this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed RATA Run Checks');
     return errorList;
   }

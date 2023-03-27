@@ -21,8 +21,8 @@ export class AppEHeatInputFromOilChecksService {
     private readonly repo: AppEHeatInputFromOilWorkspaceRepository,
   ) {}
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
+  private throwIfErrors(errorList: string[], isImport: boolean = false) {
+    if (!isImport && errorList.length > 0) {
       throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }

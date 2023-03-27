@@ -21,8 +21,8 @@ export class QACertificationEventChecksService {
     private readonly service: QACertificationEventWorkspaceService,
   ) {}
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
+  private throwIfErrors(errorList: string[], isImport: boolean = false) {
+    if (!isImport && errorList.length > 0) {
       throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }
@@ -50,7 +50,7 @@ export class QACertificationEventChecksService {
       }
     }
 
-    this.throwIfErrors(errorList);
+    this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed QA Certification Event Checks');
     return errorList;
   }
