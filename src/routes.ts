@@ -2,8 +2,7 @@ import { Routes } from 'nest-router';
 
 import { QACertificationModule } from './qa-certification/qa-certification.module';
 import { QACertificationWorkspaceModule } from './qa-certification-workspace/qa-certification.module';
-import { LocationModule } from './location/location.module';
-import { LocationWorkspaceModule } from './location-workspace/location.module';
+import { LocationWorkspaceModule } from './monitor-location-workspace/monitor-location.module';
 import { TestSummaryModule } from './test-summary/test-summary.module';
 import { TestSummaryWorkspaceModule } from './test-summary-workspace/test-summary.module';
 import { LinearitySummaryModule } from './linearity-summary/linearity-summary.module';
@@ -66,6 +65,7 @@ import { QaCertificationEventWorkspaceModule } from './qa-certification-event-wo
 import { TestExtensionExemptionsWorkspaceModule } from './test-extension-exemptions-workspace/test-extension-exemptions-workspace.module';
 import { TestExtensionExemptionsModule } from './test-extension-exemptions/test-extension-exemptions.module';
 import { QaCertificationEventModule } from './qa-certification-event/qa-certification-event.module';
+import { MonitorLocationModule } from './monitor-location/monitor-location.module';
 
 const routes: Routes = [
   {
@@ -78,7 +78,7 @@ const routes: Routes = [
   },
   {
     path: '/locations',
-    module: LocationModule,
+    module: MonitorLocationModule,
     children: [
       {
         path: ':locId/qa-certification-events',

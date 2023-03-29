@@ -35,7 +35,7 @@ let rataSumRecord = {
 };
 
 const testSumRecord = new TestSummary();
-testSumRecord.testTypeCode = TestTypeCodes.RATA
+testSumRecord.testTypeCode = TestTypeCodes.RATA;
 
 const importPayload = new FlowRataRunImportDTO();
 importPayload.averageVelocityWithWallEffects = 1;

@@ -98,7 +98,7 @@ export class UnitDefaultTestWorkspaceService {
     const entity = await this.getUnitDefaultTest(id);
 
     entity.fuelCode = payload.fuelCode;
-    entity.NOxDefaultRate = payload.NOxDefaultRate;
+    entity.noxDefaultRate = payload.noxDefaultRate;
     entity.operatingConditionCode = payload.operatingConditionCode;
     entity.groupID = payload.groupID;
     entity.numberOfUnitsInGroup = payload.numberOfUnitsInGroup;
@@ -179,7 +179,7 @@ export class UnitDefaultTestWorkspaceService {
     if (isHistoricalRecord) {
       historicalRecord = await this.historicalRepo.findOne({
         testSumId: testSumId,
-        NOxDefaultRate: payload.NOxDefaultRate,
+        noxDefaultRate: payload.noxDefaultRate,
       });
     }
 
@@ -192,7 +192,7 @@ export class UnitDefaultTestWorkspaceService {
     );
 
     this.logger.info(
-      `Flow To Load Reference Successfully Imported.  Record Id: ${createdUnitDefaultTest.id}`,
+      `Unit Default Successfully Imported.  Record Id: ${createdUnitDefaultTest.id}`,
     );
 
     if (payload.unitDefaultTestRunData?.length > 0) {

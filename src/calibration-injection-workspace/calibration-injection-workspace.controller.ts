@@ -15,7 +15,8 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -37,6 +38,7 @@ export class CalibrationInjectionWorkspaceController {
     description:
       'Retrieves workspace Calibration Injection records by Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getCalibrationInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -50,6 +52,7 @@ export class CalibrationInjectionWorkspaceController {
     type: CalibrationInjectionDTO,
     description: 'Retrieves workspace Calibration Injection record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getCalibrationInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -59,8 +62,7 @@ export class CalibrationInjectionWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: CalibrationInjectionDTO,
     description: 'Creates a workspace Calibration Injection record.',
@@ -79,8 +81,7 @@ export class CalibrationInjectionWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: CalibrationInjectionDTO,
     description: 'Updates a workspace Calibration Injection record.',
@@ -101,8 +102,7 @@ export class CalibrationInjectionWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a workspace Calibration Injection record.',
   })

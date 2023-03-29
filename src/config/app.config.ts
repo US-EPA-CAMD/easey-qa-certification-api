@@ -48,6 +48,10 @@ export default registerAs('app', () => ({
   enableSecretToken: getConfigValueBoolean(
     'EASEY_QA_CERTIFICATION_API_ENABLE_SECRET_TOKEN',
   ),
+  enableRoleGuard: getConfigValueBoolean(
+    'EASEY_QA_CERTIFICATION_API_ENABLE_ROLE_GUARD',
+    true,
+  ),
   enableCors: getConfigValueBoolean(
     'EASEY_QA_CERTIFICATION_API_ENABLE_CORS',
     true,

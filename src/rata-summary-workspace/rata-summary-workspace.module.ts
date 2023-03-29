@@ -12,6 +12,8 @@ import { RataSummaryModule } from '../rata-summary/rata-summary.module';
 import { RataRunWorkspaceModule } from '../rata-run-workspace/rata-run-workspace.module';
 import { ReferenceMethodCodeRepository } from '../reference-method-code/reference-method-code.repository';
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
+import { LocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 @Module({
   imports: [
@@ -19,6 +21,8 @@ import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/q
       RataSummaryWorkspaceRepository,
       ReferenceMethodCodeRepository,
       QAMonitorPlanWorkspaceRepository,
+      LocationWorkspaceRepository,
+      MonitorSystemWorkspaceRepository,
     ]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => RataWorkspaceModule),

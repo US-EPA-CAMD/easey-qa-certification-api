@@ -38,8 +38,8 @@ export class RataTraverseChecksService {
     private readonly rataSummaryRepository: RataSummaryWorkspaceRepository,
   ) {}
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
+  private throwIfErrors(errorList: string[], isImport: boolean = false) {
+    if (!isImport && errorList.length > 0) {
       throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }
@@ -142,7 +142,7 @@ export class RataTraverseChecksService {
       }
     }
 
-    this.throwIfErrors(errorList);
+    this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed RATA Traverse Checks');
     return errorList;
   }
@@ -154,7 +154,10 @@ export class RataTraverseChecksService {
     let error = null;
 
     if (rataTraverse.probeTypeCode) {
-      if (rataSumRecord.referenceMethodCode.startsWith('2F')) {
+      if (
+        rataSumRecord.referenceMethodCode &&
+        rataSumRecord.referenceMethodCode.startsWith('2F')
+      ) {
         if (
           !['PRISM', 'PRISM-T', 'SPHERE'].includes(rataTraverse.probeTypeCode)
         ) {
@@ -164,7 +167,10 @@ export class RataTraverseChecksService {
             method: rataSumRecord.referenceMethodCode,
           });
         }
-      } else if (rataSumRecord.referenceMethodCode.startsWith('2G')) {
+      } else if (
+        rataSumRecord.referenceMethodCode &&
+        rataSumRecord.referenceMethodCode.startsWith('2G')
+      ) {
         if (rataTraverse.probeTypeCode === 'PRANDT1') {
           error = this.getMessage('RATA-72-B', {
             value: rataTraverse.probeTypeCode,
@@ -232,8 +238,9 @@ export class RataTraverseChecksService {
     let error: string = null;
 
     if (
-      referenceMethodCode.startsWith('2F') ||
-      referenceMethodCode.startsWith('2G')
+      referenceMethodCode &&
+      (referenceMethodCode.startsWith('2F') ||
+        referenceMethodCode.startsWith('2G'))
     ) {
       if (!yawAngle) {
         error = this.getMessage('RATA-78-A', {
@@ -266,7 +273,7 @@ export class RataTraverseChecksService {
     let error: string = null;
     const fieldname = 'pitchAngle';
 
-    if (referenceMethodCode.startsWith('2F')) {
+    if (referenceMethodCode && referenceMethodCode.startsWith('2F')) {
       if (!pitchAngle) {
         error = this.getMessage('RATA-79-A', {
           fieldname,

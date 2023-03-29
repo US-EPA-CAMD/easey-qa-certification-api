@@ -7,6 +7,8 @@ import { CertEventReviewAndSubmitRepository } from './cert-event-review-and-subm
 import { CertEventReviewAndSubmitMap } from '../maps/cert-event-review-and-submit.map';
 import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
 
+const moment = require('moment');
+
 @Injectable()
 export class CertEventReviewAndSubmitService {
   constructor(
@@ -59,8 +61,11 @@ export class CertEventReviewAndSubmitService {
           }
 
           if (
-            new Date(d.eventDate.split(' ')[0]) >= new Date(rp.beginDate) &&
-            new Date(d.eventDate.split(' ')[0]) <= new Date(rp.endDate)
+            moment(d.eventDate.split(' ')[0]).isSameOrAfter(
+              rp.beginDate,
+              'day',
+            ) &&
+            moment(d.eventDate.split(' ')[0]).isSameOrBefore(rp.endDate, 'day')
           ) {
             found = true;
             d.periodAbbreviation = rp.periodAbbreviation;

@@ -15,7 +15,9 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -37,6 +39,7 @@ export class HgInjectionWorkspaceController {
     description:
       'Retrieves workspace Hg Injection records by HG Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getHgInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -50,6 +53,7 @@ export class HgInjectionWorkspaceController {
     type: HgInjectionRecordDTO,
     description: 'Retrieves workspace Hg Injection record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getHgInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -60,8 +64,7 @@ export class HgInjectionWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: HgInjectionRecordDTO,
     description: 'Creates a workspace Hg Injection record.',
@@ -82,8 +85,7 @@ export class HgInjectionWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: HgInjectionRecordDTO,
     description: 'Updates a workspace Hg Injection record.',
@@ -100,8 +102,7 @@ export class HgInjectionWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a workspace HG Injection record',
   })

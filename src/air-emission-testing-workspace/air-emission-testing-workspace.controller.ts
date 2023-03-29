@@ -6,17 +6,14 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   AirEmissionTestingBaseDTO,
@@ -25,6 +22,7 @@ import {
 } from '../dto/air-emission-test.dto';
 import { AirEmissionTestingChecksService } from './air-emission-testing-checks.service';
 import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -42,6 +40,7 @@ export class AirEmissionTestingWorkspaceController {
     description:
       'Retrieves official Air Emission Testing records by Rata Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getAirEmissionTestings(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -55,6 +54,7 @@ export class AirEmissionTestingWorkspaceController {
     type: AirEmissionTestingRecordDTO,
     description: 'Retrieves official Air Emission Testing record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getAirEmissionsTesting(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -64,8 +64,7 @@ export class AirEmissionTestingWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: AirEmissionTestingRecordDTO,
     description: 'Creates a workspace Air Emission Testing record.',
@@ -85,8 +84,7 @@ export class AirEmissionTestingWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: AirEmissionTestingRecordDTO,
     description: 'Updates a workspace Air Emission Testing record',
@@ -108,8 +106,7 @@ export class AirEmissionTestingWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a workspace Air Emission Testing record',
   })

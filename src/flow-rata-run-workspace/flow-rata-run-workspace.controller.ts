@@ -15,7 +15,8 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -41,6 +42,7 @@ export class FlowRataRunWorkspaceController {
     description:
       'Retrieves official Flow Rata Run records by Flow Rata Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getFlowRataRuns(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -57,6 +59,7 @@ export class FlowRataRunWorkspaceController {
     type: FlowRataRunDTO,
     description: 'Retrieves official Flow Rata Run record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getFlowRataRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -69,8 +72,7 @@ export class FlowRataRunWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     isArray: false,
     type: FlowRataRunRecordDTO,
@@ -105,8 +107,7 @@ export class FlowRataRunWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: FlowRataRunRecordDTO,
     description: 'Updates a Flow Rata Run record in the workspace',
@@ -141,8 +142,7 @@ export class FlowRataRunWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a Flow Rata Run record from the workspace',
   })

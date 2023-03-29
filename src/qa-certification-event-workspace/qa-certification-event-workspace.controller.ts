@@ -18,7 +18,7 @@ import {
 } from '@nestjs/swagger';
 
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -27,6 +27,7 @@ import {
   QACertificationEventRecordDTO,
 } from '../dto/qa-certification-event.dto';
 import { QACertificationEventChecksService } from './qa-certification-event-checks.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -44,6 +45,7 @@ export class QACertificationEventWorkspaceController {
     description:
       'Retrieves workspace QA Certification Event records by Location Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getQACertEvents(
     @Param('locId') locationId: string,
   ): Promise<QACertificationEventDTO[]> {
@@ -56,6 +58,7 @@ export class QACertificationEventWorkspaceController {
     type: QACertificationEventDTO,
     description: 'Retrieves workspace QA Certification Event record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getQACertEvent(
     @Param('locId') locationId: string,
     @Param('id') id: string,
@@ -64,8 +67,7 @@ export class QACertificationEventWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: QACertificationEventBaseDTO,
     description: 'Create a QA Certification Event record in the workspace',
@@ -80,8 +82,7 @@ export class QACertificationEventWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: QACertificationEventBaseDTO,
     description: 'Updates a QA Certification Event record in the workspace',
@@ -97,8 +98,7 @@ export class QACertificationEventWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a QA Certification Event from the workspace',
   })

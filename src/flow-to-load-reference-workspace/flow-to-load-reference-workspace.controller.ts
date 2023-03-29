@@ -15,7 +15,8 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -38,6 +39,7 @@ export class FlowToLoadReferenceWorkspaceController {
     description:
       'Retrieves workspace Flow To Load Reference records by Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getFlowToLoadReferences(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -52,6 +54,7 @@ export class FlowToLoadReferenceWorkspaceController {
     description:
       'Retrieves a workspace Flow To Load Reference record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getFlowToLoadReference(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -61,8 +64,7 @@ export class FlowToLoadReferenceWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
-  @UseGuards(AuthGuard)
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: FlowToLoadReferenceDTO,
     description: 'Creates a workspace Flow To Load Reference record.',
@@ -81,8 +83,7 @@ export class FlowToLoadReferenceWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: FlowToLoadReferenceDTO,
     description: 'Updates a workspace Flow To Load Reference record',
@@ -103,8 +104,7 @@ export class FlowToLoadReferenceWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a Flow To Load Reference record from the workspace',
   })

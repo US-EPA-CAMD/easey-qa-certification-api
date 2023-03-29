@@ -15,11 +15,12 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -33,6 +34,7 @@ export class HgSummaryWorkspaceController {
     type: HgSummaryDTO,
     description: 'Retrieves workspace Hg Summary records by Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getHgSummaries(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -46,6 +48,7 @@ export class HgSummaryWorkspaceController {
     type: HgSummaryDTO,
     description: 'Retrieves workspace Hg Summary record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getHgSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -55,8 +58,7 @@ export class HgSummaryWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: HgSummaryDTO,
     description: 'Creates a workspace Hg Summary record.',
@@ -71,8 +73,7 @@ export class HgSummaryWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: HgSummaryDTO,
     description: 'Updates a workspace Hg Summary record.',
@@ -88,8 +89,7 @@ export class HgSummaryWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a workspace Hg Summary record.',
   })

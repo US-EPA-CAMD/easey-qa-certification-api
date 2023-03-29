@@ -15,7 +15,8 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -37,6 +38,7 @@ export class CycleTimeSummaryWorkspaceController {
     description:
       'Retrieves workspace Cycle Time Summary records by Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getCycleTimeSummaries(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -50,6 +52,7 @@ export class CycleTimeSummaryWorkspaceController {
     type: CycleTimeSummaryDTO,
     description: 'Retrieves workspace Cycle Time Summary record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getCycleTimeSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -59,8 +62,7 @@ export class CycleTimeSummaryWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: CycleTimeSummaryDTO,
     description: 'Creates a workspace Cycle Time Summary record.',
@@ -75,8 +77,7 @@ export class CycleTimeSummaryWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: CycleTimeSummaryDTO,
     description: 'Updates a workspace Cycle Time Summary record.',
@@ -97,8 +98,7 @@ export class CycleTimeSummaryWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a workspace Cycle Time Summary record.',
   })

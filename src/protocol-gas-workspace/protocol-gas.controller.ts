@@ -16,8 +16,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -26,6 +25,7 @@ import {
 } from '../dto/protocol-gas.dto';
 import { ProtocolGasWorkspaceService } from './protocol-gas.service';
 import { ProtocolGasChecksService } from './protocol-gas-checks.service';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -42,6 +42,7 @@ export class ProtocolGasWorkspaceController {
     type: ProtocolGasRecordDTO,
     description: 'Retrieves workspace Protocol Gas records by Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getProtocolGases(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -55,6 +56,7 @@ export class ProtocolGasWorkspaceController {
     type: ProtocolGasRecordDTO,
     description: 'Retrieves workspace Protocol Gas record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   getProtocolGas(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -64,8 +66,7 @@ export class ProtocolGasWorkspaceController {
   }
 
   @Post()
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: ProtocolGasRecordDTO,
     description: 'Creates a Protocol Gas record in the workspace',
@@ -87,8 +88,7 @@ export class ProtocolGasWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: ProtocolGasRecordDTO,
     description: 'Updates a Protocol Gas record in the workspace',
@@ -100,8 +100,6 @@ export class ProtocolGasWorkspaceController {
     @Body() payload: ProtocolGasBaseDTO,
     @User() user: CurrentUser,
   ) {
-    console.log('CONTROLLER - run');
-
     await this.checksService.runChecks(
       payload,
       locationId,
@@ -113,8 +111,7 @@ export class ProtocolGasWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a Protocol Gas record from the workspace',
   })

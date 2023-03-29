@@ -15,9 +15,10 @@ import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-s
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { ReferenceMethodCodeRepository } from '../reference-method-code/reference-method-code.repository';
+import { LocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 
 const KEY = 'RATA Summary';
 
@@ -29,12 +30,14 @@ export class RataSummaryChecksService {
     private readonly repository: RataSummaryWorkspaceRepository,
     @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
-    @InjectRepository(MonitorSystemRepository)
-    private readonly monitorSystemRepository: MonitorSystemRepository,
+    @InjectRepository(MonitorSystemWorkspaceRepository)
+    private readonly monitorSystemRepository: MonitorSystemWorkspaceRepository,
     @InjectRepository(QAMonitorPlanWorkspaceRepository)
     private readonly qaMonitorPlanRepository: QAMonitorPlanWorkspaceRepository,
     @InjectRepository(ReferenceMethodCodeRepository)
     private readonly referenceMethodCodeRepository: ReferenceMethodCodeRepository,
+    @InjectRepository(LocationWorkspaceRepository)
+    private readonly monitorLocationRepository: LocationWorkspaceRepository,
   ) {}
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -64,6 +67,12 @@ export class RataSummaryChecksService {
         monitoringSystemID: testSummary.monitoringSystemID,
         locationId: locationId,
       });
+
+      testSumRecord.location = await this.monitorLocationRepository.getLocationById(
+        locationId,
+        testSumRecord.unitId,
+        testSumRecord.stackPipeId,
+      );
       // IMPORT-30 Extraneous RATA Summary Data Check
       error = await this.import30Check(rataSummary, testSumRecord);
       if (error) {
@@ -73,9 +82,16 @@ export class RataSummaryChecksService {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
       );
+
+      if (!testSumRecord) {
+        throw new LoggingException(
+          `A test summary record not found with Record Id [${testSumId}].`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
     }
 
-    if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
+    if (testSumRecord?.testTypeCode === TestTypeCodes.RATA) {
       // RATA-17 Mean CEM Value Valid
       error = this.rata17Check(testSumRecord, rataSummary.meanCEMValue);
       if (error) {
@@ -87,6 +103,7 @@ export class RataSummaryChecksService {
         locationId,
         rataSummary.referenceMethodCode,
       );
+
       if (error) {
         errorList.push(error);
       }
@@ -107,6 +124,7 @@ export class RataSummaryChecksService {
 
     this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed RATA Summary Checks');
+
     return errorList;
   }
 
@@ -115,68 +133,73 @@ export class RataSummaryChecksService {
     locationId: string,
     referenceMethodCode: string,
   ): Promise<string> {
-    const resultA = this.getMessage('RATA-16-A', {
-      fieldname: 'referenceMethodCode',
-      key: KEY,
-    });
-
-    const resultC = this.getMessage('RATA-16-C', {
-      value: referenceMethodCode,
-      key: KEY,
-      systemType: summary['system'].systemTypeCode,
-    });
-
-    const resultD = this.getMessage('RATA-16-D', {
-      key: KEY,
-      systemtype: summary['system'],
-    });
-
-    const resultE = this.getMessage('RATA-16-E', {
-      key: KEY,
-    });
+    let error: string = null;
 
     const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(
       locationId,
-      summary.unitId,
-      summary.stackPipeId,
-      summary['endDate'],
+      summary.location?.unit?.name,
+      summary.location?.stackPipe?.name,
+      summary.endDate,
     );
 
-    const referenceMethodCodeDataSet = await this.referenceMethodCodeRepository.find();
+    const referenceMethodCodeDataSet = await this.referenceMethodCodeRepository.find(
+      {
+        where: {
+          referenceMethodCode,
+        },
+      },
+    );
 
-    const referenceMethodCodes: string[] = [];
-    const parameterCodes: string[] = [];
-
-    referenceMethodCodeDataSet.forEach(ds => {
-      referenceMethodCodes.push(ds.referenceMethodCode);
-
+    const parameterCodes = referenceMethodCodeDataSet.reduce((acc, ds) => {
       const paramCodes = ds.parameterCode.split(',');
-      parameterCodes.push(...paramCodes);
-    });
+      paramCodes.forEach(code => {
+        if (!acc.includes(code)) {
+          acc.push(code);
+        }
+      });
+      return acc;
+    }, []);
+
+    if (!parameterCodes.includes(summary.system.systemTypeCode) && mp) {
+      error = this.getMessage('RATA-16-C', {
+        value: referenceMethodCode,
+        key: KEY,
+        systemType: summary['system'].systemTypeCode,
+      });
+    }
 
     if (summary.system.systemTypeCode !== 'FLOW') {
+      if (!referenceMethodCode && mp) {
+        error = this.getMessage('RATA-16-A', {
+          fieldname: 'referenceMethodCode',
+          key: KEY,
+        });
+      } else {
+        error = this.getMessage('RATA-16-D', {
+          key: KEY,
+          systemType: summary['system'].systemTypeCode,
+        });
+      }
+
+      if (
+        referenceMethodCode &&
+        referenceMethodCode.split(',').includes('20') &&
+        mp
+      ) {
+        error = this.getMessage('RATA-16-E', {
+          key: KEY,
+        });
+      }
+    } else {
       if (!referenceMethodCode) {
-        if (mp) {
-          return resultA;
-        } else {
-          return resultD;
-        }
-      }
-
-      if (referenceMethodCode.split(',').includes('20') && mp) {
-        return resultE;
-      }
-
-      if (!parameterCodes.includes(summary?.system.systemTypeCode)) {
-        if (mp) {
-          return resultC;
-        } else {
-          return resultD;
-        }
+        error = this.getMessage('RATA-16-A', {
+          fieldname: 'referenceMethodCode',
+          key: KEY,
+        });
       }
     }
 
-    return null;
+    return error;
   }
 
   private rata17Check(
@@ -190,9 +213,7 @@ export class RataSummaryChecksService {
         key: KEY,
         fieldname: 'meanCEMValue',
       });
-    }
-
-    if (meanCEMValue < 0) {
+    } else if (meanCEMValue <= 0 || meanCEMValue >= 20000) {
       error = CheckCatalogService.formatResultMessage('RATA-17-B', {
         key: KEY,
         fieldname: 'meanCEMValue',
@@ -294,7 +315,7 @@ export class RataSummaryChecksService {
     return error;
   }
 
-  getMessage(messageKey: string, messageArgs: object): string {
+  getMessage(messageKey: string, messageArgs?: object): string {
     return CheckCatalogService.formatResultMessage(messageKey, messageArgs);
   }
 }

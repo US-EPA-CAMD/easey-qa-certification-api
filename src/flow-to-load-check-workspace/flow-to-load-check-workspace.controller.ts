@@ -15,7 +15,7 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { User } from '@us-epa-camd/easey-common/decorators';
+import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { FlowToLoadCheckWorkspaceService } from './flow-to-load-check-workspace.service';
@@ -24,6 +24,7 @@ import {
   FlowToLoadCheckDTO,
   FlowToLoadCheckRecordDTO,
 } from '../dto/flow-to-load-check.dto';
+import { LookupType } from '@us-epa-camd/easey-common/enums';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -38,6 +39,7 @@ export class FlowToLoadCheckWorkspaceController {
     description:
       'Retrieves workspace Flow To Load Check records by Test Summary Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getFlowToLoadChecks(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -51,6 +53,7 @@ export class FlowToLoadCheckWorkspaceController {
     type: FlowToLoadCheckRecordDTO,
     description: 'Retrieves a workspace Flow To Load Check record by its Id',
   })
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   async getFlowToLoadCheck(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -60,8 +63,7 @@ export class FlowToLoadCheckWorkspaceController {
   }
 
   @Post()
-  @ApiBearerAuth('Token')
-  @UseGuards(AuthGuard)
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiCreatedResponse({
     type: FlowToLoadCheckRecordDTO,
     description: 'Creates a workspace Flow To Load Check record.',
@@ -76,8 +78,7 @@ export class FlowToLoadCheckWorkspaceController {
   }
 
   @Put(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     type: FlowToLoadCheckDTO,
     description: 'Updates a workspace Flow To Load Check record',
@@ -99,8 +100,7 @@ export class FlowToLoadCheckWorkspaceController {
   }
 
   @Delete(':id')
-  @UseGuards(AuthGuard)
-  @ApiBearerAuth('Token')
+  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
   @ApiOkResponse({
     description: 'Deletes a Flow To Load Check record from the workspace',
   })

@@ -22,8 +22,8 @@ export class TestExtensionExemptionsChecksService {
     private readonly service: TestExtensionExemptionsWorkspaceService,
   ) {}
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
+  private throwIfErrors(errorList: string[], isImport: boolean = false) {
+    if (!isImport && errorList.length > 0) {
       throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }
@@ -51,7 +51,7 @@ export class TestExtensionExemptionsChecksService {
       }
     }
 
-    this.throwIfErrors(errorList);
+    this.throwIfErrors(errorList, isImport);
     this.logger.info('Completed Test Extension Exemption Checks');
     return errorList;
   }

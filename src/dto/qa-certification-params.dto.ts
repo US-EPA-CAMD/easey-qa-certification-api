@@ -16,6 +16,7 @@ import { IsValidCodes } from '../pipes/is-valid-codes.pipe';
 import { ValidationArguments } from 'class-validator';
 import { FindOneOptions, In } from 'typeorm';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 const MIN_DATE = '1993-01-01';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -95,11 +96,20 @@ export class QACertificationParamsDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT}.`;
+      return CheckCatalogService.formatMessage(
+        `You reported [fieldname] which must be a valid ISO date format of ${DATE_FORMAT}.`,
+        {
+          fieldname: args.property,
+        },
+      );
     },
   })
-  @IsInDateRange('1993-01-01', null, {
-    message: `Begin Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,
+  @IsInDateRange(MIN_DATE, null, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `Begin Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,
+      );
+    },
   })
   beginDate?: Date;
 
@@ -108,11 +118,20 @@ export class QACertificationParamsDTO {
   })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
-      return `You reported [${args.property}] which must be a valid ISO date format of ${DATE_FORMAT}.`;
+      return CheckCatalogService.formatMessage(
+        `You reported [fieldname] which must be a valid ISO date format of ${DATE_FORMAT}.`,
+        {
+          fieldname: args.property,
+        },
+      );
     },
   })
-  @IsInDateRange('1993-01-01', null, {
-    message: `End Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,
+  @IsInDateRange(MIN_DATE, null, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `End Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,
+      );
+    },
   })
   endDate?: Date;
 }

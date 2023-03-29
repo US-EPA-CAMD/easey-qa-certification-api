@@ -12,7 +12,7 @@ export class UnitDefaultTestRunMap extends BaseMap<
     return {
       id: entity.id,
       unitDefaultTestSumId: entity.unitDefaultTestSumId,
-      operatingLevel: entity.operatingLevel,
+      operatingLevelForRun: entity.operatingLevelForRun,
       runNumber: entity.runNumber,
       beginDate: entity.beginDate,
       beginHour: entity.beginHour,

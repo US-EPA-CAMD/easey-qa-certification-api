@@ -40,13 +40,13 @@ export class UnitDefaultTest extends BaseEntity {
     transformer: new NumericColumnTransformer(),
     name: 'nox_default_rate',
   })
-  NOxDefaultRate: number;
+  noxDefaultRate: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
     name: 'calc_nox_default_rate',
   })
-  calculatedNOxDefaultRate: number;
+  calculatedNoxDefaultRate: number;
 
   @Column({
     type: 'varchar',
