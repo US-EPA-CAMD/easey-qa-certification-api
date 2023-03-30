@@ -22,8 +22,8 @@ export class AirEmissionTestingChecksService {
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
   ) {}
 
-  private throwIfErrors(errorList: string[]) {
-    if (errorList.length > 0) {
+  private throwIfErrors(errorList: string[], isImport: boolean = false) {
+    if (!isImport && errorList.length > 0) {
       throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
     }
   }
@@ -57,7 +57,7 @@ export class AirEmissionTestingChecksService {
       errorList.push(error);
     }
 
-    this.throwIfErrors(errorList);
+    this.throwIfErrors(errorList, isImport);
 
     this.logger.info('Completed Air Emission Testing Checks');
 
