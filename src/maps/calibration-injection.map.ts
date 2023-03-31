@@ -16,7 +16,7 @@ export class CalibrationInjectionMap extends BaseMap<
       id: entity.id,
       testSumId: entity.testSumId,
 
-      onLineOffLineIndicator: entity.onLineOffLineIndicator,
+      onlineOfflineIndicator: entity.onlineOfflineIndicator,
       upscaleGasLevelCode: entity.upscaleGasLevelCode,
       zeroInjectionDate: entity.zeroInjectionDate,
       zeroInjectionHour: entity.zeroInjectionHour,
