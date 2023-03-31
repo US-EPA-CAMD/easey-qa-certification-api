@@ -103,7 +103,7 @@ export class CalibrationInjectionWorkspaceService {
       );
     }
 
-    entity.onLineOfflineIndicator = payload.onLineOfflineIndicator;
+    entity.onlineOfflineIndicator = payload.onlineOfflineIndicator;
     entity.upscaleGasLevelCode = payload.upscaleGasLevelCode;
     entity.zeroInjectionDate = payload.zeroInjectionDate;
     entity.zeroInjectionHour = payload.zeroInjectionHour;

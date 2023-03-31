@@ -9,7 +9,7 @@ const entity = new CalibrationInjection();
 entity.id = string;
 entity.testSumId = string;
 
-entity.onLineOfflineIndicator = number;
+entity.onlineOfflineIndicator = number;
 entity.upscaleGasLevelCode = string;
 
 entity.zeroInjectionDate = date;
@@ -44,7 +44,7 @@ describe('CalibrationInjectionMap', () => {
     expect(result.id).toEqual(string);
     expect(result.testSumId).toEqual(string);
 
-    expect(result.onLineOfflineIndicator).toEqual(number);
+    expect(result.onlineOfflineIndicator).toEqual(number);
     expect(result.upscaleGasLevelCode).toEqual(string);
 
     expect(result.zeroInjectionDate).toEqual(date);
