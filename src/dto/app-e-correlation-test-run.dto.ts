@@ -6,7 +6,12 @@ import {
   AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasImportDTO,
 } from './app-e-heat-input-from-gas.dto';
-import { IsNumber, IsString, ValidateNested, ValidationArguments } from 'class-validator';
+import {
+  IsNumber,
+  IsString,
+  ValidateNested,
+  ValidationArguments,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes/is-iso-format.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';

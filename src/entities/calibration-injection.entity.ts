@@ -30,7 +30,7 @@ export class CalibrationInjection extends BaseEntity {
     name: 'online_offline_ind',
     transformer: new NumericColumnTransformer(),
   })
-  onLineOffLineIndicator: number;
+  onlineOfflineIndicator: number;
 
   @Column({
     name: 'zero_ref_value',

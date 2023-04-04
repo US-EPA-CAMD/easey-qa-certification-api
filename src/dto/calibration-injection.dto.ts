@@ -7,7 +7,7 @@ const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class CalibrationInjectionBaseDTO {
   @IsNumber()
-  onLineOffLineIndicator: number;
+  onlineOfflineIndicator: number;
   @IsString()
   upscaleGasLevelCode: string;
 

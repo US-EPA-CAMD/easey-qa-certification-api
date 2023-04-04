@@ -1,5 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString, ValidationArguments } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+  ValidationArguments,
+} from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 

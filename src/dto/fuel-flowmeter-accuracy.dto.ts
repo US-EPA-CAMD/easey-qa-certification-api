@@ -25,7 +25,7 @@ export class FuelFlowmeterAccuracyBaseDTO {
       );
     },
   })
-  reinstallationDate: string;
+  reinstallationDate: Date;
   @IsNumber()
   reinstallationHour: number;
 }

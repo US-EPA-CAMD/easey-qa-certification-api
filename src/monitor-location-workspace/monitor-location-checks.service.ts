@@ -22,10 +22,13 @@ export class LocationChecksService {
     const addLocation = (i: any) => {
       const systemIDs = [];
       const componentIDs = [];
+      let location;
 
-      const location = locations.find(
-        l => l?.unitId === i?.unitId || l?.stackPipeId === i?.stackPipeId,
-      );
+      if (i?.stackPipeId) {
+        location = locations.find(l => l?.stackPipeId === i?.stackPipeId);
+      } else {
+        location = locations.find(l => l?.unitId === i?.unitId);
+      }
 
       if (location) {
         if (

@@ -1,6 +1,11 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { IsNumber, IsOptional, IsString, ValidationArguments } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidationArguments,
+} from 'class-validator';
 
 const KEY = 'QA Certification Event';
 const DATE_FORMAT = 'YYYY-MM-DD';
