@@ -1,6 +1,6 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { ValidationArguments } from 'class-validator';
+import { IsNumber, IsString, ValidationArguments } from 'class-validator';
 
 const KEY = 'Online Offline Calibration';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -19,12 +19,19 @@ export class OnlineOfflineCalibrationBaseDTO {
   })
   onlineZeroInjectionDate: string;
 
+  @IsNumber()
   onlineZeroInjectionHour: number;
+  @IsNumber()
   onlineZeroCalibrationError: number;
+  @IsNumber()
   onlineZeroAPSIndicator: number;
+  @IsNumber()
   onlineZeroMeasuredValue: number;
+  @IsNumber()
   onlineZeroReferenceValue: number;
+  @IsNumber()
   onlineUpscaleCalibrationError: number;
+  @IsNumber()
   onlineUpscaleAPSIndicator: number;
 
   @IsIsoFormat({
@@ -39,10 +46,15 @@ export class OnlineOfflineCalibrationBaseDTO {
     },
   })
   onlineUpscaleInjectionDate: string;
+  @IsNumber()
   onlineUpscaleInjectionHour: number;
+  @IsNumber()
   onlineUpscaleMeasuredValue: number;
+  @IsNumber()
   onlineUpscaleReferenceValue: number;
+  @IsNumber()
   offlineZeroCalibrationError: number;
+  @IsNumber()
   offlineZeroAPSIndicator: number;
 
   @IsIsoFormat({
@@ -57,10 +69,15 @@ export class OnlineOfflineCalibrationBaseDTO {
     },
   })
   offlineZeroInjectionDate: string;
+  @IsNumber()
   offlineZeroInjectionHour: number;
+  @IsNumber()
   offlineZeroMeasuredValue: number;
+  @IsNumber()
   offlineZeroReferenceValue: number;
+  @IsNumber()
   offlineUpscaleCalibrationError: number;
+  @IsNumber()
   offlineUpscaleAPSIndicator: number;
 
   @IsIsoFormat({
@@ -75,9 +92,13 @@ export class OnlineOfflineCalibrationBaseDTO {
     },
   })
   offlineUpscaleInjectionDate: string;
+  @IsNumber()
   offlineUpscaleInjectionHour: number;
+  @IsNumber()
   offlineUpscaleMeasuredValue: number;
+  @IsNumber()
   offlineUpscaleReferenceValue: number;
+  @IsString()
   upscaleGasLevelCode: string;
 }
 

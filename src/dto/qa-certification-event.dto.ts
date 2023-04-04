@@ -1,14 +1,28 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { ValidationArguments } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidationArguments,
+} from 'class-validator';
 
 const KEY = 'QA Certification Event';
 const DATE_FORMAT = 'YYYY-MM-DD';
 export class QACertificationEventBaseDTO {
+  @IsOptional()
+  @IsString()
   stackPipeId?: string;
+  @IsOptional()
+  @IsString()
   unitId?: string;
+  @IsOptional()
+  @IsString()
   monitoringSystemID?: string;
+  @IsOptional()
+  @IsString()
   componentID?: string;
+  @IsString()
   qaCertEventCode: string;
 
   @IsIsoFormat({
@@ -23,7 +37,9 @@ export class QACertificationEventBaseDTO {
     },
   })
   qaCertEventDate: Date;
+  @IsNumber()
   qaCertEventHour?: number;
+  @IsString()
   requiredTestCode?: string;
 
   @IsIsoFormat({
@@ -38,6 +54,7 @@ export class QACertificationEventBaseDTO {
     },
   })
   conditionalBeginDate?: Date;
+  @IsNumber()
   conditionalBeginHour?: number;
 
   @IsIsoFormat({
@@ -52,6 +69,7 @@ export class QACertificationEventBaseDTO {
     },
   })
   completionTestDate?: Date;
+  @IsNumber()
   completionTestHour?: number;
 }
 
