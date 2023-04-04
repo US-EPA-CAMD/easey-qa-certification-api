@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
+  IsNumber,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
@@ -51,6 +52,7 @@ export class LinearitySummaryBaseDTO {
       });
     },
   })
+  @IsNumber()
   meanMeasuredValue: number;
 
   @ApiProperty({

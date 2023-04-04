@@ -5,6 +5,7 @@ import { OperatingLevelCode } from '../entities/workspace/operating-level-code.e
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import {
   IsNotEmpty,
+  IsNumber,
   ValidateIf,
   ValidateNested,
   ValidationArguments,
@@ -91,6 +92,7 @@ export class RataSummaryBaseDTO {
       });
     },
   })
+  @IsNumber()
   meanCEMValue: number;
 
   @ApiProperty({
@@ -131,6 +133,7 @@ export class RataSummaryBaseDTO {
       });
     },
   })
+  @IsNumber()
   meanDifference: number;
 
   @ApiProperty({
@@ -144,6 +147,7 @@ export class RataSummaryBaseDTO {
       });
     },
   })
+  @IsNumber()
   standardDeviationDifference: number;
 
   @ApiProperty({
@@ -157,6 +161,7 @@ export class RataSummaryBaseDTO {
       });
     },
   })
+  @IsNumber()
   confidenceCoefficient: number;
 
   @ApiProperty({
@@ -170,6 +175,7 @@ export class RataSummaryBaseDTO {
       });
     },
   })
+  @IsNumber()
   tValue: number;
 
   @ApiProperty(
@@ -183,6 +189,7 @@ export class RataSummaryBaseDTO {
       });
     },
   })
+  @IsNumber()
   apsIndicator: number;
 
   @ApiProperty(getMetadata(dataDictionary.apsCode, MetadataKeys.RATA_SUMMARY))
@@ -226,6 +233,7 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'biasAdjustmentFactor. ADD TO PROPERTY METADATA',
   })
+  @IsNumber()
   biasAdjustmentFactor: number;
 
   @ApiProperty({
@@ -249,26 +257,31 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'stackDiameter. ADD TO PROPERTY METADATA',
   })
+  @IsNumber()
   stackDiameter: number;
 
   @ApiProperty({
     description: 'stackArea. ADD TO PROPERTY METADATA',
   })
+  @IsNumber()
   stackArea: number;
 
   @ApiProperty({
     description: 'numberOfTraversePoints. ADD TO PROPERTY METADATA',
   })
+  @IsNumber()
   numberOfTraversePoints: number;
 
   @ApiProperty({
     description: 'calculatedWAF. ADD TO PROPERTY METADATA',
   })
+  @IsNumber()
   calculatedWAF: number;
 
   @ApiProperty({
     description: 'defaultWAF. ADD TO PROPERTY METADATA',
   })
+  @IsNumber()
   defaultWAF: number;
 }
 
