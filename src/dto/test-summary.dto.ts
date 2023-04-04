@@ -638,17 +638,13 @@ export class TestSummaryBaseDTO {
   @IsOptional()
   @IsInRange(1993, new Date().getFullYear(), {
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `Year must be greater than or equal to 1993 and less than or equal to ${new Date().getFullYear()}. You reported an invalid year of [${
-          args.value
-        }] in Test Summary record for Unit/Stack [${
-          args.object['unitId']
-            ? args.object['unitId']
-            : args.object['stackPipeId']
-        }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-          args.object['testNumber']
-        }]`,
-      );
+      return CheckCatalogService.formatResultMessage('IMPORT-34-A', {
+        locationID: args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId'],
+        testTypeCode: args.object['testTypeCode'],
+        testNumber: args.object['testNumber'],
+      });
     },
   })
   @ValidateIf(o => YEAR_QUARTER_TEST_TYPE_CODES.includes(o.testTypeCode))
@@ -661,15 +657,15 @@ export class TestSummaryBaseDTO {
   @IsInRange(1, 4, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `Quarter must be a numeric number from 1 to 4. You reported an invalid quarter of [${
-          args.value
-        }] in Test Summary record for Unit/Stack [${
-          args.object['unitId']
+        `You reported an invalid quarter of [value] in Test Summary record for location [locationID], Test Type Code [testTypeCode], and Test Number [testNumber]. Quarter must be a numeric number from 1 to 4.`,
+        {
+          value: args.value,
+          locationID: args.object['unitId']
             ? args.object['unitId']
-            : args.object['stackPipeId']
-        }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-          args.object['testNumber']
-        }]`,
+            : args.object['stackPipeId'],
+          testTypeCode: args.object['testTypeCode'],
+          testNumber: args.object['testNumber'],
+        },
       );
     },
   })
