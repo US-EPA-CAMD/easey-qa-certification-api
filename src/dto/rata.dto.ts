@@ -3,6 +3,8 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
+  IsNumber,
+  IsString,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
@@ -22,21 +24,25 @@ export class RataBaseDTO {
       });
     },
   })
+  @IsNumber()
   numberOfLoadLevels: number;
 
   @ApiProperty({
     description: 'relativeAccuracy. ADD TO PROPERTY METADATA',
   })
+  @IsNumber()
   relativeAccuracy: number;
 
   @ApiProperty({
     description: 'rataFrequencyCode. ADD TO PROPERTY METADATA',
   })
+  @IsString()
   rataFrequencyCode: string;
 
   @ApiProperty({
     description: 'overallBiasAdjustmentFactor. ADD TO PROPERTY METADATA',
   })
+  @IsNumber()
   overallBiasAdjustmentFactor: number;
 }
 

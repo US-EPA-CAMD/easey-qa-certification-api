@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { RequireOne } from '../pipes/require-one.pipe';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
-import { ValidateIf, ValidationArguments } from 'class-validator';
+import { IsNumber, IsOptional, IsString, ValidateIf, ValidationArguments } from 'class-validator';
 import { YEAR_QUARTER_TEST_TYPE_CODES } from '../utilities/constants';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { SpanScaleCode } from '../entities/span-scale-code.entity';
@@ -17,11 +17,15 @@ export class TestExtensionExemptionBaseDTO {
     message:
       'A Unit or Stack Pipe identifier (NOT both) must be provided for each Test Summary.',
   })
+  @IsOptional()
+  @IsString()
   stackPipeId?: string;
 
   @ApiProperty({
     description: propertyMetadata.unitId.description,
   })
+  @IsOptional()
+  @IsString()
   unitId?: string;
 
   @ApiProperty({
@@ -65,13 +69,19 @@ export class TestExtensionExemptionBaseDTO {
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOId.description,
   })
+  @IsOptional()
+  @IsString()
   monitoringSystemID?: string;
 
   @ApiProperty({
     description: propertyMetadata.componentDTOComponentId.description,
   })
+  @IsOptional()
+  @IsString()
   componentID?: string;
 
+  @IsOptional()
+  @IsNumber()
   hoursUsed?: number;
 
   @ApiProperty({
@@ -92,7 +102,10 @@ export class TestExtensionExemptionBaseDTO {
   })
   spanScaleCode?: string;
 
+  @IsOptional()
+  @IsString()
   fuelCode?: string;
+  @IsString()
   extensionOrExemptionCode: string;
 }
 

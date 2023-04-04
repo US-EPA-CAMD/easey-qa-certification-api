@@ -6,7 +6,7 @@ import {
   AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasImportDTO,
 } from './app-e-heat-input-from-gas.dto';
-import { ValidateNested, ValidationArguments } from 'class-validator';
+import { IsNumber, IsString, ValidateNested, ValidationArguments } from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes/is-iso-format.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -28,9 +28,13 @@ export class AppECorrelationTestRunBaseDTO {
     },
   })
   runNumber: number;
+  @IsNumber()
   referenceValue: number;
+  @IsNumber()
   hourlyHeatInputRate: number;
+  @IsNumber()
   totalHeatInput: number;
+  @IsNumber()
   responseTime: number;
 
   @IsIsoFormat({
@@ -45,7 +49,9 @@ export class AppECorrelationTestRunBaseDTO {
     },
   })
   beginDate: Date;
+  @IsNumber()
   beginHour: number;
+  @IsNumber()
   beginMinute: number;
 
   @IsIsoFormat({
@@ -60,7 +66,9 @@ export class AppECorrelationTestRunBaseDTO {
     },
   })
   endDate: Date;
+  @IsNumber()
   endHour: number;
+  @IsNumber()
   endMinute: number;
 }
 

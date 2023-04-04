@@ -1,11 +1,13 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { ValidationArguments } from 'class-validator';
+import { IsNumber, ValidationArguments } from 'class-validator';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 const KEY = 'Unit Default Test Run';
 export class UnitDefaultTestRunBaseDTO {
+  @IsNumber()
   operatingLevelForRun: number;
+  @IsNumber()
   runNumber: number;
 
   @IsIsoFormat({
@@ -20,7 +22,9 @@ export class UnitDefaultTestRunBaseDTO {
     },
   })
   beginDate: Date;
+  @IsNumber()
   beginHour: number;
+  @IsNumber()
   beginMinute: number;
 
   @IsIsoFormat({
@@ -35,10 +39,15 @@ export class UnitDefaultTestRunBaseDTO {
     },
   })
   endDate: Date;
+  @IsNumber()
   endHour: number;
+  @IsNumber()
   endMinute: number;
+  @IsNumber()
   responseTime: number;
+  @IsNumber()
   referenceValue: number;
+  @IsNumber()
   runUsedIndicator: number;
 }
 

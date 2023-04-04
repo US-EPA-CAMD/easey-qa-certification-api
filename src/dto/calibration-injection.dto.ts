@@ -1,12 +1,14 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { ValidationArguments } from 'class-validator';
+import { ValidationArguments, IsNumber, IsString } from 'class-validator';
 
 const KEY = 'Calibration Injection';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class CalibrationInjectionBaseDTO {
+  @IsNumber()
   onLineOffLineIndicator: number;
+  @IsString()
   upscaleGasLevelCode: string;
 
   @IsIsoFormat({
@@ -21,7 +23,9 @@ export class CalibrationInjectionBaseDTO {
     },
   })
   zeroInjectionDate: Date;
+  @IsNumber()
   zeroInjectionHour: number;
+  @IsNumber()
   zeroInjectionMinute: number;
 
   @IsIsoFormat({
@@ -36,15 +40,25 @@ export class CalibrationInjectionBaseDTO {
     },
   })
   upscaleInjectionDate: Date;
+  @IsNumber()
   upscaleInjectionHour: number;
+  @IsNumber()
   upscaleInjectionMinute: number;
+  @IsNumber()
   zeroMeasuredValue: number;
+  @IsNumber()
   upscaleMeasuredValue: number;
+  @IsNumber()
   zeroAPSIndicator: number;
+  @IsNumber()
   upscaleAPSIndicator: number;
+  @IsNumber()
   zeroCalibrationError: number;
+  @IsNumber()
   upscaleCalibrationError: number;
+  @IsNumber()
   zeroReferenceValue: number;
+  @IsNumber()
   upscaleReferenceValue: number;
 }
 
