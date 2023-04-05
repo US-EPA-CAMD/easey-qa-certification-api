@@ -36,8 +36,8 @@ const user: CurrentUser = {
   sessionId: '',
   expiration: '',
   clientIp: '',
-  isAdmin: false,
-  permissionSet: [],
+  facilities: [],
+  roles: [],
 };
 
 const qaSuppData = new QASuppData();
