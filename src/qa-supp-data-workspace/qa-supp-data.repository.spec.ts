@@ -5,6 +5,7 @@ import { QASuppDataWorkspaceRepository } from './qa-supp-data.repository';
 
 const locationId = '1';
 const testSumId = '1';
+const monSysID = '1';
 const componentID = '1';
 const testTypeCode = '1';
 const testNumber = '1';
@@ -69,6 +70,7 @@ describe('QASuppDataWorkspaceRepository', () => {
     it('calls buildBaseQuery and get a QA Support Data from the repository using LocationId, componentID, testTypeCode, TestNumber, spanScaleCode, endDate and endTime', async () => {
       const result = await repository.getUnassociatedQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
+        monSysID,
         componentID,
         testTypeCode,
         testNumber,
@@ -86,6 +88,7 @@ describe('QASuppDataWorkspaceRepository', () => {
     it('calls buildBaseQuery and get a QA Support Data from the repository using LocationId, componentID, testTypeCode, TestNumber, spanScaleCode, endDate and endTime', async () => {
       const result = await repository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
+        monSysID,
         componentID,
         testTypeCode,
         testNumber,

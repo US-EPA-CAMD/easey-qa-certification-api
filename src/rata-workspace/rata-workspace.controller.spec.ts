@@ -15,8 +15,8 @@ const rataRecord = new RataRecordDTO();
 const user: CurrentUser = {
   clientIp: '',
   expiration: '',
-  facilities: [],
-  roles: [],
+  isAdmin: false,
+  permissionSet: [],
   sessionId: '',
   userId: '',
 };

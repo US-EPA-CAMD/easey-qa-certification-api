@@ -20,8 +20,8 @@ const user: CurrentUser = {
   sessionId: '',
   expiration: '',
   clientIp: '',
-  facilities: [],
-  roles: [],
+  isAdmin: false,
+  permissionSet: [],
 };
 
 const airEmissionTestingRecord = new AirEmissionTestingRecordDTO();

@@ -42,8 +42,8 @@ const user: CurrentUser = {
   sessionId: '',
   expiration: '',
   clientIp: '',
-  facilities: [],
-  roles: [],
+  isAdmin: false,
+  permissionSet: [],
 };
 
 describe('Protocol Gas Workspace Controller', () => {

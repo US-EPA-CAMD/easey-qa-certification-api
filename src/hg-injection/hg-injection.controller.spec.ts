@@ -16,8 +16,8 @@ const user: CurrentUser = {
   sessionId: '',
   expiration: '',
   clientIp: '',
-  facilities: [],
-  roles: [],
+  isAdmin: false,
+  permissionSet: [],
 };
 const dto = new HgInjectionDTO();
 
