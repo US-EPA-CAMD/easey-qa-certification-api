@@ -40,9 +40,13 @@ export default registerAs('app', () => ({
     'QA & Certification management API endpoints for qa test data, qa cert events, and test extension & exemption data',
   ),
   env: getConfigValue('EASEY_QA_CERTIFICATION_API_ENV', 'local-dev'),
-  apiKey: getConfigValue('EASEY_QA_CERTIFICATION_API_KEY'),
+  apiKey: getConfigValue(
+    'EASEY_QA_CERTIFICATION_API_KEY',
+    'PXPWlQGB3wKXotkWN1PbSwbSoM7CoWW0ZMPWYtfc',
+  ),
   enableApiKey: getConfigValueBoolean(
     'EASEY_QA_CERTIFICATION_API_ENABLE_API_KEY',
+    true,
   ),
   secretToken: getConfigValue('EASEY_QA_CERTIFICATION_API_SECRET_TOKEN'),
   enableSecretToken: getConfigValueBoolean(
@@ -58,6 +62,7 @@ export default registerAs('app', () => ({
   ),
   enableAuthToken: getConfigValueBoolean(
     'EASEY_QA_CERTIFICATION_API_ENABLE_AUTH_TOKEN',
+    true,
   ),
   enableGlobalValidationPipes: getConfigValueBoolean(
     'EASEY_QA_CERTIFICATION_API_ENABLE_GLOBAL_VALIDATION_PIPE',
