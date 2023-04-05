@@ -15,8 +15,8 @@ const user: CurrentUser = {
   sessionId: '',
   expiration: '',
   clientIp: '',
-  facilities: [],
-  roles: [],
+  isAdmin: false,
+  permissionSet: [],
 };
 const appendixECorrelationTestSummaryId = '';
 const appECorrelationTest = new AppECorrelationTestSummaryBaseDTO();

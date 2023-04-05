@@ -17,8 +17,8 @@ const onlineOfflineCalibrationId = '';
 const user: CurrentUser = {
   clientIp: '',
   expiration: '',
-  facilities: [],
-  roles: [],
+  isAdmin: false,
+  permissionSet: [],
   sessionId: '',
   userId: '',
 };
