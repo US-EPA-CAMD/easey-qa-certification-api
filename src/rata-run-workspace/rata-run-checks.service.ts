@@ -234,7 +234,7 @@ export class RataRunChecksService {
 
     if (rataRun.runStatusCode === 'RUNUSED') {
       if (testSumRecord.system?.systemTypeCode === 'FLOW') {
-        if (endDate.diff(beginDate, 'minute') < 4) {
+        if (endDate.diff(beginDate, 'minute') < 5) {
           error = CheckCatalogService.formatResultMessage('RATA-130-A', {
             key: KEY,
           });
