@@ -78,6 +78,7 @@ export class TestSummaryChecksService {
     if (!isImport) {
       const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
+        summary.monitoringSystemID,
         summary.componentID,
         summary.testTypeCode,
         summary.testNumber,
@@ -1181,6 +1182,7 @@ export class TestSummaryChecksService {
     } else {
       duplicateQaSupp = await this.qaSuppDataRepository.getUnassociatedQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
+        null,
         summary.componentID,
         summary.testTypeCode,
         summary.testNumber,
