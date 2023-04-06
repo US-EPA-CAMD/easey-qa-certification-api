@@ -98,6 +98,7 @@ export class QACertificationChecksService {
 
         const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
           locationId,
+          summary.monitoringSystemID,
           summary.componentID,
           summary.testTypeCode,
           summary.testNumber,
