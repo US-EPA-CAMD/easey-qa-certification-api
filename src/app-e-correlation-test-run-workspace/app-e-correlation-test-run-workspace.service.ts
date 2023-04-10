@@ -193,45 +193,30 @@ export class AppECorrelationTestRunWorkspaceService {
 
     if (payload.appEHeatInputFromGasData?.length > 0) {
       for (const appEHeatInputFromGas of payload.appEHeatInputFromGasData) {
-        promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.appEHeatInputFromGasService.import(
-                locationId,
-                testSumId,
-                createdTestRun.id,
-                appEHeatInputFromGas,
-                userId,
-                isHistoricalRecord,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+        const promise = this.appEHeatInputFromGasService.import(
+          locationId,
+          testSumId,
+          createdTestRun.id,
+          appEHeatInputFromGas,
+          userId,
+          isHistoricalRecord,
         );
+        promises.push(promise);
       }
     }
 
     if (payload.appEHeatInputFromOilData?.length > 0) {
       for (const appEHeatInputFromOil of payload.appEHeatInputFromOilData) {
-        promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.appEHeatInputFromOilService.import(
-                locationId,
-                testSumId,
-                createdTestRun.id,
-                appEHeatInputFromOil,
-                userId,
-                isHistoricalRecord,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+        const promise = this.appEHeatInputFromOilService.import(
+          locationId,
+          testSumId,
+          createdTestRun.id,
+          appEHeatInputFromOil,
+          userId,
+          isHistoricalRecord,
         );
+
+        promises.push(promise);
       }
     }
 
