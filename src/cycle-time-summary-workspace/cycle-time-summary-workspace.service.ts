@@ -204,20 +204,13 @@ export class CycleTimeSummaryWorkspaceService {
     if (payload.cycleTimeInjectionData?.length > 0) {
       for (const cycleTimeInjection of payload.cycleTimeInjectionData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.cycleTimeInjectionService.import(
-                testSumId,
-                createdCycleTimeSummary.id,
-                cycleTimeInjection,
-                userId,
-                isHistoricalRecord,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.cycleTimeInjectionService.import(
+            testSumId,
+            createdCycleTimeSummary.id,
+            cycleTimeInjection,
+            userId,
+            isHistoricalRecord,
+          ),
         );
       }
     }
