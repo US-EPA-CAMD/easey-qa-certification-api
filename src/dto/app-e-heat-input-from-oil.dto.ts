@@ -2,7 +2,6 @@ import { IsNumber, IsOptional, IsString } from 'class-validator';
 const KEY = 'Appendix E Heat Input From Oil';
 
 export class AppEHeatInputFromOilBaseDTO {
-  @IsOptional()
   @IsString()
   monitoringSystemID: string;
   @IsOptional()
