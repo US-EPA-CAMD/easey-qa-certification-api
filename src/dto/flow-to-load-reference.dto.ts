@@ -5,7 +5,6 @@ export class FlowToLoadReferenceBaseDTO {
   @IsOptional()
   @IsString()
   rataTestNumber: string;
-  @IsOptional()
   @IsString()
   operatingLevelCode: string;
   @IsOptional()
