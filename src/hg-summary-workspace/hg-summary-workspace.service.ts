@@ -200,20 +200,13 @@ export class HgSummaryWorkspaceService {
     if (payload.HgInjectionData?.length > 0) {
       for (const hgInjection of payload.HgInjectionData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.hgInjectionService.import(
-                testSumId,
-                createdHgSummary.id,
-                hgInjection,
-                userId,
-                isHistoricalRecord,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.hgInjectionService.import(
+            testSumId,
+            createdHgSummary.id,
+            hgInjection,
+            userId,
+            isHistoricalRecord,
+          ),
         );
       }
     }
