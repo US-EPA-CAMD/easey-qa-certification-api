@@ -15,6 +15,22 @@ export class AppEHeatInputFromOilRepository extends Repository<
     return query.getOne();
   }
 
+  async getAppEHeatInputFromOilByTestRunIdAndMonSysID(
+    appECorrTestRunId: string,
+    monitoringSystemID: string,
+  ): Promise<AppEHeatInputFromOil> {
+    const query = this.createQueryBuilder('aehig')
+      .leftJoinAndSelect('aehig.system', 'ms')
+      .where('aehig.appECorrTestRunId = :appECorrTestRunId', {
+        appECorrTestRunId,
+      })
+      .andWhere('ms.monitoringSystemID = :monitoringSystemID', {
+        monitoringSystemID,
+      });
+
+    return query.getOne();
+  }
+
   async getAppEHeatInputFromOilsByTestRunId(
     appECorrTestRunId: string,
   ): Promise<AppEHeatInputFromOil[]> {

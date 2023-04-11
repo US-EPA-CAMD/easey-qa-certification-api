@@ -24,7 +24,9 @@ const mockTestSummaryService = () => ({
 });
 
 const mockHistoricalRepo = () => ({
-  findOne: jest.fn().mockResolvedValue(new AppEHeatInputFromGasRecordDTO()),
+  getAppEHeatInputFromGasByTestRunIdAndMonSysID: jest
+    .fn()
+    .mockResolvedValue(new AppEHeatInputFromGasRecordDTO()),
 });
 
 const appECorrTestRunId = 'd4e6f7';

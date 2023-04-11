@@ -183,10 +183,10 @@ export class AppEHeatInputFromOilWorkspaceService {
     let historicalRecord: AppEHeatInputFromOil;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
-        appECorrTestRunId: appECorrTestRunId,
-        monitoringSystemID: payload.monitoringSystemID,
-      });
+      historicalRecord = await this.historicalRepo.getAppEHeatInputFromOilByTestRunIdAndMonSysID(
+        appECorrTestRunId,
+        payload.monitoringSystemID,
+      );
     }
 
     const createdHeatInputFromOil = await this.createAppEHeatInputFromOilRecord(
