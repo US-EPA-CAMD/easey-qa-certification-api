@@ -149,7 +149,6 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Test Type Code. ADD TO PROPERTY METADATA',
   })
-  @IsOptional()
   @IsValidCode(TestTypeCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
