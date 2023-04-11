@@ -37,6 +37,7 @@ export class TestExtensionExemptionBaseDTO {
   @ApiProperty({
     description: propertyMetadata.year.description,
   })
+  @IsOptional()
   @IsInRange(1993, new Date().getFullYear(), {
     message: (args: ValidationArguments) => {
       return `Year must be greater than or equal to 1993 and less than or equal to ${new Date().getFullYear()}. You reported an invalid year of [${
@@ -51,11 +52,12 @@ export class TestExtensionExemptionBaseDTO {
     },
   })
   @ValidateIf(o => YEAR_QUARTER_TEST_TYPE_CODES.includes(o.testTypeCode))
-  year: number;
+  year?: number;
 
   @ApiProperty({
     description: propertyMetadata.quarter.description,
   })
+  @IsOptional()
   @IsInRange(1, 4, {
     message: (args: ValidationArguments) => {
       return `Quarter must be a numeric number from 1 to 4. You reported an invalid quarter of [${
@@ -70,7 +72,7 @@ export class TestExtensionExemptionBaseDTO {
     },
   })
   @ValidateIf(o => YEAR_QUARTER_TEST_TYPE_CODES.includes(o.testTypeCode))
-  quarter: number;
+  quarter?: number;
 
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOId.description,

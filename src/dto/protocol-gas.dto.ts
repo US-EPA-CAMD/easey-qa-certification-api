@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   ValidationArguments,
 } from 'class-validator';
@@ -12,8 +13,9 @@ const KEY = 'Protocol Gas';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class ProtocolGasBaseDTO {
+  @IsOptional()
   @IsString()
-  gasLevelCode: string;
+  gasLevelCode?: string;
 
   @ApiProperty({
     description: 'gasTypeCode. ADD TO PROPERTY METADATA',
@@ -28,11 +30,14 @@ export class ProtocolGasBaseDTO {
   })
   @IsString()
   gasTypeCode: string;
+  @IsOptional()
   @IsString()
-  cylinderIdentifier: string;
+  cylinderIdentifier?: string;
+  @IsOptional()
   @IsString()
-  vendorIdentifier: string;
+  vendorIdentifier?: string;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -44,7 +49,7 @@ export class ProtocolGasBaseDTO {
       );
     },
   })
-  expirationDate: Date;
+  expirationDate?: Date;
 }
 
 export class ProtocolGasRecordDTO extends ProtocolGasBaseDTO {

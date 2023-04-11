@@ -1,11 +1,12 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { IsNumber, ValidationArguments } from 'class-validator';
+import { IsNumber, IsOptional, ValidationArguments } from 'class-validator';
 
 const KEY = 'Hg Test Injection';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class HgInjectionBaseDTO {
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -18,12 +19,16 @@ export class HgInjectionBaseDTO {
     },
   })
   injectionDate: Date;
+  @IsOptional()
   @IsNumber()
   injectionHour: number;
+  @IsOptional()
   @IsNumber()
   injectionMinute: number;
   @IsNumber()
+  @IsOptional()
   measuredValue: number;
+  @IsOptional()
   @IsNumber()
   referenceValue: number;
 }

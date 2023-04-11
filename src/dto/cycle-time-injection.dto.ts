@@ -5,6 +5,7 @@ import {
   IsString,
   IsNumber,
   ValidationArguments,
+  IsOptional,
 } from 'class-validator';
 
 const KEY = 'Cycle Time Injection';
@@ -21,9 +22,11 @@ export class CycleTimeInjectionBaseDTO {
   })
   @IsString()
   gasLevelCode: string;
+  @IsOptional()
   @IsNumber()
   calibrationGasValue: number;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -36,11 +39,14 @@ export class CycleTimeInjectionBaseDTO {
     },
   })
   beginDate: Date;
+  @IsOptional()
   @IsNumber()
   beginHour: number;
+  @IsOptional()
   @IsNumber()
   beginMinute: number;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -53,14 +59,19 @@ export class CycleTimeInjectionBaseDTO {
     },
   })
   endDate: Date;
+  @IsOptional()
   @IsNumber()
   endHour: number;
+  @IsOptional()
   @IsNumber()
   endMinute: number;
+  @IsOptional()
   @IsNumber()
   injectionCycleTime: number;
+  @IsOptional()
   @IsNumber()
   beginMonitorValue: number;
+  @IsOptional()
   @IsNumber()
   endMonitorValue: number;
 }

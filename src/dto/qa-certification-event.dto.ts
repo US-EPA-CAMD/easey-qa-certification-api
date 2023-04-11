@@ -22,9 +22,11 @@ export class QACertificationEventBaseDTO {
   @IsOptional()
   @IsString()
   componentID?: string;
+  @IsOptional()
   @IsString()
-  qaCertEventCode: string;
+  qaCertEventCode?: string;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -37,11 +39,14 @@ export class QACertificationEventBaseDTO {
     },
   })
   qaCertEventDate: Date;
+  @IsOptional()
   @IsNumber()
   qaCertEventHour?: number;
+  @IsOptional()
   @IsString()
   requiredTestCode?: string;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -54,6 +59,7 @@ export class QACertificationEventBaseDTO {
     },
   })
   conditionalBeginDate?: Date;
+  @IsOptional()
   @IsNumber()
   conditionalBeginHour?: number;
 
@@ -69,6 +75,7 @@ export class QACertificationEventBaseDTO {
     },
   })
   completionTestDate?: Date;
+  @IsOptional()
   @IsNumber()
   completionTestHour?: number;
 }

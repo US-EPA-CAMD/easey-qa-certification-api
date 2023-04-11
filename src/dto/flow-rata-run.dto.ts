@@ -4,6 +4,7 @@ import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
@@ -167,6 +168,7 @@ export class FlowRataRunBaseDTO {
   )
   percentMoisture: number;
 
+  @IsOptional()
   @IsNumber()
   dryMolecularWeight: number;
 
@@ -217,8 +219,10 @@ export class FlowRataRunBaseDTO {
   })
   averageVelocityWithoutWallEffects: number;
 
+  @IsOptional()
   @IsNumber()
   averageVelocityWithWallEffects: number;
+  @IsOptional()
   @IsNumber()
   calculatedWAF: number;
 

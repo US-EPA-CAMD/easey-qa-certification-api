@@ -1,5 +1,10 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { IsNotEmpty, ValidationArguments } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  ValidationArguments,
+} from 'class-validator';
 
 const KEY = 'Appendix E Heat Input From Gas';
 
@@ -13,8 +18,14 @@ export class AppEHeatInputFromGasBaseDTO {
     },
   })
   monitoringSystemID: string;
+  @IsOptional()
+  @IsNumber()
   gasGCV: number;
+  @IsOptional()
+  @IsNumber()
   gasVolume: number;
+  @IsOptional()
+  @IsNumber()
   gasHeatInput: number;
 }
 

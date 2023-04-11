@@ -1,6 +1,11 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsEmail } from '@us-epa-camd/easey-common/pipes';
-import { IsNotEmpty, IsString, ValidationArguments } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidationArguments,
+} from 'class-validator';
 
 const KEY = 'Air Emission Testing';
 
@@ -27,6 +32,7 @@ export class AirEmissionTestingBaseDTO {
   @IsString()
   qiFirstName: string;
 
+  @IsOptional()
   @IsString()
   qiMiddleInitial: string;
 

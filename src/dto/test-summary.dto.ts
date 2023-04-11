@@ -149,6 +149,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Test Type Code. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsValidCode(TestTypeCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -163,7 +164,7 @@ export class TestSummaryBaseDTO {
       );
     },
   })
-  testTypeCode: string;
+  testTypeCode?: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOId.description,
@@ -367,6 +368,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Test Description. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @ValidateIf(o => [TestTypeCodes.OTHER].includes(o.testTypeCode))
   testDescription?: string;
 
@@ -614,6 +616,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Grace Period Indicator. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(

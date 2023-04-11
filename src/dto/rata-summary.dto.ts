@@ -6,6 +6,7 @@ import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import {
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   ValidateIf,
   ValidateNested,
   ValidationArguments,
@@ -70,6 +71,7 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'referenceMethodCode. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsValidCode(ReferenceMethodCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-16-B', {
@@ -79,7 +81,7 @@ export class RataSummaryBaseDTO {
       });
     },
   })
-  referenceMethodCode: string;
+  referenceMethodCode?: string;
 
   @ApiProperty({
     description: 'meanCEMValue. ADD TO PROPERTY METADATA',
@@ -193,6 +195,7 @@ export class RataSummaryBaseDTO {
   apsIndicator: number;
 
   @ApiProperty(getMetadata(dataDictionary.apsCode, MetadataKeys.RATA_SUMMARY))
+  @IsOptional()
   @IsValidCode(ApsCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -206,7 +209,7 @@ export class RataSummaryBaseDTO {
       );
     },
   })
-  apsCode: string;
+  apsCode?: string;
 
   @ApiProperty({
     description: 'relativeAccuracy. ADD TO PROPERTY METADATA',
@@ -233,12 +236,14 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'biasAdjustmentFactor. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNumber()
-  biasAdjustmentFactor: number;
+  biasAdjustmentFactor?: number;
 
   @ApiProperty({
     description: 'co2OrO2ReferenceMethodCode. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsValidCode(ReferenceMethodCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -252,37 +257,42 @@ export class RataSummaryBaseDTO {
     },
   })
   @ValidateIf(o => o.co2OrO2ReferenceMethodCode !== null)
-  co2OrO2ReferenceMethodCode: string;
+  co2OrO2ReferenceMethodCode?: string;
 
   @ApiProperty({
     description: 'stackDiameter. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNumber()
-  stackDiameter: number;
+  stackDiameter?: number;
 
   @ApiProperty({
     description: 'stackArea. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNumber()
-  stackArea: number;
+  stackArea?: number;
 
   @ApiProperty({
     description: 'numberOfTraversePoints. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNumber()
-  numberOfTraversePoints: number;
+  numberOfTraversePoints?: number;
 
   @ApiProperty({
     description: 'calculatedWAF. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNumber()
-  calculatedWAF: number;
+  calculatedWAF?: number;
 
   @ApiProperty({
     description: 'defaultWAF. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNumber()
-  defaultWAF: number;
+  defaultWAF?: number;
 }
 
 export class RataSummaryRecordDTO extends RataSummaryBaseDTO {

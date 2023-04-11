@@ -6,6 +6,7 @@ import {
   IsNumber,
   ValidationArguments,
   IsString,
+  IsOptional,
 } from 'class-validator';
 import { PressureMeasureCode } from '../entities/workspace/pressure-measure-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
@@ -107,10 +108,12 @@ export class RataTraverseBaseDTO {
   @IsDateString()
   lastProbeDate: Date;
 
+  @IsOptional()
   @IsNumber()
-  avgVelDiffPressure: number;
+  avgVelDiffPressure?: number;
+  @IsOptional()
   @IsNumber()
-  avgSquareVelDiffPressure: number;
+  avgSquareVelDiffPressure?: number;
 
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -138,18 +141,24 @@ export class RataTraverseBaseDTO {
     true,
   )
   tStackTemperature: number;
+  @IsOptional()
   @IsNumber()
-  pointUsedIndicator: number;
+  pointUsedIndicator?: number;
+  @IsOptional()
   @IsNumber()
-  numberWallEffectsPoints: number;
+  numberWallEffectsPoints?: number;
+  @IsOptional()
   @IsNumber()
-  yawAngle: number;
+  yawAngle?: number;
+  @IsOptional()
   @IsNumber()
-  pitchAngle: number;
+  pitchAngle?: number;
+  @IsOptional()
   @IsNumber()
-  calculatedVelocity: number;
+  calculatedVelocity?: number;
+  @IsOptional()
   @IsNumber()
-  replacementVelocity: number;
+  replacementVelocity?: number;
 }
 
 export class RataTraverseRecordDTO extends RataTraverseBaseDTO {
