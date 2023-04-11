@@ -6,7 +6,6 @@ const KEY = 'Hg Test Injection';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class HgInjectionBaseDTO {
-  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
