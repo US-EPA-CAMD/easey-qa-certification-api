@@ -7,7 +7,7 @@ import {
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import { RequireOne } from 'src/pipes/require-one.pipe';
+import { RequireOne } from '../pipes/require-one.pipe';
 
 const KEY = 'QA Certification Event';
 const DATE_FORMAT = 'YYYY-MM-DD';
