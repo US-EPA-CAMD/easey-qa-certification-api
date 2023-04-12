@@ -17,6 +17,7 @@ export class RataBaseDTO {
   @ApiProperty({
     description: 'NumberOfLoadLevels. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-102-A', {
@@ -26,7 +27,7 @@ export class RataBaseDTO {
     },
   })
   @IsNumber()
-  numberOfLoadLevels: number;
+  numberOfLoadLevels?: number;
 
   @ApiProperty({
     description: 'relativeAccuracy. ADD TO PROPERTY METADATA',

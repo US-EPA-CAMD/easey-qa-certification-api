@@ -28,6 +28,7 @@ const MAX_WET_MOLECULAR_WEIGHT = 35;
 const MIN_NO_OF_TRAVERSE_POINTS = 12;
 
 export class FlowRataRunBaseDTO {
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-85-A', {
@@ -43,8 +44,9 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  numberOfTraversePoints: number;
+  numberOfTraversePoints?: number;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-63-A', {
@@ -64,8 +66,9 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  barometricPressure: number;
+  barometricPressure?: number;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-64-A', {
@@ -85,8 +88,9 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  staticStackPressure: number;
+  staticStackPressure?: number;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-65-A', {
@@ -112,8 +116,9 @@ export class FlowRataRunBaseDTO {
     false,
     false,
   )
-  percentCO2: number;
+  percentCO2?: number;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-66-A', {
@@ -139,8 +144,9 @@ export class FlowRataRunBaseDTO {
     false,
     false,
   )
-  percentO2: number;
+  percentO2?: number;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-67-A', {
@@ -166,12 +172,13 @@ export class FlowRataRunBaseDTO {
     false,
     false,
   )
-  percentMoisture: number;
+  percentMoisture?: number;
 
   @IsOptional()
   @IsNumber()
-  dryMolecularWeight: number;
+  dryMolecularWeight?: number;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-69-A', {
@@ -191,8 +198,9 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  wetMolecularWeight: number;
+  wetMolecularWeight?: number;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-115-A', {
@@ -217,15 +225,16 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  averageVelocityWithoutWallEffects: number;
+  averageVelocityWithoutWallEffects?: number;
 
   @IsOptional()
   @IsNumber()
-  averageVelocityWithWallEffects: number;
+  averageVelocityWithWallEffects?: number;
   @IsOptional()
   @IsNumber()
-  calculatedWAF: number;
+  calculatedWAF?: number;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-94-A', {
@@ -250,7 +259,7 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  averageStackFlowRate: number;
+  averageStackFlowRate?: number;
 }
 
 export class FlowRataRunRecordDTO extends FlowRataRunBaseDTO {

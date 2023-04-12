@@ -4,29 +4,33 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  ValidateIf,
   ValidationArguments,
 } from 'class-validator';
+import { RequireOne } from 'src/pipes/require-one.pipe';
 
 const KEY = 'QA Certification Event';
 const DATE_FORMAT = 'YYYY-MM-DD';
 export class QACertificationEventBaseDTO {
-  @IsOptional()
+  @ValidateIf((o) => !o.unitId)
   @IsString()
-  stackPipeId?: string;
-  @IsOptional()
+  stackPipeId: string;
+  @ValidateIf((o) => !o.stackPipeId)
+  @RequireOne('unitId', {
+    message:
+      'A Unit or Stack Pipe identifier (NOT both) must be provided for each Test Summary.',
+  })
   @IsString()
-  unitId?: string;
+  unitId: string;
   @IsOptional()
   @IsString()
   monitoringSystemID?: string;
   @IsOptional()
   @IsString()
   componentID?: string;
-  @IsOptional()
   @IsString()
-  qaCertEventCode?: string;
+  qaCertEventCode: string;
 
-  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(

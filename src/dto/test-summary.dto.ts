@@ -1,3 +1,4 @@
+import { StackPipe } from './../entities/stack-pipe.entity';
 import {
   ValidateIf,
   ValidationArguments,
@@ -131,20 +132,20 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Stack Pipe Identifier. ADD TO PROPERTY METADATA',
   })
+  @ValidateIf((o) => !o.unitId)
   @RequireOne('unitId', {
     message:
       'A Unit or Stack Pipe identifier (NOT both) must be provided for each Test Summary.',
   })
-  @IsOptional()
   @IsString()
-  stackPipeId?: string;
+  stackPipeId: string;
 
   @ApiProperty({
     description: propertyMetadata.unitId.description,
   })
-  @IsOptional()
+  @ValidateIf((o) => !o.StackPipeId)
   @IsString()
-  unitId?: string;
+  unitId: string;
 
   @ApiProperty({
     description: 'Test Type Code. ADD TO PROPERTY METADATA',
@@ -163,11 +164,12 @@ export class TestSummaryBaseDTO {
       );
     },
   })
-  testTypeCode?: string;
+  testTypeCode: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOId.description,
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       let resultCode;
@@ -214,6 +216,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.componentDTOComponentId.description,
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       let resultCode;
@@ -310,6 +313,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Test Reason Code. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       let resultCode;
@@ -374,6 +378,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Test Result Code. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       let resultCode;
@@ -432,6 +437,7 @@ export class TestSummaryBaseDTO {
   testResultCode?: string;
 
   @ApiProperty(getMetadata(dataDictionary.beginDate, MetadataKeys.TEST_SUMMARY))
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-1-A`, {
@@ -476,6 +482,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Begin Hour. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-2-A`, {
@@ -501,6 +508,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Begin Minute. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-3-A`, {
@@ -526,6 +534,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.endDate.description,
   })
+  @IsOptional()
   @IsValidDate({
     message: ErrorMessages.DateValidity(),
   })
@@ -563,6 +572,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'End Hour. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-5-B`, {
@@ -588,6 +598,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'End Minute. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-6-A`, {

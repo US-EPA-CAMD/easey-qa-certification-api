@@ -21,7 +21,6 @@ const KEY = 'Appendix E Correlation Test Run';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class AppECorrelationTestRunBaseDTO {
-  @IsOptional()
   @IsInRange(null, 99, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -36,16 +35,16 @@ export class AppECorrelationTestRunBaseDTO {
   runNumber: number;
   @IsOptional()
   @IsNumber()
-  referenceValue: number;
+  referenceValue?: number;
   @IsOptional()
   @IsNumber()
-  hourlyHeatInputRate: number;
+  hourlyHeatInputRate?: number;
   @IsOptional()
   @IsNumber()
-  totalHeatInput: number;
+  totalHeatInput?: number;
   @IsOptional()
   @IsNumber()
-  responseTime: number;
+  responseTime?: number;
   @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
@@ -58,11 +57,10 @@ export class AppECorrelationTestRunBaseDTO {
       );
     },
   })
-  beginDate: Date;
+  beginDate?: Date;
   @IsOptional()
   @IsNumber()
-  beginHour: number;
-  @IsOptional()
+  beginHour?: number;
   @IsNumber()
   beginMinute: number;
 
@@ -78,10 +76,10 @@ export class AppECorrelationTestRunBaseDTO {
       );
     },
   })
-  endDate: Date;
+  endDate?: Date;
   @IsOptional()
   @IsNumber()
-  endHour: number;
+  endHour?: number;
   @IsOptional()
   @IsNumber()
   endMinute: number;

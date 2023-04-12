@@ -18,18 +18,16 @@ export class HgInjectionBaseDTO {
     },
   })
   injectionDate: Date;
-  @IsOptional()
   @IsNumber()
   injectionHour: number;
-  @IsOptional()
   @IsNumber()
   injectionMinute: number;
   @IsNumber()
   @IsOptional()
-  measuredValue: number;
+  measuredValue?: number;
   @IsOptional()
   @IsNumber()
-  referenceValue: number;
+  referenceValue?: number;
 }
 
 export class HgInjectionRecordDTO extends HgInjectionBaseDTO {

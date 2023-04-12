@@ -12,16 +12,16 @@ const DATE_FORMAT = 'YYYY-MM-DD';
 export class FuelFlowmeterAccuracyBaseDTO {
   @IsOptional()
   @IsString()
-  accuracyTestMethodCode: string;
+  accuracyTestMethodCode?: string;
   @IsOptional()
   @IsNumber()
-  lowFuelAccuracy: number;
+  lowFuelAccuracy?: number;
   @IsOptional()
   @IsNumber()
-  midFuelAccuracy: number;
+  midFuelAccuracy?: number;
   @IsOptional()
   @IsNumber()
-  highFuelAccuracy: number;
+  highFuelAccuracy?: number;
 
   @IsOptional()
   @IsIsoFormat({
@@ -35,10 +35,10 @@ export class FuelFlowmeterAccuracyBaseDTO {
       );
     },
   })
-  reinstallationDate: Date;
+  reinstallationDate?: Date;
   @IsOptional()
   @IsNumber()
-  reinstallationHour: number;
+  reinstallationHour?: number;
 }
 
 export class FuelFlowmeterAccuracyRecordDTO extends FuelFlowmeterAccuracyBaseDTO {

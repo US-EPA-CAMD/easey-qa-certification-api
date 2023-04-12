@@ -44,6 +44,7 @@ export class RataSummaryBaseDTO {
   @ApiProperty(
     getMetadata(dataDictionary.averageGrossUnitLoad, MetadataKeys.RATA_SUMMARY),
   )
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-23-A', {
@@ -66,7 +67,7 @@ export class RataSummaryBaseDTO {
     false,
     false,
   )
-  averageGrossUnitLoad: number;
+  averageGrossUnitLoad?: number;
 
   @ApiProperty({
     description: 'referenceMethodCode. ADD TO PROPERTY METADATA',
@@ -86,6 +87,7 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'meanCEMValue. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-17-A', {
@@ -95,11 +97,12 @@ export class RataSummaryBaseDTO {
     },
   })
   @IsNumber()
-  meanCEMValue: number;
+  meanCEMValue?: number;
 
   @ApiProperty({
     description: 'meanRATAReferenceValue. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-18-A', {
@@ -122,11 +125,12 @@ export class RataSummaryBaseDTO {
     false,
     false,
   )
-  meanRATAReferenceValue: number;
+  meanRATAReferenceValue?: number;
 
   @ApiProperty({
     description: 'meanDifference. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-19-A', {
@@ -136,11 +140,12 @@ export class RataSummaryBaseDTO {
     },
   })
   @IsNumber()
-  meanDifference: number;
+  meanDifference?: number;
 
   @ApiProperty({
     description: 'standardDeviationDifference. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-20-A', {
@@ -150,11 +155,12 @@ export class RataSummaryBaseDTO {
     },
   })
   @IsNumber()
-  standardDeviationDifference: number;
+  standardDeviationDifference?: number;
 
   @ApiProperty({
     description: 'confidenceCoefficient. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-21-A', {
@@ -164,11 +170,12 @@ export class RataSummaryBaseDTO {
     },
   })
   @IsNumber()
-  confidenceCoefficient: number;
+  confidenceCoefficient?: number;
 
   @ApiProperty({
     description: 'tValue. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-22-A', {
@@ -178,11 +185,12 @@ export class RataSummaryBaseDTO {
     },
   })
   @IsNumber()
-  tValue: number;
+  tValue?: number;
 
   @ApiProperty(
     getMetadata(dataDictionary.apsIndicator, MetadataKeys.RATA_SUMMARY),
   )
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-123-A', {
@@ -192,7 +200,7 @@ export class RataSummaryBaseDTO {
     },
   })
   @IsNumber()
-  apsIndicator: number;
+  apsIndicator?: number;
 
   @ApiProperty(getMetadata(dataDictionary.apsCode, MetadataKeys.RATA_SUMMARY))
   @IsOptional()
@@ -214,6 +222,7 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'relativeAccuracy. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-24-A', {
@@ -231,7 +240,7 @@ export class RataSummaryBaseDTO {
       });
     },
   })
-  relativeAccuracy: number;
+  relativeAccuracy?: number;
 
   @ApiProperty({
     description: 'biasAdjustmentFactor. ADD TO PROPERTY METADATA',

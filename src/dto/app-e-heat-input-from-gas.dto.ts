@@ -3,6 +3,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
   ValidationArguments,
 } from 'class-validator';
 
@@ -17,16 +18,17 @@ export class AppEHeatInputFromGasBaseDTO {
       });
     },
   })
+  @IsString()
   monitoringSystemID: string;
   @IsOptional()
   @IsNumber()
-  gasGCV: number;
+  gasGCV?: number;
   @IsOptional()
   @IsNumber()
-  gasVolume: number;
+  gasVolume?: number;
   @IsOptional()
   @IsNumber()
-  gasHeatInput: number;
+  gasHeatInput?: number;
 }
 
 export class AppEHeatInputFromGasRecordDTO extends AppEHeatInputFromGasBaseDTO {

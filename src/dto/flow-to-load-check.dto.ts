@@ -5,37 +5,37 @@ const Key = 'Flow To Load Check';
 export class FlowToLoadCheckBaseDTO {
   @IsOptional()
   @IsString()
-  testBasisCode: string;
+  testBasisCode?: string;
   @IsOptional()
   @IsNumber()
-  biasAdjustedIndicator: number;
+  biasAdjustedIndicator?: number;
   @IsOptional()
   @IsNumber()
-  avgAbsolutePercentDiff: number;
+  avgAbsolutePercentDiff?: number;
   @IsOptional()
   @IsNumber()
-  numberOfHours: number;
+  numberOfHours?: number;
   @IsOptional()
   @IsNumber()
-  numberOfHoursExcludedForFuel: number;
+  numberOfHoursExcludedForFuel?: number;
   @IsOptional()
   @IsNumber()
-  numberOfHoursExcludedRamping: number;
+  numberOfHoursExcludedRamping?: number;
   @IsOptional()
   @IsNumber()
-  numberOfHoursExcludedBypass: number;
+  numberOfHoursExcludedBypass?: number;
   @IsOptional()
   @IsNumber()
-  numberOfHoursExcludedPreRATA: number;
+  numberOfHoursExcludedPreRATA?: number;
   @IsOptional()
   @IsNumber()
-  numberOfHoursExcludedTest: number;
+  numberOfHoursExcludedTest?: number;
   @IsOptional()
   @IsNumber()
-  numberOfHoursExcMainBypass: number;
+  numberOfHoursExcMainBypass?: number;
   @IsOptional()
   @IsString()
-  operatingLevelCode: string;
+  operatingLevelCode?: string;
 }
 
 export class FlowToLoadCheckRecordDTO extends FlowToLoadCheckBaseDTO {

@@ -24,7 +24,7 @@ export class CycleTimeInjectionBaseDTO {
   gasLevelCode: string;
   @IsOptional()
   @IsNumber()
-  calibrationGasValue: number;
+  calibrationGasValue?: number;
 
   @IsOptional()
   @IsIsoFormat({
@@ -38,11 +38,10 @@ export class CycleTimeInjectionBaseDTO {
       );
     },
   })
-  beginDate: Date;
+  beginDate?: Date;
   @IsOptional()
   @IsNumber()
-  beginHour: number;
-  @IsOptional()
+  beginHour?: number;
   @IsNumber()
   beginMinute: number;
 
@@ -58,22 +57,21 @@ export class CycleTimeInjectionBaseDTO {
       );
     },
   })
-  endDate: Date;
+  endDate?: Date;
   @IsOptional()
   @IsNumber()
-  endHour: number;
-  @IsOptional()
+  endHour?: number;
   @IsNumber()
   endMinute: number;
   @IsOptional()
   @IsNumber()
-  injectionCycleTime: number;
+  injectionCycleTime?: number;
   @IsOptional()
   @IsNumber()
-  beginMonitorValue: number;
+  beginMonitorValue?: number;
   @IsOptional()
   @IsNumber()
-  endMonitorValue: number;
+  endMonitorValue?: number;
 }
 
 export class CycleTimeInjectionRecordDTO extends CycleTimeInjectionBaseDTO {

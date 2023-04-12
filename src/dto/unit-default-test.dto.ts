@@ -5,22 +5,24 @@ import {
 import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UnitDefaultTestBaseDTO {
-  @IsString()
-  fuelCode: string;
-  @IsNumber()
-  noxDefaultRate: number;
   @IsOptional()
   @IsString()
-  operatingConditionCode: string;
+  fuelCode?: string;
+  @IsOptional()
+  @IsNumber()
+  noxDefaultRate?: number;
   @IsOptional()
   @IsString()
-  groupID: string;
+  operatingConditionCode?: string;
+  @IsOptional()
+  @IsString()
+  groupID?: string;
   @IsOptional()
   @IsNumber()
-  numberOfUnitsInGroup: number;
+  numberOfUnitsInGroup?: number;
   @IsOptional()
   @IsNumber()
-  numberOfTestsForGroup: number;
+  numberOfTestsForGroup?: number;
 }
 
 export class UnitDefaultTestRecordDTO extends UnitDefaultTestBaseDTO {

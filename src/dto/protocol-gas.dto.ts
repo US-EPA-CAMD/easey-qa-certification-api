@@ -13,9 +13,8 @@ const KEY = 'Protocol Gas';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class ProtocolGasBaseDTO {
-  @IsOptional()
   @IsString()
-  gasLevelCode?: string;
+  gasLevelCode: string;
 
   @ApiProperty({
     description: 'gasTypeCode. ADD TO PROPERTY METADATA',

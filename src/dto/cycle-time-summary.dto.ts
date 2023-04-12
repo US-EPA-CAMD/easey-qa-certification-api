@@ -9,7 +9,7 @@ const KEY = 'Cycle Time Summary';
 export class CycleTimeSummaryBaseDTO {
   @IsOptional()
   @IsNumber()
-  totalTime: number;
+  totalTime?: number;
 }
 
 export class CycleTimeSummaryRecordDTO extends CycleTimeSummaryBaseDTO {

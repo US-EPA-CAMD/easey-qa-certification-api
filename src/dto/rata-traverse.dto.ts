@@ -18,6 +18,7 @@ const MIN_TSTACK_TEMP = 0;
 const MAX_TSTACK_TEMP = 1000;
 
 export class RataTraverseBaseDTO {
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-71-A', {
@@ -27,8 +28,9 @@ export class RataTraverseBaseDTO {
     },
   })
   @IsString()
-  probeID: string;
+  probeID?: string;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-72-A', {
@@ -38,8 +40,9 @@ export class RataTraverseBaseDTO {
     },
   })
   @IsString()
-  probeTypeCode: string;
+  probeTypeCode?: string;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-73-A', {
@@ -57,7 +60,7 @@ export class RataTraverseBaseDTO {
       });
     },
   })
-  pressureMeasureCode: string;
+  pressureMeasureCode?: string;
 
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -70,6 +73,7 @@ export class RataTraverseBaseDTO {
   @IsString()
   methodTraversePointID: string;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-74-A', {
@@ -95,8 +99,9 @@ export class RataTraverseBaseDTO {
     true,
     true,
   )
-  velocityCalibrationCoefficient: number;
+  velocityCalibrationCoefficient?: number;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-75-A', {
@@ -106,7 +111,7 @@ export class RataTraverseBaseDTO {
     },
   })
   @IsDateString()
-  lastProbeDate: Date;
+  lastProbeDate?: Date;
 
   @IsOptional()
   @IsNumber()
@@ -115,6 +120,7 @@ export class RataTraverseBaseDTO {
   @IsNumber()
   avgSquareVelDiffPressure?: number;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-77-A', {
@@ -140,7 +146,7 @@ export class RataTraverseBaseDTO {
     true,
     true,
   )
-  tStackTemperature: number;
+  tStackTemperature?: number;
   @IsOptional()
   @IsNumber()
   pointUsedIndicator?: number;

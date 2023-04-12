@@ -12,13 +12,13 @@ export class AppECorrelationTestSummaryBaseDTO {
   operatingLevelForRun: number;
   @IsOptional()
   @IsNumber()
-  meanReferenceValue: number;
+  meanReferenceValue?: number;
   @IsOptional()
   @IsNumber()
-  averageHourlyHeatInputRate: number;
+  averageHourlyHeatInputRate?: number;
   @IsOptional()
   @IsNumber()
-  fFactor: number;
+  fFactor?: number;
 }
 
 export class AppECorrelationTestSummaryRecordDTO extends AppECorrelationTestSummaryBaseDTO {

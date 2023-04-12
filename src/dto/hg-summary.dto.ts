@@ -4,9 +4,8 @@ import { HgInjectionDTO, HgInjectionImportDTO } from './hg-injection.dto';
 const KEY = 'Hg Test Summary';
 
 export class HgSummaryBaseDTO {
-  @IsOptional()
   @IsString()
-  gasLevelCode?: string;
+  gasLevelCode: string;
   @IsOptional()
   @IsNumber()
   meanMeasuredValue?: number;

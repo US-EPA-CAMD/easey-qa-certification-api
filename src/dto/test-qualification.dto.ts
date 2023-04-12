@@ -1,5 +1,7 @@
 import {
   IsNotEmpty,
+  IsOptional,
+  IsString,
   MinDate,
   ValidateIf,
   ValidationArguments,
@@ -22,8 +24,10 @@ export class TestQualificationBaseDTO {
       });
     },
   })
+  @IsString()
   testClaimCode: string;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-119-A', {
@@ -44,8 +48,9 @@ export class TestQualificationBaseDTO {
       );
     },
   })
-  beginDate: Date;
+  beginDate?: Date;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-120-A', {
@@ -66,8 +71,9 @@ export class TestQualificationBaseDTO {
       );
     },
   })
-  endDate: Date;
+  endDate?: Date;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-9-A', {
@@ -88,8 +94,9 @@ export class TestQualificationBaseDTO {
     },
   })
   @ValidateIf(o => o.testClaimCode === 'SLC')
-  highLoadPercentage: number;
+  highLoadPercentage?: number;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-10-A', {
@@ -99,7 +106,7 @@ export class TestQualificationBaseDTO {
     },
   })
   @IsInRange(0, 100, {
-    message: (args: ValidationArguments) => {
+    message: (args?: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-10-B', {
         value: args.value,
         fieldname: args.property,
@@ -110,8 +117,9 @@ export class TestQualificationBaseDTO {
     },
   })
   @ValidateIf(o => o.testClaimCode === 'SLC')
-  midLoadPercentage: number;
+  midLoadPercentage?: number;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-11-A', {
@@ -132,7 +140,7 @@ export class TestQualificationBaseDTO {
     },
   })
   @ValidateIf(o => o.testClaimCode === 'SLC')
-  lowLoadPercentage: number;
+  lowLoadPercentage?: number;
 }
 
 export class TestQualificationRecordDTO extends TestQualificationBaseDTO {
