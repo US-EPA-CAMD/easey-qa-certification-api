@@ -24,10 +24,10 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
 import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
 import {
-  BEGIN_DATE_TEST_TYPE_CODES,
   BEGIN_MINUTE_TEST_TYPE_CODES,
   MISC_TEST_TYPE_CODES,
   VALID_CODES_FOR_END_MINUTE_VALIDATION,
+  VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION,
 } from '../utilities/constants';
 
 const moment = require('moment');
@@ -78,6 +78,7 @@ export class TestSummaryChecksService {
     if (!isImport) {
       const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
+        summary.monitoringSystemID,
         summary.componentID,
         summary.testTypeCode,
         summary.testNumber,
@@ -125,7 +126,7 @@ export class TestSummaryChecksService {
     }
 
     // TEST-3 Test Begin Minute Valid
-    if (BEGIN_DATE_TEST_TYPE_CODES.includes(summary.testTypeCode)) {
+    if (BEGIN_MINUTE_TEST_TYPE_CODES.includes(summary.testTypeCode)) {
       error = await this.testMinuteField(summary, locationId, 'beginMinute');
       if (error) {
         errorList.push(error);
@@ -155,10 +156,14 @@ export class TestSummaryChecksService {
       }
     }
 
-    // TEST-8 Test Span Scale Valid
-    error = await this.test8Check(locationId, summary);
-    if (error) {
-      errorList.push(error);
+    if (
+      VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION.includes(summary.testTypeCode)
+    ) {
+      // TEST-8 Test Span Scale Valid
+      error = await this.test8Check(locationId, summary);
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     // TEST-23 Injection Protocol Valid
@@ -1177,6 +1182,7 @@ export class TestSummaryChecksService {
     } else {
       duplicateQaSupp = await this.qaSuppDataRepository.getUnassociatedQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
+        null,
         summary.componentID,
         summary.testTypeCode,
         summary.testNumber,

@@ -81,7 +81,7 @@ export class QACertificationWorkspaceService {
     const promises = [];
     payload.testSummaryData?.forEach((summary, idx) => {
       promises.push(
-        new Promise(async (resolve, _reject) => {
+        new Promise((resolve, _reject) => {
           const locationId = locations.find(i => {
             return (
               i.unitId === summary.unitId &&
@@ -106,7 +106,7 @@ export class QACertificationWorkspaceService {
     payload.testExtensionExemptionData?.forEach(
       (qaTestExtensionExemptionId, idx) => {
         promises.push(
-          new Promise(async (resolve, _reject) => {
+          new Promise((resolve, _reject) => {
             const locationId = locations.find(i => {
               return (
                 i.unitId === qaTestExtensionExemptionId.unitId &&
@@ -126,7 +126,7 @@ export class QACertificationWorkspaceService {
     );
     payload.certificationEventData?.forEach((qaCertEvent, idx) => {
       promises.push(
-        new Promise(async (resolve, _reject) => {
+        new Promise((resolve, _reject) => {
           const locationId = locations.find(i => {
             return (
               i.unitId === qaCertEvent.unitId &&

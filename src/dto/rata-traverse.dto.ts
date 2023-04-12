@@ -1,6 +1,12 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
-import { IsNotEmpty, ValidationArguments } from 'class-validator';
+import {
+  IsDateString,
+  IsNotEmpty,
+  IsNumber,
+  ValidationArguments,
+  IsString,
+} from 'class-validator';
 import { PressureMeasureCode } from '../entities/workspace/pressure-measure-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 
@@ -19,6 +25,7 @@ export class RataTraverseBaseDTO {
       });
     },
   })
+  @IsString()
   probeID: string;
 
   @IsNotEmpty({
@@ -29,6 +36,7 @@ export class RataTraverseBaseDTO {
       });
     },
   })
+  @IsString()
   probeTypeCode: string;
 
   @IsNotEmpty({
@@ -58,6 +66,7 @@ export class RataTraverseBaseDTO {
       });
     },
   })
+  @IsString()
   methodTraversePointID: string;
 
   @IsNotEmpty({
@@ -95,9 +104,12 @@ export class RataTraverseBaseDTO {
       });
     },
   })
+  @IsDateString()
   lastProbeDate: Date;
 
+  @IsNumber()
   avgVelDiffPressure: number;
+  @IsNumber()
   avgSquareVelDiffPressure: number;
 
   @IsNotEmpty({
@@ -126,11 +138,17 @@ export class RataTraverseBaseDTO {
     true,
   )
   tStackTemperature: number;
+  @IsNumber()
   pointUsedIndicator: number;
+  @IsNumber()
   numberWallEffectsPoints: number;
+  @IsNumber()
   yawAngle: number;
+  @IsNumber()
   pitchAngle: number;
+  @IsNumber()
   calculatedVelocity: number;
+  @IsNumber()
   replacementVelocity: number;
 }
 

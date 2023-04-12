@@ -17,8 +17,8 @@ const user: CurrentUser = {
   sessionId: '',
   expiration: '',
   clientIp: '',
-  isAdmin: false,
-  permissionSet: [],
+  facilities: [],
+  roles: [],
 };
 const fuelFlowToLoadTestId = 'fuelFlowToLoadTestId';
 const fuelFlowToLoadTest = new FuelFlowToLoadTestDTO();

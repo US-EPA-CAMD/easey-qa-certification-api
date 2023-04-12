@@ -1,6 +1,6 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsEmail } from '@us-epa-camd/easey-common/pipes';
-import { IsNotEmpty, ValidationArguments } from 'class-validator';
+import { IsNotEmpty, IsString, ValidationArguments } from 'class-validator';
 
 const KEY = 'Air Emission Testing';
 
@@ -13,6 +13,7 @@ export class AirEmissionTestingBaseDTO {
       });
     },
   })
+  @IsString()
   qiLastName: string;
 
   @IsNotEmpty({
@@ -23,8 +24,10 @@ export class AirEmissionTestingBaseDTO {
       });
     },
   })
+  @IsString()
   qiFirstName: string;
 
+  @IsString()
   qiMiddleInitial: string;
 
   @IsNotEmpty({
@@ -35,6 +38,7 @@ export class AirEmissionTestingBaseDTO {
       });
     },
   })
+  @IsString()
   aetbName: string;
 
   @IsNotEmpty({
@@ -45,6 +49,7 @@ export class AirEmissionTestingBaseDTO {
       });
     },
   })
+  @IsString()
   aetbPhoneNumber: string;
 
   @IsNotEmpty({
@@ -84,6 +89,7 @@ export class AirEmissionTestingBaseDTO {
       });
     },
   })
+  @IsString()
   providerName: string;
 
   @IsNotEmpty({

@@ -1,6 +1,11 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes/is-iso-format.pipe';
-import { IsNotEmpty, ValidationArguments } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  ValidationArguments,
+} from 'class-validator';
 
 const KEY = 'Cycle Time Injection';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -14,7 +19,9 @@ export class CycleTimeInjectionBaseDTO {
       });
     },
   })
+  @IsString()
   gasLevelCode: string;
+  @IsNumber()
   calibrationGasValue: number;
 
   @IsIsoFormat({
@@ -29,7 +36,9 @@ export class CycleTimeInjectionBaseDTO {
     },
   })
   beginDate: Date;
+  @IsNumber()
   beginHour: number;
+  @IsNumber()
   beginMinute: number;
 
   @IsIsoFormat({
@@ -44,10 +53,15 @@ export class CycleTimeInjectionBaseDTO {
     },
   })
   endDate: Date;
+  @IsNumber()
   endHour: number;
+  @IsNumber()
   endMinute: number;
+  @IsNumber()
   injectionCycleTime: number;
+  @IsNumber()
   beginMonitorValue: number;
+  @IsNumber()
   endMonitorValue: number;
 }
 

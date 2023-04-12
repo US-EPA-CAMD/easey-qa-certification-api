@@ -6,19 +6,40 @@ import {
   AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasImportDTO,
 } from './app-e-heat-input-from-gas.dto';
-import { ValidateNested, ValidationArguments } from 'class-validator';
+import {
+  IsNumber,
+  IsString,
+  ValidateNested,
+  ValidationArguments,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes/is-iso-format.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 
 const KEY = 'Appendix E Correlation Test Run';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class AppECorrelationTestRunBaseDTO {
+  @IsInRange(null, 99, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `The value for [fieldname] in [key] must not exceed 2 digits.`,
+        {
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
+    },
+  })
   runNumber: number;
+  @IsNumber()
   referenceValue: number;
+  @IsNumber()
   hourlyHeatInputRate: number;
+  @IsNumber()
   totalHeatInput: number;
+  @IsNumber()
   responseTime: number;
 
   @IsIsoFormat({
@@ -33,7 +54,9 @@ export class AppECorrelationTestRunBaseDTO {
     },
   })
   beginDate: Date;
+  @IsNumber()
   beginHour: number;
+  @IsNumber()
   beginMinute: number;
 
   @IsIsoFormat({
@@ -48,7 +71,9 @@ export class AppECorrelationTestRunBaseDTO {
     },
   })
   endDate: Date;
+  @IsNumber()
   endHour: number;
+  @IsNumber()
   endMinute: number;
 }
 

@@ -79,7 +79,7 @@ export const addBeginAndEndDateWhere = (
                 .andWhere('ts.beginDate BETWEEN :beginDate AND :endDate', {
                   beginDate,
                   endDate,
-                })
+                });
             }),
           )
           .orWhere(

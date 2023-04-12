@@ -3,6 +3,7 @@ import {
   ValidationArguments,
   IsNotEmpty,
   IsOptional,
+  IsString,
   ValidateNested,
 } from 'class-validator';
 
@@ -134,11 +135,15 @@ export class TestSummaryBaseDTO {
     message:
       'A Unit or Stack Pipe identifier (NOT both) must be provided for each Test Summary.',
   })
+  @IsOptional()
+  @IsString()
   stackPipeId?: string;
 
   @ApiProperty({
     description: propertyMetadata.unitId.description,
   })
+  @IsOptional()
+  @IsString()
   unitId?: string;
 
   @ApiProperty({
@@ -203,6 +208,7 @@ export class TestSummaryBaseDTO {
   @ValidateIf(o =>
     VALID_CODES_FOR_MON_SYS_ID_VALIDATION.includes(o.testTypeCode),
   )
+  @IsString()
   monitoringSystemID?: string;
 
   @ApiProperty({
@@ -248,11 +254,13 @@ export class TestSummaryBaseDTO {
   @ValidateIf(o =>
     VALID_CODES_FOR_COMPONENT_ID_VALIDATION.includes(o.testTypeCode),
   )
+  @IsString()
   componentID?: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSpanDTOSpanScaleCode.description,
   })
+  @IsOptional()
   @IsValidCode(SpanScaleCode, {
     message: (args: ValidationArguments) => {
       return `You reported an invalid Span Scale Code of [${
@@ -296,6 +304,7 @@ export class TestSummaryBaseDTO {
       });
     },
   })
+  @IsString()
   testNumber: string;
 
   @ApiProperty({
@@ -626,19 +635,16 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.year.description,
   })
+  @IsOptional()
   @IsInRange(1993, new Date().getFullYear(), {
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `Year must be greater than or equal to 1993 and less than or equal to ${new Date().getFullYear()}. You reported an invalid year of [${
-          args.value
-        }] in Test Summary record for Unit/Stack [${
-          args.object['unitId']
-            ? args.object['unitId']
-            : args.object['stackPipeId']
-        }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-          args.object['testNumber']
-        }]`,
-      );
+      return CheckCatalogService.formatResultMessage('IMPORT-34-A', {
+        locationID: args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId'],
+        testTypeCode: args.object['testTypeCode'],
+        testNumber: args.object['testNumber'],
+      });
     },
   })
   @ValidateIf(o => YEAR_QUARTER_TEST_TYPE_CODES.includes(o.testTypeCode))
@@ -647,18 +653,19 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.quarter.description,
   })
+  @IsOptional()
   @IsInRange(1, 4, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `Quarter must be a numeric number from 1 to 4. You reported an invalid quarter of [${
-          args.value
-        }] in Test Summary record for Unit/Stack [${
-          args.object['unitId']
+        `You reported an invalid quarter of [value] in Test Summary record for location [locationID], Test Type Code [testTypeCode], and Test Number [testNumber]. Quarter must be a numeric number from 1 to 4.`,
+        {
+          value: args.value,
+          locationID: args.object['unitId']
             ? args.object['unitId']
-            : args.object['stackPipeId']
-        }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-          args.object['testNumber']
-        }]`,
+            : args.object['stackPipeId'],
+          testTypeCode: args.object['testTypeCode'],
+          testNumber: args.object['testNumber'],
+        },
       );
     },
   })
@@ -669,11 +676,13 @@ export class TestSummaryBaseDTO {
     description: 'Test Comment. ADD TO PROPERTY METADATA',
   })
   @IsOptional()
+  @IsString()
   testComment?: string;
 
   @ApiProperty({
     description: 'Injection Protocol Code. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsValidCode(InjectionProtocolCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(

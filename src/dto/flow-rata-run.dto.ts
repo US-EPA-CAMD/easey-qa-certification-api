@@ -3,6 +3,7 @@ import { IsInRange, Min } from '@us-epa-camd/easey-common/pipes';
 import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
+  IsNumber,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
@@ -166,6 +167,7 @@ export class FlowRataRunBaseDTO {
   )
   percentMoisture: number;
 
+  @IsNumber()
   dryMolecularWeight: number;
 
   @IsNotEmpty({
@@ -215,7 +217,9 @@ export class FlowRataRunBaseDTO {
   })
   averageVelocityWithoutWallEffects: number;
 
+  @IsNumber()
   averageVelocityWithWallEffects: number;
+  @IsNumber()
   calculatedWAF: number;
 
   @IsNotEmpty({
