@@ -111,6 +111,7 @@ export class AppECorrelationTestRunWorkspaceService {
       );
     }
 
+    entity.runNumber = payload.runNumber;
     entity.referenceValue = payload.referenceValue;
     entity.hourlyHeatInputRate = payload.hourlyHeatInputRate;
     entity.totalHeatInput = payload.totalHeatInput;
