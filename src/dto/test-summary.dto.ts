@@ -1,4 +1,3 @@
-import { StackPipe } from './../entities/stack-pipe.entity';
 import {
   ValidateIf,
   ValidationArguments,
