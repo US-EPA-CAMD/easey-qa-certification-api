@@ -4,6 +4,7 @@ import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   IsString,
   ValidateNested,
   ValidationArguments,
@@ -16,6 +17,7 @@ export class RataBaseDTO {
   @ApiProperty({
     description: 'NumberOfLoadLevels. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-102-A', {
@@ -25,25 +27,28 @@ export class RataBaseDTO {
     },
   })
   @IsNumber()
-  numberOfLoadLevels: number;
+  numberOfLoadLevels?: number;
 
   @ApiProperty({
     description: 'relativeAccuracy. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNumber()
-  relativeAccuracy: number;
+  relativeAccuracy?: number;
 
   @ApiProperty({
     description: 'rataFrequencyCode. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsString()
-  rataFrequencyCode: string;
+  rataFrequencyCode?: string;
 
   @ApiProperty({
     description: 'overallBiasAdjustmentFactor. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNumber()
-  overallBiasAdjustmentFactor: number;
+  overallBiasAdjustmentFactor?: number;
 }
 
 export class RataRecordDTO extends RataBaseDTO {

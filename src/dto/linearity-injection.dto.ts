@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
-import { IsNotEmpty, ValidationArguments } from 'class-validator';
+import { IsNotEmpty, IsOptional, ValidationArguments } from 'class-validator';
 import { IsNotNegative } from '../pipes/is-not-negative.pipe';
 
 const KEY = 'Linearity Injection';
@@ -27,6 +27,7 @@ export class LinearityInjectionBaseDTO {
   @ApiProperty({
     description: 'injectionHour. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LINEAR-19-A', {
@@ -43,7 +44,7 @@ export class LinearityInjectionBaseDTO {
       });
     },
   })
-  injectionHour: number;
+  injectionHour?: number;
 
   @ApiProperty({
     description: 'injectionMinute. ADD TO PROPERTY METADATA',
@@ -69,6 +70,7 @@ export class LinearityInjectionBaseDTO {
   @ApiProperty({
     description: 'measuredValue. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LINEAR-20-A', {
@@ -77,11 +79,12 @@ export class LinearityInjectionBaseDTO {
       });
     },
   })
-  measuredValue: number;
+  measuredValue?: number;
 
   @ApiProperty({
     description: 'referenceValue. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LINEAR-21-A', {
@@ -99,7 +102,7 @@ export class LinearityInjectionBaseDTO {
       });
     },
   })
-  referenceValue: number;
+  referenceValue?: number;
 }
 
 export class LinearityInjectionRecordDTO extends LinearityInjectionBaseDTO {

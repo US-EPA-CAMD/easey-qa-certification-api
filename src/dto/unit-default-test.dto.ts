@@ -2,21 +2,27 @@ import {
   UnitDefaultTestRunDTO,
   UnitDefaultTestRunImportDTO,
 } from './unit-default-test-run.dto';
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UnitDefaultTestBaseDTO {
+  @IsOptional()
   @IsString()
-  fuelCode: string;
+  fuelCode?: string;
+  @IsOptional()
   @IsNumber()
-  noxDefaultRate: number;
+  noxDefaultRate?: number;
+  @IsOptional()
   @IsString()
-  operatingConditionCode: string;
+  operatingConditionCode?: string;
+  @IsOptional()
   @IsString()
-  groupID: string;
+  groupID?: string;
+  @IsOptional()
   @IsNumber()
-  numberOfUnitsInGroup: number;
+  numberOfUnitsInGroup?: number;
+  @IsOptional()
   @IsNumber()
-  numberOfTestsForGroup: number;
+  numberOfTestsForGroup?: number;
 }
 
 export class UnitDefaultTestRecordDTO extends UnitDefaultTestBaseDTO {

@@ -4,18 +4,24 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  ValidateIf,
   ValidationArguments,
 } from 'class-validator';
+import { RequireOne } from '../pipes/require-one.pipe';
 
 const KEY = 'QA Certification Event';
 const DATE_FORMAT = 'YYYY-MM-DD';
 export class QACertificationEventBaseDTO {
-  @IsOptional()
+  @ValidateIf((o) => !o.unitId)
   @IsString()
-  stackPipeId?: string;
-  @IsOptional()
+  stackPipeId: string;
+  @ValidateIf((o) => !o.stackPipeId)
+  @RequireOne('unitId', {
+    message:
+      'A Unit or Stack Pipe identifier (NOT both) must be provided for each Test Summary.',
+  })
   @IsString()
-  unitId?: string;
+  unitId: string;
   @IsOptional()
   @IsString()
   monitoringSystemID?: string;
@@ -37,11 +43,14 @@ export class QACertificationEventBaseDTO {
     },
   })
   qaCertEventDate: Date;
+  @IsOptional()
   @IsNumber()
   qaCertEventHour?: number;
+  @IsOptional()
   @IsString()
   requiredTestCode?: string;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -54,6 +63,7 @@ export class QACertificationEventBaseDTO {
     },
   })
   conditionalBeginDate?: Date;
+  @IsOptional()
   @IsNumber()
   conditionalBeginHour?: number;
 
@@ -69,6 +79,7 @@ export class QACertificationEventBaseDTO {
     },
   })
   completionTestDate?: Date;
+  @IsOptional()
   @IsNumber()
   completionTestHour?: number;
 }

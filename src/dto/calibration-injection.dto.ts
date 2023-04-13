@@ -1,16 +1,24 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { ValidationArguments, IsNumber, IsString } from 'class-validator';
+import {
+  ValidationArguments,
+  IsNumber,
+  IsString,
+  IsOptional,
+} from 'class-validator';
 
 const KEY = 'Calibration Injection';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class CalibrationInjectionBaseDTO {
+  @IsOptional()
   @IsNumber()
-  onlineOfflineIndicator: number;
+  onlineOfflineIndicator?: number;
+  @IsOptional()
   @IsString()
-  upscaleGasLevelCode: string;
+  upscaleGasLevelCode?: string;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -22,12 +30,15 @@ export class CalibrationInjectionBaseDTO {
       );
     },
   })
-  zeroInjectionDate: Date;
+  zeroInjectionDate?: Date;
+  @IsOptional()
   @IsNumber()
-  zeroInjectionHour: number;
+  zeroInjectionHour?: number;
+  @IsOptional()
   @IsNumber()
-  zeroInjectionMinute: number;
+  zeroInjectionMinute?: number;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -39,27 +50,37 @@ export class CalibrationInjectionBaseDTO {
       );
     },
   })
-  upscaleInjectionDate: Date;
+  upscaleInjectionDate?: Date;
+  @IsOptional()
   @IsNumber()
-  upscaleInjectionHour: number;
+  upscaleInjectionHour?: number;
+  @IsOptional()
   @IsNumber()
-  upscaleInjectionMinute: number;
+  upscaleInjectionMinute?: number;
+  @IsOptional()
   @IsNumber()
-  zeroMeasuredValue: number;
+  zeroMeasuredValue?: number;
+  @IsOptional()
   @IsNumber()
-  upscaleMeasuredValue: number;
+  upscaleMeasuredValue?: number;
+  @IsOptional()
   @IsNumber()
-  zeroAPSIndicator: number;
+  zeroAPSIndicator?: number;
+  @IsOptional()
   @IsNumber()
-  upscaleAPSIndicator: number;
+  upscaleAPSIndicator?: number;
+  @IsOptional()
   @IsNumber()
-  zeroCalibrationError: number;
+  zeroCalibrationError?: number;
+  @IsOptional()
   @IsNumber()
-  upscaleCalibrationError: number;
+  upscaleCalibrationError?: number;
+  @IsOptional()
   @IsNumber()
-  zeroReferenceValue: number;
+  zeroReferenceValue?: number;
+  @IsOptional()
   @IsNumber()
-  upscaleReferenceValue: number;
+  upscaleReferenceValue?: number;
 }
 
 export class CalibrationInjectionRecordDTO extends CalibrationInjectionBaseDTO {

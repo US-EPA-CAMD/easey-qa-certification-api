@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsNumber,
+  IsOptional,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
@@ -44,6 +45,7 @@ export class LinearitySummaryBaseDTO {
   @ApiProperty({
     description: 'meanMeasuredValue. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LINEAR-16-A', {
@@ -53,11 +55,12 @@ export class LinearitySummaryBaseDTO {
     },
   })
   @IsNumber()
-  meanMeasuredValue: number;
+  meanMeasuredValue?: number;
 
   @ApiProperty({
     description: 'meanReferenceValue. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LINEAR-17-A', {
@@ -75,11 +78,12 @@ export class LinearitySummaryBaseDTO {
       });
     },
   })
-  meanReferenceValue: number;
+  meanReferenceValue?: number;
 
   @ApiProperty({
     description: 'percentError. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LINEAR-18-A', {
@@ -97,11 +101,12 @@ export class LinearitySummaryBaseDTO {
       });
     },
   })
-  percentError: number;
+  percentError?: number;
 
   @ApiProperty(
     getMetadata(dataDictionary.apsIndicator, MetadataKeys.LINEARITY_SUMMARY),
   )
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LINEAR-37-A', {
@@ -110,7 +115,7 @@ export class LinearitySummaryBaseDTO {
       });
     },
   })
-  apsIndicator: number;
+  apsIndicator?: number;
 }
 
 export class LinearitySummaryRecordDTO extends LinearitySummaryBaseDTO {

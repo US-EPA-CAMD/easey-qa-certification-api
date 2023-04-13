@@ -1,8 +1,16 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { IsEmail } from '@us-epa-camd/easey-common/pipes';
-import { IsNotEmpty, IsNumber, IsString, MaxLength, ValidationArguments } from 'class-validator';
+import { IsEmail, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+  ValidationArguments,
+} from 'class-validator';
 
 const KEY = 'Air Emission Testing';
+const DATE_FORMAT = 'YYYY-MM-DD';
+
 
 export class AirEmissionTestingBaseDTO {
   @IsNotEmpty({
@@ -27,6 +35,7 @@ export class AirEmissionTestingBaseDTO {
   @IsString()
   qiFirstName: string;
 
+  @IsOptional()
   @MaxLength(1, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('AETB-3-A', {
@@ -37,7 +46,7 @@ export class AirEmissionTestingBaseDTO {
     },
   })
   @IsString()
-  qiMiddleInitial: string;
+  qiMiddleInitial?: string;
 
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -86,6 +95,17 @@ export class AirEmissionTestingBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
+    },
+  })
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `You reported [fieldname] which must be a valid ISO date format of ${DATE_FORMAT} for [key].`,
+        {
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
   })
   examDate: Date;
