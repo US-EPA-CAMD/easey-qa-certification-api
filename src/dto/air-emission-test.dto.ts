@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  MaxLength,
   ValidationArguments,
 } from 'class-validator';
 
@@ -35,6 +36,15 @@ export class AirEmissionTestingBaseDTO {
   qiFirstName: string;
 
   @IsOptional()
+  @MaxLength(1, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('AETB-3-A', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsString()
   qiMiddleInitial?: string;
 
