@@ -113,7 +113,7 @@ export class QACertificationChecksService {
         }
 
         promises.push(
-          new Promise(async (resolve, _reject) => {
+          new Promise((resolve, _reject) => {
             const results = this.testSummaryChecksService?.runChecks(
               locationId,
               summary,
@@ -129,7 +129,7 @@ export class QACertificationChecksService {
 
         summary.linearitySummaryData?.forEach(linearitySummary => {
           promises.push(
-            new Promise(async (resolve, _reject) => {
+            new Promise((resolve, _reject) => {
               const results = this.linearitySummaryChecksService.runChecks(
                 linearitySummary,
                 undefined,
@@ -146,7 +146,7 @@ export class QACertificationChecksService {
           linearitySummary.linearityInjectionData?.forEach(
             linearityInjection => {
               promises.push(
-                new Promise(async (resolve, _reject) => {
+                new Promise((resolve, _reject) => {
                   const results = this.linearityInjectionChecksService.runChecks(
                     linearityInjection,
                     undefined,
@@ -166,7 +166,7 @@ export class QACertificationChecksService {
 
         summary.rataData?.forEach(rata => {
           promises.push(
-            new Promise(async (resolve, _reject) => {
+            new Promise((resolve, _reject) => {
               const results = this.rataChecksService.runChecks(
                 locationId,
                 rata,
@@ -182,7 +182,7 @@ export class QACertificationChecksService {
 
           rata.rataSummaryData?.forEach(rataSummary => {
             promises.push(
-              new Promise(async (resolve, _reject) => {
+              new Promise((resolve, _reject) => {
                 const results = this.rataSummaryChecksService.runChecks(
                   locationId,
                   rataSummary,
@@ -200,7 +200,7 @@ export class QACertificationChecksService {
 
             rataSummary.rataRunData?.forEach(rataRun => {
               promises.push(
-                new Promise(async (resolve, _reject) => {
+                new Promise((resolve, _reject) => {
                   const results = this.rataRunChecksService.runChecks(
                     rataRun,
                     locationId,
@@ -218,7 +218,7 @@ export class QACertificationChecksService {
 
               rataRun.flowRataRunData?.forEach(flowRataRun => {
                 promises.push(
-                  new Promise(async (resolve, _reject) => {
+                  new Promise((resolve, _reject) => {
                     const results = this.flowRataRunChecksService.runChecks(
                       flowRataRun,
                       true,
@@ -237,7 +237,7 @@ export class QACertificationChecksService {
 
                 flowRataRun.rataTraverseData?.forEach(rataTraverse => {
                   promises.push(
-                    new Promise(async (resolve, _reject) => {
+                    new Promise((resolve, _reject) => {
                       const results = this.rataTraverseChecksService.runChecks(
                         rataTraverse,
                         locationId,
@@ -262,7 +262,7 @@ export class QACertificationChecksService {
 
         summary.testQualificationData?.forEach(testQualification => {
           promises.push(
-            new Promise(async (resolve, _reject) => {
+            new Promise((resolve, _reject) => {
               const results = this.testQualificationChecksService.runChecks(
                 locationId,
                 testQualification,
@@ -283,7 +283,7 @@ export class QACertificationChecksService {
           cycleTimeSummary.cycleTimeInjectionData?.forEach(
             cycleTimeInjection => {
               promises.push(
-                new Promise(async (resolve, _reject) => {
+                new Promise((resolve, _reject) => {
                   const results = this.cycleTimeInjectionChecksService.runChecks(
                     cycleTimeInjection,
                     null,
@@ -303,7 +303,7 @@ export class QACertificationChecksService {
 
         summary.protocolGasData?.forEach(protocolGas => {
           promises.push(
-            new Promise(async (resolve, _reject) => {
+            new Promise((resolve, _reject) => {
               const results = this.protocolGasChecksService.runChecks(
                 protocolGas,
                 locationId,
@@ -320,7 +320,7 @@ export class QACertificationChecksService {
 
         if (summary.appECorrelationTestSummaryData) {
           promises.push(
-            new Promise(async (resolve, _reject) => {
+            new Promise((resolve, _reject) => {
               const results = this.appETestSummaryChecksService.runImportChecks(
                 summary.appECorrelationTestSummaryData,
               );
@@ -330,7 +330,7 @@ export class QACertificationChecksService {
 
           summary.appECorrelationTestSummaryData.forEach(appESummary => {
             promises.push(
-              new Promise(async (resolve, _reject) => {
+              new Promise((resolve, _reject) => {
                 const results = this.appETestRunChecksService.runImportChecks(
                   appESummary.appECorrelationTestRunData,
                 );
@@ -340,7 +340,7 @@ export class QACertificationChecksService {
 
             appESummary.appECorrelationTestRunData?.forEach(appETestRun => {
               promises.push(
-                new Promise(async (resolve, _reject) => {
+                new Promise((resolve, _reject) => {
                   const results = this.appEGasChecksService.runImportChecks(
                     appETestRun.appEHeatInputFromGasData,
                   );
@@ -349,7 +349,7 @@ export class QACertificationChecksService {
               );
 
               promises.push(
-                new Promise(async (resolve, _reject) => {
+                new Promise((resolve, _reject) => {
                   const results = this.appEOilChecksService.runImportChecks(
                     appETestRun.appEHeatInputFromOilData,
                   );
@@ -363,7 +363,7 @@ export class QACertificationChecksService {
             unitDefaultTest.unitDefaultTestRunData?.forEach(
               unitDefaultTestRun => {
                 promises.push(
-                  new Promise(async (resolve, _reject) => {
+                  new Promise((resolve, _reject) => {
                     const results = this.unitDefaultTestRunChecksService.runChecks(
                       unitDefaultTestRun,
                       true,
@@ -394,7 +394,7 @@ export class QACertificationChecksService {
         }).locationId;
 
         promises.push(
-          new Promise(async (resolve, _reject) => {
+          new Promise((resolve, _reject) => {
             const results = this.testExtensionExemptionsChecksService.runChecks(
               locationId,
               testExtExem,
@@ -417,7 +417,7 @@ export class QACertificationChecksService {
         }).locationId;
 
         promises.push(
-          new Promise(async (resolve, _reject) => {
+          new Promise((resolve, _reject) => {
             const results = this.qaCertificationEventChecksService.runChecks(
               locationId,
               qaCertEvent,

@@ -8,7 +8,7 @@ import {
 } from './app-e-heat-input-from-gas.dto';
 import {
   IsNumber,
-  IsString,
+  IsOptional,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
@@ -33,15 +33,19 @@ export class AppECorrelationTestRunBaseDTO {
     },
   })
   runNumber: number;
+  @IsOptional()
   @IsNumber()
-  referenceValue: number;
+  referenceValue?: number;
+  @IsOptional()
   @IsNumber()
-  hourlyHeatInputRate: number;
+  hourlyHeatInputRate?: number;
+  @IsOptional()
   @IsNumber()
-  totalHeatInput: number;
+  totalHeatInput?: number;
+  @IsOptional()
   @IsNumber()
-  responseTime: number;
-
+  responseTime?: number;
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -53,12 +57,14 @@ export class AppECorrelationTestRunBaseDTO {
       );
     },
   })
-  beginDate: Date;
+  beginDate?: Date;
+  @IsOptional()
   @IsNumber()
-  beginHour: number;
+  beginHour?: number;
   @IsNumber()
   beginMinute: number;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -70,9 +76,11 @@ export class AppECorrelationTestRunBaseDTO {
       );
     },
   })
-  endDate: Date;
+  endDate?: Date;
+  @IsOptional()
   @IsNumber()
-  endHour: number;
+  endHour?: number;
+  @IsOptional()
   @IsNumber()
   endMinute: number;
 }

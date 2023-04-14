@@ -1,6 +1,6 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { IsNumber, ValidationArguments } from 'class-validator';
+import { IsNumber, IsOptional, ValidationArguments } from 'class-validator';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 const KEY = 'Unit Default Test Run';
@@ -10,6 +10,7 @@ export class UnitDefaultTestRunBaseDTO {
   @IsNumber()
   runNumber: number;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -21,12 +22,15 @@ export class UnitDefaultTestRunBaseDTO {
       );
     },
   })
-  beginDate: Date;
+  beginDate?: Date;
+  @IsOptional()
   @IsNumber()
-  beginHour: number;
+  beginHour?: number;
+  @IsOptional()
   @IsNumber()
-  beginMinute: number;
+  beginMinute?: number;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -38,17 +42,22 @@ export class UnitDefaultTestRunBaseDTO {
       );
     },
   })
-  endDate: Date;
+  endDate?: Date;
+  @IsOptional()
   @IsNumber()
-  endHour: number;
+  endHour?: number;
+  @IsOptional()
   @IsNumber()
-  endMinute: number;
+  endMinute?: number;
+  @IsOptional()
   @IsNumber()
-  responseTime: number;
+  responseTime?: number;
+  @IsOptional()
   @IsNumber()
-  referenceValue: number;
+  referenceValue?: number;
+  @IsOptional()
   @IsNumber()
-  runUsedIndicator: number;
+  runUsedIndicator?: number;
 }
 
 export class UnitDefaultTestRunRecordDTO extends UnitDefaultTestRunBaseDTO {

@@ -19,20 +19,20 @@ export class TestExtensionExemptionBaseDTO {
   @ApiProperty({
     description: 'Stack Pipe Identifier. ADD TO PROPERTY METADATA',
   })
+  @ValidateIf((o) => !o.unitId)
   @RequireOne('unitId', {
     message:
       'A Unit or Stack Pipe identifier (NOT both) must be provided for each Test Summary.',
   })
-  @IsOptional()
   @IsString()
-  stackPipeId?: string;
+  stackPipeId: string;
 
   @ApiProperty({
     description: propertyMetadata.unitId.description,
   })
-  @IsOptional()
+  @ValidateIf((o) => !o.stackPipeId)
   @IsString()
-  unitId?: string;
+  unitId: string;
 
   @ApiProperty({
     description: propertyMetadata.year.description,
@@ -93,18 +93,19 @@ export class TestExtensionExemptionBaseDTO {
   @ApiProperty({
     description: propertyMetadata.monitorSpanDTOSpanScaleCode.description,
   })
+  @IsOptional()
   @IsValidCode(SpanScaleCode, {
-    message: (args: ValidationArguments) => {
-      return `You reported an invalid Span Scale Code of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
-    },
+  //   message: (args: ValidationArguments) => {
+  //     return `You reported an invalid Span Scale Code of [${
+  //       args.value
+  //     }] in Test Summary record for Unit/Stack [${
+  //       args.object['unitId']
+  //         ? args.object['unitId']
+  //         : args.object['stackPipeId']
+  //     }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+  //       args.object['testNumber']
+  //     }]`;
+  //   },
   })
   spanScaleCode?: string;
 

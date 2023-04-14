@@ -1,31 +1,43 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 const KEY = 'Fuel Flow To Load Baseline';
 
 export class FuelFlowToLoadBaselineBaseDTO {
+  @IsOptional()
   @IsNumber()
-  accuracyTestNumber: number;
+  accuracyTestNumber?: number;
+  @IsOptional()
   @IsNumber()
-  peiTestNumber: number;
+  peiTestNumber?: number;
+  @IsOptional()
   @IsNumber()
-  averageFuelFlowRate: number;
+  averageFuelFlowRate?: number;
+  @IsOptional()
   @IsNumber()
-  averageLoad: number;
+  averageLoad?: number;
+  @IsOptional()
   @IsNumber()
-  baselineFuelFlowToLoadRatio: number;
+  baselineFuelFlowToLoadRatio?: number;
+  @IsOptional()
   @IsString()
-  fuelFlowToLoadUOMCode: string;
+  fuelFlowToLoadUOMCode?: string;
+  @IsOptional()
   @IsNumber()
-  averageHourlyHeatInputRate: number;
+  averageHourlyHeatInputRate?: number;
+  @IsOptional()
   @IsNumber()
-  baselineGHR: number;
+  baselineGHR?: number;
+  @IsOptional()
   @IsString()
-  ghrUnitsOfMeasureCode: string;
+  ghrUnitsOfMeasureCode?: string;
+  @IsOptional()
   @IsNumber()
-  numberOfHoursExcludedCofiring: number;
+  numberOfHoursExcludedCofiring?: number;
+  @IsOptional()
   @IsNumber()
-  numberOfHoursExcludedRamping: number;
+  numberOfHoursExcludedRamping?: number;
+  @IsOptional()
   @IsNumber()
-  numberOfHoursExcludedLowRange: number;
+  numberOfHoursExcludedLowRange?: number;
 }
 
 export class FuelFlowToLoadBaselineRecordDTO extends FuelFlowToLoadBaselineBaseDTO {

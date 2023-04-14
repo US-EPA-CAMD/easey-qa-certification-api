@@ -206,20 +206,13 @@ export class RataSummaryWorkspaceService {
     if (payload.rataRunData?.length > 0) {
       for (const rataRun of payload.rataRunData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.rataRunService.import(
-                testSumId,
-                createdRataSummary.id,
-                rataRun,
-                userId,
-                isHistoricalRecord,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.rataRunService.import(
+            testSumId,
+            createdRataSummary.id,
+            rataRun,
+            userId,
+            isHistoricalRecord,
+          ),
         );
       }
     }

@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { ValidateNested, IsNumber } from 'class-validator';
+import { ValidateNested, IsNumber, IsOptional } from 'class-validator';
 import {
   CycleTimeInjectionDTO,
   CycleTimeInjectionImportDTO,
@@ -7,8 +7,9 @@ import {
 
 const KEY = 'Cycle Time Summary';
 export class CycleTimeSummaryBaseDTO {
+  @IsOptional()
   @IsNumber()
-  totalTime: number;
+  totalTime?: number;
 }
 
 export class CycleTimeSummaryRecordDTO extends CycleTimeSummaryBaseDTO {

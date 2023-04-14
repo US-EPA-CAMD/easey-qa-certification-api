@@ -193,20 +193,13 @@ export class FlowRataRunWorkspaceService {
     if (payload.rataTraverseData?.length > 0) {
       for (const rataTraverse of payload.rataTraverseData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.rataTravarseService.import(
-                testSumId,
-                createdFlowRataRun.id,
-                rataTraverse,
-                userId,
-                isHistoricalRecord,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.rataTravarseService.import(
+            testSumId,
+            createdFlowRataRun.id,
+            rataTraverse,
+            userId,
+            isHistoricalRecord,
+          ),
         );
       }
     }
