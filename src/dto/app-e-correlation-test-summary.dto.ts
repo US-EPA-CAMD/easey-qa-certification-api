@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { ValidateNested, IsNumber } from 'class-validator';
+import { ValidateNested, IsNumber, IsOptional } from 'class-validator';
 import {
   AppECorrelationTestRunDTO,
   AppECorrelationTestRunImportDTO,
@@ -10,12 +10,15 @@ const KEY = 'Appendix E Correlation Test Summary';
 export class AppECorrelationTestSummaryBaseDTO {
   @IsNumber()
   operatingLevelForRun: number;
+  @IsOptional()
   @IsNumber()
-  meanReferenceValue: number;
+  meanReferenceValue?: number;
+  @IsOptional()
   @IsNumber()
-  averageHourlyHeatInputRate: number;
+  averageHourlyHeatInputRate?: number;
+  @IsOptional()
   @IsNumber()
-  fFactor: number;
+  fFactor?: number;
 }
 
 export class AppECorrelationTestSummaryRecordDTO extends AppECorrelationTestSummaryBaseDTO {

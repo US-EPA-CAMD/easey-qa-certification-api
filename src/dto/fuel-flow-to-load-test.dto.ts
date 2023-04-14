@@ -1,19 +1,25 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 const KEY = 'Fuel Flow To Load Test';
 
 export class FuelFlowToLoadTestBaseDTO {
+  @IsOptional()
   @IsString()
-  testBasisCode: string;
+  testBasisCode?: string;
+  @IsOptional()
   @IsNumber()
-  averageDifference: number;
+  averageDifference?: number;
+  @IsOptional()
   @IsNumber()
-  numberOfHoursUsed: number;
+  numberOfHoursUsed?: number;
+  @IsOptional()
   @IsNumber()
-  numberOfHoursExcludedCofiring: number;
+  numberOfHoursExcludedCofiring?: number;
+  @IsOptional()
   @IsNumber()
-  numberOfHoursExcludedRamping: number;
+  numberOfHoursExcludedRamping?: number;
+  @IsOptional()
   @IsNumber()
-  numberOfHoursExcludedLowRange: number;
+  numberOfHoursExcludedLowRange?: number;
 }
 
 export class FuelFlowToLoadTestRecordDTO extends FuelFlowToLoadTestBaseDTO {

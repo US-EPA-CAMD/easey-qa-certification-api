@@ -1,17 +1,23 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 export class TransmitterTransducerAccuracyBaseDTO {
+  @IsOptional()
   @IsNumber()
-  lowLevelAccuracy: number;
+  lowLevelAccuracy?: number;
+  @IsOptional()
   @IsString()
-  lowLevelAccuracySpecCode: string;
+  lowLevelAccuracySpecCode?: string;
+  @IsOptional()
   @IsNumber()
-  midLevelAccuracy: number;
+  midLevelAccuracy?: number;
+  @IsOptional()
   @IsString()
-  midLevelAccuracySpecCode: string;
+  midLevelAccuracySpecCode?: string;
+  @IsOptional()
   @IsNumber()
-  highLevelAccuracy: number;
+  highLevelAccuracy?: number;
+  @IsOptional()
   @IsString()
-  highLevelAccuracySpecCode: string;
+  highLevelAccuracySpecCode?: string;
 }
 
 export class TransmitterTransducerAccuracyRecordDTO extends TransmitterTransducerAccuracyBaseDTO {

@@ -1,23 +1,30 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 const KEY = 'Flow To Load Reference';
 
 export class FlowToLoadReferenceBaseDTO {
+  @IsOptional()
   @IsString()
-  rataTestNumber: string;
+  rataTestNumber?: string;
   @IsString()
   operatingLevelCode: string;
+  @IsOptional()
   @IsNumber()
-  averageGrossUnitLoad: number;
+  averageGrossUnitLoad?: number;
+  @IsOptional()
   @IsNumber()
-  averageReferenceMethodFlow: number;
+  averageReferenceMethodFlow?: number;
+  @IsOptional()
   @IsNumber()
-  referenceFlowLoadRatio: number;
+  referenceFlowLoadRatio?: number;
+  @IsOptional()
   @IsNumber()
-  averageHourlyHeatInputRate: number;
+  averageHourlyHeatInputRate?: number;
+  @IsOptional()
   @IsNumber()
-  referenceGrossHeatRate: number;
+  referenceGrossHeatRate?: number;
+  @IsOptional()
   @IsNumber()
-  calcSeparateReferenceIndicator: number;
+  calcSeparateReferenceIndicator?: number;
 }
 
 export class FlowToLoadReferenceRecordDTO extends FlowToLoadReferenceBaseDTO {

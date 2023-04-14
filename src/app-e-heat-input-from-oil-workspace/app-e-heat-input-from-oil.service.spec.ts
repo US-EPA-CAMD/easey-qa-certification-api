@@ -51,7 +51,9 @@ const mockMap = () => ({
 });
 
 const mockHistoricalRepo = () => ({
-  findOne: jest.fn().mockResolvedValue(new AppEHeatInputFromGasRecordDTO()),
+  getAppEHeatInputFromOilByTestRunIdAndMonSysID: jest
+    .fn()
+    .mockResolvedValue(new AppEHeatInputFromGasRecordDTO()),
 });
 
 describe('AppEHeatInputOilWorkspaceService', () => {

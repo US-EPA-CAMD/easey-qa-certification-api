@@ -1,25 +1,33 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 const KEY = 'Appendix E Heat Input From Oil';
 
 export class AppEHeatInputFromOilBaseDTO {
   @IsString()
   monitoringSystemID: string;
+  @IsOptional()
   @IsNumber()
-  oilMass: number;
+  oilMass?: number;
+  @IsOptional()
   @IsNumber()
-  oilGCV: number;
+  oilGCV?: number;
+  @IsOptional()
   @IsString()
-  oilGCVUnitsOfMeasureCode: string;
+  oilGCVUnitsOfMeasureCode?: string;
+  @IsOptional()
   @IsNumber()
-  oilHeatInput: number;
+  oilHeatInput?: number;
+  @IsOptional()
   @IsNumber()
-  oilVolume: number;
+  oilVolume?: number;
+  @IsOptional()
   @IsString()
-  oilVolumeUnitsOfMeasureCode: string;
+  oilVolumeUnitsOfMeasureCode?: string;
+  @IsOptional()
   @IsNumber()
-  oilDensity: number;
+  oilDensity?: number;
+  @IsOptional()
   @IsString()
-  oilDensityUnitsOfMeasureCode: string;
+  oilDensityUnitsOfMeasureCode?: string;
 }
 
 export class AppEHeatInputFromOilRecordDTO extends AppEHeatInputFromOilBaseDTO {
