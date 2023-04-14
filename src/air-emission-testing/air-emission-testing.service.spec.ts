@@ -80,4 +80,14 @@ describe('AirEmissionTestingService', () => {
       expect(errored).toEqual(true);
     });
   });
+
+  describe('Export', () => {
+    it('Should Export Air Emission Testing', async () => {
+      jest
+        .spyOn(service, 'getAirEmissionTestingByTestSumIds')
+        .mockResolvedValue([airEmissionTestingRecord]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([airEmissionTestingRecord]);
+    });
+  });
 });

@@ -49,6 +49,10 @@ import { UnitDefaultTest } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 import { HgSummary } from '../entities/workspace/hg-summary.entity';
 import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-workspace.service';
+import { AirEmissionTesting } from '../entities/workspace/air-emission-test.entity';
+import { TestQualification } from '../entities/workspace/test-qualification.entity';
+import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
+import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -151,6 +155,16 @@ const mockTransmitterTransducerAccuracyWorkspaceService = () => ({
 
 const mockUnitDefaultTestWorkspaceService = () => ({
   export: jest.fn().mockResolvedValue([new UnitDefaultTest()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
+const mockAirEmissionTestingWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new AirEmissionTesting()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
+const mockTestQualificationWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new TestQualification()]),
   import: jest.fn().mockResolvedValue(null),
 });
 
@@ -272,6 +286,14 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: UnitDefaultTestWorkspaceService,
           useFactory: mockUnitDefaultTestWorkspaceService,
+        },
+        {
+          provide: AirEmissionTestingWorkspaceService,
+          useFactory: mockAirEmissionTestingWorkspaceService,
+        },
+        {
+          provide: TestQualificationWorkspaceService,
+          useFactory: mockTestQualificationWorkspaceService,
         },
         {
           provide: HgSummaryWorkspaceService,
