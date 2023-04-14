@@ -175,10 +175,10 @@ export class AppEHeatInputFromGasWorkspaceService {
     let historicalRecord: AppEHeatInputFromGas;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
-        appECorrTestRunId: appECorrTestRunId,
-        monitoringSystemId: payload.monitoringSystemID,
-      });
+      historicalRecord = await this.historicalRepo.getAppEHeatInputFromGasByTestRunIdAndMonSysID(
+        appECorrTestRunId,
+        payload.monitoringSystemID,
+      );
     }
 
     const createdHeatInputFromGas = await this.createAppEHeatInputFromGas(
