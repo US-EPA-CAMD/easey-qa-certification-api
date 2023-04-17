@@ -77,4 +77,14 @@ describe('TestQualificationService', () => {
       expect(repository.find).toHaveBeenCalled();
     });
   });
+
+  describe('Export', () => {
+    it('Should Export Test Qualification', async () => {
+      jest
+        .spyOn(service, 'getTestQualificationByTestSumIds')
+        .mockResolvedValue([testQualificationRecord]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([testQualificationRecord]);
+    });
+  });
 });

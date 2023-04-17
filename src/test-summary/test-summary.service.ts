@@ -22,6 +22,8 @@ import { FuelFlowmeterAccuracyService } from '../fuel-flowmeter-accuracy/fuel-fl
 import { UnitDefaultTestService } from '../unit-default-test/unit-default-test.service';
 import { TransmitterTransducerAccuracyService } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.service';
 import { HgSummaryService } from '../hg-summary/hg-summary.service';
+import { AirEmissionTestingService } from '../air-emission-testing/air-emission-testing.service';
+import { TestQualificationService } from '../test-qualification/test-qualification.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -60,6 +62,10 @@ export class TestSummaryService {
     private readonly transmitterTransducerAccuracyService: TransmitterTransducerAccuracyService,
     @Inject(forwardRef(() => HgSummaryService))
     private readonly hgSummaryService: HgSummaryService,
+    @Inject(forwardRef(() => AirEmissionTestingService))
+    private readonly airEmissionTestingService: AirEmissionTestingService,
+    @Inject(forwardRef(() => TestQualificationService))
+    private readonly testQualificationService: TestQualificationService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -150,7 +156,9 @@ export class TestSummaryService {
       onlineOfflineCalibrationData,
       unitDefaultTestData,
       transmitterTransducerAccuracyData,
-      hgSummaryData;
+      hgSummaryData,
+      testQualificationData,
+      airEmissionTestingData;
 
     let testSumIds;
 
@@ -211,6 +219,14 @@ export class TestSummaryService {
         testSumIds,
       );
 
+      testQualificationData = await this.testQualificationService.export(
+        testSumIds,
+      );
+
+      airEmissionTestingData = await this.airEmissionTestingService.export(
+        testSumIds,
+      );
+
       hgSummaryData = await this.hgSummaryService.export(testSumIds);
 
       testSummaries.forEach(s => {
@@ -250,6 +266,12 @@ export class TestSummaryService {
           i => i.testSumId === s.id,
         );
         s.transmitterTransducerData = transmitterTransducerAccuracyData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.testQualificationData = testQualificationData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.airEmissionTestingData = airEmissionTestingData.filter(
           i => i.testSumId === s.id,
         );
         s.hgSummaryData = hgSummaryData.filter(i => i.testSumId === s.id);

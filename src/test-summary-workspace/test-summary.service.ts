@@ -44,6 +44,8 @@ import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accurac
 import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-workspace.service';
+import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
+import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -90,6 +92,10 @@ export class TestSummaryWorkspaceService {
     private readonly unitDefaultTestWorkspaceService: UnitDefaultTestWorkspaceService,
     @Inject(forwardRef(() => HgSummaryWorkspaceService))
     private readonly hgSummaryWorkspaceService: HgSummaryWorkspaceService,
+    @Inject(forwardRef(() => AirEmissionTestingWorkspaceService))
+    private readonly airEmissionTestingWorkspaceService: AirEmissionTestingWorkspaceService,
+    @Inject(forwardRef(() => TestQualificationWorkspaceService))
+    private readonly testQualificationWorkspaceService: TestQualificationWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -180,7 +186,9 @@ export class TestSummaryWorkspaceService {
       onlineOfflineCalibrationData,
       unitDefaultTestData,
       transmitterTransducerAccuracyData,
-      hgSummaryData;
+      hgSummaryData,
+      testQualificationData,
+      airEmissionTestingData;
 
     let testSumIds;
 
@@ -243,6 +251,14 @@ export class TestSummaryWorkspaceService {
         testSumIds,
       );
 
+      testQualificationData = await this.testQualificationWorkspaceService.export(
+        testSumIds,
+      );
+
+      airEmissionTestingData = await this.airEmissionTestingWorkspaceService.export(
+        testSumIds,
+      );
+
       hgSummaryData = await this.hgSummaryWorkspaceService.export(testSumIds);
 
       testSummaries.forEach(s => {
@@ -282,6 +298,12 @@ export class TestSummaryWorkspaceService {
           i => i.testSumId === s.id,
         );
         s.transmitterTransducerData = transmitterTransducerAccuracyData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.testQualificationData = testQualificationData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.airEmissionTestingData = airEmissionTestingData.filter(
           i => i.testSumId === s.id,
         );
         s.hgSummaryData = hgSummaryData.filter(i => i.testSumId === s.id);
@@ -582,6 +604,44 @@ export class TestSummaryWorkspaceService {
           this.hgSummaryWorkspaceService.import(
             createdTestSummary.id,
             hgSummary,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
+        );
+      }
+    }
+
+    if (
+      payload.testQualificationData?.length > 0 &&
+      [
+        TestTypeCodes.RATA.toString(),
+      ].includes(payload.testTypeCode)
+    ) {
+      for (const testQualification of payload.testQualificationData) {
+        promises.push(
+          this.testQualificationWorkspaceService.import(
+            createdTestSummary.id,
+            testQualification,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
+        );
+      }
+    }
+
+    if (
+      payload.airEmissionTestingData?.length > 0 &&
+      [
+        TestTypeCodes.RATA.toString(),
+        TestTypeCodes.UNITDEF.toString(),
+        TestTypeCodes.APPE.toString(),
+      ].includes(payload.testTypeCode)
+    ) {
+      for (const airEmissionTesting of payload.airEmissionTestingData) {
+        promises.push(
+          this.airEmissionTestingWorkspaceService.import(
+            createdTestSummary.id,
+            airEmissionTesting,
             userId,
             historicalrecordId !== null ? true : false,
           ),

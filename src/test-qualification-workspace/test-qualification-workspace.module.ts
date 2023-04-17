@@ -7,11 +7,13 @@ import { TestQualificationWorkspaceRepository } from './test-qualification-works
 import { TestQualificationMap } from '../maps/test-qualification.map';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { TestQualificationChecksService } from './test-qualification-checks.service';
+import { TestQualificationModule } from '../test-qualification/test-qualification.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([TestQualificationWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
+    forwardRef(() => TestQualificationModule),
     HttpModule,
   ],
   controllers: [TestQualificationWorkspaceController],

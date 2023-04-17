@@ -1,9 +1,12 @@
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { AirEmissionTestingRepository } from '../air-emission-testing/air-emission-testing.repository';
 import {
   AirEmissionTestingBaseDTO,
   AirEmissionTestingDTO,
+  AirEmissionTestingImportDTO,
 } from '../dto/air-emission-test.dto';
 import { AirEmissionTesting } from '../entities/workspace/air-emission-test.entity';
 import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
@@ -34,6 +37,10 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue([airEmissionTestingRecord]),
 });
 
+const mockHistoricalRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(airEmissionTestingRecord),
+});
+
 const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
@@ -46,6 +53,7 @@ describe('AirEmissionTestingWorkspaceService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        Logger,
         AirEmissionTestingWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
@@ -54,6 +62,10 @@ describe('AirEmissionTestingWorkspaceService', () => {
         {
           provide: AirEmissionTestingWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: AirEmissionTestingRepository,
+          useFactory: mockHistoricalRepository,
         },
         {
           provide: AirEmissionTestingMap,
@@ -184,6 +196,26 @@ describe('AirEmissionTestingWorkspaceService', () => {
         errored = true;
       }
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('Export', () => {
+    it('Should Export Air Emission Testing', async () => {
+      jest
+        .spyOn(service, 'getAirEmissionTestingByTestSumIds')
+        .mockResolvedValue([airEmissionTestingRecord]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([airEmissionTestingRecord]);
+    });
+  });
+
+  describe('Import', () => {
+    it('Should Import Air Emission Testing', async () => {
+      jest
+        .spyOn(service, 'createAirEmissionTesting')
+        .mockResolvedValue(airEmissionTestingRecord);
+
+      await service.import(testSumId, new AirEmissionTestingImportDTO(), userId, true);
     });
   });
 });
