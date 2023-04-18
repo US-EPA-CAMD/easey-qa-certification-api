@@ -142,7 +142,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.unitId.description,
   })
-  @ValidateIf((o) => !o.StackPipeId)
+  @ValidateIf((o) => !o.stackPipeId)
   @IsString()
   unitId: string;
 
