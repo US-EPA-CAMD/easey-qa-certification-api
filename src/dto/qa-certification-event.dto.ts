@@ -16,7 +16,7 @@ export class QACertificationEventBaseDTO {
   @IsString()
   stackPipeId: string;
   @ValidateIf((o) => !o.stackPipeId)
-  @RequireOne('unitId', {
+  @RequireOne('stackPipeId', {
     message:
       'A Unit or Stack Pipe identifier (NOT both) must be provided for each Test Summary.',
   })
