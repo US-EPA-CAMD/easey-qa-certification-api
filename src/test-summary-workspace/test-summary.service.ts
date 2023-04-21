@@ -46,6 +46,7 @@ import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/
 import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-workspace.service';
 import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
 import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -72,6 +73,8 @@ export class TestSummaryWorkspaceService {
     private readonly componentRepository: ComponentWorkspaceRepository,
     @InjectRepository(MonitorSystemRepository)
     private readonly monSysRepository: MonitorSystemRepository,
+    @InjectRepository(MonitorSystemWorkspaceRepository)
+    private readonly monSysWorkspaceRepository: MonitorSystemWorkspaceRepository,
     @InjectRepository(ReportingPeriodRepository)
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
     @Inject(forwardRef(() => FuelFlowToLoadBaselineWorkspaceService))
@@ -830,10 +833,16 @@ export class TestSummaryWorkspaceService {
     }
 
     if (payload.monitoringSystemID) {
-      const monitorSystem = await this.monSysRepository.findOne({
+      let monitorSystem = await this.monSysRepository.findOne({
         locationId: locationId,
         monitoringSystemID: payload.monitoringSystemID,
       });
+      if(!monitorSystem) {
+        monitorSystem = await this.monSysWorkspaceRepository.findOne({
+          locationId: locationId,
+          monitoringSystemID: payload.monitoringSystemID,
+        });
+      }
       monitoringSystemRecordId = monitorSystem ? monitorSystem.id : null;
     }
 

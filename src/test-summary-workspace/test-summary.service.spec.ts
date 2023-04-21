@@ -53,6 +53,7 @@ import { AirEmissionTesting } from '../entities/workspace/air-emission-test.enti
 import { TestQualification } from '../entities/workspace/test-qualification.entity';
 import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
 import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 const locationId = '121';
 const facilityId = 1;
@@ -191,6 +192,8 @@ describe('TestSummaryWorkspaceService', () => {
   let service: TestSummaryWorkspaceService;
   let repository: TestSummaryWorkspaceRepository;
   let locationRepository: MonitorLocationRepository;
+  let monitorSystemRepository: MonitorSystemRepository;
+  let monitorSystemWorkspaceRepository: MonitorSystemWorkspaceRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -262,6 +265,12 @@ describe('TestSummaryWorkspaceService', () => {
           }),
         },
         {
+          provide: MonitorSystemWorkspaceRepository,
+          useFactory: () => ({
+            findOne: jest.fn().mockResolvedValue(ms),
+          }),
+        },
+        {
           provide: ComponentWorkspaceRepository,
           useFactory: () => ({
             findOne: jest.fn().mockResolvedValue(comp),
@@ -305,6 +314,8 @@ describe('TestSummaryWorkspaceService', () => {
     service = module.get(TestSummaryWorkspaceService);
     repository = module.get(TestSummaryWorkspaceRepository);
     locationRepository = module.get(MonitorLocationRepository);
+    monitorSystemRepository = module.get(MonitorSystemRepository);
+    monitorSystemWorkspaceRepository = module.get(MonitorSystemWorkspaceRepository);
   });
 
   describe('getTestSummaryById', () => {
@@ -475,6 +486,30 @@ describe('TestSummaryWorkspaceService', () => {
       const result = await service.lookupValues(locationId, payload);
 
       expect(result).toEqual([1, '1', '1']);
+    });
+
+    it('should return reportPeriodId, componentRecordId, monitorSystem from a workspace monitor system record', async () => {
+      payload.year = 2022;
+      payload.quarter = 1;
+      payload.componentID = '1';
+      payload.monitoringSystemID = 'abc';
+
+      const monSysData = new MonitorSystem();
+      monSysData.id = '1';
+
+      const monSysFindOne = jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(null);
+
+      const monSysWksFindOne = jest
+        .spyOn(monitorSystemRepository, 'findOne')
+        .mockResolvedValue(monSysData);
+
+      const result = await service.lookupValues(locationId, payload);
+
+      expect(result).toEqual([1, '1', '1']);
+      expect(monSysFindOne).toHaveBeenCalled();
+      expect(monSysWksFindOne).toHaveBeenCalled();
     });
   });
 
