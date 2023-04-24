@@ -33,6 +33,9 @@ export class TestExtensionExemptionsChecksService {
     testExtensionExemption:
       | TestExtensionExemptionBaseDTO
       | TestExtensionExemptionImportDTO,
+    testExtensionExemptions:
+      | TestExtensionExemptionBaseDTO[]
+      | TestExtensionExemptionImportDTO[],
     isImport: boolean = false,
     isUpdate: boolean = false,
   ): Promise<string[]> {
@@ -44,7 +47,9 @@ export class TestExtensionExemptionsChecksService {
     if (!isUpdate) {
       error = await this.extexem8DuplicateCheck(
         testExtensionExemption,
+        testExtensionExemptions,
         locationId,
+        isImport,
       );
       if (error) {
         errorList.push(error);
@@ -60,7 +65,11 @@ export class TestExtensionExemptionsChecksService {
     testExtensionExemption:
       | TestExtensionExemptionBaseDTO
       | TestExtensionExemptionImportDTO,
+    testExtensionExemptions:
+      | TestExtensionExemptionBaseDTO[]
+      | TestExtensionExemptionImportDTO[],
     locationId: string,
+    isImport: boolean,
   ) {
     let error = null;
     let testExtExempts = [];
@@ -71,24 +80,47 @@ export class TestExtensionExemptionsChecksService {
         'extensionOrExemptionCode, reportPeriodId, monitoringSystemId, componentId, fuelCode',
     });
 
-    const {
-      reportPeriodId,
-      componentRecordId,
-      monitoringSystemRecordId,
-    } = await this.service.lookupValues(locationId, testExtensionExemption);
+    if (isImport) {
+      const duplicates = testExtensionExemptions.filter(i => {
+        return (
+          i.year === testExtensionExemption.year &&
+          i.quarter === testExtensionExemption.quarter &&
+          i.extensionOrExemptionCode ===
+            testExtensionExemption.extensionOrExemptionCode &&
+          i.fuelCode === testExtensionExemption.fuelCode &&
+          i.monitoringSystemID === testExtensionExemption.monitoringSystemID &&
+          i.componentID === testExtensionExemption.componentID &&
+          i.unitId === testExtensionExemption.unitId &&
+          i.stackPipeId === testExtensionExemption.stackPipeId
+        );
+      });
 
-    const { extensionOrExemptionCode, fuelCode } = testExtensionExemption;
-    testExtExempts = await this.repository.find({
-      reportPeriodId,
-      monitoringSystemRecordId,
-      componentRecordId,
-      extensionOrExemptionCode,
-      fuelCode,
-    });
+      if (duplicates.length > 1) {
+        error = dupeErrorMsg;
+      }
+    } else {
+      const {
+        reportPeriodId,
+        componentRecordId,
+        monitoringSystemRecordId,
+      } = await this.service.lookupValues(locationId, testExtensionExemption);
 
-    if (testExtExempts.length > 0) {
-      error = dupeErrorMsg;
+      const { extensionOrExemptionCode, fuelCode } = testExtensionExemption;
+
+      testExtExempts = await this.repository.find({
+        locationId,
+        reportPeriodId,
+        monitoringSystemRecordId,
+        componentRecordId,
+        extensionOrExemptionCode,
+        fuelCode,
+      });
+
+      if (testExtExempts.length > 0) {
+        error = dupeErrorMsg;
+      }
     }
+
     return error;
   }
 

@@ -83,7 +83,7 @@ export class QACertificationEventWorkspaceController {
     @Body() payload: QACertificationEventBaseDTO,
     @User() user: CurrentUser,
   ): Promise<QACertificationEventRecordDTO> {
-    await this.checksService.runChecks(locationId, payload, false, false);
+    await this.checksService.runChecks(locationId, payload, null, false, false);
     return this.service.createQACertEvent(locationId, payload, user.userId);
   }
 
@@ -99,7 +99,7 @@ export class QACertificationEventWorkspaceController {
     @Body() payload: QACertificationEventBaseDTO,
     @User() user: CurrentUser,
   ): Promise<QACertificationEventDTO> {
-    await this.checksService.runChecks(locationId, payload, false, true);
+    await this.checksService.runChecks(locationId, payload, null, false, true);
     return this.service.updateQACertEvent(locationId, id, payload, user.userId);
   }
 

@@ -752,9 +752,9 @@ export class TestSummaryChecksService {
     if (duplicate) {
       if (isImport) {
         fields = this.compareFields(duplicate, summary);
+      } else {
+        error = await this.getDuplicateErrorMessage(summary.testTypeCode, 'A');
       }
-
-      error = await this.getDuplicateErrorMessage(summary.testTypeCode, 'A');
     } else {
       duplicate = await this.qaSuppDataRepository.getUnassociatedQASuppDataByLocationIdAndTestSum(
         locationId,
@@ -766,9 +766,12 @@ export class TestSummaryChecksService {
       if (duplicate) {
         if (isImport) {
           fields = this.compareFields(duplicate, summary);
+        } else {
+          error = await this.getDuplicateErrorMessage(
+            summary.testTypeCode,
+            'B',
+          );
         }
-
-        error = await this.getDuplicateErrorMessage(summary.testTypeCode, 'B');
       }
     }
 

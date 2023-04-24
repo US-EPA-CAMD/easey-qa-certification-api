@@ -131,7 +131,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Stack Pipe Identifier. ADD TO PROPERTY METADATA',
   })
-  @ValidateIf((o) => !o.unitId)
+  @ValidateIf(o => !o.unitId)
   @RequireOne('unitId', {
     message:
       'A Unit or Stack Pipe identifier (NOT both) must be provided for each Test Summary.',
@@ -142,7 +142,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.unitId.description,
   })
-  @ValidateIf((o) => !o.stackPipeId)
+  @ValidateIf(o => !o.stackPipeId)
   @IsString()
   unitId: string;
 

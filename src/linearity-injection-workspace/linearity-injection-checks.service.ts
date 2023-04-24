@@ -88,46 +88,43 @@ export class LinearityInjectionChecksService {
     let error: string = null;
     const RECORDTYPE: string = 'Linearity Injection';
 
-    const duplicates = linearityInjections.filter(i => {
-      return (
-        i.injectionDate === linearityInjection.injectionDate &&
-        i.injectionHour === linearityInjection.injectionHour &&
-        i.injectionMinute === linearityInjection.injectionMinute
-      );
+    const errorMsg = this.getMessage('LINEAR-33-A', {
+      recordtype: RECORDTYPE,
+      fieldnames: [
+        linearityInjection.injectionDate,
+        linearityInjection.injectionHour,
+        linearityInjection.injectionMinute,
+      ],
     });
 
-    // IMPORT-20 Duplicate Test Check
-    if (isImport && duplicates.length > 1) {
-      error = this.getMessage('LINEAR-33-A', {
-        recordtype: RECORDTYPE,
-        fieldnames: [
-          linearityInjection.injectionDate,
-          linearityInjection.injectionHour,
-          linearityInjection.injectionMinute,
-        ],
+    if (isImport) {
+      const duplicates = linearityInjections.filter(i => {
+        return (
+          i.injectionDate === linearityInjection.injectionDate &&
+          i.injectionHour === linearityInjection.injectionHour &&
+          i.injectionMinute === linearityInjection.injectionMinute
+        );
       });
+
+      if (duplicates.length > 1) {
+        // LINEAR-33 Duplicate Linearity Injection (Result A)
+        error = errorMsg;
+      }
+    } else {
+      const record: LinearityInjection = await this.linearityInjectionRepository.findOne(
+        {
+          linSumId: linSumId,
+          injectionDate: linearityInjection.injectionDate,
+          injectionHour: linearityInjection.injectionHour,
+          injectionMinute: linearityInjection.injectionMinute,
+        },
+      );
+      if (record) {
+        // LINEAR-33 Duplicate Linearity Injection (Result A)
+        error = errorMsg;
+      }
     }
 
-    const record: LinearityInjection = await this.linearityInjectionRepository.findOne(
-      {
-        linSumId: linSumId,
-        injectionDate: linearityInjection.injectionDate,
-        injectionHour: linearityInjection.injectionHour,
-        injectionMinute: linearityInjection.injectionMinute,
-      },
-    );
-    if (record) {
-      // LINEAR-33 Duplicate Linearity Injection (Result A)
-      error = this.getMessage('LINEAR-33-A', {
-        recordtype: RECORDTYPE,
-        fieldnames: [
-          linearityInjection.injectionDate,
-          linearityInjection.injectionHour,
-          linearityInjection.injectionMinute,
-        ],
-      });
-      //error = `Another Linearity Injection record already exists with the same injectionDate [${linearityInjection.injectionDate}], injectionHour [${linearityInjection.injectionHour}], injectionMinute [${linearityInjection.injectionMinute}].`;
-    }
     return error;
   }
 

@@ -7,7 +7,11 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import {BeginEndDatesConsistent, IsInRange, IsIsoFormat} from '@us-epa-camd/easey-common/pipes';
+import {
+  BeginEndDatesConsistent,
+  IsInRange,
+  IsIsoFormat,
+} from '@us-epa-camd/easey-common/pipes';
 
 const KEY = 'Test Qualification';
 const LOAD_PERCENTAGE_MIN_VALUE = 0;
@@ -71,14 +75,11 @@ export class TestQualificationBaseDTO {
   })
   @BeginEndDatesConsistent({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(
-          'RATA-120-C',
-          {
-            datefield1: 'beginDate',
-            datefield2: 'endDate',
-            key: KEY,
-          },
-      );
+      return CheckCatalogService.formatResultMessage('RATA-120-C', {
+        datefield1: 'beginDate',
+        datefield2: 'endDate',
+        key: KEY,
+      });
     },
   })
   endDate?: Date;

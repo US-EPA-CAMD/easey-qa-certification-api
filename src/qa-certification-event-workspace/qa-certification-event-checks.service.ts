@@ -32,6 +32,9 @@ export class QACertificationEventChecksService {
     qaCertificationEvent:
       | QACertificationEventBaseDTO
       | QACertificationEventImportDTO,
+    qaCertificationEvents:
+      | QACertificationEventBaseDTO[]
+      | QACertificationEventImportDTO[],
     isImport: boolean = false,
     isUpdate: boolean = false,
   ): Promise<string[]> {
@@ -43,7 +46,9 @@ export class QACertificationEventChecksService {
     if (!isUpdate) {
       error = await this.QACertEvent11DuplicateCheck(
         qaCertificationEvent,
+        qaCertificationEvents,
         locationId,
+        isImport,
       );
       if (error) {
         errorList.push(error);
@@ -59,7 +64,11 @@ export class QACertificationEventChecksService {
     qaCertificationEvent:
       | QACertificationEventBaseDTO
       | QACertificationEventImportDTO,
+    qaCertificationEvents:
+      | QACertificationEventBaseDTO[]
+      | QACertificationEventImportDTO[],
     locationId: string,
+    isImport: boolean,
   ) {
     let error = null;
     let qaCertEvents = [];
@@ -67,31 +76,49 @@ export class QACertificationEventChecksService {
     const duplicateQACertEvent = this.getErrorMessage('QACERT-11-A', {
       recordType: KEY,
       fieldnames:
-        'locationId, qaCertEventCode, qaCertEventHour, qaCertEventDate, monitoringSystemId, componentId,',
+        'locationId, qaCertEventCode, qaCertEventHour, qaCertEventDate, monitoringSystemId, componentId',
     });
 
-    const {
-      componentRecordId,
-      monitoringSystemRecordId,
-    } = await this.service.lookupValues(locationId, qaCertificationEvent);
+    if (isImport) {
+      const duplicates = qaCertificationEvents.filter(i => {
+        return (
+          i.qaCertEventCode === qaCertificationEvent.qaCertEventCode &&
+          i.qaCertEventHour === qaCertificationEvent.qaCertEventHour &&
+          i.qaCertEventDate === qaCertificationEvent.qaCertEventDate &&
+          i.monitoringSystemID === qaCertificationEvent.monitoringSystemID &&
+          i.componentID === qaCertificationEvent.componentID &&
+          i.unitId === qaCertificationEvent.unitId &&
+          i.stackPipeId === qaCertificationEvent.stackPipeId
+        );
+      });
 
-    const {
-      qaCertEventDate,
-      qaCertEventHour,
-      qaCertEventCode,
-    } = qaCertificationEvent;
+      if (duplicates.length > 1) {
+        error = duplicateQACertEvent;
+      }
+    } else {
+      const {
+        componentRecordId,
+        monitoringSystemRecordId,
+      } = await this.service.lookupValues(locationId, qaCertificationEvent);
 
-    qaCertEvents = await this.repository.find({
-      locationId,
-      qaCertEventCode,
-      qaCertEventHour,
-      qaCertEventDate,
-      monitoringSystemRecordId,
-      componentRecordId,
-    });
+      const {
+        qaCertEventDate,
+        qaCertEventHour,
+        qaCertEventCode,
+      } = qaCertificationEvent;
 
-    if (qaCertEvents.length > 0) {
-      error = duplicateQACertEvent;
+      qaCertEvents = await this.repository.find({
+        locationId,
+        qaCertEventCode,
+        qaCertEventHour,
+        qaCertEventDate,
+        monitoringSystemRecordId,
+        componentRecordId,
+      });
+
+      if (qaCertEvents.length > 0) {
+        error = duplicateQACertEvent;
+      }
     }
 
     return error;
