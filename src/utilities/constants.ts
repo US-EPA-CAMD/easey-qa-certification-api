@@ -1,5 +1,10 @@
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 
+export const MIN_HOUR = 0;
+export const MAX_HOUR = 23;
+export const MIN_MINUTE = 0;
+export const MAX_MINUTE = 59;
+
 export const MISC_TEST_TYPE_CODES = [
   TestTypeCodes.DAHS.toString(),
   TestTypeCodes.DGFMCAL.toString(),

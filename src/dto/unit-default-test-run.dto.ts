@@ -1,6 +1,7 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { IsNumber, IsOptional, ValidationArguments } from 'class-validator';
+import {BeginEndDatesConsistent, IsInRange, IsIsoFormat} from '@us-epa-camd/easey-common/pipes';
+import {IsNotEmpty, IsNumber, IsOptional, ValidateIf, ValidationArguments} from 'class-validator';
+import {MAX_HOUR, MAX_MINUTE, MIN_HOUR, MIN_MINUTE} from "../utilities/constants";
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 const KEY = 'Unit Default Test Run';
@@ -10,7 +11,13 @@ export class UnitDefaultTestRunBaseDTO {
   @IsNumber()
   runNumber: number;
 
-  @IsOptional()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('UNITDEF-17-A', {
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -23,14 +30,48 @@ export class UnitDefaultTestRunBaseDTO {
     },
   })
   beginDate?: Date;
-  @IsOptional()
-  @IsNumber()
+
+  @ValidateIf(o => o.beginDate !== null)
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('UNITDEF-17-A', {
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('UNITDEF-17-A', {
+        key: KEY,
+      });
+    },
+  })
   beginHour?: number;
-  @IsOptional()
-  @IsNumber()
+
+  @ValidateIf(o => o.beginDate !== null && o.beginHour !== null)
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('UNITDEF-17-A', {
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_MINUTE, MAX_MINUTE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('UNITDEF-17-A', {
+        key: KEY,
+      });
+    },
+  })
   beginMinute?: number;
 
-  @IsOptional()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('UNITDEF-18-A', {
+        key: KEY,
+      });
+    },
+  })
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -43,18 +84,59 @@ export class UnitDefaultTestRunBaseDTO {
     },
   })
   endDate?: Date;
-  @IsOptional()
-  @IsNumber()
+
+  @ValidateIf(o => o.endDate !== null)
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('UNITDEF-18-A', {
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('UNITDEF-18-A', {
+        key: KEY,
+      });
+    },
+  })
   endHour?: number;
-  @IsOptional()
-  @IsNumber()
+
+  @ValidateIf(o => o.endDate !== null && o.endHour !== null)
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('UNITDEF-18-A', {
+        key: KEY,
+      });
+    },
+  })
+  @IsInRange(MIN_MINUTE, MAX_MINUTE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('UNITDEF-18-A', {
+        key: KEY,
+      });
+    },
+  })
+  @BeginEndDatesConsistent({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(
+          'UNITDEF-18-B',
+          {
+            key: KEY,
+          },
+      );
+    },
+  })
   endMinute?: number;
+
   @IsOptional()
   @IsNumber()
   responseTime?: number;
+
   @IsOptional()
   @IsNumber()
   referenceValue?: number;
+
   @IsOptional()
   @IsNumber()
   runUsedIndicator?: number;
