@@ -75,40 +75,41 @@ export class UnitDefaultTestRunChecksService {
   private async duplicateTestCheck(
     unitDefaultTestSumId: string,
     unitDefaultTestRun: UnitDefaultTestRunBaseDTO | UnitDefaultTestRunImportDTO,
-    _isImport: boolean = false,
+    isImport: boolean = false,
     unitDefaultTestRuns: UnitDefaultTestRunImportDTO[] = [],
   ): Promise<string> {
     let error: string = null;
     let RECORDTYPE: string = 'unitDefaultTestRun';
     let FIELDNAME: string = 'OperatingLevelforRun,RunNumber';
-
-    const duplicates = unitDefaultTestRuns.filter(
-      i =>
-        i.operatingLevelForRun === unitDefaultTestRun.operatingLevelForRun &&
-        i.runNumber === unitDefaultTestRun.runNumber,
-    );
-
-    // IMPORT-20 Duplicate Test Check
-    if (_isImport && duplicates.length > 1) {
-      error = this.getMessage('UNITDEF-29-A', {
-        recordtype: RECORDTYPE,
-        fieldnames: FIELDNAME,
-      });
-    }
-
-    const record: UnitDefaultTestRun = await this.repository.findOne({
-      unitDefaultTestSumId: unitDefaultTestSumId,
-      operatingLevelForRun: unitDefaultTestRun.operatingLevelForRun,
-      runNumber: unitDefaultTestRun.runNumber,
+    const errorMsg = this.getMessage('UNITDEF-29-A', {
+      recordtype: RECORDTYPE,
+      fieldnames: FIELDNAME,
     });
 
-    if (record) {
+    if (isImport) {
+      const duplicates = unitDefaultTestRuns.filter(
+        i =>
+          i.operatingLevelForRun === unitDefaultTestRun.operatingLevelForRun &&
+          i.runNumber === unitDefaultTestRun.runNumber,
+      );
+
       // UNITDEF-29 Duplicate Unit Default Test Run (Result A)
-      error = this.getMessage('UNITDEF-29-A', {
-        recordtype: RECORDTYPE,
-        fieldnames: FIELDNAME,
+      if (duplicates.length > 1) {
+        error = errorMsg;
+      }
+    } else {
+      const record: UnitDefaultTestRun = await this.repository.findOne({
+        unitDefaultTestSumId: unitDefaultTestSumId,
+        operatingLevelForRun: unitDefaultTestRun.operatingLevelForRun,
+        runNumber: unitDefaultTestRun.runNumber,
       });
+
+      if (record) {
+        // UNITDEF-29 Duplicate Unit Default Test Run (Result A)
+        error = errorMsg;
+      }
     }
+
     return error;
   }
   getMessage(messageKey: string, messageArgs: object): string {

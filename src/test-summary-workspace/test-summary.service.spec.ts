@@ -314,7 +314,9 @@ describe('TestSummaryWorkspaceService', () => {
     service = module.get(TestSummaryWorkspaceService);
     repository = module.get(TestSummaryWorkspaceRepository);
     locationRepository = module.get(MonitorLocationRepository);
-    monitorSystemWorkspaceRepository = module.get(MonitorSystemWorkspaceRepository);
+    monitorSystemWorkspaceRepository = module.get(
+      MonitorSystemWorkspaceRepository,
+    );
   });
 
   describe('getTestSummaryById', () => {

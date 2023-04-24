@@ -215,7 +215,12 @@ describe('AirEmissionTestingWorkspaceService', () => {
         .spyOn(service, 'createAirEmissionTesting')
         .mockResolvedValue(airEmissionTestingRecord);
 
-      await service.import(testSumId, new AirEmissionTestingImportDTO(), userId, true);
+      await service.import(
+        testSumId,
+        new AirEmissionTestingImportDTO(),
+        userId,
+        true,
+      );
     });
   });
 });

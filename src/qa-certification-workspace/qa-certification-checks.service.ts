@@ -358,29 +358,29 @@ export class QACertificationChecksService {
               );
             });
           });
-
-          summary.unitDefaultTestData?.forEach(unitDefaultTest => {
-            unitDefaultTest.unitDefaultTestRunData?.forEach(
-              unitDefaultTestRun => {
-                promises.push(
-                  new Promise((resolve, _reject) => {
-                    const results = this.unitDefaultTestRunChecksService.runChecks(
-                      unitDefaultTestRun,
-                      true,
-                      false,
-                      null,
-                      null,
-                      summary,
-                      unitDefaultTest.unitDefaultTestRunData,
-                    );
-
-                    resolve(results);
-                  }),
-                );
-              },
-            );
-          });
         }
+
+        summary.unitDefaultTestData?.forEach(unitDefaultTest => {
+          unitDefaultTest.unitDefaultTestRunData?.forEach(
+            unitDefaultTestRun => {
+              promises.push(
+                new Promise((resolve, _reject) => {
+                  const results = this.unitDefaultTestRunChecksService.runChecks(
+                    unitDefaultTestRun,
+                    true,
+                    false,
+                    null,
+                    null,
+                    summary,
+                    unitDefaultTest.unitDefaultTestRunData,
+                  );
+
+                  resolve(results);
+                }),
+              );
+            },
+          );
+        });
       }
     }
 
@@ -398,6 +398,7 @@ export class QACertificationChecksService {
             const results = this.testExtensionExemptionsChecksService.runChecks(
               locationId,
               testExtExem,
+              payload.testExtensionExemptionData,
               true,
               false,
             );
@@ -421,6 +422,7 @@ export class QACertificationChecksService {
             const results = this.qaCertificationEventChecksService.runChecks(
               locationId,
               qaCertEvent,
+              payload.certificationEventData,
               true,
               false,
             );

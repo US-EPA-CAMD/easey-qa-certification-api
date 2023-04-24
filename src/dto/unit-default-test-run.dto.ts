@@ -1,7 +1,22 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import {BeginEndDatesConsistent, IsInRange, IsIsoFormat} from '@us-epa-camd/easey-common/pipes';
-import {IsNotEmpty, IsNumber, IsOptional, ValidateIf, ValidationArguments} from 'class-validator';
-import {MAX_HOUR, MAX_MINUTE, MIN_HOUR, MIN_MINUTE} from "../utilities/constants";
+import {
+  BeginEndDatesConsistent,
+  IsInRange,
+  IsIsoFormat,
+} from '@us-epa-camd/easey-common/pipes';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  ValidateIf,
+  ValidationArguments,
+} from 'class-validator';
+import {
+  MAX_HOUR,
+  MAX_MINUTE,
+  MIN_HOUR,
+  MIN_MINUTE,
+} from '../utilities/constants';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 const KEY = 'Unit Default Test Run';
@@ -119,12 +134,9 @@ export class UnitDefaultTestRunBaseDTO {
   })
   @BeginEndDatesConsistent({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(
-          'UNITDEF-18-B',
-          {
-            key: KEY,
-          },
-      );
+      return CheckCatalogService.formatResultMessage('UNITDEF-18-B', {
+        key: KEY,
+      });
     },
   })
   endMinute?: number;

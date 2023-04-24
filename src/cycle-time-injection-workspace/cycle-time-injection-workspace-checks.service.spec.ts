@@ -102,7 +102,13 @@ describe('Cycle Time Injection Check Service Test', () => {
       const payload = new CycleTimeInjectionBaseDTO();
       payload.gasLevelCode = 'LOW';
 
-      let result = await service.cycle20Check(null, payload, testSummary);
+      let result = await service.cycle20Check(
+        null,
+        payload,
+        [payload],
+        testSummary,
+        false,
+      );
 
       expect(result).toEqual(null);
     });
@@ -113,7 +119,7 @@ describe('Cycle Time Injection Check Service Test', () => {
       payload.gasLevelCode = 'MID';
       jest.spyOn(repository, 'findDuplicate').mockResolvedValue(duplicate);
 
-      let result = await service.cycle20Check(null, payload, testSummary);
+      let result = await service.cycle20Check(null, payload, [payload], testSummary, false);
       expect(result).toEqual(MOCK_ERROR_MSG);
     });
   });
