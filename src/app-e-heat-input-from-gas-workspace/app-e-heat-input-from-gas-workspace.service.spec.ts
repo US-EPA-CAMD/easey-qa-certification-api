@@ -13,6 +13,7 @@ import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from
 import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-gas-workspace.service';
 import { AppEHeatInputFromGas } from '../entities/workspace/app-e-heat-input-from-gas.entity';
 import { AppEHeatInputFromGasRepository } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 const locationId = 'LOCATION-ID';
 const testSumId = 'TEST-SUM-ID';
@@ -32,6 +33,7 @@ const mockHistoricalRepo = () => ({
 const appECorrTestRunId = 'd4e6f7';
 const mockAeHiFromGas = new AppEHeatInputFromGas();
 const mockAeHiFromGasDTO = new AppEHeatInputFromGasDTO();
+const payload = new AppEHeatInputFromGasDTO();
 
 const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
@@ -41,12 +43,19 @@ const mockRepository = () => ({
   getAppEHeatInputFromGasesByTestRunIds: jest
     .fn()
     .mockResolvedValue([mockAeHiFromGas]),
+  getAppEHeatInputFromGasById: jest
+    .fn()
+    .mockResolvedValue(mockAeHiFromGas),
   create: jest.fn().mockResolvedValue(mockAeHiFromGas),
   save: jest.fn().mockResolvedValue(mockAeHiFromGas),
   findOne: jest.fn().mockResolvedValue(mockAeHiFromGas),
 });
 
 const mockMonSysRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
+});
+
+const mockMonSysWorkspaceRepository = () => ({
   findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
 });
 
@@ -58,6 +67,8 @@ const mockMap = () => ({
 describe('AppEHeatInputFromGasWorkspaceService', () => {
   let service: AppEHeatInputFromGasWorkspaceService;
   let repository: AppEHeatInputFromGasWorkspaceRepository;
+  let monSysRepository: MonitorSystemRepository;
+  let monSysWorkspaceRepository: MonitorSystemWorkspaceRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -85,6 +96,10 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
           useFactory: mockMonSysRepository,
         },
         {
+          provide: MonitorSystemWorkspaceRepository,
+          useFactory: mockMonSysWorkspaceRepository,
+        },
+        {
           provide: AppEHeatInputFromGasMap,
           useFactory: mockMap,
         },
@@ -93,6 +108,15 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
 
     service = module.get<AppEHeatInputFromGasWorkspaceService>(
       AppEHeatInputFromGasWorkspaceService,
+    );
+    repository = module.get<AppEHeatInputFromGasWorkspaceRepository>(
+      AppEHeatInputFromGasWorkspaceRepository,
+    );
+    monSysRepository = module.get<MonitorSystemRepository>(
+      MonitorSystemRepository,
+    );
+    monSysWorkspaceRepository = module.get<MonitorSystemWorkspaceRepository>(
+      MonitorSystemWorkspaceRepository,
     );
   });
 
@@ -148,6 +172,41 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
 
       const result = await service.export([appECorrTestRunId]);
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('createAppEHeatInputFromGasRecord', () => {
+    it('calls the repository.create() and insert an Appendix E Heat Input from Gas record', async () => {
+      const result = await service.createAppEHeatInputFromGas(
+        locationId,
+        testSumId,
+        appECorrTestRunId,
+        payload,
+        userId,
+      );
+      expect(result).toEqual(mockAeHiFromGasDTO);
+      expect(repository.create).toHaveBeenCalled();
+    });
+
+    it('Should throw error with invalid monSysID', async () => {
+      jest.spyOn(monSysRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(monSysWorkspaceRepository, 'findOne').mockResolvedValue(null);
+
+      let errored = false;
+
+      try {
+        await service.createAppEHeatInputFromGas(
+          locationId,
+          testSumId,
+          appECorrTestRunId,
+          payload,
+          userId,
+        );
+      } catch (err) {
+        errored = true;
+      }
+
+      expect(errored).toBe(true);
     });
   });
 });

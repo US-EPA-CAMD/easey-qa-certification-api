@@ -17,6 +17,7 @@ import {
 import { AppEHeatInputFromGas } from '../entities/app-e-heat-input-from-gas.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 @Injectable()
 export class AppEHeatInputFromGasWorkspaceService {
@@ -31,6 +32,8 @@ export class AppEHeatInputFromGasWorkspaceService {
     private readonly historicalRepo: AppEHeatInputFromGasRepository,
     @InjectRepository(MonitorSystemRepository)
     private readonly monSysRepository: MonitorSystemRepository,
+    @InjectRepository(MonitorSystemWorkspaceRepository)
+    private readonly monSysWorkspaceRepository: MonitorSystemWorkspaceRepository,
   ) {}
 
   async getAppEHeatInputFromGases(
@@ -69,10 +72,16 @@ export class AppEHeatInputFromGasWorkspaceService {
   ): Promise<AppEHeatInputFromGasRecordDTO> {
     const timestamp = currentDateTime();
 
-    const system = await this.monSysRepository.findOne({
+    let system = await this.monSysRepository.findOne({
       locationId: locationId,
       monitoringSystemID: payload.monitoringSystemID,
     });
+    if(!system) {
+      system = await this.monSysWorkspaceRepository.findOne({
+        locationId: locationId,
+        monitoringSystemID: payload.monitoringSystemID,
+      });
+    }
 
     if (!system) {
       throw new LoggingException(
