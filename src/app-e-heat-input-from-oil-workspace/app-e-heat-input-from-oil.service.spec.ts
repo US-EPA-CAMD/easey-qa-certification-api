@@ -42,10 +42,6 @@ const mockRepository = () => ({
   getAppEHeatInputFromOilById: jest.fn().mockResolvedValue(mockAeHiFromOil),
 });
 
-const mockMonSysRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
-});
-
 const mockMonSysWorkspaceRepository = () => ({
   findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
 });
@@ -64,7 +60,6 @@ const mockHistoricalRepo = () => ({
 describe('AppEHeatInputOilWorkspaceService', () => {
   let service: AppEHeatInputFromOilWorkspaceService;
   let repository: AppEHeatInputFromOilWorkspaceRepository;
-  let monSysRepository: MonitorSystemRepository;
   let monSysWorkspaceRepository: MonitorSystemWorkspaceRepository;
 
   beforeEach(async () => {
@@ -79,10 +74,6 @@ describe('AppEHeatInputOilWorkspaceService', () => {
         {
           provide: AppEHeatInputFromOilWorkspaceRepository,
           useFactory: mockRepository,
-        },
-        {
-          provide: MonitorSystemRepository,
-          useFactory: mockMonSysRepository,
         },
         {
           provide: MonitorSystemWorkspaceRepository,
@@ -104,9 +95,6 @@ describe('AppEHeatInputOilWorkspaceService', () => {
     );
     repository = module.get<AppEHeatInputFromOilWorkspaceRepository>(
       AppEHeatInputFromOilWorkspaceRepository,
-    );
-    monSysRepository = module.get<MonitorSystemRepository>(
-      MonitorSystemRepository,
     );
     monSysWorkspaceRepository = module.get<MonitorSystemWorkspaceRepository>(
       MonitorSystemWorkspaceRepository,
@@ -159,7 +147,6 @@ describe('AppEHeatInputOilWorkspaceService', () => {
     });
 
     it('Should throw error with invalid monSysID', async () => {
-      jest.spyOn(monSysRepository, 'findOne').mockResolvedValue(null);
       jest.spyOn(monSysWorkspaceRepository, 'findOne').mockResolvedValue(null);
 
       let errored = false;
