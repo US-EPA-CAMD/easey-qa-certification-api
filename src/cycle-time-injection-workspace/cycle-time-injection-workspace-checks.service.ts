@@ -92,7 +92,7 @@ export class CycleTimeInjectionChecksService {
       fieldnames: 'GasLevelCode',
     });
 
-    if (!isImport) {
+    if (isImport) {
       const duplicates = cycleTimeInjections.filter(i => {
         return i.gasLevelCode === dto.gasLevelCode;
       });
