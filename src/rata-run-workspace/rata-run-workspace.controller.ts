@@ -42,7 +42,10 @@ export class RataRunWorkspaceController {
     type: RataRunDTO,
     description: 'Get many Rata Run record in the workspace by Rata Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getRataRuns(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -58,7 +61,10 @@ export class RataRunWorkspaceController {
     type: RataRunDTO,
     description: 'Get a Rata Run record in the workspace',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getRataRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

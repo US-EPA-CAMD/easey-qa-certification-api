@@ -42,7 +42,10 @@ export class RataTraverseWorkspaceController {
     description:
       'Retrieves a workspace Rata Traverse records by Flow Rata Run ID',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getRataTraverses(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -60,7 +63,10 @@ export class RataTraverseWorkspaceController {
     type: RataTraverseRecordDTO,
     description: 'Retrieves a workspace Rata Traverse record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getRataTraverse(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

@@ -39,7 +39,10 @@ export class FlowToLoadReferenceWorkspaceController {
     description:
       'Retrieves workspace Flow To Load Reference records by Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getFlowToLoadReferences(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -54,7 +57,10 @@ export class FlowToLoadReferenceWorkspaceController {
     description:
       'Retrieves a workspace Flow To Load Reference record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getFlowToLoadReference(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

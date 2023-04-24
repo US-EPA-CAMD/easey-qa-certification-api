@@ -41,7 +41,10 @@ export class RataSummaryWorkspaceController {
     type: RataSummaryRecordDTO,
     description: 'Retrieves workspace Rata Summary records.',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getRataSummaryes(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -56,7 +59,10 @@ export class RataSummaryWorkspaceController {
     type: RataSummaryRecordDTO,
     description: 'Retrieves a workspace Rata Summary record.',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getRataSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

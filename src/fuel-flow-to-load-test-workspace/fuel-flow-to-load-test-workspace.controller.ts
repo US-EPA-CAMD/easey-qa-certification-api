@@ -38,7 +38,10 @@ export class FuelFlowToLoadTestWorkspaceController {
     description:
       'Retrieves workspace Fuel Flow To Load Test records by Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getFuelFlowToLoadTests(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -52,7 +55,10 @@ export class FuelFlowToLoadTestWorkspaceController {
     type: FuelFlowToLoadTestRecordDTO,
     description: 'Retrieves workspace Fuel Flow To Load Test record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getFuelFlowToLoadTest(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,

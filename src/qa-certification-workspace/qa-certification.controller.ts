@@ -4,20 +4,12 @@ import {
   Post,
   Query,
   Controller,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 
-import {
-  ApiTags,
-  ApiOkResponse,
-  ApiBearerAuth,
-  ApiSecurity,
-  ApiQuery,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery } from '@nestjs/swagger';
 
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -81,7 +73,10 @@ export class QACertificationWorkspaceController {
     required: false,
     explode: false,
   })
-  @RoleGuard({ queryParam: 'facilityId' }, LookupType.Facility)
+  @RoleGuard(
+    { enforceCheckout: false, queryParam: 'facilityId' },
+    LookupType.Facility,
+  )
   async export(
     @Query() params: QACertificationParamsDTO,
   ): Promise<QACertificationDTO> {
@@ -89,7 +84,16 @@ export class QACertificationWorkspaceController {
   }
 
   @Post('import')
-  @RoleGuard({ bodyParam: 'orisCode' }, LookupType.Facility)
+  @RoleGuard(
+    {
+      importLocationSources: [
+        'testSummaryData',
+        'certificationEventData',
+        'testExtensionExemptionData',
+      ],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: QACertificationDTO,
     description:
@@ -133,7 +137,7 @@ export class QACertificationWorkspaceController {
     explode: false,
   })
   @RoleGuard(
-    { queryParam: 'orisCodes', isPipeDelimitted: true },
+    { enforceCheckout: false, queryParam: 'orisCodes', isPipeDelimitted: true },
     LookupType.Facility,
   )
   async getFilteredCerts(
@@ -172,7 +176,7 @@ export class QACertificationWorkspaceController {
     explode: false,
   })
   @RoleGuard(
-    { queryParam: 'orisCodes', isPipeDelimitted: true },
+    { enforceCheckout: false, queryParam: 'orisCodes', isPipeDelimitted: true },
     LookupType.Facility,
   )
   async getFilteredTestSums(
@@ -211,7 +215,7 @@ export class QACertificationWorkspaceController {
     explode: false,
   })
   @RoleGuard(
-    { queryParam: 'orisCodes', isPipeDelimitted: true },
+    { enforceCheckout: false, queryParam: 'orisCodes', isPipeDelimitted: true },
     LookupType.Facility,
   )
   async getFilteredTee(
