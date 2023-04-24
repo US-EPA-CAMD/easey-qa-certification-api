@@ -16,7 +16,6 @@ import {
 } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOil } from '../entities/app-e-heat-input-from-oil.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 @Injectable()
@@ -30,8 +29,6 @@ export class AppEHeatInputFromOilWorkspaceService {
     private readonly map: AppEHeatInputFromOilMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(MonitorSystemRepository)
-    private readonly monSysRepository: MonitorSystemRepository,
     @InjectRepository(MonitorSystemWorkspaceRepository)
     private readonly monSysWorkspaceRepository: MonitorSystemWorkspaceRepository,
   ) {}
@@ -72,16 +69,10 @@ export class AppEHeatInputFromOilWorkspaceService {
   ): Promise<AppEHeatInputFromOilRecordDTO> {
     const timestamp = currentDateTime().toLocaleDateString();
 
-    let system = await this.monSysRepository.findOne({
+    const system = await this.monSysWorkspaceRepository.findOne({
       locationId: locationId,
       monitoringSystemID: payload.monitoringSystemID,
     });
-    if(!system) {
-      system = await this.monSysWorkspaceRepository.findOne({
-        locationId: locationId,
-        monitoringSystemID: payload.monitoringSystemID,
-      });
-    }
 
     if (!system) {
       throw new LoggingException(

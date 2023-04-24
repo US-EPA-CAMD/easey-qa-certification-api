@@ -71,8 +71,6 @@ export class TestSummaryWorkspaceService {
     private readonly monitorLocationRepository: MonitorLocationRepository,
     @InjectRepository(ComponentWorkspaceRepository)
     private readonly componentRepository: ComponentWorkspaceRepository,
-    @InjectRepository(MonitorSystemRepository)
-    private readonly monSysRepository: MonitorSystemRepository,
     @InjectRepository(MonitorSystemWorkspaceRepository)
     private readonly monSysWorkspaceRepository: MonitorSystemWorkspaceRepository,
     @InjectRepository(ReportingPeriodRepository)
@@ -833,16 +831,11 @@ export class TestSummaryWorkspaceService {
     }
 
     if (payload.monitoringSystemID) {
-      let monitorSystem = await this.monSysRepository.findOne({
+      const monitorSystem = await this.monSysWorkspaceRepository.findOne({
         locationId: locationId,
         monitoringSystemID: payload.monitoringSystemID,
       });
-      if(!monitorSystem) {
-        monitorSystem = await this.monSysWorkspaceRepository.findOne({
-          locationId: locationId,
-          monitoringSystemID: payload.monitoringSystemID,
-        });
-      }
+      
       monitoringSystemRecordId = monitorSystem ? monitorSystem.id : null;
     }
 

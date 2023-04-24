@@ -10,11 +10,13 @@ import { AppECorrelationTestSummaryWorkspaceModule } from '../app-e-correlation-
 import { AppEHeatInputFromGasModule } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.module';
 import { AppEHeatInputFromGasChecksService } from './app-e-heat-input-from-gas-checks.service';
 import { AppECorrelationTestRunWorkspaceModule } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.module';
+import { MonitorSystemWorkspaceModule } from '../monitor-system-workspace/monitor-system-workspace.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AppEHeatInputFromGasWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
+    forwardRef(() => MonitorSystemWorkspaceModule),
     forwardRef(() => AppECorrelationTestSummaryWorkspaceModule),
     forwardRef(() => AppECorrelationTestRunWorkspaceModule),
     forwardRef(() => AppEHeatInputFromGasModule),

@@ -314,7 +314,6 @@ describe('TestSummaryWorkspaceService', () => {
     service = module.get(TestSummaryWorkspaceService);
     repository = module.get(TestSummaryWorkspaceRepository);
     locationRepository = module.get(MonitorLocationRepository);
-    monitorSystemRepository = module.get(MonitorSystemRepository);
     monitorSystemWorkspaceRepository = module.get(MonitorSystemWorkspaceRepository);
   });
 
@@ -497,18 +496,13 @@ describe('TestSummaryWorkspaceService', () => {
       const monSysData = new MonitorSystem();
       monSysData.id = '1';
 
-      const monSysFindOne = jest
-        .spyOn(monitorSystemRepository, 'findOne')
-        .mockResolvedValue(null);
-
       const monSysWksFindOne = jest
-        .spyOn(monitorSystemRepository, 'findOne')
+        .spyOn(monitorSystemWorkspaceRepository, 'findOne')
         .mockResolvedValue(monSysData);
 
       const result = await service.lookupValues(locationId, payload);
 
       expect(result).toEqual([1, '1', '1']);
-      expect(monSysFindOne).toHaveBeenCalled();
       expect(monSysWksFindOne).toHaveBeenCalled();
     });
   });
