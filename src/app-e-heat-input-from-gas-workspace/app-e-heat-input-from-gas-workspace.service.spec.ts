@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import {
   AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasImportDTO,
@@ -51,10 +50,6 @@ const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(mockAeHiFromGas),
 });
 
-const mockMonSysRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
-});
-
 const mockMonSysWorkspaceRepository = () => ({
   findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
 });
@@ -67,7 +62,6 @@ const mockMap = () => ({
 describe('AppEHeatInputFromGasWorkspaceService', () => {
   let service: AppEHeatInputFromGasWorkspaceService;
   let repository: AppEHeatInputFromGasWorkspaceRepository;
-  let monSysRepository: MonitorSystemRepository;
   let monSysWorkspaceRepository: MonitorSystemWorkspaceRepository;
 
   beforeEach(async () => {
@@ -92,10 +86,6 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
           useFactory: mockRepository,
         },
         {
-          provide: MonitorSystemRepository,
-          useFactory: mockMonSysRepository,
-        },
-        {
           provide: MonitorSystemWorkspaceRepository,
           useFactory: mockMonSysWorkspaceRepository,
         },
@@ -111,9 +101,6 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
     );
     repository = module.get<AppEHeatInputFromGasWorkspaceRepository>(
       AppEHeatInputFromGasWorkspaceRepository,
-    );
-    monSysRepository = module.get<MonitorSystemRepository>(
-      MonitorSystemRepository,
     );
     monSysWorkspaceRepository = module.get<MonitorSystemWorkspaceRepository>(
       MonitorSystemWorkspaceRepository,
@@ -189,7 +176,6 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
     });
 
     it('Should throw error with invalid monSysID', async () => {
-      jest.spyOn(monSysRepository, 'findOne').mockResolvedValue(null);
       jest.spyOn(monSysWorkspaceRepository, 'findOne').mockResolvedValue(null);
 
       let errored = false;
