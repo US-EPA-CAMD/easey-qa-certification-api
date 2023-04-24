@@ -48,7 +48,7 @@ describe('QACertificationEventChecksService', () => {
 
   describe('QA Certification Event Checks', () => {
     it('Should pass all checks', async () => {
-      const result = await service.runChecks(locationId, payload, false, false);
+      const result = await service.runChecks(locationId, payload, null, false, false);
       expect(result).toEqual([]);
     });
 
@@ -58,7 +58,7 @@ describe('QACertificationEventChecksService', () => {
         .spyOn(repository, 'find')
         .mockImplementation(() => Promise.resolve([duplicate]));
       try {
-        await service.runChecks(locationId, payload, false, false);
+        await service.runChecks(locationId, payload, null, false, false);
       } catch (err) {
         expect(err).toBeInstanceOf(LoggingException);
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);

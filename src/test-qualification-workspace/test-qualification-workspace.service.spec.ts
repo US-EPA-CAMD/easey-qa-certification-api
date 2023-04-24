@@ -212,7 +212,12 @@ describe('TestQualificationWorkspaceService', () => {
         .spyOn(service, 'createTestQualification')
         .mockResolvedValue(testQualificationRecord);
 
-      await service.import(testSumId, new TestQualificationImportDTO(), userId, true);
+      await service.import(
+        testSumId,
+        new TestQualificationImportDTO(),
+        userId,
+        true,
+      );
     });
   });
 });

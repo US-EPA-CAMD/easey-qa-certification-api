@@ -6,12 +6,27 @@ import {
   AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasImportDTO,
 } from './app-e-heat-input-from-gas.dto';
-import {IsNotEmpty, IsNumber, IsOptional, ValidateIf, ValidateNested, ValidationArguments} from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  ValidateIf,
+  ValidateNested,
+  ValidationArguments,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes/is-iso-format.pipe';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import {BeginEndDatesConsistent, IsInRange} from "@us-epa-camd/easey-common/pipes";
-import {MAX_HOUR, MAX_MINUTE, MIN_HOUR, MIN_MINUTE} from "../utilities/constants";
+import {
+  BeginEndDatesConsistent,
+  IsInRange,
+} from '@us-epa-camd/easey-common/pipes';
+import {
+  MAX_HOUR,
+  MAX_MINUTE,
+  MIN_HOUR,
+  MIN_MINUTE,
+} from '../utilities/constants';
 
 const KEY = 'Appendix E Correlation Test Run';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -154,12 +169,9 @@ export class AppECorrelationTestRunBaseDTO {
   })
   @BeginEndDatesConsistent({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(
-          'APPE-20-B',
-          {
-            key: KEY,
-          },
-      );
+      return CheckCatalogService.formatResultMessage('APPE-20-B', {
+        key: KEY,
+      });
     },
   })
   endMinute: number;

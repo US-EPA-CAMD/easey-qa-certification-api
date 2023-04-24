@@ -42,9 +42,7 @@ const mockRepository = () => ({
   getAppEHeatInputFromGasesByTestRunIds: jest
     .fn()
     .mockResolvedValue([mockAeHiFromGas]),
-  getAppEHeatInputFromGasById: jest
-    .fn()
-    .mockResolvedValue(mockAeHiFromGas),
+  getAppEHeatInputFromGasById: jest.fn().mockResolvedValue(mockAeHiFromGas),
   create: jest.fn().mockResolvedValue(mockAeHiFromGas),
   save: jest.fn().mockResolvedValue(mockAeHiFromGas),
   findOne: jest.fn().mockResolvedValue(mockAeHiFromGas),
