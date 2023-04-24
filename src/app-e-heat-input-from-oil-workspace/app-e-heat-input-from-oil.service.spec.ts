@@ -14,6 +14,7 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { AppEHeatInputFromGasRecordDTO } from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 const locationId = '5';
 const aeHiOilId = 'a1b2c3';
@@ -45,6 +46,10 @@ const mockMonSysRepository = () => ({
   findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
 });
 
+const mockMonSysWorkspaceRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
+});
+
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(mockAeHiFromOilDTO),
   many: jest.fn().mockResolvedValue([mockAeHiFromOilDTO]),
@@ -60,6 +65,7 @@ describe('AppEHeatInputOilWorkspaceService', () => {
   let service: AppEHeatInputFromOilWorkspaceService;
   let repository: AppEHeatInputFromOilWorkspaceRepository;
   let monSysRepository: MonitorSystemRepository;
+  let monSysWorkspaceRepository: MonitorSystemWorkspaceRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -77,6 +83,10 @@ describe('AppEHeatInputOilWorkspaceService', () => {
         {
           provide: MonitorSystemRepository,
           useFactory: mockMonSysRepository,
+        },
+        {
+          provide: MonitorSystemWorkspaceRepository,
+          useFactory: mockMonSysWorkspaceRepository,
         },
         {
           provide: AppEHeatInputFromOilMap,
@@ -97,6 +107,9 @@ describe('AppEHeatInputOilWorkspaceService', () => {
     );
     monSysRepository = module.get<MonitorSystemRepository>(
       MonitorSystemRepository,
+    );
+    monSysWorkspaceRepository = module.get<MonitorSystemWorkspaceRepository>(
+      MonitorSystemWorkspaceRepository,
     );
   });
 
@@ -147,6 +160,7 @@ describe('AppEHeatInputOilWorkspaceService', () => {
 
     it('Should throw error with invalid monSysID', async () => {
       jest.spyOn(monSysRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(monSysWorkspaceRepository, 'findOne').mockResolvedValue(null);
 
       let errored = false;
 
