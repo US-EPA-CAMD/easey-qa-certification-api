@@ -12,10 +12,10 @@ import { RequireOne } from '../pipes/require-one.pipe';
 const KEY = 'QA Certification Event';
 const DATE_FORMAT = 'YYYY-MM-DD';
 export class QACertificationEventBaseDTO {
-  @ValidateIf((o) => !o.unitId)
+  @ValidateIf(o => !o.unitId)
   @IsString()
   stackPipeId: string;
-  @ValidateIf((o) => !o.stackPipeId)
+  @ValidateIf(o => !o.stackPipeId)
   @RequireOne('stackPipeId', {
     message:
       'A Unit or Stack Pipe identifier (NOT both) must be provided for each Test Summary.',

@@ -616,9 +616,7 @@ export class TestSummaryWorkspaceService {
 
     if (
       payload.testQualificationData?.length > 0 &&
-      [
-        TestTypeCodes.RATA.toString(),
-      ].includes(payload.testTypeCode)
+      [TestTypeCodes.RATA.toString()].includes(payload.testTypeCode)
     ) {
       for (const testQualification of payload.testQualificationData) {
         promises.push(
@@ -837,7 +835,7 @@ export class TestSummaryWorkspaceService {
         locationId: locationId,
         monitoringSystemID: payload.monitoringSystemID,
       });
-      if(!monitorSystem) {
+      if (!monitorSystem) {
         monitorSystem = await this.monSysWorkspaceRepository.findOne({
           locationId: locationId,
           monitoringSystemID: payload.monitoringSystemID,

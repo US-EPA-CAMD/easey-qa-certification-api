@@ -65,7 +65,9 @@ export class CycleTimeInjectionChecksService {
     error = await this.cycle20Check(
       cycleTimeInjectionId,
       cycleTimeInjection,
+      cycleTimeInjections,
       testSumRecord,
+      isImport,
     );
     if (error) {
       errorList.push(error);
@@ -79,11 +81,27 @@ export class CycleTimeInjectionChecksService {
   async cycle20Check(
     cycleTimeInjectionId: string,
     dto: CycleTimeInjectionBaseDTO,
+    cycleTimeInjections: CycleTimeInjectionImportDTO[],
     testSummary: TestSummary,
+    isImport: boolean,
   ) {
     let error: string = null;
 
-    if (dto.gasLevelCode) {
+    const errorMsg = this.getMessage('CYCLE-20-A', {
+      recordtype: 'Cycle Time Injection',
+      fieldnames: 'GasLevelCode',
+    });
+
+    if (!isImport) {
+      const duplicates = cycleTimeInjections.filter(i => {
+        return i.gasLevelCode === dto.gasLevelCode;
+      });
+
+      if (duplicates.length > 1) {
+        // CYCLE-20 (Result A)
+        error = errorMsg;
+      }
+    } else {
       const duplicate = await this.repo.findDuplicate(
         cycleTimeInjectionId,
         testSummary.id,
@@ -91,10 +109,8 @@ export class CycleTimeInjectionChecksService {
       );
 
       if (duplicate)
-        error = this.getMessage('CYCLE-20-A', {
-          recordtype: 'Cycle Time Injection',
-          fieldnames: 'GasLevelCode',
-        });
+        // CYCLE-20 (Result A)
+        error = errorMsg;
     }
 
     return error;

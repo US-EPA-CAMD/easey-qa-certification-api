@@ -76,7 +76,7 @@ export class AppEHeatInputFromOilWorkspaceService {
       locationId: locationId,
       monitoringSystemID: payload.monitoringSystemID,
     });
-    if(!system) {
+    if (!system) {
       system = await this.monSysWorkspaceRepository.findOne({
         locationId: locationId,
         monitoringSystemID: payload.monitoringSystemID,

@@ -11,7 +11,6 @@ import {
 const KEY = 'Air Emission Testing';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
-
 export class AirEmissionTestingBaseDTO {
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
