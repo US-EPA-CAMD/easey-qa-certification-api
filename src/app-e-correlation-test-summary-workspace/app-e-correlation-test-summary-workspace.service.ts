@@ -182,6 +182,12 @@ export class AppECorrelationTestSummaryWorkspaceService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
   }
 
   async getAppECorrelationsByTestSumIds(

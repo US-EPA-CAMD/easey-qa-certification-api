@@ -193,6 +193,9 @@ export class QACertificationEventWorkspaceService {
     entity.completionTestHour = payload.completionTestHour;
     entity.userId = userId;
     entity.updateDate = timestamp;
+    entity.needsEvalFlag = 'Y';
+    entity.updatedStatusFlag = 'Y';
+    entity.evalStatusCode = 'EVAL';
 
     await this.repository.save(entity);
 
