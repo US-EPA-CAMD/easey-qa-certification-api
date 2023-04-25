@@ -41,7 +41,10 @@ export class OnlineOfflineCalibrationWorkspaceController {
     description:
       'Retrieves workspace Online Offline Calibration records by Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getOnlineOfflineCalibrations(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -56,7 +59,10 @@ export class OnlineOfflineCalibrationWorkspaceController {
     description:
       'Retrieves workspace Online Offline Calibration record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getOnlineOfflineCalibration(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

@@ -40,7 +40,10 @@ export class AirEmissionTestingWorkspaceController {
     description:
       'Retrieves official Air Emission Testing records by Rata Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getAirEmissionTestings(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -54,7 +57,10 @@ export class AirEmissionTestingWorkspaceController {
     type: AirEmissionTestingRecordDTO,
     description: 'Retrieves official Air Emission Testing record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getAirEmissionsTesting(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

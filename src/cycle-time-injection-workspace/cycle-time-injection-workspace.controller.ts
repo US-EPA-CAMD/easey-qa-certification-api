@@ -43,7 +43,10 @@ export class CycleTimeInjectionWorkspaceController {
     description:
       'Retreives workspace Cycle Time Injection records by Cycle Time Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getCycleTimeInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -57,7 +60,10 @@ export class CycleTimeInjectionWorkspaceController {
     type: CycleTimeInjectionRecordDTO,
     description: 'Retrieves workspace Cycle Time Injection record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getCycleTimeInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

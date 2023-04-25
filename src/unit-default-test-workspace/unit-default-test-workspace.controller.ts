@@ -40,7 +40,10 @@ export class UnitDefaultTestWorkspaceController {
     description:
       'Retrieves workspace Unit Default Test records by Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getUnitDefaultTests(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -54,7 +57,10 @@ export class UnitDefaultTestWorkspaceController {
     type: UnitDefaultTestRecordDTO,
     description: 'Retrieves workspace Unit Default Test record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getUnitDefaultTest(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

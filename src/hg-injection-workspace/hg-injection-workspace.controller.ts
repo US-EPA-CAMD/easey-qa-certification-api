@@ -39,7 +39,10 @@ export class HgInjectionWorkspaceController {
     description:
       'Retrieves workspace Hg Injection records by HG Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getHgInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -53,7 +56,10 @@ export class HgInjectionWorkspaceController {
     type: HgInjectionRecordDTO,
     description: 'Retrieves workspace Hg Injection record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getHgInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

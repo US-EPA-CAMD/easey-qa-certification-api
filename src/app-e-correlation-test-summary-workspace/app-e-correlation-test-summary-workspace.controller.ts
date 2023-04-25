@@ -42,7 +42,10 @@ export class AppendixETestSummaryWorkspaceController {
     description:
       'Retrieves workspace Appendix E Correlation Test Summary records by Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getAppECorrelations(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -57,7 +60,10 @@ export class AppendixETestSummaryWorkspaceController {
     description:
       'Retrieves a workspace Appendix E Correlation Test Summary record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getAppECorrelation(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

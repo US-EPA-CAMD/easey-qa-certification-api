@@ -40,7 +40,10 @@ export class FuelFlowmeterAccuracyWorkspaceController {
     description:
       'Retrieves Workspace Fuel Flowmeter Accuracy records by Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getFuelFlowmeterAccuracies(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -55,7 +58,10 @@ export class FuelFlowmeterAccuracyWorkspaceController {
     description:
       'Retrieves a Workspace Fuel Flowmeter Accuracy record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getFuelFlowmeterAccuracy(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

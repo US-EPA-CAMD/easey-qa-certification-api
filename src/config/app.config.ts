@@ -80,6 +80,10 @@ export default registerAs('app', () => ({
   // FORMAT: { "userId": "", "roles": [ { "orisCode": 3, "role": "P" } ] }
   currentUser: getConfigValue('EASEY_QA_CERTIFICATION_API_CURRENT_USER'),
   apiHost: apiHost,
+  enableRoleGuardCheckoutCheck: getConfigValueBoolean(
+    'EASEY_MONITOR_PLAN_API_ENABLE_ROLE_GUARD_CHECKOUT',
+    true,
+  ),
   authApi: {
     uri: getConfigValue('EASEY_AUTH_API', `https://${apiHost}/auth-mgmt`),
   },
