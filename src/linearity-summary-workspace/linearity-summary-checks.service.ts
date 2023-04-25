@@ -134,7 +134,7 @@ export class LinearitySummaryChecksService {
         gasLevelCode: linearitySummary.gasLevelCode,
       });
 
-      if (!isImport && record) {
+      if (record) {
         // LINEAR-32 Duplicate Linearity Summary (Result A)
         error = errorMsg;
       }
