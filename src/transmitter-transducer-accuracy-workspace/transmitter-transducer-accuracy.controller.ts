@@ -43,7 +43,10 @@ export class TransmitterTransducerAccuracyWorkspaceController {
     description:
       'Retrieves workspace Transmitter Transducer Accuracy records by Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getTransmitterTransducerAccuracies(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -58,7 +61,10 @@ export class TransmitterTransducerAccuracyWorkspaceController {
     description:
       'Retrieves official Transmitter Transducer Accuracy record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getTransmitterTransducerAccuracy(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

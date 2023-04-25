@@ -40,7 +40,10 @@ export class FuelFlowToLoadBaselineWorkspaceController {
     description:
       'Retrieves workspace Fuel Flow To Load Baseline records by Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getFuelFlowToLoadBaselines(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -55,7 +58,10 @@ export class FuelFlowToLoadBaselineWorkspaceController {
     description:
       'Retrieves workspace Fuel Flow To Load Baseline record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getFuelFlowToLoadBaseline(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,

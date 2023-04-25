@@ -45,7 +45,10 @@ export class LinearitySummaryWorkspaceController {
     description:
       'Retrieves workspace Linearity Summary records by Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getSummariesByTestSumId(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -58,7 +61,10 @@ export class LinearitySummaryWorkspaceController {
     type: LinearitySummaryRecordDTO,
     description: 'Retrieves workspace Linearity Summary record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getSummaryById(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

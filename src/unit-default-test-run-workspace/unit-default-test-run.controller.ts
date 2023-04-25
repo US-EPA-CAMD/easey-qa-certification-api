@@ -44,7 +44,10 @@ export class UnitDefaultTestRunWorkspaceController {
     description:
       'Retrieves official Unit Default Test Run records by Unit Default Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getUnitDefaultTestRuns(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -59,7 +62,10 @@ export class UnitDefaultTestRunWorkspaceController {
     type: UnitDefaultTestRunRecordDTO,
     description: 'Retrieves official Unit Default Test Run record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getUnitDefaultTestRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,

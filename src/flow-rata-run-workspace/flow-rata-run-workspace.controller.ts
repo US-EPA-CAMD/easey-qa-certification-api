@@ -42,7 +42,10 @@ export class FlowRataRunWorkspaceController {
     description:
       'Retrieves official Flow Rata Run records by Flow Rata Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getFlowRataRuns(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -59,7 +62,10 @@ export class FlowRataRunWorkspaceController {
     type: FlowRataRunDTO,
     description: 'Retrieves official Flow Rata Run record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getFlowRataRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

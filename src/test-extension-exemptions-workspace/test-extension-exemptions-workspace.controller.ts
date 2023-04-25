@@ -42,7 +42,10 @@ export class TestExtensionExemptionsWorkspaceController {
     description:
       'Retrieves workspace QA Test Extension Exemption records by Location Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getTestExtensionExemptions(
     @Param('locId') locationId: string,
   ): Promise<TestExtensionExemptionRecordDTO[]> {
@@ -55,7 +58,10 @@ export class TestExtensionExemptionsWorkspaceController {
     description:
       'Retrieves workspace Test Extension Exemption record by its id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getTestExtensionExemption(
     @Param('locId') _locationId: string,
     @Param('id') id: string,

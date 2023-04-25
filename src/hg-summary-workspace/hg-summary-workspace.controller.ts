@@ -34,7 +34,10 @@ export class HgSummaryWorkspaceController {
     type: HgSummaryDTO,
     description: 'Retrieves workspace Hg Summary records by Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getHgSummaries(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -48,7 +51,10 @@ export class HgSummaryWorkspaceController {
     type: HgSummaryDTO,
     description: 'Retrieves workspace Hg Summary record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getHgSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,

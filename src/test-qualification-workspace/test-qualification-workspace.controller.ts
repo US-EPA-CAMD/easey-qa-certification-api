@@ -42,7 +42,10 @@ export class TestQualificationWorkspaceController {
     description:
       'Retrieves official Test Qualification records by Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getTestQualifications(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -56,7 +59,10 @@ export class TestQualificationWorkspaceController {
     type: TestQualificationRecordDTO,
     description: 'Retrieves official Test Qualification record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getTestQualification(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

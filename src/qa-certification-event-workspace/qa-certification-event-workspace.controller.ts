@@ -45,7 +45,10 @@ export class QACertificationEventWorkspaceController {
     description:
       'Retrieves workspace QA Certification Event records by Location Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getQACertEvents(
     @Param('locId') locationId: string,
   ): Promise<QACertificationEventDTO[]> {
@@ -58,7 +61,10 @@ export class QACertificationEventWorkspaceController {
     type: QACertificationEventDTO,
     description: 'Retrieves workspace QA Certification Event record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getQACertEvent(
     @Param('locId') locationId: string,
     @Param('id') id: string,
