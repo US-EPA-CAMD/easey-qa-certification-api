@@ -1,4 +1,5 @@
 import {
+  addBeginAndEndDateWhere,
   addJoins,
   addTestExtExemIdWhere,
 } from '../utilities/test-extension-exemption.querybuilder';
@@ -49,6 +50,8 @@ export class TestExtensionExemptionsWorkspaceRepository extends Repository<
     unitIds?: string[],
     stackPipeIds?: string[],
     qaTestExtensionExemptionIds?: string[],
+    beginDate?: Date,
+    endDate?: Date,
   ): Promise<TestExtensionExemption[]> {
     let unitsWhere =
       unitIds && unitIds.length > 0
@@ -79,6 +82,12 @@ export class TestExtensionExemptionsWorkspaceRepository extends Repository<
     query = addTestExtExemIdWhere(
       query,
       qaTestExtensionExemptionIds,
+    ) as SelectQueryBuilder<TestExtensionExemption>;
+
+    query = addBeginAndEndDateWhere(
+      query,
+      beginDate,
+      endDate,
     ) as SelectQueryBuilder<TestExtensionExemption>;
 
     return query.getMany();

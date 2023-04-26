@@ -45,12 +45,16 @@ export class QaCertificationEventService {
     unitIds?: string[],
     stackPipeIds?: string[],
     qaCertificationEventIds?: string[],
+    beginDate?: Date,
+    endDate?: Date,
   ): Promise<QACertificationEventDTO[]> {
     const results = await this.repository.getQaCertEventsByUnitStack(
       facilityId,
       unitIds,
       stackPipeIds,
       qaCertificationEventIds,
+      beginDate,
+      endDate,
     );
 
     return this.map.many(results);
@@ -61,12 +65,16 @@ export class QaCertificationEventService {
     unitIds?: string[],
     stackPipeIds?: string[],
     qaCertificationEventIds?: string[],
+    beginDate?: Date,
+    endDate?: Date,
   ): Promise<QACertificationEventDTO[]> {
     const testSummaries = await this.getQACertEvents(
       facilityId,
       unitIds,
       stackPipeIds,
       qaCertificationEventIds,
+      beginDate,
+      endDate,
     );
 
     return testSummaries;
