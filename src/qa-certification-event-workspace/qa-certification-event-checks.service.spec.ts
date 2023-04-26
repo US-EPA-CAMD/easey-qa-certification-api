@@ -48,7 +48,13 @@ describe('QACertificationEventChecksService', () => {
 
   describe('QA Certification Event Checks', () => {
     it('Should pass all checks', async () => {
-      const result = await service.runChecks(locationId, payload, null, false, false);
+      const result = await service.runChecks(
+        locationId,
+        payload,
+        null,
+        false,
+        false,
+      );
       expect(result).toEqual([]);
     });
 

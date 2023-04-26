@@ -46,6 +46,8 @@ export class QACertificationWorkspaceService {
         params.unitIds,
         params.stackPipeIds,
         params.qaCertificationEventIds,
+        params.beginDate,
+        params.endDate,
       ),
     );
     const EXT_EXEMPTIONS = EVENTS + 1;
@@ -55,6 +57,8 @@ export class QACertificationWorkspaceService {
         params.unitIds,
         params.stackPipeIds,
         params.qaTestExtensionExemptionIds,
+        params.beginDate,
+        params.endDate,
       ),
     );
 

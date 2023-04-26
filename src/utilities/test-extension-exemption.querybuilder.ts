@@ -1,4 +1,4 @@
-import { SelectQueryBuilder } from 'typeorm';
+import { Brackets, SelectQueryBuilder } from 'typeorm';
 import { TestExtensionExemption } from '../entities/test-extension-exemption.entity';
 import { TestExtensionExemption as WorkspaceTestExtensionExemption } from '../entities/workspace/test-extension-exemption.entity';
 
@@ -31,5 +31,31 @@ export const addTestExtExemIdWhere = (
       qaTestExtensionExemptionIds,
     });
   }
+  return query;
+};
+
+export const addBeginAndEndDateWhere = (
+  query: SelectQueryBuilder<
+    TestExtensionExemption | WorkspaceTestExtensionExemption
+  >,
+  beginDate: Date,
+  endDate: Date,
+): SelectQueryBuilder<
+  TestExtensionExemption | WorkspaceTestExtensionExemption
+> => {
+  if (beginDate && endDate) {
+    query.andWhere(
+      new Brackets(qb1 => {
+        qb1.where(
+          new Brackets(qb2 => {
+            qb2
+              .where('rp.beginDate = :beginDate', { beginDate })
+              .andWhere('rp.endDate = :endDate', { endDate });
+          }),
+        );
+      }),
+    );
+  }
+
   return query;
 };

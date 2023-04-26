@@ -46,12 +46,16 @@ export class TestExtensionExemptionsService {
     unitIds?: string[],
     stackPipeIds?: string[],
     qaTestExtensionExemptionIds?: string[],
+    beginDate?: Date,
+    endDate?: Date,
   ): Promise<TestExtensionExemptionDTO[]> {
     const results = await this.repository.getTestExtensionsByUnitStack(
       facilityId,
       unitIds,
       stackPipeIds,
       qaTestExtensionExemptionIds,
+      beginDate,
+      endDate,
     );
     return this.map.many(results);
   }
@@ -61,12 +65,16 @@ export class TestExtensionExemptionsService {
     unitIds?: string[],
     stackPipeIds?: string[],
     qaTestExtensionExemptionIds?: string[],
+    beginDate?: Date,
+    endDate?: Date,
   ): Promise<TestExtensionExemptionDTO[]> {
     const results = await this.getTestExtensions(
       facilityId,
       unitIds,
       stackPipeIds,
       qaTestExtensionExemptionIds,
+      beginDate,
+      endDate,
     );
     return results;
   }

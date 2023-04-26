@@ -119,7 +119,13 @@ describe('Cycle Time Injection Check Service Test', () => {
       payload.gasLevelCode = 'MID';
       jest.spyOn(repository, 'findDuplicate').mockResolvedValue(duplicate);
 
-      let result = await service.cycle20Check(null, payload, [payload], testSummary, false);
+      let result = await service.cycle20Check(
+        null,
+        payload,
+        [payload],
+        testSummary,
+        false,
+      );
       expect(result).toEqual(MOCK_ERROR_MSG);
     });
   });
