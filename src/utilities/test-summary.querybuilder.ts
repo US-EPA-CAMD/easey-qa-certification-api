@@ -2,6 +2,7 @@ import { Brackets, SelectQueryBuilder } from 'typeorm';
 
 import { TestSummary } from '../entities/test-summary.entity';
 import { TestSummary as WorkspaceTestSummary } from '../entities/workspace/test-summary.entity';
+import { getQuarter, getYear } from './functions';
 
 export const addJoins = (
   query: SelectQueryBuilder<TestSummary | WorkspaceTestSummary>,
@@ -73,32 +74,26 @@ export const addBeginAndEndDateWhere = (
         qb1
           .where(
             new Brackets(qb2 => {
-              qb2
-                .where('ts.reportingPeriod IS NULL')
-                .andWhere('ts.beginDate IS NOT NULL')
-                .andWhere('ts.beginDate BETWEEN :beginDate AND :endDate', {
-                  beginDate,
-                  endDate,
-                });
-            }),
-          )
-          .orWhere(
-            new Brackets(qb3 => {
-              qb3
-                .where('ts.reportingPeriod IS NULL')
-                .andWhere('ts.endDate IS NOT NULL')
-                .andWhere('ts.endDate BETWEEN :beginDate AND :endDate', {
-                  beginDate,
-                  endDate,
-                });
+              qb2.where('ts.reportingPeriod IS NULL').andWhere(
+                new Brackets(qb3 => {
+                  qb3
+                    .where('ts.endDate IS NOT NULL')
+                    .andWhere('ts.endDate BETWEEN :beginDate AND :endDate', {
+                      beginDate,
+                      endDate,
+                    });
+                }),
+              );
             }),
           )
           .orWhere(
             new Brackets(qb4 => {
               qb4
                 .where('ts.reportingPeriod IS NOT NULL')
-                .andWhere('rp.beginDate = :beginDate', { beginDate })
-                .andWhere('rp.endDate = :endDate', { endDate });
+                .andWhere('rp.year = :year', { year: getYear(endDate) })
+                .andWhere('rp.quarter = :quarter', {
+                  quarter: getQuarter(endDate),
+                });
             }),
           );
       }),
