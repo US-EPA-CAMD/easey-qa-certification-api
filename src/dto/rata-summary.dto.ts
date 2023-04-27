@@ -7,6 +7,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsPositive,
   ValidateIf,
   ValidateNested,
   ValidationArguments,
@@ -102,7 +103,6 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'meanRATAReferenceValue. ADD TO PROPERTY METADATA',
   })
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-18-A', {
@@ -111,9 +111,7 @@ export class RataSummaryBaseDTO {
       });
     },
   })
-  @IsInRange(
-    0,
-    20000,
+  @IsPositive(
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatResultMessage('RATA-18-B', {
@@ -122,8 +120,6 @@ export class RataSummaryBaseDTO {
         });
       },
     },
-    false,
-    false,
   )
   meanRATAReferenceValue?: number;
 

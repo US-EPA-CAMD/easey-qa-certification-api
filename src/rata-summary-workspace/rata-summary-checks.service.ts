@@ -213,7 +213,7 @@ export class RataSummaryChecksService {
         key: KEY,
         fieldname: 'meanCEMValue',
       });
-    } else if (meanCEMValue <= 0 || meanCEMValue >= 20000) {
+    } else if (meanCEMValue <= 0) {
       error = CheckCatalogService.formatResultMessage('RATA-17-B', {
         key: KEY,
         fieldname: 'meanCEMValue',
