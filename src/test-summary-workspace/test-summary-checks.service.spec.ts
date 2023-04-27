@@ -290,7 +290,7 @@ describe('Test Summary Check Service Test', () => {
       const result = await service.runChecks(locationId, payload, true, false, [
         payload,
       ]);
-      expect(result).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+      expect(result).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
     });
 
     it('Should get error LINEAR -31 Duplicate Test Summary record (Result A)', async () => {
@@ -524,7 +524,7 @@ describe('Test Summary Check Service Test', () => {
       importPayload.endMinute = 1;
 
       try {
-        await service.runChecks(locationId, importPayload, true, false, [
+        await service.runChecks(locationId, importPayload, false, false, [
           importPayload,
         ]);
       } catch (err) {
@@ -536,7 +536,7 @@ describe('Test Summary Check Service Test', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(new TestSummary());
 
       try {
-        await service.runChecks(locationId, payload, true, false, [payload]);
+        await service.runChecks(locationId, payload, false, false, [payload]);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -548,7 +548,7 @@ describe('Test Summary Check Service Test', () => {
         .mockResolvedValue(new TestSummary());
 
       try {
-        await service.runChecks(locationId, payload, true, false, [payload]);
+        await service.runChecks(locationId, payload, false, false, [payload]);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
