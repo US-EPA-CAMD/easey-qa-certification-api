@@ -180,14 +180,16 @@ export class TestSummaryChecksService {
     if (!isUpdate) {
       if (summary.testTypeCode === TestTypeCodes.LINE) {
         // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
-        error = await this.linear4Check(
-          locationId,
-          summary,
-          historicalTestSumId,
-          isImport,
-        );
-        if (error) {
-          errorList.push(error);
+        if(!isImport){
+          error = await this.linear4Check(
+            locationId,
+            summary,
+            historicalTestSumId,
+            isImport,
+          );
+          if (error) {
+            errorList.push(error);
+          }
         }
       }
 
