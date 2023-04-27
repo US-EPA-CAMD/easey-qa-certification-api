@@ -927,7 +927,9 @@ export class TestSummaryChecksService {
     const errorResponse = this.getMessage('TEST-7-A', { key: KEY });
 
     const beginDate = moment(summary.beginDate);
+    beginDate.hours(summary.beginHour);
     const endDate = moment(summary.endDate);
+    endDate.hours(summary.endHour);
 
     if ([TestTypeCodes.ONOFF.toString(), TestTypeCodes.FF2LBAS.toString(),
       ].includes(summary.testTypeCode)
