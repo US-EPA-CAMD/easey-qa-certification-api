@@ -6,7 +6,7 @@ export const currentDateTime = (): Date => {
   );
 };
 
-// *** date nees to be in YYYY-MM-DD format
+// *** date needs to be in YYYY-MM-DD format
 export const getQuarter = (date: Date): number => {
   const dateString = String(date);
   const month = parseInt(dateString.substring(5, 7));
@@ -22,7 +22,7 @@ export const getQuarter = (date: Date): number => {
   }
 };
 
-// *** date nees to be in YYYY-MM-DD format
+// *** date needs to be in YYYY-MM-DD format
 export const getYear = (date: Date): string => {
   const dateString = String(date);
   return dateString.substring(0, 4);
