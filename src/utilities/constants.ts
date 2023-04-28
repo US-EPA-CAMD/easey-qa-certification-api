@@ -56,16 +56,48 @@ export const BEGIN_DATE_TEST_TYPE_CODES = [
 
 // From TEST-3 in QA/Cert Data Check Specification
 export const VALID_CODES_FOR_BEGIN_MINUTE_VALIDATION = [
+  TestTypeCodes.UNITDEF.toString(),
+  TestTypeCodes.APPE.toString(),
+  TestTypeCodes.RATA.toString(),
+  TestTypeCodes.HGSI3.toString(),
+  TestTypeCodes.HGLINE.toString(),
+  TestTypeCodes.LINE.toString(),
+  TestTypeCodes.CYCLE.toString(),
+  TestTypeCodes.SEVENDAY.toString(),
+];
+
+export const VALID_CODES_FOR_END_MINUTE_VALIDATION = [
+  TestTypeCodes.SEVENDAY.toString(),
+  TestTypeCodes.CYCLE.toString(),
+  TestTypeCodes.LINE.toString(),
+  TestTypeCodes.HGLINE.toString(),
+  TestTypeCodes.HGSI3.toString(),
+  TestTypeCodes.RATA.toString(),
+  TestTypeCodes.F2LREF.toString(),
+  TestTypeCodes.APPE.toString(),
+  TestTypeCodes.FFACC.toString(),
+  TestTypeCodes.FFACCTT.toString(),
+  TestTypeCodes.UNITDEF.toString(),
+  TestTypeCodes.DAHS.toString(),
+  TestTypeCodes.DGFMCAL.toString(),
+  TestTypeCodes.MFMCAL.toString(),
+  TestTypeCodes.TSCAL.toString(),
+  TestTypeCodes.BCAL.toString(),
+  TestTypeCodes.QGA.toString(),
+  TestTypeCodes.LEAK.toString(),
+  TestTypeCodes.OTHER.toString(),
+  TestTypeCodes.PEI.toString(),
+  TestTypeCodes.PEMSACC.toString(),
+];
+
+export const BEGIN_END_MINUTE_REQUIRED_TYPES = [
   TestTypeCodes.LINE.toString(),
   TestTypeCodes.RATA.toString(),
   TestTypeCodes.CYCLE.toString(),
   TestTypeCodes.F2LREF.toString(),
   TestTypeCodes.APPE.toString(),
   TestTypeCodes.UNITDEF.toString(),
-];
-
-export const VALID_CODES_FOR_END_MINUTE_VALIDATION = VALID_CODES_FOR_BEGIN_MINUTE_VALIDATION;
-
+]
 
 export const VALID_CODES_FOR_COMPONENT_ID_VALIDATION = [
   TestTypeCodes.FFACCTT,

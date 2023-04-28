@@ -26,6 +26,7 @@ import { TestResultCodeRepository } from '../test-result-code/test-result-code.r
 import {
   VALID_CODES_FOR_BEGIN_MINUTE_VALIDATION,
   VALID_CODES_FOR_END_MINUTE_VALIDATION,
+  BEGIN_END_MINUTE_REQUIRED_TYPES,
   MISC_TEST_TYPE_CODES,
   VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION,
 } from '../utilities/constants';
@@ -127,15 +128,19 @@ export class TestSummaryChecksService {
     }
 
     // TEST-3 Test Begin Minute Valid
-    error = await this.test3Check(summary, locationId);
-    if (error) {
+    if(VALID_CODES_FOR_BEGIN_MINUTE_VALIDATION.includes(summary.testTypeCode)) {
+      error = await this.test3Check(summary, locationId);
+      if (error) {
         errorList.push(error);
+      }
     }
 
     // TEST-6 Test End Minute Valid
-    error = await this.test6Check(summary, locationId);
-    if (error) {
+    if(VALID_CODES_FOR_END_MINUTE_VALIDATION.includes(summary.testTypeCode)) {
+      error = await this.test6Check(summary, locationId);
+      if (error) {
         errorList.push(error);
+      }
     }
 
     // TEST-7 Test Dates Consistent
@@ -892,7 +897,7 @@ export class TestSummaryChecksService {
           summary['beginDate'],
       );
 
-      if(mp || VALID_CODES_FOR_BEGIN_MINUTE_VALIDATION.includes(summary.testTypeCode))
+      if(mp || BEGIN_END_MINUTE_REQUIRED_TYPES.includes(summary.testTypeCode))
         return this.getMessage('TEST-3-A', { fieldname: 'beginMinute', key: KEY });
       else
         return this.getMessage('TEST-3-B', {fieldName: 'beginMinute', key: KEY});
@@ -915,7 +920,7 @@ export class TestSummaryChecksService {
           summary['endDate'],
       );
 
-      if(mp || VALID_CODES_FOR_END_MINUTE_VALIDATION.includes(summary.testTypeCode))
+      if(mp || BEGIN_END_MINUTE_REQUIRED_TYPES.includes(summary.testTypeCode))
         return this.getMessage('TEST-6-A', { fieldname: 'endMinute', key: KEY });
       else
         return this.getMessage('TEST-6-B', {fieldName: 'endMinute', key: KEY});
