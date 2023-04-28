@@ -6,9 +6,9 @@ export class AppEHeatInputFromOilWorkspaceRepository extends Repository<
   AppEHeatInputFromOil
 > {
   async getAppEHeatInputFromOilById(id: string): Promise<AppEHeatInputFromOil> {
-    const query = this.createQueryBuilder('aehig')
-      .leftJoinAndSelect('aehig.system', 'ms')
-      .where('aehig.id = :id', {
+    const query = this.createQueryBuilder('aehio')
+      .leftJoinAndSelect('aehio.system', 'ms')
+      .where('aehio.id = :id', {
         id,
       });
 
@@ -18,9 +18,9 @@ export class AppEHeatInputFromOilWorkspaceRepository extends Repository<
   async getAppEHeatInputFromOilsByTestRunId(
     appECorrTestRunId: string,
   ): Promise<AppEHeatInputFromOil[]> {
-    const query = this.createQueryBuilder('aehig')
-      .leftJoinAndSelect('aehig.system', 'ms')
-      .where('aehig.appECorrTestRunId = :appECorrTestRunId', {
+    const query = this.createQueryBuilder('aehio')
+      .leftJoinAndSelect('aehio.system', 'ms')
+      .where('aehio.appECorrTestRunId = :appECorrTestRunId', {
         appECorrTestRunId,
       });
 
@@ -30,9 +30,9 @@ export class AppEHeatInputFromOilWorkspaceRepository extends Repository<
   async getAppEHeatInputFromOilsByTestRunIds(
     appECorrTestRunIds: string[],
   ): Promise<AppEHeatInputFromOil[]> {
-    const query = this.createQueryBuilder('aehig')
-      .leftJoinAndSelect('aehig.system', 'ms')
-      .where('aehig.appECorrTestRunId IN (:...appECorrTestRunIds)', {
+    const query = this.createQueryBuilder('aehio')
+      .leftJoinAndSelect('aehio.system', 'ms')
+      .where('aehio.appECorrTestRunId IN (:...appECorrTestRunIds)', {
         appECorrTestRunIds,
       });
 

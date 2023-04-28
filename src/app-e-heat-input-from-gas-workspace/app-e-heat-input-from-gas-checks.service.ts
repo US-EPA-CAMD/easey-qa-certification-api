@@ -78,8 +78,6 @@ export class AppEHeatInputFromGasChecksService {
   ) {
     let error: string = null;
     let appETestSummary = appETestRun.appECorrelationTestSummary;
-    let testSummary = appETestSummary.testSummary;
-
     if (
       dto.monitoringSystemID &&
       appETestRun.runNumber != null &&
@@ -87,7 +85,7 @@ export class AppEHeatInputFromGasChecksService {
     ) {
       const duplicate = await this.repo.findDuplicate(
         aehiGasId,
-        testSummary.id,
+        appETestSummary.id,
         appETestSummary.operatingLevelForRun,
         appETestRun.runNumber,
         dto.monitoringSystemID,

@@ -28,7 +28,7 @@ export class AppEHeatInputFromGasWorkspaceService {
     @InjectRepository(AppEHeatInputFromGasWorkspaceRepository)
     private readonly repository: AppEHeatInputFromGasWorkspaceRepository,
     @InjectRepository(AppEHeatInputFromGasRepository)
-    private readonly historicalRepo: AppEHeatInputFromGasRepository,
+    private readonly historicalRepo,
     @InjectRepository(MonitorSystemWorkspaceRepository)
     private readonly monSysWorkspaceRepository: MonitorSystemWorkspaceRepository,
   ) {}
