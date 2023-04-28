@@ -245,18 +245,6 @@ export class TestQualificationChecksService {
         error = this.getErrorMessage('RATA-120-B');
         errors.push(error);
       }
-
-      if (
-        testSumBeginDate !== null &&
-        testQualification.endDate <= testSumBeginDate
-      ) {
-        error = this.getErrorMessage('RATA-120-C', {
-          datefield1: testSumBeginDate,
-          datefield2: testQualification.endDate,
-          key: KEY,
-        });
-        errors.push(error);
-      }
     }
 
     return errors;
