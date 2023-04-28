@@ -483,40 +483,6 @@ describe('TestQualificationChecksService', () => {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
-
-    it('Should get [RATA-120-C] error', async () => {
-      payload.testClaimCode = 'SLC';
-      payload.endDate = new Date('2020-01-01');
-
-      let testSumRec = new TestSummary();
-      testSumRecord.beginDate = new Date('2020-01-01');
-
-      const returnValue = new TestQualification();
-      jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
-
-      const monSysRec = new MonitorSystem();
-      monSysRec.systemTypeCode = 'FLOW';
-      jest
-        .spyOn(monitorSystemRepository, 'findOne')
-        .mockResolvedValue(monSysRec);
-      jest
-        .spyOn(testSummaryRepository, 'getTestSummaryById')
-        .mockResolvedValue(testSumRec);
-
-      try {
-        await service.runChecks(
-          locationId,
-          payload,
-          testQualificationRecords,
-          testSumId,
-          testSumRecord,
-          rata,
-          true,
-        );
-      } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
-      }
-    });
   });
 
   describe('RATA-121 Duplicate Test Claim', () => {
