@@ -96,6 +96,7 @@ export class RataSummaryBaseDTO {
       });
     },
   })
+  @IsNumber()
   meanCEMValue?: number;
 
   @ApiProperty({
