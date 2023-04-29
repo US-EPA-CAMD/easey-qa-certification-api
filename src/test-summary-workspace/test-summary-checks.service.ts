@@ -145,9 +145,11 @@ export class TestSummaryChecksService {
 
     // TEST-7 Test Dates Consistent
     // NOTE: beginMinute and endMinute validity tests need to run before this test
-    error = this.test7Check(summary);
-    if (error) {
-      errorList.push(error);
+    if(summary.beginDate && summary.endDate) {
+      error = this.test7Check(summary);
+      if (error) {
+        errorList.push(error);
+      }
     }
 
     if (summary.testTypeCode === TestTypeCodes.LINE) {
