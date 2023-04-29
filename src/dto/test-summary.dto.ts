@@ -434,7 +434,6 @@ export class TestSummaryBaseDTO {
   testResultCode?: string;
 
   @ApiProperty(getMetadata(dataDictionary.beginDate, MetadataKeys.TEST_SUMMARY))
-  @IsOptional()
   @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -469,7 +468,6 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Begin Hour. ADD TO PROPERTY METADATA',
   })
-  @IsOptional()
   @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -511,7 +509,6 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.endDate.description,
   })
-  @IsOptional()
   @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -546,7 +543,6 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'End Hour. ADD TO PROPERTY METADATA',
   })
-  @IsOptional()
   @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
