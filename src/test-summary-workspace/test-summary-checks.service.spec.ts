@@ -290,7 +290,7 @@ describe('Test Summary Check Service Test', () => {
       const result = await service.runChecks(locationId, payload, true, false, [
         payload,
       ]);
-      expect(result).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+      expect(result).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
     });
 
     it('Should get error LINEAR -31 Duplicate Test Summary record (Result A)', async () => {
@@ -524,7 +524,7 @@ describe('Test Summary Check Service Test', () => {
       importPayload.endMinute = 1;
 
       try {
-        await service.runChecks(locationId, importPayload, true, false, [
+        await service.runChecks(locationId, importPayload, false, false, [
           importPayload,
         ]);
       } catch (err) {
@@ -536,7 +536,7 @@ describe('Test Summary Check Service Test', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(new TestSummary());
 
       try {
-        await service.runChecks(locationId, payload, true, false, [payload]);
+        await service.runChecks(locationId, payload, false, false, [payload]);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -548,7 +548,7 @@ describe('Test Summary Check Service Test', () => {
         .mockResolvedValue(new TestSummary());
 
       try {
-        await service.runChecks(locationId, payload, true, false, [payload]);
+        await service.runChecks(locationId, payload, false, false, [payload]);
       } catch (err) {
         expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
@@ -763,35 +763,17 @@ describe('Test Summary Check Service Test', () => {
     });
   });
 
-  describe('testMinuteField() test', () => {
-    it('returns null when startMinute and endMinute are valid', async () => {
-      const startMinuteresult = await service.testMinuteField(
+  describe('test3Check() test', () => {
+    it('Returns null when startMinute is not null', async () => {
+      const result = await service.test3Check(
         summaryBase,
         '1',
-        'beginMinute',
-      );
-      const endMinuteresult = await service.testMinuteField(
-        summaryBase,
-        '1',
-        'endMinute',
       );
 
-      expect(startMinuteresult).toBeNull();
-      expect(endMinuteresult).toBeNull();
+      expect(result).toBeNull();
     });
 
-    it('returns error message when testType "LINE"', async () => {
-      jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      const summary = {
-        ...summaryBase,
-      };
-      summary.testTypeCode = TestTypeCodes.LINE.toString();
-      summary.beginMinute = null;
-      const result = await service.testMinuteField(summary, '1', 'beginMinute');
-      expect(result).toBe(MOCK_ERROR_MSG);
-    });
-
-    it('returns error message A when startMinute is null and testType is not [LINE, RATA, CYCLE, F2LREF, APPE, UNITDEF] and monitor plan is found', async () => {
+    it('Returns error message when startMinute is null', async () => {
       jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       qaMonitorPlanWSRepo.getMonitorPlanWithALowerBeginDate.mockResolvedValue(
         new MonitorPlan(),
@@ -801,21 +783,32 @@ describe('Test Summary Check Service Test', () => {
         testTypeCode: TestTypeCodes.F2LCHK.toString(),
         beginMinute: null,
       };
-      const result = await service.testMinuteField(summary, '1', 'beginMinute');
+      const result = await service.test3Check(summary, '1',);
       expect(result).toBe(MOCK_ERROR_MSG);
     });
+  });
 
-    it('returns error message B when startMinute is null and testType is not [LINE, RATA, CYCLE, F2LREF, APPE, UNITDEF] and monitor plan is NOT found', async () => {
+  describe('test6Check() test', () => {
+    it('Returns null when endMinute is not null', async () => {
+      const result = await service.test6Check(
+          summaryBase,
+          '1',
+      );
+
+      expect(result).toBeNull();
+    });
+
+    it('Returns error message when endMinute is null', async () => {
       jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       qaMonitorPlanWSRepo.getMonitorPlanWithALowerBeginDate.mockResolvedValue(
-        null,
+          new MonitorPlan(),
       );
       const summary = {
         ...summaryBase,
-        testTypeCode: TestTypeCodes.LINE.toString(),
-        beginMinute: null,
+        testTypeCode: TestTypeCodes.F2LCHK.toString(),
+        endMinute: null,
       };
-      const result = await service.testMinuteField(summary, '1', 'beginMinute');
+      const result = await service.test6Check(summary, '1',);
       expect(result).toBe(MOCK_ERROR_MSG);
     });
   });

@@ -154,12 +154,16 @@ export class QACertificationEventWorkspaceService {
     unitIds?: string[],
     stackPipeIds?: string[],
     qaCertificationEventIds?: string[],
+    beginDate?: Date,
+    endDate?: Date,
   ): Promise<QACertificationEventDTO[]> {
     const results = await this.repository.getQaCertEventsByUnitStack(
       facilityId,
       unitIds,
       stackPipeIds,
       qaCertificationEventIds,
+      beginDate,
+      endDate,
     );
 
     return this.map.many(results);
@@ -193,6 +197,9 @@ export class QACertificationEventWorkspaceService {
     entity.completionTestHour = payload.completionTestHour;
     entity.userId = userId;
     entity.updateDate = timestamp;
+    entity.needsEvalFlag = 'Y';
+    entity.updatedStatusFlag = 'Y';
+    entity.evalStatusCode = 'EVAL';
 
     await this.repository.save(entity);
 
@@ -204,12 +211,16 @@ export class QACertificationEventWorkspaceService {
     unitIds?: string[],
     stackPipeIds?: string[],
     qaCertificationEventIds?: string[],
+    beginDate?: Date,
+    endDate?: Date,
   ): Promise<QACertificationEventDTO[]> {
     const qaCertEvents = await this.getQACertEvents(
       facilityId,
       unitIds,
       stackPipeIds,
       qaCertificationEventIds,
+      beginDate,
+      endDate,
     );
 
     return qaCertEvents;

@@ -75,17 +75,6 @@ export const addBeginAndEndDateWhere = (
             new Brackets(qb2 => {
               qb2
                 .where('ts.reportingPeriod IS NULL')
-                .andWhere('ts.beginDate IS NOT NULL')
-                .andWhere('ts.beginDate BETWEEN :beginDate AND :endDate', {
-                  beginDate,
-                  endDate,
-                });
-            }),
-          )
-          .orWhere(
-            new Brackets(qb3 => {
-              qb3
-                .where('ts.reportingPeriod IS NULL')
                 .andWhere('ts.endDate IS NOT NULL')
                 .andWhere('ts.endDate BETWEEN :beginDate AND :endDate', {
                   beginDate,
@@ -94,8 +83,8 @@ export const addBeginAndEndDateWhere = (
             }),
           )
           .orWhere(
-            new Brackets(qb4 => {
-              qb4
+            new Brackets(qb3 => {
+              qb3
                 .where('ts.reportingPeriod IS NOT NULL')
                 .andWhere('rp.beginDate = :beginDate', { beginDate })
                 .andWhere('rp.endDate = :endDate', { endDate });

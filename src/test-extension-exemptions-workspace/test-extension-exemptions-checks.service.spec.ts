@@ -53,7 +53,13 @@ describe('TestExtensionExemptionsChecksService', () => {
 
   describe('Test Extension Exemptions Checks', () => {
     it('Should pass all checks', async () => {
-      const result = await service.runChecks(locationId, payload, null, false, false);
+      const result = await service.runChecks(
+        locationId,
+        payload,
+        null,
+        false,
+        false,
+      );
       expect(result).toEqual([]);
     });
 

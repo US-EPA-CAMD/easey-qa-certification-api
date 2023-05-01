@@ -100,9 +100,7 @@ import {
   VALID_CODES_FOR_MON_SYS_ID_VALIDATION,
   YEAR_QUARTER_TEST_TYPE_CODES,
   GRACE_PERIOD_IND_TEST_TYPE_CODES,
-  VALID_CODES_FOR_END_DATE_VALIDATION,
-  BEGIN_MINUTE_TEST_TYPE_CODES,
-  MISC_TEST_TYPE_CODES,
+  MISC_TEST_TYPE_CODES, VALID_CODES_FOR_END_DATE_VALIDATION,
 } from '../utilities/constants';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
@@ -148,6 +146,14 @@ export class TestSummaryBaseDTO {
 
   @ApiProperty({
     description: 'Test Type Code. ADD TO PROPERTY METADATA',
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('TEST-12-A', {
+      fieldname: args.property,
+      key: KEY,
+      });
+    }
   })
   @IsValidCode(TestTypeCode, {
     message: (args: ValidationArguments) => {
@@ -436,23 +442,13 @@ export class TestSummaryBaseDTO {
   testResultCode?: string;
 
   @ApiProperty(getMetadata(dataDictionary.beginDate, MetadataKeys.TEST_SUMMARY))
-  @IsOptional()
+  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-1-A`, {
         fieldname: args.property,
         key: KEY,
       });
-    },
-  })
-  @IsValidDate({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `Begin Date must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [value]`,
-        {
-          value: args.value,
-        },
-      );
     },
   })
   @IsIsoFormat({
@@ -475,13 +471,12 @@ export class TestSummaryBaseDTO {
       });
     },
   })
-  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginDate?: Date;
 
   @ApiProperty({
     description: 'Begin Hour. ADD TO PROPERTY METADATA',
   })
-  @IsOptional()
+  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-2-A`, {
@@ -501,20 +496,10 @@ export class TestSummaryBaseDTO {
       });
     },
   })
-  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginHour?: number;
 
   @ApiProperty({
     description: 'Begin Minute. ADD TO PROPERTY METADATA',
-  })
-  @IsOptional()
-  @IsNotEmpty({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(`TEST-3-A`, {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
   })
   @IsInRange(MIN_MINUTE, MAX_MINUTE, {
     message: (args: ValidationArguments) => {
@@ -527,16 +512,12 @@ export class TestSummaryBaseDTO {
       });
     },
   })
-  @ValidateIf(o => BEGIN_MINUTE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginMinute?: number;
 
   @ApiProperty({
     description: propertyMetadata.endDate.description,
   })
-  @IsOptional()
-  @IsValidDate({
-    message: ErrorMessages.DateValidity(),
-  })
+  @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-4-A`, {
@@ -565,13 +546,20 @@ export class TestSummaryBaseDTO {
       });
     },
   })
-  @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
   endDate?: Date;
 
   @ApiProperty({
     description: 'End Hour. ADD TO PROPERTY METADATA',
   })
-  @IsOptional()
+  @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(`TEST-5-A`, {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-5-B`, {
@@ -583,29 +571,12 @@ export class TestSummaryBaseDTO {
       });
     },
   })
-  @IsNotEmpty({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(`TEST-5-A`, {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
-  @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
   endHour?: number;
 
   @ApiProperty({
     description: 'End Minute. ADD TO PROPERTY METADATA',
   })
   @IsOptional()
-  @IsNotEmpty({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(`TEST-6-A`, {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
   @IsInRange(MIN_MINUTE, MAX_MINUTE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-6-C`, {
@@ -617,9 +588,6 @@ export class TestSummaryBaseDTO {
       });
     },
   })
-  @ValidateIf(o =>
-    VALID_CODES_FOR_END_MINUTE_VALIDATION.includes(o.testTypeCode),
-  )
   endMinute?: number;
 
   @ApiProperty({
