@@ -81,7 +81,7 @@ export default registerAs('app', () => ({
   currentUser: getConfigValue('EASEY_QA_CERTIFICATION_API_CURRENT_USER'),
   apiHost: apiHost,
   enableRoleGuardCheckoutCheck: getConfigValueBoolean(
-    'EASEY_MONITOR_PLAN_API_ENABLE_ROLE_GUARD_CHECKOUT',
+    'EASEY_QA_CERTIFICATION_API_ENABLE_ROLE_GUARD_CHECKOUT',
     true,
   ),
   authApi: {
