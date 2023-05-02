@@ -198,7 +198,7 @@ export class OnlineOfflineCalibrationWorkspaceService {
     );
 
     this.logger.info(
-      `Online Offline Calibration successfully imported. Record Id: ${createdOnlineOfflineCalibration}`,
+      `Online Offline Calibration successfully imported. Record Id: ${createdOnlineOfflineCalibration.id}`,
     );
   }
 

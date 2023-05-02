@@ -54,7 +54,10 @@ export class TestSummaryWorkspaceController {
     required: false,
     explode: false,
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getTestSummaries(
     @Param('locId') locationId: string,
     @Query() params: TestSummaryParamsDTO,
@@ -73,7 +76,10 @@ export class TestSummaryWorkspaceController {
     type: TestSummaryRecordDTO,
     description: 'Retrieves workspace Test Summary record by its id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getTestSummary(
     @Param('locId') _locationId: string,
     @Param('id') id: string,

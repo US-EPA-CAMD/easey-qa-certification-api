@@ -43,7 +43,10 @@ export class AppEHeatInputFromOilWorkspaceController {
     description:
       'Retrieves workspace Appendix E Heat Input from Oil records by Appendix E CorrelationTestRun Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getAppEHeatInputFromOilRecords(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -60,7 +63,10 @@ export class AppEHeatInputFromOilWorkspaceController {
     description:
       'Retrieves workspace Appendix E Heat Input from Oil record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getAppEHeatInputFromOilRecord(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

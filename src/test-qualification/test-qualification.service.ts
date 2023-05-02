@@ -4,6 +4,7 @@ import { TestQualificationRepository } from './test-qualification.repository';
 import { TestQualificationMap } from '../maps/test-qualification.map';
 import { TestQualificationDTO } from '../dto/test-qualification.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
 
 @Injectable()
 export class TestQualificationService {
@@ -34,5 +35,18 @@ export class TestQualificationService {
     }
 
     return this.map.one(result);
+  }
+
+  async getTestQualificationByTestSumIds(
+    testSumIds: string[],
+  ): Promise<TestQualificationDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<TestQualificationDTO[]> {
+    return this.getTestQualificationByTestSumIds(testSumIds);
   }
 }

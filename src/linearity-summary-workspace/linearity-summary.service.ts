@@ -113,20 +113,13 @@ export class LinearitySummaryWorkspaceService {
     if (payload.linearityInjectionData?.length > 0) {
       for (const injection of payload.linearityInjectionData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.injectionService.import(
-                testSumId,
-                createdLineSummary.id,
-                injection,
-                userId,
-                isHistoricalRecord,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.injectionService.import(
+            testSumId,
+            createdLineSummary.id,
+            injection,
+            userId,
+            isHistoricalRecord,
+          ),
         );
       }
     }

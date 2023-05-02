@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   AirEmissionTestingBaseDTO,
   AirEmissionTestingRecordDTO,
+  AirEmissionTestingDTO,
+  AirEmissionTestingImportDTO,
 } from '../dto/air-emission-test.dto';
 import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -10,15 +12,22 @@ import { AirEmissionTestingWorkspaceRepository } from './air-emission-testing-wo
 import { currentDateTime } from '../utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
+import { AirEmissionTesting } from '../entities/air-emission-test.entity';
+import { AirEmissionTestingRepository } from '../air-emission-testing/air-emission-testing.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class AirEmissionTestingWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     private readonly map: AirEmissionTestingMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(AirEmissionTestingWorkspaceRepository)
     private readonly repository: AirEmissionTestingWorkspaceRepository,
+    @InjectRepository(AirEmissionTestingRepository)
+    private readonly historicalRepo: AirEmissionTestingRepository,
   ) {}
 
   async getAirEmissionTestings(
@@ -129,6 +138,51 @@ export class AirEmissionTestingWorkspaceService {
       testSumId,
       userId,
       isImport,
+    );
+  }
+
+  async getAirEmissionTestingByTestSumIds(
+    testSumIds: string[],
+  ): Promise<AirEmissionTestingDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<AirEmissionTestingDTO[]> {
+    return this.getAirEmissionTestingByTestSumIds(testSumIds);
+  }
+
+  async import(
+    testSumId: string,
+    payload: AirEmissionTestingImportDTO,
+    userId: string,
+    isHistoricalRecord: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: AirEmissionTesting;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepo.findOne({
+        testSumId: testSumId,
+        qiLastName: payload.qiLastName,
+        qiFirstName: payload.qiFirstName,
+        aetbName: payload.aetbName,
+        examDate: payload.examDate,
+      });
+    }
+
+    const createdAirEmissionTesting = await this.createAirEmissionTesting(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Air Emission Testing Successfully Imported.  Record Id: ${createdAirEmissionTesting.id}`,
     );
   }
 }

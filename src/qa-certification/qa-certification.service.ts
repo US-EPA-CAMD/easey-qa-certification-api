@@ -40,6 +40,8 @@ export class QACertificationService {
         params.unitIds,
         params.stackPipeIds,
         params.qaCertificationEventIds,
+        params.beginDate,
+        params.endDate,
       ),
     );
 
@@ -50,6 +52,8 @@ export class QACertificationService {
         params.unitIds,
         params.stackPipeIds,
         params.qaTestExtensionExemptionIds,
+        params.beginDate,
+        params.endDate,
       ),
     );
 

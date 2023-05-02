@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
 import { AirEmissionTestingDTO } from '../dto/air-emission-test.dto';
 import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
 import { AirEmissionTestingRepository } from './air-emission-testing.repository';
@@ -32,5 +33,18 @@ export class AirEmissionTestingService {
     }
 
     return this.map.one(result);
+  }
+
+  async getAirEmissionTestingByTestSumIds(
+    testSumIds: string[],
+  ): Promise<AirEmissionTestingDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<AirEmissionTestingDTO[]> {
+    return this.getAirEmissionTestingByTestSumIds(testSumIds);
   }
 }

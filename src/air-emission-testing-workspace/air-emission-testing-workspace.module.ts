@@ -7,11 +7,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
 import { AirEmissionTestingChecksService } from './air-emission-testing-checks.service';
+import { AirEmissionTestingModule } from '../air-emission-testing/air-emission-testing.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AirEmissionTestingWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
+    forwardRef(() => AirEmissionTestingModule),
     HttpModule,
   ],
   controllers: [AirEmissionTestingWorkspaceController],

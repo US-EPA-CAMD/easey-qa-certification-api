@@ -1,4 +1,5 @@
 import {
+  addBeginAndEndDateWhere,
   addJoins,
   addQACertEventIdWhere,
 } from '../utilities/qa-cert-events.querybuilder';
@@ -37,6 +38,8 @@ export class QACertificationEventRepository extends Repository<
     unitIds?: string[],
     stackPipeIds?: string[],
     qaCertificationEventIds?: string[],
+    beginDate?: Date,
+    endDate?: Date,
   ): Promise<QACertificationEvent[]> {
     let unitsWhere =
       unitIds && unitIds.length > 0
@@ -67,6 +70,12 @@ export class QACertificationEventRepository extends Repository<
     query = addQACertEventIdWhere(
       query,
       qaCertificationEventIds,
+    ) as SelectQueryBuilder<QACertificationEvent>;
+
+    query = addBeginAndEndDateWhere(
+      query,
+      beginDate,
+      endDate,
     ) as SelectQueryBuilder<QACertificationEvent>;
 
     return query.getMany();

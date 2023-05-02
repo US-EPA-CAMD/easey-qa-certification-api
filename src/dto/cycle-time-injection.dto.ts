@@ -1,6 +1,12 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes/is-iso-format.pipe';
-import { IsNotEmpty, ValidationArguments } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  ValidationArguments,
+  IsOptional,
+} from 'class-validator';
 
 const KEY = 'Cycle Time Injection';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -14,9 +20,13 @@ export class CycleTimeInjectionBaseDTO {
       });
     },
   })
+  @IsString()
   gasLevelCode: string;
-  calibrationGasValue: number;
+  @IsOptional()
+  @IsNumber()
+  calibrationGasValue?: number;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -28,10 +38,14 @@ export class CycleTimeInjectionBaseDTO {
       );
     },
   })
-  beginDate: Date;
-  beginHour: number;
+  beginDate?: Date;
+  @IsOptional()
+  @IsNumber()
+  beginHour?: number;
+  @IsNumber()
   beginMinute: number;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -43,12 +57,21 @@ export class CycleTimeInjectionBaseDTO {
       );
     },
   })
-  endDate: Date;
-  endHour: number;
+  endDate?: Date;
+  @IsOptional()
+  @IsNumber()
+  endHour?: number;
+  @IsNumber()
   endMinute: number;
-  injectionCycleTime: number;
-  beginMonitorValue: number;
-  endMonitorValue: number;
+  @IsOptional()
+  @IsNumber()
+  injectionCycleTime?: number;
+  @IsOptional()
+  @IsNumber()
+  beginMonitorValue?: number;
+  @IsOptional()
+  @IsNumber()
+  endMonitorValue?: number;
 }
 
 export class CycleTimeInjectionRecordDTO extends CycleTimeInjectionBaseDTO {

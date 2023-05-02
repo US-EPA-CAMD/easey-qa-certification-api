@@ -107,38 +107,39 @@ export class LinearitySummaryChecksService {
   private async duplicateTestCheck(
     testSumId: string,
     linearitySummary: LinearitySummaryBaseDTO | LinearitySummaryImportDTO,
-    _isImport: boolean = false,
+    isImport: boolean = false,
     linearitySummaies: LinearitySummaryImportDTO[] = [],
   ): Promise<string> {
     let error: string = null;
     let RECORDTYPE: string = 'linearitySummary';
     let FIELDNAME: string = 'gasLevelCode';
 
-    const duplicates = linearitySummaies.filter(i => {
-      return i.gasLevelCode === linearitySummary.gasLevelCode;
+    const errorMsg = this.getMessage('LINEAR-32-A', {
+      recordtype: RECORDTYPE,
+      fieldnames: FIELDNAME,
     });
 
-    // IMPORT-20 Duplicate Test Check
-    if (_isImport && duplicates.length > 1) {
-      error = this.getMessage('LINEAR-32-A', {
-        recordtype: RECORDTYPE,
-        fieldnames: FIELDNAME,
+    if (isImport) {
+      const duplicates = linearitySummaies.filter(i => {
+        return i.gasLevelCode === linearitySummary.gasLevelCode;
       });
-    }
 
-    const record: LinearitySummary = await this.repository.findOne({
-      testSumId: testSumId,
-      gasLevelCode: linearitySummary.gasLevelCode,
-    });
-
-    if (record) {
       // LINEAR-32 Duplicate Linearity Summary (Result A)
-      error = this.getMessage('LINEAR-32-A', {
-        recordtype: RECORDTYPE,
-        fieldnames: FIELDNAME,
+      if (duplicates.length > 1) {
+        error = errorMsg;
+      }
+    } else {
+      const record: LinearitySummary = await this.repository.findOne({
+        testSumId: testSumId,
+        gasLevelCode: linearitySummary.gasLevelCode,
       });
-      //error = `Another Linearity Summary record already exists with the same gasLevelCode [${linearitySummary.gasLevelCode}].`;
+
+      if (record) {
+        // LINEAR-32 Duplicate Linearity Summary (Result A)
+        error = errorMsg;
+      }
     }
+
     return error;
   }
   getMessage(messageKey: string, messageArgs: object): string {

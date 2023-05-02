@@ -16,7 +16,7 @@ import {
 } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOil } from '../entities/app-e-heat-input-from-oil.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 @Injectable()
 export class AppEHeatInputFromOilWorkspaceService {
@@ -29,8 +29,8 @@ export class AppEHeatInputFromOilWorkspaceService {
     private readonly map: AppEHeatInputFromOilMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(MonitorSystemRepository)
-    private readonly monSysRepository: MonitorSystemRepository,
+    @InjectRepository(MonitorSystemWorkspaceRepository)
+    private readonly monSysWorkspaceRepository: MonitorSystemWorkspaceRepository,
   ) {}
 
   async getAppEHeatInputFromOilRecords(
@@ -69,7 +69,7 @@ export class AppEHeatInputFromOilWorkspaceService {
   ): Promise<AppEHeatInputFromOilRecordDTO> {
     const timestamp = currentDateTime().toLocaleDateString();
 
-    const system = await this.monSysRepository.findOne({
+    const system = await this.monSysWorkspaceRepository.findOne({
       locationId: locationId,
       monitoringSystemID: payload.monitoringSystemID,
     });
@@ -183,10 +183,10 @@ export class AppEHeatInputFromOilWorkspaceService {
     let historicalRecord: AppEHeatInputFromOil;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
-        appECorrTestRunId: appECorrTestRunId,
-        monitoringSystemID: payload.monitoringSystemID,
-      });
+      historicalRecord = await this.historicalRepo.getAppEHeatInputFromOilByTestRunIdAndMonSysID(
+        appECorrTestRunId,
+        payload.monitoringSystemID,
+      );
     }
 
     const createdHeatInputFromOil = await this.createAppEHeatInputFromOilRecord(

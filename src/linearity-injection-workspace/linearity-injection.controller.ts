@@ -46,7 +46,10 @@ export class LinearityInjectionWorkspaceController {
     description:
       'Retrieves workspace Linearity Injection records by Linearity Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -60,7 +63,10 @@ export class LinearityInjectionWorkspaceController {
     type: LinearityInjectionRecordDTO,
     description: 'Retrieves workspace Linearity Injection record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getLinearityInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

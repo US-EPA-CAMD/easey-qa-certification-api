@@ -37,6 +37,10 @@ import { TransmitterTransducerAccuracy } from '../entities/transmitter-transduce
 import { TransmitterTransducerAccuracyService } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.service';
 import { HgSummary } from '../entities/hg-summary.entity';
 import { HgSummaryService } from '../hg-summary/hg-summary.service';
+import { AirEmissionTestingService } from '../air-emission-testing/air-emission-testing.service';
+import { TestQualificationService } from '../test-qualification/test-qualification.service';
+import { AirEmissionTesting } from '../entities/air-emission-test.entity';
+import { TestQualification } from '../entities/test-qualification.entity';
 
 const locationId = '121';
 const facilityId = 1;
@@ -112,6 +116,14 @@ const mockUnitDefaultTestService = () => ({
 
 const mockTransmitterTransducerAccuracyService = () => ({
   export: jest.fn().mockResolvedValue([new TransmitterTransducerAccuracy()]),
+});
+
+const mockAirEmissionTestingService = () => ({
+  export: jest.fn().mockResolvedValue([new AirEmissionTesting()]),
+});
+
+const mockTestQualificationService = () => ({
+  export: jest.fn().mockResolvedValue([new TestQualification()]),
 });
 
 const mockHgSummaryService = () => ({
@@ -190,6 +202,14 @@ describe('TestSummaryService', () => {
         {
           provide: TransmitterTransducerAccuracyService,
           useFactory: mockTransmitterTransducerAccuracyService,
+        },
+        {
+          provide: AirEmissionTestingService,
+          useFactory: mockAirEmissionTestingService,
+        },
+        {
+          provide: TestQualificationService,
+          useFactory: mockTestQualificationService,
         },
         {
           provide: HgSummaryService,

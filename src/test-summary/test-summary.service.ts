@@ -22,6 +22,8 @@ import { FuelFlowmeterAccuracyService } from '../fuel-flowmeter-accuracy/fuel-fl
 import { UnitDefaultTestService } from '../unit-default-test/unit-default-test.service';
 import { TransmitterTransducerAccuracyService } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.service';
 import { HgSummaryService } from '../hg-summary/hg-summary.service';
+import { AirEmissionTestingService } from '../air-emission-testing/air-emission-testing.service';
+import { TestQualificationService } from '../test-qualification/test-qualification.service';
 
 @Injectable()
 export class TestSummaryService {
@@ -60,6 +62,10 @@ export class TestSummaryService {
     private readonly transmitterTransducerAccuracyService: TransmitterTransducerAccuracyService,
     @Inject(forwardRef(() => HgSummaryService))
     private readonly hgSummaryService: HgSummaryService,
+    @Inject(forwardRef(() => AirEmissionTestingService))
+    private readonly airEmissionTestingService: AirEmissionTestingService,
+    @Inject(forwardRef(() => TestQualificationService))
+    private readonly testQualificationService: TestQualificationService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -135,6 +141,146 @@ export class TestSummaryService {
     return this.map.many(results);
   }
 
+  private async getAllChildrenData(testTypeCodes, testSummaries) {
+    let linearitySummaryData,
+      rataData,
+      protocolGasData,
+      fuelFlowToLoadTestData,
+      fuelFlowToLoadBaselineData,
+      fuelFlowmeterAccuracyData,
+      appECorrelationTestSummaryData,
+      calibrationInjectionData,
+      cycleTimeSummaryData,
+      flowToLoadCheckData,
+      flowToLoadReferenceData,
+      onlineOfflineCalibrationData,
+      unitDefaultTestData,
+      transmitterTransducerAccuracyData,
+      hgSummaryData,
+      testQualificationData,
+      airEmissionTestingData;
+
+    let testSumIds;
+
+    if (testTypeCodes?.length > 0) {
+      testSumIds = testSummaries.filter(i =>
+        testTypeCodes.includes(i.testTypeCode),
+      );
+    }
+
+    testSumIds = testSummaries.map(i => i.id);
+
+    if (testSumIds) {
+      linearitySummaryData = await this.linearityService.export(testSumIds);
+
+      rataData = await this.rataService.export(testSumIds);
+
+      protocolGasData = await this.protocolGasService.export(testSumIds);
+
+      fuelFlowToLoadTestData = await this.fuelFlowToLoadTestService.export(
+        testSumIds,
+      );
+
+      fuelFlowToLoadBaselineData = await this.fuelFlowToLoadBaselineService.export(
+        testSumIds,
+      );
+
+      flowToLoadCheckData = await this.flowToLoadCheckService.export(
+        testSumIds,
+      );
+
+      flowToLoadReferenceData = await this.flowLoadReferenceService.export(
+        testSumIds,
+      );
+
+      fuelFlowmeterAccuracyData = await this.fuelFlowmeterAccuracyService.export(
+        testSumIds,
+      );
+
+      appECorrelationTestSummaryData = await this.appECorrelationTestSummaryService.export(
+        testSumIds,
+      );
+
+      calibrationInjectionData = await this.calInjService.export(testSumIds);
+
+      onlineOfflineCalibrationData = await this.onlineOfflineCalibrationService.export(
+        testSumIds,
+      );
+
+      cycleTimeSummaryData = await this.cycleTimeSummaryService.export(
+        testSumIds,
+      );
+
+      unitDefaultTestData = await this.unitDefaultTestService.export(
+        testSumIds,
+      );
+
+      transmitterTransducerAccuracyData = await this.transmitterTransducerAccuracyService.export(
+        testSumIds,
+      );
+
+      testQualificationData = await this.testQualificationService.export(
+        testSumIds,
+      );
+
+      airEmissionTestingData = await this.airEmissionTestingService.export(
+        testSumIds,
+      );
+
+      hgSummaryData = await this.hgSummaryService.export(testSumIds);
+
+      testSummaries.forEach(s => {
+        s.linearitySummaryData = linearitySummaryData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.rataData = rataData.filter(i => i.testSumId === s.id);
+        s.protocolGasData = protocolGasData.filter(i => i.testSumId === s.id);
+        s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.fuelFlowToLoadBaselineData = fuelFlowToLoadBaselineData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.calibrationInjectionData = calibrationInjectionData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.flowToLoadCheckData = flowToLoadCheckData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.fuelFlowmeterAccuracyData = fuelFlowmeterAccuracyData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.onlineOfflineCalibrationData = onlineOfflineCalibrationData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.cycleTimeSummaryData = cycleTimeSummaryData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.unitDefaultTestData = unitDefaultTestData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.transmitterTransducerData = transmitterTransducerAccuracyData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.testQualificationData = testQualificationData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.airEmissionTestingData = airEmissionTestingData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.hgSummaryData = hgSummaryData.filter(i => i.testSumId === s.id);
+      });
+    }
+
+    return testSummaries;
+  }
+
   async export(
     facilityId: number,
     unitIds?: string[],
@@ -144,8 +290,6 @@ export class TestSummaryService {
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
-    const promises = [];
-
     const testSummaries = await this.getTestSummaries(
       facilityId,
       unitIds,
@@ -156,138 +300,6 @@ export class TestSummaryService {
       endDate,
     );
 
-    promises.push(
-      new Promise(async (resolve, _reject) => {
-        let linearitySummaryData,
-          rataData,
-          protocolGasData,
-          fuelFlowToLoadTestData,
-          fuelFlowToLoadBaselineData,
-          fuelFlowmeterAccuracyData,
-          appECorrelationTestSummaryData,
-          calibrationInjectionData,
-          cycleTimeSummaryData,
-          flowToLoadCheckData,
-          flowToLoadReferenceData,
-          onlineOfflineCalibrationData,
-          unitDefaultTestData,
-          transmitterTransducerAccuracyData,
-          hgSummaryData;
-
-        let testSumIds;
-
-        if (testTypeCodes?.length > 0) {
-          testSumIds = testSummaries.filter(i =>
-            testTypeCodes.includes(i.testTypeCode),
-          );
-        }
-
-        testSumIds = testSummaries.map(i => i.id);
-
-        if (testSumIds) {
-          linearitySummaryData = await this.linearityService.export(testSumIds);
-
-          rataData = await this.rataService.export(testSumIds);
-
-          protocolGasData = await this.protocolGasService.export(testSumIds);
-
-          fuelFlowToLoadTestData = await this.fuelFlowToLoadTestService.export(
-            testSumIds,
-          );
-
-          fuelFlowToLoadBaselineData = await this.fuelFlowToLoadBaselineService.export(
-            testSumIds,
-          );
-
-          flowToLoadCheckData = await this.flowToLoadCheckService.export(
-            testSumIds,
-          );
-
-          flowToLoadReferenceData = await this.flowLoadReferenceService.export(
-            testSumIds,
-          );
-
-          fuelFlowmeterAccuracyData = await this.fuelFlowmeterAccuracyService.export(
-            testSumIds,
-          );
-
-          appECorrelationTestSummaryData = await this.appECorrelationTestSummaryService.export(
-            testSumIds,
-          );
-
-          calibrationInjectionData = await this.calInjService.export(
-            testSumIds,
-          );
-
-          onlineOfflineCalibrationData = await this.onlineOfflineCalibrationService.export(
-            testSumIds,
-          );
-
-          cycleTimeSummaryData = await this.cycleTimeSummaryService.export(
-            testSumIds,
-          );
-
-          unitDefaultTestData = await this.unitDefaultTestService.export(
-            testSumIds,
-          );
-
-          transmitterTransducerAccuracyData = await this.transmitterTransducerAccuracyService.export(
-            testSumIds,
-          );
-
-          hgSummaryData = await this.hgSummaryService.export(testSumIds);
-
-          testSummaries.forEach(s => {
-            s.linearitySummaryData = linearitySummaryData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.rataData = rataData.filter(i => i.testSumId === s.id);
-            s.protocolGasData = protocolGasData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.fuelFlowToLoadBaselineData = fuelFlowToLoadBaselineData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.calibrationInjectionData = calibrationInjectionData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.flowToLoadCheckData = flowToLoadCheckData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.fuelFlowmeterAccuracyData = fuelFlowmeterAccuracyData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.onlineOfflineCalibrationData = onlineOfflineCalibrationData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.cycleTimeSummaryData = cycleTimeSummaryData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.unitDefaultTestData = unitDefaultTestData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.transmitterTransducerData = transmitterTransducerAccuracyData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.hgSummaryData = hgSummaryData.filter(i => i.testSumId === s.id);
-          });
-        }
-
-        resolve(testSummaries);
-      }),
-    );
-
-    await Promise.all(promises);
-
-    return testSummaries;
+    return this.getAllChildrenData(testTypeCodes, testSummaries);
   }
 }

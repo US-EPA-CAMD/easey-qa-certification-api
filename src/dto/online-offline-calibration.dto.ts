@@ -1,11 +1,17 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { ValidationArguments } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidationArguments,
+} from 'class-validator';
 
 const KEY = 'Online Offline Calibration';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class OnlineOfflineCalibrationBaseDTO {
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -17,16 +23,31 @@ export class OnlineOfflineCalibrationBaseDTO {
       );
     },
   })
-  onlineZeroInjectionDate: string;
+  onlineZeroInjectionDate?: string;
 
-  onlineZeroInjectionHour: number;
-  onlineZeroCalibrationError: number;
-  onlineZeroAPSIndicator: number;
-  onlineZeroMeasuredValue: number;
-  onlineZeroReferenceValue: number;
-  onlineUpscaleCalibrationError: number;
-  onlineUpscaleAPSIndicator: number;
+  @IsOptional()
+  @IsNumber()
+  onlineZeroInjectionHour?: number;
+  @IsOptional()
+  @IsNumber()
+  onlineZeroCalibrationError?: number;
+  @IsOptional()
+  @IsNumber()
+  onlineZeroAPSIndicator?: number;
+  @IsOptional()
+  @IsNumber()
+  onlineZeroMeasuredValue?: number;
+  @IsOptional()
+  @IsNumber()
+  onlineZeroReferenceValue?: number;
+  @IsOptional()
+  @IsNumber()
+  onlineUpscaleCalibrationError?: number;
+  @IsOptional()
+  @IsNumber()
+  onlineUpscaleAPSIndicator?: number;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -38,13 +59,24 @@ export class OnlineOfflineCalibrationBaseDTO {
       );
     },
   })
-  onlineUpscaleInjectionDate: string;
-  onlineUpscaleInjectionHour: number;
-  onlineUpscaleMeasuredValue: number;
-  onlineUpscaleReferenceValue: number;
-  offlineZeroCalibrationError: number;
-  offlineZeroAPSIndicator: number;
+  onlineUpscaleInjectionDate?: string;
+  @IsOptional()
+  @IsNumber()
+  onlineUpscaleInjectionHour?: number;
+  @IsOptional()
+  @IsNumber()
+  onlineUpscaleMeasuredValue?: number;
+  @IsOptional()
+  @IsNumber()
+  onlineUpscaleReferenceValue?: number;
+  @IsOptional()
+  @IsNumber()
+  offlineZeroCalibrationError?: number;
+  @IsOptional()
+  @IsNumber()
+  offlineZeroAPSIndicator?: number;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -56,13 +88,24 @@ export class OnlineOfflineCalibrationBaseDTO {
       );
     },
   })
-  offlineZeroInjectionDate: string;
-  offlineZeroInjectionHour: number;
-  offlineZeroMeasuredValue: number;
-  offlineZeroReferenceValue: number;
-  offlineUpscaleCalibrationError: number;
-  offlineUpscaleAPSIndicator: number;
+  offlineZeroInjectionDate?: string;
+  @IsOptional()
+  @IsNumber()
+  offlineZeroInjectionHour?: number;
+  @IsOptional()
+  @IsNumber()
+  offlineZeroMeasuredValue?: number;
+  @IsOptional()
+  @IsNumber()
+  offlineZeroReferenceValue?: number;
+  @IsOptional()
+  @IsNumber()
+  offlineUpscaleCalibrationError?: number;
+  @IsOptional()
+  @IsNumber()
+  offlineUpscaleAPSIndicator?: number;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -74,11 +117,19 @@ export class OnlineOfflineCalibrationBaseDTO {
       );
     },
   })
-  offlineUpscaleInjectionDate: string;
-  offlineUpscaleInjectionHour: number;
-  offlineUpscaleMeasuredValue: number;
-  offlineUpscaleReferenceValue: number;
-  upscaleGasLevelCode: string;
+  offlineUpscaleInjectionDate?: string;
+  @IsOptional()
+  @IsNumber()
+  offlineUpscaleInjectionHour?: number;
+  @IsOptional()
+  @IsNumber()
+  offlineUpscaleMeasuredValue?: number;
+  @IsOptional()
+  @IsNumber()
+  offlineUpscaleReferenceValue?: number;
+  @IsOptional()
+  @IsString()
+  upscaleGasLevelCode?: string;
 }
 
 export class OnlineOfflineCalibrationRecordDTO extends OnlineOfflineCalibrationBaseDTO {

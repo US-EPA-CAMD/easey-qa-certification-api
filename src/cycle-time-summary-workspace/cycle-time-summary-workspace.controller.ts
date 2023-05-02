@@ -38,7 +38,10 @@ export class CycleTimeSummaryWorkspaceController {
     description:
       'Retrieves workspace Cycle Time Summary records by Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getCycleTimeSummaries(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -52,7 +55,10 @@ export class CycleTimeSummaryWorkspaceController {
     type: CycleTimeSummaryDTO,
     description: 'Retrieves workspace Cycle Time Summary record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getCycleTimeSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,

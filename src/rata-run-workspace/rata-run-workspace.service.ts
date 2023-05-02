@@ -179,20 +179,13 @@ export class RataRunWorkspaceService {
     if (payload.flowRataRunData?.length > 0) {
       for (const flowRataRun of payload.flowRataRunData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.flowRataRunService.import(
-                testSumId,
-                createdRataRun.id,
-                flowRataRun,
-                userId,
-                isHistoricalRecord,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.flowRataRunService.import(
+            testSumId,
+            createdRataRun.id,
+            flowRataRun,
+            userId,
+            isHistoricalRecord,
+          ),
         );
       }
     }

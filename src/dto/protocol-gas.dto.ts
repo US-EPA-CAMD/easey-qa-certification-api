@@ -1,5 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, ValidationArguments } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidationArguments,
+} from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 
@@ -7,6 +13,7 @@ const KEY = 'Protocol Gas';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class ProtocolGasBaseDTO {
+  @IsString()
   gasLevelCode: string;
 
   @ApiProperty({
@@ -20,10 +27,16 @@ export class ProtocolGasBaseDTO {
       });
     },
   })
+  @IsString()
   gasTypeCode: string;
-  cylinderIdentifier: string;
-  vendorIdentifier: string;
+  @IsOptional()
+  @IsString()
+  cylinderIdentifier?: string;
+  @IsOptional()
+  @IsString()
+  vendorIdentifier?: string;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -35,7 +48,7 @@ export class ProtocolGasBaseDTO {
       );
     },
   })
-  expirationDate: Date;
+  expirationDate?: Date;
 }
 
 export class ProtocolGasRecordDTO extends ProtocolGasBaseDTO {

@@ -150,21 +150,14 @@ export class AppECorrelationTestSummaryWorkspaceService {
     if (payload.appECorrelationTestRunData?.length > 0) {
       for (const testRun of payload.appECorrelationTestRunData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.appECorrTestRunService.import(
-                locationId,
-                testSumId,
-                createdAppECorrelation.id,
-                testRun,
-                userId,
-                isHistoricalRecord,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.appECorrTestRunService.import(
+            locationId,
+            testSumId,
+            createdAppECorrelation.id,
+            testRun,
+            userId,
+            isHistoricalRecord,
+          ),
         );
       }
     }
@@ -189,6 +182,12 @@ export class AppECorrelationTestSummaryWorkspaceService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+
+    await this.testSummaryService.resetToNeedsEvaluation(
+      testSumId,
+      userId,
+      isImport,
+    );
   }
 
   async getAppECorrelationsByTestSumIds(

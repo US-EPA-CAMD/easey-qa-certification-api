@@ -1,13 +1,23 @@
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 import { HgInjectionDTO, HgInjectionImportDTO } from './hg-injection.dto';
 
 const KEY = 'Hg Test Summary';
 
 export class HgSummaryBaseDTO {
+  @IsString()
   gasLevelCode: string;
-  meanMeasuredValue: number;
-  meanReferenceValue: number;
-  percentError: number;
-  apsIndicator: number;
+  @IsOptional()
+  @IsNumber()
+  meanMeasuredValue?: number;
+  @IsOptional()
+  @IsNumber()
+  meanReferenceValue?: number;
+  @IsOptional()
+  @IsNumber()
+  percentError?: number;
+  @IsOptional()
+  @IsNumber()
+  apsIndicator?: number;
 }
 
 export class HgSummaryRecordDTO extends HgSummaryBaseDTO {

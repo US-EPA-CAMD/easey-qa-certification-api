@@ -49,6 +49,11 @@ import { UnitDefaultTest } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 import { HgSummary } from '../entities/workspace/hg-summary.entity';
 import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-workspace.service';
+import { AirEmissionTesting } from '../entities/workspace/air-emission-test.entity';
+import { TestQualification } from '../entities/workspace/test-qualification.entity';
+import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
+import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 const locationId = '121';
 const facilityId = 1;
@@ -154,6 +159,16 @@ const mockUnitDefaultTestWorkspaceService = () => ({
   import: jest.fn().mockResolvedValue(null),
 });
 
+const mockAirEmissionTestingWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new AirEmissionTesting()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
+const mockTestQualificationWorkspaceService = () => ({
+  export: jest.fn().mockResolvedValue([new TestQualification()]),
+  import: jest.fn().mockResolvedValue(null),
+});
+
 const mockHgSummaryWorkspaceService = () => ({
   export: jest.fn().mockResolvedValue([new HgSummary()]),
   import: jest.fn().mockResolvedValue(null),
@@ -177,6 +192,8 @@ describe('TestSummaryWorkspaceService', () => {
   let service: TestSummaryWorkspaceService;
   let repository: TestSummaryWorkspaceRepository;
   let locationRepository: MonitorLocationRepository;
+  let monitorSystemRepository: MonitorSystemRepository;
+  let monitorSystemWorkspaceRepository: MonitorSystemWorkspaceRepository;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -248,6 +265,12 @@ describe('TestSummaryWorkspaceService', () => {
           }),
         },
         {
+          provide: MonitorSystemWorkspaceRepository,
+          useFactory: () => ({
+            findOne: jest.fn().mockResolvedValue(ms),
+          }),
+        },
+        {
           provide: ComponentWorkspaceRepository,
           useFactory: () => ({
             findOne: jest.fn().mockResolvedValue(comp),
@@ -274,6 +297,14 @@ describe('TestSummaryWorkspaceService', () => {
           useFactory: mockUnitDefaultTestWorkspaceService,
         },
         {
+          provide: AirEmissionTestingWorkspaceService,
+          useFactory: mockAirEmissionTestingWorkspaceService,
+        },
+        {
+          provide: TestQualificationWorkspaceService,
+          useFactory: mockTestQualificationWorkspaceService,
+        },
+        {
           provide: HgSummaryWorkspaceService,
           useFactory: mockHgSummaryWorkspaceService,
         },
@@ -283,6 +314,9 @@ describe('TestSummaryWorkspaceService', () => {
     service = module.get(TestSummaryWorkspaceService);
     repository = module.get(TestSummaryWorkspaceRepository);
     locationRepository = module.get(MonitorLocationRepository);
+    monitorSystemWorkspaceRepository = module.get(
+      MonitorSystemWorkspaceRepository,
+    );
   });
 
   describe('getTestSummaryById', () => {
@@ -453,6 +487,25 @@ describe('TestSummaryWorkspaceService', () => {
       const result = await service.lookupValues(locationId, payload);
 
       expect(result).toEqual([1, '1', '1']);
+    });
+
+    it('should return reportPeriodId, componentRecordId, monitorSystem from a workspace monitor system record', async () => {
+      payload.year = 2022;
+      payload.quarter = 1;
+      payload.componentID = '1';
+      payload.monitoringSystemID = 'abc';
+
+      const monSysData = new MonitorSystem();
+      monSysData.id = '1';
+
+      const monSysWksFindOne = jest
+        .spyOn(monitorSystemWorkspaceRepository, 'findOne')
+        .mockResolvedValue(monSysData);
+
+      const result = await service.lookupValues(locationId, payload);
+
+      expect(result).toEqual([1, '1', '1']);
+      expect(monSysWksFindOne).toHaveBeenCalled();
     });
   });
 

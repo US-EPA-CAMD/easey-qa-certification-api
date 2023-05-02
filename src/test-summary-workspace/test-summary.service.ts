@@ -44,6 +44,9 @@ import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accurac
 import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-workspace.service';
+import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
+import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -68,8 +71,8 @@ export class TestSummaryWorkspaceService {
     private readonly monitorLocationRepository: MonitorLocationRepository,
     @InjectRepository(ComponentWorkspaceRepository)
     private readonly componentRepository: ComponentWorkspaceRepository,
-    @InjectRepository(MonitorSystemRepository)
-    private readonly monSysRepository: MonitorSystemRepository,
+    @InjectRepository(MonitorSystemWorkspaceRepository)
+    private readonly monSysWorkspaceRepository: MonitorSystemWorkspaceRepository,
     @InjectRepository(ReportingPeriodRepository)
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
     @Inject(forwardRef(() => FuelFlowToLoadBaselineWorkspaceService))
@@ -90,6 +93,10 @@ export class TestSummaryWorkspaceService {
     private readonly unitDefaultTestWorkspaceService: UnitDefaultTestWorkspaceService,
     @Inject(forwardRef(() => HgSummaryWorkspaceService))
     private readonly hgSummaryWorkspaceService: HgSummaryWorkspaceService,
+    @Inject(forwardRef(() => AirEmissionTestingWorkspaceService))
+    private readonly airEmissionTestingWorkspaceService: AirEmissionTestingWorkspaceService,
+    @Inject(forwardRef(() => TestQualificationWorkspaceService))
+    private readonly testQualificationWorkspaceService: TestQualificationWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -165,6 +172,148 @@ export class TestSummaryWorkspaceService {
     return this.map.many(results);
   }
 
+  private async getAllChildrenData(testTypeCodes, testSummaries) {
+    let linearitySummaryData,
+      rataData,
+      protocolGasData,
+      fuelFlowToLoadTestData,
+      fuelFlowToLoadBaselineData,
+      fuelFlowmeterAccuracyData,
+      calibrationInjectionData,
+      cycleTimeSummaryData,
+      flowToLoadCheckData,
+      flowToLoadReferenceData,
+      appECorrelationTestSummaryData,
+      onlineOfflineCalibrationData,
+      unitDefaultTestData,
+      transmitterTransducerAccuracyData,
+      hgSummaryData,
+      testQualificationData,
+      airEmissionTestingData;
+
+    let testSumIds;
+
+    if (testTypeCodes?.length > 0) {
+      testSumIds = testSummaries.filter(i =>
+        testTypeCodes.includes(i.testTypeCode),
+      );
+    }
+
+    testSumIds = testSummaries.map(i => i.id);
+
+    if (testSumIds) {
+      linearitySummaryData = await this.linearityService.export(testSumIds);
+
+      rataData = await this.rataService.export(testSumIds);
+
+      protocolGasData = await this.protocolGasService.export(testSumIds);
+
+      appECorrelationTestSummaryData = await this.appECorrelationTestSummaryWorkspaceService.export(
+        testSumIds,
+      );
+
+      fuelFlowToLoadTestData = await this.fuelFlowToLoadTestWorkspaceService.export(
+        testSumIds,
+      );
+
+      fuelFlowToLoadBaselineData = await this.fuelFlowToLoadBaselineWorkspaceService.export(
+        testSumIds,
+      );
+
+      fuelFlowmeterAccuracyData = await this.fuelFlowmeterAccuracyWorkspaceService.export(
+        testSumIds,
+      );
+
+      calibrationInjectionData = await this.calInjWorkspaceService.export(
+        testSumIds,
+      );
+
+      flowToLoadCheckData = await this.flowToLoadCheckWorkspaceService.export(
+        testSumIds,
+      );
+
+      flowToLoadReferenceData = await this.flowToLoadReferenceWorkspaceService.export(
+        testSumIds,
+      );
+
+      onlineOfflineCalibrationData = await this.onlineOfflineCalibrationWorkspaceService.export(
+        testSumIds,
+      );
+
+      cycleTimeSummaryData = await this.cycleTimeSummaryWorkspaceService.export(
+        testSumIds,
+      );
+
+      unitDefaultTestData = await this.unitDefaultTestWorkspaceService.export(
+        testSumIds,
+      );
+
+      transmitterTransducerAccuracyData = await this.transmitterTransducerAccuracyWorkspaceService.export(
+        testSumIds,
+      );
+
+      testQualificationData = await this.testQualificationWorkspaceService.export(
+        testSumIds,
+      );
+
+      airEmissionTestingData = await this.airEmissionTestingWorkspaceService.export(
+        testSumIds,
+      );
+
+      hgSummaryData = await this.hgSummaryWorkspaceService.export(testSumIds);
+
+      testSummaries.forEach(s => {
+        s.linearitySummaryData = linearitySummaryData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.rataData = rataData.filter(i => i.testSumId === s.id);
+        s.protocolGasData = protocolGasData.filter(i => i.testSumId === s.id);
+        s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.fuelFlowToLoadBaselineData = fuelFlowToLoadBaselineData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.calibrationInjectionData = calibrationInjectionData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.flowToLoadCheckData = flowToLoadCheckData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.fuelFlowmeterAccuracyData = fuelFlowmeterAccuracyData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.onlineOfflineCalibrationData = onlineOfflineCalibrationData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.cycleTimeSummaryData = cycleTimeSummaryData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.unitDefaultTestData = unitDefaultTestData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.transmitterTransducerData = transmitterTransducerAccuracyData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.testQualificationData = testQualificationData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.airEmissionTestingData = airEmissionTestingData.filter(
+          i => i.testSumId === s.id,
+        );
+        s.hgSummaryData = hgSummaryData.filter(i => i.testSumId === s.id);
+      });
+    }
+
+    return testSummaries;
+  }
+
   async export(
     facilityId: number,
     unitIds?: string[],
@@ -174,8 +323,6 @@ export class TestSummaryWorkspaceService {
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
-    const promises = [];
-
     const testSummaries = await this.getTestSummaries(
       facilityId,
       unitIds,
@@ -186,140 +333,7 @@ export class TestSummaryWorkspaceService {
       endDate,
     );
 
-    promises.push(
-      new Promise(async (resolve, _reject) => {
-        let linearitySummaryData,
-          rataData,
-          protocolGasData,
-          fuelFlowToLoadTestData,
-          fuelFlowToLoadBaselineData,
-          fuelFlowmeterAccuracyData,
-          calibrationInjectionData,
-          cycleTimeSummaryData,
-          flowToLoadCheckData,
-          flowToLoadReferenceData,
-          appECorrelationTestSummaryData,
-          onlineOfflineCalibrationData,
-          unitDefaultTestData,
-          transmitterTransducerAccuracyData,
-          hgSummaryData;
-
-        let testSumIds;
-
-        if (testTypeCodes?.length > 0) {
-          testSumIds = testSummaries.filter(i =>
-            testTypeCodes.includes(i.testTypeCode),
-          );
-        }
-
-        testSumIds = testSummaries.map(i => i.id);
-
-        if (testSumIds) {
-          linearitySummaryData = await this.linearityService.export(testSumIds);
-
-          rataData = await this.rataService.export(testSumIds);
-
-          protocolGasData = await this.protocolGasService.export(testSumIds);
-
-          appECorrelationTestSummaryData = await this.appECorrelationTestSummaryWorkspaceService.export(
-            testSumIds,
-          );
-
-          fuelFlowToLoadTestData = await this.fuelFlowToLoadTestWorkspaceService.export(
-            testSumIds,
-          );
-
-          fuelFlowToLoadBaselineData = await this.fuelFlowToLoadBaselineWorkspaceService.export(
-            testSumIds,
-          );
-
-          fuelFlowmeterAccuracyData = await this.fuelFlowmeterAccuracyWorkspaceService.export(
-            testSumIds,
-          );
-
-          calibrationInjectionData = await this.calInjWorkspaceService.export(
-            testSumIds,
-          );
-
-          flowToLoadCheckData = await this.flowToLoadCheckWorkspaceService.export(
-            testSumIds,
-          );
-
-          flowToLoadReferenceData = await this.flowToLoadReferenceWorkspaceService.export(
-            testSumIds,
-          );
-
-          onlineOfflineCalibrationData = await this.onlineOfflineCalibrationWorkspaceService.export(
-            testSumIds,
-          );
-
-          cycleTimeSummaryData = await this.cycleTimeSummaryWorkspaceService.export(
-            testSumIds,
-          );
-
-          unitDefaultTestData = await this.unitDefaultTestWorkspaceService.export(
-            testSumIds,
-          );
-
-          transmitterTransducerAccuracyData = await this.transmitterTransducerAccuracyWorkspaceService.export(
-            testSumIds,
-          );
-
-          hgSummaryData = await this.hgSummaryWorkspaceService.export(
-            testSumIds,
-          );
-
-          testSummaries.forEach(s => {
-            s.linearitySummaryData = linearitySummaryData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.rataData = rataData.filter(i => i.testSumId === s.id);
-            s.protocolGasData = protocolGasData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.fuelFlowToLoadBaselineData = fuelFlowToLoadBaselineData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.calibrationInjectionData = calibrationInjectionData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.flowToLoadCheckData = flowToLoadCheckData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.fuelFlowmeterAccuracyData = fuelFlowmeterAccuracyData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.onlineOfflineCalibrationData = onlineOfflineCalibrationData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.cycleTimeSummaryData = cycleTimeSummaryData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.unitDefaultTestData = unitDefaultTestData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.transmitterTransducerData = transmitterTransducerAccuracyData.filter(
-              i => i.testSumId === s.id,
-            );
-            s.hgSummaryData = hgSummaryData.filter(i => i.testSumId === s.id);
-          });
-        }
-
-        resolve(testSummaries);
-      }),
-    );
-
-    await Promise.all(promises);
-    return testSummaries;
+    return this.getAllChildrenData(testTypeCodes, testSummaries);
   }
 
   async import(
@@ -357,19 +371,12 @@ export class TestSummaryWorkspaceService {
     ) {
       for (const linearitySummary of payload.linearitySummaryData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.linearityService.import(
-                createdTestSummary.id,
-                linearitySummary,
-                userId,
-                historicalrecordId !== null ? true : false,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.linearityService.import(
+            createdTestSummary.id,
+            linearitySummary,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
         );
       }
     }
@@ -380,19 +387,12 @@ export class TestSummaryWorkspaceService {
     ) {
       for (const rata of payload.rataData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.rataService.import(
-                createdTestSummary.id,
-                rata,
-                userId,
-                historicalrecordId !== null ? true : false,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.rataService.import(
+            createdTestSummary.id,
+            rata,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
         );
       }
     }
@@ -408,19 +408,12 @@ export class TestSummaryWorkspaceService {
     ) {
       for (const protocolGas of payload.protocolGasData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.protocolGasService.import(
-                createdTestSummary.id,
-                protocolGas,
-                userId,
-                historicalrecordId !== null ? true : false,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.protocolGasService.import(
+            createdTestSummary.id,
+            protocolGas,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
         );
       }
     }
@@ -431,19 +424,12 @@ export class TestSummaryWorkspaceService {
     ) {
       for (const fuelFlowToLoadTest of payload.fuelFlowToLoadTestData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.fuelFlowToLoadTestWorkspaceService.import(
-                createdTestSummary.id,
-                fuelFlowToLoadTest,
-                userId,
-                historicalrecordId !== null ? true : false,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.fuelFlowToLoadTestWorkspaceService.import(
+            createdTestSummary.id,
+            fuelFlowToLoadTest,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
         );
       }
     }
@@ -454,19 +440,12 @@ export class TestSummaryWorkspaceService {
     ) {
       for (const flowToLoadCheck of payload.flowToLoadCheckData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.flowToLoadCheckWorkspaceService.import(
-                createdTestSummary.id,
-                flowToLoadCheck,
-                userId,
-                historicalrecordId !== null ? true : false,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.flowToLoadCheckWorkspaceService.import(
+            createdTestSummary.id,
+            flowToLoadCheck,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
         );
       }
     }
@@ -477,19 +456,12 @@ export class TestSummaryWorkspaceService {
     ) {
       for (const fuelFlowToLoadBaseline of payload.fuelFlowToLoadBaselineData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.fuelFlowToLoadBaselineWorkspaceService.import(
-                createdTestSummary.id,
-                fuelFlowToLoadBaseline,
-                userId,
-                historicalrecordId !== null ? true : false,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.fuelFlowToLoadBaselineWorkspaceService.import(
+            createdTestSummary.id,
+            fuelFlowToLoadBaseline,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
         );
       }
     }
@@ -500,19 +472,12 @@ export class TestSummaryWorkspaceService {
     ) {
       for (const fuelFlowmeterAccuracy of payload.fuelFlowmeterAccuracyData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.fuelFlowmeterAccuracyWorkspaceService.import(
-                createdTestSummary.id,
-                fuelFlowmeterAccuracy,
-                userId,
-                historicalrecordId !== null ? true : false,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.fuelFlowmeterAccuracyWorkspaceService.import(
+            createdTestSummary.id,
+            fuelFlowmeterAccuracy,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
         );
       }
     }
@@ -523,19 +488,12 @@ export class TestSummaryWorkspaceService {
     ) {
       for (const flowToLoadReference of payload.flowToLoadReferenceData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.flowToLoadReferenceWorkspaceService.import(
-                createdTestSummary.id,
-                flowToLoadReference,
-                userId,
-                historicalrecordId !== null ? true : false,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.flowToLoadReferenceWorkspaceService.import(
+            createdTestSummary.id,
+            flowToLoadReference,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
         );
       }
     }
@@ -546,20 +504,13 @@ export class TestSummaryWorkspaceService {
     ) {
       for (const appECorrelationTestSummary of payload.appECorrelationTestSummaryData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.appECorrelationTestSummaryWorkspaceService.import(
-                locationId,
-                createdTestSummary.id,
-                appECorrelationTestSummary,
-                userId,
-                historicalrecordId !== null ? true : false,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.appECorrelationTestSummaryWorkspaceService.import(
+            locationId,
+            createdTestSummary.id,
+            appECorrelationTestSummary,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
         );
       }
     }
@@ -570,19 +521,12 @@ export class TestSummaryWorkspaceService {
     ) {
       for (const calibrationInjection of payload.calibrationInjectionData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.calInjWorkspaceService.import(
-                createdTestSummary.id,
-                calibrationInjection,
-                userId,
-                historicalrecordId !== null ? true : false,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.calInjWorkspaceService.import(
+            createdTestSummary.id,
+            calibrationInjection,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
         );
       }
     }
@@ -593,19 +537,12 @@ export class TestSummaryWorkspaceService {
     ) {
       for (const cycleTimeSummary of payload.cycleTimeSummaryData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.cycleTimeSummaryWorkspaceService.import(
-                createdTestSummary.id,
-                cycleTimeSummary,
-                userId,
-                historicalrecordId !== null ? true : false,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.cycleTimeSummaryWorkspaceService.import(
+            createdTestSummary.id,
+            cycleTimeSummary,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
         );
       }
     }
@@ -616,19 +553,12 @@ export class TestSummaryWorkspaceService {
     ) {
       for (const onlineOfflineCalibration of payload.onlineOfflineCalibrationData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.onlineOfflineCalibrationWorkspaceService.import(
-                createdTestSummary.id,
-                onlineOfflineCalibration,
-                userId,
-                historicalrecordId !== null ? true : false,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.onlineOfflineCalibrationWorkspaceService.import(
+            createdTestSummary.id,
+            onlineOfflineCalibration,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
         );
       }
     }
@@ -639,19 +569,12 @@ export class TestSummaryWorkspaceService {
     ) {
       for (const transmitterTransducerAccuracy of payload.transmitterTransducerData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.transmitterTransducerAccuracyWorkspaceService.import(
-                createdTestSummary.id,
-                transmitterTransducerAccuracy,
-                userId,
-                historicalrecordId !== null ? true : false,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.transmitterTransducerAccuracyWorkspaceService.import(
+            createdTestSummary.id,
+            transmitterTransducerAccuracy,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
         );
       }
     }
@@ -662,19 +585,12 @@ export class TestSummaryWorkspaceService {
     ) {
       for (const unitDefaultTest of payload.unitDefaultTestData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.unitDefaultTestWorkspaceService.import(
-                createdTestSummary.id,
-                unitDefaultTest,
-                userId,
-                historicalrecordId !== null ? true : false,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.unitDefaultTestWorkspaceService.import(
+            createdTestSummary.id,
+            unitDefaultTest,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
         );
       }
     }
@@ -686,19 +602,48 @@ export class TestSummaryWorkspaceService {
     ) {
       for (const hgSummary of payload.hgSummaryData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.hgSummaryWorkspaceService.import(
-                createdTestSummary.id,
-                hgSummary,
-                userId,
-                historicalrecordId !== null ? true : false,
-              ),
-            );
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.hgSummaryWorkspaceService.import(
+            createdTestSummary.id,
+            hgSummary,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
+        );
+      }
+    }
+
+    if (
+      payload.testQualificationData?.length > 0 &&
+      [TestTypeCodes.RATA.toString()].includes(payload.testTypeCode)
+    ) {
+      for (const testQualification of payload.testQualificationData) {
+        promises.push(
+          this.testQualificationWorkspaceService.import(
+            createdTestSummary.id,
+            testQualification,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
+        );
+      }
+    }
+
+    if (
+      payload.airEmissionTestingData?.length > 0 &&
+      [
+        TestTypeCodes.RATA.toString(),
+        TestTypeCodes.UNITDEF.toString(),
+        TestTypeCodes.APPE.toString(),
+      ].includes(payload.testTypeCode)
+    ) {
+      for (const airEmissionTesting of payload.airEmissionTestingData) {
+        promises.push(
+          this.airEmissionTestingWorkspaceService.import(
+            createdTestSummary.id,
+            airEmissionTesting,
+            userId,
+            historicalrecordId !== null ? true : false,
+          ),
         );
       }
     }
@@ -884,10 +829,11 @@ export class TestSummaryWorkspaceService {
     }
 
     if (payload.monitoringSystemID) {
-      const monitorSystem = await this.monSysRepository.findOne({
+      const monitorSystem = await this.monSysWorkspaceRepository.findOne({
         locationId: locationId,
         monitoringSystemID: payload.monitoringSystemID,
       });
+
       monitoringSystemRecordId = monitorSystem ? monitorSystem.id : null;
     }
 

@@ -1,6 +1,13 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
-import { IsNotEmpty, ValidationArguments } from 'class-validator';
+import {
+  IsDateString,
+  IsNotEmpty,
+  IsNumber,
+  ValidationArguments,
+  IsString,
+  IsOptional,
+} from 'class-validator';
 import { PressureMeasureCode } from '../entities/workspace/pressure-measure-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 
@@ -11,6 +18,7 @@ const MIN_TSTACK_TEMP = 0;
 const MAX_TSTACK_TEMP = 1000;
 
 export class RataTraverseBaseDTO {
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-71-A', {
@@ -19,8 +27,10 @@ export class RataTraverseBaseDTO {
       });
     },
   })
-  probeID: string;
+  @IsString()
+  probeID?: string;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-72-A', {
@@ -29,8 +39,10 @@ export class RataTraverseBaseDTO {
       });
     },
   })
-  probeTypeCode: string;
+  @IsString()
+  probeTypeCode?: string;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-73-A', {
@@ -48,7 +60,7 @@ export class RataTraverseBaseDTO {
       });
     },
   })
-  pressureMeasureCode: string;
+  pressureMeasureCode?: string;
 
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -58,8 +70,10 @@ export class RataTraverseBaseDTO {
       });
     },
   })
+  @IsString()
   methodTraversePointID: string;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-74-A', {
@@ -85,8 +99,9 @@ export class RataTraverseBaseDTO {
     true,
     true,
   )
-  velocityCalibrationCoefficient: number;
+  velocityCalibrationCoefficient?: number;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-75-A', {
@@ -95,11 +110,17 @@ export class RataTraverseBaseDTO {
       });
     },
   })
-  lastProbeDate: Date;
+  @IsDateString()
+  lastProbeDate?: Date;
 
-  avgVelDiffPressure: number;
-  avgSquareVelDiffPressure: number;
+  @IsOptional()
+  @IsNumber()
+  avgVelDiffPressure?: number;
+  @IsOptional()
+  @IsNumber()
+  avgSquareVelDiffPressure?: number;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-77-A', {
@@ -125,13 +146,25 @@ export class RataTraverseBaseDTO {
     true,
     true,
   )
-  tStackTemperature: number;
-  pointUsedIndicator: number;
-  numberWallEffectsPoints: number;
-  yawAngle: number;
-  pitchAngle: number;
-  calculatedVelocity: number;
-  replacementVelocity: number;
+  tStackTemperature?: number;
+  @IsOptional()
+  @IsNumber()
+  pointUsedIndicator?: number;
+  @IsOptional()
+  @IsNumber()
+  numberWallEffectsPoints?: number;
+  @IsOptional()
+  @IsNumber()
+  yawAngle?: number;
+  @IsOptional()
+  @IsNumber()
+  pitchAngle?: number;
+  @IsOptional()
+  @IsNumber()
+  calculatedVelocity?: number;
+  @IsOptional()
+  @IsNumber()
+  replacementVelocity?: number;
 }
 
 export class RataTraverseRecordDTO extends RataTraverseBaseDTO {

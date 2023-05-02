@@ -42,7 +42,10 @@ export class AppEHeatInputFromGasWorkspaceController {
     description:
       'Retrieves a workspace Appendix E Heat Input From Gas records by Appendix E Correlation Test Run Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getAppEHeatInputFromGases(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -58,7 +61,10 @@ export class AppEHeatInputFromGasWorkspaceController {
     type: AppEHeatInputFromGasRecordDTO,
     description: `Retrieves a workspace Appendix E Heat Input From Gas record by it's Id`,
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getAppEHeatInputFromGas(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

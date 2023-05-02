@@ -38,7 +38,10 @@ export class CalibrationInjectionWorkspaceController {
     description:
       'Retrieves workspace Calibration Injection records by Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getCalibrationInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -52,7 +55,10 @@ export class CalibrationInjectionWorkspaceController {
     type: CalibrationInjectionDTO,
     description: 'Retrieves workspace Calibration Injection record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getCalibrationInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,

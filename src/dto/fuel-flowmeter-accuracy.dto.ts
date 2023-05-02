@@ -1,15 +1,29 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { ValidationArguments } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidationArguments,
+} from 'class-validator';
 
 const KEY = 'Fuel Flowmeter Accuracy';
 const DATE_FORMAT = 'YYYY-MM-DD';
 export class FuelFlowmeterAccuracyBaseDTO {
-  accuracyTestMethodCode: string;
-  lowFuelAccuracy: number;
-  midFuelAccuracy: number;
-  highFuelAccuracy: number;
+  @IsOptional()
+  @IsString()
+  accuracyTestMethodCode?: string;
+  @IsOptional()
+  @IsNumber()
+  lowFuelAccuracy?: number;
+  @IsOptional()
+  @IsNumber()
+  midFuelAccuracy?: number;
+  @IsOptional()
+  @IsNumber()
+  highFuelAccuracy?: number;
 
+  @IsOptional()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -21,8 +35,10 @@ export class FuelFlowmeterAccuracyBaseDTO {
       );
     },
   })
-  reinstallationDate: string;
-  reinstallationHour: number;
+  reinstallationDate?: Date;
+  @IsOptional()
+  @IsNumber()
+  reinstallationHour?: number;
 }
 
 export class FuelFlowmeterAccuracyRecordDTO extends FuelFlowmeterAccuracyBaseDTO {

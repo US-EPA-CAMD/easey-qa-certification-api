@@ -3,6 +3,7 @@ import {
   ValidationArguments,
   IsNotEmpty,
   IsOptional,
+  IsString,
   ValidateNested,
 } from 'class-validator';
 
@@ -99,9 +100,7 @@ import {
   VALID_CODES_FOR_MON_SYS_ID_VALIDATION,
   YEAR_QUARTER_TEST_TYPE_CODES,
   GRACE_PERIOD_IND_TEST_TYPE_CODES,
-  VALID_CODES_FOR_END_DATE_VALIDATION,
-  BEGIN_MINUTE_TEST_TYPE_CODES,
-  MISC_TEST_TYPE_CODES,
+  MISC_TEST_TYPE_CODES, VALID_CODES_FOR_END_DATE_VALIDATION,
 } from '../utilities/constants';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
@@ -130,19 +129,31 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Stack Pipe Identifier. ADD TO PROPERTY METADATA',
   })
+  @ValidateIf(o => !o.unitId)
   @RequireOne('unitId', {
     message:
       'A Unit or Stack Pipe identifier (NOT both) must be provided for each Test Summary.',
   })
-  stackPipeId?: string;
+  @IsString()
+  stackPipeId: string;
 
   @ApiProperty({
     description: propertyMetadata.unitId.description,
   })
-  unitId?: string;
+  @ValidateIf(o => !o.stackPipeId)
+  @IsString()
+  unitId: string;
 
   @ApiProperty({
     description: 'Test Type Code. ADD TO PROPERTY METADATA',
+  })
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('TEST-12-A', {
+      fieldname: args.property,
+      key: KEY,
+      });
+    }
   })
   @IsValidCode(TestTypeCode, {
     message: (args: ValidationArguments) => {
@@ -163,6 +174,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOId.description,
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       let resultCode;
@@ -203,11 +215,13 @@ export class TestSummaryBaseDTO {
   @ValidateIf(o =>
     VALID_CODES_FOR_MON_SYS_ID_VALIDATION.includes(o.testTypeCode),
   )
+  @IsString()
   monitoringSystemID?: string;
 
   @ApiProperty({
     description: propertyMetadata.componentDTOComponentId.description,
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       let resultCode;
@@ -248,11 +262,13 @@ export class TestSummaryBaseDTO {
   @ValidateIf(o =>
     VALID_CODES_FOR_COMPONENT_ID_VALIDATION.includes(o.testTypeCode),
   )
+  @IsString()
   componentID?: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSpanDTOSpanScaleCode.description,
   })
+  @IsOptional()
   @IsValidCode(SpanScaleCode, {
     message: (args: ValidationArguments) => {
       return `You reported an invalid Span Scale Code of [${
@@ -296,11 +312,13 @@ export class TestSummaryBaseDTO {
       });
     },
   })
+  @IsString()
   testNumber: string;
 
   @ApiProperty({
     description: 'Test Reason Code. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       let resultCode;
@@ -358,12 +376,14 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Test Description. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @ValidateIf(o => [TestTypeCodes.OTHER].includes(o.testTypeCode))
   testDescription?: string;
 
   @ApiProperty({
     description: 'Test Result Code. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       let resultCode;
@@ -422,22 +442,13 @@ export class TestSummaryBaseDTO {
   testResultCode?: string;
 
   @ApiProperty(getMetadata(dataDictionary.beginDate, MetadataKeys.TEST_SUMMARY))
+  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-1-A`, {
         fieldname: args.property,
         key: KEY,
       });
-    },
-  })
-  @IsValidDate({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `Begin Date must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [value]`,
-        {
-          value: args.value,
-        },
-      );
     },
   })
   @IsIsoFormat({
@@ -460,12 +471,12 @@ export class TestSummaryBaseDTO {
       });
     },
   })
-  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginDate?: Date;
 
   @ApiProperty({
     description: 'Begin Hour. ADD TO PROPERTY METADATA',
   })
+  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-2-A`, {
@@ -485,19 +496,10 @@ export class TestSummaryBaseDTO {
       });
     },
   })
-  @ValidateIf(o => BEGIN_DATE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginHour?: number;
 
   @ApiProperty({
     description: 'Begin Minute. ADD TO PROPERTY METADATA',
-  })
-  @IsNotEmpty({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(`TEST-3-A`, {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
   })
   @IsInRange(MIN_MINUTE, MAX_MINUTE, {
     message: (args: ValidationArguments) => {
@@ -510,15 +512,12 @@ export class TestSummaryBaseDTO {
       });
     },
   })
-  @ValidateIf(o => BEGIN_MINUTE_TEST_TYPE_CODES.includes(o.testTypeCode))
   beginMinute?: number;
 
   @ApiProperty({
     description: propertyMetadata.endDate.description,
   })
-  @IsValidDate({
-    message: ErrorMessages.DateValidity(),
-  })
+  @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-4-A`, {
@@ -547,11 +546,19 @@ export class TestSummaryBaseDTO {
       });
     },
   })
-  @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
   endDate?: Date;
 
   @ApiProperty({
     description: 'End Hour. ADD TO PROPERTY METADATA',
+  })
+  @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(`TEST-5-A`, {
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
   })
   @IsInRange(MIN_HOUR, MAX_HOUR, {
     message: (args: ValidationArguments) => {
@@ -564,28 +571,12 @@ export class TestSummaryBaseDTO {
       });
     },
   })
-  @IsNotEmpty({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(`TEST-5-A`, {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
-  @ValidateIf(o => VALID_CODES_FOR_END_DATE_VALIDATION.includes(o.testTypeCode))
   endHour?: number;
 
   @ApiProperty({
     description: 'End Minute. ADD TO PROPERTY METADATA',
   })
-  @IsNotEmpty({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage(`TEST-6-A`, {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
+  @IsOptional()
   @IsInRange(MIN_MINUTE, MAX_MINUTE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-6-C`, {
@@ -597,14 +588,12 @@ export class TestSummaryBaseDTO {
       });
     },
   })
-  @ValidateIf(o =>
-    VALID_CODES_FOR_END_MINUTE_VALIDATION.includes(o.testTypeCode),
-  )
   endMinute?: number;
 
   @ApiProperty({
     description: 'Grace Period Indicator. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -626,19 +615,16 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.year.description,
   })
+  @IsOptional()
   @IsInRange(1993, new Date().getFullYear(), {
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `Year must be greater than or equal to 1993 and less than or equal to ${new Date().getFullYear()}. You reported an invalid year of [${
-          args.value
-        }] in Test Summary record for Unit/Stack [${
-          args.object['unitId']
-            ? args.object['unitId']
-            : args.object['stackPipeId']
-        }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-          args.object['testNumber']
-        }]`,
-      );
+      return CheckCatalogService.formatResultMessage('IMPORT-34-A', {
+        locationID: args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId'],
+        testTypeCode: args.object['testTypeCode'],
+        testNumber: args.object['testNumber'],
+      });
     },
   })
   @ValidateIf(o => YEAR_QUARTER_TEST_TYPE_CODES.includes(o.testTypeCode))
@@ -647,18 +633,19 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.quarter.description,
   })
+  @IsOptional()
   @IsInRange(1, 4, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `Quarter must be a numeric number from 1 to 4. You reported an invalid quarter of [${
-          args.value
-        }] in Test Summary record for Unit/Stack [${
-          args.object['unitId']
+        `You reported an invalid quarter of [value] in Test Summary record for location [locationID], Test Type Code [testTypeCode], and Test Number [testNumber]. Quarter must be a numeric number from 1 to 4.`,
+        {
+          value: args.value,
+          locationID: args.object['unitId']
             ? args.object['unitId']
-            : args.object['stackPipeId']
-        }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-          args.object['testNumber']
-        }]`,
+            : args.object['stackPipeId'],
+          testTypeCode: args.object['testTypeCode'],
+          testNumber: args.object['testNumber'],
+        },
       );
     },
   })
@@ -669,11 +656,13 @@ export class TestSummaryBaseDTO {
     description: 'Test Comment. ADD TO PROPERTY METADATA',
   })
   @IsOptional()
+  @IsString()
   testComment?: string;
 
   @ApiProperty({
     description: 'Injection Protocol Code. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsValidCode(InjectionProtocolCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(

@@ -2,7 +2,13 @@ import { ApiProperty } from '@nestjs/swagger';
 import { RequireOne } from '../pipes/require-one.pipe';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
-import { ValidateIf, ValidationArguments } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidateIf,
+  ValidationArguments,
+} from 'class-validator';
 import { YEAR_QUARTER_TEST_TYPE_CODES } from '../utilities/constants';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { SpanScaleCode } from '../entities/span-scale-code.entity';
@@ -13,16 +19,20 @@ export class TestExtensionExemptionBaseDTO {
   @ApiProperty({
     description: 'Stack Pipe Identifier. ADD TO PROPERTY METADATA',
   })
+  @ValidateIf(o => !o.unitId)
   @RequireOne('unitId', {
     message:
       'A Unit or Stack Pipe identifier (NOT both) must be provided for each Test Summary.',
   })
-  stackPipeId?: string;
+  @IsString()
+  stackPipeId: string;
 
   @ApiProperty({
     description: propertyMetadata.unitId.description,
   })
-  unitId?: string;
+  @ValidateIf(o => !o.stackPipeId)
+  @IsString()
+  unitId: string;
 
   @ApiProperty({
     description: propertyMetadata.year.description,
@@ -65,34 +75,44 @@ export class TestExtensionExemptionBaseDTO {
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOId.description,
   })
+  @IsOptional()
+  @IsString()
   monitoringSystemID?: string;
 
   @ApiProperty({
     description: propertyMetadata.componentDTOComponentId.description,
   })
+  @IsOptional()
+  @IsString()
   componentID?: string;
 
+  @IsOptional()
+  @IsNumber()
   hoursUsed?: number;
 
   @ApiProperty({
     description: propertyMetadata.monitorSpanDTOSpanScaleCode.description,
   })
+  @IsOptional()
   @IsValidCode(SpanScaleCode, {
-    message: (args: ValidationArguments) => {
-      return `You reported an invalid Span Scale Code of [${
-        args.value
-      }] in Test Summary record for Unit/Stack [${
-        args.object['unitId']
-          ? args.object['unitId']
-          : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
-    },
+    //   message: (args: ValidationArguments) => {
+    //     return `You reported an invalid Span Scale Code of [${
+    //       args.value
+    //     }] in Test Summary record for Unit/Stack [${
+    //       args.object['unitId']
+    //         ? args.object['unitId']
+    //         : args.object['stackPipeId']
+    //     }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
+    //       args.object['testNumber']
+    //     }]`;
+    //   },
   })
   spanScaleCode?: string;
 
+  @IsOptional()
+  @IsString()
   fuelCode?: string;
+  @IsString()
   extensionOrExemptionCode: string;
 }
 

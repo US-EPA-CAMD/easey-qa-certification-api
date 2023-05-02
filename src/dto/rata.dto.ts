@@ -3,6 +3,9 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Type } from 'class-transformer';
 import {
   IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
@@ -14,6 +17,7 @@ export class RataBaseDTO {
   @ApiProperty({
     description: 'NumberOfLoadLevels. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-102-A', {
@@ -22,22 +26,29 @@ export class RataBaseDTO {
       });
     },
   })
-  numberOfLoadLevels: number;
+  @IsNumber()
+  numberOfLoadLevels?: number;
 
   @ApiProperty({
     description: 'relativeAccuracy. ADD TO PROPERTY METADATA',
   })
-  relativeAccuracy: number;
+  @IsOptional()
+  @IsNumber()
+  relativeAccuracy?: number;
 
   @ApiProperty({
     description: 'rataFrequencyCode. ADD TO PROPERTY METADATA',
   })
-  rataFrequencyCode: string;
+  @IsOptional()
+  @IsString()
+  rataFrequencyCode?: string;
 
   @ApiProperty({
     description: 'overallBiasAdjustmentFactor. ADD TO PROPERTY METADATA',
   })
-  overallBiasAdjustmentFactor: number;
+  @IsOptional()
+  @IsNumber()
+  overallBiasAdjustmentFactor?: number;
 }
 
 export class RataRecordDTO extends RataBaseDTO {

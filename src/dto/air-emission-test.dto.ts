@@ -1,8 +1,15 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { IsEmail } from '@us-epa-camd/easey-common/pipes';
-import { IsNotEmpty, ValidationArguments } from 'class-validator';
+import { IsEmail, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+  ValidationArguments,
+} from 'class-validator';
 
 const KEY = 'Air Emission Testing';
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class AirEmissionTestingBaseDTO {
   @IsNotEmpty({
@@ -13,6 +20,7 @@ export class AirEmissionTestingBaseDTO {
       });
     },
   })
+  @IsString()
   qiLastName: string;
 
   @IsNotEmpty({
@@ -23,9 +31,21 @@ export class AirEmissionTestingBaseDTO {
       });
     },
   })
+  @IsString()
   qiFirstName: string;
 
-  qiMiddleInitial: string;
+  @IsOptional()
+  @MaxLength(1, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage('AETB-3-A', {
+        value: args.value,
+        fieldname: args.property,
+        key: KEY,
+      });
+    },
+  })
+  @IsString()
+  qiMiddleInitial?: string;
 
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -35,6 +55,7 @@ export class AirEmissionTestingBaseDTO {
       });
     },
   })
+  @IsString()
   aetbName: string;
 
   @IsNotEmpty({
@@ -45,6 +66,7 @@ export class AirEmissionTestingBaseDTO {
       });
     },
   })
+  @IsString()
   aetbPhoneNumber: string;
 
   @IsNotEmpty({
@@ -74,6 +96,17 @@ export class AirEmissionTestingBaseDTO {
       });
     },
   })
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `You reported [fieldname] which must be a valid ISO date format of ${DATE_FORMAT} for [key].`,
+        {
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
+    },
+  })
   examDate: Date;
 
   @IsNotEmpty({
@@ -84,6 +117,7 @@ export class AirEmissionTestingBaseDTO {
       });
     },
   })
+  @IsString()
   providerName: string;
 
   @IsNotEmpty({

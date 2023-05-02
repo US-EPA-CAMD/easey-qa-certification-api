@@ -1,6 +1,6 @@
 import { QACertificationEvent } from '../entities/qa-certification-event.entity';
 import { QACertificationEvent as WorkspaceQACertificationEvent } from '../entities/workspace/qa-certification-event.entity';
-import { SelectQueryBuilder } from 'typeorm';
+import { Brackets, SelectQueryBuilder } from 'typeorm';
 
 export const addJoins = (
   query: SelectQueryBuilder<
@@ -26,5 +26,33 @@ export const addQACertEventIdWhere = (
       qaCertificationEventIds,
     });
   }
+  return query;
+};
+
+export const addBeginAndEndDateWhere = (
+  query: SelectQueryBuilder<
+    QACertificationEvent | WorkspaceQACertificationEvent
+  >,
+  beginDate: Date,
+  endDate: Date,
+): SelectQueryBuilder<QACertificationEvent | WorkspaceQACertificationEvent> => {
+  if (beginDate && endDate) {
+    query.andWhere(
+      new Brackets(qb1 => {
+        qb1.where(
+          new Brackets(qb2 => {
+            qb2.andWhere(
+              'qce.qaCertEventDate BETWEEN :beginDate AND :endDate',
+              {
+                beginDate,
+                endDate,
+              },
+            );
+          }),
+        );
+      }),
+    );
+  }
+
   return query;
 };

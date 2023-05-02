@@ -5,6 +5,9 @@ import { OperatingLevelCode } from '../entities/workspace/operating-level-code.e
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import {
   IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
   ValidateIf,
   ValidateNested,
   ValidationArguments,
@@ -42,6 +45,7 @@ export class RataSummaryBaseDTO {
   @ApiProperty(
     getMetadata(dataDictionary.averageGrossUnitLoad, MetadataKeys.RATA_SUMMARY),
   )
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-23-A', {
@@ -64,11 +68,12 @@ export class RataSummaryBaseDTO {
     false,
     false,
   )
-  averageGrossUnitLoad: number;
+  averageGrossUnitLoad?: number;
 
   @ApiProperty({
     description: 'referenceMethodCode. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsValidCode(ReferenceMethodCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-16-B', {
@@ -78,7 +83,7 @@ export class RataSummaryBaseDTO {
       });
     },
   })
-  referenceMethodCode: string;
+  referenceMethodCode?: string;
 
   @ApiProperty({
     description: 'meanCEMValue. ADD TO PROPERTY METADATA',
@@ -91,7 +96,8 @@ export class RataSummaryBaseDTO {
       });
     },
   })
-  meanCEMValue: number;
+  @IsNumber()
+  meanCEMValue?: number;
 
   @ApiProperty({
     description: 'meanRATAReferenceValue. ADD TO PROPERTY METADATA',
@@ -104,9 +110,7 @@ export class RataSummaryBaseDTO {
       });
     },
   })
-  @IsInRange(
-    0,
-    20000,
+  @IsPositive(
     {
       message: (args: ValidationArguments) => {
         return CheckCatalogService.formatResultMessage('RATA-18-B', {
@@ -115,14 +119,13 @@ export class RataSummaryBaseDTO {
         });
       },
     },
-    false,
-    false,
   )
-  meanRATAReferenceValue: number;
+  meanRATAReferenceValue?: number;
 
   @ApiProperty({
     description: 'meanDifference. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-19-A', {
@@ -131,11 +134,13 @@ export class RataSummaryBaseDTO {
       });
     },
   })
-  meanDifference: number;
+  @IsNumber()
+  meanDifference?: number;
 
   @ApiProperty({
     description: 'standardDeviationDifference. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-20-A', {
@@ -144,11 +149,13 @@ export class RataSummaryBaseDTO {
       });
     },
   })
-  standardDeviationDifference: number;
+  @IsNumber()
+  standardDeviationDifference?: number;
 
   @ApiProperty({
     description: 'confidenceCoefficient. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-21-A', {
@@ -157,11 +164,13 @@ export class RataSummaryBaseDTO {
       });
     },
   })
-  confidenceCoefficient: number;
+  @IsNumber()
+  confidenceCoefficient?: number;
 
   @ApiProperty({
     description: 'tValue. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-22-A', {
@@ -170,11 +179,13 @@ export class RataSummaryBaseDTO {
       });
     },
   })
-  tValue: number;
+  @IsNumber()
+  tValue?: number;
 
   @ApiProperty(
     getMetadata(dataDictionary.apsIndicator, MetadataKeys.RATA_SUMMARY),
   )
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-123-A', {
@@ -183,9 +194,11 @@ export class RataSummaryBaseDTO {
       });
     },
   })
-  apsIndicator: number;
+  @IsNumber()
+  apsIndicator?: number;
 
   @ApiProperty(getMetadata(dataDictionary.apsCode, MetadataKeys.RATA_SUMMARY))
+  @IsOptional()
   @IsValidCode(ApsCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -199,11 +212,12 @@ export class RataSummaryBaseDTO {
       );
     },
   })
-  apsCode: string;
+  apsCode?: string;
 
   @ApiProperty({
     description: 'relativeAccuracy. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-24-A', {
@@ -221,16 +235,19 @@ export class RataSummaryBaseDTO {
       });
     },
   })
-  relativeAccuracy: number;
+  relativeAccuracy?: number;
 
   @ApiProperty({
     description: 'biasAdjustmentFactor. ADD TO PROPERTY METADATA',
   })
-  biasAdjustmentFactor: number;
+  @IsOptional()
+  @IsNumber()
+  biasAdjustmentFactor?: number;
 
   @ApiProperty({
     description: 'co2OrO2ReferenceMethodCode. ADD TO PROPERTY METADATA',
   })
+  @IsOptional()
   @IsValidCode(ReferenceMethodCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -244,32 +261,42 @@ export class RataSummaryBaseDTO {
     },
   })
   @ValidateIf(o => o.co2OrO2ReferenceMethodCode !== null)
-  co2OrO2ReferenceMethodCode: string;
+  co2OrO2ReferenceMethodCode?: string;
 
   @ApiProperty({
     description: 'stackDiameter. ADD TO PROPERTY METADATA',
   })
-  stackDiameter: number;
+  @IsOptional()
+  @IsNumber()
+  stackDiameter?: number;
 
   @ApiProperty({
     description: 'stackArea. ADD TO PROPERTY METADATA',
   })
-  stackArea: number;
+  @IsOptional()
+  @IsNumber()
+  stackArea?: number;
 
   @ApiProperty({
     description: 'numberOfTraversePoints. ADD TO PROPERTY METADATA',
   })
-  numberOfTraversePoints: number;
+  @IsOptional()
+  @IsNumber()
+  numberOfTraversePoints?: number;
 
   @ApiProperty({
     description: 'calculatedWAF. ADD TO PROPERTY METADATA',
   })
-  calculatedWAF: number;
+  @IsOptional()
+  @IsNumber()
+  calculatedWAF?: number;
 
   @ApiProperty({
     description: 'defaultWAF. ADD TO PROPERTY METADATA',
   })
-  defaultWAF: number;
+  @IsOptional()
+  @IsNumber()
+  defaultWAF?: number;
 }
 
 export class RataSummaryRecordDTO extends RataSummaryBaseDTO {

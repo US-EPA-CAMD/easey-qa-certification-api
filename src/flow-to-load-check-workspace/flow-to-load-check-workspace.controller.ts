@@ -39,7 +39,10 @@ export class FlowToLoadCheckWorkspaceController {
     description:
       'Retrieves workspace Flow To Load Check records by Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getFlowToLoadChecks(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -53,7 +56,10 @@ export class FlowToLoadCheckWorkspaceController {
     type: FlowToLoadCheckRecordDTO,
     description: 'Retrieves a workspace Flow To Load Check record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getFlowToLoadCheck(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

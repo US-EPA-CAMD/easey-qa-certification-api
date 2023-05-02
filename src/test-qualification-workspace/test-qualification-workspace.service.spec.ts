@@ -3,6 +3,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import {
   TestQualificationBaseDTO,
   TestQualificationDTO,
+  TestQualificationImportDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
 import { TestQualification } from '../entities/workspace/test-qualification.entity';
@@ -11,6 +12,8 @@ import { TestQualificationWorkspaceRepository } from './test-qualification-works
 import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { HttpStatus } from '@nestjs/common/enums';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { TestQualificationRepository } from '../test-qualification/test-qualification.repository';
 
 const testSumId = '';
 const testQualificationId = 'a1b2c3';
@@ -42,6 +45,10 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue(testQualifications),
 });
 
+const mockHistoricalRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(testQualificationRecord),
+});
+
 const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
@@ -54,6 +61,7 @@ describe('TestQualificationWorkspaceService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        Logger,
         TestQualificationWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
@@ -62,6 +70,10 @@ describe('TestQualificationWorkspaceService', () => {
         {
           provide: TestQualificationWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: TestQualificationRepository,
+          useFactory: mockHistoricalRepository,
         },
         {
           provide: TestQualificationMap,
@@ -181,6 +193,31 @@ describe('TestQualificationWorkspaceService', () => {
         errored = true;
       }
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('Export', () => {
+    it('Should Export Test Qualification', async () => {
+      jest
+        .spyOn(service, 'getTestQualificationByTestSumIds')
+        .mockResolvedValue([testQualificationRecord]);
+      const result = await service.export([testSumId]);
+      expect(result).toEqual([testQualificationRecord]);
+    });
+  });
+
+  describe('Import', () => {
+    it('Should Import Test Qualification', async () => {
+      jest
+        .spyOn(service, 'createTestQualification')
+        .mockResolvedValue(testQualificationRecord);
+
+      await service.import(
+        testSumId,
+        new TestQualificationImportDTO(),
+        userId,
+        true,
+      );
     });
   });
 });

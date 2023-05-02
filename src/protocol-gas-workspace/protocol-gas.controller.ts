@@ -42,7 +42,10 @@ export class ProtocolGasWorkspaceController {
     type: ProtocolGasRecordDTO,
     description: 'Retrieves workspace Protocol Gas records by Test Summary Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getProtocolGases(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -56,7 +59,10 @@ export class ProtocolGasWorkspaceController {
     type: ProtocolGasRecordDTO,
     description: 'Retrieves workspace Protocol Gas record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getProtocolGas(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,

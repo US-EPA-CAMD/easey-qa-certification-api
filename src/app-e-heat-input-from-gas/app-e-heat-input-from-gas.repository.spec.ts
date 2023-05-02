@@ -7,6 +7,7 @@ const appEHeatInputFromGas = new AppEHeatInputFromGas();
 
 const mockQueryBuilder = () => ({
   where: jest.fn(),
+  andWhere: jest.fn(),
   getOne: jest.fn(),
   getMany: jest.fn(),
   leftJoinAndSelect: jest.fn(),
@@ -53,6 +54,22 @@ describe('AppEHeatInputFromGasRepository', () => {
       const result = await repository.getAppEHeatInputFromGasByTestRunId('1');
 
       expect(result).toEqual([appEHeatInputFromGas]);
+    });
+  });
+
+  describe('getAppEHeatInputFromGasByTestRunIdAndMonSysID', () => {
+    it('calls buildBaseQuery and get one Appendix E Heat Input From Oil from the repository with appECorrTestRunId', async () => {
+      queryBuilder.leftJoinAndSelect.mockReturnValue(queryBuilder);
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.andWhere.mockReturnValue(queryBuilder);
+      queryBuilder.getOne.mockReturnValue(appEHeatInputFromGas);
+
+      const result = await repository.getAppEHeatInputFromGasByTestRunIdAndMonSysID(
+        '1',
+        'AA0',
+      );
+
+      expect(result).toEqual(appEHeatInputFromGas);
     });
   });
 

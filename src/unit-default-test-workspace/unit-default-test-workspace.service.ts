@@ -198,21 +198,13 @@ export class UnitDefaultTestWorkspaceService {
     if (payload.unitDefaultTestRunData?.length > 0) {
       for (const unitDefaultTestRun of payload.unitDefaultTestRunData) {
         promises.push(
-          new Promise(async (resolve, _reject) => {
-            const innerPromises = [];
-            innerPromises.push(
-              this.unitDefaultTestRunService.import(
-                testSumId,
-                createdUnitDefaultTest.id,
-                unitDefaultTestRun,
-                userId,
-                isHistoricalRecord,
-              ),
-            );
-
-            await Promise.all(innerPromises);
-            resolve(true);
-          }),
+          this.unitDefaultTestRunService.import(
+            testSumId,
+            createdUnitDefaultTest.id,
+            unitDefaultTestRun,
+            userId,
+            isHistoricalRecord,
+          ),
         );
       }
     }

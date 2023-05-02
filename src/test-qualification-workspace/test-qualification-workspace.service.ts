@@ -7,20 +7,28 @@ import { currentDateTime } from '../utilities/functions';
 import {
   TestQualificationBaseDTO,
   TestQualificationDTO,
+  TestQualificationImportDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
 import { TestQualificationMap } from '../maps/test-qualification.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
+import { In } from 'typeorm';
+import { TestQualification } from '../entities/test-qualification.entity';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { TestQualificationRepository } from '../test-qualification/test-qualification.repository';
 
 @Injectable()
 export class TestQualificationWorkspaceService {
   constructor(
+    private readonly logger: Logger,
     private readonly map: TestQualificationMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @InjectRepository(TestQualificationWorkspaceRepository)
     private readonly repository: TestQualificationWorkspaceRepository,
+    @InjectRepository(TestQualificationRepository)
+    private readonly historicalRepo: TestQualificationRepository,
   ) {}
 
   async getTestQualifications(
@@ -51,12 +59,13 @@ export class TestQualificationWorkspaceService {
     payload: TestQualificationBaseDTO,
     userId: string,
     isImport: boolean = false,
+    historicalRecordId?: string,
   ): Promise<TestQualificationRecordDTO> {
     const timestamp = currentDateTime();
 
     let entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
       userId,
       addDate: timestamp,
@@ -135,5 +144,48 @@ export class TestQualificationWorkspaceService {
     );
 
     return this.map.one(record);
+  }
+
+  async getTestQualificationByTestSumIds(
+    testSumIds: string[],
+  ): Promise<TestQualificationDTO[]> {
+    const results = await this.repository.find({
+      where: { testSumId: In(testSumIds) },
+    });
+    return this.map.many(results);
+  }
+
+  async export(testSumIds: string[]): Promise<TestQualificationDTO[]> {
+    return this.getTestQualificationByTestSumIds(testSumIds);
+  }
+
+  async import(
+    testSumId: string,
+    payload: TestQualificationImportDTO,
+    userId: string,
+    isHistoricalRecord: boolean,
+  ) {
+    const isImport = true;
+    let historicalRecord: TestQualification;
+
+    if (isHistoricalRecord) {
+      historicalRecord = await this.historicalRepo.findOne({
+        testSumId: testSumId,
+        testClaimCode: payload.testClaimCode,
+        highLoadPercentage: payload.highLoadPercentage,
+      });
+    }
+
+    const createdTestQualification = await this.createTestQualification(
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+    );
+
+    this.logger.info(
+      `Test Qualification Successfully Imported.  Record Id: ${createdTestQualification.id}`,
+    );
   }
 }

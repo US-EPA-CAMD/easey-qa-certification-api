@@ -45,7 +45,10 @@ export class QACertificationEventWorkspaceController {
     description:
       'Retrieves workspace QA Certification Event records by Location Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   async getQACertEvents(
     @Param('locId') locationId: string,
   ): Promise<QACertificationEventDTO[]> {
@@ -58,7 +61,10 @@ export class QACertificationEventWorkspaceController {
     type: QACertificationEventDTO,
     description: 'Retrieves workspace QA Certification Event record by its Id',
   })
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    { enforceCheckout: false, pathParam: 'locId' },
+    LookupType.Location,
+  )
   getQACertEvent(
     @Param('locId') locationId: string,
     @Param('id') id: string,
@@ -77,7 +83,7 @@ export class QACertificationEventWorkspaceController {
     @Body() payload: QACertificationEventBaseDTO,
     @User() user: CurrentUser,
   ): Promise<QACertificationEventRecordDTO> {
-    await this.checksService.runChecks(locationId, payload, false, false);
+    await this.checksService.runChecks(locationId, payload, null, false, false);
     return this.service.createQACertEvent(locationId, payload, user.userId);
   }
 
@@ -93,7 +99,7 @@ export class QACertificationEventWorkspaceController {
     @Body() payload: QACertificationEventBaseDTO,
     @User() user: CurrentUser,
   ): Promise<QACertificationEventDTO> {
-    await this.checksService.runChecks(locationId, payload, false, true);
+    await this.checksService.runChecks(locationId, payload, null, false, true);
     return this.service.updateQACertEvent(locationId, id, payload, user.userId);
   }
 

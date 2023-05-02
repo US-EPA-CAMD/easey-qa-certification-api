@@ -10,11 +10,13 @@ import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
 import { AppEHeatInputFromOilChecksService } from './app-e-heat-input-from-oil-checks.service';
 import { AppECorrelationTestRunWorkspaceModule } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.module';
+import { MonitorSystemWorkspaceModule } from '../monitor-system-workspace/monitor-system-workspace.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([AppEHeatInputFromOilWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
+    forwardRef(() => MonitorSystemWorkspaceModule),
     forwardRef(() => AppECorrelationTestRunWorkspaceModule),
     forwardRef(() => AppEHeatInputFromOilModule),
     HttpModule,

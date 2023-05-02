@@ -10,7 +10,7 @@ entity.id = string;
 entity.testSumId = string;
 
 entity.accuracyTestMethodCode = string;
-entity.reinstallationDate = string;
+entity.reinstallationDate = date;
 entity.reinstallationHour = number;
 entity.lowFuelAccuracy = number;
 entity.midFuelAccuracy = number;
@@ -28,7 +28,7 @@ describe('FuelFlowmeterAccuracyMap', () => {
     expect(result.testSumId).toEqual(string);
 
     expect(result.accuracyTestMethodCode).toEqual(string);
-    expect(result.reinstallationDate).toEqual(string);
+    expect(result.reinstallationDate).toEqual(date);
     expect(result.reinstallationHour).toEqual(number);
     expect(result.lowFuelAccuracy).toEqual(number);
     expect(result.midFuelAccuracy).toEqual(number);
