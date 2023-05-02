@@ -23,7 +23,7 @@ export class OnlineOfflineCalibrationBaseDTO {
       );
     },
   })
-  onlineZeroInjectionDate?: string;
+  onlineZeroInjectionDate?: Date;
 
   @IsOptional()
   @IsNumber()
@@ -59,7 +59,7 @@ export class OnlineOfflineCalibrationBaseDTO {
       );
     },
   })
-  onlineUpscaleInjectionDate?: string;
+  onlineUpscaleInjectionDate?: Date;
   @IsOptional()
   @IsNumber()
   onlineUpscaleInjectionHour?: number;
@@ -88,7 +88,7 @@ export class OnlineOfflineCalibrationBaseDTO {
       );
     },
   })
-  offlineZeroInjectionDate?: string;
+  offlineZeroInjectionDate?: Date;
   @IsOptional()
   @IsNumber()
   offlineZeroInjectionHour?: number;
@@ -117,7 +117,7 @@ export class OnlineOfflineCalibrationBaseDTO {
       );
     },
   })
-  offlineUpscaleInjectionDate?: string;
+  offlineUpscaleInjectionDate?: Date;
   @IsOptional()
   @IsNumber()
   offlineUpscaleInjectionHour?: number;

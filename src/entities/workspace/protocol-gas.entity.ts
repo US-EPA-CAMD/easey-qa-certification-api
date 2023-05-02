@@ -53,16 +53,16 @@ export class ProtocolGas extends BaseEntity {
   expirationDate: Date;
 
   @Column({
-    type: 'time without time zone',
+    type: 'timestamp',
     name: 'add_date',
   })
-  addDate: string;
+  addDate: Date;
 
   @Column({
-    type: 'time without time zone',
+    type: 'timestamp',
     name: 'update_date',
   })
-  updateDate: string;
+  updateDate: Date;
 
   @Column({
     type: 'varchar',

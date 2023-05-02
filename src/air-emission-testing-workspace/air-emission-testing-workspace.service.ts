@@ -9,7 +9,7 @@ import {
 import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { AirEmissionTestingWorkspaceRepository } from './air-emission-testing-workspace.repository';
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
@@ -88,9 +88,16 @@ export class AirEmissionTestingWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<AirEmissionTestingRecordDTO> {
-    const timestamp = currentDateTime().toLocaleString();
+    const timestamp = currentDateTime();
 
-    const entity = await this.getAirEmissionTesting(id);
+    const entity = await this.repository.findOne(id);
+
+    if (!entity) {
+      throw new LoggingException(
+        `An Air Emission Testing record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     entity.qiLastName = payload.qiLastName;
     entity.qiFirstName = payload.qiFirstName;

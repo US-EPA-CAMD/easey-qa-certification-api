@@ -10,7 +10,7 @@ import { FuelFlowToLoadBaselineMap } from '../maps/fuel-flow-to-load-baseline.ma
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FuelFlowToLoadBaselineWorkspaceRepository } from './fuel-flow-to-load-baseline-workspace.repository';
 import { v4 as uuid } from 'uuid';
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { FuelFlowToLoadBaseline } from '../entities/fuel-flow-to-load-baseline.entity';
 import { FuelFlowToLoadBaselineRepository } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.repository';
@@ -119,6 +119,10 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     entity.numberOfHoursExcludedRamping = payload.numberOfHoursExcludedRamping;
     entity.numberOfHoursExcludedLowRange =
       payload.numberOfHoursExcludedLowRange;
+
+    const timestamp = currentDateTime();
+    entity.userId = userId;
+    entity.updateDate = timestamp;
 
     await this.repository.save(entity);
 

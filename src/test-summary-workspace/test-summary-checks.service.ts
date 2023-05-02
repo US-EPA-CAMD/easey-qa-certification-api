@@ -29,7 +29,7 @@ import {
   MISC_TEST_TYPE_CODES,
   VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION,
 } from '../utilities/constants';
-import {getMetadata} from "../data-dictionary";
+import { getMetadata } from '../data-dictionary';
 
 const moment = require('moment');
 const KEY = 'Test Summary';
@@ -129,13 +129,13 @@ export class TestSummaryChecksService {
     // TEST-3 Test Begin Minute Valid
     error = await this.test3Check(summary, locationId);
     if (error) {
-        errorList.push(error);
+      errorList.push(error);
     }
 
     // TEST-6 Test End Minute Valid
     error = await this.test6Check(summary, locationId);
     if (error) {
-        errorList.push(error);
+      errorList.push(error);
     }
 
     // TEST-7 Test Dates Consistent
@@ -177,7 +177,7 @@ export class TestSummaryChecksService {
     if (!isUpdate) {
       if (summary.testTypeCode === TestTypeCodes.LINE) {
         // LINEAR-4 Identification of Previously Reported Test or Test Number for Linearity Check
-        if(!isImport){
+        if (!isImport) {
           error = await this.linear4Check(
             locationId,
             summary,
@@ -881,44 +881,66 @@ export class TestSummaryChecksService {
     return error;
   }
 
-  async test3Check(summary: TestSummaryBaseDTO,
-                   locationId: string): Promise<string> {
-    if(summary.beginMinute === undefined || summary.beginMinute === null) {
+  async test3Check(
+    summary: TestSummaryBaseDTO,
+    locationId: string,
+  ): Promise<string> {
+    if (summary.beginMinute === undefined || summary.beginMinute === null) {
       // Look for a monitor plan with a begin date before this test summary begin date
       const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(
-          locationId,
-          summary.unitId,
-          summary.stackPipeId,
-          summary['beginDate'],
+        locationId,
+        summary.unitId,
+        summary.stackPipeId,
+        summary['beginDate'],
       );
 
-      if(mp || VALID_CODES_FOR_BEGIN_MINUTE_VALIDATION.includes(summary.testTypeCode))
-        return this.getMessage('TEST-3-A', { fieldname: 'beginMinute', key: KEY });
+      if (
+        mp ||
+        VALID_CODES_FOR_BEGIN_MINUTE_VALIDATION.includes(summary.testTypeCode)
+      )
+        return this.getMessage('TEST-3-A', {
+          fieldname: 'beginMinute',
+          key: KEY,
+        });
       else
-        return this.getMessage('TEST-3-B', {fieldName: 'beginMinute', key: KEY});
+        return this.getMessage('TEST-3-B', {
+          fieldName: 'beginMinute',
+          key: KEY,
+        });
     }
 
     return null;
   }
 
-  async test6Check(summary: TestSummaryBaseDTO,
-                   locationId: string): Promise<string> {
-
-    if(summary.testTypeCode !== 'ONOFF' && (
-        summary.endMinute === undefined || summary.endMinute === null)) {
-
+  async test6Check(
+    summary: TestSummaryBaseDTO,
+    locationId: string,
+  ): Promise<string> {
+    if (
+      summary.testTypeCode !== 'ONOFF' &&
+      (summary.endMinute === undefined || summary.endMinute === null)
+    ) {
       // Look for a monitor plan with a begin date before this test summary end date
       const mp: MonitorPlan = await this.qaMonitorPlanRepository.getMonitorPlanWithALowerBeginDate(
-          locationId,
-          summary.unitId,
-          summary.stackPipeId,
-          summary['endDate'],
+        locationId,
+        summary.unitId,
+        summary.stackPipeId,
+        summary['endDate'],
       );
 
-      if(mp || VALID_CODES_FOR_END_MINUTE_VALIDATION.includes(summary.testTypeCode))
-        return this.getMessage('TEST-6-A', { fieldname: 'endMinute', key: KEY });
+      if (
+        mp ||
+        VALID_CODES_FOR_END_MINUTE_VALIDATION.includes(summary.testTypeCode)
+      )
+        return this.getMessage('TEST-6-A', {
+          fieldname: 'endMinute',
+          key: KEY,
+        });
       else
-        return this.getMessage('TEST-6-B', {fieldName: 'endMinute', key: KEY});
+        return this.getMessage('TEST-6-B', {
+          fieldName: 'endMinute',
+          key: KEY,
+        });
     }
 
     return null;
@@ -933,21 +955,20 @@ export class TestSummaryChecksService {
     const endDate = moment(summary.endDate);
     endDate.hours(summary.endHour);
 
-    if ([TestTypeCodes.ONOFF.toString(), TestTypeCodes.FF2LBAS.toString(),
+    if (
+      [
+        TestTypeCodes.ONOFF.toString(),
+        TestTypeCodes.FF2LBAS.toString(),
       ].includes(summary.testTypeCode)
     ) {
       // Checks if beginDate-hour is same or after endDate-hour
-      if (!beginDate.isBefore(endDate))
-        return errorResponse;
-
+      if (!beginDate.isBefore(endDate)) return errorResponse;
     } else {
-
       beginDate.minutes(summary.beginMinute);
       endDate.minutes(summary.endMinute);
 
       // Checks if beginDate/hour/minute is before endDate/hour/minute
-      if(! beginDate.isBefore(endDate))
-        return errorResponse;
+      if (!beginDate.isBefore(endDate)) return errorResponse;
     }
 
     return null;

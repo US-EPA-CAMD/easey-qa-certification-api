@@ -1,6 +1,7 @@
 import { BaseEntity, ViewEntity, ViewColumn } from 'typeorm';
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
+import { timestamp } from 'aws-sdk/clients/cloudfront';
 
 @ViewEntity({ name: 'camdecmpswks.vw_qa_cert_event_eval_and_submit' })
 export class CertEventReviewAndSubmit extends BaseEntity {
@@ -53,7 +54,7 @@ export class CertEventReviewAndSubmit extends BaseEntity {
   userid: string;
 
   @ViewColumn({ name: 'update_date' })
-  updateDate: string;
+  updateDate: Date;
 
   @ViewColumn({ name: 'eval_status_cd' })
   evalStatusCode: string;

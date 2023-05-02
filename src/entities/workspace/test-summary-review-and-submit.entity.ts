@@ -62,7 +62,7 @@ export class TestSummaryReviewAndSubmit {
   @ViewColumn({
     name: 'update_date',
   })
-  updateDate: string;
+  updateDate: Date;
 
   @ViewColumn({
     name: 'eval_status_cd',

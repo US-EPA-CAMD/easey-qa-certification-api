@@ -14,7 +14,7 @@ import {
   LinearitySummaryImportDTO,
 } from '../dto/linearity-summary.dto';
 
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 import { LinearityInjectionWorkspaceService } from '../linearity-injection-workspace/linearity-injection.service';

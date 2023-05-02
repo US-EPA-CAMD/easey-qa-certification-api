@@ -9,7 +9,7 @@ import {
   RataRunRecordDTO,
 } from '../dto/rata-run.dto';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { In } from 'typeorm';

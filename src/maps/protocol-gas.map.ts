@@ -17,8 +17,8 @@ export class ProtocolGasMap extends BaseMap<ProtocolGas, ProtocolGasDTO> {
       cylinderIdentifier: entity.cylinderIdentifier,
       expirationDate: entity.expirationDate,
       userId: entity.userId,
-      addDate: entity.addDate,
-      updateDate: entity.updateDate,
+      addDate: entity.addDate.toLocaleString(),
+      updateDate: entity.updateDate.toLocaleString(),
     };
   }
 }
