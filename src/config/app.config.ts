@@ -41,8 +41,7 @@ export default registerAs('app', () => ({
   ),
   env: getConfigValue('EASEY_QA_CERTIFICATION_API_ENV', 'local-dev'),
   apiKey: getConfigValue(
-    'EASEY_QA_CERTIFICATION_API_KEY',
-    'PXPWlQGB3wKXotkWN1PbSwbSoM7CoWW0ZMPWYtfc',
+    'EASEY_QA_CERTIFICATION_API_KEY'
   ),
   enableApiKey: getConfigValueBoolean(
     'EASEY_QA_CERTIFICATION_API_ENABLE_API_KEY',
@@ -81,7 +80,7 @@ export default registerAs('app', () => ({
   currentUser: getConfigValue('EASEY_QA_CERTIFICATION_API_CURRENT_USER'),
   apiHost: apiHost,
   enableRoleGuardCheckoutCheck: getConfigValueBoolean(
-    'EASEY_MONITOR_PLAN_API_ENABLE_ROLE_GUARD_CHECKOUT',
+    'EASEY_QA_CERTIFICATION_API_ENABLE_ROLE_GUARD_CHECKOUT',
     true,
   ),
   authApi: {

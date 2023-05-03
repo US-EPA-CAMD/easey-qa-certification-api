@@ -88,7 +88,6 @@ export class RataSummaryBaseDTO {
   @ApiProperty({
     description: 'meanCEMValue. ADD TO PROPERTY METADATA',
   })
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-17-A', {
