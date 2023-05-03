@@ -1,7 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
 import {
   HgInjectionBaseDTO,
@@ -93,7 +93,7 @@ export class HgInjectionWorkspaceService {
 
     if (!entity) {
       throw new LoggingException(
-        `Hg Summary record not found with Record Id [${id}].`,
+        `Hg Injection record not found with Record Id [${id}].`,
         HttpStatus.NOT_FOUND,
       );
     }

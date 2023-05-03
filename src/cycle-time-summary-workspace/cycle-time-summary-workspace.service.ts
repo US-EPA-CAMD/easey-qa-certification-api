@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { CycleTimeSummaryWorkspaceRepository } from './cycle-time-summary-workspace.repository';
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import {
@@ -107,6 +107,10 @@ export class CycleTimeSummaryWorkspaceService {
     }
 
     entity.totalTime = payload.totalTime;
+
+    const timestamp = currentDateTime();
+    entity.userId = userId;
+    entity.updateDate = timestamp;
 
     await this.repository.save(entity);
 

@@ -1,7 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
@@ -43,7 +43,7 @@ export class FlowToLoadCheckWorkspaceService {
 
     if (!result) {
       throw new LoggingException(
-        `Appendix E Correlation Test Summary Workspace record not found with Record Id [${id}].`,
+        `Flow to Load Check Workspace record not found with Record Id [${id}].`,
         HttpStatus.NOT_FOUND,
       );
     }
@@ -90,6 +90,13 @@ export class FlowToLoadCheckWorkspaceService {
     const timestamp = currentDateTime();
 
     const entity = await this.repository.findOne(id);
+
+    if (!entity) {
+      throw new LoggingException(
+        `Flow to Load Check Workspace record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     entity.testBasisCode = payload.testBasisCode;
     entity.biasAdjustedIndicator = payload.biasAdjustedIndicator;

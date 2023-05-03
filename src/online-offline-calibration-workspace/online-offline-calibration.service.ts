@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   OnlineOfflineCalibrationDTO,
   OnlineOfflineCalibrationBaseDTO,
@@ -118,9 +118,16 @@ export class OnlineOfflineCalibrationWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<OnlineOfflineCalibrationDTO> {
-    const timestamp = currentDateTime().toLocaleString();
+    const timestamp = currentDateTime();
 
-    const entity = await this.getOnlineOfflineCalibration(id);
+    const entity = await this.repository.findOne(id);
+
+    if (!entity) {
+      throw new LoggingException(
+        `Online Offline Calibration record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     entity.offlineUpscaleAPSIndicator = payload.offlineUpscaleAPSIndicator;
     entity.offlineZeroAPSIndicator = payload.offlineZeroAPSIndicator;

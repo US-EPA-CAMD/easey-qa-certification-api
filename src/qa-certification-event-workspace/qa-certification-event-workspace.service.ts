@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
@@ -178,6 +178,13 @@ export class QACertificationEventWorkspaceService {
     const timestamp = currentDateTime();
 
     const entity = await this.repository.findOne(id);
+
+    if (!entity) {
+      throw new LoggingException(
+        `A QA Certification Event record not found with Record Id [${id}]`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     const {
       componentRecordId,

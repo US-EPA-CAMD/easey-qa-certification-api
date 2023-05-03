@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { TransmitterTransducerAccuracyWorkspaceRepository } from './transmitter-transducer-accuracy.repository';
 import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -120,6 +120,10 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     entity.midLevelAccuracySpecCode = payload.midLevelAccuracySpecCode;
     entity.highLevelAccuracy = payload.highLevelAccuracy;
     entity.highLevelAccuracySpecCode = payload.highLevelAccuracySpecCode;
+
+    const timestamp = currentDateTime();
+    entity.userId = userId;
+    entity.updateDate = timestamp;
 
     await this.repository.save(entity);
 

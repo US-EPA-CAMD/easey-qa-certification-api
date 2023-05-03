@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid';
 
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   ProtocolGasBaseDTO,
   ProtocolGasDTO,
@@ -88,9 +88,16 @@ export class ProtocolGasWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<ProtocolGasDTO> {
-    const timestamp = currentDateTime().toLocaleString();
+    const timestamp = currentDateTime();
 
-    const entity = await this.getProtocolGas(id);
+    const entity = await this.repository.findOne(id);
+
+    if (!entity) {
+      throw new LoggingException(
+        `A protocol gas record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     entity.gasLevelCode = payload.gasLevelCode;
     entity.gasTypeCode = payload.gasTypeCode;

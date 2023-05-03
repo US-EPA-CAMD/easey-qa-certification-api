@@ -12,7 +12,7 @@ import {
 import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FuelFlowToLoadTestWorkspaceRepository } from './fuel-flow-to-load-test-workspace.repository';
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 import { FuelFlowToLoadTest } from '../entities/fuel-flow-to-load-test.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -99,6 +99,13 @@ export class FuelFlowToLoadTestWorkspaceService {
       testSumId,
     });
 
+    if (!entity) {
+      throw new LoggingException(
+        `Fuel Flow To Load Test record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     entity.testBasisCode = payload.testBasisCode;
     entity.averageDifference = payload.averageDifference;
     entity.numberOfHoursUsed = payload.numberOfHoursExcludedCofiring;
@@ -106,6 +113,10 @@ export class FuelFlowToLoadTestWorkspaceService {
     entity.numberOfHoursExcludedRamping = payload.numberOfHoursExcludedRamping;
     entity.numberOfHoursExcludedLowRange =
       payload.numberOfHoursExcludedLowRange;
+
+    const timestamp = currentDateTime();
+    entity.userId = userId;
+    entity.updateDate = timestamp;
 
     await this.repository.save(entity);
 
