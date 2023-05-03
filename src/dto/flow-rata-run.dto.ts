@@ -271,8 +271,8 @@ export class FlowRataRunRecordDTO extends FlowRataRunBaseDTO {
   calculatedAverageVelocityWithWallEffects: number;
   calculatedCalculatedWAF: number;
   userId: string;
-  addDate: Date;
-  updateDate: Date;
+  addDate: string;
+  updateDate: string;
 }
 
 export class FlowRataRunImportDTO extends FlowRataRunBaseDTO {
