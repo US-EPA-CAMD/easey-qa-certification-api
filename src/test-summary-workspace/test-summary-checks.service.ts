@@ -1321,7 +1321,7 @@ export class TestSummaryChecksService {
       !testResultCodes.includes(summary.testResultCode) &&
       [TestTypeCodes.LINE.toString()].includes(summary.testTypeCode)
     ) {
-      const option = this.testResultCodeRepository.findOne(
+      const option = await this.testResultCodeRepository.findOne(
         summary.testResultCode,
       );
 
@@ -1360,7 +1360,7 @@ export class TestSummaryChecksService {
         TestTypeCodes.ONOFF.toString(),
       ].includes(summary.testTypeCode)
     ) {
-      const option = this.testResultCodeRepository.findOne(
+      const option = await this.testResultCodeRepository.findOne(
         summary.testResultCode,
       );
 
