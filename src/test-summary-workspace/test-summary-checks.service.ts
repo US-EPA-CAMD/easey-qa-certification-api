@@ -1114,10 +1114,7 @@ export class TestSummaryChecksService {
       fields.push('spanScaleCode');
     }
 
-    if (
-      new Date(duplicate.endDate).toDateString() !==
-      new Date(summary.endDate).toDateString()
-    ) {
+    if (!moment(duplicate.endDate).isSame(moment(summary.endDate))) {
       fields.push('endDate');
     }
 

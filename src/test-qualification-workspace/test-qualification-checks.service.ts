@@ -15,6 +15,7 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import { RataImportDTO } from '../dto/rata.dto';
 import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
 
+const moment = require('moment')
 const KEY = 'Test Qualification';
 
 @Injectable()
@@ -221,7 +222,7 @@ export class TestQualificationChecksService {
 
     if (
       testQualification.testClaimCode === 'SLC' &&
-      new Date(testQualification.beginDate) < new Date('1993-01-01')
+      moment(testQualification.beginDate).isBefore(moment('1993-01-01'))
     ) {
       error = this.getErrorMessage('RATA-119-B', {
         fieldname: 'beginDate',
