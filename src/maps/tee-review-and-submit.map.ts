@@ -22,7 +22,10 @@ export class TeeReviewAndSubmitMap extends BaseMap<
       userid: entity.userid,
       updateDate: entity.updateDate.toLocaleString(),
       evalStatusCode: entity.evalStatusCode,
+      evalStatusCodeDescription: entity.evalStatusCodeDescription,
       submissionAvailabilityCode: entity.submissionAvailabilityCode,
+      submissionAvailabilityCodeDescription:
+        entity.submissionAvailabilityCodeDescription,
       periodAbbreviation: entity.periodAbbreviation,
       fuelCode: entity.fuelCode,
       hoursUsed: entity.hoursUsed,
