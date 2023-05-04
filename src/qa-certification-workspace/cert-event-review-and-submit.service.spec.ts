@@ -10,7 +10,7 @@ dto.eventDate = '2022-05-01';
 
 const dto2 = new CertEventReviewAndSubmitDTO();
 dto2.periodAbbreviation = '';
-dto2.eventDate = '2022-05-01';
+dto2.eventDate = '2022-01-10';
 
 const mockRepo = () => ({
   find: jest.fn().mockImplementation(args => {

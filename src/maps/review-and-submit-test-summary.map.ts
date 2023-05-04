@@ -37,7 +37,11 @@ export class ReviewAndSubmitTestSummaryMap extends BaseMap<
 
       evalStatusCode: entity.evalStatusCode,
 
+      evalStatusCodeDescription: entity.evalStatusCodeDescription,
+
       submissionCode: entity.submissionCode,
+
+      submissionCodeDescription: entity.submissionAvailabilityCodeDescription,
 
       periodAbbreviation: entity.periodAbbreviation,
 

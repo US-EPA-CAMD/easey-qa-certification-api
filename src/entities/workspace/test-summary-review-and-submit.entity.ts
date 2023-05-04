@@ -69,6 +69,12 @@ export class TestSummaryReviewAndSubmit {
   })
   evalStatusCode: string;
 
+  @ViewColumn({ name: 'eval_status_cd_description' })
+  evalStatusCodeDescription: string;
+
+  @ViewColumn({ name: 'submission_availability_cd_description' })
+  submissionAvailabilityCodeDescription: string;
+
   @ViewColumn({
     name: 'submission_availability_cd',
   })
