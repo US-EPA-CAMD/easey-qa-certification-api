@@ -128,7 +128,9 @@ export class TestSummaryChecksService {
     }
 
     // TEST-3 Test Begin Minute Valid
-    if(VALID_CODES_FOR_BEGIN_MINUTE_VALIDATION.includes(summary.testTypeCode)) {
+    if (
+      VALID_CODES_FOR_BEGIN_MINUTE_VALIDATION.includes(summary.testTypeCode)
+    ) {
       error = await this.test3Check(summary, locationId);
       if (error) {
         errorList.push(error);
@@ -136,7 +138,7 @@ export class TestSummaryChecksService {
     }
 
     // TEST-6 Test End Minute Valid
-    if(VALID_CODES_FOR_END_MINUTE_VALIDATION.includes(summary.testTypeCode)) {
+    if (VALID_CODES_FOR_END_MINUTE_VALIDATION.includes(summary.testTypeCode)) {
       error = await this.test6Check(summary, locationId);
       if (error) {
         errorList.push(error);
@@ -145,7 +147,7 @@ export class TestSummaryChecksService {
 
     // TEST-7 Test Dates Consistent
     // NOTE: beginMinute and endMinute validity tests need to run before this test
-    if(summary.beginDate && summary.endDate) {
+    if (summary.beginDate && summary.endDate) {
       error = this.test7Check(summary);
       if (error) {
         errorList.push(error);
@@ -901,8 +903,11 @@ export class TestSummaryChecksService {
         summary['beginDate'],
       );
 
-      if(mp || BEGIN_END_MINUTE_REQUIRED_TYPES.includes(summary.testTypeCode))
-        return this.getMessage('TEST-3-A', { fieldname: 'beginMinute', key: KEY });
+      if (mp || BEGIN_END_MINUTE_REQUIRED_TYPES.includes(summary.testTypeCode))
+        return this.getMessage('TEST-3-A', {
+          fieldname: 'beginMinute',
+          key: KEY,
+        });
       else
         return this.getMessage('TEST-3-B', {
           fieldName: 'beginMinute',
@@ -929,8 +934,11 @@ export class TestSummaryChecksService {
         summary['endDate'],
       );
 
-      if(mp || BEGIN_END_MINUTE_REQUIRED_TYPES.includes(summary.testTypeCode))
-        return this.getMessage('TEST-6-A', { fieldname: 'endMinute', key: KEY });
+      if (mp || BEGIN_END_MINUTE_REQUIRED_TYPES.includes(summary.testTypeCode))
+        return this.getMessage('TEST-6-A', {
+          fieldname: 'endMinute',
+          key: KEY,
+        });
       else
         return this.getMessage('TEST-6-B', {
           fieldName: 'endMinute',

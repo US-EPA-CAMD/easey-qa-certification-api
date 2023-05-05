@@ -97,7 +97,7 @@ export const BEGIN_END_MINUTE_REQUIRED_TYPES = [
   TestTypeCodes.F2LREF.toString(),
   TestTypeCodes.APPE.toString(),
   TestTypeCodes.UNITDEF.toString(),
-]
+];
 
 export const VALID_CODES_FOR_COMPONENT_ID_VALIDATION = [
   TestTypeCodes.FFACCTT,

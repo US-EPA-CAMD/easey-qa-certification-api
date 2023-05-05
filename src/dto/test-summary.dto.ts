@@ -100,7 +100,8 @@ import {
   VALID_CODES_FOR_MON_SYS_ID_VALIDATION,
   YEAR_QUARTER_TEST_TYPE_CODES,
   GRACE_PERIOD_IND_TEST_TYPE_CODES,
-  MISC_TEST_TYPE_CODES, VALID_CODES_FOR_END_DATE_VALIDATION,
+  MISC_TEST_TYPE_CODES,
+  VALID_CODES_FOR_END_DATE_VALIDATION,
 } from '../utilities/constants';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
@@ -151,10 +152,10 @@ export class TestSummaryBaseDTO {
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('TEST-12-A', {
-      fieldname: args.property,
-      key: KEY,
+        fieldname: args.property,
+        key: KEY,
       });
-    }
+    },
   })
   @IsValidCode(TestTypeCode, {
     message: (args: ValidationArguments) => {
