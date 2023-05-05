@@ -160,43 +160,42 @@ export class RataSummaryChecksService {
       return acc;
     }, []);
 
-    if (!parameterCodes.includes(summary.system.systemTypeCode) && mp) {
-      error = this.getMessage('RATA-16-C', {
-        value: referenceMethodCode,
-        key: KEY,
-        systemType: summary['system'].systemTypeCode,
-      });
-    }
-
     if (summary.system.systemTypeCode !== 'FLOW') {
-      if (!referenceMethodCode && mp) {
-        error = this.getMessage('RATA-16-A', {
-          fieldname: 'referenceMethodCode',
-          key: KEY,
-        });
-      } else {
-        error = this.getMessage('RATA-16-D', {
-          key: KEY,
-          systemType: summary['system'].systemTypeCode,
-        });
-      }
-
-      if (
-        referenceMethodCode &&
-        referenceMethodCode.split(',').includes('20') &&
-        mp
-      ) {
+      if (!referenceMethodCode) {
+        if (mp) {
+          error = this.getMessage('RATA-16-A', {
+            fieldname: 'referenceMethodCode',
+            key: KEY,
+          });
+        } else {
+          error = this.getMessage('RATA-16-D', {
+            key: KEY,
+            systemType: summary['system'].systemTypeCode,
+          });
+        }
+      } else if (referenceMethodCode?.split(',').includes('20') && mp) {
         error = this.getMessage('RATA-16-E', {
           key: KEY,
         });
+      } else if (!parameterCodes.includes(summary.system.systemTypeCode)) {
+        if (mp) {
+          error = this.getMessage('RATA-16-C', {
+            value: referenceMethodCode,
+            key: KEY,
+            systemType: summary['system'].systemTypeCode,
+          });
+        } else {
+          error = this.getMessage('RATA-16-D', {
+            key: KEY,
+            systemType: summary['system'].systemTypeCode,
+          });
+        }
       }
-    } else {
-      if (!referenceMethodCode) {
-        error = this.getMessage('RATA-16-A', {
-          fieldname: 'referenceMethodCode',
-          key: KEY,
-        });
-      }
+    } else if (!parameterCodes.includes(summary.system.systemTypeCode)) {
+      error = this.getMessage('RATA-16-D', {
+        key: KEY,
+        systemType: summary['system'].systemTypeCode,
+      });
     }
 
     return error;
