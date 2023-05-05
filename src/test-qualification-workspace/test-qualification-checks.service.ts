@@ -15,7 +15,7 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import { RataImportDTO } from '../dto/rata.dto';
 import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
 
-const moment = require('moment')
+const moment = require('moment');
 const KEY = 'Test Qualification';
 
 @Injectable()

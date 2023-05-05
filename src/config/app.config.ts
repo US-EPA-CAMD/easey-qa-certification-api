@@ -40,9 +40,7 @@ export default registerAs('app', () => ({
     'QA & Certification management API endpoints for qa test data, qa cert events, and test extension & exemption data',
   ),
   env: getConfigValue('EASEY_QA_CERTIFICATION_API_ENV', 'local-dev'),
-  apiKey: getConfigValue(
-    'EASEY_QA_CERTIFICATION_API_KEY'
-  ),
+  apiKey: getConfigValue('EASEY_QA_CERTIFICATION_API_KEY'),
   enableApiKey: getConfigValueBoolean(
     'EASEY_QA_CERTIFICATION_API_ENABLE_API_KEY',
     true,

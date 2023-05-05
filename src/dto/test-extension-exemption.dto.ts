@@ -42,16 +42,13 @@ export class TestExtensionExemptionBaseDTO {
     message: (args: ValidationArguments) => {
       return `Year must be greater than or equal to 1993 and less than or equal to ${currentDateTime().getFullYear()}. You reported an invalid year of [${
         args.value
-      }] in Test Summary record for Unit/Stack [${
+      }] in Test Extension & Exemption record for Unit/Stack [${
         args.object['unitId']
           ? args.object['unitId']
           : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
+      }], Test Type Code [${args.object['testTypeCode']}].`;
     },
   })
-  @ValidateIf(o => YEAR_QUARTER_TEST_TYPE_CODES.includes(o.testTypeCode))
   year: number;
 
   @ApiProperty({
