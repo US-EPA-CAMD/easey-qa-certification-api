@@ -46,7 +46,7 @@ export class TestExtensionExemptionBaseDTO {
         args.object['unitId']
           ? args.object['unitId']
           : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}].`;
+      }].`;
     },
   })
   year: number;
