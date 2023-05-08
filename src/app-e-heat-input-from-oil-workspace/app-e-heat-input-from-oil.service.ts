@@ -5,7 +5,7 @@ import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from
 import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import {
@@ -115,7 +115,7 @@ export class AppEHeatInputFromOilWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<AppEHeatInputFromOilRecordDTO> {
-    const timestamp = currentDateTime().toLocaleString();
+    const timestamp = currentDateTime();
 
     const entity = await this.repository.getAppEHeatInputFromOilById(id);
 

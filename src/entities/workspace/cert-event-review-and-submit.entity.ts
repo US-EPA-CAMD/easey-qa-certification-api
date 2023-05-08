@@ -31,12 +31,6 @@ export class CertEventReviewAndSubmit extends BaseEntity {
   @ViewColumn({ name: 'system_component_identifier' })
   systemComponentIdentifier: string;
 
-  @ViewColumn({
-    name: 'rpt_period_id',
-    transformer: new NumericColumnTransformer(),
-  })
-  rptPeriodIdentifier: number;
-
   @ViewColumn({ name: 'event_date' })
   eventDate: string;
 
@@ -53,14 +47,17 @@ export class CertEventReviewAndSubmit extends BaseEntity {
   userid: string;
 
   @ViewColumn({ name: 'update_date' })
-  updateDate: string;
+  updateDate: Date;
 
   @ViewColumn({ name: 'eval_status_cd' })
   evalStatusCode: string;
 
+  @ViewColumn({ name: 'eval_status_cd_description' })
+  evalStatusCodeDescription: string;
+
   @ViewColumn({ name: 'submission_availability_cd' })
   submissionAvailabilityCode: string;
 
-  @ViewColumn({ name: 'period_abbreviation' })
-  periodAbbreviation: string;
+  @ViewColumn({ name: 'submission_availability_cd_description' })
+  submissionAvailabilityCodeDescription: string;
 }

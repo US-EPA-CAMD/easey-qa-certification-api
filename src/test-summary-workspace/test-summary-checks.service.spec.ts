@@ -765,10 +765,7 @@ describe('Test Summary Check Service Test', () => {
 
   describe('test3Check() test', () => {
     it('Returns null when startMinute is not null', async () => {
-      const result = await service.test3Check(
-        summaryBase,
-        '1',
-      );
+      const result = await service.test3Check(summaryBase, '1');
 
       expect(result).toBeNull();
     });
@@ -783,17 +780,14 @@ describe('Test Summary Check Service Test', () => {
         testTypeCode: TestTypeCodes.F2LCHK.toString(),
         beginMinute: null,
       };
-      const result = await service.test3Check(summary, '1',);
+      const result = await service.test3Check(summary, '1');
       expect(result).toBe(MOCK_ERROR_MSG);
     });
   });
 
   describe('test6Check() test', () => {
     it('Returns null when endMinute is not null', async () => {
-      const result = await service.test6Check(
-          summaryBase,
-          '1',
-      );
+      const result = await service.test6Check(summaryBase, '1');
 
       expect(result).toBeNull();
     });
@@ -801,14 +795,14 @@ describe('Test Summary Check Service Test', () => {
     it('Returns error message when endMinute is null', async () => {
       jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
       qaMonitorPlanWSRepo.getMonitorPlanWithALowerBeginDate.mockResolvedValue(
-          new MonitorPlan(),
+        new MonitorPlan(),
       );
       const summary = {
         ...summaryBase,
         testTypeCode: TestTypeCodes.F2LCHK.toString(),
         endMinute: null,
       };
-      const result = await service.test6Check(summary, '1',);
+      const result = await service.test6Check(summary, '1');
       expect(result).toBe(MOCK_ERROR_MSG);
     });
   });

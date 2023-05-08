@@ -8,7 +8,7 @@ import {
 import { CalibrationInjectionMap } from '../maps/calibration-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { CalibrationInjectionWorkspaceRepository } from './calibration-injection-workspace.repository';
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
@@ -119,6 +119,10 @@ export class CalibrationInjectionWorkspaceService {
     entity.upscaleCalibrationError = payload.upscaleCalibrationError;
     entity.zeroReferenceValue = payload.zeroReferenceValue;
     entity.upscaleReferenceValue = payload.upscaleReferenceValue;
+
+    const timestamp = currentDateTime();
+    entity.userId = userId;
+    entity.updateDate = timestamp;
 
     await this.repository.save(entity);
 

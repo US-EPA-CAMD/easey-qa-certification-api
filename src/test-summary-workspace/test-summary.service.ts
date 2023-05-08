@@ -19,7 +19,7 @@ import {
   TestSummaryImportDTO,
 } from '../dto/test-summary.dto';
 
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { TestSummaryMap } from '../maps/test-summary.map';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { LinearitySummaryWorkspaceService } from '../linearity-summary-workspace/linearity-summary.service';

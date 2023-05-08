@@ -11,7 +11,7 @@ import { HgSummary } from '../entities/hg-summary.entity';
 import { v4 as uuid } from 'uuid';
 import { In } from 'typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { HgSummaryMap } from '../maps/hg-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
@@ -114,6 +114,8 @@ export class HgSummaryWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<HgSummaryDTO> {
+    const timestamp = currentDateTime();
+
     const entity = await this.repository.findOne({
       id,
       testSumId,
@@ -131,6 +133,8 @@ export class HgSummaryWorkspaceService {
     entity.meanReferenceValue = payload.meanReferenceValue;
     entity.percentError = payload.percentError;
     entity.apsIndicator = payload.apsIndicator;
+    entity.userId = userId;
+    entity.updateDate = timestamp;
 
     await this.repository.save(entity);
 

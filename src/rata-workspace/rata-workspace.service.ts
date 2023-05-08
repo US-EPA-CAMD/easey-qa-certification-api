@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   RataBaseDTO,
   RataDTO,

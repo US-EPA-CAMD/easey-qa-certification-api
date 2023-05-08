@@ -20,15 +20,18 @@ export class CertEventReviewAndSubmitMap extends BaseMap<
       qaCertEventCode: entity.qaCertEventCode,
       monLocIdentifier: entity.monLocIdentifier,
       systemComponentIdentifier: entity.systemComponentIdentifier,
-      rptPeriodIdentifier: entity.rptPeriodIdentifier,
+      rptPeriodIdentifier: null,
       eventDate: entity.eventDate,
       conditionDate: entity.conditionDate,
       lastCompletion: entity.lastCompletion,
       userid: entity.userid,
-      updateDate: entity.updateDate,
+      updateDate: entity.updateDate.toLocaleString(),
       evalStatusCode: entity.evalStatusCode,
+      evalStatusCodeDescription: entity.evalStatusCodeDescription,
       submissionAvailabilityCode: entity.submissionAvailabilityCode,
-      periodAbbreviation: entity.periodAbbreviation,
+      submissionAvailabilityDescription:
+        entity.submissionAvailabilityCodeDescription,
+      periodAbbreviation: null,
       requiredTestCode: entity.requiredTestCode,
     };
   }

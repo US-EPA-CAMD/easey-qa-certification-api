@@ -33,11 +33,15 @@ export class ReviewAndSubmitTestSummaryMap extends BaseMap<
 
       userId: entity.userId,
 
-      updateDate: entity.updateDate,
+      updateDate: entity.updateDate.toLocaleString(),
 
       evalStatusCode: entity.evalStatusCode,
 
+      evalStatusCodeDescription: entity.evalStatusCodeDescription,
+
       submissionCode: entity.submissionCode,
+
+      submissionCodeDescription: entity.submissionAvailabilityCodeDescription,
 
       periodAbbreviation: entity.periodAbbreviation,
 

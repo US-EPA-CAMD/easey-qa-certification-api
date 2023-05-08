@@ -23,7 +23,11 @@ export class TeeReviewAndSubmitDTO {
 
   evalStatusCode: string;
 
+  evalStatusCodeDescription: string;
+
   submissionAvailabilityCode: string;
+
+  submissionAvailabilityCodeDescription: string;
 
   periodAbbreviation: string;
 

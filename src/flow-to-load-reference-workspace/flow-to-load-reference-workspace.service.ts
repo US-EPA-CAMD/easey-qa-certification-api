@@ -5,7 +5,7 @@ import { In } from 'typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FlowToLoadReferenceMap } from '../maps/flow-to-load-reference.map';
 import { FlowToLoadReferenceWorkspaceRepository } from './flow-to-load-reference-workspace.repository';
@@ -87,9 +87,16 @@ export class FlowToLoadReferenceWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<FlowToLoadReferenceDTO> {
-    const timestamp = currentDateTime().toLocaleString();
+    const timestamp = currentDateTime();
 
-    const entity = await this.getFlowToLoadReference(id);
+    const entity = await this.repository.findOne(id);
+
+    if (!entity) {
+      throw new LoggingException(
+        `Flow To Load Reference Workspace record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     entity.rataTestNumber = payload.rataTestNumber;
     entity.operatingLevelCode = payload.operatingLevelCode;

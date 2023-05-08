@@ -29,7 +29,11 @@ export class CertEventReviewAndSubmitDTO {
 
   evalStatusCode: string;
 
+  evalStatusCodeDescription: string;
+
   submissionAvailabilityCode: string;
+
+  submissionAvailabilityDescription: string;
 
   requiredTestCode: string;
 

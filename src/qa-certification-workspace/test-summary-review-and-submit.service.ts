@@ -28,7 +28,7 @@ export class TestSummaryReviewAndSubmitService {
   ): Promise<ReviewAndSubmitTestSummaryDTO[]> {
     const filteredDates = [];
 
-    let data;
+    let data: ReviewAndSubmitTestSummaryDTO[];
     try {
       if (monPlanIds && monPlanIds.length > 0) {
         data = await this.map.many(
@@ -61,7 +61,7 @@ export class TestSummaryReviewAndSubmitService {
           }
 
           if (
-            moment(d.beginDate).isSameOrAfter(rp.beginDate, 'day') &&
+            moment(d.endDate).isSameOrAfter(rp.beginDate, 'day') &&
             moment(d.endDate).isSameOrBefore(rp.endDate, 'day')
           ) {
             found = true;

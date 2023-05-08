@@ -63,16 +63,16 @@ export class TransmitterTransducerAccuracy extends BaseEntity {
   highLevelAccuracySpecCode: string;
 
   @Column({
-    type: 'time without time zone',
+    type: 'timestamp',
     name: 'add_date',
   })
-  addDate: string;
+  addDate: Date;
 
   @Column({
-    type: 'time without time zone',
+    type: 'timestamp',
     name: 'update_date',
   })
-  updateDate: string;
+  updateDate: Date;
 
   @Column({
     type: 'varchar',

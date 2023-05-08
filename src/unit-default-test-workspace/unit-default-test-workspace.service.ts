@@ -6,7 +6,7 @@ import { In } from 'typeorm';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   UnitDefaultTestBaseDTO,
   UnitDefaultTestRecordDTO,
@@ -93,9 +93,18 @@ export class UnitDefaultTestWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<UnitDefaultTestRecordDTO> {
-    const timestamp = currentDateTime().toLocaleString();
+    const timestamp = currentDateTime();
 
-    const entity = await this.getUnitDefaultTest(id);
+    const entity = await this.repository.findOne({
+      id,
+    });
+
+    if (!entity) {
+      throw new LoggingException(
+        `Unit Default Test record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     entity.fuelCode = payload.fuelCode;
     entity.noxDefaultRate = payload.noxDefaultRate;

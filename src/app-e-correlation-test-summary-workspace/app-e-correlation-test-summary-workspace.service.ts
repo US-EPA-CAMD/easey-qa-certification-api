@@ -1,7 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
 import {
@@ -95,9 +95,16 @@ export class AppECorrelationTestSummaryWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
-    const timestamp = currentDateTime().toLocaleString();
+    const timestamp = currentDateTime();
 
-    const entity = await this.getAppECorrelation(id);
+    const entity = await this.repository.findOne(id);
+
+    if (!entity) {
+      throw new LoggingException(
+        `Appendix E Correlation Test Summary Workspace record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     entity.operatingLevelForRun = payload.operatingLevelForRun;
     entity.meanReferenceValue = payload.meanReferenceValue;

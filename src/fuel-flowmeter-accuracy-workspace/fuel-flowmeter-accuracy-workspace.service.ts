@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import {
   FuelFlowmeterAccuracyBaseDTO,
@@ -62,9 +62,16 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<FuelFlowmeterAccuracyDTO> {
-    const timestamp = currentDateTime().toLocaleString();
+    const timestamp = currentDateTime();
 
-    const entity = await this.getFuelFlowmeterAccuracy(id);
+    const entity = await this.repository.findOne(id);
+
+    if (!entity) {
+      throw new LoggingException(
+        `Fuel Flowmeter Accuracy record not found with Record Id [${id}].`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
 
     entity.accuracyTestMethodCode = payload.accuracyTestMethodCode;
     entity.reinstallationDate = payload.reinstallationDate;

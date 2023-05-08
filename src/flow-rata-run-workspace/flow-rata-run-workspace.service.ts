@@ -5,7 +5,7 @@ import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 import { RataTraverseWorkspaceService } from '../rata-traverse-workspace/rata-traverse-workspace.service';
 
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.repository';
 import { FlowRataRunMap } from '../maps/flow-rata-run.map';
 import {
@@ -65,7 +65,7 @@ export class FlowRataRunWorkspaceService {
 
     let entity = this.repository.create({
       ...payload,
-      id: uuid(),
+      id: historicalRecordId ? historicalRecordId : uuid(),
       rataRunId,
       userId,
       addDate: timestamp,

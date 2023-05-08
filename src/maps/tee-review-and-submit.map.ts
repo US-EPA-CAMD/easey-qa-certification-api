@@ -20,9 +20,12 @@ export class TeeReviewAndSubmitMap extends BaseMap<
       systemComponentIdentifier: entity.systemComponentIdentifier,
       rptPeriodIdentifier: entity.rptPeriodIdentifier,
       userid: entity.userid,
-      updateDate: entity.updateDate,
+      updateDate: entity.updateDate.toLocaleString(),
       evalStatusCode: entity.evalStatusCode,
+      evalStatusCodeDescription: entity.evalStatusCodeDescription,
       submissionAvailabilityCode: entity.submissionAvailabilityCode,
+      submissionAvailabilityCodeDescription:
+        entity.submissionAvailabilityCodeDescription,
       periodAbbreviation: entity.periodAbbreviation,
       fuelCode: entity.fuelCode,
       hoursUsed: entity.hoursUsed,

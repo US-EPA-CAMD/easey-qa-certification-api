@@ -12,6 +12,7 @@ import {
 import { YEAR_QUARTER_TEST_TYPE_CODES } from '../utilities/constants';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { SpanScaleCode } from '../entities/span-scale-code.entity';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 const KEY = 'Test Extension Exemption';
 
@@ -37,20 +38,17 @@ export class TestExtensionExemptionBaseDTO {
   @ApiProperty({
     description: propertyMetadata.year.description,
   })
-  @IsInRange(1993, new Date().getFullYear(), {
+  @IsInRange(1993, currentDateTime().getFullYear(), {
     message: (args: ValidationArguments) => {
-      return `Year must be greater than or equal to 1993 and less than or equal to ${new Date().getFullYear()}. You reported an invalid year of [${
+      return `Year must be greater than or equal to 1993 and less than or equal to ${currentDateTime().getFullYear()}. You reported an invalid year of [${
         args.value
-      }] in Test Summary record for Unit/Stack [${
+      }] in Test Extension & Exemption record for Unit/Stack [${
         args.object['unitId']
           ? args.object['unitId']
           : args.object['stackPipeId']
-      }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-        args.object['testNumber']
-      }]`;
+      }].`;
     },
   })
-  @ValidateIf(o => YEAR_QUARTER_TEST_TYPE_CODES.includes(o.testTypeCode))
   year: number;
 
   @ApiProperty({

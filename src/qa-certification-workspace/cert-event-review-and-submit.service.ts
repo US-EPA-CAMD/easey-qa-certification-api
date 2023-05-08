@@ -26,9 +26,7 @@ export class CertEventReviewAndSubmitService {
     monPlanIds: string[],
     quarters: string[],
   ): Promise<CertEventReviewAndSubmitDTO[]> {
-    const filteredDates = [];
-
-    let data;
+    let data: CertEventReviewAndSubmitDTO[];
     try {
       if (monPlanIds && monPlanIds.length > 0) {
         data = await this.map.many(
@@ -40,7 +38,7 @@ export class CertEventReviewAndSubmitService {
         );
       }
 
-      let quarterList;
+      let quarterList: ReportingPeriod[];
       if (quarters && quarters.length > 0) {
         quarterList = await this.returnManager().find(ReportingPeriod, {
           where: { periodAbbreviation: In(quarters) },
@@ -55,11 +53,6 @@ export class CertEventReviewAndSubmitService {
         let found = false;
 
         for (const rp of quarterList) {
-          if (d.periodAbbreviation === rp.periodAbbreviation) {
-            found = true;
-            break;
-          }
-
           if (
             moment(d.eventDate.split(' ')[0]).isSameOrAfter(
               rp.beginDate,
@@ -69,6 +62,7 @@ export class CertEventReviewAndSubmitService {
           ) {
             found = true;
             d.periodAbbreviation = rp.periodAbbreviation;
+            d.rptPeriodIdentifier = rp.id;
             break;
           }
         }
@@ -82,9 +76,7 @@ export class CertEventReviewAndSubmitService {
         }
       }
 
-      data = newResults;
-
-      return data;
+      return newResults;
     } catch (e) {
       throw new LoggingException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }

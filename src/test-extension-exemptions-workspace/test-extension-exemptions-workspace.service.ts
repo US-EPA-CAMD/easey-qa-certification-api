@@ -13,7 +13,7 @@ import {
 import { TestExtensionExemptionMap } from '../maps/test-extension-exemption.map';
 import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
 import { v4 as uuid } from 'uuid';
-import { currentDateTime } from '../utilities/functions';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';

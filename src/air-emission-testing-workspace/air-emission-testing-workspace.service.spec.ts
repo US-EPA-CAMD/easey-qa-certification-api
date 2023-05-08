@@ -151,7 +151,7 @@ describe('AirEmissionTestingWorkspaceService', () => {
     });
 
     it('should throw error with invalid Air Emission Testing', async () => {
-      jest.spyOn(service, 'getAirEmissionTesting').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
 
       let errored = false;
       try {

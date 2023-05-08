@@ -25,7 +25,7 @@ export class TeeReviewAndSubmitService {
   ): Promise<TeeReviewAndSubmitDTO[]> {
     const filteredDates = [];
 
-    let data;
+    let data: TeeReviewAndSubmitDTO[];
     try {
       if (monPlanIds && monPlanIds.length > 0) {
         data = await this.map.many(
