@@ -112,20 +112,15 @@ export class QACertificationChecksService {
           duplicateQaSuppRecords.push(duplicateQaSupp);
         }
 
-        promises.push(
-          new Promise((resolve, _reject) => {
-            const results = this.testSummaryChecksService?.runChecks(
-              locationId,
-              summary,
-              true,
-              false,
-              payload.testSummaryData,
-              duplicateQaSupp ? duplicateQaSupp.testSumId : null,
-            );
-
-            resolve(results);
-          }),
+        const results = await this.testSummaryChecksService?.runChecks(
+          locationId,
+          summary,
+          true,
+          false,
+          payload.testSummaryData,
+          duplicateQaSupp ? duplicateQaSupp.testSumId : null,
         );
+        this.throwIfErrors(results);
 
         summary.linearitySummaryData?.forEach(linearitySummary => {
           promises.push(

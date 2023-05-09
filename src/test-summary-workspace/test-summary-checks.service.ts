@@ -20,7 +20,7 @@ import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
 import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
 import {
@@ -30,7 +30,6 @@ import {
   MISC_TEST_TYPE_CODES,
   VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION,
 } from '../utilities/constants';
-import { getMetadata } from '../data-dictionary';
 
 const moment = require('moment');
 const KEY = 'Test Summary';
@@ -51,8 +50,8 @@ export class TestSummaryChecksService {
     private readonly analyzerRangeRepository: AnalyzerRangeWorkspaceRepository,
     @InjectRepository(TestSummaryMasterDataRelationshipRepository)
     private readonly testSummaryRelationshipsRepository: TestSummaryMasterDataRelationshipRepository,
-    @InjectRepository(MonitorSystemRepository)
-    private readonly monitorSystemRepository: MonitorSystemRepository,
+    @InjectRepository(MonitorSystemWorkspaceRepository)
+    private readonly monitorSystemRepository: MonitorSystemWorkspaceRepository,
     @InjectRepository(MonitorMethodRepository)
     private readonly monitorMethodRepository: MonitorMethodRepository,
     @InjectRepository(TestResultCodeRepository)
@@ -530,6 +529,7 @@ export class TestSummaryChecksService {
 
     const monitorSystem = await this.monitorSystemRepository.findOne({
       where: {
+        locationId: locationId,
         monitoringSystemID: summary.monitoringSystemID,
       },
     });
@@ -558,8 +558,6 @@ export class TestSummaryChecksService {
           [
             TestTypeCodes.SEVENDAY.toString(),
             TestTypeCodes.ONOFF.toString(),
-            TestTypeCodes.CYCLE.toString(),
-            TestTypeCodes.LINE.toString(),
           ].includes(summary.testTypeCode)
         ) {
           if (
@@ -569,9 +567,25 @@ export class TestSummaryChecksService {
           ) {
             return resultB;
           }
-        }
-
-        if (
+        } else if (
+          [TestTypeCodes.CYCLE.toString()].includes(summary.testTypeCode)
+        ) {
+          if (
+            !['SO2', 'CO2', 'NOX', 'O2', 'HG'].includes(
+              component.componentTypeCode,
+            )
+          ) {
+            return resultB;
+          }
+        } else if (
+          [TestTypeCodes.LINE.toString()].includes(summary.testTypeCode)
+        ) {
+          if (
+            !['SO2', 'CO2', 'NOX', 'O2'].includes(component.componentTypeCode)
+          ) {
+            return resultB;
+          }
+        } else if (
           [
             TestTypeCodes.HGSI3.toString(),
             TestTypeCodes.HGLINE.toString(),
@@ -580,9 +594,7 @@ export class TestSummaryChecksService {
           if (component.componentTypeCode !== 'HG') {
             return resultB;
           }
-        }
-
-        if (
+        } else if (
           [
             TestTypeCodes.FFACC.toString(),
             TestTypeCodes.FFACCTT.toString(),
@@ -605,7 +617,7 @@ export class TestSummaryChecksService {
         TestTypeCodes.APPE.toString(),
       ].includes(summary.testTypeCode)
     ) {
-      if (summary.monitoringSystemID === null || summary.componentID !== null) {
+      if (!summary.monitoringSystemID || summary.componentID) {
         return resultC;
       } else {
         if (summary.testTypeCode === TestTypeCodes.RATA.toString()) {
@@ -628,21 +640,15 @@ export class TestSummaryChecksService {
             ].includes(monitorSystem.systemTypeCode)
           ) {
             return resultD;
-          }
-
-          if (summary.testTypeCode === 'APPE') {
+          } else if (summary.testTypeCode === 'APPE') {
             if (monitorSystem.systemTypeCode !== 'NOXE') {
               return resultD;
             }
-          }
-
-          if (['F2LCHK', 'F2LREF'].includes(summary.testTypeCode)) {
+          } else if (['F2LCHK', 'F2LREF'].includes(summary.testTypeCode)) {
             if (monitorSystem.systemTypeCode !== 'FLOW') {
               return resultD;
             }
-          }
-
-          if (['FF2LBAS', 'FF2LTST'].includes(summary.testTypeCode)) {
+          } else if (['FF2LBAS', 'FF2LTST'].includes(summary.testTypeCode)) {
             if (
               !['OILV', 'OILM', 'GAS', 'LTOL', 'LTGS'].includes(
                 monitorSystem.systemTypeCode,

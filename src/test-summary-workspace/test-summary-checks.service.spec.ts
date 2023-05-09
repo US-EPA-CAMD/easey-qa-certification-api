@@ -22,7 +22,6 @@ import { TestResultCode } from '../entities/test-result-code.entity';
 import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { RataImportDTO } from '../dto/rata.dto';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
 import { MonitorMethod } from '../entities/monitor-method.entity';
 import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
@@ -43,6 +42,7 @@ import { FuelFlowmeterAccuracyImportDTO } from '../dto/fuel-flowmeter-accuracy.d
 import { TransmitterTransducerAccuracyImportDTO } from '../dto/transmitter-transducer-accuracy.dto';
 import { UnitDefaultTestImportDTO } from '../dto/unit-default-test.dto';
 import { HgSummaryImportDTO } from '../dto/hg-summary.dto';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -145,7 +145,7 @@ describe('Test Summary Check Service Test', () => {
           useFactory: mockAnalyzerRangeWorkspaceRepository,
         },
         {
-          provide: MonitorSystemRepository,
+          provide: MonitorSystemWorkspaceRepository,
           useFactory: () => ({
             findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
           }),
