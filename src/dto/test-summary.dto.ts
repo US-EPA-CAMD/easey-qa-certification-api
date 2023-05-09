@@ -176,7 +176,6 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.monitorSystemDTOId.description,
   })
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       let resultCode;
@@ -223,7 +222,6 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.componentDTOComponentId.description,
   })
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       let resultCode;
