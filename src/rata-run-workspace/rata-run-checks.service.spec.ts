@@ -124,7 +124,7 @@ describe('Rata Run Check Service Test', () => {
           false,
         );
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
       }
     });
   });
@@ -209,50 +209,6 @@ describe('Rata Run Check Service Test', () => {
     });
   });
 
-  describe('RATA-101 RATA Run Values Valid', () => {
-    it('Should get [RATA-101-A] error', async () => {
-      importPayload.cemValue = 1;
-      importPayload.rataReferenceValue = 1;
-
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
-      jest
-        .spyOn(testSummaryRepository, 'getTestSummaryById')
-        .mockResolvedValue(testSumRecord);
-
-      try {
-        await service.runChecks(
-          importPayload,
-          locationId,
-          testSumId,
-          false,
-          false,
-        );
-      } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
-      }
-    });
-    it('Should get [RATA-101-B] error', async () => {
-      importPayload.cemValue = -1;
-      importPayload.rataReferenceValue = -1;
-
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
-      jest
-        .spyOn(testSummaryRepository, 'getTestSummaryById')
-        .mockResolvedValue(testSumRecord);
-
-      try {
-        await service.runChecks(
-          importPayload,
-          locationId,
-          testSumId,
-          false,
-          false,
-        );
-      } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
-      }
-    });
-  });
   describe('RATA-108 Duplicate RATA Run', () => {
     it('Should get [RATA-108-A] error', async () => {
       const payload = new RataRunBaseDTO();

@@ -86,12 +86,6 @@ export class RataRunChecksService {
         errorList.push(error);
       }
 
-      // RATA-101
-      error = this.rata101Check(rataRun, testSumRecord);
-      if (error) {
-        errorList.push(error);
-      }
-
       // RATA-130
       error = this.rata130Check(rataRun, testSumRecord);
       if (error) {
@@ -155,34 +149,6 @@ export class RataRunChecksService {
         rataRun.rataReferenceValue,
       ) || null
     );
-  }
-
-  private rata101Check(
-    rataRun: RataRunBaseDTO,
-    testSumRecord: TestSummary,
-  ): string {
-    let error: string = null;
-
-    if (rataRun.runStatusCode === 'RUNUSED') {
-      if (
-        testSumRecord.system?.systemTypeCode === 'FLOW' &&
-        ((rataRun.cemValue > 0 &&
-          Math.ceil(rataRun.cemValue / 1000) * 1000 !== rataRun.cemValue) ||
-          (rataRun.rataReferenceValue > 0 &&
-            Math.ceil(rataRun.rataReferenceValue / 1000) * 1000 !==
-              rataRun.rataReferenceValue))
-      ) {
-        error = this.getMessage('RATA-101-A', {
-          key: KEY,
-        });
-      } else if (rataRun.cemValue <= 0 || rataRun.rataReferenceValue <= 0) {
-        error = this.getMessage('RATA-101-B', {
-          key: KEY,
-        });
-      }
-    }
-
-    return error;
   }
 
   private async rata108Check(
