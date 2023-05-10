@@ -539,6 +539,7 @@ export class TestSummaryChecksService {
       locationId: locationId,
     });
 
+    // Level 1
     if (
       [
         TestTypeCodes.SEVENDAY.toString(),
@@ -551,9 +552,11 @@ export class TestSummaryChecksService {
         TestTypeCodes.HGLINE.toString(),
       ].includes(summary.testTypeCode)
     ) {
+      // Level 2
       if (summary.monitoringSystemID || !summary.componentID) {
         return resultA;
       } else {
+        // Level 3
         if (
           [
             TestTypeCodes.SEVENDAY.toString(),
@@ -605,7 +608,7 @@ export class TestSummaryChecksService {
           }
         }
       }
-    }else if (
+    } else if (
       [
         TestTypeCodes.RATA.toString(),
         TestTypeCodes.F2LCHK.toString(),
@@ -615,9 +618,11 @@ export class TestSummaryChecksService {
         TestTypeCodes.APPE.toString(),
       ].includes(summary.testTypeCode)
     ) {
+      // Level 2
       if (!summary.monitoringSystemID || summary.componentID) {
         return resultC;
       } else {
+        // Level 3
         if (summary.testTypeCode === TestTypeCodes.RATA.toString()) {
           if (
             ![
@@ -657,7 +662,8 @@ export class TestSummaryChecksService {
           }
         }
       }
-    }else if (summary.testTypeCode === TestTypeCodes.UNITDEF.toString()) {
+    } else if (summary.testTypeCode === TestTypeCodes.UNITDEF.toString()) {
+      // Level 2
       if (summary.monitoringSystemID !== null || summary.componentID !== null) {
         return resultE;
       } else {
@@ -668,7 +674,7 @@ export class TestSummaryChecksService {
             monitoringMethodCode: 'LME',
           },
         });
-
+        // Level 3
         if (!monitorMethod) {
           return resultF;
         }
