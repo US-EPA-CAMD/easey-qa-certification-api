@@ -22,7 +22,7 @@ import { TestResultCode } from '../entities/test-result-code.entity';
 import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { RataImportDTO } from '../dto/rata.dto';
-import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
+import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method-workspace.repository';
 import { MonitorMethod } from '../entities/monitor-method.entity';
 import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
 import { ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
@@ -157,7 +157,7 @@ describe('Test Summary Check Service Test', () => {
           }),
         },
         {
-          provide: MonitorMethodRepository,
+          provide: MonitorMethodWorkspaceRepository,
           useFactory: () => ({
             findOne: jest.fn().mockResolvedValue(new MonitorMethod()),
           }),
