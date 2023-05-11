@@ -172,6 +172,7 @@ export class HgSummaryWorkspaceService {
       isImport,
     );
   }
+
   async import(
     testSumId: string,
     payload: HgSummaryImportDTO,
@@ -194,7 +195,7 @@ export class HgSummaryWorkspaceService {
       payload,
       userId,
       isImport,
-      historicalRecord ? historicalRecord.id : null,
+      historicalRecord?.id,
     );
 
     this.logger.info(
