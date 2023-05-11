@@ -62,7 +62,7 @@ export class HgInjectionWorkspaceService {
 
     let entity = this.repository.create({
       ...payload,
-      id: historicalRecordId ? historicalRecordId : uuid(),
+      id: historicalRecordId ?? uuid(),
       hgTestSumId,
       userId,
       addDate: timestamp,
@@ -78,6 +78,7 @@ export class HgInjectionWorkspaceService {
       userId,
       isImport,
     );
+
     return this.map.one(entity);
   }
 
@@ -168,22 +169,18 @@ export class HgInjectionWorkspaceService {
       historicalRecord = await this.historicalRepository.findOne({
         hgTestSumId: hgTestSumId,
         injectionDate: payload.injectionDate,
+        injectionHour: payload.injectionHour,
+        injectionMinute: payload.injectionMinute,
       });
     }
 
-    const createdHgInjection = await this.createHgInjection(
+    await this.createHgInjection(
       testSumId,
       hgTestSumId,
       payload,
       userId,
       isImport,
-      historicalRecord ? historicalRecord.id : null,
+      historicalRecord?.id,
     );
-
-    this.logger.info(
-      `Hg Injection Successfully Imported. Record Id: ${createdHgInjection.id}`,
-    );
-
-    return null;
   }
 }
