@@ -21,7 +21,7 @@ import { AnalyzerRangeModule } from './analyzer-range-workspace/analyzer-range.m
 import { RataModule } from './rata/rata.module';
 import { RataWorkspaceModule } from './rata-workspace/rata-workspace.module';
 import { MonitorSystemModule } from './monitor-system/monitor-system.module';
-import { MonitorMethodModule } from './monitor-method/monitor-method.module';
+import { MonitorMethodWorkspaceModule } from './monitor-method-workspace/monitor-method-workspace.module';
 import { RataSummaryWorkspaceModule } from './rata-summary-workspace/rata-summary-workspace.module';
 import { RataSummaryModule } from './rata-summary/rata-summary.module';
 import { RataRunModule } from './rata-run/rata-run.module';
@@ -102,7 +102,7 @@ import { CrossCheckCatalogValueModule } from './cross-check-catalog-value/cross-
     RataModule,
     RataWorkspaceModule,
     MonitorSystemModule,
-    MonitorMethodModule,
+    MonitorMethodWorkspaceModule,
     RataSummaryWorkspaceModule,
     RataSummaryModule,
     RataRunModule,

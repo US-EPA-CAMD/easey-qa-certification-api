@@ -219,7 +219,7 @@ describe('HgInjectionWorkspaceService', () => {
         userId,
         false,
       );
-      expect(result).toEqual(null);
+      expect(result).toEqual(undefined);
     });
 
     it('Should Import Hg Injection from Historical Record', async () => {
@@ -232,7 +232,7 @@ describe('HgInjectionWorkspaceService', () => {
         userId,
         true,
       );
-      expect(result).toEqual(null);
+      expect(result).toEqual(undefined);
     });
   });
 });

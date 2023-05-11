@@ -18,7 +18,7 @@ import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/an
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { RataWorkspaceModule } from '../rata-workspace/rata-workspace.module';
-import { MonitorMethodRepository } from '../monitor-method/monitor-method.repository';
+import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method-workspace.repository';
 import { TestResultCodeModule } from '../test-result-code/test-result-code.module';
 import { TestQualificationWorkspaceModule } from '../test-qualification-workspace/test-qualification-workspace.module';
 import { AirEmissionTestingWorkspaceModule } from '../air-emission-testing-workspace/air-emission-testing-workspace.module';
@@ -55,7 +55,7 @@ import { HgInjectionWorkspaceModule } from '../hg-injection-workspace/hg-injecti
       MonitorSystemRepository,
       ReportingPeriodRepository,
       MonitorLocationRepository,
-      MonitorMethodRepository,
+      MonitorMethodWorkspaceRepository,
       CalibrationInjectionRepository,
       TransmitterTransducerAccuracyRepository,
       HgSummaryRepository,
