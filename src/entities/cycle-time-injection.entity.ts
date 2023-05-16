@@ -111,13 +111,13 @@ export class CycleTimeInjection extends BaseEntity {
   userId: string;
 
   @Column({
-    type: 'timestamp without time zone',
+    type: 'timestamp',
     name: 'add_date',
   })
   addDate: Date;
 
   @Column({
-    type: 'timestamp without time zone',
+    type: 'timestamp',
     name: 'update_date',
   })
   updateDate: Date;

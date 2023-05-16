@@ -39,10 +39,10 @@ export class MonitorPlan extends BaseEntity {
   @Column({ name: 'userid', type: 'varchar' })
   userId: string;
 
-  @Column({ name: 'add_date', type: 'date' })
+  @Column({ name: 'add_date', type: 'timestamp' })
   addDate: Date;
 
-  @Column({ name: 'update_date', type: 'date' })
+  @Column({ name: 'update_date', type: 'timestamp' })
   updateDate: Date;
 
   @Column({ name: 'submission_id', type: 'numeric' })
