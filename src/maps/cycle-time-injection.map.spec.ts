@@ -31,7 +31,7 @@ describe('CycleTimeInjectionMap', () => {
 
     const result = await map.one(entity);
     result.addDate = date.toISOString();
-    result.addDate = date.toISOString();
+    result.updateDate = date.toISOString();
 
     expect(result.id).toEqual(string);
     expect(result.cycleTimeSumId).toEqual(string);
