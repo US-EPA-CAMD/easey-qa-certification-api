@@ -1,0 +1,26 @@
+export enum QACertificationDataTypes {
+  APPE_HI_GAS = 'ae_hi_gas',
+  APPE_HI_OIL = 'ae_hi_oil',
+  AIR_EMISSION = 'air_emission_testing',
+  CYCLE_TIME = 'cycle_time_summary',
+  CAL_INJ = 'calibration_injection',
+  LINEARITY = 'linearity_summary',
+  HG_LINEARITY = 'hg_test_summary',
+  RATA = 'rata_run',
+  RATA_FLOW = 'flow_rata_run',
+  RATA_WALL_EFFECTS = '',
+  FLOW_2_LOAD_CHK = 'flow_to_load_check',
+  FLOW_2_LOAD_REF = 'flow_to_load_reference',
+  FUEL_FLOW_2_LOAD_CHK = 'fuel_flow_to_load_check',
+  FUEL_FLOW_2_LOAD_BASE = 'fuel_flow_to_load_baseline',
+  FUEL_FLOWMETER_ACCURACY = 'fuel_flowmeter_accuracy',
+  ON_OFF_CAL = 'on_off_cal',
+  UNIT_DEFAULT = 'unit_default_test',
+  TRANS_ACCURACY = 'trans_accuracy',
+  PROTOCOL_GAS = 'protocol_gas',
+  QUALIFICATION = 'test_qualification',
+  CERT_EVENT = 'qa_cert_event',
+  TEST_EXT_EXEMP = 'test_extension_exemption',
+}
+
+export default QACertificationDataTypes;

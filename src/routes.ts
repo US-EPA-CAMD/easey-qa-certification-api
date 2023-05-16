@@ -66,8 +66,13 @@ import { TestExtensionExemptionsWorkspaceModule } from './test-extension-exempti
 import { TestExtensionExemptionsModule } from './test-extension-exemptions/test-extension-exemptions.module';
 import { QaCertificationEventModule } from './qa-certification-event/qa-certification-event.module';
 import { MonitorLocationModule } from './monitor-location/monitor-location.module';
+import { WhatHasDataModule } from './what-has-data/what-has-data.module';
 
 const routes: Routes = [
+  {
+    path: '/what-has-data',
+    module: WhatHasDataModule,
+  },
   {
     path: '/',
     module: QACertificationModule,
