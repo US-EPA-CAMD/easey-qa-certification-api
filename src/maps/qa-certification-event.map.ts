@@ -39,8 +39,8 @@ export class QACertificationEventMap extends BaseMap<
       pendingStatusCode: entity['pendingStatusCode'] || null,
       evalStatusCode: entity['evalStatusCode'] || null,
       userId: entity.userId,
-      addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
-      updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
+      addDate: entity.addDate ? entity.addDate.toISOString() : null,
+      updateDate: entity.updateDate ? entity.updateDate.toISOString() : null,
     };
   }
 }

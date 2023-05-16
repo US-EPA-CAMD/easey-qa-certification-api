@@ -19,8 +19,8 @@ export class FuelFlowToLoadTestMap extends BaseMap<
       numberOfHoursExcludedRamping: entity.numberOfHoursExcludedRamping,
       numberOfHoursExcludedLowRange: entity.numberOfHoursExcludedLowRange,
       userId: entity.userId,
-      addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
-      updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
+      addDate: entity.addDate ? entity.addDate.toISOString() : null,
+      updateDate: entity.updateDate ? entity.updateDate.toISOString() : null,
     };
   }
 }

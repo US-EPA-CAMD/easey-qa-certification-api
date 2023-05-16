@@ -21,8 +21,8 @@ export class TransmitterTransducerAccuracyMap extends BaseMap<
       highLevelAccuracy: entity.highLevelAccuracy,
       highLevelAccuracySpecCode: entity.highLevelAccuracySpecCode,
       userId: entity.userId,
-      addDate: entity.addDate?.toLocaleString() ?? null,
-      updateDate: entity.updateDate?.toLocaleString() ?? null,
+      addDate: entity.addDate?.toISOString() ?? null,
+      updateDate: entity.updateDate?.toISOString() ?? null,
     };
   }
 }

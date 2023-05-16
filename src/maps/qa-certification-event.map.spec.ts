@@ -74,8 +74,8 @@ describe('QACertificationEventMap', () => {
     // expect(result.evalStatusCode).toEqual(someString);
     // expect(result.pendingStatusCode).toEqual(someString);
     expect(result.userId).toEqual(someString);
-    expect(result.addDate).toEqual(date.toLocaleString());
-    expect(result.updateDate).toEqual(date.toLocaleString());
+    expect(result.addDate).toEqual(date.toISOString());
+    expect(result.updateDate).toEqual(date.toISOString());
   });
 
   it('should return null when addDate, updateDate, pendingStatusCode and evalStatusCode is undefined', async () => {

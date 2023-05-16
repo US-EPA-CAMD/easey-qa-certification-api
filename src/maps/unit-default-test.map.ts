@@ -20,8 +20,8 @@ export class UnitDefaultTestMap extends BaseMap<
       numberOfUnitsInGroup: entity.numberOfUnitsInGroup,
       numberOfTestsForGroup: entity.numberOfTestsForGroup,
       userId: entity.userId,
-      addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
-      updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
+      addDate: entity.addDate ? entity.addDate.toISOString() : null,
+      updateDate: entity.updateDate ? entity.updateDate.toISOString() : null,
       unitDefaultTestRunData: [],
     };
   }
