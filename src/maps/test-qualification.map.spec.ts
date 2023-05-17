@@ -35,8 +35,8 @@ describe('TestQualificationMap', () => {
     expect(result.lowLoadPercentage).toEqual(number);
 
     expect(result.userId).toEqual(string);
-    expect(result.addDate).toEqual(date.toLocaleString());
-    expect(result.updateDate).toEqual(date.toLocaleString());
+    expect(result.addDate).toEqual(date.toISOString());
+    expect(result.updateDate).toEqual(date.toISOString());
   });
 
   it('should return null when addDate and updateDate is undefined', async () => {

@@ -21,8 +21,8 @@ export class FuelFlowmeterAccuracyMap extends BaseMap<
       midFuelAccuracy: entity.midFuelAccuracy,
       highFuelAccuracy: entity.highFuelAccuracy,
       userId: entity.userId,
-      addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
-      updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
+      addDate: entity.addDate ? entity.addDate.toISOString() : null,
+      updateDate: entity.updateDate ? entity.updateDate.toISOString() : null,
     };
   }
 }

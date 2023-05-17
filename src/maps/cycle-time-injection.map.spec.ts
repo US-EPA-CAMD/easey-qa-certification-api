@@ -30,8 +30,8 @@ describe('CycleTimeInjectionMap', () => {
     const map = new CycleTimeInjectionMap();
 
     const result = await map.one(entity);
-    result.addDate = date.toLocaleString();
-    result.addDate = date.toLocaleString();
+    result.addDate = date.toISOString();
+    result.updateDate = date.toISOString();
 
     expect(result.id).toEqual(string);
     expect(result.cycleTimeSumId).toEqual(string);
@@ -48,7 +48,7 @@ describe('CycleTimeInjectionMap', () => {
     expect(result.endMonitorValue).toEqual(number);
     expect(result.calculatedInjectionCycleTime).toEqual(number);
     expect(result.userId).toEqual(string);
-    expect(result.addDate).toEqual(date.toLocaleString());
-    expect(result.updateDate).toEqual(date.toLocaleString());
+    expect(result.addDate).toEqual(date.toISOString());
+    expect(result.updateDate).toEqual(date.toISOString());
   });
 });

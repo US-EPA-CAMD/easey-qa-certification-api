@@ -137,8 +137,8 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       calculatedSpanValue: entity.calculatedSpanValue,
       evalStatusCode,
       userId: entity.userId,
-      addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
-      updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
+      addDate: entity.addDate ? entity.addDate.toISOString() : null,
+      updateDate: entity.updateDate ? entity.updateDate.toISOString() : null,
       reportPeriodId: entity.reportPeriodId,
 
       calibrationInjectionData: calibrationInjections,

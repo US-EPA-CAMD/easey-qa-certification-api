@@ -33,8 +33,8 @@ export class LinearitySummaryMap extends BaseMap<
       apsIndicator: entity.apsIndicator,
       calculatedAPSIndicator: entity.calculatedAPSIndicator,
       userId: entity.userId,
-      addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
-      updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
+      addDate: entity.addDate ? entity.addDate.toISOString() : null,
+      updateDate: entity.updateDate ? entity.updateDate.toISOString() : null,
       linearityInjectionData: injections,
     };
   }

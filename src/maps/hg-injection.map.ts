@@ -15,8 +15,8 @@ export class HgInjectionMap extends BaseMap<HgInjection, HgInjectionDTO> {
       measuredValue: entity.measuredValue,
       referenceValue: entity.referenceValue,
       userId: entity.userId,
-      addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
-      updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
+      addDate: entity.addDate ? entity.addDate.toISOString() : null,
+      updateDate: entity.updateDate ? entity.updateDate.toISOString() : null,
     };
   }
 }
