@@ -23,6 +23,7 @@ applications:
       EASEY_QA_CERTIFICATION_API_ENABLE_ROLE_GUARD_CHECKOUT: true
       EASEY_API_GATEWAY_HOST: ((apiHost))
       EASEY_AUTH_API: https://((apiHost))/auth-mgmt
+      TZ: America/New_York
     routes:
       - route: ((host))/((path))
     services:
