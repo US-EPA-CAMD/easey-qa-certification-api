@@ -77,13 +77,13 @@ export class TestExtensionExemption extends BaseEntity {
   userId: string;
 
   @Column({
-    type: 'date',
+    type: 'timestamp',
     name: 'add_date',
   })
   addDate: Date;
 
   @Column({
-    type: 'date',
+    type: 'timestamp',
     name: 'update_date',
   })
   updateDate: Date;

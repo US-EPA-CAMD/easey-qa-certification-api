@@ -23,8 +23,8 @@ describe('HgInjectionMap', () => {
     const map = new HgInjectionMap();
 
     const result = await map.one(entity);
-    result.addDate = date.toLocaleString();
-    result.addDate = date.toLocaleString();
+    result.addDate = date.toISOString();
+    result.addDate = date.toISOString();
 
     expect(result.id).toEqual(string);
     expect(result.hgTestSumId).toEqual(string);
@@ -34,7 +34,7 @@ describe('HgInjectionMap', () => {
     expect(result.measuredValue).toEqual(number);
     expect(result.referenceValue).toEqual(number);
     expect(result.userId).toEqual(string);
-    expect(result.addDate).toEqual(date.toLocaleString());
-    expect(result.updateDate).toEqual(date.toLocaleString());
+    expect(result.addDate).toEqual(date.toISOString());
+    expect(result.updateDate).toEqual(date.toISOString());
   });
 });

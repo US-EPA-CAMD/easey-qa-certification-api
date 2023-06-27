@@ -134,13 +134,13 @@ export class QACertificationEvent extends BaseEntity {
 
   @Column({
     name: 'add_date',
-    type: 'timestamp without time zone',
+    type: 'timestamp',
   })
   addDate: Date;
 
   @Column({
     name: 'update_date',
-    type: 'timestamp without time zone',
+    type: 'timestamp',
   })
   updateDate: Date;
 

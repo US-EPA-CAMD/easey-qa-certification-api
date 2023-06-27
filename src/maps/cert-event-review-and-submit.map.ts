@@ -25,7 +25,7 @@ export class CertEventReviewAndSubmitMap extends BaseMap<
       conditionDate: entity.conditionDate,
       lastCompletion: entity.lastCompletion,
       userid: entity.userid,
-      updateDate: entity.updateDate.toLocaleString(),
+      updateDate: entity.updateDate.toISOString(),
       evalStatusCode: entity.evalStatusCode,
       evalStatusCodeDescription: entity.evalStatusCodeDescription,
       submissionAvailabilityCode: entity.submissionAvailabilityCode,

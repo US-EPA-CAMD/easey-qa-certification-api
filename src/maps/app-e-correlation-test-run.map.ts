@@ -46,8 +46,8 @@ export class AppECorrelationTestRunMap extends BaseMap<
       endHour: entity.endHour,
       endMinute: entity.endMinute,
       userId: entity.userId,
-      addDate: entity.addDate ? entity.addDate.toLocaleString() : null,
-      updateDate: entity.updateDate ? entity.updateDate.toLocaleString() : null,
+      addDate: entity.addDate ? entity.addDate.toISOString() : null,
+      updateDate: entity.updateDate ? entity.updateDate.toISOString() : null,
       appEHeatInputFromOilData: appEHeatInputFromOils,
       appEHeatInputFromGasData: appEHeatInputFromGases,
     };

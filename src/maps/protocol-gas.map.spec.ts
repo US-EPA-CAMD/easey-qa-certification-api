@@ -28,7 +28,7 @@ describe('ProtocolGasMap', () => {
     expect(result.cylinderIdentifier).toEqual(string);
     expect(result.expirationDate).toEqual(date);
     expect(result.userId).toEqual(string);
-    expect(result.addDate).toEqual(date.toLocaleString());
-    expect(result.updateDate).toEqual(date.toLocaleString());
+    expect(result.addDate).toEqual(date.toISOString());
+    expect(result.updateDate).toEqual(date.toISOString());
   });
 });

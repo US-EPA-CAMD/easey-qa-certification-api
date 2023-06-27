@@ -61,8 +61,8 @@ describe('TestExtensionExemptionMap', () => {
     expect(result.pendingStatusCode).toEqual(null);
     expect(result.evalStatusCode).toEqual(null);
     expect(result.userId).toEqual(string);
-    expect(result.addDate).toEqual(date.toLocaleString());
-    expect(result.updateDate).toEqual(date.toLocaleString());
+    expect(result.addDate).toEqual(date.toISOString());
+    expect(result.updateDate).toEqual(date.toISOString());
   });
 
   it('should return null when addDate, updateDate, pendingStatusCode and evalStatusCode is undefined', async () => {

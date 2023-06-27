@@ -81,6 +81,8 @@ import { GasComponentCodeModule } from './gas-component-code/gas-component-code.
 import { ReferenceMethodCodeModule } from './reference-method-code/reference-method-code.module';
 import { GasTypeCodeModule } from './gas-type-code/gas-type-code.module';
 import { CrossCheckCatalogValueModule } from './cross-check-catalog-value/cross-check-catalog-value.module';
+import { WhatHasDataModule } from './what-has-data/what-has-data.module';
+
 @Module({
   imports: [
     RouterModule.forRoutes(routes),
@@ -162,6 +164,7 @@ import { CrossCheckCatalogValueModule } from './cross-check-catalog-value/cross-
     ReferenceMethodCodeModule,
     GasTypeCodeModule,
     CrossCheckCatalogValueModule,
+    WhatHasDataModule,
   ],
 })
 export class AppModule {}
