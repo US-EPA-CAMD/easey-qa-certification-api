@@ -129,6 +129,7 @@ async function removeLinearitySummaryNonReportedValues(
     delete dto.addDate;
     delete dto.updateDate;
   });
+  await Promise.all(promises);
 }
 
 async function removeLinearityInjectionNonReportedValues(
@@ -157,6 +158,7 @@ async function removeRataNonReportedValues(rataData: RataDTO[]) {
     delete dto.addDate;
     delete dto.updateDate;
   });
+  await Promise.all(promises);
 }
 
 async function removeRataSummaryNonReportedValues(
@@ -183,6 +185,7 @@ async function removeRataSummaryNonReportedValues(
     delete dto.addDate;
     delete dto.updateDate;
   });
+  await Promise.all(promises);
 }
 
 async function removeRataRunNonReportedValues(rataRun: RataRunDTO[]) {
@@ -196,6 +199,7 @@ async function removeRataRunNonReportedValues(rataRun: RataRunDTO[]) {
     delete dto.addDate;
     delete dto.updateDate;
   });
+  await Promise.all(promises);
 }
 
 async function removeflowRataRunNonReportedValues(
@@ -215,6 +219,7 @@ async function removeflowRataRunNonReportedValues(
     delete dto.addDate;
     delete dto.updateDate;
   });
+  await Promise.all(promises);
 }
 
 async function removeRataTraverseNonReportedValues(
@@ -273,6 +278,7 @@ async function removeCycleTimeSummaryNonReportedValues(
     delete dto.addDate;
     delete dto.updateDate;
   });
+  await Promise.all(promises);
 }
 
 async function removeCycleTimeInjectionNonReportedValues(
@@ -366,6 +372,7 @@ async function removeAppECorrelationTestSummaryNonReportedValues(
     delete dto.addDate;
     delete dto.updateDate;
   });
+  await Promise.all(promises);
 }
 
 async function removeAppECorrelationTestRunNonReportedValues(
@@ -385,6 +392,7 @@ async function removeAppECorrelationTestRunNonReportedValues(
     delete dto.addDate;
     delete dto.updateDate;
   });
+  await Promise.all(promises);
 }
 
 async function removeAppEHeatInputFromOilNonReportedValues(
@@ -429,6 +437,7 @@ async function removeUnitDefaultTestNonReportedValues(
     delete dto.addDate;
     delete dto.updateDate;
   });
+  await Promise.all(promises);
 }
 
 async function removeUnitDefaultTestRunNonReportedValues(
@@ -457,6 +466,7 @@ async function removeHgSummaryNonReportedValues(hgSummaryData: HgSummaryDTO[]) {
     delete dto.addDate;
     delete dto.updateDate;
   });
+  await Promise.all(promises);
 }
 
 async function removeHgInjectionNonReportedValues(
