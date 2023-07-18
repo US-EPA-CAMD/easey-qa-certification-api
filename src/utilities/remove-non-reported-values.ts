@@ -50,7 +50,7 @@ async function removeTestSummaryNonReportedValues(
   testSummaryData: TestSummaryDTO[],
 ) {
   const promises = [];
-  testSummaryData.forEach(dto => {
+  testSummaryData?.forEach(dto => {
     promises.push(
       removeCalibrationInjectionNonReportedValues(dto.calibrationInjectionData),
       removeLinearitySummaryNonReportedValues(dto.linearitySummaryData),
@@ -98,13 +98,13 @@ async function removeTestSummaryNonReportedValues(
 async function removeCalibrationInjectionNonReportedValues(
   calibrationInjectionData: CalibrationInjectionDTO[],
 ) {
-  calibrationInjectionData.forEach(dto => {
+  calibrationInjectionData?.forEach(dto => {
     delete dto.id;
     delete dto.testSumId;
     delete dto.calculatedZeroCalibrationError;
     delete dto.calculatedZeroAPSIndicator;
-    delete dto.calculatedUpscaleCalibrationError,
-      delete dto.calculatedUpscaleAPSIndicator;
+    delete dto.calculatedUpscaleCalibrationError;
+    delete dto.calculatedUpscaleAPSIndicator;
     delete dto.userId;
     delete dto.addDate;
     delete dto.updateDate;
@@ -115,7 +115,7 @@ async function removeLinearitySummaryNonReportedValues(
   linearitySummaryData: LinearitySummaryDTO[],
 ) {
   const promises = [];
-  linearitySummaryData.forEach(dto => {
+  linearitySummaryData?.forEach(dto => {
     promises.push(
       removeLinearityInjectionNonReportedValues(dto.linearityInjectionData),
     );
@@ -134,7 +134,7 @@ async function removeLinearitySummaryNonReportedValues(
 async function removeLinearityInjectionNonReportedValues(
   linearityInjectionData: LinearityInjectionDTO[],
 ) {
-  linearityInjectionData.forEach(dto => {
+  linearityInjectionData?.forEach(dto => {
     delete dto.id;
     delete dto.linSumId;
     delete dto.userId;
@@ -145,7 +145,7 @@ async function removeLinearityInjectionNonReportedValues(
 
 async function removeRataNonReportedValues(rataData: RataDTO[]) {
   const promises = [];
-  rataData.forEach(dto => {
+  rataData?.forEach(dto => {
     promises.push(removeRataSummaryNonReportedValues(dto.rataSummaryData));
     delete dto.id;
     delete dto.testSumId;
@@ -163,7 +163,7 @@ async function removeRataSummaryNonReportedValues(
   rataSummary: RataSummaryDTO[],
 ) {
   const promises = [];
-  rataSummary.forEach(dto => {
+  rataSummary?.forEach(dto => {
     promises.push(removeRataRunNonReportedValues(dto.rataRunData));
     delete dto.id;
     delete dto.rataId;
@@ -187,7 +187,7 @@ async function removeRataSummaryNonReportedValues(
 
 async function removeRataRunNonReportedValues(rataRun: RataRunDTO[]) {
   const promises = [];
-  rataRun.forEach(dto => {
+  rataRun?.forEach(dto => {
     promises.push(removeflowRataRunNonReportedValues(dto.flowRataRunData));
     delete dto.id;
     delete dto.rataSumId;
@@ -202,7 +202,7 @@ async function removeflowRataRunNonReportedValues(
   flowRataRun: FlowRataRunDTO[],
 ) {
   const promises = [];
-  flowRataRun.forEach(dto => {
+  flowRataRun?.forEach(dto => {
     promises.push(removeRataTraverseNonReportedValues(dto.rataTraverseData));
     delete dto.id;
     delete dto.rataRunId;
@@ -220,7 +220,7 @@ async function removeflowRataRunNonReportedValues(
 async function removeRataTraverseNonReportedValues(
   rataTraverse: RataTraverseDTO[],
 ) {
-  rataTraverse.forEach(dto => {
+  rataTraverse?.forEach(dto => {
     delete dto.id;
     delete dto.flowRataRunId;
     delete dto.calculatedCalculatedVelocity;
@@ -233,7 +233,7 @@ async function removeRataTraverseNonReportedValues(
 async function removeFlowToLoadReferenceNonReportedValues(
   flowToLoadReference: FlowToLoadReferenceDTO[],
 ) {
-  flowToLoadReference.forEach(dto => {
+  flowToLoadReference?.forEach(dto => {
     delete dto.id;
     delete dto.testSumId;
     delete dto.calculatedAverageGrossUnitLoad;
@@ -249,7 +249,7 @@ async function removeFlowToLoadReferenceNonReportedValues(
 async function removeFlowToLoadCheckNonReportedValues(
   flowToLoadCheck: FlowToLoadCheckDTO[],
 ) {
-  flowToLoadCheck.forEach(dto => {
+  flowToLoadCheck?.forEach(dto => {
     delete dto.id;
     delete dto.testSumId;
     delete dto.userId;
@@ -262,7 +262,7 @@ async function removeCycleTimeSummaryNonReportedValues(
   cycleTimeSummary: CycleTimeSummaryDTO[],
 ) {
   const promises = [];
-  cycleTimeSummary.forEach(dto => {
+  cycleTimeSummary?.forEach(dto => {
     promises.push(
       removeCycleTimeInjectionNonReportedValues(dto.cycleTimeInjectionData),
     );
@@ -278,7 +278,7 @@ async function removeCycleTimeSummaryNonReportedValues(
 async function removeCycleTimeInjectionNonReportedValues(
   cycleTimeInjection: CycleTimeInjectionDTO[],
 ) {
-  cycleTimeInjection.forEach(dto => {
+  cycleTimeInjection?.forEach(dto => {
     delete dto.id;
     delete dto.cycleTimeSumId;
     delete dto.calculatedInjectionCycleTime;
@@ -291,7 +291,7 @@ async function removeCycleTimeInjectionNonReportedValues(
 async function removeOnlineOfflineCalibrationNonReportedValues(
   onlineOfflineCalibrationData: OnlineOfflineCalibrationDTO[],
 ) {
-  onlineOfflineCalibrationData.forEach(dto => {
+  onlineOfflineCalibrationData?.forEach(dto => {
     delete dto.id;
     delete dto.testSumId;
     delete dto.userId;
@@ -303,7 +303,7 @@ async function removeOnlineOfflineCalibrationNonReportedValues(
 async function removeFuelFlowmeterAccuracyNonReportedValues(
   fuelFlowmeterAccuracyData: FuelFlowmeterAccuracyDTO[],
 ) {
-  fuelFlowmeterAccuracyData.forEach(dto => {
+  fuelFlowmeterAccuracyData?.forEach(dto => {
     delete dto.id;
     delete dto.testSumId;
     delete dto.userId;
@@ -315,7 +315,7 @@ async function removeFuelFlowmeterAccuracyNonReportedValues(
 async function removeTransmitterTransducerAccuracyNonReportedValues(
   transmitterTransducerAccuracyData: TransmitterTransducerAccuracyDTO[],
 ) {
-  transmitterTransducerAccuracyData.forEach(dto => {
+  transmitterTransducerAccuracyData?.forEach(dto => {
     delete dto.id;
     delete dto.testSumId;
     delete dto.userId;
@@ -327,7 +327,7 @@ async function removeTransmitterTransducerAccuracyNonReportedValues(
 async function removeFuelFlowToLoadBaselineNonReportedValues(
   fuelFlowToLoadBaselineData: FuelFlowToLoadBaselineDTO[],
 ) {
-  fuelFlowToLoadBaselineData.forEach(dto => {
+  fuelFlowToLoadBaselineData?.forEach(dto => {
     delete dto.id;
     delete dto.testSumId;
     delete dto.userId;
@@ -339,7 +339,7 @@ async function removeFuelFlowToLoadBaselineNonReportedValues(
 async function removeFuelFlowToLoadTestNonReportedValues(
   fuelFlowToLoadTestData: FuelFlowToLoadTestDTO[],
 ) {
-  fuelFlowToLoadTestData.forEach(dto => {
+  fuelFlowToLoadTestData?.forEach(dto => {
     delete dto.id;
     delete dto.testSumId;
     delete dto.userId;
@@ -352,7 +352,7 @@ async function removeAppECorrelationTestSummaryNonReportedValues(
   appECorrelationTestSummaryData: AppECorrelationTestSummaryDTO[],
 ) {
   const promises = [];
-  appECorrelationTestSummaryData.forEach(dto => {
+  appECorrelationTestSummaryData?.forEach(dto => {
     promises.push(
       removeAppECorrelationTestRunNonReportedValues(
         dto.appECorrelationTestRunData,
@@ -372,7 +372,7 @@ async function removeAppECorrelationTestRunNonReportedValues(
   appECorrelationTestRunData: AppECorrelationTestRunDTO[],
 ) {
   const promises = [];
-  appECorrelationTestRunData.forEach(dto => {
+  appECorrelationTestRunData?.forEach(dto => {
     promises.push(
       removeAppEHeatInputFromOilNonReportedValues(dto.appEHeatInputFromOilData),
       removeAppEHeatInputFromGasNonReportedValues(dto.appEHeatInputFromGasData),
@@ -390,7 +390,7 @@ async function removeAppECorrelationTestRunNonReportedValues(
 async function removeAppEHeatInputFromOilNonReportedValues(
   appEHeatInputFromOilData: AppEHeatInputFromOilDTO[],
 ) {
-  appEHeatInputFromOilData.forEach(dto => {
+  appEHeatInputFromOilData?.forEach(dto => {
     delete dto.id;
     delete dto.appECorrTestRunId;
     delete dto.calculatedOilMass;
@@ -404,7 +404,7 @@ async function removeAppEHeatInputFromOilNonReportedValues(
 async function removeAppEHeatInputFromGasNonReportedValues(
   appEHeatInputFromGas: AppEHeatInputFromGasDTO[],
 ) {
-  appEHeatInputFromGas.forEach(dto => {
+  appEHeatInputFromGas?.forEach(dto => {
     delete dto.id;
     delete dto.appECorrTestRunId;
     delete dto.calculatedGasHeatInput;
@@ -418,7 +418,7 @@ async function removeUnitDefaultTestNonReportedValues(
   unitDefaultTestData: UnitDefaultTestDTO[],
 ) {
   const promises = [];
-  unitDefaultTestData.forEach(dto => {
+  unitDefaultTestData?.forEach(dto => {
     promises.push(
       removeUnitDefaultTestRunNonReportedValues(dto.unitDefaultTestRunData),
     );
@@ -434,7 +434,7 @@ async function removeUnitDefaultTestNonReportedValues(
 async function removeUnitDefaultTestRunNonReportedValues(
   unitDefaultTestRunData: UnitDefaultTestRunDTO[],
 ) {
-  unitDefaultTestRunData.forEach(dto => {
+  unitDefaultTestRunData?.forEach(dto => {
     delete dto.id;
     delete dto.unitDefaultTestSumId;
     delete dto.userId;
@@ -445,7 +445,7 @@ async function removeUnitDefaultTestRunNonReportedValues(
 
 async function removeHgSummaryNonReportedValues(hgSummaryData: HgSummaryDTO[]) {
   const promises = [];
-  hgSummaryData.forEach(dto => {
+  hgSummaryData?.forEach(dto => {
     promises.push(removeHgInjectionNonReportedValues(dto.HgInjectionData));
     delete dto.id;
     delete dto.testSumId;
@@ -462,7 +462,7 @@ async function removeHgSummaryNonReportedValues(hgSummaryData: HgSummaryDTO[]) {
 async function removeHgInjectionNonReportedValues(
   hgInjectionData: HgInjectionDTO[],
 ) {
-  hgInjectionData.forEach(dto => {
+  hgInjectionData?.forEach(dto => {
     delete dto.id;
     delete dto.hgTestSumId;
     delete dto.userId;
@@ -474,7 +474,7 @@ async function removeHgInjectionNonReportedValues(
 async function removeTestQualificationNonReportedValues(
   testQualificationData: TestQualificationDTO[],
 ) {
-  testQualificationData.forEach(dto => {
+  testQualificationData?.forEach(dto => {
     delete dto.id;
     delete dto.testSumId;
     delete dto.userId;
@@ -486,7 +486,7 @@ async function removeTestQualificationNonReportedValues(
 async function removeProtocolGasNonReportedValues(
   protocolGasData: ProtocolGasDTO[],
 ) {
-  protocolGasData.forEach(dto => {
+  protocolGasData?.forEach(dto => {
     delete dto.id;
     delete dto.testSumId;
     delete dto.userId;
@@ -498,7 +498,7 @@ async function removeProtocolGasNonReportedValues(
 async function removeAirEmissionTestingNonReportedValues(
   airEmissionTestingData: AirEmissionTestingDTO[],
 ) {
-  airEmissionTestingData.forEach(dto => {
+  airEmissionTestingData?.forEach(dto => {
     delete dto.id;
     delete dto.testSumId;
     delete dto.userId;
@@ -510,7 +510,7 @@ async function removeAirEmissionTestingNonReportedValues(
 async function removeCertificationEventNonReportedValues(
   certificationEventData: QACertificationEventDTO[],
 ) {
-  certificationEventData.forEach(dto => {
+  certificationEventData?.forEach(dto => {
     delete dto.id;
     delete dto.locationId;
     delete dto.lastUpdated;
@@ -530,7 +530,7 @@ async function removeCertificationEventNonReportedValues(
 async function removeTestExtensionExemptionNonReportedValues(
   testExtensionExemptionData: TestExtensionExemptionDTO[],
 ) {
-  testExtensionExemptionData.forEach(dto => {
+  testExtensionExemptionData?.forEach(dto => {
     delete dto.id;
     delete dto.locationId;
     delete dto.reportPeriodId;

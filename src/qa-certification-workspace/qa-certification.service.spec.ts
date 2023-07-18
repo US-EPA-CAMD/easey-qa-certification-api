@@ -104,7 +104,11 @@ describe('QA Certification Workspace Service Test', () => {
 
       const paramsDTO = new QACertificationParamsDTO();
       paramsDTO.facilityId = 1;
-      const result = await service.export(paramsDTO);
+      paramsDTO.reportedValuesOnly = true;
+      const result = await service.export(
+        paramsDTO,
+        paramsDTO.reportedValuesOnly,
+      );
 
       expect(result).toEqual(expected);
     });
