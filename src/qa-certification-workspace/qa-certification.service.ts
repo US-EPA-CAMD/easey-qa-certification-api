@@ -13,6 +13,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { TestExtensionExemptionsWorkspaceService } from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.service';
 import { QACertificationEventWorkspaceService } from '../qa-certification-event-workspace/qa-certification-event-workspace.service';
+import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 
 @Injectable()
 export class QACertificationWorkspaceService {
@@ -23,7 +24,10 @@ export class QACertificationWorkspaceService {
     private readonly qaCertEventService: QACertificationEventWorkspaceService,
   ) {}
 
-  async export(params: QACertificationParamsDTO): Promise<QACertificationDTO> {
+  async export(
+    params: QACertificationParamsDTO,
+    rptValuesOnly: boolean = false,
+  ): Promise<QACertificationDTO> {
     const promises = [];
 
     const SUMMARIES = 0;
@@ -64,12 +68,18 @@ export class QACertificationWorkspaceService {
 
     const results = await Promise.all(promises);
 
-    return {
+    const resultObject = {
       orisCode: Number(params.facilityId),
       testSummaryData: results[SUMMARIES],
       certificationEventData: results[EVENTS],
       testExtensionExemptionData: results[EXT_EXEMPTIONS],
     };
+
+    if (rptValuesOnly) {
+      await removeNonReportedValues(resultObject);
+    }
+
+    return resultObject;
   }
 
   async import(
