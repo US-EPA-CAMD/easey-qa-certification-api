@@ -7,6 +7,7 @@ import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { TestSummaryService } from '../test-summary/test-summary.service';
 import { TestExtensionExemptionsService } from '../test-extension-exemptions/test-extension-exemptions.service';
 import { QaCertificationEventService } from '../qa-certification-event/qa-certification-event.service';
+import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 
 @Injectable()
 export class QACertificationService {
@@ -17,7 +18,10 @@ export class QACertificationService {
     private readonly qaCertEventService: QaCertificationEventService,
   ) {}
 
-  async export(params: QACertificationParamsDTO): Promise<QACertificationDTO> {
+  async export(
+    params: QACertificationParamsDTO,
+    rptValuesOnly: boolean = false,
+  ): Promise<QACertificationDTO> {
     const promises = [];
 
     const SUMMARIES = 0;
@@ -59,11 +63,17 @@ export class QACertificationService {
 
     const results = await Promise.all(promises);
 
-    return {
+    const resultObject = {
       orisCode: Number(params.facilityId),
       testSummaryData: results[SUMMARIES],
       certificationEventData: results[EVENTS],
       testExtensionExemptionData: results[EXT_EXEMPTIONS],
     };
+
+    if (rptValuesOnly) {
+      await removeNonReportedValues(resultObject);
+    }
+
+    return resultObject;
   }
 }
