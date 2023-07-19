@@ -13,7 +13,7 @@ import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestTypeCode } from './../entities/test-type-code.entity';
 import { IsValidCodes } from '../pipes/is-valid-codes.pipe';
-import { ValidationArguments } from 'class-validator';
+import { IsOptional, ValidationArguments } from 'class-validator';
 import { FindOneOptions, In } from 'typeorm';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -134,4 +134,9 @@ export class QACertificationParamsDTO {
     },
   })
   endDate?: Date;
+
+  @IsOptional()
+  @ApiProperty()
+  @Transform(({ value }) => value === 'true')
+  reportedValuesOnly?: boolean;
 }

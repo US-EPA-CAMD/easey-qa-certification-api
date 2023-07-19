@@ -55,6 +55,7 @@ describe('QA Certification Service', () => {
   describe('export test', () => {
     it('successfully calls export() service function', async () => {
       const paramsDTO = new QACertificationParamsDTO();
+      paramsDTO.reportedValuesOnly = true;
       paramsDTO.facilityId = 1;
       const qaCertEventDto = new QACertificationDTO();
       const testSumDto = new TestSummaryDTO();
@@ -68,7 +69,10 @@ describe('QA Certification Service', () => {
       testSummaryService.export.mockResolvedValue([testSumDto]);
       qaCertEventService.export.mockResolvedValue([qaCertEventDto]);
       testExtensionExemptionsService.export.mockResolvedValue([testExtExmtDto]);
-      const result = await service.export(paramsDTO);
+      const result = await service.export(
+        paramsDTO,
+        paramsDTO.reportedValuesOnly,
+      );
 
       expect(result).toEqual(expected);
     });

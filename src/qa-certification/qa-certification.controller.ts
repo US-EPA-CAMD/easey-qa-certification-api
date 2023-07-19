@@ -1,6 +1,12 @@
 import { Get, Query, Controller } from '@nestjs/common';
 
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiSecurity,
+  ApiQuery,
+  ApiOperation,
+} from '@nestjs/swagger';
 
 import { QACertificationDTO } from '../dto/qa-certification.dto';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
@@ -13,9 +19,12 @@ export class QACertificationController {
   constructor(private readonly service: QACertificationService) {}
 
   @Get('export')
+  @ApiOperation({
+    summary: 'Exports official QA Certification data',
+  })
   @ApiOkResponse({
     type: QACertificationDTO,
-    description: 'Exports official QA Certification data',
+    description: 'Successfull export of official QA Certification data',
   })
   @ApiQuery({
     style: 'pipeDelimited',
@@ -44,6 +53,6 @@ export class QACertificationController {
   async export(
     @Query() params: QACertificationParamsDTO,
   ): Promise<QACertificationDTO> {
-    return this.service.export(params);
+    return this.service.export(params, params.reportedValuesOnly);
   }
 }
