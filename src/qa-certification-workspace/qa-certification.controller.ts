@@ -7,7 +7,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOkResponse,
+  ApiSecurity,
+  ApiQuery,
+  ApiOperation,
+} from '@nestjs/swagger';
 
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -45,9 +51,12 @@ export class QACertificationWorkspaceController {
   ) {}
 
   @Get('export')
+  @ApiOperation({
+    summary: 'Exports workspace QA Certification data',
+  })
   @ApiOkResponse({
     type: QACertificationDTO,
-    description: 'Exports worksapce QA Certification data',
+    description: 'Successfull export of workspace QA Certification data',
   })
   @ApiQuery({
     style: 'pipeDelimited',
@@ -80,7 +89,7 @@ export class QACertificationWorkspaceController {
   async export(
     @Query() params: QACertificationParamsDTO,
   ): Promise<QACertificationDTO> {
-    return this.service.export(params);
+    return this.service.export(params, params.reportedValuesOnly);
   }
 
   @Post('import')
