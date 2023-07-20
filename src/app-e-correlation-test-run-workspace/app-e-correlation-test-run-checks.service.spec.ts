@@ -70,7 +70,7 @@ describe('Appendix E Correlation Test Run Checks Service Test', () => {
         result = err.response.message;
       }
 
-      expect(result).toEqual([MOCK_ERROR_MSG]);
+      expect(result).toEqual(MOCK_ERROR_MSG);
     });
   });
 

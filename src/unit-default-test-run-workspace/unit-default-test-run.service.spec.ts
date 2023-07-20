@@ -14,6 +14,7 @@ import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
 import { UnitDefaultTestRunWorkspaceRepository } from './unit-default-test-run.repository';
 import { UnitDefaultTestRunWorkspaceService } from './unit-default-test-run.service';
 import { UnitDefaultTestRunRepository } from '../unit-default-test-run/unit-default-test-run.repository';
+import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -54,6 +55,7 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         UnitDefaultTestRunWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,

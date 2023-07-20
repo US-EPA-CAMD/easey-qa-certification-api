@@ -17,6 +17,7 @@ import { RataSummaryWorkspaceService } from '../rata-summary-workspace/rata-summ
 import { RataSummaryDTO, RataSummaryImportDTO } from '../dto/rata-summary.dto';
 import { RataRepository } from '../rata/rata.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { ConfigService } from '@nestjs/config';
 
 const rataDto = new RataDTO();
 
@@ -73,6 +74,7 @@ describe('RataWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         RataWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,

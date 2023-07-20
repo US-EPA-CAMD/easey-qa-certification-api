@@ -77,7 +77,7 @@ describe('Appendix E Heat Input From Oil Checks Service Test', () => {
         result = err.response.message;
       }
 
-      expect(result).toEqual([MOCK_ERROR_MSG]);
+      expect(result).toEqual(MOCK_ERROR_MSG);
     });
   });
 

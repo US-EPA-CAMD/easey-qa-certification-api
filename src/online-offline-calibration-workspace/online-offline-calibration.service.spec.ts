@@ -9,6 +9,7 @@ import { OnlineOfflineCalibrationWorkspaceService } from './online-offline-calib
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { HttpStatus } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 const testSumId = '1';
 const onlineOfflineCalibrationId = 'abc123';
@@ -45,6 +46,7 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         OnlineOfflineCalibrationWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,

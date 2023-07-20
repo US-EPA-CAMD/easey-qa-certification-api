@@ -24,6 +24,7 @@ export class AppECorrelationTestSummaryChecksService {
       throw new EaseyException(
         new Error(errorList.join('\n')),
         HttpStatus.BAD_REQUEST,
+        { responseObject: errorList },
       );
     }
   }

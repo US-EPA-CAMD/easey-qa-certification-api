@@ -76,7 +76,9 @@ describe('Linearity Summary Check Service Test', () => {
       try {
         await service.runChecks(payload, testSumId, false, false);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(
+          `${MOCK_ERROR_MSG}\n${MOCK_ERROR_MSG}`,
+        );
       }
     });
   });
@@ -93,7 +95,9 @@ describe('Linearity Summary Check Service Test', () => {
       try {
         await service.runChecks(payload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(
+          `${MOCK_ERROR_MSG}\n${MOCK_ERROR_MSG}`,
+        );
       }
     });
   });

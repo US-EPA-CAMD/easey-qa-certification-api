@@ -72,7 +72,7 @@ describe('TestExtensionExemptionsChecksService', () => {
         await service.runChecks(locationId, payload, null, false, false);
       } catch (err) {
         expect(err).toBeInstanceOf(EaseyException);
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
   });

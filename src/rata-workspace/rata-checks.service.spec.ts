@@ -129,7 +129,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
 
@@ -153,7 +153,9 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(
+          `${MOCK_ERROR_MSG}\n${MOCK_ERROR_MSG}`,
+        );
       }
     });
   });
@@ -174,7 +176,9 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG, MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(
+          `${MOCK_ERROR_MSG}\n${MOCK_ERROR_MSG}`,
+        );
       }
     });
 
@@ -263,7 +267,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
 
@@ -284,7 +288,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
 
@@ -305,7 +309,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
   });
@@ -328,7 +332,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
 
@@ -349,7 +353,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
 
@@ -373,7 +377,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
 
@@ -399,7 +403,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
 
@@ -426,7 +430,7 @@ describe('Rata Checks Service Test', () => {
       try {
         await service.runChecks(locationId, importPayload, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
   });

@@ -4,6 +4,7 @@ import { RataTraverse } from '../entities/rata-traverse.entity';
 import { RataTraverseMap } from '../maps/rata-traverse.map';
 import { RataTraverseRepository } from './rata-traverse.repository';
 import { RataTraverseService } from './rata-traverse.service';
+import { ConfigService } from '@nestjs/config';
 
 const flowRataRunId = '';
 const rataTravarse = new RataTraverse();
@@ -25,6 +26,7 @@ describe('RataTraverseService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        ConfigService,
         RataTraverseService,
         {
           provide: RataTraverseRepository,

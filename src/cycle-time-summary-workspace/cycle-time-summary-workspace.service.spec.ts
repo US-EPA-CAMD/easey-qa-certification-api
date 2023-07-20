@@ -18,6 +18,7 @@ import {
   CycleTimeInjectionDTO,
   CycleTimeInjectionImportDTO,
 } from '../dto/cycle-time-injection.dto';
+import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -65,6 +66,7 @@ describe('CycleTimeSummaryWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         CycleTimeSummaryWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,

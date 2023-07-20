@@ -14,6 +14,7 @@ import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { HttpStatus } from '@nestjs/common/enums';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { TestQualificationRepository } from '../test-qualification/test-qualification.repository';
+import { ConfigService } from '@nestjs/config';
 
 const testSumId = '';
 const testQualificationId = 'a1b2c3';
@@ -62,6 +63,7 @@ describe('TestQualificationWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         TestQualificationWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,

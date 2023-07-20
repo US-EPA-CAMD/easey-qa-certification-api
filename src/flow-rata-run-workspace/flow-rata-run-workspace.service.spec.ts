@@ -17,6 +17,7 @@ import { RataTraverseWorkspaceService } from '../rata-traverse-workspace/rata-tr
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FlowRataRunRepository } from '../flow-rata-run/flow-rata-run.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { ConfigService } from '@nestjs/config';
 
 const flowRataRunId = 'a1b2c3';
 const testSumId = 'd4e5f6';
@@ -82,6 +83,7 @@ describe('FlowRataRunWorkspaceService', () => {
       providers: [
         Logger,
         FlowRataRunWorkspaceService,
+        ConfigService,
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSummaryService,

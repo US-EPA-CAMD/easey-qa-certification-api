@@ -20,6 +20,7 @@ import {
   UnitDefaultTestRunImportDTO,
 } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRunWorkspaceService } from '../unit-default-test-run-workspace/unit-default-test-run.service';
+import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -72,6 +73,7 @@ describe('UnitDefaultTestWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         UnitDefaultTestWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,

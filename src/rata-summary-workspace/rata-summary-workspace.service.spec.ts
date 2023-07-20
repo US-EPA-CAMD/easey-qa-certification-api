@@ -20,6 +20,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { Rata } from '../entities/workspace/rata.entity';
+import { ConfigService } from '@nestjs/config';
 
 const dto = new RataSummaryDTO();
 
@@ -94,6 +95,7 @@ describe('RataSummaryWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         RataSummaryWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,

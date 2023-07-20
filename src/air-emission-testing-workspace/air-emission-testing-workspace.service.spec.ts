@@ -13,6 +13,7 @@ import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { AirEmissionTestingWorkspaceRepository } from './air-emission-testing-workspace.repository';
 import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
+import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -54,6 +55,7 @@ describe('AirEmissionTestingWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         AirEmissionTestingWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,

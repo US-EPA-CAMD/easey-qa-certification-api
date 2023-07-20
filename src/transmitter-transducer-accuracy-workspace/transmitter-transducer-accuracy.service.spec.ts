@@ -14,6 +14,7 @@ import {
 import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { TransmitterTransducerAccuracyRepository } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.repository';
+import { ConfigService } from '@nestjs/config';
 
 const testSumID = 'TEST-SUM-ID';
 const userID = 'USER-ID';
@@ -53,6 +54,7 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         TransmitterTransducerAccuracyWorkspaceService,
         {
           provide: TransmitterTransducerAccuracyWorkspaceRepository,

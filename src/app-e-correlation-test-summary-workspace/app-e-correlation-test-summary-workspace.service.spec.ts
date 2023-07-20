@@ -15,6 +15,7 @@ import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
 import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-test-summary-workspace.service';
+import { ConfigService } from '@nestjs/config';
 
 const locationId = '5';
 const testSumId = '';
@@ -62,6 +63,7 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         AppECorrelationTestSummaryWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
