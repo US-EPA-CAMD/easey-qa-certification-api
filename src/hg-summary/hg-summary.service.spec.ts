@@ -6,6 +6,7 @@ import { HgSummaryMap } from '../maps/hg-summary.map';
 import { HgSummaryRepository } from './hg-summary.repository';
 import { HgSummaryService } from './hg-summary.service';
 import { HgInjectionService } from '../hg-injection/hg-injection.service';
+import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -34,6 +35,7 @@ describe('HgSummaryService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        ConfigService,
         HgSummaryService,
         {
           provide: HgSummaryRepository,

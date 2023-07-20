@@ -4,8 +4,7 @@ import { In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   LinearityInjectionDTO,
@@ -36,8 +35,10 @@ export class LinearityInjectionWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `A linearity injection record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `A linearity injection record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -95,7 +96,7 @@ export class LinearityInjectionWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Linearity Injection Successfully Imported. Record Id: ${result.id}`,
     );
     return null;
@@ -141,8 +142,10 @@ export class LinearityInjectionWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `A linearity injection record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `A linearity injection record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -173,8 +176,8 @@ export class LinearityInjectionWorkspaceService {
     try {
       await this.repository.delete(id);
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Linearity Injection record Id [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting Linearity Injection record Id [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

@@ -12,6 +12,7 @@ import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
 import { InternalServerErrorException } from '@nestjs/common';
 import { FlowToLoadCheckRepository } from '../flow-to-load-check/flow-to-load-check.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { ConfigService } from '@nestjs/config';
 
 const testSumId = '';
 const userId = 'user';
@@ -52,6 +53,7 @@ describe('FlowToLoadCheckWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         FlowToLoadCheckWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,

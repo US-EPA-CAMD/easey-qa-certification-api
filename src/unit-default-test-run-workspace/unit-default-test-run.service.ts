@@ -4,8 +4,7 @@ import { In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   UnitDefaultTestRunBaseDTO,
@@ -52,8 +51,10 @@ export class UnitDefaultTestRunWorkspaceService {
     });
 
     if (!result) {
-      throw new LoggingException(
-        `Unit Default Test Run record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Unit Default Test Run record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -102,8 +103,10 @@ export class UnitDefaultTestRunWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `Unit Default Test Run record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Unit Default Test Run record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -142,8 +145,10 @@ export class UnitDefaultTestRunWorkspaceService {
     try {
       await this.repository.delete(id);
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Unit Default Test Run with record id [${id}]`,
+      throw new EaseyException(
+        new Error(
+          `Error deleting Unit Default Test Run with record id [${id}]`,
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -199,7 +204,7 @@ export class UnitDefaultTestRunWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Unit Default Test Run successfully imported. Record Id: ${createdUnitDefaultTestRun.id}`,
     );
 

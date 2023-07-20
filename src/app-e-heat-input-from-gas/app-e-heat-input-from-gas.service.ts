@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import {
   AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasRecordDTO,
@@ -32,8 +32,10 @@ export class AppEHeatInputFromGasService {
     const result = await this.repository.getAppEHeatInputFromGasById(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Appendix E Heat Input From Gas record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Appendix E Heat Input From Gas record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { AppEHeatInputFromOilChecksService } from './app-e-heat-input-from-oil-checks.service';
 import { AppECorrelationTestRunWorkspaceRepository } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.repository';
@@ -38,7 +37,7 @@ describe('Appendix E Heat Input From Oil Checks Service Test', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [LoggerModule, LoggingException],
+      imports: [LoggerModule, LoggerModule],
       providers: [
         AppEHeatInputFromOilChecksService,
         {
@@ -78,7 +77,7 @@ describe('Appendix E Heat Input From Oil Checks Service Test', () => {
         result = err.response.message;
       }
 
-      expect(result).toEqual([MOCK_ERROR_MSG]);
+      expect(result).toEqual(MOCK_ERROR_MSG);
     });
   });
 

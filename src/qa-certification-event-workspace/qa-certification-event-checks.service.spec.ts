@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { QACertificationEventBaseDTO } from '../dto/qa-certification-event.dto';
 import { QACertificationEventChecksService } from './qa-certification-event-checks.service';
@@ -66,8 +66,8 @@ describe('QACertificationEventChecksService', () => {
       try {
         await service.runChecks(locationId, payload, null, false, false);
       } catch (err) {
-        expect(err).toBeInstanceOf(LoggingException);
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err).toBeInstanceOf(EaseyException);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
   });

@@ -13,6 +13,7 @@ import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-ga
 import { AppEHeatInputFromGas } from '../entities/workspace/app-e-heat-input-from-gas.entity';
 import { AppEHeatInputFromGasRepository } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { ConfigService } from '@nestjs/config';
 
 const locationId = 'LOCATION-ID';
 const testSumId = 'TEST-SUM-ID';
@@ -66,6 +67,7 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         AppEHeatInputFromGasWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,

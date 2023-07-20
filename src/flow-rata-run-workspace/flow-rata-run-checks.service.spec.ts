@@ -8,7 +8,7 @@ import { FlowRataRunChecksService } from './flow-rata-run-checks.service';
 import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.repository';
 import { RataFrequencyCode } from '../entities/workspace/rata-frequency-code.entity';
 import { FlowRataRunImportDTO } from '../dto/flow-rata-run.dto';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { RataSummaryWorkspaceRepository } from '../rata-summary-workspace/rata-summary-workspace.repository';
 import { RataRunWorkspaceRepository } from '../rata-run-workspace/rata-run-workspace.repository';
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
@@ -70,7 +70,7 @@ describe('Flow Rata Run Check Service Test', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [LoggerModule, LoggingException],
+      imports: [LoggerModule, LoggerModule],
       providers: [
         FlowRataRunChecksService,
         {
@@ -118,7 +118,7 @@ describe('Flow Rata Run Check Service Test', () => {
       try {
         await service.runChecks(importPayload, false, false, rataSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
       try {
         await service.runChecks(
@@ -130,7 +130,7 @@ describe('Flow Rata Run Check Service Test', () => {
           testSumId,
         );
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
   });
@@ -149,7 +149,7 @@ describe('Flow Rata Run Check Service Test', () => {
       try {
         await service.runChecks(importPayload, false, false, rataSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
     it('Should get [RATA-114-B] error', async () => {
@@ -160,7 +160,7 @@ describe('Flow Rata Run Check Service Test', () => {
       try {
         await service.runChecks(importPayload, false, false, rataSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
     it('Should get [RATA-114-C] error', async () => {
@@ -177,7 +177,7 @@ describe('Flow Rata Run Check Service Test', () => {
       try {
         await service.runChecks(importPayload, false, false, rataSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
   });
@@ -195,7 +195,7 @@ describe('Flow Rata Run Check Service Test', () => {
           rataRunId,
         );
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
   });
@@ -220,7 +220,7 @@ describe('Flow Rata Run Check Service Test', () => {
           rataRunId,
         );
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
     it('Should get [RATA-124-B] error', async () => {
@@ -241,7 +241,7 @@ describe('Flow Rata Run Check Service Test', () => {
           rataRunId,
         );
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
   });

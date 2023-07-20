@@ -11,6 +11,7 @@ import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
 import { ProtocolGasWorkspaceService } from './protocol-gas.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { ProtocolGasRepository } from '../protocol-gas/protocol-gas.repository';
+import { ConfigService } from '@nestjs/config';
 
 const protocolGasId = 'a1b2c3';
 const testSumId = '1';
@@ -54,6 +55,7 @@ describe('ProtocolGasWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         ProtocolGasWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,

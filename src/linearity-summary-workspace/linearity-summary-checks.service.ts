@@ -11,7 +11,7 @@ import { LinearitySummary } from '../entities/linearity-summary.entity';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
@@ -30,7 +30,11 @@ export class LinearitySummaryChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(
+        new Error(errorList.join('\n')),
+        HttpStatus.BAD_REQUEST,
+        { responseObject: errorList },
+      );
     }
   }
 
@@ -45,7 +49,7 @@ export class LinearitySummaryChecksService {
     let error: string = null;
     const errorList: string[] = [];
     let testSumRecord;
-    this.logger.info('Running Linearity Summary Checks');
+    this.logger.log('Running Linearity Summary Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
@@ -76,7 +80,7 @@ export class LinearitySummaryChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.info('Completed Linearity Summary Checks');
+    this.logger.log('Completed Linearity Summary Checks');
     return errorList;
   }
 

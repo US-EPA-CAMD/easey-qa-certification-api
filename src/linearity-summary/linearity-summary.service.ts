@@ -7,8 +7,7 @@ import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryRepository } from './linearity-summary.repository';
 import { LinearityInjectionService } from '../linearity-injection/linearity-injection.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 @Injectable()
 export class LinearitySummaryService {
   constructor(
@@ -22,8 +21,10 @@ export class LinearitySummaryService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `A linearity summary record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `A linearity summary record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

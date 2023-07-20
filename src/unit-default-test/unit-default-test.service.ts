@@ -5,7 +5,7 @@ import {
   UnitDefaultTestRecordDTO,
 } from '../dto/unit-default-test.dto';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { UnitDefaultTestRepository } from './unit-default-test.repository';
 import { In } from 'typeorm';
 import { UnitDefaultTestRunService } from '../unit-default-test-run/unit-default-test-run.service';
@@ -38,8 +38,8 @@ export class UnitDefaultTestService {
     });
 
     if (!result) {
-      throw new LoggingException(
-        `Unit Default Test record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`Unit Default Test record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }

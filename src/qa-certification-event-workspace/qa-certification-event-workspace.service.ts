@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
@@ -56,10 +56,12 @@ export class QACertificationEventWorkspaceService {
     );
 
     if (!location) {
-      throw new LoggingException(
-        `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${
-          payload.unitId ? payload.unitId : payload.stackPipeId
-        }]`,
+      throw new EaseyException(
+        new Error(
+          `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${
+            payload.unitId ? payload.unitId : payload.stackPipeId
+          }]`,
+        ),
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -91,8 +93,10 @@ export class QACertificationEventWorkspaceService {
     const result = await this.repository.getQACertificationEventById(id);
 
     if (!result) {
-      throw new LoggingException(
-        `A QA Certification Event record not found with Record Id [${id}]`,
+      throw new EaseyException(
+        new Error(
+          `A QA Certification Event record not found with Record Id [${id}]`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -180,8 +184,10 @@ export class QACertificationEventWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `A QA Certification Event record not found with Record Id [${id}]`,
+      throw new EaseyException(
+        new Error(
+          `A QA Certification Event record not found with Record Id [${id}]`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -270,7 +276,7 @@ export class QACertificationEventWorkspaceService {
       );
     }
 
-    this.logger.info(
+    this.logger.log(
       `QA Certification Record Successfully Imported. Record Id: ${importedQACertEvent.id}`,
     );
 

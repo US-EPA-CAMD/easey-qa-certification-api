@@ -2,8 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In } from 'typeorm';
 
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CycleTimeInjectionDTO } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
 import { CycleTimeInjectionRepository } from './cycle-time-injection.repository';
@@ -39,8 +38,10 @@ export class CycleTimeInjectionService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `A Cycle Time Injection record not found with Record Id [${id}]`,
+      throw new EaseyException(
+        new Error(
+          `A Cycle Time Injection record not found with Record Id [${id}]`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

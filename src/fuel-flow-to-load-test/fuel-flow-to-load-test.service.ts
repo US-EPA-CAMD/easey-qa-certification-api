@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
 import { FuelFlowToLoadTestDTO } from '../dto/fuel-flow-to-load-test.dto';
 import { FuelFlowToLoadTestRepository } from './fuel-flow-to-load-test.repository';
@@ -30,8 +30,10 @@ export class FuelFlowToLoadTestService {
     });
 
     if (!result) {
-      throw new LoggingException(
-        `Fuel Flow To Load Test record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Fuel Flow To Load Test record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

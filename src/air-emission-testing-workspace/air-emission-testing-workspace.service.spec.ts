@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { AirEmissionTestingRepository } from '../air-emission-testing/air-emission-testing.repository';
 import {
@@ -13,6 +13,7 @@ import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { AirEmissionTestingWorkspaceRepository } from './air-emission-testing-workspace.repository';
 import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
+import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -54,6 +55,7 @@ describe('AirEmissionTestingWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         AirEmissionTestingWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
@@ -179,8 +181,10 @@ describe('AirEmissionTestingWorkspaceService', () => {
     });
 
     it('Should through error while deleting a Air Emission Testing record', async () => {
-      const error = new LoggingException(
-        `Error deleting Air Emission Testing with record Id [${airEmissiontestingId}]`,
+      const error = new EaseyException(
+        new Error(
+          `Error deleting Air Emission Testing with record Id [${airEmissiontestingId}]`,
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);

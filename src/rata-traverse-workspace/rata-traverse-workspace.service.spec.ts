@@ -11,6 +11,7 @@ import { RataTraverseWorkspaceService } from './rata-traverse-workspace.service'
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { RataTraverseRepository } from '../rata-traverse/rata-traverse.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { ConfigService } from '@nestjs/config';
 
 const testSumId = '';
 const userId = '';
@@ -46,6 +47,7 @@ describe('RataTraverseWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         RataTraverseWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,

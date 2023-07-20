@@ -1,6 +1,6 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { getManager, In } from 'typeorm';
 import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { CertEventReviewAndSubmitRepository } from './cert-event-review-and-submit.repository';
@@ -78,7 +78,7 @@ export class CertEventReviewAndSubmitService {
 
       return newResults;
     } catch (e) {
-      throw new LoggingException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new EaseyException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

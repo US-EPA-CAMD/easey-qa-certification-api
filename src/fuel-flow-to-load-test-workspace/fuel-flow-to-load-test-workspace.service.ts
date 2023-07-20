@@ -1,6 +1,6 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -50,8 +50,10 @@ export class FuelFlowToLoadTestWorkspaceService {
     });
 
     if (!result) {
-      throw new LoggingException(
-        `Fuel Flow To Load Test record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Fuel Flow To Load Test record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -100,8 +102,10 @@ export class FuelFlowToLoadTestWorkspaceService {
     });
 
     if (!entity) {
-      throw new LoggingException(
-        `Fuel Flow To Load Test record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Fuel Flow To Load Test record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -168,7 +172,7 @@ export class FuelFlowToLoadTestWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Fuel FLow To Load Test Successfully Imported.  Record Id: ${createdFuelFlowToLoadTest.id}`,
     );
   }

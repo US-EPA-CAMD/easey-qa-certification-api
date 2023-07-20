@@ -92,7 +92,7 @@ describe('Cycle Time Injection Check Service Test', () => {
       try {
         await service.runChecks(payload, null, cycleTimeSumId, testSumId);
       } catch (err) {
-        expect(err.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
       }
     });
   });

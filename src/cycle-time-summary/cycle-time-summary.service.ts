@@ -1,6 +1,6 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CycleTimeInjectionService } from '../cycle-time-injection/cycle-time-injection.service';
 import { In } from 'typeorm';
 import { CycleTimeSummaryDTO } from '../dto/cycle-time-summary.dto';
@@ -35,8 +35,10 @@ export class CycleTimeSummaryService {
     });
 
     if (!result) {
-      throw new LoggingException(
-        `Cycle Time Summary record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Cycle Time Summary record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

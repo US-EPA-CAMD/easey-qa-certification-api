@@ -2,7 +2,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { HttpStatus, Injectable } from '@nestjs/common';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 import {
@@ -60,7 +60,11 @@ export class TestSummaryChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(
+        new Error(errorList.join('\n')),
+        HttpStatus.BAD_REQUEST,
+        { responseObject: errorList },
+      );
     }
   }
 
@@ -74,7 +78,7 @@ export class TestSummaryChecksService {
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
-    this.logger.info('Running Test Summary Checks');
+    this.logger.log('Running Test Summary Checks');
 
     if (!isImport) {
       const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
@@ -211,7 +215,7 @@ export class TestSummaryChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.info('Completed Test Summary Checks');
+    this.logger.log('Completed Test Summary Checks');
     return errorList;
   }
 
