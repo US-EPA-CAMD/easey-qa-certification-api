@@ -12,6 +12,7 @@ import { FuelFlowmeterAccuracyWorkspaceService } from './fuel-flowmeter-accuracy
 import { FuelFlowmeterAccuracyRepository } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.repository';
 import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
 import { FuelFlowmeterAccuracy } from '../entities/fuel-flowmeter-accuracy.entity';
+import { ConfigService } from '@nestjs/config';
 
 const testSumId = '';
 const userId = 'user';
@@ -51,6 +52,7 @@ describe('FuelFlowmeterWorkspaceService', () => {
       imports: [LoggerModule],
       providers: [
         Logger,
+        ConfigService,
         FuelFlowmeterAccuracyWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,

@@ -23,6 +23,7 @@ import {
   AppEHeatInputFromOilDTO,
   AppEHeatInputFromOilImportDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
+import { ConfigService } from '@nestjs/config';
 
 const userId = 'testUser';
 const locationId = '5';
@@ -72,6 +73,7 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         AppECorrelationTestRunWorkspaceService,
         {
           provide: AppECorrelationTestRunWorkspaceRepository,

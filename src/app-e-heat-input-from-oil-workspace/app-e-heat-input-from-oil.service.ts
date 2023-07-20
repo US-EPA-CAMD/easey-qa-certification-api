@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
 import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -49,8 +49,10 @@ export class AppEHeatInputFromOilWorkspaceService {
     const result = await this.repository.getAppEHeatInputFromOilById(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Appendix E Heat Input from Oil record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Appendix E Heat Input from Oil record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -75,8 +77,10 @@ export class AppEHeatInputFromOilWorkspaceService {
     });
 
     if (!system) {
-      throw new LoggingException(
-        `Monitor System Identifier is invalid for this location [${locationId}].`,
+      throw new EaseyException(
+        new Error(
+          `Monitor System Identifier is invalid for this location [${locationId}].`,
+        ),
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -120,8 +124,10 @@ export class AppEHeatInputFromOilWorkspaceService {
     const entity = await this.repository.getAppEHeatInputFromOilById(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `Appendix E Heat Input From Oil record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Appendix E Heat Input From Oil record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -158,8 +164,10 @@ export class AppEHeatInputFromOilWorkspaceService {
     try {
       await this.repository.delete({ id });
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Appendix E Heat Input From Gas record Id [${id}]`,
+      throw new EaseyException(
+        new Error(
+          `Error deleting Appendix E Heat Input From Gas record Id [${id}]`,
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -199,7 +207,7 @@ export class AppEHeatInputFromOilWorkspaceService {
       isHistoricalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Appendix E Heat Input from Oil Successfully Imported.  Record Id: ${createdHeatInputFromOil.id}`,
     );
   }

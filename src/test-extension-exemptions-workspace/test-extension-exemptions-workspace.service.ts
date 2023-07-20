@@ -17,7 +17,7 @@ import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
@@ -44,8 +44,10 @@ export class TestExtensionExemptionsWorkspaceService {
     const result = await this.repository.getTestExtensionExemptionById(id);
 
     if (!result) {
-      throw new LoggingException(
-        `A QA Test Extension Exemtion record not found with Record Id [${id}]`,
+      throw new EaseyException(
+        new Error(
+          `A QA Test Extension Exemtion record not found with Record Id [${id}]`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -139,7 +141,7 @@ export class TestExtensionExemptionsWorkspaceService {
       );
     }
 
-    this.logger.info(
+    this.logger.log(
       `QA Test Extension Exemption Record Successfully Imported. Record Id: ${importedTestExtensionExemption.id}`,
     );
 
@@ -165,10 +167,12 @@ export class TestExtensionExemptionsWorkspaceService {
     );
 
     if (!location) {
-      throw new LoggingException(
-        `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${
-          payload.unitId ? payload.unitId : payload.stackPipeId
-        }]`,
+      throw new EaseyException(
+        new Error(
+          `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${
+            payload.unitId ? payload.unitId : payload.stackPipeId
+          }]`,
+        ),
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -209,8 +213,10 @@ export class TestExtensionExemptionsWorkspaceService {
     const record = await this.repository.findOne(id);
 
     if (!record) {
-      throw new LoggingException(
-        `A test extension exemption record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `A test extension exemption record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

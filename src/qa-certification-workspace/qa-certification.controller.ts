@@ -108,7 +108,6 @@ export class QACertificationWorkspaceController {
     description:
       'Imports QA Certification data from JSON file into the workspace',
   })
-  @UseInterceptors(FormatValidationErrorsInterceptor)
   async import(
     @Body() payload: QACertificationImportDTO,
     @User() user: CurrentUser,

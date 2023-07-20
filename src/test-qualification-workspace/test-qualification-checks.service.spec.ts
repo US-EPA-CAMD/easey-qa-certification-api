@@ -515,13 +515,9 @@ describe('TestQualificationChecksService', () => {
           rata,
         );
       } catch (err) {
-        expect(err.response.message).toEqual([
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-          MOCK_ERROR_MSG,
-        ]);
+        expect(err.response.message).toEqual(
+          `${MOCK_ERROR_MSG}\n${MOCK_ERROR_MSG}\n${MOCK_ERROR_MSG}\n${MOCK_ERROR_MSG}\n${MOCK_ERROR_MSG}`,
+        );
       }
     });
   });

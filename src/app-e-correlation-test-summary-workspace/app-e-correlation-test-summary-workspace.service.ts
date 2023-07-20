@@ -12,7 +12,7 @@ import {
 } from '../dto/app-e-correlation-test-summary.dto';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { AppendixETestSummaryRepository } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.repository';
 import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -49,8 +49,10 @@ export class AppECorrelationTestSummaryWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Appendix E Correlation Test Summary Workspace record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Appendix E Correlation Test Summary Workspace record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -100,8 +102,10 @@ export class AppECorrelationTestSummaryWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `Appendix E Correlation Test Summary Workspace record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Appendix E Correlation Test Summary Workspace record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -150,7 +154,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Appendix E Correlation Test Summary Successfully Imported.  Record Id: ${createdAppECorrelation.id}`,
     );
 
@@ -184,8 +188,10 @@ export class AppECorrelationTestSummaryWorkspaceService {
         testSumId,
       });
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Appendix E Correlation Test Summary with record Id [${id}]`,
+      throw new EaseyException(
+        new Error(
+          `Error deleting Appendix E Correlation Test Summary with record Id [${id}]`,
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

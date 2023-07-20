@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { RataSummaryService } from '../rata-summary/rata-summary.service';
 import { In } from 'typeorm';
 import { RataDTO } from '../dto/rata.dto';
@@ -22,8 +22,8 @@ export class RataService {
     });
 
     if (!result) {
-      throw new LoggingException(
-        `A RATA record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`A RATA record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }

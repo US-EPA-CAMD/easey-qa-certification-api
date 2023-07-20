@@ -2,7 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { In } from 'typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
@@ -42,8 +42,10 @@ export class FlowToLoadReferenceWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Flow To Load Reference Workspace record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Flow To Load Reference Workspace record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -92,8 +94,10 @@ export class FlowToLoadReferenceWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `Flow To Load Reference Workspace record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Flow To Load Reference Workspace record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -133,8 +137,8 @@ export class FlowToLoadReferenceWorkspaceService {
         testSumId,
       });
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Flow To Load Reference record Id [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting Flow To Load Reference record Id [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
         e,
       );
@@ -180,7 +184,7 @@ export class FlowToLoadReferenceWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Flow To Load Reference Successfully Imported.  Record Id: ${createdFlowToLoadReference.id}`,
     );
   }

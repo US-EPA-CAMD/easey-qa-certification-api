@@ -15,6 +15,7 @@ import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { AppEHeatInputFromGasRecordDTO } from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { ConfigService } from '@nestjs/config';
 
 const locationId = '5';
 const aeHiOilId = 'a1b2c3';
@@ -66,6 +67,7 @@ describe('AppEHeatInputOilWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         AppEHeatInputFromOilWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,

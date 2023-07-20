@@ -2,8 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   ProtocolGasBaseDTO,
@@ -36,8 +35,8 @@ export class ProtocolGasWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `A protocol gas record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`A protocol gas record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -93,8 +92,8 @@ export class ProtocolGasWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `A protocol gas record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`A protocol gas record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -171,7 +170,7 @@ export class ProtocolGasWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Protocol Gas Successfully Imported.  Record Id: ${createdProtocolGas.id}`,
     );
   }

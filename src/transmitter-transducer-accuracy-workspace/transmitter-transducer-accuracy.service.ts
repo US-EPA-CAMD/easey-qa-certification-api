@@ -2,7 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
@@ -38,8 +38,10 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `A Transmitter Transducer Accuracy record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `A Transmitter Transducer Accuracy record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -108,8 +110,10 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     const entity = await this.repository.findOne({ id, testSumId });
 
     if (!entity) {
-      throw new LoggingException(
-        `Transmitter Transducer Accuracy record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Transmitter Transducer Accuracy record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -148,8 +152,10 @@ export class TransmitterTransducerAccuracyWorkspaceService {
         testSumId,
       });
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Transmitter Transducer Accuracy record [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Error deleting Transmitter Transducer Accuracy record [${id}].`,
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR,
         e,
       );
@@ -191,7 +197,7 @@ export class TransmitterTransducerAccuracyWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Transmitter Transducer Accuracy successfully imported. Record Id: ${createdTransmitterTransducerAccuracy.id}`,
     );
 

@@ -10,7 +10,7 @@ import {
 import { OnlineOfflineCalibrationRepository } from './online-offline-calibration.repository';
 import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.map';
 import { TestSummaryService } from '../test-summary/test-summary.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 
 @Injectable()
@@ -40,8 +40,10 @@ export class OnlineOfflineCalibrationService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Online Offline Calibration record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Online Offline Calibration record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

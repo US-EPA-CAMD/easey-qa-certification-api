@@ -16,6 +16,7 @@ import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository'
 import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
 import { HgInjectionWorkspaceService } from '../hg-injection-workspace/hg-injection-workspace.service';
 import { HgInjectionDTO, HgInjectionImportDTO } from '../dto/hg-injection.dto';
+import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -63,6 +64,7 @@ describe('HgSummaryWorkspaceService', () => {
       providers: [
         Logger,
         HgSummaryWorkspaceService,
+        ConfigService,
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSumService,

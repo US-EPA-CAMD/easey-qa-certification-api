@@ -3,7 +3,7 @@ import { RataRunRepository } from './rata-run.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RataRunMap } from '../maps/rata-run.map';
 import { RataRunDTO } from '../dto/rata-run.dto';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 import { FlowRataRunService } from '../flow-rata-run/flow-rata-run.service';
 
@@ -26,8 +26,8 @@ export class RataRunService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Rata Run record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`Rata Run record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }

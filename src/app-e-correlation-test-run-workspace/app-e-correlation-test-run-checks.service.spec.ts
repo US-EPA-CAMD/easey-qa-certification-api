@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { AppECorrelationTestRunChecksService } from './app-e-correlation-test-run-checks.service';
 import { AppECorrelationTestRunWorkspaceRepository } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.repository';
@@ -33,7 +32,7 @@ describe('Appendix E Correlation Test Run Checks Service Test', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [LoggerModule, LoggingException],
+      imports: [LoggerModule, LoggerModule],
       providers: [
         AppECorrelationTestRunChecksService,
         {
@@ -71,7 +70,7 @@ describe('Appendix E Correlation Test Run Checks Service Test', () => {
         result = err.response.message;
       }
 
-      expect(result).toEqual([MOCK_ERROR_MSG]);
+      expect(result).toEqual(MOCK_ERROR_MSG);
     });
   });
 

@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
@@ -34,7 +34,11 @@ export class RataChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(
+        new Error(errorList.join('\n')),
+        HttpStatus.BAD_REQUEST,
+        { responseObject: errorList },
+      );
     }
   }
 
@@ -48,7 +52,7 @@ export class RataChecksService {
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
-    this.logger.info('Running RATA Checks');
+    this.logger.log('Running RATA Checks');
     let testSumRecord;
 
     if (isImport) {
@@ -99,7 +103,7 @@ export class RataChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.info('Completed RATA Checks');
+    this.logger.log('Completed RATA Checks');
     return errorList;
   }
 

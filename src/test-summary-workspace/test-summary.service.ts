@@ -10,8 +10,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import {
   TestSummaryDTO,
   TestSummaryBaseDTO,
@@ -103,8 +102,10 @@ export class TestSummaryWorkspaceService {
     const result = await this.repository.getTestSummaryById(testSumId);
 
     if (!result) {
-      throw new LoggingException(
-        `A test summary record not found with Record Id [${testSumId}].`,
+      throw new EaseyException(
+        new Error(
+          `A test summary record not found with Record Id [${testSumId}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -361,7 +362,7 @@ export class TestSummaryWorkspaceService {
       historicalrecordId,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Test Summary Successfully Imported. Record Id: ${createdTestSummary.id}`,
     );
 
@@ -673,10 +674,12 @@ export class TestSummaryWorkspaceService {
     );
 
     if (!location) {
-      throw new LoggingException(
-        `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${
-          payload.unitId ? payload.unitId : payload.stackPipeId
-        }]`,
+      throw new EaseyException(
+        new Error(
+          `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${
+            payload.unitId ? payload.unitId : payload.stackPipeId
+          }]`,
+        ),
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -733,8 +736,8 @@ export class TestSummaryWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `A test summary record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`A test summary record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }

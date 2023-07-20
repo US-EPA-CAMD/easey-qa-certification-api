@@ -12,7 +12,7 @@ import {
 import { RataSummaryMap } from '../maps/rata-summary.map';
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 import { RataRunWorkspaceService } from '../rata-run-workspace/rata-run-workspace.service';
 import { RataSummary } from '../entities/rata-summary.entity';
@@ -49,8 +49,10 @@ export class RataSummaryWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Rata Summary workspace record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Rata Summary workspace record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -103,8 +105,10 @@ export class RataSummaryWorkspaceService {
     const record = await this.repository.findOne(rataSumId);
 
     if (!record) {
-      throw new LoggingException(
-        `A Rata Summary record not found with Record Id [${rataSumId}].`,
+      throw new EaseyException(
+        new Error(
+          `A Rata Summary record not found with Record Id [${rataSumId}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -150,8 +154,8 @@ export class RataSummaryWorkspaceService {
     try {
       await this.repository.delete(id);
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Rata Summary with record Id [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting Rata Summary with record Id [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -199,7 +203,7 @@ export class RataSummaryWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Rata Summary Successfully Imported. Record Id: ${createdRataSummary.id}`,
     );
 

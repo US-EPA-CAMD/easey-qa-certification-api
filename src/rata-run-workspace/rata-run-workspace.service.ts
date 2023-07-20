@@ -8,7 +8,7 @@ import {
   RataRunImportDTO,
   RataRunRecordDTO,
 } from '../dto/rata-run.dto';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -43,8 +43,8 @@ export class RataRunWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Rata Run record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`Rata Run record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -108,8 +108,8 @@ export class RataRunWorkspaceService {
     const record = await this.repository.findOne(rataRunId);
 
     if (!record) {
-      throw new LoggingException(
-        `A Rata Run record not found with Record Id [${rataRunId}].`,
+      throw new EaseyException(
+        new Error(`A Rata Run record not found with Record Id [${rataRunId}].`),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -172,7 +172,7 @@ export class RataRunWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Rata Run Successfully Imported. Record Id: ${createdRataRun.id}`,
     );
 

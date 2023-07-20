@@ -11,7 +11,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { AirEmissionTestingWorkspaceRepository } from './air-emission-testing-workspace.repository';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 import { AirEmissionTesting } from '../entities/air-emission-test.entity';
 import { AirEmissionTestingRepository } from '../air-emission-testing/air-emission-testing.repository';
@@ -44,8 +44,10 @@ export class AirEmissionTestingWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `An Air Emission Testing record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `An Air Emission Testing record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -93,8 +95,10 @@ export class AirEmissionTestingWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `An Air Emission Testing record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `An Air Emission Testing record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -135,8 +139,8 @@ export class AirEmissionTestingWorkspaceService {
         testSumId,
       });
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Air Emission Testing with record Id [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting Air Emission Testing with record Id [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -188,7 +192,7 @@ export class AirEmissionTestingWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Air Emission Testing Successfully Imported.  Record Id: ${createdAirEmissionTesting.id}`,
     );
   }

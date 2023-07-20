@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AppECorrelationTestRunWorkspaceRepository } from './app-e-correlation-test-run-workspace.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import {
   AppECorrelationTestRunBaseDTO,
@@ -23,7 +23,11 @@ export class AppECorrelationTestRunChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(
+        new Error(errorList.join('\n')),
+        HttpStatus.BAD_REQUEST,
+        { responseObject: errorList },
+      );
     }
   }
 
@@ -36,7 +40,7 @@ export class AppECorrelationTestRunChecksService {
     let error: string = null;
     const errorList: string[] = [];
 
-    this.logger.info('Running Appendix E Test Run Checks');
+    this.logger.log('Running Appendix E Test Run Checks');
 
     const appETestSummary = await this.appETestSummaryRepository.findOne(
       appETestSumId,
@@ -48,7 +52,7 @@ export class AppECorrelationTestRunChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.info('Completed Appendix E Test Run Checks');
+    this.logger.log('Completed Appendix E Test Run Checks');
     return errorList;
   }
 

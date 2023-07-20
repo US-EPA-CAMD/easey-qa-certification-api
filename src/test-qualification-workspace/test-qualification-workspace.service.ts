@@ -1,8 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   TestQualificationBaseDTO,
@@ -45,8 +44,10 @@ export class TestQualificationWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Test Qualification record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Test Qualification record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -96,8 +97,8 @@ export class TestQualificationWorkspaceService {
     try {
       await this.repository.delete(id);
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Test Qualification with record Id [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting Test Qualification with record Id [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -120,8 +121,10 @@ export class TestQualificationWorkspaceService {
     const record = await this.repository.findOne(id);
 
     if (!record) {
-      throw new LoggingException(
-        `A Test Qualification record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `A Test Qualification record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -184,7 +187,7 @@ export class TestQualificationWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Test Qualification Successfully Imported.  Record Id: ${createdTestQualification.id}`,
     );
   }

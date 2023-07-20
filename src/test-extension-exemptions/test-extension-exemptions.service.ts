@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import {
   TestExtensionExemptionDTO,
   TestExtensionExemptionRecordDTO,
@@ -22,8 +22,10 @@ export class TestExtensionExemptionsService {
     const result = await this.repository.getTestExtensionExemptionById(id);
 
     if (!result) {
-      throw new LoggingException(
-        `A QA Test Extension Exemption record not found with Record Id [${id}]`,
+      throw new EaseyException(
+        new Error(
+          `A QA Test Extension Exemption record not found with Record Id [${id}]`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

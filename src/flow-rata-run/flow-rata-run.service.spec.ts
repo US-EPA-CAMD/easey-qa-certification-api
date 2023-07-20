@@ -6,6 +6,7 @@ import { FlowRataRun } from '../entities/flow-rata-run.entity';
 import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
 import { RataTraverseService } from '../rata-traverse/rata-traverse.service';
 import { RataTraverseDTO } from '../dto/rata-traverse.dto';
+import { ConfigService } from '@nestjs/config';
 
 const flowRataRunId = 'a1b2c3';
 const rataRunId = 'd4e5f6';
@@ -35,6 +36,7 @@ describe('FlowRataRunService', () => {
       providers: [
         FlowRataRunService,
         FlowRataRunMap,
+        ConfigService,
         {
           provide: FlowRataRunRepository,
           useFactory: mockRepository,

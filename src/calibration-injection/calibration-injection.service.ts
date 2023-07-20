@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CalibrationInjectionMap } from '../maps/calibration-injection.map';
 import { CalibrationInjectionDTO } from '../dto/calibration-injection.dto';
@@ -32,8 +32,10 @@ export class CalibrationInjectionService {
     });
 
     if (!result) {
-      throw new LoggingException(
-        `Calibration Injection record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Calibration Injection record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
