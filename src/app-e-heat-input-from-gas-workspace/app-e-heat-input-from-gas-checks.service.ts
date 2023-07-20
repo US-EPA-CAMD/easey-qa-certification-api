@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import {
   AppEHeatInputFromGasBaseDTO,
@@ -23,7 +23,10 @@ export class AppEHeatInputFromGasChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(
+        new Error(errorList.join('\n')),
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -35,7 +38,7 @@ export class AppEHeatInputFromGasChecksService {
     let error: string = null;
     const errorList: string[] = [];
 
-    this.logger.info('Running Appendix E Heat Input From Gas Checks');
+    this.logger.log('Running Appendix E Heat Input From Gas Checks');
 
     const appETestRun = await this.appETestRunRepo.findOneWithAncestors(
       appETestRunId,
@@ -47,7 +50,7 @@ export class AppEHeatInputFromGasChecksService {
     }
 
     this.throwIfErrors(errorList);
-    this.logger.info('Completed Appendix E Heat Input From Gas Checks');
+    this.logger.log('Completed Appendix E Heat Input From Gas Checks');
     return errorList;
   }
 

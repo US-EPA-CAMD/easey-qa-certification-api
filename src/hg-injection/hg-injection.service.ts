@@ -2,8 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In } from 'typeorm';
 
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { HgInjectionMap } from '../maps/hg-injection.map';
 import { HgInjectionRepository } from './hg-injection.repository';
 import { HgInjectionDTO } from '../dto/hg-injection.dto';
@@ -27,8 +26,8 @@ export class HgInjectionService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Hg Injection record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`Hg Injection record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }

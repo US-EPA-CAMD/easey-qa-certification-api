@@ -1,7 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { QACertificationEventMap } from '../maps/qa-certification-event.map';
 import { QACertificationEventRepository } from './qa-certification-event.repository';
 import {
@@ -21,8 +20,10 @@ export class QaCertificationEventService {
     const result = await this.repository.getQACertificationEventById(id);
 
     if (!result) {
-      throw new LoggingException(
-        `A QA Certification Event record not found with Record Id [${id}]`,
+      throw new EaseyException(
+        new Error(
+          `A QA Certification Event record not found with Record Id [${id}]`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

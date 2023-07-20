@@ -19,7 +19,7 @@ import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 import { LinearityInjectionWorkspaceService } from '../linearity-injection-workspace/linearity-injection.service';
 import { TestSummaryWorkspaceService } from './../test-summary-workspace/test-summary.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { LinearitySummary } from '../entities/linearity-summary.entity';
 import { LinearitySummaryRepository } from '../linearity-summary/linearity-summary.repository';
 
@@ -42,8 +42,10 @@ export class LinearitySummaryWorkspaceService {
     const result = await this.repository.getSummaryById(id);
 
     if (!result) {
-      throw new LoggingException(
-        `A linearity summary record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `A linearity summary record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -106,7 +108,7 @@ export class LinearitySummaryWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Linear Summary Successfully Imported. Record Id: ${createdLineSummary.id}`,
     );
 
@@ -170,8 +172,10 @@ export class LinearitySummaryWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `A linearity summary record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `A linearity summary record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -203,8 +207,8 @@ export class LinearitySummaryWorkspaceService {
     try {
       await this.repository.delete(id);
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Linearity Summary record Id [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting Linearity Summary record Id [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
         e,
       );

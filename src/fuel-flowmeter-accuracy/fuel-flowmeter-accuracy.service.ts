@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
 import {
   FuelFlowmeterAccuracyDTO,
@@ -31,8 +31,10 @@ export class FuelFlowmeterAccuracyService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Fuel Flowmeter Accuracy record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Fuel Flowmeter Accuracy record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

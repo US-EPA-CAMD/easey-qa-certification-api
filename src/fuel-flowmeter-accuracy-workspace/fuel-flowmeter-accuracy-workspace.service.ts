@@ -4,8 +4,7 @@ import { In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import {
@@ -46,8 +45,10 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Fuel Flowmeter Accuracy record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Fuel Flowmeter Accuracy record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -67,8 +68,10 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `Fuel Flowmeter Accuracy record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Fuel Flowmeter Accuracy record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -134,8 +137,8 @@ export class FuelFlowmeterAccuracyWorkspaceService {
         testSumId,
       });
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Fuel Flowmeter Accuracy record Id [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting Fuel Flowmeter Accuracy record Id [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
         e,
       );
@@ -186,7 +189,7 @@ export class FuelFlowmeterAccuracyWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Fuel to Flowmeter Accuracy Successfully Imported.  Record Id: ${createdFlowToLoadReference.id}`,
     );
   }

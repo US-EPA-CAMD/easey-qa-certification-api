@@ -10,7 +10,7 @@ import { TestQualification } from '../entities/workspace/test-qualification.enti
 import { TestQualificationMap } from '../maps/test-qualification.map';
 import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
 import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { HttpStatus } from '@nestjs/common/enums';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { TestQualificationRepository } from '../test-qualification/test-qualification.repository';
@@ -147,8 +147,10 @@ describe('TestQualificationWorkspaceService', () => {
     });
 
     it('Should through error while deleting a Test Qualification record', async () => {
-      const error = new LoggingException(
-        `Error deleting Test Qualification with record Id [${testSumId}]`,
+      const error = new EaseyException(
+        new Error(
+          `Error deleting Test Qualification with record Id [${testSumId}]`,
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);

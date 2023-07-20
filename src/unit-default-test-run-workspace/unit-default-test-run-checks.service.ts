@@ -10,7 +10,7 @@ import { UnitDefaultTestRun } from '../entities/unit-default-test-run.entity';
 
 import { UnitDefaultTestRunWorkspaceRepository } from './unit-default-test-run.repository';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
@@ -27,7 +27,10 @@ export class UnitDefaultTestRunChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(
+        new Error(errorList.join('\n')),
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -43,7 +46,7 @@ export class UnitDefaultTestRunChecksService {
     let error: string = null;
     const errorList: string[] = [];
     let testSumRecord;
-    this.logger.info('Running Unit Default Test Run Checks');
+    this.logger.log('Running Unit Default Test Run Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
@@ -68,7 +71,7 @@ export class UnitDefaultTestRunChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.info('Completed Unit Default Test Run Checks');
+    this.logger.log('Completed Unit Default Test Run Checks');
     return errorList;
   }
 

@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { RataRunWorkspaceService } from '../rata-run-workspace/rata-run-workspace.service';
 import {
   RataSummaryBaseDTO,
@@ -190,8 +190,8 @@ describe('RataSummaryWorkspaceService', () => {
     });
 
     it('Should through error while deleting a Rata Summary record', async () => {
-      const error = new LoggingException(
-        `Error deleting Rata Summary with record Id [${rataId}]`,
+      const error = new EaseyException(
+        new Error(`Error deleting Rata Summary with record Id [${rataId}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);

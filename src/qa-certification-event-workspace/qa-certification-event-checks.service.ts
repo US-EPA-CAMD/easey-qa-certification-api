@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
@@ -23,7 +23,10 @@ export class QACertificationEventChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(
+        new Error(errorList.join('\n')),
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -41,7 +44,7 @@ export class QACertificationEventChecksService {
     let error: string = null;
     const errorList: string[] = [];
 
-    this.logger.info('Running QA Certification Event Checks');
+    this.logger.log('Running QA Certification Event Checks');
 
     if (!isUpdate) {
       error = await this.QACertEvent11DuplicateCheck(
@@ -56,7 +59,7 @@ export class QACertificationEventChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.info('Completed QA Certification Event Checks');
+    this.logger.log('Completed QA Certification Event Checks');
     return errorList;
   }
 

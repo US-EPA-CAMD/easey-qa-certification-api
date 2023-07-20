@@ -2,8 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { TestSummaryDTO } from '../dto/test-summary.dto';
 import { TestSummaryMap } from '../maps/test-summary.map';
 import { TestSummaryRepository } from './test-summary.repository';
@@ -72,8 +71,10 @@ export class TestSummaryService {
     const result = await this.repository.getTestSummaryById(testSumId);
 
     if (!result) {
-      throw new LoggingException(
-        `A test summary record not found with Record Id [${testSumId}].`,
+      throw new EaseyException(
+        new Error(
+          `A test summary record not found with Record Id [${testSumId}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

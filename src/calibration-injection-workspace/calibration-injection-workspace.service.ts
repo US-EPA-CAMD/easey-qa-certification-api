@@ -10,7 +10,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { CalibrationInjectionWorkspaceRepository } from './calibration-injection-workspace.repository';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 import { CalibrationInjection } from '../entities/calibration-injection.entity';
 import { CalibrationInjectionRepository } from '../calibration-injection/calibration-injection.repository';
@@ -47,8 +47,10 @@ export class CalibrationInjectionWorkspaceService {
     });
 
     if (!result) {
-      throw new LoggingException(
-        `Calibration Injection record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Calibration Injection record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -97,8 +99,10 @@ export class CalibrationInjectionWorkspaceService {
     });
 
     if (!entity) {
-      throw new LoggingException(
-        `Calibration Injection record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Calibration Injection record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -147,10 +151,9 @@ export class CalibrationInjectionWorkspaceService {
         testSumId,
       });
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Calibration Injection record [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting Calibration Injection record [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
-        e,
       );
     }
 
@@ -205,7 +208,7 @@ export class CalibrationInjectionWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Calibration Injection Successfully Imported. Record Id: ${createdCalibrationInjection.id}`,
     );
 

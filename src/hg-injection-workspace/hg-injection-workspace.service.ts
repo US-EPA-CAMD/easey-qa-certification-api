@@ -11,7 +11,7 @@ import {
 } from '../dto/hg-injection.dto';
 import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.repository';
 import { HgInjectionMap } from '../maps/hg-injection.map';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 import { HgInjection } from '../entities/hg-injection.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -41,8 +41,8 @@ export class HgInjectionWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Hg Injeciton record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`Hg Injeciton record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -93,8 +93,8 @@ export class HgInjectionWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `Hg Injection record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`Hg Injection record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -127,8 +127,8 @@ export class HgInjectionWorkspaceService {
     try {
       await this.repository.delete({ id });
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting HG Injection record Id [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting HG Injection record Id [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
         e,
       );

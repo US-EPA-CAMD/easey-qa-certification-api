@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
 import { FlowToLoadCheckWorkspaceRepository } from './flow-to-load-check-workspace.repository';
 import {
@@ -42,8 +42,10 @@ export class FlowToLoadCheckWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Flow to Load Check Workspace record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Flow to Load Check Workspace record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -92,8 +94,10 @@ export class FlowToLoadCheckWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `Flow to Load Check Workspace record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Flow to Load Check Workspace record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -135,10 +139,9 @@ export class FlowToLoadCheckWorkspaceService {
         testSumId,
       });
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Flow To Load Check record Id [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting Flow To Load Check record Id [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
-        e,
       );
     }
 
@@ -186,7 +189,7 @@ export class FlowToLoadCheckWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Flow To Load Check Successfully Imported.  Record Id: ${createdFlowToLoadCheck.id}`,
     );
   }

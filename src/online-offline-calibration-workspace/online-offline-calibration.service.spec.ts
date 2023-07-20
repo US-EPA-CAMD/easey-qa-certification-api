@@ -7,7 +7,7 @@ import { OnlineOfflineCalibrationRepository } from '../online-offline-calibratio
 import { OnlineOfflineCalibrationWorkspaceRepository } from './online-offline-calibration.repository';
 import { OnlineOfflineCalibrationWorkspaceService } from './online-offline-calibration.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { HttpStatus } from '@nestjs/common';
 
 const testSumId = '1';
@@ -127,8 +127,10 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
     });
 
     it('should throw error while deleting a Online Offline Calibration record', async () => {
-      const error = new LoggingException(
-        `Error deleting Online Offline Calibration with record Id [${onlineOfflineCalibrationId}]`,
+      const error = new EaseyException(
+        new Error(
+          `Error deleting Online Offline Calibration with record Id [${onlineOfflineCalibrationId}]`,
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 import { In } from 'typeorm';
 
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
@@ -49,8 +49,8 @@ export class UnitDefaultTestWorkspaceService {
     });
 
     if (!result) {
-      throw new LoggingException(
-        `Unit Default Test record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`Unit Default Test record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -100,8 +100,8 @@ export class UnitDefaultTestWorkspaceService {
     });
 
     if (!entity) {
-      throw new LoggingException(
-        `Unit Default Test record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`Unit Default Test record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -135,8 +135,8 @@ export class UnitDefaultTestWorkspaceService {
     try {
       await this.repository.delete(id);
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Unit Default Test with record Id [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting Unit Default Test with record Id [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -200,7 +200,7 @@ export class UnitDefaultTestWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Unit Default Successfully Imported.  Record Id: ${createdUnitDefaultTest.id}`,
     );
 

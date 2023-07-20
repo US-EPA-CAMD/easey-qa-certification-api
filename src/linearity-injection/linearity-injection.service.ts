@@ -4,8 +4,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { LinearityInjectionDTO } from '../dto/linearity-injection.dto';
 import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { LinearityInjectionRepository } from './linearity-injection.repository';
@@ -23,8 +22,10 @@ export class LinearityInjectionService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `A linearity injection record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `A linearity injection record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

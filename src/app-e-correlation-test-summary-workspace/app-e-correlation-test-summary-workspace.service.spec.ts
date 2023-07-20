@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { AppECorrelationTestRunDTO } from '../dto/app-e-correlation-test-run.dto';
 import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
@@ -193,8 +193,10 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
     });
 
     it('Should throw error while deleting an Appendix E Correlation Test Summary record', async () => {
-      const error = new LoggingException(
-        `Error Appendix E Correlation Test Summary with record Id [${appendixECorrelationTestSummaryId}]`,
+      const error = new EaseyException(
+        new Error(
+          `Error Appendix E Correlation Test Summary with record Id [${appendixECorrelationTestSummaryId}]`,
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);

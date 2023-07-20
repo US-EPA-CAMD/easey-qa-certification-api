@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -24,7 +24,10 @@ export class TestExtensionExemptionsChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(
+        new Error(errorList.join('\n')),
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -42,7 +45,7 @@ export class TestExtensionExemptionsChecksService {
     let error: string = null;
     const errorList: string[] = [];
 
-    this.logger.info('Running Test Extension Exemption Checks');
+    this.logger.log('Running Test Extension Exemption Checks');
 
     if (!isUpdate) {
       error = await this.extexem8DuplicateCheck(
@@ -57,7 +60,7 @@ export class TestExtensionExemptionsChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.info('Completed Test Extension Exemption Checks');
+    this.logger.log('Completed Test Extension Exemption Checks');
     return errorList;
   }
 

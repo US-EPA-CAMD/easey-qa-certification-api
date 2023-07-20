@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { TestResultCodes } from '../enums/test-result-code.enum';
 import { RataImportDTO } from '../dto/rata.dto';
@@ -58,7 +58,7 @@ describe('Rata Checks Service Test', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [LoggerModule, LoggingException],
+      imports: [LoggerModule, LoggerModule],
       providers: [
         RataChecksService,
         {

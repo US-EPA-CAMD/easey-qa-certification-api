@@ -6,7 +6,7 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import { RataRunChecksService } from './rata-run-checks.service';
 import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
 import { RataRunBaseDTO, RataRunImportDTO } from '../dto/rata-run.dto';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { RataSummaryWorkspaceRepository } from '../rata-summary-workspace/rata-summary-workspace.repository';
 import { RataRun } from '../entities/workspace/rata-run.entity';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
@@ -70,7 +70,7 @@ describe('Rata Run Check Service Test', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [LoggerModule, LoggingException],
+      imports: [LoggerModule, LoggerModule],
       providers: [
         RataRunChecksService,
         {

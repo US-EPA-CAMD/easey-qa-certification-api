@@ -2,8 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { QACertificationImportDTO } from '../dto/qa-certification.dto';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { LocationChecksService } from '../monitor-location-workspace/monitor-location-checks.service';
@@ -68,14 +67,17 @@ export class QACertificationChecksService {
 
   private throwIfErrors(errorList: string[]) {
     if (errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(
+        new Error(errorList.join('\n')),
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
   async runChecks(
     payload: QACertificationImportDTO,
   ): Promise<[LocationIdentifiers[], QASuppData[]]> {
-    this.logger.info('Running QA Certification Checks');
+    this.logger.log('Running QA Certification Checks');
 
     const errorList: string[] = [];
     const promises: Promise<string[]>[] = [];
@@ -428,7 +430,7 @@ export class QACertificationChecksService {
     }
 
     this.throwIfErrors(await this.extractErrors(promises));
-    this.logger.info('Completed QA Certification Checks');
+    this.logger.log('Completed QA Certification Checks');
     return [locations, duplicateQaSuppRecords];
   }
 }

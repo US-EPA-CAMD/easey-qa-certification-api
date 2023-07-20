@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
@@ -42,7 +42,10 @@ export class RataSummaryChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(
+        new Error(errorList.join('\n')),
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -59,7 +62,7 @@ export class RataSummaryChecksService {
     let error: string = null;
     const errorList: string[] = [];
     let testSumRecord;
-    this.logger.info('Running Rata Summary Checks');
+    this.logger.log('Running Rata Summary Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
@@ -84,8 +87,10 @@ export class RataSummaryChecksService {
       );
 
       if (!testSumRecord) {
-        throw new LoggingException(
-          `A test summary record not found with Record Id [${testSumId}].`,
+        throw new EaseyException(
+          new Error(
+            `A test summary record not found with Record Id [${testSumId}].`,
+          ),
           HttpStatus.NOT_FOUND,
         );
       }
@@ -123,7 +128,7 @@ export class RataSummaryChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.info('Completed RATA Summary Checks');
+    this.logger.log('Completed RATA Summary Checks');
 
     return errorList;
   }

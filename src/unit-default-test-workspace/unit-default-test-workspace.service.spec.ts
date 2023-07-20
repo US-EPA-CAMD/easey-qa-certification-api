@@ -10,7 +10,7 @@ import {
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
 import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { HttpStatus } from '@nestjs/common';
 import { UnitDefaultTest as UnitDefaultTestOfficial } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestRepository } from '../unit-default-test/unit-default-test.repository';
@@ -192,8 +192,10 @@ describe('UnitDefaultTestWorkspaceService', () => {
     });
 
     it('Should through error while deleting a Unit Default Test record', async () => {
-      const error = new LoggingException(
-        `Error deleting Unit Default Test with record Id [${testSumId}]`,
+      const error = new EaseyException(
+        new Error(
+          `Error deleting Unit Default Test with record Id [${testSumId}]`,
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);

@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { AppEHeatInputFromGasChecksService } from './app-e-heat-input-from-gas-checks.service';
 import { AppECorrelationTestRunWorkspaceRepository } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.repository';
@@ -38,7 +37,7 @@ describe('Appendix E Heat Input From Gas Checks Service Test', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [LoggerModule, LoggingException],
+      imports: [LoggerModule, LoggerModule],
       providers: [
         AppEHeatInputFromGasChecksService,
         {

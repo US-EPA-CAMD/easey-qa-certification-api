@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, forwardRef, Inject } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 import { AppEHeatInputFromGasService } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.service';
 import { AppEHeatInputFromOilService } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.service';
@@ -39,8 +39,10 @@ export class AppECorrelationTestRunService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Appendix E Correlation Test Run record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Appendix E Correlation Test Run record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

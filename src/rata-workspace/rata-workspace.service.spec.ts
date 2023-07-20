@@ -11,7 +11,7 @@ import { RataMap } from '../maps/rata.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { RataWorkspaceRepository } from './rata-workspace.repository';
 import { RataWorkspaceService } from './rata-workspace.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { HttpStatus } from '@nestjs/common';
 import { RataSummaryWorkspaceService } from '../rata-summary-workspace/rata-summary-workspace.service';
 import { RataSummaryDTO, RataSummaryImportDTO } from '../dto/rata-summary.dto';
@@ -180,8 +180,8 @@ describe('RataWorkspaceService', () => {
     });
 
     it('Should through error while deleting a Rata record', async () => {
-      const error = new LoggingException(
-        `Error deleting RATA with record Id [${rataId}]`,
+      const error = new EaseyException(
+        new Error(`Error deleting RATA with record Id [${rataId}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);

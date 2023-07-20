@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import {
   FlowRataRunBaseDTO,
   FlowRataRunImportDTO,
@@ -34,7 +34,10 @@ export class FlowRataRunChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(
+        new Error(errorList.join('\n')),
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -53,7 +56,7 @@ export class FlowRataRunChecksService {
     const errorList: string[] = [];
     let rataSummaryRecord, rataRunRecord, testSumRecord;
 
-    this.logger.info('Running Flow Rata Run Checks');
+    this.logger.log('Running Flow Rata Run Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
@@ -96,7 +99,7 @@ export class FlowRataRunChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.info('Completed Flow Rata Run Checks');
+    this.logger.log('Completed Flow Rata Run Checks');
     return errorList;
   }
 

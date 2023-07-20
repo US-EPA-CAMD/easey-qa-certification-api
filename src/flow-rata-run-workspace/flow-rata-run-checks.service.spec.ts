@@ -8,7 +8,7 @@ import { FlowRataRunChecksService } from './flow-rata-run-checks.service';
 import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.repository';
 import { RataFrequencyCode } from '../entities/workspace/rata-frequency-code.entity';
 import { FlowRataRunImportDTO } from '../dto/flow-rata-run.dto';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { RataSummaryWorkspaceRepository } from '../rata-summary-workspace/rata-summary-workspace.repository';
 import { RataRunWorkspaceRepository } from '../rata-run-workspace/rata-run-workspace.repository';
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
@@ -70,7 +70,7 @@ describe('Flow Rata Run Check Service Test', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [LoggerModule, LoggingException],
+      imports: [LoggerModule, LoggerModule],
       providers: [
         FlowRataRunChecksService,
         {

@@ -7,7 +7,7 @@ import {
   CycleTimeInjectionBaseDTO,
   CycleTimeInjectionImportDTO,
 } from '../dto/cycle-time-injection.dto';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
@@ -29,7 +29,10 @@ export class CycleTimeInjectionChecksService {
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
-      throw new LoggingException(errorList, HttpStatus.BAD_REQUEST);
+      throw new EaseyException(
+        new Error(errorList.join('\n')),
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -45,7 +48,7 @@ export class CycleTimeInjectionChecksService {
     let error: string = null;
     const errorList: string[] = [];
     let testSumRecord;
-    this.logger.info('Running Linearity Injection Checks');
+    this.logger.log('Running Linearity Injection Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
@@ -74,7 +77,7 @@ export class CycleTimeInjectionChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.info('Completed Linearity Injection Checks');
+    this.logger.log('Completed Linearity Injection Checks');
     return errorList;
   }
 
