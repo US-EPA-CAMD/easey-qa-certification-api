@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ProtocolGasDTO } from '../dto/protocol-gas.dto';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { ProtocolGasRepository } from './protocol-gas.repository';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 
 @Injectable()
@@ -27,8 +27,8 @@ export class ProtocolGasService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Protocol Gas record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`Protocol Gas record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }

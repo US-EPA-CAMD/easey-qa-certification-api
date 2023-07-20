@@ -13,6 +13,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { FuelFlowToLoadBaselineWorkspaceRepository } from './fuel-flow-to-load-baseline-workspace.repository';
 import { FuelFlowToLoadBaselineWorkspaceService } from './fuel-flow-to-load-baseline-workspace.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -53,6 +54,7 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         FuelFlowToLoadBaselineWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,

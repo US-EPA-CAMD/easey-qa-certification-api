@@ -14,7 +14,7 @@ import { AppECorrelationTestRunWorkspaceRepository } from './app-e-correlation-t
 import { AppECorrelationTestRunRepository } from '../app-e-correlation-test-run/app-e-correlation-test-run.repository';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { AppECorrelationTestRun } from '../entities/app-e-correlation-test-run.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { In } from 'typeorm';
@@ -52,8 +52,10 @@ export class AppECorrelationTestRunWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Appendix E Correlation Test Run record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Appendix E Correlation Test Run record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -105,8 +107,10 @@ export class AppECorrelationTestRunWorkspaceService {
     });
 
     if (!entity) {
-      throw new LoggingException(
-        `Appendix E Correlation Test Run record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Appendix E Correlation Test Run record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -147,8 +151,10 @@ export class AppECorrelationTestRunWorkspaceService {
     try {
       await this.repository.delete({ id, appECorrTestSumId });
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Appendix E Correlation Test Run record Id [${id}]`,
+      throw new EaseyException(
+        new Error(
+          `Error deleting Appendix E Correlation Test Run record Id [${id}]`,
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -188,7 +194,7 @@ export class AppECorrelationTestRunWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Appendix E Correlation Test Run Successfully Imported. Record Id: ${createdTestRun.id}`,
     );
 

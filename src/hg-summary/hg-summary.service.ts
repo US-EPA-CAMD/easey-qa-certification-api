@@ -2,8 +2,7 @@ import { HttpStatus, Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In } from 'typeorm';
 
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgSummaryMap } from '../maps/hg-summary.map';
 import { HgSummaryRepository } from './hg-summary.repository';
@@ -32,8 +31,8 @@ export class HgSummaryService {
     });
 
     if (!result) {
-      throw new LoggingException(
-        `Hg Summary record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`Hg Summary record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }

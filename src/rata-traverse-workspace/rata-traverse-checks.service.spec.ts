@@ -3,7 +3,7 @@ import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-s
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { RataTraverseChecksService } from './rata-traverse-checks.service';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import {
@@ -67,7 +67,7 @@ describe('Rata Traverse Check Service Test', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [LoggerModule, LoggingException],
+      imports: [LoggerModule, LoggerModule],
       providers: [
         RataTraverseChecksService,
         {

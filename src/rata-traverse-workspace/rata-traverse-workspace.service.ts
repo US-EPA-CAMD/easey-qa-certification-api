@@ -1,8 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { RataTraverseMap } from '../maps/rata-traverse.map';
@@ -43,8 +42,8 @@ export class RataTraverseWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Rata Traverse record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`Rata Traverse record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -95,8 +94,10 @@ export class RataTraverseWorkspaceService {
     const record = await this.repository.findOne(rataTraverseId);
 
     if (!record) {
-      throw new LoggingException(
-        `A Rata Traverse record not found with Record Id [${rataTraverseId}].`,
+      throw new EaseyException(
+        new Error(
+          `A Rata Traverse record not found with Record Id [${rataTraverseId}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -181,7 +182,7 @@ export class RataTraverseWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Rata Traverse Successfully Imported. Record Id: ${createdRataRun.id}`,
     );
 

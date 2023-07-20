@@ -4,6 +4,7 @@ import { UnitDefaultTestRun } from '../entities/unit-default-test-run.entity';
 import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
 import { UnitDefaultTestRunRepository } from './unit-default-test-run.repository';
 import { UnitDefaultTestRunService } from './unit-default-test-run.service';
+import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const unitDefaultTestSumId = '';
@@ -28,6 +29,7 @@ describe('UnitDefaultTestRunService', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
+        ConfigService,
         UnitDefaultTestRunService,
         {
           provide: UnitDefaultTestRunRepository,

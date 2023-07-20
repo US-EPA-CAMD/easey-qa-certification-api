@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { AppECorrelationTestRunDTO } from '../dto/app-e-correlation-test-run.dto';
 import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
@@ -15,6 +15,7 @@ import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
 import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-test-summary-workspace.service';
+import { ConfigService } from '@nestjs/config';
 
 const locationId = '5';
 const testSumId = '';
@@ -62,6 +63,7 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         AppECorrelationTestSummaryWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
@@ -193,8 +195,10 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
     });
 
     it('Should throw error while deleting an Appendix E Correlation Test Summary record', async () => {
-      const error = new LoggingException(
-        `Error Appendix E Correlation Test Summary with record Id [${appendixECorrelationTestSummaryId}]`,
+      const error = new EaseyException(
+        new Error(
+          `Error Appendix E Correlation Test Summary with record Id [${appendixECorrelationTestSummaryId}]`,
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);

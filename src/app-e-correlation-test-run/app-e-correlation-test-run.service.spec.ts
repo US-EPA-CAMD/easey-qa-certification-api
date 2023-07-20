@@ -8,6 +8,7 @@ import { AppECorrelationTestRunRepository } from './app-e-correlation-test-run.r
 import { AppECorrelationTestRunService } from './app-e-correlation-test-run.service';
 import { AppEHeatInputFromGasService } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.service';
 import { AppEHeatInputFromOilService } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.service';
+import { ConfigService } from '@nestjs/config';
 
 const testSumId = '1';
 const appECorrTestSumId = 'g7h8i9';
@@ -40,6 +41,7 @@ describe('AppECorrelationTestRunService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AppECorrelationTestRunService,
+        ConfigService,
         {
           provide: AppECorrelationTestRunRepository,
           useFactory: mockRepository,

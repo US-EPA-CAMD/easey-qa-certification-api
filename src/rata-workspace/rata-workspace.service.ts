@@ -11,7 +11,7 @@ import {
 import { RataMap } from '../maps/rata.map';
 import { RataWorkspaceRepository } from './rata-workspace.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { RataSummaryWorkspaceService } from '../rata-summary-workspace/rata-summary-workspace.service';
 import { In } from 'typeorm';
 import { RataRepository } from '../rata/rata.repository';
@@ -39,8 +39,8 @@ export class RataWorkspaceService {
     });
 
     if (!result) {
-      throw new LoggingException(
-        `A RATA record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`A RATA record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -94,8 +94,8 @@ export class RataWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `A RATA record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`A RATA record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -126,8 +126,8 @@ export class RataWorkspaceService {
     try {
       await this.repository.delete(id);
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting RATA with record Id [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting RATA with record Id [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -171,9 +171,7 @@ export class RataWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
-      `Rata Successfully Imported. Record Id: ${createdRata.id}`,
-    );
+    this.logger.log(`Rata Successfully Imported. Record Id: ${createdRata.id}`);
 
     if (payload.rataSummaryData?.length > 0) {
       for (const rataSummary of payload.rataSummaryData) {

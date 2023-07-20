@@ -7,7 +7,7 @@ import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { AppEHeatInputFromGasRepository } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.repository';
 import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import {
   AppEHeatInputFromGasBaseDTO,
   AppEHeatInputFromGasImportDTO,
@@ -49,8 +49,10 @@ export class AppEHeatInputFromGasWorkspaceService {
     const result = await this.repository.getAppEHeatInputFromGasById(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Appendix E Heat Input From Gas record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Appendix E Heat Input From Gas record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -75,8 +77,10 @@ export class AppEHeatInputFromGasWorkspaceService {
     });
 
     if (!system) {
-      throw new LoggingException(
-        `Monitor System Identifier is invalid for this location [${locationId}].`,
+      throw new EaseyException(
+        new Error(
+          `Monitor System Identifier is invalid for this location [${locationId}].`,
+        ),
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -118,8 +122,10 @@ export class AppEHeatInputFromGasWorkspaceService {
     const entity = await this.repository.getAppEHeatInputFromGasById(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `Appendix E Heat Input From Gas record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Appendix E Heat Input From Gas record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -150,8 +156,10 @@ export class AppEHeatInputFromGasWorkspaceService {
     try {
       await this.repository.delete({ id });
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Appendix E Heat Input From Gas record Id [${id}]`,
+      throw new EaseyException(
+        new Error(
+          `Error deleting Appendix E Heat Input From Gas record Id [${id}]`,
+        ),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -191,7 +199,7 @@ export class AppEHeatInputFromGasWorkspaceService {
       isHistoricalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Appendix E Heat Input from Gas Successfully Imported.  Record Id: ${createdHeatInputFromGas.id}`,
     );
   }

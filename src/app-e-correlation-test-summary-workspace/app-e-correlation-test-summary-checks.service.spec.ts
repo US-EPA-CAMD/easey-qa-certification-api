@@ -1,12 +1,10 @@
 import { Test } from '@nestjs/testing';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { AppECorrelationTestSummaryChecksService } from './app-e-correlation-test-summary-checks.service';
 import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryImportDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
-import { AppECorrelationTestRun } from '../entities/workspace/app-e-correlation-test-run.entity';
 import { AppECorrelationTestSummary } from '../entities/workspace/app-e-correlation-test-summary.entity';
 import { AppendixETestSummaryWorkspaceRepository } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.repository';
 
@@ -27,7 +25,7 @@ describe('Appendix E Correlation Test Summary Checks Service Test', () => {
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
-      imports: [LoggerModule, LoggingException],
+      imports: [LoggerModule, LoggerModule],
       providers: [
         AppECorrelationTestSummaryChecksService,
         {
@@ -61,7 +59,7 @@ describe('Appendix E Correlation Test Summary Checks Service Test', () => {
         result = err.response.message;
       }
 
-      expect(result).toEqual([MOCK_ERROR_MSG]);
+      expect(result).toEqual(MOCK_ERROR_MSG);
     });
   });
 

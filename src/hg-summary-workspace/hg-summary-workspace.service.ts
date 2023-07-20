@@ -10,7 +10,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { HgSummary } from '../entities/hg-summary.entity';
 import { v4 as uuid } from 'uuid';
 import { In } from 'typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { HgSummaryMap } from '../maps/hg-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -46,8 +46,8 @@ export class HgSummaryWorkspaceService {
     });
 
     if (!result) {
-      throw new LoggingException(
-        `Hg Summary record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`Hg Summary record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -122,8 +122,8 @@ export class HgSummaryWorkspaceService {
     });
 
     if (!entity) {
-      throw new LoggingException(
-        `Hg Summary record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`Hg Summary record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -159,8 +159,8 @@ export class HgSummaryWorkspaceService {
         testSumId,
       });
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Hg Summary record [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting Hg Summary record [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
         e,
       );
@@ -198,7 +198,7 @@ export class HgSummaryWorkspaceService {
       historicalRecord?.id,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Hg Summary Successfully Imported. Record Id: ${createdHgSummary.id}`,
     );
 

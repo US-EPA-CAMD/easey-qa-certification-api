@@ -3,8 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   CycleTimeInjectionBaseDTO,
@@ -46,8 +45,10 @@ export class CycleTimeInjectionWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `A Cycle Time Injection record not found with Record Id [${id}]`,
+      throw new EaseyException(
+        new Error(
+          `A Cycle Time Injection record not found with Record Id [${id}]`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -126,7 +127,7 @@ export class CycleTimeInjectionWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Cycle Time Injection Successfully Imported. Record Id: ${createdCycleTimeInjection.id}`,
     );
 
@@ -145,8 +146,10 @@ export class CycleTimeInjectionWorkspaceService {
     const entity = await this.repository.findOne(id);
 
     if (!entity) {
-      throw new LoggingException(
-        `A Cycle Time Injection record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `A Cycle Time Injection record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -186,8 +189,8 @@ export class CycleTimeInjectionWorkspaceService {
     try {
       await this.repository.delete({ id });
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Cycle Time Injection record Id [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting Cycle Time Injection record Id [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
         e,
       );

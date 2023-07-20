@@ -6,7 +6,7 @@ import {
   AppECorrelationTestSummaryDTO,
   AppECorrelationTestSummaryRecordDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 import { AppECorrelationTestRunService } from '../app-e-correlation-test-run/app-e-correlation-test-run.service';
 
@@ -34,8 +34,10 @@ export class AppECorrelationTestSummaryService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Appendix E Correlation Test Summary record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Appendix E Correlation Test Summary record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

@@ -156,7 +156,7 @@ describe('Rata Summary Check Service Test', () => {
         );
       } catch (error) {
         errored = true;
-        expect(error.response.message).toEqual([MOCK_ERROR_MSG]);
+        expect(error.response.message).toEqual(MOCK_ERROR_MSG);
       }
       expect(errored).toEqual(true);
     });

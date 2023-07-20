@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { FlowToLoadReferenceRepository } from './flow-to-load-reference.repository';
 import {
   FlowToLoadReferenceDTO,
@@ -31,8 +31,10 @@ export class FlowToLoadReferenceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Flow To Load Reference record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Flow To Load Reference record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

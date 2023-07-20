@@ -3,7 +3,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AppEHeatInputFromOilRepository } from './app-e-heat-input-from-oil.repository';
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { AppEHeatInputFromOilDTO } from '../dto/app-e-heat-input-from-oil.dto';
 
 @Injectable()
@@ -30,8 +30,10 @@ export class AppEHeatInputFromOilService {
     const result = await this.repository.getAppEHeatInputFromOilById(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Appendix E Heat Input from Oil record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Appendix E Heat Input from Oil record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }

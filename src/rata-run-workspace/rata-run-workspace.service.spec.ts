@@ -14,6 +14,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { RataRunRepository } from '../rata-run/rata-run.repository';
 import { FlowRataRunWorkspaceService } from '../flow-rata-run-workspace/flow-rata-run-workspace.service';
 import { FlowRataRunDTO, FlowRataRunImportDTO } from '../dto/flow-rata-run.dto';
+import { ConfigService } from '@nestjs/config';
 
 const rataRunId = 'a1b2c3';
 const testSumId = 'd4e5f6';
@@ -74,6 +75,7 @@ describe('RataRunWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         RataRunWorkspaceService,
         {
           provide: RataRunWorkspaceRepository,

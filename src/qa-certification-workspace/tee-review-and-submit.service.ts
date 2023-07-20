@@ -1,6 +1,6 @@
 import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { getManager, In } from 'typeorm';
 import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository copy';
 import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
@@ -43,7 +43,7 @@ export class TeeReviewAndSubmitService {
 
       return data;
     } catch (e) {
-      throw new LoggingException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new EaseyException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

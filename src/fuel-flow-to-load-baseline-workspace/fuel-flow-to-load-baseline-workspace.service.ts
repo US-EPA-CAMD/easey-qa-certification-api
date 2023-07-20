@@ -11,7 +11,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { FuelFlowToLoadBaselineWorkspaceRepository } from './fuel-flow-to-load-baseline-workspace.repository';
 import { v4 as uuid } from 'uuid';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { FuelFlowToLoadBaseline } from '../entities/fuel-flow-to-load-baseline.entity';
 import { FuelFlowToLoadBaselineRepository } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.repository';
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -48,8 +48,10 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     });
 
     if (!result) {
-      throw new LoggingException(
-        `Fuel Flow To Load Baseline record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Fuel Flow To Load Baseline record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -98,8 +100,10 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     });
 
     if (!entity) {
-      throw new LoggingException(
-        `Fuel Flow To Load Baseline record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Fuel Flow To Load Baseline record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -147,8 +151,8 @@ export class FuelFlowToLoadBaselineWorkspaceService {
         testSumId,
       });
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Fuel Flow To Load Baseline record [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting Fuel Flow To Load Baseline record [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
         e,
       );
@@ -185,7 +189,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Fuel Flow To Load Baseline Successfully Imported.  Record Id: ${createdFuelFlowToLoadBaseline.id}`,
     );
   }

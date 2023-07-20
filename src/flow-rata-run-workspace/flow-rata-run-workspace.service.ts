@@ -1,7 +1,7 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { v4 as uuid } from 'uuid';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 import { RataTraverseWorkspaceService } from '../rata-traverse-workspace/rata-traverse-workspace.service';
 
@@ -44,8 +44,8 @@ export class FlowRataRunWorkspaceService {
     const result = await this.repository.findOne(id);
 
     if (!result) {
-      throw new LoggingException(
-        `Flow Rata Run record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(`Flow Rata Run record not found with Record Id [${id}].`),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -94,8 +94,10 @@ export class FlowRataRunWorkspaceService {
     const record = await this.repository.findOne(flowRataRunId);
 
     if (!record) {
-      throw new LoggingException(
-        `A Flow Rata Run record not found with Record Id [${flowRataRunId}].`,
+      throw new EaseyException(
+        new Error(
+          `A Flow Rata Run record not found with Record Id [${flowRataRunId}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -136,8 +138,8 @@ export class FlowRataRunWorkspaceService {
     try {
       await this.repository.delete(id);
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Flow Rata Run with record Id [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting Flow Rata Run with record Id [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -186,7 +188,7 @@ export class FlowRataRunWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Flow Rata Run Successfully Imported. Record Id: ${createdFlowRataRun.id}`,
     );
 

@@ -5,7 +5,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { CycleTimeSummaryWorkspaceRepository } from './cycle-time-summary-workspace.repository';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
-import { LoggingException } from '@us-epa-camd/easey-common/exceptions';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import {
   CycleTimeSummaryBaseDTO,
   CycleTimeSummaryDTO,
@@ -50,8 +50,10 @@ export class CycleTimeSummaryWorkspaceService {
     });
 
     if (!result) {
-      throw new LoggingException(
-        `Cycle Time Summary record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Cycle Time Summary record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -100,8 +102,10 @@ export class CycleTimeSummaryWorkspaceService {
     });
 
     if (!entity) {
-      throw new LoggingException(
-        `Cycle Time Summary record not found with Record Id [${id}].`,
+      throw new EaseyException(
+        new Error(
+          `Cycle Time Summary record not found with Record Id [${id}].`,
+        ),
         HttpStatus.NOT_FOUND,
       );
     }
@@ -135,8 +139,8 @@ export class CycleTimeSummaryWorkspaceService {
         testSumId,
       });
     } catch (e) {
-      throw new LoggingException(
-        `Error deleting Cycle Time Summary record [${id}]`,
+      throw new EaseyException(
+        new Error(`Error deleting Cycle Time Summary record [${id}]`),
         HttpStatus.INTERNAL_SERVER_ERROR,
         e,
       );
@@ -201,7 +205,7 @@ export class CycleTimeSummaryWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.info(
+    this.logger.log(
       `Cycle Time Summary Successfully Imported. Record Id: ${createdCycleTimeSummary.id}`,
     );
 

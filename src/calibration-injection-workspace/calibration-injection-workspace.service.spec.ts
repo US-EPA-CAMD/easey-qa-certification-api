@@ -12,6 +12,7 @@ import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summ
 import { CalibrationInjectionWorkspaceRepository } from './calibration-injection-workspace.repository';
 import { CalibrationInjectionWorkspaceService } from './calibration-injection-workspace.service';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -51,6 +52,7 @@ describe('CalibrationInjectionWorkspaceService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         Logger,
+        ConfigService,
         CalibrationInjectionWorkspaceService,
         {
           provide: TestSummaryWorkspaceService,
