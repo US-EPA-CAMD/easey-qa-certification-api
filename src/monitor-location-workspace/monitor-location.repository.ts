@@ -6,8 +6,8 @@ import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 export class LocationWorkspaceRepository extends Repository<MonitorLocation> {
   private buildBaseQuery() {
     return this.createQueryBuilder('ml')
-      .innerJoinAndSelect('ml.systems', 'ms')
-      .innerJoinAndSelect('ml.components', 'c')
+      .leftJoinAndSelect('ml.systems', 'ms')
+      .leftJoinAndSelect('ml.components', 'c')
       .leftJoinAndSelect('ml.unit', 'u')
       .leftJoin('u.plant', 'up')
       .leftJoinAndSelect('ml.stackPipe', 'sp')
