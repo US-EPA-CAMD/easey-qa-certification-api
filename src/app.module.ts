@@ -82,6 +82,7 @@ import { ReferenceMethodCodeModule } from './reference-method-code/reference-met
 import { GasTypeCodeModule } from './gas-type-code/gas-type-code.module';
 import { CrossCheckCatalogValueModule } from './cross-check-catalog-value/cross-check-catalog-value.module';
 import { WhatHasDataModule } from './what-has-data/what-has-data.module';
+import { S3FileUploadModule } from './s3-file-upload/s3-file-upload.module';
 
 @Module({
   imports: [
@@ -165,6 +166,7 @@ import { WhatHasDataModule } from './what-has-data/what-has-data.module';
     GasTypeCodeModule,
     CrossCheckCatalogValueModule,
     WhatHasDataModule,
+    S3FileUploadModule,
   ],
 })
 export class AppModule {}
