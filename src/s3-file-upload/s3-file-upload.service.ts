@@ -7,7 +7,10 @@ export class S3FileUploadService {
 
     private s3Client;
 
-    constructor(private readonly configService: ConfigService){
+    constructor(private readonly configService: ConfigService){}
+
+    async uploadFile(fileName: string, file: Buffer){
+
         if( !this.configService.get("AWS_S3_REGION") ||
             !this.configService.get("AWS_S3_BUCKET_NAME") ||
             !this.configService.get("AWS_ACCESS_KEY_ID") ||
@@ -19,12 +22,8 @@ export class S3FileUploadService {
 
         this.s3Client = new S3Client({
             region: this.configService.get("AWS_S3_REGION")
-        })
-    }
+        });
 
- 
-
-    async uploadFile(fileName: string, file: Buffer){
         return await this.s3Client.send(new PutObjectCommand({
             Body: file,
             Key: fileName,
