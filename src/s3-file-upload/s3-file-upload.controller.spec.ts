@@ -17,6 +17,18 @@ describe('S3FileUploadController', () => {
     controller = module.get(S3FileUploadController);
     service = module.get(S3FileUploadService);
     configService = module.get(ConfigService);
+
+    
+    const mS3ClientInstance = {
+      upload: jest.fn().mockReturnThis(),
+    };
+    
+    jest.mock('@aws-sdk/client-s3', () => { 
+      S3Client: jest.fn(() => mS3ClientInstance) 
+      PutObjectCommand: jest.fn(() => {})
+    });
+
+
   });
 
   it('should be defined', async () => {
