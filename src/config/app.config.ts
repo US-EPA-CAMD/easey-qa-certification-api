@@ -84,4 +84,10 @@ export default registerAs('app', () => ({
   authApi: {
     uri: getConfigValue('EASEY_AUTH_API', `https://${apiHost}/auth-mgmt`),
   },
+  awsRegion: getConfigValue('EASEY_QA_CERTIFICATION_AWS_S3_REGION'),
+  awsBucket: getConfigValue('EASEY_QA_CERTIFICATION_AWS_S3_BUCKET_NAME'),
+  awsAccessKey: getConfigValue('EASEY_QA_CERTIFICATION_AWS_ACCESS_KEY_ID'),
+  awsSecretAccessKey: getConfigValue(
+    'EASEY_QA_CERTIFICATION_AWS_SECRET_ACCESS_KEY',
+  ),
 }));
