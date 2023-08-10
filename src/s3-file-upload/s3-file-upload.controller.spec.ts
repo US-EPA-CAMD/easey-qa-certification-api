@@ -34,7 +34,7 @@ describe('S3FileUploadController', () => {
     };
 
     jest.spyOn(configService, 'get').mockReturnValue("value");
-    jest.spyOn(service, 'uploadFile').mockResolvedValue("success");
+    jest.spyOn(service, 'uploadFile').mockResolvedValue(null);
     await expect( controller.uploadFile(file)).resolves;
 
   });

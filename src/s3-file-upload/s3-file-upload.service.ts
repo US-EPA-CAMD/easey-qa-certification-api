@@ -5,7 +5,7 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 @Injectable()
 export class S3FileUploadService {
 
-    private s3Client;
+    private s3Client: S3Client;
 
     constructor(private readonly configService: ConfigService){}
 
