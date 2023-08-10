@@ -3,7 +3,7 @@ applications:
     memory: ((memory))M
     disk_quota: ((disk))M
     instances: ((instances))
-    stack: cflinuxfs4    
+    stack: cflinuxfs4
     buildpacks:
       - nodejs_buildpack
     env:
@@ -14,6 +14,8 @@ applications:
       EASEY_QA_CERTIFICATION_API_TITLE: ((title))
       EASEY_QA_CERTIFICATION_API_DESCRIPTION: ((description))
       EASEY_QA_CERTIFICATION_API_ENV: ((environment))
+      EASEY_QA_CERTIFICATION_AWS_S3_REGION: ((awsRegion))
+      EASEY_QA_CERTIFICATION_AWS_S3_BUCKET_NAME: ((awsBucketName))
       EASEY_QA_CERTIFICATION_API_ENABLE_API_KEY: true
       EASEY_QA_CERTIFICATION_API_ENABLE_SECRET_TOKEN: true
       EASEY_QA_CERTIFICATION_API_ENABLE_CORS: true

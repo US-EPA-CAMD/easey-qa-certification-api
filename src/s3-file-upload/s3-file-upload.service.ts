@@ -1,33 +1,43 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 @Injectable()
 export class S3FileUploadService {
+  private s3Client: S3Client;
 
-    private s3Client: S3Client;
+  constructor(private readonly configService: ConfigService) {}
 
-    constructor(private readonly configService: ConfigService){}
-
-    async uploadFile(fileName: string, file: Buffer){
-
-        if( !this.configService.get("AWS_S3_REGION") ||
-            !this.configService.get("AWS_S3_BUCKET_NAME") ||
-            !this.configService.get("AWS_ACCESS_KEY_ID") ||
-            !this.configService.get("AWS_SECRET_ACCESS_KEY")
-
-        ){
-            throw new Error("AWS information not set")
-        }
-
-        this.s3Client = new S3Client({
-            region: this.configService.get("AWS_S3_REGION")
-        });
-
-        return await this.s3Client.send(new PutObjectCommand({
-            Body: file,
-            Key: fileName,
-            Bucket: this.configService.get("AWS_S3_BUCKET_NAME"),
-        }))
+  async uploadFile(fileName: string, file: Buffer) {
+    if (
+      !this.configService.get<string>('app.awsRegion') ||
+      !this.configService.get<string>('app.awsBucket') ||
+      !this.configService.get<string>('app.awsAccessKey') ||
+      !this.configService.get<string>('app.awsSecretAccessKey')
+    ) {
+      throw new EaseyException(
+        new Error('No AWS credentials'),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
+
+    this.s3Client = new S3Client({
+      credentials: {
+        accessKeyId: this.configService.get<string>('app.awsAccessKey'),
+        secretAccessKey: this.configService.get<string>(
+          'app.awsSecretAccessKey',
+        ),
+      },
+      region: this.configService.get<string>('app.awsRegion'),
+    });
+
+    return this.s3Client.send(
+      new PutObjectCommand({
+        Body: file,
+        Key: fileName,
+        Bucket: this.configService.get<string>('app.awsBucket'),
+      }),
+    );
+  }
 }
