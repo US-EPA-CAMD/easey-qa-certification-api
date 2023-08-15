@@ -12,9 +12,9 @@ export class S3FileUploadService {
   async uploadFile(fileName: string, file: Buffer) {
     if (
       !this.configService.get<string>('app.awsRegion') ||
-      !this.configService.get<string>('app.awsBucket') ||
-      !this.configService.get<string>('app.awsAccessKey') ||
-      !this.configService.get<string>('app.awsSecretAccessKey')
+      !this.configService.get<string>('app.matsImportBucket') ||
+      !this.configService.get<string>('app.matsImportBucketAccessKey') ||
+      !this.configService.get<string>('app.matsImportBucketSecretAccessKey')
     ) {
       throw new EaseyException(
         new Error('No AWS credentials'),
@@ -24,9 +24,9 @@ export class S3FileUploadService {
 
     this.s3Client = new S3Client({
       credentials: {
-        accessKeyId: this.configService.get<string>('app.awsAccessKey'),
+        accessKeyId: this.configService.get<string>('app.matsImportBucketAccessKey'),
         secretAccessKey: this.configService.get<string>(
-          'app.awsSecretAccessKey',
+          'app.matsImportBucketSecretAccessKey',
         ),
       },
       region: this.configService.get<string>('app.awsRegion'),
@@ -36,7 +36,7 @@ export class S3FileUploadService {
       new PutObjectCommand({
         Body: file,
         Key: fileName,
-        Bucket: this.configService.get<string>('app.awsBucket'),
+        Bucket: this.configService.get<string>('app.matsImportBucket'),
       }),
     );
   }

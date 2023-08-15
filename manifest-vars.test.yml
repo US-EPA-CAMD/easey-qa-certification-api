@@ -2,3 +2,4 @@ instances: 1
 environment: testing
 host: api-easey-tst.app.cloud.gov
 apiHost: api.epa.gov/easey/test
+matsImportBucket: cg-4f56c44b-64ff-45e7-b346-87ee77ca1dad
