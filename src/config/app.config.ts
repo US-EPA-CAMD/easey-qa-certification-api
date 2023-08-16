@@ -85,15 +85,15 @@ export default registerAs('app', () => ({
     uri: getConfigValue('EASEY_AUTH_API', `https://${apiHost}/auth-mgmt`),
   },
   awsRegion: getConfigValue(
-    'EASEY_QA_CERTIFICATION_API_AWS_S3_REGION'
+    'EASEY_AWS_S3_REGION'
   ),
   matsImportBucket: getConfigValue(
-    'EASEY_QA_CERTIFICATION_API_MATS_BULK_FILES_IMPORT_BUCKET'
+    'EASEY_MATS_BULK_FILES_IMPORT_BUCKET'
   ),
   matsImportBucketAccessKey: getConfigValue(
-    'EASEY_QA_CERTIFICATION_API_MATS_BULK_FILES_IMPORT_AWS_ACCESS_KEY_ID'
+    'EASEY_MATS_BULK_FILES_IMPORT_AWS_ACCESS_KEY_ID'
   ),
   matsImportBucketSecretAccessKey: getConfigValue(
-    'EASEY_QA_CERTIFICATION_API_MATS_BULK_FILES_IMPORT_AWS_SECRET_ACCESS_KEY',
+    'EASEY_MATS_BULK_FILES_IMPORT_AWS_SECRET_ACCESS_KEY',
   ),
 }));
