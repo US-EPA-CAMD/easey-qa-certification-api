@@ -3,7 +3,7 @@ export class MatsBulkFileDTO {
 
   facilityName: string;
 
-  monPlanIdentifier: string;
+  monPlanId: string;
 
   locationInfo: string;
 
@@ -26,4 +26,6 @@ export class MatsBulkFileDTO {
   filename: string;
 
   updatedStatusFLG: string;
+
+  evalStatusCode: string;
 }
