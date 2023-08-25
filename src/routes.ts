@@ -67,16 +67,11 @@ import { TestExtensionExemptionsModule } from './test-extension-exemptions/test-
 import { QaCertificationEventModule } from './qa-certification-event/qa-certification-event.module';
 import { MonitorLocationModule } from './monitor-location/monitor-location.module';
 import { WhatHasDataModule } from './what-has-data/what-has-data.module';
-import { S3FileUploadModule } from './s3-file-upload/s3-file-upload.module';
 
 const routes: Routes = [
   {
     path: '/what-has-data',
     module: WhatHasDataModule,
-  },
-  {
-    path: '/file-upload',
-    module: S3FileUploadModule,
   },
   {
     path: '/',
