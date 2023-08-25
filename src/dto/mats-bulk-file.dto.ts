@@ -26,4 +26,6 @@ export class MatsBulkFileDTO {
   filename: string;
 
   updatedStatusFLG: string;
+
+  evalStatusCode: string;
 }

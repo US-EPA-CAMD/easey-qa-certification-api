@@ -22,6 +22,7 @@ export class MatsBulkFileMap extends BaseMap<MatsBulkFile, MatsBulkFileDTO> {
       testNumber: entity.testNumber,
       filename: entity.filename,
       updatedStatusFLG: entity.updatedStatusFLG,
+      evalStatusCode: 'PASS', //Default mats bulk files evaluations to PASS
     };
   }
 }
