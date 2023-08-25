@@ -3,7 +3,7 @@ export class MatsBulkFileDTO {
 
   facilityName: string;
 
-  monPlanIdentifier: string;
+  monPlanId: string;
 
   locationInfo: string;
 

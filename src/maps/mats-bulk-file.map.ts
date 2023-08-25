@@ -9,7 +9,7 @@ export class MatsBulkFileMap extends BaseMap<MatsBulkFile, MatsBulkFileDTO> {
     return {
       orisCode: entity.orisCode,
       facilityName: entity.facilityName,
-      monPlanIdentifier: entity.monPlanIdentifier,
+      monPlanId: entity.monPlanIdentifier,
       locationInfo: entity.locationInfo,
       matsBulkFileIdentifier: entity.matsBulkFileIdentifier,
       monLOCIdentifier: entity.monLOCIdentifier,

@@ -25,7 +25,7 @@ export class ReviewAndSubmitTestSummaryDTO {
 
   evalStatusCode: string;
 
-  submissionCode: string;
+  submissionAvailabilityCode: string;
 
   evalStatusCodeDescription: string;
 
