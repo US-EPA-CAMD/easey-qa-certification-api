@@ -7,7 +7,7 @@ export class MatsBulkFileDTO {
 
   locationInfo: string;
 
-  matsBulkFileIdentifier: any;
+  matsBulkFileIdentifier: number;
 
   monLOCIdentifier: string;
 
