@@ -26,8 +26,11 @@ export class MatsBulkFile extends BaseEntity {
   @ViewColumn({ name: 'location_info' })
   locationInfo: string;
 
-  @ViewColumn({ name: 'mats_bulk_file_id' })
-  matsBulkFileIdentifier: any;
+  @ViewColumn({
+    name: 'mats_bulk_file_id',
+    transformer: new NumericColumnTransformer(),
+  })
+  matsBulkFileIdentifier: number;
 
   @ViewColumn({ name: 'mon_loc_id' })
   monLOCIdentifier: string;
