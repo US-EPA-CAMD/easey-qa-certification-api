@@ -2,11 +2,11 @@ name: Release Branch Workflow
 
 on:
   push:
-    branches: [ release/* ]
+    branches: [release/*]
     paths-ignore:
-    - '**/*.md'
-    - 'LICENSE'
-    - '.gitignore'
+      - '**/*.md'
+      - 'LICENSE'
+      - '.gitignore'
 
 jobs:
   Build-Test-Package:
@@ -39,7 +39,7 @@ jobs:
         uses: sonarsource/sonarcloud-github-action@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}          
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       - name: Package App
         run: devops/scripts/package-artifact.sh
         env:
@@ -83,6 +83,8 @@ jobs:
         env:
           QA_CERTIFICATION_API_KEY: ${{ secrets.API_KEY }}
           QA_CERTIFICATION_API_SECRET_TOKEN: ${{ secrets.API_SECRET_TOKEN }}
+          MATS_BULK_FILES_IMPORT_AWS_ACCESS_KEY_ID: ${{ secrets.MATS_BULK_FILES_IMPORT_AWS_ACCESS_KEY_ID }}
+          MATS_BULK_FILES_IMPORT_AWS_SECRET_ACCESS_KEY: ${{ secrets.MATS_BULK_FILES_IMPORT_AWS_SECRET_ACCESS_KEY }}
       - name: Deploy
         run: devops/scripts/deploy.sh
 
@@ -123,6 +125,8 @@ jobs:
         env:
           QA_CERTIFICATION_API_KEY: ${{ secrets.API_KEY }}
           QA_CERTIFICATION_API_SECRET_TOKEN: ${{ secrets.API_SECRET_TOKEN }}
+          MATS_BULK_FILES_IMPORT_AWS_ACCESS_KEY_ID: ${{ secrets.MATS_BULK_FILES_IMPORT_AWS_ACCESS_KEY_ID }}
+          MATS_BULK_FILES_IMPORT_AWS_SECRET_ACCESS_KEY: ${{ secrets.MATS_BULK_FILES_IMPORT_AWS_SECRET_ACCESS_KEY }}
       - name: Deploy
         run: devops/scripts/deploy.sh
 
@@ -163,6 +167,8 @@ jobs:
         env:
           QA_CERTIFICATION_API_KEY: ${{ secrets.API_KEY }}
           QA_CERTIFICATION_API_SECRET_TOKEN: ${{ secrets.API_SECRET_TOKEN }}
+          MATS_BULK_FILES_IMPORT_AWS_ACCESS_KEY_ID: ${{ secrets.MATS_BULK_FILES_IMPORT_AWS_ACCESS_KEY_ID }}
+          MATS_BULK_FILES_IMPORT_AWS_SECRET_ACCESS_KEY: ${{ secrets.MATS_BULK_FILES_IMPORT_AWS_SECRET_ACCESS_KEY }}
       - name: Deploy
         run: devops/scripts/deploy.sh
 
@@ -203,5 +209,7 @@ jobs:
         env:
           QA_CERTIFICATION_API_KEY: ${{ secrets.API_KEY }}
           QA_CERTIFICATION_API_SECRET_TOKEN: ${{ secrets.API_SECRET_TOKEN }}
+          MATS_BULK_FILES_IMPORT_AWS_ACCESS_KEY_ID: ${{ secrets.MATS_BULK_FILES_IMPORT_AWS_ACCESS_KEY_ID }}
+          MATS_BULK_FILES_IMPORT_AWS_SECRET_ACCESS_KEY: ${{ secrets.MATS_BULK_FILES_IMPORT_AWS_SECRET_ACCESS_KEY }}
       - name: Deploy
         run: devops/scripts/deploy.sh

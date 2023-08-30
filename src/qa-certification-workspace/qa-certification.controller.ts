@@ -26,7 +26,6 @@ import {
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { QACertificationWorkspaceService } from './qa-certification.service';
 import { QACertificationChecksService } from './qa-certification-checks.service';
-import { FormatValidationErrorsInterceptor } from '../interceptors/format-validation-errors.interceptor';
 import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
@@ -37,6 +36,9 @@ import { TestSummaryReviewAndSubmitService } from './test-summary-review-and-sub
 import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
 import { TeeReviewAndSubmitService } from './tee-review-and-submit.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
+import { ReviewAndSubmitMultipleParamsMatsDTO } from '../dto/review-and-submit-multiple-params-mats.dto';
+import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -47,6 +49,7 @@ export class QACertificationWorkspaceController {
     private readonly reviewSubmitServiceCert: CertEventReviewAndSubmitService,
     private readonly reviewSubmitServiceTestSum: TestSummaryReviewAndSubmitService,
     private readonly reviewSubmitServiceTee: TeeReviewAndSubmitService,
+    private readonly reviewSubmitServiceMats: MatsBulkFilesReviewAndSubmitService,
     private readonly checksService: QACertificationChecksService,
   ) {}
 
@@ -233,6 +236,38 @@ export class QACertificationWorkspaceController {
       dto.orisCodes,
       dto.monPlanIds,
       dto.quarters,
+    );
+  }
+
+  @Get('mats-bulk-file')
+  @ApiOkResponse({
+    isArray: true,
+    type: MatsBulkFileDTO,
+    description:
+      'Retrieves workspace mats-bulk-files records given a list of oris codes and or mon plan ids',
+  })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'orisCodes',
+    required: true,
+    explode: false,
+  })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'monPlanIds',
+    required: false,
+    explode: false,
+  })
+  @RoleGuard(
+    { enforceCheckout: false, queryParam: 'orisCodes', isPipeDelimitted: true },
+    LookupType.Facility,
+  )
+  async getFilteredMatsBulkFile(
+    @Query() dto: ReviewAndSubmitMultipleParamsMatsDTO,
+  ): Promise<MatsBulkFileDTO[]> {
+    return this.reviewSubmitServiceMats.getMatsBulkFileRecords(
+      dto.orisCodes,
+      dto.monPlanIds,
     );
   }
 }

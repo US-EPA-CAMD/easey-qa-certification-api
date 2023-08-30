@@ -26,6 +26,11 @@ import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
 import { TeeReviewAndSubmitService } from './tee-review-and-submit.service';
 import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository copy';
 import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
+import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
+import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
+import { MatsBulkFileMap } from '../maps/mats-bulk-file.map';
+import { ReviewAndSubmitMultipleParamsMatsDTO } from '../dto/review-and-submit-multiple-params-mats.dto';
+import { MatsBulkFilesReviewAndSubmitRepository } from './mats-bulk-files-review-and-submit.repository';
 
 const qaCertDto = new QACertificationDTO();
 const qaParamsDto = new QACertificationParamsDTO();
@@ -64,6 +69,7 @@ describe('QA Certification Workspace Controller Test', () => {
   let reviewSubmitServiceCert: CertEventReviewAndSubmitService;
   let reviewSubmitServiceTestSum: TestSummaryReviewAndSubmitService;
   let reviewSubmitServiceTee: TeeReviewAndSubmitService;
+  let reviewSubmitMats: MatsBulkFilesReviewAndSubmitService;
   let checkService: QACertificationChecksService;
 
   beforeAll(async () => {
@@ -90,6 +96,9 @@ describe('QA Certification Workspace Controller Test', () => {
         TeeReviewAndSubmitService,
         TeeReviewAndSubmitRepository,
         TeeReviewAndSubmitMap,
+        MatsBulkFilesReviewAndSubmitRepository,
+        MatsBulkFilesReviewAndSubmitService,
+        MatsBulkFileMap,
       ],
     }).compile();
 
@@ -98,6 +107,7 @@ describe('QA Certification Workspace Controller Test', () => {
     reviewSubmitServiceCert = module.get(CertEventReviewAndSubmitService);
     reviewSubmitServiceTestSum = module.get(TestSummaryReviewAndSubmitService);
     reviewSubmitServiceTee = module.get(TeeReviewAndSubmitService);
+    reviewSubmitMats = module.get(MatsBulkFilesReviewAndSubmitService);
     checkService = module.get(QACertificationChecksService);
   });
 
@@ -119,7 +129,7 @@ describe('QA Certification Workspace Controller Test', () => {
   });
 
   describe('getCertEventFiltered', () => {
-    it('should call the review and submit test summary controller function and return a list of dtos', async () => {
+    it('should call the review and submit cert event controller function and return a list of dtos', async () => {
       const dto = new CertEventReviewAndSubmitDTO();
       reviewSubmitServiceCert.getCertEventRecords = jest
         .fn()
@@ -149,12 +159,27 @@ describe('QA Certification Workspace Controller Test', () => {
   });
 
   describe('getTeeFiltered', () => {
-    it('should call the review and submit test summary controller function and return a list of dtos', async () => {
+    it('should call the review and submit test extension exemption controller function and return a list of dtos', async () => {
       const dto = new TeeReviewAndSubmitDTO();
       reviewSubmitServiceTee.getTeeRecords = jest.fn().mockResolvedValue([dto]);
 
       const result = await controller.getFilteredTee(
         new ReviewAndSubmitMultipleParamsDTO(),
+      );
+
+      expect(result).toEqual([dto]);
+    });
+  });
+
+  describe('getMatsBulkFiltered', () => {
+    it('should call the review and submit test summary controller function and return a list of dtos', async () => {
+      const dto = new MatsBulkFileDTO();
+      reviewSubmitMats.getMatsBulkFileRecords = jest
+        .fn()
+        .mockResolvedValue([dto]);
+
+      const result = await controller.getFilteredMatsBulkFile(
+        new ReviewAndSubmitMultipleParamsMatsDTO(),
       );
 
       expect(result).toEqual([dto]);

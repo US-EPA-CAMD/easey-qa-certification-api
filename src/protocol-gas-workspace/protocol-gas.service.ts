@@ -159,6 +159,7 @@ export class ProtocolGasWorkspaceService {
         testSumId: testSumId,
         gasLevelCode: payload.gasLevelCode,
         cylinderIdentifier: payload.cylinderIdentifier,
+        gasTypeCode: payload.gasTypeCode,
       });
     }
 

@@ -35,6 +35,9 @@ import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oi
 import { AppEHeatInputFromGasWorkspaceModule } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
 import { UnitDefaultTestRunWorkspaceModule } from '../unit-default-test-run-workspace/unit-default-test-run.module';
 import { ProtocolGasWorkspaceModule } from '../protocol-gas-workspace/protocol-gas.module';
+import { MatsBulkFilesReviewAndSubmitRepository } from './mats-bulk-files-review-and-submit.repository';
+import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
+import { MatsBulkFileMap } from '../maps/mats-bulk-file.map';
 
 @Module({
   imports: [
@@ -42,6 +45,7 @@ import { ProtocolGasWorkspaceModule } from '../protocol-gas-workspace/protocol-g
       CertEventReviewAndSubmitRepository,
       TestSummaryReviewAndSubmitRepository,
       TeeReviewAndSubmitRepository,
+      MatsBulkFilesReviewAndSubmitRepository,
     ]),
     HttpModule,
     QASuppDataWorkspaceModule,
@@ -75,6 +79,8 @@ import { ProtocolGasWorkspaceModule } from '../protocol-gas-workspace/protocol-g
     ReviewAndSubmitTestSummaryMap,
     TeeReviewAndSubmitService,
     TeeReviewAndSubmitMap,
+    MatsBulkFilesReviewAndSubmitService,
+    MatsBulkFileMap,
   ],
   exports: [QACertificationChecksService, QACertificationWorkspaceService],
 })
