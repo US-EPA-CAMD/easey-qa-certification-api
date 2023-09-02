@@ -5,6 +5,7 @@ import {
   IsOptional,
   IsString,
   ValidateNested,
+  MaxLength,
 } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
@@ -13,6 +14,7 @@ import {
   IsInRange,
   IsValidDate,
   IsIsoFormat,
+  MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
 
 import {
@@ -137,6 +139,11 @@ export class TestSummaryBaseDTO {
       'A Unit or Stack Pipe identifier (NOT both) must be provided for each Test Summary.',
   })
   @IsString()
+  @MatchesRegEx('^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$', {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 4 characters and only consist of upper and lower case letters, numbers starting with CS, MS, XS, CP, MP, XP for [${KEY}].`;
+    },
+  })
   stackPipeId: string;
 
   @ApiProperty({
@@ -144,6 +151,11 @@ export class TestSummaryBaseDTO {
   })
   @ValidateIf(o => !o.stackPipeId)
   @IsString()
+  @MatchesRegEx('^[A-z0-9\\-\\*#]{1,6}$', {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 6 characters and only consist of upper and lower case letters, numbers, and the special characters - (dash), * (asterisk), and # (pound) for [${KEY}].`;
+    },
+  })
   unitId: string;
 
   @ApiProperty({
@@ -217,6 +229,11 @@ export class TestSummaryBaseDTO {
     VALID_CODES_FOR_MON_SYS_ID_VALIDATION.includes(o.testTypeCode),
   )
   @IsString()
+  @MatchesRegEx('^[A-Z0-9]{1,3}$', {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 3 characters and only consist of upper case letters, numbers for [${KEY}].`;
+    },
+  })
   monitoringSystemId?: string;
 
   @ApiProperty({
@@ -263,6 +280,11 @@ export class TestSummaryBaseDTO {
     VALID_CODES_FOR_COMPONENT_ID_VALIDATION.includes(o.testTypeCode),
   )
   @IsString()
+  @MatchesRegEx('^[A-Z0-9]{1,3}$', {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 3 characters and only consist of upper case letters, numbers for [${KEY}].`;
+    },
+  })
   componentId?: string;
 
   @ApiProperty({
@@ -313,6 +335,11 @@ export class TestSummaryBaseDTO {
     },
   })
   @IsString()
+  @MaxLength(18, {
+    message: (args: ValidationArguments) => {
+      return `The value for [${args.value}] in the Component record [${args.property}] must not exceed 18 characters for [${KEY}].`;
+    },
+  })
   testNumber: string;
 
   @ApiProperty({
@@ -376,8 +403,12 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: 'Test Description. ADD TO PROPERTY METADATA',
   })
-  @IsOptional()
   @ValidateIf(o => [TestTypeCodes.OTHER].includes(o.testTypeCode))
+  @MaxLength(100, {
+    message: (args: ValidationArguments) => {
+      return `The value for [${args.value}] in the Component record [${args.property}] must not exceed 100 characters for [${KEY}].`;
+    },
+  })
   testDescription?: string;
 
   @ApiProperty({
@@ -657,6 +688,11 @@ export class TestSummaryBaseDTO {
   })
   @IsOptional()
   @IsString()
+  @MaxLength(1000, {
+    message: (args: ValidationArguments) => {
+      return `The value for [${args.value}] in the Component record [${args.property}] must not exceed 1000 characters for [${KEY}].`;
+    },
+  })
   testComment?: string;
 
   @ApiProperty({
