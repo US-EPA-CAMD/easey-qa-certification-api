@@ -17,6 +17,7 @@ import {
 import { GasLevelCode } from '../entities/workspace/gas-level-code.entity';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 
 const KEY = 'Linearity Summary';
 
@@ -45,7 +46,6 @@ export class LinearitySummaryBaseDTO {
   @ApiProperty({
     description: 'meanMeasuredValue. ADD TO PROPERTY METADATA',
   })
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LINEAR-16-A', {
@@ -54,13 +54,24 @@ export class LinearitySummaryBaseDTO {
       });
     },
   })
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999999999.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.999 for [${KEY}].`;
+    },
+  })
   meanMeasuredValue?: number;
 
   @ApiProperty({
     description: 'meanReferenceValue. ADD TO PROPERTY METADATA',
   })
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LINEAR-17-A', {
@@ -78,12 +89,24 @@ export class LinearitySummaryBaseDTO {
       });
     },
   })
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999999999.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.999 for [${KEY}].`;
+    },
+  })
   meanReferenceValue?: number;
 
   @ApiProperty({
     description: 'percentError. ADD TO PROPERTY METADATA',
   })
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LINEAR-18-A', {
@@ -101,18 +124,35 @@ export class LinearitySummaryBaseDTO {
       });
     },
   })
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999.9, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.9 for [${KEY}].`;
+    },
+  })
   percentError?: number;
 
   @ApiProperty(
     getMetadata(dataDictionary.apsIndicator, MetadataKeys.LINEARITY_SUMMARY),
   )
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LINEAR-37-A', {
         fieldname: args.property,
         key: KEY,
       });
+    },
+  })
+  @IsInRange(0, 1, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}].`;
     },
   })
   apsIndicator?: number;
