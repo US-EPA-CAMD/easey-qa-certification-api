@@ -1,24 +1,29 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 import {
-  IsDateString,
+  IsInRange,
+  IsIsoFormat,
+  IsValidDate,
+} from '@us-epa-camd/easey-common/pipes';
+import {
   IsNotEmpty,
   IsNumber,
   ValidationArguments,
   IsString,
   IsOptional,
+  MaxLength,
+  IsInt,
 } from 'class-validator';
 import { PressureMeasureCode } from '../entities/workspace/pressure-measure-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
+import { ProbeTypeCode } from '../entities/probe-type-code.entity';
 
 const KEY = 'RATA Traverse';
 const MIN_VEL_CAL_COEFF = 0.5;
 const MAX_VEL_CAL_COEFF = 1.5;
 const MIN_TSTACK_TEMP = 0;
 const MAX_TSTACK_TEMP = 1000;
-
+const DATE_FORMAT = 'YYYY-MM-DD';
 export class RataTraverseBaseDTO {
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-71-A', {
@@ -28,9 +33,13 @@ export class RataTraverseBaseDTO {
     },
   })
   @IsString()
-  probeId?: string;
+  @MaxLength(11, {
+    message: (args: ValidationArguments) => {
+      return `The value for [${args.value}] in the Component record [${args.property}] must not exceed 11 characters`;
+    },
+  })
+  probeId: string;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-72-A', {
@@ -40,9 +49,20 @@ export class RataTraverseBaseDTO {
     },
   })
   @IsString()
-  probeTypeCode?: string;
+  @IsValidCode(ProbeTypeCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
+    },
+  })
+  probeTypeCode: string;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-73-A', {
@@ -60,7 +80,7 @@ export class RataTraverseBaseDTO {
       });
     },
   })
-  pressureMeasureCode?: string;
+  pressureMeasureCode: string;
 
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -73,7 +93,6 @@ export class RataTraverseBaseDTO {
   @IsString()
   methodTraversePointId: string;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-74-A', {
@@ -99,9 +118,8 @@ export class RataTraverseBaseDTO {
     true,
     true,
   )
-  velocityCalibrationCoefficient?: number;
+  velocityCalibrationCoefficient: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-75-A', {
@@ -110,18 +128,59 @@ export class RataTraverseBaseDTO {
       });
     },
   })
-  @IsDateString()
-  lastProbeDate?: Date;
+  @IsIsoFormat({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `The value for [fieldName] in the [key] record must be a valid ISO date format [dateFormat]`,
+        {
+          fieldName: args.property,
+          key: KEY,
+          dateFormat: DATE_FORMAT,
+        },
+      );
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  lastProbeDate: Date;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for [${KEY}]`;
+      },
+    },
+  )
+  @IsInRange(0, 99.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99.999 for [${KEY}]`;
+    },
+  })
   averageVelocityDifferencePressure?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for [${KEY}]`;
+      },
+    },
+  )
+  @IsInRange(0, 99.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99.999 for [${KEY}]`;
+    },
+  })
   averageSquareVelocityDifferencePressure?: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-77-A', {
@@ -147,30 +206,74 @@ export class RataTraverseBaseDTO {
     true,
     true,
   )
-  tStackTemperature?: number;
+  tStackTemperature: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsInRange(0, 1, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be 0 or 1 for [${KEY}]`;
+    },
+  })
   pointUsedIndicator?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsInRange(0, 99, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99 for [${KEY}]`;
+    },
+  })
   numberWallEffectsPoints?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsInRange(-99, 99, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -99 and 99 for [${KEY}]`;
+    },
+  })
   yawAngle?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsInRange(-99, 99, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -99 and 99 for [${KEY}]`;
+    },
+  })
   pitchAngle?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 2 decimal place for [${KEY}]`;
+      },
+    },
+  )
+  @IsInRange(0, 9999.99, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.99 for [${KEY}]`;
+    },
+  })
   calculatedVelocity?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 2 decimal place for [${KEY}]`;
+      },
+    },
+  )
+  @IsInRange(0, 9999.99, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.99 for [${KEY}]`;
+    },
+  })
   replacementVelocity?: number;
 }
 
