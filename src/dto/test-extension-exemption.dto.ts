@@ -1,18 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { RequireOne } from '../pipes/require-one.pipe';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
-import { IsInRange } from '@us-epa-camd/easey-common/pipes';
 import {
-  IsNumber,
+  IsInRange,
+  IsValidCode,
+  MatchesRegEx,
+} from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInt,
+  IsNotEmpty,
   IsOptional,
   IsString,
   ValidateIf,
   ValidationArguments,
 } from 'class-validator';
-import { YEAR_QUARTER_TEST_TYPE_CODES } from '../utilities/constants';
-import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { SpanScaleCode } from '../entities/span-scale-code.entity';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { FuelCode } from '../entities/fuel-code.entity';
+import { FindOneOptions } from 'typeorm';
+import { ExtensionExemptionCode } from '../entities/extension-exemption-code.entity';
 
 const KEY = 'Test Extension Exemption';
 
@@ -26,6 +32,11 @@ export class TestExtensionExemptionBaseDTO {
       'A Unit or Stack Pipe identifier (NOT both) must be provided for each Test Summary.',
   })
   @IsString()
+  @MatchesRegEx('^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$', {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 4 characters and only consist of upper and lower case letters, numbers starting with CS, MS, XS, CP, MP, XP for [${KEY}].`;
+    },
+  })
   stackPipeId: string;
 
   @ApiProperty({
@@ -33,6 +44,11 @@ export class TestExtensionExemptionBaseDTO {
   })
   @ValidateIf(o => !o.stackPipeId)
   @IsString()
+  @MatchesRegEx('^[A-z0-9\\-\\*#]{1,6}$', {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 6 characters and only consist of upper and lower case letters, numbers, and the special characters - (dash), * (asterisk), and # (pound) for [${KEY}].`;
+    },
+  })
   unitId: string;
 
   @ApiProperty({
@@ -49,6 +65,8 @@ export class TestExtensionExemptionBaseDTO {
       }].`;
     },
   })
+  @IsInt()
+  @IsNotEmpty()
   year: number;
 
   @ApiProperty({
@@ -67,7 +85,8 @@ export class TestExtensionExemptionBaseDTO {
       }]`;
     },
   })
-  @ValidateIf(o => YEAR_QUARTER_TEST_TYPE_CODES.includes(o.testTypeCode))
+  @IsInt()
+  @IsNotEmpty()
   quarter: number;
 
   @ApiProperty({
@@ -75,6 +94,11 @@ export class TestExtensionExemptionBaseDTO {
   })
   @IsOptional()
   @IsString()
+  @MatchesRegEx('^[A-Z0-9]{1,3}$', {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 3 characters and only consist of upper case letters, numbers for [${KEY}].`;
+    },
+  })
   monitoringSystemId?: string;
 
   @ApiProperty({
@@ -82,10 +106,20 @@ export class TestExtensionExemptionBaseDTO {
   })
   @IsOptional()
   @IsString()
+  @MatchesRegEx('^[A-Z0-9]{1,3}$', {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 3 characters and only consist of upper case letters, numbers for [${KEY}].`;
+    },
+  })
   componentId?: string;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsInRange(0, 2208, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 2208 for [${KEY}].`;
+    },
+  })
   hoursUsed?: number;
 
   @ApiProperty({
@@ -93,24 +127,51 @@ export class TestExtensionExemptionBaseDTO {
   })
   @IsOptional()
   @IsValidCode(SpanScaleCode, {
-    //   message: (args: ValidationArguments) => {
-    //     return `You reported an invalid Span Scale Code of [${
-    //       args.value
-    //     }] in Test Summary record for Unit/Stack [${
-    //       args.object['unitId']
-    //         ? args.object['unitId']
-    //         : args.object['stackPipeId']
-    //     }], Test Type Code [${args.object['testTypeCode']}], and Test Number [${
-    //       args.object['testNumber']
-    //     }]`;
-    //   },
+    message: (args: ValidationArguments) => {
+      return `You reported an invalid Span Scale Code of [${
+        args.value
+      }] in ${KEY} record for Unit/Stack [${
+        args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId']
+      }].`;
+    },
   })
   spanScaleCode?: string;
 
   @IsOptional()
   @IsString()
+  @IsValidCode(
+    FuelCode,
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${
+          args.property
+        }] is invalid in ${KEY} record for Unit/Stack [${
+          args.object['unitId']
+            ? args.object['unitId']
+            : args.object['stackPipeId']
+        }].`;
+      },
+    },
+    (args: ValidationArguments): FindOneOptions<FuelCode> => {
+      return { where: { fuelGroupCode: 'GAS' } };
+    },
+  )
   fuelCode?: string;
+
   @IsString()
+  @IsValidCode(ExtensionExemptionCode, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${
+        args.property
+      }] is invalid in ${KEY} record for Unit/Stack [${
+        args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId']
+      }].`;
+    },
+  })
   extensionOrExemptionCode: string;
 }
 
