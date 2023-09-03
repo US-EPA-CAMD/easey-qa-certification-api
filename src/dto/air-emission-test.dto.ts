@@ -1,5 +1,9 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { IsEmail, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsEmail,
+  IsIsoFormat,
+  IsValidDate,
+} from '@us-epa-camd/easey-common/pipes';
 import {
   IsNotEmpty,
   IsOptional,
@@ -21,6 +25,11 @@ export class AirEmissionTestingBaseDTO {
     },
   })
   @IsString()
+  @MaxLength(25, {
+    message: (args: ValidationArguments) => {
+      return `The value for [${args.value}] in the ${KEY} record [${args.property}] must not exceed 25 characters`;
+    },
+  })
   qiLastName: string;
 
   @IsNotEmpty({
@@ -32,6 +41,11 @@ export class AirEmissionTestingBaseDTO {
     },
   })
   @IsString()
+  @MaxLength(25, {
+    message: (args: ValidationArguments) => {
+      return `The value for [${args.value}] in the ${KEY} record [${args.property}] must not exceed 25 characters`;
+    },
+  })
   qiFirstName: string;
 
   @IsOptional()
@@ -56,6 +70,11 @@ export class AirEmissionTestingBaseDTO {
     },
   })
   @IsString()
+  @MaxLength(50, {
+    message: (args: ValidationArguments) => {
+      return `The value for [${args.value}] in the ${KEY} record [${args.property}] must not exceed 50 characters`;
+    },
+  })
   aetbName: string;
 
   @IsNotEmpty({
@@ -67,6 +86,11 @@ export class AirEmissionTestingBaseDTO {
     },
   })
   @IsString()
+  @MaxLength(18, {
+    message: (args: ValidationArguments) => {
+      return `The value for [${args.value}] in the ${KEY} record [${args.property}] must not exceed 18 characters`;
+    },
+  })
   aetbPhoneNumber: string;
 
   @IsNotEmpty({
@@ -84,6 +108,11 @@ export class AirEmissionTestingBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
+    },
+  })
+  @MaxLength(70, {
+    message: (args: ValidationArguments) => {
+      return `The value for [${args.value}] in the ${KEY} record [${args.property}] must not exceed 70 characters`;
     },
   })
   aetbEmail: string;
@@ -107,6 +136,13 @@ export class AirEmissionTestingBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   examDate: Date;
 
   @IsNotEmpty({
@@ -118,6 +154,11 @@ export class AirEmissionTestingBaseDTO {
     },
   })
   @IsString()
+  @MaxLength(50, {
+    message: (args: ValidationArguments) => {
+      return `The value for [${args.value}] in the ${KEY} record [${args.property}] must not exceed 50 characters`;
+    },
+  })
   providerName: string;
 
   @IsNotEmpty({
@@ -135,6 +176,11 @@ export class AirEmissionTestingBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
+    },
+  })
+  @MaxLength(70, {
+    message: (args: ValidationArguments) => {
+      return `The value for [${args.value}] in the ${KEY} record [${args.property}] must not exceed 70 characters`;
     },
   })
   providerEmail: string;
