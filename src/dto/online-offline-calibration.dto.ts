@@ -2,6 +2,7 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import {
   IsInRange,
   IsIsoFormat,
+  IsValidCode,
   IsValidDate,
 } from '@us-epa-camd/easey-common/pipes';
 import {
@@ -11,7 +12,8 @@ import {
   IsString,
   ValidationArguments,
 } from 'class-validator';
-import { MAX_HOUR, MIN_HOUR } from 'src/utilities/constants';
+import { GasLevelCode } from '../entities/workspace/gas-level-code.entity';
+import { MAX_HOUR, MIN_HOUR } from '../utilities/constants';
 
 const KEY = 'Online Offline Calibration';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -367,6 +369,18 @@ export class OnlineOfflineCalibrationBaseDTO {
 
   @IsOptional()
   @IsString()
+  @IsValidCode(GasLevelCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
+    },
+  })
   upscaleGasLevelCode?: string;
 }
 
