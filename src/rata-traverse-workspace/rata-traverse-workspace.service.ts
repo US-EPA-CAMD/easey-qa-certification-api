@@ -110,7 +110,8 @@ export class RataTraverseWorkspaceService {
       payload.velocityCalibrationCoefficient;
     record.lastProbeDate = payload.lastProbeDate;
     record.avgVelDiffPressure = payload.averageVelocityDifferencePressure;
-    record.avgSquareVelDiffPressure = payload.averageSquareVelocityDifferencePressure;
+    record.avgSquareVelDiffPressure =
+      payload.averageSquareVelocityDifferencePressure;
     record.tStackTemperature = payload.tStackTemperature;
     record.pointUsedIndicator = payload.pointUsedIndicator;
     record.numberWallEffectsPoints = payload.numberWallEffectsPoints;

@@ -86,9 +86,12 @@ export class QACertificationEventChecksService {
     if (isImport) {
       const duplicates = qaCertificationEvents.filter(i => {
         return (
-          i.certificationEventCode === qaCertificationEvent.certificationEventCode &&
-          i.certificationEventHour === qaCertificationEvent.certificationEventHour &&
-          i.certificationEventDate === qaCertificationEvent.certificationEventDate &&
+          i.certificationEventCode ===
+            qaCertificationEvent.certificationEventCode &&
+          i.certificationEventHour ===
+            qaCertificationEvent.certificationEventHour &&
+          i.certificationEventDate ===
+            qaCertificationEvent.certificationEventDate &&
           i.monitoringSystemId === qaCertificationEvent.monitoringSystemId &&
           i.componentId === qaCertificationEvent.componentId &&
           i.unitId === qaCertificationEvent.unitId &&

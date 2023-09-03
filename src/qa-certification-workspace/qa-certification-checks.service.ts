@@ -336,25 +336,27 @@ export class QACertificationChecksService {
               }),
             );
 
-            appESummary.appendixECorrelationTestRunData?.forEach(appETestRun => {
-              promises.push(
-                new Promise((resolve, _reject) => {
-                  const results = this.appEGasChecksService.runImportChecks(
-                    appETestRun.appEHeatInputFromGasData,
-                  );
-                  resolve(results);
-                }),
-              );
+            appESummary.appendixECorrelationTestRunData?.forEach(
+              appETestRun => {
+                promises.push(
+                  new Promise((resolve, _reject) => {
+                    const results = this.appEGasChecksService.runImportChecks(
+                      appETestRun.appEHeatInputFromGasData,
+                    );
+                    resolve(results);
+                  }),
+                );
 
-              promises.push(
-                new Promise((resolve, _reject) => {
-                  const results = this.appEOilChecksService.runImportChecks(
-                    appETestRun.appEHeatInputFromOilData,
-                  );
-                  resolve(results);
-                }),
-              );
-            });
+                promises.push(
+                  new Promise((resolve, _reject) => {
+                    const results = this.appEOilChecksService.runImportChecks(
+                      appETestRun.appEHeatInputFromOilData,
+                    );
+                    resolve(results);
+                  }),
+                );
+              },
+            );
           });
         }
 
