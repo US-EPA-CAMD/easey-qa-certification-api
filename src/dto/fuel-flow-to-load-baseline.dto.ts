@@ -8,7 +8,7 @@ import {
   MaxLength,
   ValidationArguments,
 } from 'class-validator';
-import { unitsOfMeasureCode } from '../entities/units-of-measure-code.entity';
+import { UnitsOfMeasureCode } from '../entities/units-of-measure-code.entity';
 
 const KEY = 'Fuel Flow To Load Baseline';
 
@@ -74,7 +74,7 @@ export class FuelFlowToLoadBaselineBaseDTO {
 
   @IsOptional()
   @IsString()
-  @IsValidCode(unitsOfMeasureCode, {
+  @IsValidCode(UnitsOfMeasureCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
         'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
@@ -115,7 +115,7 @@ export class FuelFlowToLoadBaselineBaseDTO {
 
   @IsOptional()
   @IsString()
-  @IsValidCode(unitsOfMeasureCode, {
+  @IsValidCode(UnitsOfMeasureCode, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
         'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
