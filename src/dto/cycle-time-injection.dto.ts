@@ -14,7 +14,7 @@ import {
   MAX_MINUTE,
   MIN_HOUR,
   MIN_MINUTE,
-} from 'src/utilities/constants';
+} from '../utilities/constants';
 
 const KEY = 'Cycle Time Injection';
 const DATE_FORMAT = 'YYYY-MM-DD';

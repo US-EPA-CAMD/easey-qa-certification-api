@@ -3,6 +3,7 @@ import {
   IsInRange,
   IsIsoFormat,
   IsValidDate,
+  MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
 import {
   IsNotEmpty,
@@ -91,6 +92,11 @@ export class RataTraverseBaseDTO {
     },
   })
   @IsString()
+  @MatchesRegEx('^[a-zA-Z0-9]{1,3}$', {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 3 characters and only consist of upper and lower case letters, numbers for [${KEY}].`;
+    },
+  })
   methodTraversePointId: string;
 
   @IsNotEmpty({
