@@ -7,6 +7,7 @@ import {
   AppEHeatInputFromGasImportDTO,
 } from './app-e-heat-input-from-gas.dto';
 import {
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -20,6 +21,7 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import {
   BeginEndDatesConsistent,
   IsInRange,
+  IsValidDate,
 } from '@us-epa-camd/easey-common/pipes';
 import {
   MAX_HOUR,
@@ -32,11 +34,14 @@ const KEY = 'Appendix E Correlation Test Run';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class AppECorrelationTestRunBaseDTO {
+  @IsInt()
+  @IsNotEmpty()
   @IsInRange(1, 99, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `The value for [fieldname] in [key] must not exceed 2 digits.`,
+        `The value of [value] for [fieldname] in [key] must be in the range of 1 and 99.`,
         {
+          value: args.value,
           fieldname: args.property,
           key: KEY,
         },
@@ -94,7 +99,7 @@ export class AppECorrelationTestRunBaseDTO {
   totalHeatInput?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   @IsInRange(0, 800, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999.9 for [${KEY}].`;
@@ -117,6 +122,13 @@ export class AppECorrelationTestRunBaseDTO {
           fieldname: args.property,
           key: KEY,
         },
+      );
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
       );
     },
   })
@@ -171,6 +183,13 @@ export class AppECorrelationTestRunBaseDTO {
           fieldname: args.property,
           key: KEY,
         },
+      );
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
       );
     },
   })

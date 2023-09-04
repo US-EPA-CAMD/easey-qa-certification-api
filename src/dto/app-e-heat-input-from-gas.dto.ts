@@ -1,12 +1,11 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { IsInRange, MatchesRegEx } from '@us-epa-camd/easey-common/pipes';
 import {
   IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
   ValidationArguments,
-  MatchesRegEx,
-  IsInRange
 } from 'class-validator';
 
 const KEY = 'Appendix E Heat Input From Gas';
@@ -29,7 +28,7 @@ export class AppEHeatInputFromGasBaseDTO {
   monitoringSystemId: string;
 
   @IsOptional()
-   @IsNumber(
+  @IsNumber(
     { maxDecimalPlaces: 6 },
     {
       message: (args: ValidationArguments) => {
@@ -37,7 +36,7 @@ export class AppEHeatInputFromGasBaseDTO {
       },
     },
   )
-  @IsInRange(0.000000, 999999999.9, {
+  @IsInRange(0, 20000, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 0.000000 and 20000.000000 for [${KEY}].`;
     },
@@ -45,7 +44,7 @@ export class AppEHeatInputFromGasBaseDTO {
   gasGCV?: number;
 
   @IsOptional()
- @IsNumber(
+  @IsNumber(
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
@@ -62,12 +61,12 @@ export class AppEHeatInputFromGasBaseDTO {
 
   @IsOptional()
   @IsNumber(
-  { maxDecimalPlaces: 1 },
-  {
-    message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
+      },
     },
-  },
   )
   @IsInRange(0, 999999.9, {
     message: (args: ValidationArguments) => {

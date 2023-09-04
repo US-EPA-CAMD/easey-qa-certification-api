@@ -3,8 +3,10 @@ import {
   BeginEndDatesConsistent,
   IsInRange,
   IsIsoFormat,
+  IsValidDate,
 } from '@us-epa-camd/easey-common/pipes';
 import {
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -21,14 +23,8 @@ import {
 const DATE_FORMAT = 'YYYY-MM-DD';
 const KEY = 'Unit Default Test Run';
 export class UnitDefaultTestRunBaseDTO {
-  @IsNumber(
-    { maxDecimalPlaces: 2 },
-    {
-      message: (args: ValidationArguments) => {
-        return `The value of [${args.value}] for [${args.property}] is allowed only 2 decimal place for $[${KEY}].`;
-      },
-    },
-  )
+  @IsInt()
+  @IsNotEmpty()
   @IsInRange(1, 99, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 1 and 99 for [${KEY}].`;
@@ -36,14 +32,8 @@ export class UnitDefaultTestRunBaseDTO {
   })
   operatingLevelForRun: number;
 
-  @IsNumber(
-    { maxDecimalPlaces: 2 },
-    {
-      message: (args: ValidationArguments) => {
-        return `The value of [${args.value}] for [${args.property}] is allowed only 2 decimal place for $[${KEY}].`;
-      },
-    },
-  )
+  @IsInt()
+  @IsNotEmpty()
   @IsInRange(1, 99, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 1 and 99 for [${KEY}].`;
@@ -66,6 +56,13 @@ export class UnitDefaultTestRunBaseDTO {
           fieldname: args.property,
           key: KEY,
         },
+      );
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
       );
     },
   })
@@ -123,9 +120,16 @@ export class UnitDefaultTestRunBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   endDate?: Date;
 
-  @ValidateIf(o => o.endDate !== null)
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('UNITDEF-18-A', {
@@ -167,14 +171,7 @@ export class UnitDefaultTestRunBaseDTO {
   endMinute?: number;
 
   @IsOptional()
-  @IsNumber(
-    { maxDecimalPlaces: 3 },
-    {
-      message: (args: ValidationArguments) => {
-        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
-      },
-    },
-  )
+  @IsInt()
   @IsInRange(0, 800, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 800 for [${KEY}].`;
@@ -183,7 +180,6 @@ export class UnitDefaultTestRunBaseDTO {
   responseTime?: number;
 
   @IsOptional()
-  @IsNumber()
   @IsNumber(
     { maxDecimalPlaces: 3 },
     {
@@ -200,7 +196,12 @@ export class UnitDefaultTestRunBaseDTO {
   referenceValue?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsInRange(0, 1, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be 0 or 1 for [${KEY}]`;
+    },
+  })
   runUsedIndicator?: number;
 }
 

@@ -1,4 +1,16 @@
-import { IsNumber, IsOptional, IsString, MatchesRegEx, ValidationArguments, IsInRange } from 'class-validator';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import {
+  IsInRange,
+  IsValidCode,
+  MatchesRegEx,
+} from '@us-epa-camd/easey-common/pipes';
+import {
+  IsNumber,
+  IsOptional,
+  IsString,
+  ValidationArguments,
+} from 'class-validator';
+import { UnitsOfMeasureCode } from '../entities/units-of-measure-code.entity';
 const KEY = 'Appendix E Heat Input From Oil';
 
 export class AppEHeatInputFromOilBaseDTO {
@@ -9,6 +21,7 @@ export class AppEHeatInputFromOilBaseDTO {
     },
   })
   monitoringSystemId: string;
+
   @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
@@ -27,14 +40,14 @@ export class AppEHeatInputFromOilBaseDTO {
 
   @IsOptional()
   @IsNumber(
-  { maxDecimalPlaces: 6 },
-  {
-    message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] is allowed only 6 decimal place for $[${KEY}].`;
+    { maxDecimalPlaces: 6 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 6 decimal place for $[${KEY}].`;
+      },
     },
-  },
   )
-  @IsInRange(0.000000, 20000.000000, {
+  @IsInRange(0.0, 20000.0, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 0.000000 and 20000.000000 for [${KEY}].`;
     },
@@ -43,7 +56,20 @@ export class AppEHeatInputFromOilBaseDTO {
 
   @IsOptional()
   @IsString()
+  @IsValidCode(UnitsOfMeasureCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
+    },
+  })
   oilGCVUnitsOfMeasureCode?: string;
+
   @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 1 },
@@ -61,7 +87,7 @@ export class AppEHeatInputFromOilBaseDTO {
   oilHeatInput?: number;
 
   @IsOptional()
-    @IsNumber(
+  @IsNumber(
     { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
@@ -78,9 +104,22 @@ export class AppEHeatInputFromOilBaseDTO {
 
   @IsOptional()
   @IsString()
+  @IsValidCode(UnitsOfMeasureCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
+    },
+  })
   oilVolumeUnitsOfMeasureCode?: string;
+
   @IsOptional()
-    @IsNumber(
+  @IsNumber(
     { maxDecimalPlaces: 6 },
     {
       message: (args: ValidationArguments) => {
@@ -88,14 +127,27 @@ export class AppEHeatInputFromOilBaseDTO {
       },
     },
   )
-  @IsInRange(0.000000, 20000.000000, {
+  @IsInRange(0.0, 20000.0, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 0.000000 and 999999999.9 for [${KEY}].`;
     },
   })
   oilDensity?: number;
+
   @IsOptional()
   @IsString()
+  @IsValidCode(UnitsOfMeasureCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
+    },
+  })
   oilDensityUnitsOfMeasureCode?: string;
 }
 

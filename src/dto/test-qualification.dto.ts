@@ -2,17 +2,19 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  MinDate,
   ValidateIf,
   ValidationArguments,
-  IsNumber
+  IsNumber,
 } from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import {
   BeginEndDatesConsistent,
   IsInRange,
   IsIsoFormat,
+  IsValidCode,
+  IsValidDate,
 } from '@us-epa-camd/easey-common/pipes';
+import { TestClaimCode } from '../entities/workspace/test-claim-code.entity';
 
 const KEY = 'Test Qualification';
 const LOAD_PERCENTAGE_MIN_VALUE = 0;
@@ -30,6 +32,18 @@ export class TestQualificationBaseDTO {
     },
   })
   @IsString()
+  @IsValidCode(TestClaimCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
+    },
+  })
   testClaimCode: string;
 
   @IsNotEmpty({
@@ -40,7 +54,6 @@ export class TestQualificationBaseDTO {
       });
     },
   })
-  @ValidateIf(o => o.testClaimCode === 'SLC')
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -52,6 +65,14 @@ export class TestQualificationBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  @ValidateIf(o => o.testClaimCode === 'SLC')
   beginDate?: Date;
 
   @IsNotEmpty({
@@ -62,7 +83,6 @@ export class TestQualificationBaseDTO {
       });
     },
   })
-  @ValidateIf(o => o.testClaimCode === 'SLC')
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -83,6 +103,14 @@ export class TestQualificationBaseDTO {
       });
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
+  @ValidateIf(o => o.testClaimCode === 'SLC')
   endDate?: Date;
 
   @IsOptional()
@@ -94,7 +122,7 @@ export class TestQualificationBaseDTO {
       });
     },
   })
-  @IsInRange(0, 9999.9, {
+  @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-9-B', {
         value: args.value,
@@ -133,7 +161,7 @@ export class TestQualificationBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999.9, {
+  @IsInRange(0, 100, {
     message: (args?: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-10-B', {
         value: args.value,
@@ -164,7 +192,7 @@ export class TestQualificationBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999.9, {
+  @IsInRange(0, 100, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-11-B', {
         value: args.value,
