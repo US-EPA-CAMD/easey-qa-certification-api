@@ -35,7 +35,7 @@ export class QACertificationEventBaseDTO {
   @IsString()
   @MatchesRegEx('^(C|c|M|m|X|x)(S|s|P|p)[A-z0-9\\-]{1,6}$', {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be 1 to 4 characters and only consist of upper and lower case letters, numbers starting with CS, MS, XS, CP, MP, XP for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 6 characters and only consist of upper and lower case letters, numbers starting with CS, MS, XS, CP, MP, XP for [${KEY}].`;
     },
   })
   stackPipeId: string;

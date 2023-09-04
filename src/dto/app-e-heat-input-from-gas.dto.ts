@@ -36,9 +36,9 @@ export class AppEHeatInputFromGasBaseDTO {
       },
     },
   )
-  @IsInRange(0, 20000, {
+  @IsInRange(0, 999999999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0.000000 and 20000.000000 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0.0 and 999999999.9 for [${KEY}].`;
     },
   })
   gasGCV?: number;
