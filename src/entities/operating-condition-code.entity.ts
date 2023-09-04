@@ -8,7 +8,7 @@ export class OperatingConditionCode extends BaseEntity {
   operatingConditionCode: string;
 
   @Column({
-    name: 'operating_condition_cd_description',
+    name: 'op_condition_cd_description',
   })
   operatingConditionCodeDescription: string;
 }
