@@ -171,7 +171,7 @@ export class RataSummaryBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999999999.99999, {
+  @IsInRange(-9999999999.99999, 9999999999.99999, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.99999 for [${KEY}].`;
     },

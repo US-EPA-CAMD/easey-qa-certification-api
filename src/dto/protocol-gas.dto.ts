@@ -48,18 +48,19 @@ export class ProtocolGasBaseDTO {
     },
   })
   @IsString()
-  @IsValidCode(GasTypeCode, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
-        {
-          value: args.value,
-          fieldname: args.property,
-          key: KEY,
-        },
-      );
-    },
-  })
+  // TODO: All the GasTypeCodes used in the historical recornds but not in the List of the available GasTypeCodes in the DB table.
+  // @IsValidCode(GasTypeCode, {
+  //   message: (args: ValidationArguments) => {
+  //     return CheckCatalogService.formatMessage(
+  //       'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+  //       {
+  //         value: args.value,
+  //         fieldname: args.property,
+  //         key: KEY,
+  //       },
+  //     );
+  //   },
+  // })
   gasTypeCode: string;
 
   @IsOptional()
