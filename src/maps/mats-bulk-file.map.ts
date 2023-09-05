@@ -7,22 +7,23 @@ import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
 export class MatsBulkFileMap extends BaseMap<MatsBulkFile, MatsBulkFileDTO> {
   public async one(entity: MatsBulkFile): Promise<MatsBulkFileDTO> {
     return {
-      orisCode: entity.orisCode,
-      facilityName: entity.facilityName,
-      monPlanId: entity.monPlanIdentifier,
-      locationInfo: entity.locationInfo,
       matsBulkFileIdentifier: entity.matsBulkFileIdentifier,
-      monLOCIdentifier: entity.monLOCIdentifier,
-      systemComponentIdentifier: entity.systemComponentIdentifier,
-      userid: entity.userid,
-      updateDate: entity.updateDate,
-      submissionAvailabilityCode: entity.submissionAvailabilityCode,
-      submissionAvailabilityCodeDescription:
-        entity.submissionAvailabilityCodeDescription,
+      facIdentifier: entity.facIdentifier,
+      orisCode: entity.orisCode,
+      location: entity.location,
+      testTypeCode: entity.testTypeCode,
+      testTypeCodeDescription: entity.testTypeCodeDescription,
+      facilityName: entity.facilityName,
+      monPlanIdentifier: entity.monPlanIdentifier,
       testNumber: entity.testNumber,
       filename: entity.filename,
+      lastUpdated: entity.lastUpdated,
       updatedStatusFLG: entity.updatedStatusFLG,
-      evalStatusCode: 'PASS', //Default mats bulk files evaluations to PASS
+      submissionIdentifier: entity.submissionIdentifier,
+      submissionAvailabilityCode: entity.submissionAvailabilityCode,
+      userid: entity.userid,
+      addDate: entity.addDate,
+      bucketLocation: entity.bucketLocation,
     };
   }
 }
