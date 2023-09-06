@@ -110,7 +110,7 @@ export class FlowToLoadReferenceWorkspaceService {
     entity.averageHourlyHeatInputRate = payload.averageHourlyHeatInputRate;
     entity.referenceGrossHeatRate = payload.referenceGrossHeatRate;
     entity.calcSeparateReferenceIndicator =
-      payload.calcSeparateReferenceIndicator;
+      payload.calculatedSeparateReferenceIndicator;
     entity.userId = userId;
     entity.updateDate = timestamp;
 

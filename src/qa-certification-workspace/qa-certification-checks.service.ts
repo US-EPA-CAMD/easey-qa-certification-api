@@ -101,8 +101,8 @@ export class QACertificationChecksService {
 
         const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
           locationId,
-          summary.monitoringSystemID,
-          summary.componentID,
+          summary.monitoringSystemId,
+          summary.componentId,
           summary.testTypeCode,
           summary.testNumber,
           summary.spanScaleCode,
@@ -316,27 +316,27 @@ export class QACertificationChecksService {
           );
         });
 
-        if (summary.appECorrelationTestSummaryData) {
+        if (summary.appendixECorrelationTestSummaryData) {
           promises.push(
             new Promise((resolve, _reject) => {
               const results = this.appETestSummaryChecksService.runImportChecks(
-                summary.appECorrelationTestSummaryData,
+                summary.appendixECorrelationTestSummaryData,
               );
               resolve(results);
             }),
           );
 
-          summary.appECorrelationTestSummaryData.forEach(appESummary => {
+          summary.appendixECorrelationTestSummaryData.forEach(appESummary => {
             promises.push(
               new Promise((resolve, _reject) => {
                 const results = this.appETestRunChecksService.runImportChecks(
-                  appESummary.appECorrelationTestRunData,
+                  appESummary.appendixECorrelationTestRunData,
                 );
                 resolve(results);
               }),
             );
 
-            appESummary.appECorrelationTestRunData?.forEach(appETestRun => {
+            appESummary.appendixECorrelationTestRunData?.forEach(appETestRun => {
               promises.push(
                 new Promise((resolve, _reject) => {
                   const results = this.appEGasChecksService.runImportChecks(

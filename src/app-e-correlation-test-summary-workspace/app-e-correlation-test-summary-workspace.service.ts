@@ -86,7 +86,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
       isImport,
     );
     const dto = await this.map.one(entity);
-    delete dto.appECorrelationTestRunData;
+    delete dto.appendixECorrelationTestRunData;
     return dto;
   }
 
@@ -158,8 +158,8 @@ export class AppECorrelationTestSummaryWorkspaceService {
       `Appendix E Correlation Test Summary Successfully Imported.  Record Id: ${createdAppECorrelation.id}`,
     );
 
-    if (payload.appECorrelationTestRunData?.length > 0) {
-      for (const testRun of payload.appECorrelationTestRunData) {
+    if (payload.appendixECorrelationTestRunData?.length > 0) {
+      for (const testRun of payload.appendixECorrelationTestRunData) {
         promises.push(
           this.appECorrTestRunService.import(
             locationId,
@@ -222,7 +222,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
     );
 
     appECorrelationTests.forEach(s => {
-      s.appECorrelationTestRunData = testRuns.filter(
+      s.appendixECorrelationTestRunData = testRuns.filter(
         i => i.appECorrTestSumId === s.id,
       );
     });

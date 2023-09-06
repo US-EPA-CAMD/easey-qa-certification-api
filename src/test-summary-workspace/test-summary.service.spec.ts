@@ -481,8 +481,8 @@ describe('TestSummaryWorkspaceService', () => {
     it('should return reportPeriodId, componentRecordId, monitorSystem', async () => {
       payload.year = 2022;
       payload.quarter = 1;
-      payload.componentID = '1';
-      payload.monitoringSystemID = 'abc';
+      payload.componentId = '1';
+      payload.monitoringSystemId = 'abc';
 
       const result = await service.lookupValues(locationId, payload);
 
@@ -492,8 +492,8 @@ describe('TestSummaryWorkspaceService', () => {
     it('should return reportPeriodId, componentRecordId, monitorSystem from a workspace monitor system record', async () => {
       payload.year = 2022;
       payload.quarter = 1;
-      payload.componentID = '1';
-      payload.monitoringSystemID = 'abc';
+      payload.componentId = '1';
+      payload.monitoringSystemId = 'abc';
 
       const monSysData = new MonitorSystem();
       monSysData.id = '1';

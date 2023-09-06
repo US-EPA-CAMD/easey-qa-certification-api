@@ -14,7 +14,7 @@ export class AppEHeatInputFromOilMap extends BaseMap<
     return {
       id: entity.id,
       appECorrTestRunId: entity.appECorrTestRunId,
-      monitoringSystemID: entity.system.monitoringSystemID,
+      monitoringSystemId: entity.system.monitoringSystemID,
       oilMass: entity.oilMass,
       calculatedOilMass: entity.calculatedOilMass,
       oilGCV: entity.oilGCV,

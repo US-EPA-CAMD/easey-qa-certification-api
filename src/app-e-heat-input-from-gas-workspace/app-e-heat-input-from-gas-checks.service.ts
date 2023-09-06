@@ -62,14 +62,14 @@ export class AppEHeatInputFromGasChecksService {
     let monSysIDs = [];
 
     for (let dto of importDTOs) {
-      if (monSysIDs.includes(dto.monitoringSystemID)) {
+      if (monSysIDs.includes(dto.monitoringSystemId)) {
         errors = [
           this.getMessage('APPE-51-A', {
             recordtype: 'Appendix E Heat Input from Gas',
             fieldnames: 'MonitoringSystemID',
           }),
         ];
-      } else monSysIDs.push(dto.monitoringSystemID);
+      } else monSysIDs.push(dto.monitoringSystemId);
     }
 
     return errors;
@@ -83,7 +83,7 @@ export class AppEHeatInputFromGasChecksService {
     let error: string = null;
     let appETestSummary = appETestRun.appECorrelationTestSummary;
     if (
-      dto.monitoringSystemID &&
+      dto.monitoringSystemId &&
       appETestRun.runNumber != null &&
       appETestSummary.operatingLevelForRun != null
     ) {
@@ -92,7 +92,7 @@ export class AppEHeatInputFromGasChecksService {
         appETestSummary.id,
         appETestSummary.operatingLevelForRun,
         appETestRun.runNumber,
-        dto.monitoringSystemID,
+        dto.monitoringSystemId,
       );
 
       if (duplicate)

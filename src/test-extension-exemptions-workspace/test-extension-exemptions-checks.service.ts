@@ -92,8 +92,8 @@ export class TestExtensionExemptionsChecksService {
           i.extensionOrExemptionCode ===
             testExtensionExemption.extensionOrExemptionCode &&
           i.fuelCode === testExtensionExemption.fuelCode &&
-          i.monitoringSystemID === testExtensionExemption.monitoringSystemID &&
-          i.componentID === testExtensionExemption.componentID &&
+          i.monitoringSystemId === testExtensionExemption.monitoringSystemId &&
+          i.componentId === testExtensionExemption.componentId &&
           i.unitId === testExtensionExemption.unitId &&
           i.stackPipeId === testExtensionExemption.stackPipeId
         );

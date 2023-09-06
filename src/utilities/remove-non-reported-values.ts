@@ -361,7 +361,7 @@ async function removeAppECorrelationTestSummaryNonReportedValues(
   appECorrelationTestSummaryData?.forEach(dto => {
     promises.push(
       removeAppECorrelationTestRunNonReportedValues(
-        dto.appECorrelationTestRunData,
+        dto.appendixECorrelationTestRunData,
       ),
     );
     delete dto.id;
@@ -455,7 +455,7 @@ async function removeUnitDefaultTestRunNonReportedValues(
 async function removeHgSummaryNonReportedValues(hgSummaryData: HgSummaryDTO[]) {
   const promises = [];
   hgSummaryData?.forEach(dto => {
-    promises.push(removeHgInjectionNonReportedValues(dto.HgInjectionData));
+    promises.push(removeHgInjectionNonReportedValues(dto.hgInjectionData));
     delete dto.id;
     delete dto.testSumId;
     delete dto.calculatedMeanMeasuredValue;

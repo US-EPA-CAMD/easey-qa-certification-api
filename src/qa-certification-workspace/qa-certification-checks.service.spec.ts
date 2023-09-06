@@ -187,7 +187,7 @@ describe('QA Certification Check Service Test', () => {
 
     const testSumary = new TestSummaryImportDTO();
     testSumary.unitId = '51';
-    testSumary.componentID = 'AA0';
+    testSumary.componentId = 'AA0';
     testSumary.stackPipeId = null;
     testSumary.testTypeCode = TestTypeCodes.LINE;
 
@@ -199,13 +199,13 @@ describe('QA Certification Check Service Test', () => {
 
     const testExtExem = new TestExtensionExemptionImportDTO();
     testExtExem.unitId = '51';
-    testExtExem.componentID = 'AA0';
+    testExtExem.componentId = 'AA0';
     testExtExem.stackPipeId = null;
     payload.testExtensionExemptionData = [testExtExem];
 
     const qaCertEvent = new QACertificationEventImportDTO();
     qaCertEvent.unitId = '51';
-    qaCertEvent.componentID = 'AA0';
+    qaCertEvent.componentId = 'AA0';
     qaCertEvent.stackPipeId = null;
     payload.certificationEventData = [qaCertEvent];
 

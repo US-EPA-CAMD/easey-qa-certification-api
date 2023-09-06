@@ -33,11 +33,11 @@ testSummaryImport.testTypeCode = 'RATA';
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 const importPayload = new RataTraverseImportDTO();
-importPayload.methodTraversePointID = '999';
+importPayload.methodTraversePointId = '999';
 importPayload.pointUsedIndicator = 1;
 importPayload.replacementVelocity = 2;
-importPayload.avgVelDiffPressure = 1;
-importPayload.avgSquareVelDiffPressure = null;
+importPayload.averageVelocityDifferencePressure = 1;
+importPayload.averageSquareVelocityDifferencePressure = null;
 
 const testSummary = new TestSummary();
 testSummary.testTypeCode = 'RATA';
@@ -107,9 +107,9 @@ describe('Rata Traverse Check Service Test', () => {
 
   describe('runChecks', () => {
     it('Should pass all checks', async () => {
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2FH';
       importPayload.pointUsedIndicator = 1;
       importPayload.replacementVelocity = 2;
@@ -138,9 +138,9 @@ describe('Rata Traverse Check Service Test', () => {
   describe('RATA-72 Probe Type Valid', () => {
     it('Should get [RATA-72-B] error 1st trigger', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2F';
       rataSummaryImport.defaultWAF = 1;
       importPayload.pointUsedIndicator = 2;
@@ -168,9 +168,9 @@ describe('Rata Traverse Check Service Test', () => {
 
     it('Should get [RATA-72-B] error 2nd trigger', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2G';
       rataSummaryImport.defaultWAF = 1;
       importPayload.pointUsedIndicator = 2;
@@ -198,9 +198,9 @@ describe('Rata Traverse Check Service Test', () => {
 
     it('Should get [RATA-72-B] error 3rd trigger', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = 'M2H';
       importPayload.pointUsedIndicator = 2;
       importPayload.replacementVelocity = null;
@@ -229,9 +229,9 @@ describe('Rata Traverse Check Service Test', () => {
   describe('RATA-76 Velocity Differential Pressure Valid', () => {
     it('Should get [RATA-76-A] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = null;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = null;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2FH';
       importPayload.pointUsedIndicator = 1;
       importPayload.replacementVelocity = 2;
@@ -256,9 +256,9 @@ describe('Rata Traverse Check Service Test', () => {
 
     it('Should get [RATA-76-B] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = 1;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = 1;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2FH';
       importPayload.pointUsedIndicator = 1;
       importPayload.replacementVelocity = 2;
@@ -285,9 +285,9 @@ describe('Rata Traverse Check Service Test', () => {
   describe('RATA-81 Exterior Method 1 Traverse Point Identifier Valid', () => {
     it('Should get [RATA-81-A] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = 'M2H';
       importPayload.pointUsedIndicator = 1;
       importPayload.replacementVelocity = null;
@@ -315,9 +315,9 @@ describe('Rata Traverse Check Service Test', () => {
 
     it('Should get [RATA-81-B] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2F';
       rataSummaryImport.defaultWAF = 1;
       importPayload.pointUsedIndicator = 1;
@@ -346,9 +346,9 @@ describe('Rata Traverse Check Service Test', () => {
 
     it('Should get [RATA-81-C] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2F';
       importPayload.pointUsedIndicator = 1;
       importPayload.replacementVelocity = null;
@@ -376,9 +376,9 @@ describe('Rata Traverse Check Service Test', () => {
   describe('RATA-82 Number of Wall Effects Points Valid', () => {
     it('Should get [RATA-82-A] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2FH';
       importPayload.pointUsedIndicator = 1;
       importPayload.replacementVelocity = 2;
@@ -404,9 +404,9 @@ describe('Rata Traverse Check Service Test', () => {
 
     it('Should get [RATA-82-B] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2F';
       importPayload.pointUsedIndicator = 1;
       importPayload.replacementVelocity = null;
@@ -434,9 +434,9 @@ describe('Rata Traverse Check Service Test', () => {
 
     it('Should get [RATA-82-C] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2FH';
       importPayload.pointUsedIndicator = 2;
       importPayload.replacementVelocity = null;
@@ -462,9 +462,9 @@ describe('Rata Traverse Check Service Test', () => {
 
     it('Should get [RATA-82-D] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2F';
       importPayload.pointUsedIndicator = 2;
       importPayload.replacementVelocity = null;
@@ -492,9 +492,9 @@ describe('Rata Traverse Check Service Test', () => {
   describe('RATA-83 Replacement Velocity Valid', () => {
     it('Should get [RATA-83-A] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2FH';
       importPayload.pointUsedIndicator = 1;
       importPayload.replacementVelocity = null;
@@ -521,9 +521,9 @@ describe('Rata Traverse Check Service Test', () => {
 
     it('Should get [RATA-83-B] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2FH';
       importPayload.pointUsedIndicator = 1;
       importPayload.replacementVelocity = -1;
@@ -548,9 +548,9 @@ describe('Rata Traverse Check Service Test', () => {
 
     it('Should get [RATA-83-C] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2FH';
       importPayload.pointUsedIndicator = 2;
       importPayload.replacementVelocity = 1;
@@ -575,9 +575,9 @@ describe('Rata Traverse Check Service Test', () => {
 
     it('Should get [RATA-83-D] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2F';
       rataSummaryImport.defaultWAF = 1;
       importPayload.pointUsedIndicator = 2;
@@ -604,9 +604,9 @@ describe('Rata Traverse Check Service Test', () => {
 
     it('Should get [RATA-83-E] error', async () => {
       jest.spyOn(checkService, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
-      importPayload.avgVelDiffPressure = 1;
-      importPayload.avgSquareVelDiffPressure = null;
-      importPayload.methodTraversePointID = '999';
+      importPayload.averageVelocityDifferencePressure = 1;
+      importPayload.averageSquareVelocityDifferencePressure = null;
+      importPayload.methodTraversePointId = '999';
       rataSummaryImport.referenceMethodCode = '2F';
       importPayload.pointUsedIndicator = 2;
       importPayload.replacementVelocity = 1;
@@ -633,7 +633,7 @@ describe('Rata Traverse Check Service Test', () => {
   describe('RATA-110 Duplicate RATA Traverse', () => {
     it('Should get [RATA-110-A] error', async () => {
       const payload = new RataTraverseBaseDTO();
-      payload.methodTraversePointID = '4';
+      payload.methodTraversePointId = '4';
       payload.yawAngle = 45;
 
       const returnValue = new RataTraverse();

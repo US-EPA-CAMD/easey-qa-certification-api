@@ -24,12 +24,12 @@ export class QACertificationEventBaseDTO {
   unitId: string;
   @IsOptional()
   @IsString()
-  monitoringSystemID?: string;
+  monitoringSystemId?: string;
   @IsOptional()
   @IsString()
-  componentID?: string;
+  componentId?: string;
   @IsString()
-  qaCertEventCode: string;
+  certificationEventCode: string;
 
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
@@ -42,10 +42,10 @@ export class QACertificationEventBaseDTO {
       );
     },
   })
-  qaCertEventDate: Date;
+  certificationEventDate: Date;
   @IsOptional()
   @IsNumber()
-  qaCertEventHour?: number;
+  certificationEventHour?: number;
   @IsOptional()
   @IsString()
   requiredTestCode?: string;

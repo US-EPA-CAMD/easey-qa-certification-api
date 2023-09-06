@@ -75,14 +75,14 @@ export class TestExtensionExemptionBaseDTO {
   })
   @IsOptional()
   @IsString()
-  monitoringSystemID?: string;
+  monitoringSystemId?: string;
 
   @ApiProperty({
     description: propertyMetadata.componentDTOComponentId.description,
   })
   @IsOptional()
   @IsString()
-  componentID?: string;
+  componentId?: string;
 
   @IsOptional()
   @IsNumber()

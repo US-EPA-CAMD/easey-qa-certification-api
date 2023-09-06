@@ -3,7 +3,7 @@ const KEY = 'Appendix E Heat Input From Oil';
 
 export class AppEHeatInputFromOilBaseDTO {
   @IsString()
-  monitoringSystemID: string;
+  monitoringSystemId: string;
   @IsOptional()
   @IsNumber()
   oilMass?: number;

@@ -500,10 +500,10 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.appECorrelationTestSummaryData?.length > 0 &&
+      payload.appendixECorrelationTestSummaryData?.length > 0 &&
       payload.testTypeCode === TestTypeCodes.APPE
     ) {
-      for (const appECorrelationTestSummary of payload.appECorrelationTestSummaryData) {
+      for (const appECorrelationTestSummary of payload.appendixECorrelationTestSummaryData) {
         promises.push(
           this.appECorrelationTestSummaryWorkspaceService.import(
             locationId,
@@ -630,14 +630,14 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.airEmissionTestingData?.length > 0 &&
+      payload.airEmissionTestData?.length > 0 &&
       [
         TestTypeCodes.RATA.toString(),
         TestTypeCodes.UNITDEF.toString(),
         TestTypeCodes.APPE.toString(),
       ].includes(payload.testTypeCode)
     ) {
-      for (const airEmissionTesting of payload.airEmissionTestingData) {
+      for (const airEmissionTesting of payload.airEmissionTestData) {
         promises.push(
           this.airEmissionTestingWorkspaceService.import(
             createdTestSummary.id,
@@ -822,19 +822,19 @@ export class TestSummaryWorkspaceService {
       reportPeriodId = rptPeriod ? rptPeriod.id : null;
     }
 
-    if (payload.componentID) {
+    if (payload.componentId) {
       const component = await this.componentRepository.findOne({
         locationId: locationId,
-        componentID: payload.componentID,
+        componentID: payload.componentId,
       });
 
       componentRecordId = component ? component.id : null;
     }
 
-    if (payload.monitoringSystemID) {
+    if (payload.monitoringSystemId) {
       const monitorSystem = await this.monSysWorkspaceRepository.findOne({
         locationId: locationId,
-        monitoringSystemID: payload.monitoringSystemID,
+        monitoringSystemID: payload.monitoringSystemId,
       });
 
       monitoringSystemRecordId = monitorSystem ? monitorSystem.id : null;

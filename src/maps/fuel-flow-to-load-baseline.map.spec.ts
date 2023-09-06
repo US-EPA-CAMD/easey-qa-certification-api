@@ -39,7 +39,7 @@ describe('FuelFlowToLoadBaselineMap', () => {
     expect(result.averageFuelFlowRate).toEqual(number);
     expect(result.averageLoad).toEqual(number);
     expect(result.baselineFuelFlowToLoadRatio).toEqual(number);
-    expect(result.fuelFlowToLoadUOMCode).toEqual(string);
+    expect(result.fuelFlowToLoadUnitsOfMeasureCode).toEqual(string);
     expect(result.averageHourlyHeatInputRate).toEqual(number);
     expect(result.baselineGHR).toEqual(number);
     expect(result.ghrUnitsOfMeasureCode).toEqual(string);

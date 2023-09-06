@@ -109,7 +109,7 @@ export class UnitDefaultTestWorkspaceService {
     entity.fuelCode = payload.fuelCode;
     entity.noxDefaultRate = payload.noxDefaultRate;
     entity.operatingConditionCode = payload.operatingConditionCode;
-    entity.groupID = payload.groupID;
+    entity.groupID = payload.groupId;
     entity.numberOfUnitsInGroup = payload.numberOfUnitsInGroup;
     entity.numberOfTestsForGroup = payload.numberOfTestsForGroup;
     entity.userId = userId;

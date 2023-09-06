@@ -16,7 +16,7 @@ export class UnitDefaultTestBaseDTO {
   operatingConditionCode?: string;
   @IsOptional()
   @IsString()
-  groupID?: string;
+  groupId?: string;
   @IsOptional()
   @IsNumber()
   numberOfUnitsInGroup?: number;

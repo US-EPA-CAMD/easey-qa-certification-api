@@ -58,7 +58,7 @@ export class HgSummaryService {
     );
 
     hgSummaries.forEach(s => {
-      s.HgInjectionData = hgInjections.filter(i => i.hgTestSumId === s.id);
+      s.hgInjectionData = hgInjections.filter(i => i.hgTestSumId === s.id);
     });
 
     return hgSummaries;

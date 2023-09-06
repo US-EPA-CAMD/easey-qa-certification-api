@@ -62,14 +62,14 @@ export class AppEHeatInputFromOilChecksService {
     let monSysIDs = [];
 
     for (let dto of importDTOs) {
-      if (monSysIDs.includes(dto.monitoringSystemID)) {
+      if (monSysIDs.includes(dto.monitoringSystemId)) {
         errors = [
           this.getMessage('APPE-50-A', {
             recordtype: 'Appendix E Heat Input from Oil',
             fieldnames: 'MonitoringSystemID',
           }),
         ];
-      } else monSysIDs.push(dto.monitoringSystemID);
+      } else monSysIDs.push(dto.monitoringSystemId);
     }
 
     return errors;
@@ -85,7 +85,7 @@ export class AppEHeatInputFromOilChecksService {
     let testSummary = appETestSummary.testSummary;
 
     if (
-      dto.monitoringSystemID &&
+      dto.monitoringSystemId &&
       appETestRun.runNumber != null &&
       appETestSummary.operatingLevelForRun != null
     ) {
@@ -94,7 +94,7 @@ export class AppEHeatInputFromOilChecksService {
         testSummary.id,
         appETestSummary.operatingLevelForRun,
         appETestRun.runNumber,
-        dto.monitoringSystemID,
+        dto.monitoringSystemId,
       );
 
       if (duplicate)

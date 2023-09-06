@@ -19,7 +19,7 @@ export class AppEHeatInputFromGasBaseDTO {
     },
   })
   @IsString()
-  monitoringSystemID: string;
+  monitoringSystemId: string;
   @IsOptional()
   @IsNumber()
   gasGCV?: number;

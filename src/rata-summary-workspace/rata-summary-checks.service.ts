@@ -68,7 +68,7 @@ export class RataSummaryChecksService {
     if (isImport) {
       testSumRecord = testSummary;
       testSumRecord.system = await this.monitorSystemRepository.findOne({
-        monitoringSystemID: testSummary.monitoringSystemID,
+        monitoringSystemID: testSummary.monitoringSystemId,
         locationId: locationId,
       });
 

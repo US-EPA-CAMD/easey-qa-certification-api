@@ -19,7 +19,7 @@ mockAppETestRun.appECorrelationTestSummary = new AppECorrelationTestSummary();
 mockAppETestRun.appECorrelationTestSummary.operatingLevelForRun = 1;
 mockAppETestRun.appECorrelationTestSummary.testSummary = new TestSummary();
 const mockDTO = new AppEHeatInputFromGasBaseDTO();
-mockDTO.monitoringSystemID = 'X';
+mockDTO.monitoringSystemId = 'X';
 const mockDuplicate = new AppEHeatInputFromGas();
 const appETestRunId = '1';
 
@@ -83,9 +83,9 @@ describe('Appendix E Heat Input From Gas Checks Service Test', () => {
 
   describe('Appendix E Heat Input from Gas - Duplicate Check on Import', () => {
     let importDTO1 = new AppEHeatInputFromGasImportDTO();
-    importDTO1.monitoringSystemID = 'ID1';
+    importDTO1.monitoringSystemId = 'ID1';
     let importDTO2 = new AppEHeatInputFromGasImportDTO();
-    importDTO2.monitoringSystemID = 'ID2';
+    importDTO2.monitoringSystemId = 'ID2';
 
     it('Should pass when no duplicates in import payload', async () => {
       const result = await service.runImportChecks([importDTO1, importDTO2]);
@@ -93,7 +93,7 @@ describe('Appendix E Heat Input From Gas Checks Service Test', () => {
     });
 
     it('Should fail when there are duplicates in import payload', async () => {
-      importDTO2.monitoringSystemID = importDTO1.monitoringSystemID;
+      importDTO2.monitoringSystemId = importDTO1.monitoringSystemId;
       let result;
       try {
         result = await service.runImportChecks([importDTO1, importDTO2]);

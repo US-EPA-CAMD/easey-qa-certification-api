@@ -19,7 +19,7 @@ export class FuelFlowToLoadBaselineMap extends BaseMap<
       averageFuelFlowRate: entity.averageFuelFlowRate,
       averageLoad: entity.averageLoad,
       baselineFuelFlowToLoadRatio: entity.baselineFuelFlowToLoadRatio,
-      fuelFlowToLoadUOMCode: entity.fuelFlowToLoadUOMCode,
+      fuelFlowToLoadUnitsOfMeasureCode: entity.fuelFlowToLoadUOMCode,
       averageHourlyHeatInputRate: entity.averageHourlyHeatInputRate,
       baselineGHR: entity.baselineGHR,
       ghrUnitsOfMeasureCode: entity.ghrUnitsOfMeasureCode,

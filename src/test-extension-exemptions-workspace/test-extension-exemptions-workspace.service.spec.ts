@@ -318,8 +318,8 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
     it('should return reportPeriodId, componentRecordId, monitorSystemRecordId', async () => {
       payload.year = 2022;
       payload.quarter = 1;
-      payload.componentID = '1';
-      payload.monitoringSystemID = 'abc';
+      payload.componentId = '1';
+      payload.monitoringSystemId = 'abc';
 
       const result = await service.lookupValues(locationId, payload);
 
@@ -332,8 +332,8 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
     it('should return componentID, monitoringSystemID, and reportingPeriodId as null value', async () => {
       payload.year = 2022;
       payload.quarter = 1;
-      payload.componentID = '1';
-      payload.monitoringSystemID = 'abc';
+      payload.componentId = '1';
+      payload.monitoringSystemId = 'abc';
 
       jest.spyOn(componentRepository, 'findOne').mockResolvedValue(null);
       jest.spyOn(monSysRepository, 'findOne').mockResolvedValue(null);

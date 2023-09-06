@@ -28,7 +28,7 @@ export class RataTraverseBaseDTO {
     },
   })
   @IsString()
-  probeID?: string;
+  probeId?: string;
 
   @IsOptional()
   @IsNotEmpty({
@@ -71,7 +71,7 @@ export class RataTraverseBaseDTO {
     },
   })
   @IsString()
-  methodTraversePointID: string;
+  methodTraversePointId: string;
 
   @IsOptional()
   @IsNotEmpty({
@@ -115,10 +115,11 @@ export class RataTraverseBaseDTO {
 
   @IsOptional()
   @IsNumber()
-  avgVelDiffPressure?: number;
+  averageVelocityDifferencePressure?: number;
+
   @IsOptional()
   @IsNumber()
-  avgSquareVelDiffPressure?: number;
+  averageSquareVelocityDifferencePressure?: number;
 
   @IsOptional()
   @IsNotEmpty({
@@ -147,21 +148,27 @@ export class RataTraverseBaseDTO {
     true,
   )
   tStackTemperature?: number;
+
   @IsOptional()
   @IsNumber()
   pointUsedIndicator?: number;
+
   @IsOptional()
   @IsNumber()
   numberWallEffectsPoints?: number;
+
   @IsOptional()
   @IsNumber()
   yawAngle?: number;
+
   @IsOptional()
   @IsNumber()
   pitchAngle?: number;
+
   @IsOptional()
   @IsNumber()
   calculatedVelocity?: number;
+
   @IsOptional()
   @IsNumber()
   replacementVelocity?: number;
