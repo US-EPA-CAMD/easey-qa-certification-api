@@ -24,6 +24,7 @@ export class MatsBulkFileMap extends BaseMap<MatsBulkFile, MatsBulkFileDTO> {
       userid: entity.userid,
       addDate: entity.addDate,
       bucketLocation: entity.bucketLocation,
+      evalStatusCode: entity.evalStatusCode,
     };
   }
 }
