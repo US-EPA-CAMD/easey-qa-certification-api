@@ -32,20 +32,20 @@ export class LocationChecksService {
 
       if (location) {
         if (
-          i.monitoringSystemID &&
+          i.monitoringSystemId &&
           !location.systemIDs.includes(i.monitoringSystemID)
         ) {
           location.systemIDs.push(i.monitoringSystemID);
         }
-        if (i.componentID && !location.componentIDs.includes(i.componentID)) {
-          location.componentIDs.push(i.componentID);
+        if (i.componentId && !location.componentIDs.includes(i.componentId)) {
+          location.componentIDs.push(i.componentId);
         }
       } else {
-        if (i.monitoringSystemID) {
-          systemIDs.push(i.monitoringSystemID);
+        if (i.monitoringSystemId) {
+          systemIDs.push(i.monitoringSystemId);
         }
-        if (i.componentID) {
-          componentIDs.push(i.componentID);
+        if (i.componentId) {
+          componentIDs.push(i.componentId);
         }
 
         locations.push({
