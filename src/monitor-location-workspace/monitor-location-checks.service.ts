@@ -33,7 +33,7 @@ export class LocationChecksService {
       if (location) {
         if (
           i.monitoringSystemId &&
-          !location.systemIDs.includes(i.monitoringSystemID)
+          !location.systemIDs.includes(i.monitoringSystemId)
         ) {
           location.systemIDs.push(i.monitoringSystemID);
         }
