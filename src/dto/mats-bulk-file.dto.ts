@@ -32,4 +32,6 @@ export class MatsBulkFileDTO {
   addDate: string;
 
   bucketLocation: string;
+
+  evalStatusCode: string;
 }

@@ -66,4 +66,7 @@ export class MatsBulkFile extends BaseEntity {
 
   @Column({ name: 'bucket_location' })
   bucketLocation: string;
+
+  @Column({ name: 'eval_status_cd' })
+  evalStatusCode: string;
 }
