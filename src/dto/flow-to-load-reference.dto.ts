@@ -24,7 +24,7 @@ export class FlowToLoadReferenceBaseDTO {
   referenceGrossHeatRate?: number;
   @IsOptional()
   @IsNumber()
-  calcSeparateReferenceIndicator?: number;
+  calculatedSeparateReferenceIndicator?: number;
 }
 
 export class FlowToLoadReferenceRecordDTO extends FlowToLoadReferenceBaseDTO {

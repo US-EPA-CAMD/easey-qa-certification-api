@@ -32,7 +32,7 @@ describe('UnitDefaultTestMap', () => {
     expect(result.noxDefaultRate).toEqual(number);
     expect(result.calculatedNoxDefaultRate).toEqual(number);
     expect(result.operatingConditionCode).toEqual(string);
-    expect(result.groupID).toEqual(string);
+    expect(result.groupId).toEqual(string);
     expect(result.numberOfUnitsInGroup).toEqual(number);
     expect(result.numberOfTestsForGroup).toEqual(number);
 

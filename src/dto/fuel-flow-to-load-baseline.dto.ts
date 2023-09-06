@@ -19,7 +19,7 @@ export class FuelFlowToLoadBaselineBaseDTO {
   baselineFuelFlowToLoadRatio?: number;
   @IsOptional()
   @IsString()
-  fuelFlowToLoadUOMCode?: string;
+  fuelFlowToLoadUnitsOfMeasureCode?: string;
   @IsOptional()
   @IsNumber()
   averageHourlyHeatInputRate?: number;

@@ -40,7 +40,7 @@ describe('FlowToLoadReferenceMap', () => {
     expect(result.referenceFlowLoadRatio).toEqual(number);
     expect(result.averageHourlyHeatInputRate).toEqual(number);
     expect(result.referenceGrossHeatRate).toEqual(number);
-    expect(result.calcSeparateReferenceIndicator).toEqual(number);
+    expect(result.calculatedSeparateReferenceIndicator).toEqual(number);
     expect(result.calculatedAverageGrossUnitLoad).toEqual(number);
     expect(result.calculatedAverageReferenceMethodFlow).toEqual(number);
     expect(result.calculatedReferenceFlowToLoadRatio).toEqual(number);

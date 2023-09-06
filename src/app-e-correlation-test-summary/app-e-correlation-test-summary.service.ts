@@ -64,7 +64,7 @@ export class AppECorrelationTestSummaryService {
     );
 
     appECorrelationTests.forEach(s => {
-      s.appECorrelationTestRunData = testRuns.filter(
+      s.appendixECorrelationTestRunData = testRuns.filter(
         i => i.appECorrTestSumId === s.id,
       );
     });

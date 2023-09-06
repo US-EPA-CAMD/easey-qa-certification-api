@@ -73,7 +73,7 @@ export class AppEHeatInputFromGasWorkspaceService {
 
     const system = await this.monSysWorkspaceRepository.findOne({
       locationId: locationId,
-      monitoringSystemID: payload.monitoringSystemID,
+      monitoringSystemID: payload.monitoringSystemId,
     });
 
     if (!system) {
@@ -185,7 +185,7 @@ export class AppEHeatInputFromGasWorkspaceService {
     if (isHistoricalRecord) {
       historicalRecord = await this.historicalRepo.getAppEHeatInputFromGasByTestRunIdAndMonSysID(
         appECorrTestRunId,
-        payload.monitoringSystemID,
+        payload.monitoringSystemId,
       );
     }
 

@@ -34,9 +34,9 @@ export class AppECorrelationTestSummaryRecordDTO extends AppECorrelationTestSumm
 export class AppECorrelationTestSummaryImportDTO extends AppECorrelationTestSummaryBaseDTO {
   @ValidateNested({ each: true })
   @Type(() => AppECorrelationTestRunImportDTO)
-  appECorrelationTestRunData: AppECorrelationTestRunImportDTO[];
+  appendixECorrelationTestRunData: AppECorrelationTestRunImportDTO[];
 }
 
 export class AppECorrelationTestSummaryDTO extends AppECorrelationTestSummaryRecordDTO {
-  appECorrelationTestRunData: AppECorrelationTestRunDTO[];
+  appendixECorrelationTestRunData: AppECorrelationTestRunDTO[];
 }

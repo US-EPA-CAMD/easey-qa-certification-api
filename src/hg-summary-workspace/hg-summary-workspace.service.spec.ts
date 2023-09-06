@@ -160,7 +160,7 @@ describe('HgSummaryWorkspaceService', () => {
       jest.spyOn(service, 'getHgSummaryByTestSumIds').mockResolvedValue([dto]);
 
       const result = await service.export([testSumId]);
-      dto.HgInjectionData = [hgInjDto];
+      dto.hgInjectionData = [hgInjDto];
       expect(result).toEqual([dto]);
     });
   });
@@ -221,7 +221,7 @@ describe('HgSummaryWorkspaceService', () => {
     });
 
     it('Should Import Hg Summary Data from Historical Record', async () => {
-      importPayload.HgInjectionData = [new HgInjectionImportDTO()];
+      importPayload.hgInjectionData = [new HgInjectionImportDTO()];
       jest.spyOn(service, 'createHgSummary').mockResolvedValue(dto);
 
       await service.import(testSumId, new HgSummaryImportDTO(), userId, true);

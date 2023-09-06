@@ -140,7 +140,7 @@ describe('Rata Summary Check Service Test', () => {
         .mockResolvedValue(testSummary);
 
       const testSumImportDTO = new TestSummaryImportDTO();
-      testSumImportDTO.monitoringSystemID = '001';
+      testSumImportDTO.monitoringSystemId = '001';
 
       let errored = false;
       try {

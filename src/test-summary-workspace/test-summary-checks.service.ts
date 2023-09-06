@@ -83,8 +83,8 @@ export class TestSummaryChecksService {
     if (!isImport) {
       const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
-        summary.monitoringSystemID,
-        summary.componentID,
+        summary.monitoringSystemId,
+        summary.componentId,
         summary.testTypeCode,
         summary.testNumber,
         summary.spanScaleCode,
@@ -313,7 +313,7 @@ export class TestSummaryChecksService {
 
     if (
       summary.testTypeCode !== TestTypeCodes.APPE &&
-      summary.appECorrelationTestSummaryData?.length > 0
+      summary.appendixECorrelationTestSummaryData?.length > 0
     ) {
       invalidChildRecords.push('Appendix E Correlation Test Summary');
     }
@@ -343,7 +343,7 @@ export class TestSummaryChecksService {
         TestTypeCodes.APPE.toString(),
         TestTypeCodes.UNITDEF.toString(),
       ].includes(summary.testTypeCode) &&
-      summary.airEmissionTestingData?.length > 0
+      summary.airEmissionTestData?.length > 0
     ) {
       invalidChildRecords.push('Air Emission Test');
     }
@@ -521,12 +521,12 @@ export class TestSummaryChecksService {
     const resultA = this.getMessage('IMPORT-18-A', locTestTypeNumber);
     const resultB = this.getMessage('IMPORT-18-B', {
       ...locTestTypeNumber,
-      component: summary.componentID,
+      component: summary.componentId,
     });
     const resultC = this.getMessage('IMPORT-18-C', locTestTypeNumber);
     const resultD = this.getMessage('IMPORT-18-D', {
       ...locTestTypeNumber,
-      system: summary.monitoringSystemID,
+      system: summary.monitoringSystemId,
     });
     const resultE = this.getMessage('IMPORT-18-E', locTestTypeNumber);
     const resultF = this.getMessage('IMPORT-18-F', locTestTypeNumber);
@@ -534,12 +534,12 @@ export class TestSummaryChecksService {
     const monitorSystem = await this.monitorSystemRepository.findOne({
       where: {
         locationId: locationId,
-        monitoringSystemID: summary.monitoringSystemID,
+        monitoringSystemID: summary.monitoringSystemId,
       },
     });
 
     const component = await this.componentRepository.findOne({
-      componentID: summary.componentID,
+      componentID: summary.componentId,
       locationId: locationId,
     });
 
@@ -557,7 +557,7 @@ export class TestSummaryChecksService {
       ].includes(summary.testTypeCode)
     ) {
       // Level 2
-      if (summary.monitoringSystemID || !summary.componentID) {
+      if (summary.monitoringSystemId || !summary.componentId) {
         return resultA;
       } else {
         // Level 3
@@ -623,7 +623,7 @@ export class TestSummaryChecksService {
       ].includes(summary.testTypeCode)
     ) {
       // Level 2
-      if (!summary.monitoringSystemID || summary.componentID) {
+      if (!summary.monitoringSystemId || summary.componentId) {
         return resultC;
       } else {
         // Level 3
@@ -668,7 +668,7 @@ export class TestSummaryChecksService {
       }
     } else if (summary.testTypeCode === TestTypeCodes.UNITDEF.toString()) {
       // Level 2
-      if (summary.monitoringSystemID !== null || summary.componentID !== null) {
+      if (summary.monitoringSystemId !== null || summary.componentId !== null) {
         return resultE;
       } else {
         const monitorMethod = await this.monitorMethodRepository.findOne({
@@ -706,7 +706,7 @@ export class TestSummaryChecksService {
                   const monitorSystem = await this.monitorSystemRepository.findOne(
                     {
                       locationId,
-                      monitoringSystemID: summary.monitoringSystemID,
+                      monitoringSystemID: summary.monitoringSystemId,
                     },
                   );
 
@@ -718,7 +718,7 @@ export class TestSummaryChecksService {
                       locationID: summary.unitId
                         ? summary.unitId
                         : summary.stackPipeId,
-                      systemID: summary.monitoringSystemID,
+                      systemID: summary.monitoringSystemId,
                       testNumber: summary.testNumber,
                     });
                   }
@@ -997,9 +997,9 @@ export class TestSummaryChecksService {
     const testDateConsistent = this.test7Check(summary);
     let FIELDNAME: string = 'spanScalecode';
 
-    if (summary.componentID) {
+    if (summary.componentId) {
       const component = await this.componentRepository.findOne({
-        componentID: summary.componentID,
+        componentID: summary.componentId,
         locationId: locationId,
       });
       if (
@@ -1077,7 +1077,7 @@ export class TestSummaryChecksService {
     ) {
       const component = await this.componentRepository.findOne({
         locationId: locationId,
-        componentID: summary.componentID,
+        componentID: summary.componentId,
       });
 
       if (component) {
@@ -1110,17 +1110,17 @@ export class TestSummaryChecksService {
     const fields: string[] = [];
 
     if (
-      (duplicate.system === null && summary.monitoringSystemID) ||
+      (duplicate.system === null && summary.monitoringSystemId) ||
       (duplicate.system &&
-        duplicate.system.monitoringSystemID !== summary.monitoringSystemID)
+        duplicate.system.monitoringSystemID !== summary.monitoringSystemId)
     ) {
       fields.push('monitoringSystemID');
     }
 
     if (
-      (duplicate.component === null && summary.componentID) ||
+      (duplicate.component === null && summary.componentId) ||
       (duplicate.component &&
-        duplicate.component.componentID !== summary.componentID)
+        duplicate.component.componentID !== summary.componentId)
     ) {
       fields.push('componentID');
     }
@@ -1176,7 +1176,7 @@ export class TestSummaryChecksService {
     const resultA = this.getMessage('LINEAR-4-A', null);
 
     const duplicateTestSum = await this.repository.getTestSummaryByComponent(
-      summary.componentID,
+      summary.componentId,
       summary.testTypeCode,
       summary.spanScaleCode,
       summary.endDate,
@@ -1190,7 +1190,7 @@ export class TestSummaryChecksService {
       duplicateQaSupp = await this.qaSuppDataRepository.getUnassociatedQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
         locationId,
         null,
-        summary.componentID,
+        summary.componentId,
         summary.testTypeCode,
         summary.testNumber,
         summary.spanScaleCode,
@@ -1216,7 +1216,7 @@ export class TestSummaryChecksService {
             )
           ) {
             if (
-              duplicateQaSupp.component.componentID !== summary.componentID &&
+              duplicateQaSupp.component.componentID !== summary.componentId &&
               duplicateQaSupp.spanScaleCode !== summary.spanScaleCode &&
               duplicateQaSupp.endDate !== summary.endDate &&
               duplicateQaSupp.endHour !== summary.endHour &&

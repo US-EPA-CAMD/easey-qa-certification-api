@@ -29,7 +29,7 @@ export class HgSummaryMap extends BaseMap<HgSummary, HgSummaryDTO> {
       userId: entity.userId,
       addDate: entity.addDate ? entity.addDate.toISOString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toISOString() : null,
-      HgInjectionData: HgInjection,
+      hgInjectionData: HgInjection,
     };
   }
 }

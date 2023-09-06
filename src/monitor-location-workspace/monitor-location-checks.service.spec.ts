@@ -43,8 +43,8 @@ describe('location checks service tests', () => {
     const payload = new QACertificationImportDTO();
 
     const testSummary = new TestSummaryImportDTO();
-    testSummary.monitoringSystemID = '1';
-    testSummary.componentID = '1';
+    testSummary.monitoringSystemId = '1';
+    testSummary.componentId = '1';
     testSummary.unitId = '51';
     payload.testSummaryData = [testSummary];
     it('is able to return weith expected values', () => {

@@ -33,9 +33,9 @@ export class HgSummaryRecordDTO extends HgSummaryBaseDTO {
 }
 
 export class HgSummaryImportDTO extends HgSummaryBaseDTO {
-  HgInjectionData: HgInjectionImportDTO[];
+  hgInjectionData: HgInjectionImportDTO[];
 }
 
 export class HgSummaryDTO extends HgSummaryRecordDTO {
-  HgInjectionData: HgInjectionDTO[];
+  hgInjectionData: HgInjectionDTO[];
 }

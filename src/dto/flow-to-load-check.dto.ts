@@ -11,7 +11,7 @@ export class FlowToLoadCheckBaseDTO {
   biasAdjustedIndicator?: number;
   @IsOptional()
   @IsNumber()
-  avgAbsolutePercentDiff?: number;
+  averageAbsolutePercentDifference?: number;
   @IsOptional()
   @IsNumber()
   numberOfHours?: number;
@@ -32,7 +32,7 @@ export class FlowToLoadCheckBaseDTO {
   numberOfHoursExcludedTest?: number;
   @IsOptional()
   @IsNumber()
-  numberOfHoursExcMainBypass?: number;
+  numberOfHoursExcludedMainBypass?: number;
   @IsOptional()
   @IsString()
   operatingLevelCode?: string;

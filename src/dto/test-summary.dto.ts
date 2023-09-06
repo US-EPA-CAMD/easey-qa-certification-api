@@ -217,7 +217,7 @@ export class TestSummaryBaseDTO {
     VALID_CODES_FOR_MON_SYS_ID_VALIDATION.includes(o.testTypeCode),
   )
   @IsString()
-  monitoringSystemID?: string;
+  monitoringSystemId?: string;
 
   @ApiProperty({
     description: propertyMetadata.componentDTOComponentId.description,
@@ -263,7 +263,7 @@ export class TestSummaryBaseDTO {
     VALID_CODES_FOR_COMPONENT_ID_VALIDATION.includes(o.testTypeCode),
   )
   @IsString()
-  componentID?: string;
+  componentId?: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSpanDTOSpanScaleCode.description,
@@ -744,7 +744,7 @@ export class TestSummaryImportDTO extends TestSummaryBaseDTO {
 
   @ValidateNested({ each: true })
   @Type(() => AppECorrelationTestSummaryImportDTO)
-  appECorrelationTestSummaryData: AppECorrelationTestSummaryImportDTO[];
+  appendixECorrelationTestSummaryData: AppECorrelationTestSummaryImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => UnitDefaultTestImportDTO)
@@ -764,7 +764,7 @@ export class TestSummaryImportDTO extends TestSummaryBaseDTO {
 
   @ValidateNested({ each: true })
   @Type(() => AirEmissionTestingImportDTO)
-  airEmissionTestingData: AirEmissionTestingImportDTO[];
+  airEmissionTestData: AirEmissionTestingImportDTO[];
 }
 
 export class TestSummaryDTO extends TestSummaryRecordDTO {

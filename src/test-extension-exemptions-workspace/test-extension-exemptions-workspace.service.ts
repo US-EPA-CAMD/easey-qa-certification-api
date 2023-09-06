@@ -274,19 +274,19 @@ export class TestExtensionExemptionsWorkspaceService {
       reportPeriodId = rptPeriod ? rptPeriod.id : null;
     }
 
-    if (payload.componentID) {
+    if (payload.componentId) {
       const component = await this.componentRepository.findOne({
         locationId: locationId,
-        componentID: payload.componentID,
+        componentID: payload.componentId,
       });
 
       componentRecordId = component ? component.id : null;
     }
 
-    if (payload.monitoringSystemID) {
+    if (payload.monitoringSystemId) {
       const monitorSystem = await this.monSysRepository.findOne({
         locationId: locationId,
-        monitoringSystemID: payload.monitoringSystemID,
+        monitoringSystemID: payload.monitoringSystemId,
       });
 
       monitoringSystemRecordId = monitorSystem ? monitorSystem.id : null;

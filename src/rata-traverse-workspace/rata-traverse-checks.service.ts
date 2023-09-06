@@ -75,7 +75,7 @@ export class RataTraverseChecksService {
       testSumRecord = testSummary;
       rataSumRecord = rataSummary;
       testSumRecord.system = await this.monitorSystemRepository.findOne({
-        monitoringSystemID: testSummary.monitoringSystemID,
+        monitoringSystemID: testSummary.monitoringSystemId,
         locationId: locationId,
       });
     } else {
@@ -218,8 +218,8 @@ export class RataTraverseChecksService {
     let error = null;
 
     if (
-      rataTraverse.avgVelDiffPressure === null &&
-      rataTraverse.avgSquareVelDiffPressure === null
+      rataTraverse.averageVelocityDifferencePressure === null &&
+      rataTraverse.averageSquareVelocityDifferencePressure === null
     ) {
       error = this.getMessage('RATA-76-A', {
         key: KEY,
@@ -227,8 +227,8 @@ export class RataTraverseChecksService {
     }
 
     if (
-      rataTraverse.avgVelDiffPressure !== null &&
-      rataTraverse.avgSquareVelDiffPressure !== null
+      rataTraverse.averageVelocityDifferencePressure !== null &&
+      rataTraverse.averageSquareVelocityDifferencePressure !== null
     ) {
       error = this.getMessage('RATA-76-B', {
         key: KEY,
@@ -476,7 +476,7 @@ export class RataTraverseChecksService {
     if (flowRataRunId && !isImport) {
       duplicates = await this.repository.find({
         flowRataRunId: flowRataRunId,
-        methodTraversePointID: rataTraverse.methodTraversePointID,
+        methodTraversePointID: rataTraverse.methodTraversePointId,
       });
       if (duplicates.length > 0) {
         error = CheckCatalogService.formatResultMessage('RATA-110-A', {
@@ -488,7 +488,7 @@ export class RataTraverseChecksService {
 
     if (rataTraverses?.length > 1 && isImport) {
       duplicates = rataTraverses.filter(
-        rs => rs.methodTraversePointID === rataTraverse.methodTraversePointID,
+        rs => rs.methodTraversePointId === rataTraverse.methodTraversePointId,
       );
       if (duplicates.length > 1) {
         error = CheckCatalogService.formatResultMessage('RATA-110-A', {

@@ -260,8 +260,8 @@ describe('QACertificationEventWorkspaceService', () => {
 
   describe('lookupValues', () => {
     it('should return componentID, monitoringSystemID', async () => {
-      payload.componentID = '1';
-      payload.monitoringSystemID = 'abc';
+      payload.componentId = '1';
+      payload.monitoringSystemId = 'abc';
 
       const result = await service.lookupValues(locationId, payload);
 
@@ -272,8 +272,8 @@ describe('QACertificationEventWorkspaceService', () => {
     });
 
     it('should return componentID, monitoringSystemID as null value', async () => {
-      payload.componentID = '1';
-      payload.monitoringSystemID = 'abc';
+      payload.componentId = '1';
+      payload.monitoringSystemId = 'abc';
 
       jest.spyOn(componentRepository, 'findOne').mockResolvedValue(null);
       jest.spyOn(monSysRepository, 'findOne').mockResolvedValue(null);

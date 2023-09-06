@@ -18,13 +18,13 @@ export class QACertificationEventMap extends BaseMap<
         ? entity.location.stackPipe.name
         : null,
       unitId: entity.location.unit ? entity.location.unit.name : null,
-      monitoringSystemID: entity.system
+      monitoringSystemId: entity.system
         ? entity.system.monitoringSystemID
         : null,
-      componentID: entity.component ? entity.component.componentID : null,
-      qaCertEventCode: entity.qaCertEventCode,
-      qaCertEventDate: entity.qaCertEventDate,
-      qaCertEventHour: entity.qaCertEventHour,
+      componentId: entity.component ? entity.component.componentID : null,
+      certificationEventCode: entity.qaCertEventCode,
+      certificationEventDate: entity.qaCertEventDate,
+      certificationEventHour: entity.qaCertEventHour,
       requiredTestCode: entity.requiredTestCode,
       conditionalBeginDate: entity.conditionalBeginDate,
       conditionalBeginHour: entity.conditionalBeginHour,

@@ -180,7 +180,7 @@ describe('Test Summary Check Service Test', () => {
 
   describe('Test Summary Checks', () => {
     const payload = new TestSummaryImportDTO();
-    payload.componentID = 'A01';
+    payload.componentId = 'A01';
     payload.spanScaleCode = 'H';
     payload.testTypeCode = TestTypeCodes.LINE;
     payload.stackPipeId = '';
@@ -372,11 +372,11 @@ describe('Test Summary Check Service Test', () => {
       importPayload.fuelFlowToLoadTestData = [
         new FuelFlowToLoadTestImportDTO(),
       ];
-      importPayload.appECorrelationTestSummaryData = [
+      importPayload.appendixECorrelationTestSummaryData = [
         new AppECorrelationTestSummaryImportDTO(),
       ];
       importPayload.unitDefaultTestData = [new UnitDefaultTestImportDTO()];
-      importPayload.airEmissionTestingData = [
+      importPayload.airEmissionTestData = [
         new AirEmissionTestingImportDTO(),
       ];
 
@@ -607,7 +607,7 @@ describe('Test Summary Check Service Test', () => {
       const p = new TestSummaryImportDTO();
       p.testTypeCode = TestTypeCodes.LINE;
       p.stackPipeId = '';
-      p.componentID = '011';
+      p.componentId = '011';
       p.testResultCode = 'PASSED';
       p.spanScaleCode = 'H';
       p.testNumber = '';
