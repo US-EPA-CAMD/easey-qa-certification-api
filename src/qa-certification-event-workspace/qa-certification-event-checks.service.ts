@@ -78,7 +78,7 @@ export class QACertificationEventChecksService {
     let qaCertEvents = [];
 
     const duplicateQACertEvent = this.getErrorMessage('QACERT-11-A', {
-      recordType: KEY,
+      recordtype: KEY,
       fieldnames:
         'locationId, qaCertEventCode, qaCertEventHour, qaCertEventDate, monitoringSystemId, componentId',
     });
@@ -86,9 +86,12 @@ export class QACertificationEventChecksService {
     if (isImport) {
       const duplicates = qaCertificationEvents.filter(i => {
         return (
-          i.certificationEventCode === qaCertificationEvent.certificationEventCode &&
-          i.certificationEventHour === qaCertificationEvent.certificationEventHour &&
-          i.certificationEventDate === qaCertificationEvent.certificationEventDate &&
+          i.certificationEventCode ===
+            qaCertificationEvent.certificationEventCode &&
+          i.certificationEventHour ===
+            qaCertificationEvent.certificationEventHour &&
+          i.certificationEventDate ===
+            qaCertificationEvent.certificationEventDate &&
           i.monitoringSystemId === qaCertificationEvent.monitoringSystemId &&
           i.componentId === qaCertificationEvent.componentId &&
           i.unitId === qaCertificationEvent.unitId &&

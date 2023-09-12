@@ -1,23 +1,69 @@
 import { Type } from 'class-transformer';
-import { ValidateNested, IsNumber, IsOptional } from 'class-validator';
+import {
+  ValidateNested,
+  IsNumber,
+  IsOptional,
+  IsInt,
+  ValidationArguments,
+  IsNotEmpty,
+} from 'class-validator';
 import {
   AppECorrelationTestRunDTO,
   AppECorrelationTestRunImportDTO,
 } from './app-e-correlation-test-run.dto';
+import { IsInRange } from '@us-epa-camd/easey-common/pipes/is-in-range.pipe';
 
 const KEY = 'Appendix E Correlation Test Summary';
 
 export class AppECorrelationTestSummaryBaseDTO {
-  @IsNumber()
+  @IsInt()
+  @IsNotEmpty()
+  @IsInRange(1, 99, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 1 and 99 for [${KEY}].`;
+    },
+  })
   operatingLevelForRun: number;
+
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 3, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 3 for [${KEY}].`;
+    },
+  })
   meanReferenceValue?: number;
+
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 999999.9, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999.9 for [${KEY}].`;
+    },
+  })
   averageHourlyHeatInputRate?: number;
+
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsInRange(1000, 22000, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 1000 and 22000 for [${KEY}].`;
+    },
+  })
   fFactor?: number;
 }
 

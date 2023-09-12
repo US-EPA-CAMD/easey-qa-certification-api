@@ -5,16 +5,16 @@ import { Transform } from 'class-transformer';
 
 export class WhatHasDataParamsDTO {
   @ApiProperty({
-    enum: QACertificationDataTypes
+    enum: QACertificationDataTypes,
   })
   @IsString()
   dataType: QACertificationDataTypes;
 
   @ApiPropertyOptional({
-    type: Boolean
+    type: Boolean,
   })
   @IsOptional()
-  @Transform(({ value }) => value === "true")
+  @Transform(({ value }) => value === 'true')
   workspace: boolean;
 }
 
