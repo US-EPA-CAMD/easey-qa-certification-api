@@ -72,13 +72,13 @@ async function removeTestSummaryNonReportedValues(
       ),
       removeFuelFlowToLoadTestNonReportedValues(dto.fuelFlowToLoadTestData),
       removeAppECorrelationTestSummaryNonReportedValues(
-        dto.appECorrelationTestSummaryData,
+        dto.appendixECorrelationTestSummaryData,
       ),
       removeUnitDefaultTestNonReportedValues(dto.unitDefaultTestData),
       removeHgSummaryNonReportedValues(dto.hgSummaryData),
       removeTestQualificationNonReportedValues(dto.testQualificationData),
       removeProtocolGasNonReportedValues(dto.protocolGasData),
-      removeAirEmissionTestingNonReportedValues(dto.airEmissionTestingData),
+      removeAirEmissionTestingNonReportedValues(dto.airEmissionTestData),
     );
     delete dto.id;
     delete dto.locationId;

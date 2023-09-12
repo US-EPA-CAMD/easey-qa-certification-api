@@ -127,8 +127,8 @@ export class TestSummaryWorkspaceService {
     delete dto.hgSummaryData;
     delete dto.testQualificationData;
     delete dto.protocolGasData;
-    delete dto.airEmissionTestingData;
-    delete dto.appECorrelationTestSummaryData;
+    delete dto.airEmissionTestData;
+    delete dto.appendixECorrelationTestSummaryData;
 
     return dto;
   }
@@ -716,12 +716,12 @@ export class TestSummaryWorkspaceService {
     delete dto.transmitterTransducerData;
     delete dto.fuelFlowToLoadBaselineData;
     delete dto.fuelFlowToLoadTestData;
-    delete dto.appECorrelationTestSummaryData;
+    delete dto.appendixECorrelationTestSummaryData;
     delete dto.unitDefaultTestData;
     delete dto.hgSummaryData;
     delete dto.testQualificationData;
     delete dto.protocolGasData;
-    delete dto.airEmissionTestingData;
+    delete dto.airEmissionTestData;
 
     return dto;
   }
