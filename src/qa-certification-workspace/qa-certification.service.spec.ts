@@ -68,12 +68,12 @@ testSummary.onlineOfflineCalibrationData = [onlineOfflineCalibration];
 testSummary.fuelFlowmeterAccuracyData = [fuelFlowmeterAccuracy];
 testSummary.transmitterTransducerData = [transmitterTransducerAccuracy];
 testSummary.fuelFlowToLoadBaselineData = [fuelFlowToLoadBaseline];
-testSummary.appECorrelationTestSummaryData = [appECorrelationTestSummary];
+testSummary.appendixECorrelationTestSummaryData = [appECorrelationTestSummary];
 testSummary.unitDefaultTestData = [unitDefaultTest];
 testSummary.hgSummaryData = [hgSummary];
 testSummary.testQualificationData = [testQualification];
 testSummary.protocolGasData = [protocolGas];
-testSummary.airEmissionTestingData = [airEmissionTesting];
+testSummary.airEmissionTestData = [airEmissionTesting];
 qaCertDto.testExtensionExemptionData = [testExtExmtDto];
 qaCertDto.certificationEventData = [qaCertEventDto];
 

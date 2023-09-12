@@ -151,13 +151,13 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       fuelFlowmeterAccuracyData: fuelFlowmeterAccuracy,
       transmitterTransducerData: [],
       fuelFlowToLoadBaselineData: [],
-      appECorrelationTestSummaryData: appECorrelationTestSummaries,
+      appendixECorrelationTestSummaryData: appECorrelationTestSummaries,
       fuelFlowToLoadTestData: fuelFlowToloadTest,
       unitDefaultTestData: unitDefaultTestMap,
       hgSummaryData: hgSummary,
       testQualificationData: testQuals,
       protocolGasData: protocolGases,
-      airEmissionTestingData: airEmissionTestings,
+      airEmissionTestData: airEmissionTestings,
     };
   }
 }
