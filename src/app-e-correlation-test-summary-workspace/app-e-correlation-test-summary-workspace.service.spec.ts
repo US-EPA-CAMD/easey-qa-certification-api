@@ -159,7 +159,9 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
     });
 
     it('Should Import Appendix E Correlation Test Summary from Historical Record', async () => {
-      importDTO.appendixECorrelationTestRunData = [new AppECorrelationTestRunDTO()];
+      importDTO.appendixECorrelationTestRunData = [
+        new AppECorrelationTestRunDTO(),
+      ];
 
       jest.spyOn(service, 'createAppECorrelation').mockResolvedValue(recordDTO);
 

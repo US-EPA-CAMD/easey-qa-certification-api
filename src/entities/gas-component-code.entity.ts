@@ -13,7 +13,7 @@ export class GasComponentCode {
   })
   gasComponentCodeDescription: string;
 
-  @PrimaryColumn({
+  @Column({
     name: 'can_combine_ind',
     transformer: new NumericColumnTransformer(),
   })

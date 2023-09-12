@@ -9,8 +9,8 @@ const entity = new FuelFlowToLoadBaseline();
 entity.id = string;
 entity.testSumId = string;
 
-entity.accuracyTestNumber = number;
-entity.peiTestNumber = number;
+entity.accuracyTestNumber = string;
+entity.peiTestNumber = string;
 entity.averageFuelFlowRate = number;
 entity.averageLoad = number;
 entity.baselineFuelFlowToLoadRatio = number;
@@ -34,8 +34,8 @@ describe('FuelFlowToLoadBaselineMap', () => {
     expect(result.id).toEqual(string);
     expect(result.testSumId).toEqual(string);
 
-    expect(result.accuracyTestNumber).toEqual(number);
-    expect(result.peiTestNumber).toEqual(number);
+    expect(result.accuracyTestNumber).toEqual(string);
+    expect(result.peiTestNumber).toEqual(string);
     expect(result.averageFuelFlowRate).toEqual(number);
     expect(result.averageLoad).toEqual(number);
     expect(result.baselineFuelFlowToLoadRatio).toEqual(number);

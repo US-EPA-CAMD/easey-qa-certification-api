@@ -1,11 +1,22 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidCode,
+} from '@us-epa-camd/easey-common/pipes';
 import {
   ValidationArguments,
   IsNumber,
   IsString,
   IsOptional,
 } from 'class-validator';
+import {
+  MAX_HOUR,
+  MAX_MINUTE,
+  MIN_HOUR,
+  MIN_MINUTE,
+} from '../utilities/constants';
+import { GasLevelCode } from '../entities/workspace/gas-level-code.entity';
 
 const KEY = 'Calibration Injection';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -13,9 +24,20 @@ const DATE_FORMAT = 'YYYY-MM-DD';
 export class CalibrationInjectionBaseDTO {
   @IsOptional()
   @IsNumber()
+  @IsInRange(0, 1, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}].`;
+    },
+  })
   onlineOfflineIndicator?: number;
+
   @IsOptional()
   @IsString()
+  @IsValidCode(GasLevelCode, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
+    },
+  })
   upscaleGasLevelCode?: string;
 
   @IsOptional()
@@ -31,11 +53,37 @@ export class CalibrationInjectionBaseDTO {
     },
   })
   zeroInjectionDate?: Date;
+
   @IsOptional()
   @IsNumber()
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(
+        'You reported a [Fieldname] of [Hour], which is outside the range of acceptable values for this hour for [key].',
+        {
+          fieldname: args.property,
+          hour: args.value,
+          key: KEY,
+        },
+      );
+    },
+  })
   zeroInjectionHour?: number;
+
   @IsOptional()
   @IsNumber()
+  @IsInRange(MIN_MINUTE, MAX_MINUTE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(
+        'You reported a [fieldname] of [minute], which is outside the range of acceptable values for this minute for [key].',
+        {
+          fieldname: args.property,
+          minute: args.value,
+          key: KEY,
+        },
+      );
+    },
+  })
   zeroInjectionMinute?: number;
 
   @IsOptional()
@@ -51,35 +99,151 @@ export class CalibrationInjectionBaseDTO {
     },
   })
   upscaleInjectionDate?: Date;
+
   @IsOptional()
   @IsNumber()
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(
+        'You reported a [Fieldname] of [Hour], which is outside the range of acceptable values for this hour for [key].',
+        {
+          fieldname: args.property,
+          hour: args.value,
+          key: KEY,
+        },
+      );
+    },
+  })
   upscaleInjectionHour?: number;
+
   @IsOptional()
   @IsNumber()
+  @IsInRange(MIN_MINUTE, MAX_MINUTE, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatResultMessage(
+        'You reported a [fieldname] of [minute], which is outside the range of acceptable values for this minute for [key].',
+        {
+          fieldname: args.property,
+          minute: args.value,
+          key: KEY,
+        },
+      );
+    },
+  })
   upscaleInjectionMinute?: number;
+
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999999999.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.999 for [${KEY}].`;
+    },
+  })
   zeroMeasuredValue?: number;
+
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999999999.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.999 for [${KEY}].`;
+    },
+  })
   upscaleMeasuredValue?: number;
+
   @IsOptional()
   @IsNumber()
+  @IsInRange(0, 1, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}].`;
+    },
+  })
   zeroAPSIndicator?: number;
+
   @IsOptional()
   @IsNumber()
+  @IsInRange(0, 1, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}].`;
+    },
+  })
   upscaleAPSIndicator?: number;
+
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999999999.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.999 for [${KEY}].`;
+    },
+  })
   zeroCalibrationError?: number;
+
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999999999.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.999 for [${KEY}].`;
+    },
+  })
   upscaleCalibrationError?: number;
+
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999999999.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.999 for [${KEY}].`;
+    },
+  })
   zeroReferenceValue?: number;
+
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999999999.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.999 for [${KEY}].`;
+    },
+  })
   upscaleReferenceValue?: number;
 }
 

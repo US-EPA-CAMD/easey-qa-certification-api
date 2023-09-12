@@ -1,7 +1,8 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { IsInRange, Min } from '@us-epa-camd/easey-common/pipes';
+import { IsInRange, Max, Min } from '@us-epa-camd/easey-common/pipes';
 import { Type } from 'class-transformer';
 import {
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -23,12 +24,12 @@ const MIN_PERCENT_O2_PRESSURE = 0;
 const MAX_PERCENT_O2_PRESSURE = 22;
 const MIN_PERCENT_MOISTURE = 0;
 const MAX_PERCENT_MOISTURE = 75.0;
-const MIN_WET_MOLECULAR_WEIGHT = 25;
-const MAX_WET_MOLECULAR_WEIGHT = 35;
+const MIN_DRY_WET_MOLECULAR_WEIGHT = 25;
+const MAX_DRY_WET_MOLECULAR_WEIGHT = 35;
 const MIN_NO_OF_TRAVERSE_POINTS = 12;
+const MAX_NO_OF_TRAVERSE_POINTS = 99;
 
 export class FlowRataRunBaseDTO {
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-85-A', {
@@ -44,9 +45,13 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  numberOfTraversePoints?: number;
+  @Max(MAX_NO_OF_TRAVERSE_POINTS, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be in the range of 12 to 99 for [${KEY}].`;
+    },
+  })
+  numberOfTraversePoints: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-63-A', {
@@ -66,9 +71,8 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  barometricPressure?: number;
+  barometricPressure: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-64-A', {
@@ -88,9 +92,8 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  staticStackPressure?: number;
+  staticStackPressure: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-65-A', {
@@ -116,9 +119,8 @@ export class FlowRataRunBaseDTO {
     false,
     false,
   )
-  percentCO2?: number;
+  percentCO2: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-66-A', {
@@ -144,9 +146,8 @@ export class FlowRataRunBaseDTO {
     false,
     false,
   )
-  percentO2?: number;
+  percentO2: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-67-A', {
@@ -172,13 +173,17 @@ export class FlowRataRunBaseDTO {
     false,
     false,
   )
-  percentMoisture?: number;
+  percentMoisture: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsInRange(MIN_DRY_WET_MOLECULAR_WEIGHT, MAX_DRY_WET_MOLECULAR_WEIGHT, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be in the range of ${MIN_DRY_WET_MOLECULAR_WEIGHT} to ${MAX_DRY_WET_MOLECULAR_WEIGHT} for [${KEY}].`;
+    },
+  })
   dryMolecularWeight?: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-69-A', {
@@ -187,20 +192,19 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  @IsInRange(MIN_WET_MOLECULAR_WEIGHT, MAX_WET_MOLECULAR_WEIGHT, {
+  @IsInRange(MIN_DRY_WET_MOLECULAR_WEIGHT, MAX_DRY_WET_MOLECULAR_WEIGHT, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-69-B', {
         value: args.value,
         fieldname: args.property,
         key: KEY,
-        minvalue: MIN_WET_MOLECULAR_WEIGHT,
-        maxvalue: MAX_WET_MOLECULAR_WEIGHT,
+        minvalue: MIN_DRY_WET_MOLECULAR_WEIGHT,
+        maxvalue: MAX_DRY_WET_MOLECULAR_WEIGHT,
       });
     },
   })
-  wetMolecularWeight?: number;
+  wetMolecularWeight: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-115-A', {
@@ -225,16 +229,45 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  averageVelocityWithoutWallEffects?: number;
+  @Max(9999.99, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be grater than 0 to 9999.99 for [${KEY}].`;
+    },
+  })
+  averageVelocityWithoutWallEffects: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 2 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999.99, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.99 for [${KEY}].`;
+    },
+  })
   averageVelocityWithWallEffects?: number;
+
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 4 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 4 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 99.9999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99.9999 for [${KEY}].`;
+    },
+  })
   calculatedWAF?: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-94-A', {
@@ -259,7 +292,12 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  averageStackFlowRate?: number;
+  @Max(9999999999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be grater than 0 to 9999999999 for [${KEY}].`;
+    },
+  })
+  averageStackFlowRate: number;
 }
 
 export class FlowRataRunRecordDTO extends FlowRataRunBaseDTO {
