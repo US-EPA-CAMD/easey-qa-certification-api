@@ -32,7 +32,7 @@ const KEY = 'Appendix E Correlation Test Run';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class AppECorrelationTestRunBaseDTO {
-  @IsInRange(null, 99, {
+  @IsInRange(1, 99, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
         `The value for [fieldname] in [key] must not exceed 2 digits.`,
@@ -46,19 +46,60 @@ export class AppECorrelationTestRunBaseDTO {
   runNumber: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 99999.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99999.999 for [${KEY}].`;
+    },
+  })
   referenceValue?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 999999.9, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999.9 for [${KEY}].`;
+    },
+  })
   hourlyHeatInputRate?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 999999.9, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999.9 for [${KEY}].`;
+    },
+  })
   totalHeatInput?: number;
 
   @IsOptional()
   @IsNumber()
+  @IsInRange(0, 800, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999.9 for [${KEY}].`;
+    },
+  })
   responseTime?: number;
 
   @IsNotEmpty({

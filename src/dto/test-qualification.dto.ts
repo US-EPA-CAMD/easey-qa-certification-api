@@ -5,6 +5,7 @@ import {
   MinDate,
   ValidateIf,
   ValidationArguments,
+  IsNumber
 } from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import {
@@ -93,7 +94,7 @@ export class TestQualificationBaseDTO {
       });
     },
   })
-  @IsInRange(0, 100, {
+  @IsInRange(0, 9999.9, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-9-B', {
         value: args.value,
@@ -104,6 +105,14 @@ export class TestQualificationBaseDTO {
       });
     },
   })
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
+      },
+    },
+  )
   @ValidateIf(o => o.testClaimCode === 'SLC')
   highLoadPercentage?: number;
 
@@ -116,7 +125,15 @@ export class TestQualificationBaseDTO {
       });
     },
   })
-  @IsInRange(0, 100, {
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999.9, {
     message: (args?: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-10-B', {
         value: args.value,
@@ -139,7 +156,15 @@ export class TestQualificationBaseDTO {
       });
     },
   })
-  @IsInRange(0, 100, {
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999.9, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-11-B', {
         value: args.value,

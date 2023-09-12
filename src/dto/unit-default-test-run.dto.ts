@@ -21,9 +21,34 @@ import {
 const DATE_FORMAT = 'YYYY-MM-DD';
 const KEY = 'Unit Default Test Run';
 export class UnitDefaultTestRunBaseDTO {
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 2 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(1, 99, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 1 and 99 for [${KEY}].`;
+    },
+  })
   operatingLevelForRun: number;
-  @IsNumber()
+
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 2 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(1, 99, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 1 and 99 for [${KEY}].`;
+    },
+  })
   runNumber: number;
 
   @IsNotEmpty({
@@ -142,11 +167,36 @@ export class UnitDefaultTestRunBaseDTO {
   endMinute?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 800, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 800 for [${KEY}].`;
+    },
+  })
   responseTime?: number;
 
   @IsOptional()
   @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 99999.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99999.999 for [${KEY}].`;
+    },
+  })
   referenceValue?: number;
 
   @IsOptional()
