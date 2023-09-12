@@ -1,11 +1,28 @@
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
-import { IsNumber, IsOptional, ValidationArguments } from 'class-validator';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidDate,
+} from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  ValidationArguments,
+} from 'class-validator';
+import {
+  MAX_HOUR,
+  MAX_MINUTE,
+  MIN_HOUR,
+  MIN_MINUTE,
+} from '../utilities/constants';
 
 const KEY = 'Hg Test Injection';
 const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class HgInjectionBaseDTO {
+  @IsNotEmpty()
   @IsIsoFormat({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
@@ -17,16 +34,61 @@ export class HgInjectionBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   injectionDate: Date;
-  @IsNumber()
+
+  @IsInt()
+  @IsInRange(MIN_HOUR, MAX_HOUR, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of ${MIN_HOUR} and ${MAX_HOUR} for [${KEY}]`;
+    },
+  })
   injectionHour: number;
-  @IsNumber()
+
+  @IsInt()
+  @IsInRange(MIN_MINUTE, MAX_MINUTE, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of ${MIN_MINUTE} and ${MAX_MINUTE} for [${KEY}]`;
+    },
+  })
   injectionMinute: number;
-  @IsNumber()
+
   @IsOptional()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999999999.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.999 for [${KEY}].`;
+    },
+  })
   measuredValue?: number;
+
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999999999.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.999 for [${KEY}].`;
+    },
+  })
   referenceValue?: number;
 }
 
