@@ -42,6 +42,7 @@ import { TransmitterTransducerAccuracyWorkspaceModule } from '../transmitter-tra
 import { HgSummaryWorkspaceModule } from '../hg-summary-workspace/hg-summary-workspace.module';
 import { HgSummaryRepository } from '../hg-summary/hg-summary.repository';
 import { HgInjectionWorkspaceModule } from '../hg-injection-workspace/hg-injection-workspace.module';
+import { QASuppDataWorkspaceModule } from '../qa-supp-data-workspace/qa-supp-data.module';
 
 @Module({
   imports: [
@@ -81,6 +82,7 @@ import { HgInjectionWorkspaceModule } from '../hg-injection-workspace/hg-injecti
     forwardRef(() => TransmitterTransducerAccuracyWorkspaceModule),
     forwardRef(() => HgSummaryWorkspaceModule),
     forwardRef(() => HgInjectionWorkspaceModule),
+    forwardRef(() => QASuppDataWorkspaceModule),
     TestResultCodeModule,
     HttpModule,
   ],

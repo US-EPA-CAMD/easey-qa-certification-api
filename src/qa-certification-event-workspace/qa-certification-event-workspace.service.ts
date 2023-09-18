@@ -80,6 +80,7 @@ export class QACertificationEventWorkspaceService {
       needsEvalFlag: 'Y',
       evalStatusCode: 'EVAL',
       pendingStatusCode: 'PENDING',
+      submissionAvailabilityCode: 'REQUIRE',
     });
 
     await this.repository.save(entity);

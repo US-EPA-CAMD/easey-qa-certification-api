@@ -46,6 +46,7 @@ import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-wo
 import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
 import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { QASuppDataWorkspaceService } from '../qa-supp-data-workspace/qa-supp-data.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -96,6 +97,8 @@ export class TestSummaryWorkspaceService {
     private readonly airEmissionTestingWorkspaceService: AirEmissionTestingWorkspaceService,
     @Inject(forwardRef(() => TestQualificationWorkspaceService))
     private readonly testQualificationWorkspaceService: TestQualificationWorkspaceService,
+    @Inject(forwardRef(() => QASuppDataWorkspaceService))
+    private readonly qaSuppDataService: QASuppDataWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -805,6 +808,12 @@ export class TestSummaryWorkspaceService {
       entity.evalStatusCode = 'EVAL';
 
       await this.repository.save(entity);
+
+      try {
+        await this.qaSuppDataService.setSubmissionAvailCodeToRequire(testSumId);
+      } catch (error) {
+        this.logger.log(error);
+      }
     }
   }
 
