@@ -14,8 +14,8 @@ export class QASuppDataWorkspaceService {
       testSumId: testSumId,
     });
 
-    entity.submissionAvailabilityCode = "REQUIRE"
+    entity.submissionAvailabilityCode = 'REQUIRE';
 
-    await this.repository.save(entity)
+    await this.repository.save(entity);
   }
 }
