@@ -192,6 +192,7 @@ export class TestExtensionExemptionsWorkspaceService {
       updatedStatusFlag: 'Y',
       evalStatusCode: 'EVAL',
       pendingStatusCode: 'PENDING',
+      submissionAvailabilityCode: 'REQUIRE',
     });
 
     await this.repository.save(entity);
@@ -241,6 +242,7 @@ export class TestExtensionExemptionsWorkspaceService {
     record.updatedStatusFlag = 'Y';
     record.evalStatusCode = 'EVAL';
     record.pendingStatusCode = 'PENDING';
+    record.submissionAvailabilityCode = 'REQUIRE';
 
     await this.repository.save(record);
     return this.getTestExtensionExemptionById(record.id);
