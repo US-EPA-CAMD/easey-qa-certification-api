@@ -2,13 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { TeeReviewAndSubmit } from '../entities/workspace/tee-review-and-submit.entity';
 import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
+import { TeeReviewAndSubmitGlobal } from '../entities/tee-review-and-submit.entity';
 
 @Injectable()
 export class TeeReviewAndSubmitMap extends BaseMap<
   TeeReviewAndSubmit,
   TeeReviewAndSubmitDTO
 > {
-  public async one(entity: TeeReviewAndSubmit): Promise<TeeReviewAndSubmitDTO> {
+  public async one(
+    entity: TeeReviewAndSubmit | TeeReviewAndSubmitGlobal,
+  ): Promise<TeeReviewAndSubmitDTO> {
     return {
       orisCode: entity.orisCode,
       facilityName: entity.facilityName,

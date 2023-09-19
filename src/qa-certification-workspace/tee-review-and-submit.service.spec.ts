@@ -2,7 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
 import { TeeReviewAndSubmitService } from './tee-review-and-submit.service';
 import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
-import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository copy';
+import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository';
+import { TeeReviewAndSubmitGlobalRepository } from './tee-review-and-submit-global.repository';
 
 const dto = new TeeReviewAndSubmitDTO();
 dto.periodAbbreviation = '2022 Q1';
@@ -37,6 +38,7 @@ describe('TeeReviewAndSubmitService', () => {
         TeeReviewAndSubmitService,
         { provide: TeeReviewAndSubmitMap, useFactory: mockMap },
         { provide: TeeReviewAndSubmitRepository, useFactory: mockRepo },
+        { provide: TeeReviewAndSubmitGlobalRepository, useFactory: mockRepo },
       ],
     }).compile();
 

@@ -6,12 +6,14 @@ import { TestSummaryModule } from '../test-summary/test-summary.module';
 
 import { QACertificationController } from './qa-certification.controller';
 import { QACertificationService } from './qa-certification.service';
+import { QACertificationWorkspaceModule } from '../qa-certification-workspace/qa-certification.module';
 
 @Module({
   imports: [
     TestSummaryModule,
     QaCertificationEventModule,
     TestExtensionExemptionsModule,
+    QACertificationWorkspaceModule,
   ],
   controllers: [QACertificationController],
   providers: [QACertificationService],
