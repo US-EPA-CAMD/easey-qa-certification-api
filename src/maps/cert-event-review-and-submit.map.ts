@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { BaseMap } from '@us-epa-camd/easey-common/maps';
 import { CertEventReviewAndSubmit } from '../entities/workspace/cert-event-review-and-submit.entity';
 import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
+import { CertEventReviewAndSubmitGlobal } from '../entities/cert-event-review-and-submit.entity';
 
 @Injectable()
 export class CertEventReviewAndSubmitMap extends BaseMap<
@@ -9,7 +10,7 @@ export class CertEventReviewAndSubmitMap extends BaseMap<
   CertEventReviewAndSubmitDTO
 > {
   public async one(
-    entity: CertEventReviewAndSubmit,
+    entity: CertEventReviewAndSubmit | CertEventReviewAndSubmitGlobal,
   ): Promise<CertEventReviewAndSubmitDTO> {
     return {
       orisCode: entity.orisCode,

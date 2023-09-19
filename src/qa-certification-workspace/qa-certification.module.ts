@@ -23,7 +23,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TestSummaryReviewAndSubmitRepository } from './test-summary-review-and-submit.repository';
 import { TestSummaryReviewAndSubmitService } from './test-summary-review-and-submit.service';
 import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
-import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository copy';
+import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository';
 import { TeeReviewAndSubmitService } from './tee-review-and-submit.service';
 import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
 import { QaCertificationEventWorkspaceModule } from '../qa-certification-event-workspace/qa-certification-event-workspace.module';
@@ -38,6 +38,9 @@ import { ProtocolGasWorkspaceModule } from '../protocol-gas-workspace/protocol-g
 import { MatsBulkFilesReviewAndSubmitRepository } from './mats-bulk-files-review-and-submit.repository';
 import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
 import { MatsBulkFileMap } from '../maps/mats-bulk-file.map';
+import { CertEventReviewAndSubmitGlobalRepository } from './cert-event-review-and-submit-global.repository';
+import { TeeReviewAndSubmitGlobalRepository } from './tee-review-and-submit-global.repository';
+import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
 
 @Module({
   imports: [
@@ -46,6 +49,9 @@ import { MatsBulkFileMap } from '../maps/mats-bulk-file.map';
       TestSummaryReviewAndSubmitRepository,
       TeeReviewAndSubmitRepository,
       MatsBulkFilesReviewAndSubmitRepository,
+      CertEventReviewAndSubmitGlobalRepository,
+      TeeReviewAndSubmitGlobalRepository,
+      TestSummaryReviewAndSubmitGlobalRepository,
     ]),
     HttpModule,
     QASuppDataWorkspaceModule,
@@ -82,6 +88,12 @@ import { MatsBulkFileMap } from '../maps/mats-bulk-file.map';
     MatsBulkFilesReviewAndSubmitService,
     MatsBulkFileMap,
   ],
-  exports: [QACertificationChecksService, QACertificationWorkspaceService],
+  exports: [
+    QACertificationChecksService,
+    QACertificationWorkspaceService,
+    CertEventReviewAndSubmitService,
+    TestSummaryReviewAndSubmitService,
+    TeeReviewAndSubmitService,
+  ],
 })
 export class QACertificationWorkspaceModule {}

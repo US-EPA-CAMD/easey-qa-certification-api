@@ -6,6 +6,7 @@ import { getManager, In } from 'typeorm';
 import { TestSummaryReviewAndSubmitRepository } from './test-summary-review-and-submit.repository';
 import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
 import { ReportingPeriod } from '../entities/reporting-period.entity';
+import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
 
 const moment = require('moment');
 
@@ -13,7 +14,10 @@ const moment = require('moment');
 export class TestSummaryReviewAndSubmitService {
   constructor(
     @InjectRepository(TestSummaryReviewAndSubmitRepository)
-    private readonly repository: TestSummaryReviewAndSubmitRepository,
+    private readonly workspaceRepository: TestSummaryReviewAndSubmitRepository,
+    @InjectRepository(TestSummaryReviewAndSubmitGlobalRepository)
+    private readonly globalRepository: TestSummaryReviewAndSubmitGlobalRepository,
+
     private readonly map: ReviewAndSubmitTestSummaryMap,
   ) {}
 
@@ -25,18 +29,26 @@ export class TestSummaryReviewAndSubmitService {
     orisCodes: number[],
     monPlanIds: string[],
     quarters: string[],
+    isWorkspace: boolean = true,
   ): Promise<ReviewAndSubmitTestSummaryDTO[]> {
     const filteredDates = [];
+
+    let repository;
+    if (isWorkspace) {
+      repository = this.workspaceRepository;
+    } else {
+      repository = this.globalRepository;
+    }
 
     let data: ReviewAndSubmitTestSummaryDTO[];
     try {
       if (monPlanIds && monPlanIds.length > 0) {
         data = await this.map.many(
-          await this.repository.find({ where: { monPlanId: In(monPlanIds) } }),
+          await repository.find({ where: { monPlanId: In(monPlanIds) } }),
         );
       } else {
         data = await this.map.many(
-          await this.repository.find({ where: { orisCode: In(orisCodes) } }),
+          await repository.find({ where: { orisCode: In(orisCodes) } }),
         );
       }
 

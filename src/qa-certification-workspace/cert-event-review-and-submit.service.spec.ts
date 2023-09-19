@@ -3,6 +3,7 @@ import { CertEventReviewAndSubmitRepository } from './cert-event-review-and-subm
 import { CertEventReviewAndSubmitService } from './cert-event-review-and-submit.service';
 import { CertEventReviewAndSubmitMap } from '../maps/cert-event-review-and-submit.map';
 import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
+import { CertEventReviewAndSubmitGlobalRepository } from './cert-event-review-and-submit-global.repository';
 
 const dto = new CertEventReviewAndSubmitDTO();
 dto.periodAbbreviation = '2022 Q1';
@@ -39,6 +40,10 @@ describe('CertEventReviewAndSubmitService', () => {
         CertEventReviewAndSubmitService,
         { provide: CertEventReviewAndSubmitMap, useFactory: mockMap },
         { provide: CertEventReviewAndSubmitRepository, useFactory: mockRepo },
+        {
+          provide: CertEventReviewAndSubmitGlobalRepository,
+          useFactory: mockRepo,
+        },
       ],
     }).compile();
 
