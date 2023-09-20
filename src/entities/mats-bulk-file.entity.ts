@@ -1,61 +1,72 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  PrimaryColumn,
-  ViewColumn,
-  ViewEntity,
-} from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
 
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
-@ViewEntity({ name: 'camdecmpswks.vw_mats_bulk_file_eval_and_submit' })
+@Entity({ name: 'camdecmpswks.mats_bulk_file' })
 export class MatsBulkFile extends BaseEntity {
-  @ViewColumn({
+  @PrimaryColumn({ name: 'mats_bulk_file_id' })
+  matsBulkFileIdentifier: number;
+
+  @Column({
+    name: 'fac_id',
+    type: 'numeric',
+    transformer: new NumericColumnTransformer(),
+  })
+  facIdentifier: number;
+
+  @Column({
     name: 'oris_code',
+    type: 'numeric',
     transformer: new NumericColumnTransformer(),
   })
   orisCode: number;
 
-  @ViewColumn({ name: 'facility_name' })
+  @Column({ name: 'location' })
+  location: string;
+
+  @Column({ name: 'test_type_code' })
+  testTypeCode: string;
+
+  @Column({ name: 'test_type_code_description' })
+  testTypeCodeDescription: string;
+
+  @Column({ name: 'facility_name' })
   facilityName: string;
 
-  @ViewColumn({ name: 'mon_plan_id' })
+  @Column({ name: 'mon_plan_id' })
   monPlanIdentifier: string;
 
-  @ViewColumn({ name: 'location_info' })
-  locationInfo: string;
-
-  @ViewColumn({
-    name: 'mats_bulk_file_id',
-    transformer: new NumericColumnTransformer(),
-  })
-  matsBulkFileIdentifier: number;
-
-  @ViewColumn({ name: 'mon_loc_id' })
-  monLOCIdentifier: string;
-
-  @ViewColumn({ name: 'system_component_identifier' })
-  systemComponentIdentifier: string;
-
-  @ViewColumn({ name: 'userid' })
-  userid: string;
-
-  @ViewColumn({ name: 'update_date' })
-  updateDate: string;
-
-  @ViewColumn({ name: 'submission_availability_cd' })
-  submissionAvailabilityCode: string;
-
-  @ViewColumn({ name: 'submission_availability_cd_description' })
-  submissionAvailabilityCodeDescription: string;
-
-  @ViewColumn({ name: 'test_num' })
+  @Column({ name: 'test_num' })
   testNumber: string;
 
-  @ViewColumn({ name: 'filename' })
+  @Column({ name: 'filename' })
   filename: string;
 
-  @ViewColumn({ name: 'updated_status_flg' })
+  @Column({ name: 'last_updated' })
+  lastUpdated: string;
+
+  @Column({ name: 'updated_status_flg' })
   updatedStatusFLG: string;
+
+  @Column({
+    name: 'submission_id',
+    type: 'numeric',
+    transformer: new NumericColumnTransformer(),
+  })
+  submissionIdentifier: number;
+
+  @Column({ name: 'submission_availability_cd' })
+  submissionAvailabilityCode: string;
+
+  @Column({ name: 'userid' })
+  userid: string;
+
+  @Column({ name: 'add_date' })
+  addDate: string;
+
+  @Column({ name: 'bucket_location' })
+  bucketLocation: string;
+
+  @Column({ name: 'eval_status_cd' })
+  evalStatusCode: string;
 }

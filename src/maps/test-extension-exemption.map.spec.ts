@@ -48,8 +48,8 @@ describe('TestExtensionExemptionMap', () => {
     expect(result.unitId).toEqual(string);
     expect(result.year).toEqual(number);
     expect(result.quarter).toEqual(number);
-    expect(result.monitoringSystemID).toEqual(string);
-    expect(result.componentID).toEqual(string);
+    expect(result.monitoringSystemId).toEqual(string);
+    expect(result.componentId).toEqual(string);
     expect(result.hoursUsed).toEqual(number);
     expect(result.spanScaleCode).toEqual(string);
     expect(result.fuelCode).toEqual(string);

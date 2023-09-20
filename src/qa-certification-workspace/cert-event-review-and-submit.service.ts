@@ -6,6 +6,7 @@ import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { CertEventReviewAndSubmitRepository } from './cert-event-review-and-submit.repository';
 import { CertEventReviewAndSubmitMap } from '../maps/cert-event-review-and-submit.map';
 import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
+import { CertEventReviewAndSubmitGlobalRepository } from './cert-event-review-and-submit-global.repository';
 
 const moment = require('moment');
 
@@ -13,7 +14,9 @@ const moment = require('moment');
 export class CertEventReviewAndSubmitService {
   constructor(
     @InjectRepository(CertEventReviewAndSubmitRepository)
-    private readonly repository: CertEventReviewAndSubmitRepository,
+    private readonly workspaceRepository: CertEventReviewAndSubmitRepository,
+    @InjectRepository(CertEventReviewAndSubmitGlobalRepository)
+    private readonly globalRepository: CertEventReviewAndSubmitGlobalRepository,
     private readonly map: CertEventReviewAndSubmitMap,
   ) {}
 
@@ -25,16 +28,25 @@ export class CertEventReviewAndSubmitService {
     orisCodes: number[],
     monPlanIds: string[],
     quarters: string[],
+    isWorkspace: boolean = true,
   ): Promise<CertEventReviewAndSubmitDTO[]> {
     let data: CertEventReviewAndSubmitDTO[];
+
+    let repository;
+    if (isWorkspace) {
+      repository = this.workspaceRepository;
+    } else {
+      repository = this.globalRepository;
+    }
+
     try {
       if (monPlanIds && monPlanIds.length > 0) {
         data = await this.map.many(
-          await this.repository.find({ where: { monPlanId: In(monPlanIds) } }),
+          await repository.find({ where: { monPlanId: In(monPlanIds) } }),
         );
       } else {
         data = await this.map.many(
-          await this.repository.find({ where: { orisCode: In(orisCodes) } }),
+          await repository.find({ where: { orisCode: In(orisCodes) } }),
         );
       }
 

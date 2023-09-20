@@ -27,7 +27,8 @@ export class FlowToLoadReferenceMap extends BaseMap<
       averageHourlyHeatInputRate: entity.averageHourlyHeatInputRate,
       referenceGrossHeatRate: entity.referenceGrossHeatRate,
       calculatedReferenceGrossHeatRate: entity.calculatedReferenceGrossHeatRate,
-      calcSeparateReferenceIndicator: entity.calcSeparateReferenceIndicator,
+      calculatedSeparateReferenceIndicator:
+        entity.calcSeparateReferenceIndicator,
       userId: entity.userId,
       addDate: entity.addDate ? entity.addDate.toISOString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toISOString() : null,

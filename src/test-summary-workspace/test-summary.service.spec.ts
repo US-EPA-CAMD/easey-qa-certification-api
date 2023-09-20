@@ -54,6 +54,7 @@ import { TestQualification } from '../entities/workspace/test-qualification.enti
 import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
 import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { QASuppDataWorkspaceService } from '../qa-supp-data-workspace/qa-supp-data.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -172,6 +173,10 @@ const mockTestQualificationWorkspaceService = () => ({
 const mockHgSummaryWorkspaceService = () => ({
   export: jest.fn().mockResolvedValue([new HgSummary()]),
   import: jest.fn().mockResolvedValue(null),
+});
+
+const mockQASuppDataWorkspaceService = () => ({
+  setSubmissionAvailCodeToRequire: jest.fn(),
 });
 
 const monLocation = new MonitorLocation();
@@ -307,6 +312,10 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: HgSummaryWorkspaceService,
           useFactory: mockHgSummaryWorkspaceService,
+        },
+        {
+          provide: QASuppDataWorkspaceService,
+          useFactory: mockQASuppDataWorkspaceService,
         },
       ],
     }).compile();
@@ -481,8 +490,8 @@ describe('TestSummaryWorkspaceService', () => {
     it('should return reportPeriodId, componentRecordId, monitorSystem', async () => {
       payload.year = 2022;
       payload.quarter = 1;
-      payload.componentID = '1';
-      payload.monitoringSystemID = 'abc';
+      payload.componentId = '1';
+      payload.monitoringSystemId = 'abc';
 
       const result = await service.lookupValues(locationId, payload);
 
@@ -492,8 +501,8 @@ describe('TestSummaryWorkspaceService', () => {
     it('should return reportPeriodId, componentRecordId, monitorSystem from a workspace monitor system record', async () => {
       payload.year = 2022;
       payload.quarter = 1;
-      payload.componentID = '1';
-      payload.monitoringSystemID = 'abc';
+      payload.componentId = '1';
+      payload.monitoringSystemId = 'abc';
 
       const monSysData = new MonitorSystem();
       monSysData.id = '1';

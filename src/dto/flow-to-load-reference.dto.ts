@@ -1,30 +1,99 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsInRange, IsValidCode } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInt,
+  IsNumber,
+  IsOptional,
+  IsString,
+  MaxLength,
+  ValidationArguments,
+} from 'class-validator';
+import { OperatingLevelCode } from '../entities/workspace/operating-level-code.entity';
 const KEY = 'Flow To Load Reference';
 
 export class FlowToLoadReferenceBaseDTO {
   @IsOptional()
   @IsString()
+  @MaxLength(18, {
+    message: (args: ValidationArguments) => {
+      return `The value for [${args.value}] in the Component record [${args.property}] must not exceed 18 characters`;
+    },
+  })
   rataTestNumber?: string;
+
   @IsString()
+  @IsValidCode(OperatingLevelCode, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
+    },
+  })
   operatingLevelCode: string;
+
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsInRange(0, 999999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999 for [${KEY}].`;
+    },
+  })
   averageGrossUnitLoad?: number;
+
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsInRange(0, 9999999999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999 for [${KEY}].`;
+    },
+  })
   averageReferenceMethodFlow?: number;
+
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 2 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999.99, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.99 for [${KEY}].`;
+    },
+  })
   referenceFlowLoadRatio?: number;
+
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 999999.9, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999.9 for [${KEY}].`;
+    },
+  })
   averageHourlyHeatInputRate?: number;
+
   @IsOptional()
-  @IsNumber()
+  @IsInRange(0, 999999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999 for [${KEY}].`;
+    },
+  })
   referenceGrossHeatRate?: number;
+
   @IsOptional()
   @IsNumber()
-  calcSeparateReferenceIndicator?: number;
+  @IsInRange(0, 1, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}].`;
+    },
+  })
+  calculatedSeparateReferenceIndicator?: number;
 }
 
 export class FlowToLoadReferenceRecordDTO extends FlowToLoadReferenceBaseDTO {

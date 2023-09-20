@@ -78,7 +78,7 @@ export class QACertificationEventChecksService {
     let qaCertEvents = [];
 
     const duplicateQACertEvent = this.getErrorMessage('QACERT-11-A', {
-      recordType: KEY,
+      recordtype: KEY,
       fieldnames:
         'locationId, qaCertEventCode, qaCertEventHour, qaCertEventDate, monitoringSystemId, componentId',
     });
@@ -86,11 +86,14 @@ export class QACertificationEventChecksService {
     if (isImport) {
       const duplicates = qaCertificationEvents.filter(i => {
         return (
-          i.qaCertEventCode === qaCertificationEvent.qaCertEventCode &&
-          i.qaCertEventHour === qaCertificationEvent.qaCertEventHour &&
-          i.qaCertEventDate === qaCertificationEvent.qaCertEventDate &&
-          i.monitoringSystemID === qaCertificationEvent.monitoringSystemID &&
-          i.componentID === qaCertificationEvent.componentID &&
+          i.certificationEventCode ===
+            qaCertificationEvent.certificationEventCode &&
+          i.certificationEventHour ===
+            qaCertificationEvent.certificationEventHour &&
+          i.certificationEventDate ===
+            qaCertificationEvent.certificationEventDate &&
+          i.monitoringSystemId === qaCertificationEvent.monitoringSystemId &&
+          i.componentId === qaCertificationEvent.componentId &&
           i.unitId === qaCertificationEvent.unitId &&
           i.stackPipeId === qaCertificationEvent.stackPipeId
         );
@@ -106,16 +109,16 @@ export class QACertificationEventChecksService {
       } = await this.service.lookupValues(locationId, qaCertificationEvent);
 
       const {
-        qaCertEventDate,
-        qaCertEventHour,
-        qaCertEventCode,
+        certificationEventDate,
+        certificationEventHour,
+        certificationEventCode,
       } = qaCertificationEvent;
 
       qaCertEvents = await this.repository.find({
         locationId,
-        qaCertEventCode,
-        qaCertEventHour,
-        qaCertEventDate,
+        qaCertEventCode: certificationEventCode,
+        qaCertEventHour: certificationEventHour,
+        qaCertEventDate: certificationEventDate,
         monitoringSystemRecordId,
         componentRecordId,
       });

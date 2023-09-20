@@ -24,13 +24,16 @@ import { TestSummaryReviewAndSubmitRepository } from './test-summary-review-and-
 import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
 import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
 import { TeeReviewAndSubmitService } from './tee-review-and-submit.service';
-import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository copy';
+import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository';
 import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
 import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
 import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
 import { MatsBulkFileMap } from '../maps/mats-bulk-file.map';
 import { ReviewAndSubmitMultipleParamsMatsDTO } from '../dto/review-and-submit-multiple-params-mats.dto';
 import { MatsBulkFilesReviewAndSubmitRepository } from './mats-bulk-files-review-and-submit.repository';
+import { CertEventReviewAndSubmitGlobalRepository } from './cert-event-review-and-submit-global.repository';
+import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
+import { TeeReviewAndSubmitGlobalRepository } from './tee-review-and-submit-global.repository';
 
 const qaCertDto = new QACertificationDTO();
 const qaParamsDto = new QACertificationParamsDTO();
@@ -89,12 +92,15 @@ describe('QA Certification Workspace Controller Test', () => {
         },
         CertEventReviewAndSubmitService,
         CertEventReviewAndSubmitRepository,
+        CertEventReviewAndSubmitGlobalRepository,
         CertEventReviewAndSubmitMap,
         TestSummaryReviewAndSubmitRepository,
+        TestSummaryReviewAndSubmitGlobalRepository,
         TestSummaryReviewAndSubmitService,
         ReviewAndSubmitTestSummaryMap,
         TeeReviewAndSubmitService,
         TeeReviewAndSubmitRepository,
+        TeeReviewAndSubmitGlobalRepository,
         TeeReviewAndSubmitMap,
         MatsBulkFilesReviewAndSubmitRepository,
         MatsBulkFilesReviewAndSubmitService,

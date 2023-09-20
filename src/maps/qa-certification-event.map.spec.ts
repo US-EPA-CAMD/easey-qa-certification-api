@@ -55,11 +55,11 @@ describe('QACertificationEventMap', () => {
     expect(result.locationId).toEqual(someString);
     expect(result.unitId).toEqual(someString);
     expect(result.stackPipeId).toEqual(someString);
-    expect(result.monitoringSystemID).toEqual(someString);
-    expect(result.componentID).toEqual(someString);
-    expect(result.qaCertEventCode).toEqual(someString);
-    expect(result.qaCertEventDate).toEqual(date);
-    expect(result.qaCertEventHour).toEqual(someNumber);
+    expect(result.monitoringSystemId).toEqual(someString);
+    expect(result.componentId).toEqual(someString);
+    expect(result.certificationEventCode).toEqual(someString);
+    expect(result.certificationEventDate).toEqual(date);
+    expect(result.certificationEventHour).toEqual(someNumber);
     expect(result.requiredTestCode).toEqual(someString);
     expect(result.conditionalBeginDate).toEqual(date);
     expect(result.conditionalBeginHour).toEqual(someNumber);
@@ -91,8 +91,8 @@ describe('QACertificationEventMap', () => {
 
     expect(result.stackPipeId).toEqual(null);
     expect(result.unitId).toEqual(null);
-    expect(result.monitoringSystemID).toEqual(null);
-    expect(result.componentID).toEqual(null);
+    expect(result.monitoringSystemId).toEqual(null);
+    expect(result.componentId).toEqual(null);
     expect(result.addDate).toEqual(null);
     expect(result.updateDate).toEqual(null);
     expect(result.pendingStatusCode).toEqual(null);

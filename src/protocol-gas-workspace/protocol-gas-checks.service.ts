@@ -61,7 +61,7 @@ export class ProtocolGasChecksService {
       testSumRecord.system = await this.monitorSystemWorkspaceRepository.findOne(
         {
           where: {
-            monitoringSystemID: testSummary.monitoringSystemID,
+            monitoringSystemID: testSummary.monitoringSystemId,
             locationId,
           },
         },
@@ -69,7 +69,7 @@ export class ProtocolGasChecksService {
       testSumRecord.component = await this.componentWorkspaceRepository.findOne(
         {
           where: {
-            componentID: testSummary.componentID,
+            componentID: testSummary.componentId,
             locationId,
           },
         },

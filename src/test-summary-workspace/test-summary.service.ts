@@ -46,6 +46,7 @@ import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-wo
 import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
 import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { QASuppDataWorkspaceService } from '../qa-supp-data-workspace/qa-supp-data.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -96,6 +97,8 @@ export class TestSummaryWorkspaceService {
     private readonly airEmissionTestingWorkspaceService: AirEmissionTestingWorkspaceService,
     @Inject(forwardRef(() => TestQualificationWorkspaceService))
     private readonly testQualificationWorkspaceService: TestQualificationWorkspaceService,
+    @Inject(forwardRef(() => QASuppDataWorkspaceService))
+    private readonly qaSuppDataService: QASuppDataWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -127,8 +130,8 @@ export class TestSummaryWorkspaceService {
     delete dto.hgSummaryData;
     delete dto.testQualificationData;
     delete dto.protocolGasData;
-    delete dto.airEmissionTestingData;
-    delete dto.appECorrelationTestSummaryData;
+    delete dto.airEmissionTestData;
+    delete dto.appendixECorrelationTestSummaryData;
 
     return dto;
   }
@@ -500,10 +503,10 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.appECorrelationTestSummaryData?.length > 0 &&
+      payload.appendixECorrelationTestSummaryData?.length > 0 &&
       payload.testTypeCode === TestTypeCodes.APPE
     ) {
-      for (const appECorrelationTestSummary of payload.appECorrelationTestSummaryData) {
+      for (const appECorrelationTestSummary of payload.appendixECorrelationTestSummaryData) {
         promises.push(
           this.appECorrelationTestSummaryWorkspaceService.import(
             locationId,
@@ -630,14 +633,14 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.airEmissionTestingData?.length > 0 &&
+      payload.airEmissionTestData?.length > 0 &&
       [
         TestTypeCodes.RATA.toString(),
         TestTypeCodes.UNITDEF.toString(),
         TestTypeCodes.APPE.toString(),
       ].includes(payload.testTypeCode)
     ) {
-      for (const airEmissionTesting of payload.airEmissionTestingData) {
+      for (const airEmissionTesting of payload.airEmissionTestData) {
         promises.push(
           this.airEmissionTestingWorkspaceService.import(
             createdTestSummary.id,
@@ -716,12 +719,12 @@ export class TestSummaryWorkspaceService {
     delete dto.transmitterTransducerData;
     delete dto.fuelFlowToLoadBaselineData;
     delete dto.fuelFlowToLoadTestData;
-    delete dto.appECorrelationTestSummaryData;
+    delete dto.appendixECorrelationTestSummaryData;
     delete dto.unitDefaultTestData;
     delete dto.hgSummaryData;
     delete dto.testQualificationData;
     delete dto.protocolGasData;
-    delete dto.airEmissionTestingData;
+    delete dto.airEmissionTestData;
 
     return dto;
   }
@@ -805,6 +808,12 @@ export class TestSummaryWorkspaceService {
       entity.evalStatusCode = 'EVAL';
 
       await this.repository.save(entity);
+
+      try {
+        await this.qaSuppDataService.setSubmissionAvailCodeToRequire(testSumId);
+      } catch (error) {
+        this.logger.log(error);
+      }
     }
   }
 
@@ -822,19 +831,19 @@ export class TestSummaryWorkspaceService {
       reportPeriodId = rptPeriod ? rptPeriod.id : null;
     }
 
-    if (payload.componentID) {
+    if (payload.componentId) {
       const component = await this.componentRepository.findOne({
         locationId: locationId,
-        componentID: payload.componentID,
+        componentID: payload.componentId,
       });
 
       componentRecordId = component ? component.id : null;
     }
 
-    if (payload.monitoringSystemID) {
+    if (payload.monitoringSystemId) {
       const monitorSystem = await this.monSysWorkspaceRepository.findOne({
         locationId: locationId,
-        monitoringSystemID: payload.monitoringSystemID,
+        monitoringSystemID: payload.monitoringSystemId,
       });
 
       monitoringSystemRecordId = monitorSystem ? monitorSystem.id : null;

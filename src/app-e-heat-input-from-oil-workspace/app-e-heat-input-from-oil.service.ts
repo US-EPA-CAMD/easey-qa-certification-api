@@ -73,7 +73,7 @@ export class AppEHeatInputFromOilWorkspaceService {
 
     const system = await this.monSysWorkspaceRepository.findOne({
       locationId: locationId,
-      monitoringSystemID: payload.monitoringSystemID,
+      monitoringSystemID: payload.monitoringSystemId,
     });
 
     if (!system) {
@@ -193,7 +193,7 @@ export class AppEHeatInputFromOilWorkspaceService {
     if (isHistoricalRecord) {
       historicalRecord = await this.historicalRepo.getAppEHeatInputFromOilByTestRunIdAndMonSysID(
         appECorrTestRunId,
-        payload.monitoringSystemID,
+        payload.monitoringSystemId,
       );
     }
 

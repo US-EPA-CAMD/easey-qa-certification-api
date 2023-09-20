@@ -1,7 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInRange } from '@us-epa-camd/easey-common/pipes';
-import { IsNotEmpty, IsOptional, ValidationArguments } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  ValidationArguments,
+} from 'class-validator';
 import { IsNotNegative } from '../pipes/is-not-negative.pipe';
 
 const KEY = 'Linearity Injection';
@@ -70,13 +75,25 @@ export class LinearityInjectionBaseDTO {
   @ApiProperty({
     description: 'measuredValue. ADD TO PROPERTY METADATA',
   })
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('LINEAR-20-A', {
         fieldname: args.property,
         key: KEY,
       });
+    },
+  })
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999999999.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.999 for [${KEY}].`;
     },
   })
   measuredValue?: number;
@@ -100,6 +117,19 @@ export class LinearityInjectionBaseDTO {
         fieldname: args.property,
         key: KEY,
       });
+    },
+  })
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999999999.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.999 for [${KEY}].`;
     },
   })
   referenceValue?: number;

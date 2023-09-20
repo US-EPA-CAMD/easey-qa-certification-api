@@ -75,7 +75,10 @@ export default registerAs('app', () => ({
   enableDebug: getConfigValueBoolean('EASEY_QA_CERTIFICATION_API_ENABLE_DEBUG'),
   // NEEDS TO BE SET IN .ENV FILE FOR LOCAL DEVELOPMENT
   // FORMAT: { "userId": "", "roles": [ { "orisCode": 3, "role": "P" } ] }
-  currentUser: getConfigValue('EASEY_QA_CERTIFICATION_API_CURRENT_USER'),
+  currentUser: getConfigValue(
+    'EASEY_QA_CERTIFICATION_API_CURRENT_USER',
+    '{ "userId": "" }',
+  ),
   apiHost: apiHost,
   enableRoleGuardCheckoutCheck: getConfigValueBoolean(
     'EASEY_QA_CERTIFICATION_API_ENABLE_ROLE_GUARD_CHECKOUT',
@@ -84,14 +87,10 @@ export default registerAs('app', () => ({
   authApi: {
     uri: getConfigValue('EASEY_AUTH_API', `https://${apiHost}/auth-mgmt`),
   },
-  awsRegion: getConfigValue(
-    'EASEY_AWS_S3_REGION'
-  ),
-  matsImportBucket: getConfigValue(
-    'EASEY_MATS_BULK_FILES_IMPORT_BUCKET'
-  ),
+  awsRegion: getConfigValue('EASEY_AWS_S3_REGION'),
+  matsImportBucket: getConfigValue('EASEY_MATS_BULK_FILES_IMPORT_BUCKET'),
   matsImportBucketAccessKey: getConfigValue(
-    'EASEY_MATS_BULK_FILES_IMPORT_AWS_ACCESS_KEY_ID'
+    'EASEY_MATS_BULK_FILES_IMPORT_AWS_ACCESS_KEY_ID',
   ),
   matsImportBucketSecretAccessKey: getConfigValue(
     'EASEY_MATS_BULK_FILES_IMPORT_AWS_SECRET_ACCESS_KEY',

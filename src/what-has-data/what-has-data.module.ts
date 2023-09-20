@@ -6,11 +6,7 @@ import { WhatHasDataController } from './what-has-data.controller';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      MonitorLocationRepository
-    ])
-  ],
+  imports: [TypeOrmModule.forFeature([MonitorLocationRepository])],
   controllers: [WhatHasDataController],
   providers: [WhatHasDataService],
 })

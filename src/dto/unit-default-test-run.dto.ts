@@ -3,8 +3,10 @@ import {
   BeginEndDatesConsistent,
   IsInRange,
   IsIsoFormat,
+  IsValidDate,
 } from '@us-epa-camd/easey-common/pipes';
 import {
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -21,9 +23,22 @@ import {
 const DATE_FORMAT = 'YYYY-MM-DD';
 const KEY = 'Unit Default Test Run';
 export class UnitDefaultTestRunBaseDTO {
-  @IsNumber()
+  @IsInt()
+  @IsNotEmpty()
+  @IsInRange(1, 99, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 1 and 99 for [${KEY}].`;
+    },
+  })
   operatingLevelForRun: number;
-  @IsNumber()
+
+  @IsInt()
+  @IsNotEmpty()
+  @IsInRange(1, 99, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 1 and 99 for [${KEY}].`;
+    },
+  })
   runNumber: number;
 
   @IsNotEmpty({
@@ -41,6 +56,13 @@ export class UnitDefaultTestRunBaseDTO {
           fieldname: args.property,
           key: KEY,
         },
+      );
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
       );
     },
   })
@@ -98,9 +120,16 @@ export class UnitDefaultTestRunBaseDTO {
       );
     },
   })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
+      );
+    },
+  })
   endDate?: Date;
 
-  @ValidateIf(o => o.endDate !== null)
+  @ValidateIf(o => o.endDate !== null || o.endHour !== null)
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('UNITDEF-18-A', {
@@ -142,15 +171,37 @@ export class UnitDefaultTestRunBaseDTO {
   endMinute?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsInRange(0, 800, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 800 for [${KEY}].`;
+    },
+  })
   responseTime?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 99999.999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99999.999 for [${KEY}].`;
+    },
+  })
   referenceValue?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
+  @IsInRange(0, 1, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be 0 or 1 for [${KEY}]`;
+    },
+  })
   runUsedIndicator?: number;
 }
 

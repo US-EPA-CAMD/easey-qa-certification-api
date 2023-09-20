@@ -24,10 +24,10 @@ export class TestExtensionExemptionMap extends BaseMap<
           : null,
       year: entity.reportingPeriod ? entity.reportingPeriod.year : null,
       quarter: entity.reportingPeriod ? entity.reportingPeriod.quarter : null,
-      monitoringSystemID: entity.system
+      monitoringSystemId: entity.system
         ? entity.system.monitoringSystemID
         : null,
-      componentID: entity.component ? entity.component.componentID : null,
+      componentId: entity.component ? entity.component.componentID : null,
       hoursUsed: entity.hoursUsed,
       spanScaleCode: entity.spanScaleCode,
       fuelCode: entity.fuelCode,

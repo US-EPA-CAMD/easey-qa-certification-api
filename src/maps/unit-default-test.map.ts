@@ -16,7 +16,7 @@ export class UnitDefaultTestMap extends BaseMap<
       noxDefaultRate: entity.noxDefaultRate,
       calculatedNoxDefaultRate: entity.calculatedNoxDefaultRate,
       operatingConditionCode: entity.operatingConditionCode,
-      groupID: entity.groupID,
+      groupId: entity.groupID,
       numberOfUnitsInGroup: entity.numberOfUnitsInGroup,
       numberOfTestsForGroup: entity.numberOfTestsForGroup,
       userId: entity.userId,

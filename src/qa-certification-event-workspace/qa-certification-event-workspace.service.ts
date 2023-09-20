@@ -80,6 +80,7 @@ export class QACertificationEventWorkspaceService {
       needsEvalFlag: 'Y',
       evalStatusCode: 'EVAL',
       pendingStatusCode: 'PENDING',
+      submissionAvailabilityCode: 'REQUIRE',
     });
 
     await this.repository.save(entity);
@@ -118,19 +119,19 @@ export class QACertificationEventWorkspaceService {
     let componentRecordId = null;
     let monitoringSystemRecordId = null;
 
-    if (payload.componentID) {
+    if (payload.componentId) {
       const component = await this.componentRepository.findOne({
         locationId: locationId,
-        componentID: payload.componentID,
+        componentID: payload.componentId,
       });
 
       componentRecordId = component ? component.id : null;
     }
 
-    if (payload.monitoringSystemID) {
+    if (payload.monitoringSystemId) {
       const monitorSystem = await this.monitoringSystemRepository.findOne({
         locationId,
-        monitoringSystemID: payload.monitoringSystemID,
+        monitoringSystemID: payload.monitoringSystemId,
       });
 
       monitoringSystemRecordId = monitorSystem ? monitorSystem.id : null;
@@ -199,9 +200,9 @@ export class QACertificationEventWorkspaceService {
 
     entity.componentRecordId = componentRecordId;
     entity.monitoringSystemRecordId = monitoringSystemRecordId;
-    entity.qaCertEventCode = payload.qaCertEventCode;
-    entity.qaCertEventDate = payload.qaCertEventDate;
-    entity.qaCertEventHour = payload.qaCertEventHour;
+    entity.qaCertEventCode = payload.certificationEventCode;
+    entity.qaCertEventDate = payload.certificationEventDate;
+    entity.qaCertEventHour = payload.certificationEventHour;
     entity.requiredTestCode = payload.requiredTestCode;
     entity.requiredTestCode = payload.requiredTestCode;
     entity.conditionalBeginDate = payload.conditionalBeginDate;
@@ -213,6 +214,7 @@ export class QACertificationEventWorkspaceService {
     entity.needsEvalFlag = 'Y';
     entity.updatedStatusFlag = 'Y';
     entity.evalStatusCode = 'EVAL';
+    entity.submissionAvailabilityCode = 'REQUIRE';
 
     await this.repository.save(entity);
 
@@ -252,9 +254,9 @@ export class QACertificationEventWorkspaceService {
     const record = await this.repository.findOne({
       where: {
         locationId,
-        qaCertEventHour: payload.qaCertEventHour,
-        qaCertEventDate: payload.qaCertEventDate,
-        qaCertEventCode: payload.qaCertEventCode,
+        qaCertEventHour: payload.certificationEventHour,
+        qaCertEventDate: payload.certificationEventDate,
+        qaCertEventCode: payload.certificationEventCode,
         componentRecordId,
         monitoringSystemRecordId,
       },

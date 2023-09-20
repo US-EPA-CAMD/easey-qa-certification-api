@@ -92,12 +92,12 @@ export class TestSummaryService {
     delete dto.transmitterTransducerData;
     delete dto.fuelFlowToLoadBaselineData;
     delete dto.fuelFlowToLoadTestData;
-    delete dto.appECorrelationTestSummaryData;
+    delete dto.appendixECorrelationTestSummaryData;
     delete dto.unitDefaultTestData;
     delete dto.hgSummaryData;
     delete dto.testQualificationData;
     delete dto.protocolGasData;
-    delete dto.airEmissionTestingData;
+    delete dto.airEmissionTestData;
 
     return dto;
   }
@@ -149,7 +149,7 @@ export class TestSummaryService {
       fuelFlowToLoadTestData,
       fuelFlowToLoadBaselineData,
       fuelFlowmeterAccuracyData,
-      appECorrelationTestSummaryData,
+      appendixECorrelationTestSummaryData,
       calibrationInjectionData,
       cycleTimeSummaryData,
       flowToLoadCheckData,
@@ -159,7 +159,7 @@ export class TestSummaryService {
       transmitterTransducerAccuracyData,
       hgSummaryData,
       testQualificationData,
-      airEmissionTestingData;
+      airEmissionTestData;
 
     let testSumIds;
 
@@ -198,7 +198,7 @@ export class TestSummaryService {
         testSumIds,
       );
 
-      appECorrelationTestSummaryData = await this.appECorrelationTestSummaryService.export(
+      appendixECorrelationTestSummaryData = await this.appECorrelationTestSummaryService.export(
         testSumIds,
       );
 
@@ -224,7 +224,7 @@ export class TestSummaryService {
         testSumIds,
       );
 
-      airEmissionTestingData = await this.airEmissionTestingService.export(
+      airEmissionTestData = await this.airEmissionTestingService.export(
         testSumIds,
       );
 
@@ -242,7 +242,7 @@ export class TestSummaryService {
         s.fuelFlowToLoadBaselineData = fuelFlowToLoadBaselineData.filter(
           i => i.testSumId === s.id,
         );
-        s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
+        s.appendixECorrelationTestSummaryData = appendixECorrelationTestSummaryData.filter(
           i => i.testSumId === s.id,
         );
         s.calibrationInjectionData = calibrationInjectionData.filter(
@@ -272,7 +272,7 @@ export class TestSummaryService {
         s.testQualificationData = testQualificationData.filter(
           i => i.testSumId === s.id,
         );
-        s.airEmissionTestingData = airEmissionTestingData.filter(
+        s.airEmissionTestData = airEmissionTestData.filter(
           i => i.testSumId === s.id,
         );
         s.hgSummaryData = hgSummaryData.filter(i => i.testSumId === s.id);

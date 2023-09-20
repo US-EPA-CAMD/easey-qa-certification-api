@@ -101,7 +101,7 @@ export class HgSummaryWorkspaceService {
     );
 
     hgSummaries.forEach(s => {
-      s.HgInjectionData = hgInjections.filter(i => i.hgTestSumId === s.id);
+      s.hgInjectionData = hgInjections.filter(i => i.hgTestSumId === s.id);
     });
 
     return hgSummaries;
@@ -202,8 +202,8 @@ export class HgSummaryWorkspaceService {
       `Hg Summary Successfully Imported. Record Id: ${createdHgSummary.id}`,
     );
 
-    if (payload.HgInjectionData?.length > 0) {
-      for (const hgInjection of payload.HgInjectionData) {
+    if (payload.hgInjectionData?.length > 0) {
+      for (const hgInjection of payload.hgInjectionData) {
         promises.push(
           this.hgInjectionService.import(
             testSumId,

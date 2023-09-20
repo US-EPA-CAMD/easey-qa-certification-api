@@ -2,15 +2,19 @@ import { Injectable, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { getManager, In } from 'typeorm';
-import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository copy';
+import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository';
 import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
 import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
+import { TeeReviewAndSubmitGlobalRepository } from './tee-review-and-submit-global.repository';
 
 @Injectable()
 export class TeeReviewAndSubmitService {
   constructor(
     @InjectRepository(TeeReviewAndSubmitRepository)
-    private readonly repository: TeeReviewAndSubmitRepository,
+    private readonly workspaceRepository: TeeReviewAndSubmitRepository,
+    @InjectRepository(TeeReviewAndSubmitGlobalRepository)
+    private readonly globalRepository: TeeReviewAndSubmitGlobalRepository,
+
     private readonly map: TeeReviewAndSubmitMap,
   ) {}
 
@@ -22,18 +26,26 @@ export class TeeReviewAndSubmitService {
     orisCodes: number[],
     monPlanIds: string[],
     quarters: string[],
+    isWorkspace: boolean = true,
   ): Promise<TeeReviewAndSubmitDTO[]> {
     const filteredDates = [];
+
+    let repository;
+    if (isWorkspace) {
+      repository = this.workspaceRepository;
+    } else {
+      repository = this.globalRepository;
+    }
 
     let data: TeeReviewAndSubmitDTO[];
     try {
       if (monPlanIds && monPlanIds.length > 0) {
         data = await this.map.many(
-          await this.repository.find({ where: { monPlanId: In(monPlanIds) } }),
+          await repository.find({ where: { monPlanId: In(monPlanIds) } }),
         );
       } else {
         data = await this.map.many(
-          await this.repository.find({ where: { orisCode: In(orisCodes) } }),
+          await repository.find({ where: { orisCode: In(orisCodes) } }),
         );
       }
 

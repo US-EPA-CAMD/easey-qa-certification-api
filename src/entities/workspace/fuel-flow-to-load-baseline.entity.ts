@@ -24,15 +24,13 @@ export class FuelFlowToLoadBaseline extends BaseEntity {
 
   @Column({
     name: 'accuracy_test_number',
-    transformer: new NumericColumnTransformer(),
   })
-  accuracyTestNumber: number;
+  accuracyTestNumber: string;
 
   @Column({
     name: 'pei_test_number',
-    transformer: new NumericColumnTransformer(),
   })
-  peiTestNumber: number;
+  peiTestNumber: string;
 
   @Column({
     name: 'avg_fuel_flow_rate',

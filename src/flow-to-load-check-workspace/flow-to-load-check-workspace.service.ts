@@ -104,14 +104,14 @@ export class FlowToLoadCheckWorkspaceService {
 
     entity.testBasisCode = payload.testBasisCode;
     entity.biasAdjustedIndicator = payload.biasAdjustedIndicator;
-    entity.avgAbsolutePercentDiff = payload.avgAbsolutePercentDiff;
+    entity.avgAbsolutePercentDiff = payload.averageAbsolutePercentDifference;
     entity.numberOfHours = payload.numberOfHours;
     entity.numberOfHoursExcludedForFuel = payload.numberOfHoursExcludedForFuel;
     entity.numberOfHoursExcludedRamping = payload.numberOfHoursExcludedRamping;
     entity.numberOfHoursExcludedBypass = payload.numberOfHoursExcludedBypass;
     entity.numberOfHoursExcludedPreRATA = payload.numberOfHoursExcludedPreRATA;
     entity.numberOfHoursExcludedTest = payload.numberOfHoursExcludedTest;
-    entity.numberOfHoursExcMainBypass = payload.numberOfHoursExcMainBypass;
+    entity.numberOfHoursExcMainBypass = payload.numberOfHoursExcludedMainBypass;
     entity.operatingLevelCode = payload.operatingLevelCode;
     entity.userId = userId;
     entity.updateDate = timestamp;

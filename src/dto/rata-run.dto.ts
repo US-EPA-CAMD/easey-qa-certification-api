@@ -1,6 +1,6 @@
 import {
   IsNotEmpty,
-  IsOptional,
+  IsNumber,
   IsPositive,
   ValidateIf,
   ValidateNested,
@@ -46,7 +46,6 @@ export class RataRunBaseDTO {
   })
   runNumber: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-30-A', {
@@ -66,9 +65,8 @@ export class RataRunBaseDTO {
       );
     },
   })
-  beginDate?: Date;
+  beginDate: Date;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-30-A', {
@@ -85,7 +83,7 @@ export class RataRunBaseDTO {
       });
     },
   })
-  beginHour?: number;
+  beginHour: number;
 
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -105,7 +103,6 @@ export class RataRunBaseDTO {
   })
   beginMinute: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-31-A', {
@@ -125,9 +122,8 @@ export class RataRunBaseDTO {
       );
     },
   })
-  endDate?: Date;
+  endDate: Date;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-31-A', {
@@ -144,7 +140,7 @@ export class RataRunBaseDTO {
       });
     },
   })
-  endHour?: number;
+  endHour: number;
 
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
@@ -164,7 +160,6 @@ export class RataRunBaseDTO {
   })
   endMinute: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-27-A', {
@@ -181,10 +176,22 @@ export class RataRunBaseDTO {
       });
     },
   })
+  @IsNumber(
+    { maxDecimalPlaces: 5 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 5 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999999999.99999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.99999 for [${KEY}].`;
+    },
+  })
   @ValidateIf(o => o.runStatusCode === 'RUNUSED')
   cemValue?: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-33-A', {
@@ -202,10 +209,22 @@ export class RataRunBaseDTO {
       });
     },
   })
+  @IsNumber(
+    { maxDecimalPlaces: 5 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 5 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(0, 9999999999.99999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.99999 for [${KEY}].`;
+    },
+  })
   @ValidateIf(o => o.runStatusCode === 'RUNUSED')
   rataReferenceValue?: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-26-A', {
@@ -222,10 +241,15 @@ export class RataRunBaseDTO {
       });
     },
   })
+  @IsNumber()
+  @IsInRange(0, 999999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999 for [${KEY}].`;
+    },
+  })
   @ValidateIf(o => o.runStatusCode === 'RUNUSED')
   grossUnitLoad?: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-29-A', {
@@ -243,7 +267,7 @@ export class RataRunBaseDTO {
       });
     },
   })
-  runStatusCode?: string;
+  runStatusCode: string;
 }
 
 export class RataRunRecordDTO extends RataRunBaseDTO {
