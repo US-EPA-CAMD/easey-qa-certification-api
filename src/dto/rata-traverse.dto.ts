@@ -180,9 +180,9 @@ export class RataTraverseBaseDTO {
       },
     },
   )
-  @IsInRange(0, 99.999, {
+  @IsInRange(-99.999, 99.999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99.999 for [${KEY}]`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -99.999 and 99.999 for [${KEY}]`;
     },
   })
   averageSquareVelocityDifferencePressure?: number;
@@ -233,19 +233,33 @@ export class RataTraverseBaseDTO {
   numberWallEffectsPoints?: number;
 
   @IsOptional()
-  @IsInt()
-  @IsInRange(-99, 99, {
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for [${KEY}]`;
+      },
+    },
+  )
+  @IsInRange(-99999.9, 90, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of -99 and 99 for [${KEY}]`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -99999.9 and 90 for [${KEY}]`;
     },
   })
   yawAngle?: number;
 
   @IsOptional()
-  @IsInt()
-  @IsInRange(-99, 99, {
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for [${KEY}]`;
+      },
+    },
+  )
+  @IsInRange(-99999.9, 90, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of -99 and 99 for [${KEY}]`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -99999.9 and 90 for [${KEY}]`;
     },
   })
   pitchAngle?: number;
@@ -259,9 +273,9 @@ export class RataTraverseBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999.99, {
+  @IsInRange(-9999.99, 9999.99, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.99 for [${KEY}]`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999.99 and 9999.99 for [${KEY}]`;
     },
   })
   calculatedVelocity?: number;
