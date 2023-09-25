@@ -241,9 +241,9 @@ export class RataTraverseBaseDTO {
       },
     },
   )
-  @IsInRange(-99999.9, 90, {
+  @IsInRange(-360, 360, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of -99999.9 and 90 for [${KEY}]`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -360 and 360 for [${KEY}]`;
     },
   })
   yawAngle?: number;
@@ -257,9 +257,9 @@ export class RataTraverseBaseDTO {
       },
     },
   )
-  @IsInRange(-99999.9, 90, {
+  @IsInRange(-360, 360, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of -99999.9 and 90 for [${KEY}]`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -360 and 360 for [${KEY}]`;
     },
   })
   pitchAngle?: number;
