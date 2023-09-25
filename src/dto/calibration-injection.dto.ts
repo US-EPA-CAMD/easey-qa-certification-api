@@ -207,9 +207,9 @@ export class CalibrationInjectionBaseDTO {
       },
     },
   )
-  @IsInRange(-9999.99, 9999999999.999, {
+  @IsInRange(-9999.999, 9999999999.999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999.990 and 9999999999.999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999.999 and 9999999999.999 for [${KEY}].`;
     },
   })
   upscaleCalibrationError?: number;
