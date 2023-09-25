@@ -200,9 +200,9 @@ export class QACertificationEventWorkspaceService {
 
     entity.componentRecordId = componentRecordId;
     entity.monitoringSystemRecordId = monitoringSystemRecordId;
-    entity.qaCertEventCode = payload.certificationEventCode;
-    entity.qaCertEventDate = payload.certificationEventDate;
-    entity.qaCertEventHour = payload.certificationEventHour;
+    entity.certificationEventCode = payload.certificationEventCode;
+    entity.certificationEventDate = payload.certificationEventDate;
+    entity.certificationEventHour = payload.certificationEventHour;
     entity.requiredTestCode = payload.requiredTestCode;
     entity.requiredTestCode = payload.requiredTestCode;
     entity.conditionalBeginDate = payload.conditionalBeginDate;
