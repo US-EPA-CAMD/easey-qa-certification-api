@@ -808,12 +808,6 @@ export class TestSummaryWorkspaceService {
       entity.evalStatusCode = 'EVAL';
 
       await this.repository.save(entity);
-
-      try {
-        await this.qaSuppDataService.setSubmissionAvailCodeToRequire(testSumId);
-      } catch (error) {
-        this.logger.log(error);
-      }
     }
   }
 
