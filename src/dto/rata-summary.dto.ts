@@ -54,20 +54,12 @@ export class RataSummaryBaseDTO {
       });
     },
   })
-  @IsInRange(
-    0,
-    20000,
-    {
-      message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatResultMessage('RATA-23-B', {
-          fieldname: args.property,
-          key: KEY,
-        });
-      },
+  @IsInt()
+  @IsInRange(-999999, 999999, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -999999 and 999999 for [${KEY}].`;
     },
-    false,
-    false,
-  )
+  })
   averageGrossUnitLoad?: number;
 
   @ApiProperty({
@@ -173,7 +165,7 @@ export class RataSummaryBaseDTO {
   )
   @IsInRange(-9999999999.99999, 9999999999.99999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.99999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999999999.99999 and 9999999999.99999 for [${KEY}].`;
     },
   })
   meanDifference?: number;
@@ -197,9 +189,9 @@ export class RataSummaryBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999999999.99999, {
+  @IsInRange(-9999999999.99999, 9999999999.99999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.99999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999999999.99999 and 9999999999.99999 for [${KEY}].`;
     },
   })
   standardDeviationDifference?: number;
