@@ -166,7 +166,7 @@ export class ProtocolGasChecksService {
 
         const gasComponents = await this.gasComponentCodeRepository.find();
 
-        gasTypeCodes.forEach(async gcCodeFromGasType => {
+        gasTypeCodes.forEach(gcCodeFromGasType => {
           const filteredGasComponent = gasComponents.find(gc => {
             return gc.gasComponentCode === gcCodeFromGasType;
           });
