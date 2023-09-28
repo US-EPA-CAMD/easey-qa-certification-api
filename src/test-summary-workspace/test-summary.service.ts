@@ -804,16 +804,9 @@ export class TestSummaryWorkspaceService {
       entity.updateDate = timestamp;
       entity.lastUpdated = timestamp;
       entity.needsEvalFlag = 'Y';
-      entity.updatedStatusFlag = 'Y';
       entity.evalStatusCode = 'EVAL';
 
       await this.repository.save(entity);
-
-      try {
-        await this.qaSuppDataService.setSubmissionAvailCodeToRequire(testSumId);
-      } catch (error) {
-        this.logger.log(error);
-      }
     }
   }
 
