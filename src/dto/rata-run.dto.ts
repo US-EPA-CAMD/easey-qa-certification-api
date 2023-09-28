@@ -184,9 +184,9 @@ export class RataRunBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999999999.99999, {
+  @IsInRange(-9999999999.99999, 9999999999.99999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.99999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999999999.99999 and 9999999999.99999 for [${KEY}].`;
     },
   })
   @ValidateIf(o => o.runStatusCode === 'RUNUSED')
@@ -217,9 +217,9 @@ export class RataRunBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999999999.99999, {
+  @IsInRange(-9999999999.99999, 9999999999.99999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.99999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999999999.99999 and 9999999999.99999 for [${KEY}].`;
     },
   })
   @ValidateIf(o => o.runStatusCode === 'RUNUSED')
@@ -242,9 +242,9 @@ export class RataRunBaseDTO {
     },
   })
   @IsNumber()
-  @IsInRange(0, 999999, {
+  @IsInRange(-999999, 999999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -999999 and 999999 for [${KEY}].`;
     },
   })
   @ValidateIf(o => o.runStatusCode === 'RUNUSED')

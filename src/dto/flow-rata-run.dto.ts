@@ -22,8 +22,6 @@ const MIN_PERCENT_CO2_PRESSURE = 0;
 const MAX_PERCENT_CO2_PRESSURE = 20;
 const MIN_PERCENT_O2_PRESSURE = 0;
 const MAX_PERCENT_O2_PRESSURE = 22;
-const MIN_PERCENT_MOISTURE = 0;
-const MAX_PERCENT_MOISTURE = 75.0;
 const MIN_DRY_WET_MOLECULAR_WEIGHT = 25;
 const MAX_DRY_WET_MOLECULAR_WEIGHT = 35;
 const MIN_NO_OF_TRAVERSE_POINTS = 12;
@@ -156,23 +154,19 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
-  @IsInRange(
-    MIN_PERCENT_MOISTURE,
-    MAX_PERCENT_MOISTURE,
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatResultMessage('RATA-67-B', {
-          value: args.value,
-          fieldname: args.property,
-          key: KEY,
-          minvalue: MIN_PERCENT_MOISTURE,
-          maxvalue: MAX_PERCENT_MOISTURE,
-        });
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
       },
     },
-    false,
-    false,
   )
+  @IsInRange(-9999.9, 75, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999.9 and 75 for [${KEY}].`;
+    },
+  })
   percentMoisture: number;
 
   @IsOptional()
