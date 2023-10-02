@@ -69,7 +69,7 @@ export default registerAs('app', () => ({
   published: getConfigValue('EASEY_QA_CERTIFICATION_API_PUBLISHED', 'local'),
   reqSizeLimit: getConfigValue(
     'EASEY_QA_CERTIFICATION_API_REQ_SIZE_LIMIT',
-    '1mb',
+    '50mb',
   ),
   // ENABLES DEBUG CONSOLE LOGS
   enableDebug: getConfigValueBoolean('EASEY_QA_CERTIFICATION_API_ENABLE_DEBUG'),
