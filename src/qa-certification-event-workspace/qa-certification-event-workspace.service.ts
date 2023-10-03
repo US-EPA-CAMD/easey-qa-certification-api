@@ -254,9 +254,9 @@ export class QACertificationEventWorkspaceService {
     const record = await this.repository.findOne({
       where: {
         locationId,
-        qaCertEventHour: payload.certificationEventHour,
-        qaCertEventDate: payload.certificationEventDate,
-        qaCertEventCode: payload.certificationEventCode,
+        certificationEventHour: payload.certificationEventHour,
+        certificationEventDate: payload.certificationEventDate,
+        certificationEventCode: payload.certificationEventCode,
         componentRecordId,
         monitoringSystemRecordId,
       },

@@ -5,10 +5,10 @@ export class QACertEventCode extends BaseEntity {
   @PrimaryColumn({
     name: 'qa_cert_event_cd',
   })
-  qaCertEventCode: string;
+  certificationEventCode: string;
 
   @Column({
     name: 'qa_cert_event_cd_description',
   })
-  qaCertEventCodeDescription: string;
+  certificationEventDescription: string;
 }
