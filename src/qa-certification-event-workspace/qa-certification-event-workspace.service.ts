@@ -200,9 +200,9 @@ export class QACertificationEventWorkspaceService {
 
     entity.componentRecordId = componentRecordId;
     entity.monitoringSystemRecordId = monitoringSystemRecordId;
-    entity.qaCertEventCode = payload.certificationEventCode;
-    entity.qaCertEventDate = payload.certificationEventDate;
-    entity.qaCertEventHour = payload.certificationEventHour;
+    entity.certificationEventCode = payload.certificationEventCode;
+    entity.certificationEventDate = payload.certificationEventDate;
+    entity.certificationEventHour = payload.certificationEventHour;
     entity.requiredTestCode = payload.requiredTestCode;
     entity.requiredTestCode = payload.requiredTestCode;
     entity.conditionalBeginDate = payload.conditionalBeginDate;
@@ -254,9 +254,9 @@ export class QACertificationEventWorkspaceService {
     const record = await this.repository.findOne({
       where: {
         locationId,
-        qaCertEventHour: payload.certificationEventHour,
-        qaCertEventDate: payload.certificationEventDate,
-        qaCertEventCode: payload.certificationEventCode,
+        certificationEventHour: payload.certificationEventHour,
+        certificationEventDate: payload.certificationEventDate,
+        certificationEventCode: payload.certificationEventCode,
         componentRecordId,
         monitoringSystemRecordId,
       },

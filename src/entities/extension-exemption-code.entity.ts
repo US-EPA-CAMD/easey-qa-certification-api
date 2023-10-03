@@ -8,7 +8,7 @@ export class ExtensionExemptionCode extends BaseEntity {
   extensionExemptionCode: string;
 
   @Column({
-    name: 'extens_exempt_cd_description',
+    name: 'extens_exemp_cd_description',
   })
   extensionExemptionCodeDescription: string;
 }

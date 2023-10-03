@@ -116,9 +116,9 @@ export class QACertificationEventChecksService {
 
       qaCertEvents = await this.repository.find({
         locationId,
-        qaCertEventCode: certificationEventCode,
-        qaCertEventHour: certificationEventHour,
-        qaCertEventDate: certificationEventDate,
+        certificationEventCode,
+        certificationEventHour,
+        certificationEventDate,
         monitoringSystemRecordId,
         componentRecordId,
       });
