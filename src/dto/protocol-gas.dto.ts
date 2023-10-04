@@ -14,7 +14,9 @@ import {
   MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
 import { GasLevelCode } from '../entities/workspace/gas-level-code.entity';
-import { GasTypeCode } from '../entities/workspace/gas-type-code.entity';
+import { GasComponentCode } from '../entities/gas-component-code.entity';
+import { IsValidCodes } from '../pipes/is-valid-codes.pipe';
+import { FindOneOptions, In } from 'typeorm';
 
 const KEY = 'Protocol Gas';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -48,19 +50,24 @@ export class ProtocolGasBaseDTO {
     },
   })
   @IsString()
-  // TODO: All the GasTypeCodes used in the historical recornds but not in the List of the available GasTypeCodes in the DB table.
-  // @IsValidCode(GasTypeCode, {
-  //   message: (args: ValidationArguments) => {
-  //     return CheckCatalogService.formatMessage(
-  //       'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
-  //       {
-  //         value: args.value,
-  //         fieldname: args.property,
-  //         key: KEY,
-  //       },
-  //     );
-  //   },
-  // })
+  @IsValidCodes(
+    GasComponentCode,
+    (args: ValidationArguments): FindOneOptions<GasComponentCode> => {
+      return { where: { gasComponentCode: In(args.value), groupCode: 'GTC' } };
+    },
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatMessage(
+          'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+          {
+            value: args.value,
+            fieldname: args.property,
+            key: KEY,
+          },
+        );
+      },
+    },
+  )
   gasTypeCode: string;
 
   @IsOptional()
