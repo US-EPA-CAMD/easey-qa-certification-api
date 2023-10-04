@@ -77,11 +77,30 @@ export class LinearitySummaryChecksService {
       if (error) {
         errorList.push(error);
       }
+
+      if (!isImport) {
+        error = await this.linear18Check(linearitySummary.percentError);
+        if (error) {
+          errorList.push(error);
+        }
+      }
     }
 
     this.throwIfErrors(errorList, isImport);
     this.logger.log('Completed Linearity Summary Checks');
     return errorList;
+  }
+
+  // LINEAR-18
+  private async linear18Check(percentError: number) {
+    if (percentError < 0) {
+      return this.getMessage('LINEAR-18-B', {
+        value: percentError,
+        fieldname: 'percentError',
+        key: 'Linearity Summary',
+      });
+    }
+    return null;
   }
 
   // LINEAR-15

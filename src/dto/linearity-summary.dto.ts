@@ -114,15 +114,6 @@ export class LinearitySummaryBaseDTO {
       });
     },
   })
-  @IsNotNegative({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('LINEAR-18-B', {
-        value: args.value,
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
   @IsNumber(
     { maxDecimalPlaces: 1 },
     {
