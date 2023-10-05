@@ -2,7 +2,6 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInRange, Max, Min } from '@us-epa-camd/easey-common/pipes';
 import { Type } from 'class-transformer';
 import {
-  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
