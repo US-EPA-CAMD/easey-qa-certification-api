@@ -1,7 +1,7 @@
 import {
   IsNotEmpty,
   IsNumber,
-  ValidateIf,
+  IsOptional,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
@@ -158,7 +158,7 @@ export class RataRunBaseDTO {
   })
   endMinute: number;
 
-  
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 5 },
     {
@@ -172,9 +172,9 @@ export class RataRunBaseDTO {
       return `The value of [${args.value}] for [${args.property}] must be within the range of -9999999999.99999 and 9999999999.99999 for [${KEY}].`;
     },
   })
-  @ValidateIf(o => o.runStatusCode === 'RUNUSED')
   cemValue?: number;
 
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 5 },
     {
@@ -188,9 +188,9 @@ export class RataRunBaseDTO {
       return `The value of [${args.value}] for [${args.property}] must be within the range of -9999999999.99999 and 9999999999.99999 for [${KEY}].`;
     },
   })
-  @ValidateIf(o => o.runStatusCode === 'RUNUSED')
   rataReferenceValue?: number;
 
+  @IsOptional()
   @IsNumber()
   @IsInRange(-999999, 999999, {
     message: (args: ValidationArguments) => {
