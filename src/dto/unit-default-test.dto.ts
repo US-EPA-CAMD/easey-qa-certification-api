@@ -9,11 +9,13 @@ import {
   IsOptional,
   IsString,
   MaxLength,
+  ValidateNested,
   ValidationArguments,
 } from 'class-validator';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { FuelCode } from '../entities/fuel-code.entity';
 import { OperatingConditionCode } from '../entities/operating-condition-code.entity';
+import { Type } from 'class-transformer';
 
 const KEY = 'Unit Default Test';
 
@@ -104,6 +106,8 @@ export class UnitDefaultTestRecordDTO extends UnitDefaultTestBaseDTO {
 }
 
 export class UnitDefaultTestImportDTO extends UnitDefaultTestBaseDTO {
+  @ValidateNested({ each: true })
+  @Type(() => UnitDefaultTestRunImportDTO)
   unitDefaultTestRunData: UnitDefaultTestRunImportDTO[];
 }
 
