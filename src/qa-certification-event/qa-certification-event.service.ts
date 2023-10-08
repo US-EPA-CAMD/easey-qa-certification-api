@@ -69,7 +69,7 @@ export class QaCertificationEventService {
     beginDate?: Date,
     endDate?: Date,
   ): Promise<QACertificationEventDTO[]> {
-    const testSummaries = await this.getQACertEvents(
+    const qaCertEvents = await this.getQACertEvents(
       facilityId,
       unitIds,
       stackPipeIds,
@@ -78,6 +78,6 @@ export class QaCertificationEventService {
       endDate,
     );
 
-    return testSummaries;
+    return qaCertEvents;
   }
 }
