@@ -15,8 +15,7 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { GasLevelCode } from '../entities/workspace/gas-level-code.entity';
 import { GasComponentCode } from '../entities/gas-component-code.entity';
-import { Transform } from 'class-transformer';
-import { IsValidCodes } from 'src/pipes/is-valid-codes.pipe';
+import { IsValidCodes } from '../pipes/is-valid-codes.pipe';
 import { FindOneOptions, In } from 'typeorm';
 
 const KEY = 'Protocol Gas';
