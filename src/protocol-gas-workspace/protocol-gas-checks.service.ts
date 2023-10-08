@@ -95,7 +95,7 @@ export class ProtocolGasChecksService {
   }
 
   private async pgvp8andpgvp12and13Checks(
-    gasTypeCode: string[],
+    gasTypeCode: string,
     testSumRecord: TestSummary,
   ): Promise<string[]> {
     let error: string;

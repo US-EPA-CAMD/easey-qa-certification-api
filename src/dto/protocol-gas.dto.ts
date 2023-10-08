@@ -51,26 +51,19 @@ export class ProtocolGasBaseDTO {
     },
   })
   @IsString()
-  @Transform(({ value }) => value.split(',').map((item: string) => item.trim()))
   @IsValidCodes(
     GasComponentCode,
     (args: ValidationArguments): FindOneOptions<GasComponentCode> => {
-      return { where: { gasComponentCode: In(args.value) } };
+      let codes = args.value.split(',');
+      return { where: { gasComponentCode: In(codes) } };
     },
     {
       message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatMessage(
-          'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
-          {
-            value: args.value,
-            fieldname: args.property,
-            key: KEY,
-          },
-        );
+        return `You reported the value [${args.value}] for [${args.property}], all or some of the codes are not in the list of valid values.`;
       },
     },
   )
-  gasTypeCode: string[];
+  gasTypeCode: string;
 
   @IsOptional()
   @IsString()
