@@ -26,39 +26,54 @@ export class QACertificationService {
 
     const SUMMARIES = 0;
     promises.push(
-      this.testSummaryService.export(
-        params.facilityId,
-        params.unitIds,
-        params.stackPipeIds,
-        params.testSummaryIds,
-        params.testTypeCodes,
-        params.beginDate,
-        params.endDate,
-      ),
+      params.testSummaryIds ||
+        (!params.testSummaryIds &&
+          !params.qaCertificationEventIds &&
+          !params.qaTestExtensionExemptionIds)
+        ? this.testSummaryService.export(
+            params.facilityId,
+            params.unitIds,
+            params.stackPipeIds,
+            params.testSummaryIds,
+            params.testTypeCodes,
+            params.beginDate,
+            params.endDate,
+          )
+        : [],
     );
 
     const EVENTS = SUMMARIES + 1;
     promises.push(
-      this.qaCertEventService.export(
-        params.facilityId,
-        params.unitIds,
-        params.stackPipeIds,
-        params.qaCertificationEventIds,
-        params.beginDate,
-        params.endDate,
-      ),
+      params.qaCertificationEventIds ||
+        (!params.testSummaryIds &&
+          !params.qaCertificationEventIds &&
+          !params.qaTestExtensionExemptionIds)
+        ? this.qaCertEventService.export(
+            params.facilityId,
+            params.unitIds,
+            params.stackPipeIds,
+            params.qaCertificationEventIds,
+            params.beginDate,
+            params.endDate,
+          )
+        : [],
     );
 
     const EXT_EXEMPTIONS = EVENTS + 1;
     promises.push(
-      this.testExtensionExemptionService.export(
-        params.facilityId,
-        params.unitIds,
-        params.stackPipeIds,
-        params.qaTestExtensionExemptionIds,
-        params.beginDate,
-        params.endDate,
-      ),
+      params.qaTestExtensionExemptionIds ||
+        (!params.testSummaryIds &&
+          !params.qaCertificationEventIds &&
+          !params.qaTestExtensionExemptionIds)
+        ? this.testExtensionExemptionService.export(
+            params.facilityId,
+            params.unitIds,
+            params.stackPipeIds,
+            params.qaTestExtensionExemptionIds,
+            params.beginDate,
+            params.endDate,
+          )
+        : [],
     );
 
     const results = await Promise.all(promises);
