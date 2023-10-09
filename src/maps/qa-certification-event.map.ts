@@ -22,9 +22,9 @@ export class QACertificationEventMap extends BaseMap<
         ? entity.system.monitoringSystemID
         : null,
       componentId: entity.component ? entity.component.componentID : null,
-      certificationEventCode: entity.qaCertEventCode,
-      certificationEventDate: entity.qaCertEventDate,
-      certificationEventHour: entity.qaCertEventHour,
+      certificationEventCode: entity.certificationEventCode,
+      certificationEventDate: entity.certificationEventDate,
+      certificationEventHour: entity.certificationEventHour,
       requiredTestCode: entity.requiredTestCode,
       conditionalBeginDate: entity.conditionalBeginDate,
       conditionalBeginHour: entity.conditionalBeginHour,

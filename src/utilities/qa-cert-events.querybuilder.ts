@@ -42,7 +42,7 @@ export const addBeginAndEndDateWhere = (
         qb1.where(
           new Brackets(qb2 => {
             qb2.andWhere(
-              'qce.qaCertEventDate BETWEEN :beginDate AND :endDate',
+              'qce.certificationEventDate BETWEEN :beginDate AND :endDate',
               {
                 beginDate,
                 endDate,

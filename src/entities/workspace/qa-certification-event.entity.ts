@@ -42,20 +42,20 @@ export class QACertificationEvent extends BaseEntity {
     name: 'qa_cert_event_cd',
     type: 'varchar',
   })
-  qaCertEventCode: string;
+  certificationEventCode: string;
 
   @Column({
     name: 'qa_cert_event_date',
     type: 'date',
   })
-  qaCertEventDate: Date;
+  certificationEventDate: Date;
 
   @Column({
     name: 'qa_cert_event_hour',
     type: 'numeric',
     transformer: new NumericColumnTransformer(),
   })
-  qaCertEventHour: number;
+  certificationEventHour: number;
 
   @Column({
     name: 'required_test_cd',

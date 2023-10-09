@@ -3,12 +3,14 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  ValidateNested,
   ValidationArguments,
 } from 'class-validator';
 import { HgInjectionDTO, HgInjectionImportDTO } from './hg-injection.dto';
 import { IsInRange, IsValidCode } from '@us-epa-camd/easey-common/pipes';
 import { GasLevelCode } from '../entities/workspace/gas-level-code.entity';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { Type } from 'class-transformer';
 
 const KEY = 'Hg Test Summary';
 
@@ -99,6 +101,8 @@ export class HgSummaryRecordDTO extends HgSummaryBaseDTO {
 }
 
 export class HgSummaryImportDTO extends HgSummaryBaseDTO {
+  @ValidateNested({ each: true })
+  @Type(() => HgInjectionImportDTO)
   hgInjectionData: HgInjectionImportDTO[];
 }
 

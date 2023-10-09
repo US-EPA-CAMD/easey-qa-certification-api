@@ -80,7 +80,7 @@ export class QACertificationEventChecksService {
     const duplicateQACertEvent = this.getErrorMessage('QACERT-11-A', {
       recordtype: KEY,
       fieldnames:
-        'locationId, qaCertEventCode, qaCertEventHour, qaCertEventDate, monitoringSystemId, componentId',
+        'locationId, certificationEventCode, certificationEventHour, certificationEventDate, monitoringSystemId, componentId',
     });
 
     if (isImport) {
@@ -116,9 +116,9 @@ export class QACertificationEventChecksService {
 
       qaCertEvents = await this.repository.find({
         locationId,
-        qaCertEventCode: certificationEventCode,
-        qaCertEventHour: certificationEventHour,
-        qaCertEventDate: certificationEventDate,
+        certificationEventCode,
+        certificationEventHour,
+        certificationEventDate,
         monitoringSystemRecordId,
         componentRecordId,
       });

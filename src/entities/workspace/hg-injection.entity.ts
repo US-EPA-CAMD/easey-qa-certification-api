@@ -26,7 +26,7 @@ export class HgInjection extends BaseEntity {
   hgTestSumId: string;
 
   @Column({
-    type: 'varchar',
+    type: 'date',
     name: 'injection_date',
   })
   injectionDate: Date;

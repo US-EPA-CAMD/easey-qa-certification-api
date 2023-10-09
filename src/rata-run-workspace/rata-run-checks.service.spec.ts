@@ -124,7 +124,9 @@ describe('Rata Run Check Service Test', () => {
           false,
         );
       } catch (err) {
-        expect(err.response.message).toEqual(MOCK_ERROR_MSG);
+        expect(err.response.message).toEqual(
+          `${MOCK_ERROR_MSG}\n${MOCK_ERROR_MSG}`,
+        );
       }
     });
   });

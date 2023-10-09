@@ -2,7 +2,6 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInRange, Max, Min } from '@us-epa-camd/easey-common/pipes';
 import { Type } from 'class-transformer';
 import {
-  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -170,12 +169,19 @@ export class FlowRataRunBaseDTO {
   percentMoisture: number;
 
   @IsOptional()
-  @IsInt()
   @IsInRange(MIN_DRY_WET_MOLECULAR_WEIGHT, MAX_DRY_WET_MOLECULAR_WEIGHT, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be in the range of ${MIN_DRY_WET_MOLECULAR_WEIGHT} to ${MAX_DRY_WET_MOLECULAR_WEIGHT} for [${KEY}].`;
     },
   })
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 2 decimal place for $[${KEY}].`;
+      },
+    },
+  )
   dryMolecularWeight?: number;
 
   @IsNotEmpty({
@@ -197,6 +203,14 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 2 decimal place for $[${KEY}].`;
+      },
+    },
+  )
   wetMolecularWeight: number;
 
   @IsNotEmpty({

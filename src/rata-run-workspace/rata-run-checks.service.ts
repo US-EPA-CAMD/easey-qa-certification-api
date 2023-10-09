@@ -66,10 +66,30 @@ export class RataRunChecksService {
     }
 
     if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
-      // RATA-27 Result C
-      error = this.rata27Check(rataRun, testSumRecord);
-      if (error) {
-        errorList.push(error);
+      if (!isImport && rataRun.runStatusCode === 'RUNUSED') {
+        // RATA-26
+        error = this.rata26Check(rataRun.grossUnitLoad);
+        if (error) {
+          errorList.push(error);
+        }
+
+        // RATA-27
+        error = this.rata27Check(rataRun, testSumRecord);
+        if (error) {
+          errorList.push(error);
+        }
+
+        // RATA-33
+        error = this.rata33Check(rataRun, testSumRecord);
+        if (error) {
+          errorList.push(error);
+        }
+
+        // RATA-130
+        error = this.rata130Check(rataRun, testSumRecord);
+        if (error) {
+          errorList.push(error);
+        }
       }
 
       // RATA-29 Result C
@@ -80,18 +100,6 @@ export class RataRunChecksService {
 
       // RATA-31 Result B
       error = this.rata31Check(rataRun);
-      if (error) {
-        errorList.push(error);
-      }
-
-      // RATA-33 Result C
-      error = this.rata33Check(rataRun, testSumRecord);
-      if (error) {
-        errorList.push(error);
-      }
-
-      // RATA-130
-      error = this.rata130Check(rataRun, testSumRecord);
       if (error) {
         errorList.push(error);
       }
@@ -110,10 +118,37 @@ export class RataRunChecksService {
     return errorList;
   }
 
+  private rata26Check(grossUnitLoad: number): string {
+    if (grossUnitLoad === null || grossUnitLoad === undefined) {
+      return this.getMessage('RATA-26-A', {
+        fieldname: 'grossUnitLoad',
+        key: KEY,
+      });
+    } else if (grossUnitLoad <= 0) {
+      return this.getMessage('RATA-26-B', {
+        fieldname: 'grossUnitLoad',
+        key: KEY,
+      });
+    }
+    return null;
+  }
+
   private rata27Check(
     rataRun: RataRunBaseDTO,
     testSumRecord: TestSummary,
   ): string {
+    if (rataRun.cemValue === null || rataRun.cemValue === undefined) {
+      return this.getMessage('RATA-27-A', {
+        fieldname: 'cemValue',
+        key: KEY,
+      });
+    } else if (rataRun.cemValue < 0) {
+      return this.getMessage('RATA-27-B', {
+        fieldname: 'cemValue',
+        key: KEY,
+      });
+    }
+
     return (
       this.rataRunValueFloatCheck(
         rataRun,
@@ -144,6 +179,22 @@ export class RataRunChecksService {
     rataRun: RataRunBaseDTO,
     testSumRecord: TestSummary,
   ): string {
+    if (
+      rataRun.rataReferenceValue === null ||
+      rataRun.rataReferenceValue === undefined
+    ) {
+      return this.getMessage('RATA-33-A', {
+        fieldname: rataRun.rataReferenceValue,
+        key: KEY,
+      });
+    } else if (rataRun.rataReferenceValue < 0) {
+      return this.getMessage('RATA-33-B', {
+        value: rataRun.rataReferenceValue,
+        fieldname: 'rataReferenceValue',
+        key: KEY,
+      });
+    }
+
     return (
       this.rataRunValueFloatCheck(
         rataRun,

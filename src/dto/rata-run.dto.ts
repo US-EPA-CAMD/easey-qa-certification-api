@@ -1,8 +1,7 @@
 import {
   IsNotEmpty,
   IsNumber,
-  IsPositive,
-  ValidateIf,
+  IsOptional,
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
@@ -11,7 +10,6 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { RunStatusCode } from '../entities/run-status-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { FlowRataRunDTO, FlowRataRunImportDTO } from './flow-rata-run.dto';
-import { IsNotNegative } from '../pipes/is-not-negative.pipe';
 import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
 import { Type } from 'class-transformer';
 
@@ -160,22 +158,7 @@ export class RataRunBaseDTO {
   })
   endMinute: number;
 
-  @IsNotEmpty({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-27-A', {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
-  @IsNotNegative({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-27-B', {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 5 },
     {
@@ -189,26 +172,9 @@ export class RataRunBaseDTO {
       return `The value of [${args.value}] for [${args.property}] must be within the range of -9999999999.99999 and 9999999999.99999 for [${KEY}].`;
     },
   })
-  @ValidateIf(o => o.runStatusCode === 'RUNUSED')
   cemValue?: number;
 
-  @IsNotEmpty({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-33-A', {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
-  @IsNotNegative({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-33-B', {
-        value: args.value,
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
+  @IsOptional()
   @IsNumber(
     { maxDecimalPlaces: 5 },
     {
@@ -222,32 +188,15 @@ export class RataRunBaseDTO {
       return `The value of [${args.value}] for [${args.property}] must be within the range of -9999999999.99999 and 9999999999.99999 for [${KEY}].`;
     },
   })
-  @ValidateIf(o => o.runStatusCode === 'RUNUSED')
   rataReferenceValue?: number;
 
-  @IsNotEmpty({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-26-A', {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
-  @IsPositive({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatResultMessage('RATA-26-B', {
-        fieldname: args.property,
-        key: KEY,
-      });
-    },
-  })
+  @IsOptional()
   @IsNumber()
   @IsInRange(-999999, 999999, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of -999999 and 999999 for [${KEY}].`;
     },
   })
-  @ValidateIf(o => o.runStatusCode === 'RUNUSED')
   grossUnitLoad?: number;
 
   @IsNotEmpty({
