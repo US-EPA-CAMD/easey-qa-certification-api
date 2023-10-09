@@ -95,7 +95,7 @@ export class ProtocolGasChecksService {
   }
 
   private async pgvp8andpgvp12and13Checks(
-    gasTypeCode: string,
+    gasTypeCode: string[],
     testSumRecord: TestSummary,
   ): Promise<string[]> {
     let error: string;
@@ -157,12 +157,6 @@ export class ProtocolGasChecksService {
         balanceComponentCount = 0;
 
         let gasTypeCodes = [];
-
-        if (gasTypeCode.includes(',')) {
-          gasTypeCode.split(',').forEach(c => gasTypeCodes.push(c.trim()));
-        } else {
-          gasTypeCodes.push(gasTypeCode.trim());
-        }
 
         const gasComponents = await this.gasComponentCodeRepository.find();
 

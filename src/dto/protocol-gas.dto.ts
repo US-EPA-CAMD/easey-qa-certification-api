@@ -15,7 +15,8 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { GasLevelCode } from '../entities/workspace/gas-level-code.entity';
 import { GasComponentCode } from '../entities/gas-component-code.entity';
-import { IsValidCodes } from '../pipes/is-valid-codes.pipe';
+import { Transform } from 'class-transformer';
+import { IsValidCodes } from 'src/pipes/is-valid-codes.pipe';
 import { FindOneOptions, In } from 'typeorm';
 
 const KEY = 'Protocol Gas';
@@ -50,10 +51,11 @@ export class ProtocolGasBaseDTO {
     },
   })
   @IsString()
+  @Transform(({ value }) => value.split(',').map((item: string) => item.trim()))
   @IsValidCodes(
     GasComponentCode,
     (args: ValidationArguments): FindOneOptions<GasComponentCode> => {
-      return { where: { gasComponentCode: In(args.value), groupCode: 'GTC' } };
+      return { where: { gasComponentCode: In(args.value) } };
     },
     {
       message: (args: ValidationArguments) => {
@@ -68,7 +70,7 @@ export class ProtocolGasBaseDTO {
       },
     },
   )
-  gasTypeCode: string;
+  gasTypeCode: string[];
 
   @IsOptional()
   @IsString()

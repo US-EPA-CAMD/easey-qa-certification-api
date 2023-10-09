@@ -35,7 +35,7 @@ export class ProtocolGas extends BaseEntity {
     type: 'varchar',
     name: 'gas_type_cd',
   })
-  gasTypeCode: string;
+  gasTypeCode: string[];
 
   @Column({ type: 'varchar', name: 'vendor_id' })
   vendorIdentifier: string;
