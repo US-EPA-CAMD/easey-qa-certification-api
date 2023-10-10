@@ -10,6 +10,9 @@ import {
 } from '../utilities/test-summary.querybuilder';
 
 import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { HttpStatus } from '@nestjs/common';
+
 @EntityRepository(TestSummary)
 export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
   private buildBaseQuery(): SelectQueryBuilder<TestSummary> {
@@ -21,7 +24,18 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
     const query = this.buildBaseQuery().where('ts.id = :testSumId', {
       testSumId,
     });
-    return query.getOne();
+
+    const record = await query.getOne();
+    if (!record) {
+      throw new EaseyException(
+        new Error(
+          `A test summary record not found with Record Id [${testSumId}].`,
+        ),
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return record;
   }
 
   async getTestSummaryByLocationId(
