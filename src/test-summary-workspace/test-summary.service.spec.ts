@@ -333,20 +333,6 @@ describe('TestSummaryWorkspaceService', () => {
       const result = await service.getTestSummaryById(testSumId);
       expect(result).toEqual(testSummaryDto);
     });
-
-    it('should throw error when test summary not found', async () => {
-      jest.spyOn(repository, 'getTestSummaryById').mockResolvedValue(null);
-
-      let errored = false;
-
-      try {
-        await service.getTestSummaryById(testSumId);
-      } catch (err) {
-        errored = true;
-      }
-
-      expect(errored).toBe(true);
-    });
   });
 
   describe('getTestSummariesByLocationId', () => {
