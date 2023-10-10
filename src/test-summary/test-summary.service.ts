@@ -70,6 +70,15 @@ export class TestSummaryService {
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
     const result = await this.repository.getTestSummaryById(testSumId);
 
+    if (!result) {
+      throw new EaseyException(
+        new Error(
+          `A test summary record not found with Record Id [${testSumId}].`,
+        ),
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
     const dto = await this.map.one(result);
 
     delete dto.calibrationInjectionData;
