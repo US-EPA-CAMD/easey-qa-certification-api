@@ -158,7 +158,9 @@ export class ProtocolGasChecksService {
         containsZERO = false;
         balanceComponentCount = 0;
 
-        let gasTypeCodes = gasTypeCode.split(',');
+        let gasTypeCodes = gasTypeCode.includes(',')
+          ? gasTypeCode.split(',')
+          : [gasTypeCode];
 
         const gasComponents = await this.gasComponentCodeRepository.find();
 

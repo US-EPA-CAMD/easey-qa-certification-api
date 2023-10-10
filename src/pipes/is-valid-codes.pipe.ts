@@ -21,11 +21,14 @@ export function IsValidCodes(
       validator: {
         async validate(value: string | string[], args: ValidationArguments) {
           if (value) {
-            if (typeof value === 'string' && value.includes(',')) {
-              value = value.split(',');
-            }
-            if (typeof value === 'string' && value.includes('|')) {
-              value = value.split('|');
+            if (typeof value === 'string') {
+              if (value.includes(',')) {
+                value = value.split(',');
+              } else if (value.includes('|')) {
+                value = value.split('|');
+              } else {
+                value = [value];
+              }
             }
             const manager = getManager();
             const found = await manager.find(type, findOption(args));
