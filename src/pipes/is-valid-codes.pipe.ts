@@ -19,11 +19,20 @@ export function IsValidCodes(
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        async validate(value: any, args: ValidationArguments) {
+        async validate(value: string | string[], args: ValidationArguments) {
           if (value) {
+            if (typeof value === 'string') {
+              if (value.includes(',')) {
+                value = value.split(',');
+              } else if (value.includes('|')) {
+                value = value.split('|');
+              } else {
+                value = [value];
+              }
+            }
             const manager = getManager();
-            const found = await manager.findOne(type, findOption(args));
-            return found != null;
+            const found = await manager.find(type, findOption(args));
+            return found.length === value.length;
           }
           return true;
         },

@@ -34,7 +34,7 @@ export class TestSummaryParamsDTO {
     },
     {
       message: (args: ValidationArguments) => {
-        return `The database does not contain any Test Type Code with ${args.value}`;
+        return `You reported the value of [${args.value}] for [${args.property}], all or some of the codes are not in the list of valid values.`;
       },
     },
   )

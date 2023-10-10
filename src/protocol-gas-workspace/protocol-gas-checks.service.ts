@@ -84,6 +84,7 @@ export class ProtocolGasChecksService {
     const errors = await this.pgvp8andpgvp12and13Checks(
       protocolGas.gasTypeCode,
       testSumRecord,
+      isImport,
     );
     if (errors.length > 0) {
       errorList.push(...errors);
@@ -97,6 +98,7 @@ export class ProtocolGasChecksService {
   private async pgvp8andpgvp12and13Checks(
     gasTypeCode: string,
     testSumRecord: TestSummary,
+    isImport: boolean = false,
   ): Promise<string[]> {
     let error: string;
     let errorList: string[] = [];
@@ -156,19 +158,22 @@ export class ProtocolGasChecksService {
         containsZERO = false;
         balanceComponentCount = 0;
 
-        let gasTypeCodes = [];
-
-        if (gasTypeCode.includes(',')) {
-          gasTypeCode.split(',').forEach(c => gasTypeCodes.push(c.trim()));
-        } else {
-          gasTypeCodes.push(gasTypeCode.trim());
-        }
+        let gasTypeCodes = gasTypeCode.includes(',')
+          ? gasTypeCode.split(',')
+          : [gasTypeCode];
 
         const gasComponents = await this.gasComponentCodeRepository.find();
 
         gasTypeCodes.forEach(gcCodeFromGasType => {
           const filteredGasComponent = gasComponents.find(gc => {
-            return gc.gasComponentCode === gcCodeFromGasType;
+            if (!isImport) {
+              return (
+                gc.gasComponentCode === gcCodeFromGasType &&
+                gc.groupCode === 'GCC'
+              );
+            } else {
+              return gc.gasComponentCode === gcCodeFromGasType;
+            }
           });
 
           if (!filteredGasComponent) {
@@ -278,9 +283,8 @@ export class ProtocolGasChecksService {
               ) {
                 errorCodes.push({ code: 'PGVP-13-B' });
               } else if (
-                (testSumRecord.testTypeCode === 'LINE' &&
-                  protocolGasParameter === 'NOX') ||
-                protocolGasParameter === 'NOXC'
+                testSumRecord.testTypeCode === 'LINE' &&
+                ['NOX', 'NOXC'].includes(protocolGasParameter)
               ) {
                 if (
                   !gasTypeCodes.some(cd => ['NO', 'NO2', 'NOX'].includes(cd))

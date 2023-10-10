@@ -1,15 +1,15 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
 import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 
-@Entity({ name: 'camdecmpsmd.gas_component_code' })
+@Entity({ name: 'camdecmpsmd.vw_gas_component_code' })
 export class GasComponentCode {
   @PrimaryColumn({
-    name: 'gas_component_cd',
+    name: 'code',
   })
   gasComponentCode: string;
 
   @Column({
-    name: 'gas_component_description',
+    name: 'description',
   })
   gasComponentCodeDescription: string;
 
@@ -24,4 +24,9 @@ export class GasComponentCode {
     transformer: new NumericColumnTransformer(),
   })
   balanceComponentIndicator: number;
+
+  @Column({
+    name: 'group_cd',
+  })
+  groupCode: string;
 }
