@@ -30,6 +30,7 @@ export function IsValidCodes(
                 value = [value];
               }
             }
+            value = value.filter((v) => v !== '')
             const manager = getManager();
             const found = await manager.find(type, findOption(args));
             return found.length === value.length;

@@ -142,7 +142,7 @@ describe('ProtocolGasWorkspaceService', () => {
         .spyOn(service, 'createProtocolGas')
         .mockResolvedValue(protocolGasDTO);
 
-      await service.import(testSumId, new ProtocolGasImportDTO(), userId, true);
+      await service.import(testSumId, new ProtocolGasImportDTO(), userId);
     });
   });
 });
