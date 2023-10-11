@@ -407,7 +407,6 @@ export class TestSummaryWorkspaceService {
             createdTestSummary.id,
             protocolGas,
             userId,
-            historicalrecordId !== null ? true : false,
           ),
         );
       }

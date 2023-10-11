@@ -57,13 +57,12 @@ export class ProtocolGasWorkspaceService {
     payload: ProtocolGasBaseDTO,
     userId: string,
     isImport: boolean = false,
-    historicalRecordId?: string,
   ): Promise<ProtocolGasRecordDTO> {
     const timestamp = currentDateTime().toLocaleDateString();
 
     let entity = this.repository.create({
       ...payload,
-      id: historicalRecordId ? historicalRecordId : uuid(),
+      id: uuid(),
       testSumId,
       userId,
       addDate: timestamp,
@@ -149,26 +148,14 @@ export class ProtocolGasWorkspaceService {
     testSumId: string,
     payload: ProtocolGasImportDTO,
     userId: string,
-    isHistoricalRecord: boolean,
   ) {
     const isImport = true;
-    let historicalRecord: ProtocolGas;
-
-    if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
-        testSumId: testSumId,
-        gasLevelCode: payload.gasLevelCode,
-        cylinderIdentifier: payload.cylinderIdentifier,
-        gasTypeCode: payload.gasTypeCode,
-      });
-    }
 
     const createdProtocolGas = await this.createProtocolGas(
       testSumId,
       payload,
       userId,
       isImport,
-      historicalRecord ? historicalRecord.id : null,
     );
 
     this.logger.log(
