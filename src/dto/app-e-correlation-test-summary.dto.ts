@@ -18,9 +18,9 @@ const KEY = 'Appendix E Correlation Test Summary';
 export class AppECorrelationTestSummaryBaseDTO {
   @IsInt()
   @IsNotEmpty()
-  @IsInRange(1, 99, {
+  @IsInRange(0, 99, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 1 and 99 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99 for [${KEY}].`;
     },
   })
   operatingLevelForRun: number;
@@ -34,9 +34,9 @@ export class AppECorrelationTestSummaryBaseDTO {
       },
     },
   )
-  @IsInRange(0, 3, {
+  @IsInRange(-99999.999, 99999.999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 3 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -99999.999 and 99999.999 for [${KEY}].`;
     },
   })
   meanReferenceValue?: number;
@@ -50,18 +50,25 @@ export class AppECorrelationTestSummaryBaseDTO {
       },
     },
   )
-  @IsInRange(0, 999999.9, {
+  @IsInRange(-999999.9, 999999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999.9 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -999999.9 and 999999.9 for [${KEY}].`;
     },
   })
   averageHourlyHeatInputRate?: number;
 
   @IsOptional()
-  @IsInt()
-  @IsInRange(1000, 22000, {
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
+      },
+    },
+  )
+  @IsInRange(-999999999.9, 999999999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 1000 and 22000 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -999999999.9 and 999999999.9 for [${KEY}].`;
     },
   })
   fFactor?: number;

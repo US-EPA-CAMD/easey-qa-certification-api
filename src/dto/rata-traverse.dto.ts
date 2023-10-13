@@ -107,6 +107,14 @@ export class RataTraverseBaseDTO {
       });
     },
   })
+  @IsNumber(
+    { maxDecimalPlaces: 3 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place for $[${KEY}].`;
+      },
+    },
+  )
   @IsInRange(
     MIN_VEL_CAL_COEFF,
     MAX_VEL_CAL_COEFF,
@@ -149,7 +157,7 @@ export class RataTraverseBaseDTO {
   @IsValidDate({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
       );
     },
   })
@@ -164,9 +172,9 @@ export class RataTraverseBaseDTO {
       },
     },
   )
-  @IsInRange(0, 99.999, {
+  @IsInRange(-99.999, 99.999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99.999 for [${KEY}]`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -99.999 and 99.999 for [${KEY}]`;
     },
   })
   averageVelocityDifferencePressure?: number;
@@ -195,6 +203,14 @@ export class RataTraverseBaseDTO {
       });
     },
   })
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
+      },
+    },
+  )
   @IsInRange(
     MIN_TSTACK_TEMP,
     MAX_TSTACK_TEMP,
@@ -218,7 +234,7 @@ export class RataTraverseBaseDTO {
   @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be 0 or 1 for [${KEY}]`;
+      return `The value of [${args.value}] for [${args.property}] must be an integer of 0 and 1 for [${KEY}]`;
     },
   })
   pointUsedIndicator?: number;
@@ -227,7 +243,7 @@ export class RataTraverseBaseDTO {
   @IsInt()
   @IsInRange(0, 99, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99 for [${KEY}]`;
+      return `The value of [${args.value}] for [${args.property}] must be an integer within the range of 0 and 99 for [${KEY}]`;
     },
   })
   numberWallEffectsPoints?: number;
@@ -289,9 +305,9 @@ export class RataTraverseBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999.99, {
+  @IsInRange(-9999.99, 9999.99, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.99 for [${KEY}]`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999.99 and 9999.99 for [${KEY}]`;
     },
   })
   replacementVelocity?: number;

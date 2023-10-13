@@ -97,7 +97,7 @@ export class ProtocolGasBaseDTO {
   @IsValidDate({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
       );
     },
   })

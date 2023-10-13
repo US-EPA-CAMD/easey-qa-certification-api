@@ -30,18 +30,18 @@ export class FlowToLoadReferenceBaseDTO {
 
   @IsOptional()
   @IsInt()
-  @IsInRange(0, 999999, {
+  @IsInRange(-999999, 999999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -999999 and 999999 for [${KEY}].`;
     },
   })
   averageGrossUnitLoad?: number;
 
   @IsOptional()
   @IsInt()
-  @IsInRange(0, 9999999999, {
+  @IsInRange(-9999999999, 9999999999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999999999 and 9999999999 for [${KEY}].`;
     },
   })
   averageReferenceMethodFlow?: number;
@@ -55,9 +55,9 @@ export class FlowToLoadReferenceBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999.99, {
+  @IsInRange(-9999.99, 9999.99, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.99 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999.99 and 9999.99 for [${KEY}].`;
     },
   })
   referenceFlowLoadRatio?: number;
@@ -71,26 +71,27 @@ export class FlowToLoadReferenceBaseDTO {
       },
     },
   )
-  @IsInRange(0, 999999.9, {
+  @IsInRange(-999999.9, 999999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999.9 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -999999.9 and 999999.9 for [${KEY}].`;
     },
   })
   averageHourlyHeatInputRate?: number;
 
   @IsOptional()
-  @IsInRange(0, 999999, {
+  @IsInt()
+  @IsInRange(-999999, 999999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -999999 and 999999 for [${KEY}].`;
     },
   })
   referenceGrossHeatRate?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be 0 or 1 for [${KEY}].`;
     },
   })
   calculatedSeparateReferenceIndicator?: number;

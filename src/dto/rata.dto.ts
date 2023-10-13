@@ -31,7 +31,7 @@ export class RataBaseDTO {
   @IsInt()
   @IsInRange(0, 9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be an integer within the range of 0 and 9 for [${KEY}].`;
     },
   })
   numberOfLoadLevels?: number;
@@ -48,9 +48,9 @@ export class RataBaseDTO {
       },
     },
   )
-  @IsInRange(0, 999.99, {
+  @IsInRange(-999.99, 999.99, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999.99 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -999.99 and 999.99 for [${KEY}].`;
     },
   })
   relativeAccuracy?: number;
@@ -79,9 +79,9 @@ export class RataBaseDTO {
       },
     },
   )
-  @IsInRange(0, 99.999, {
+  @IsInRange(-99.999, 99.999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99.999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -99.999 and 99.999 for [${KEY}].`;
     },
   })
   overallBiasAdjustmentFactor?: number;

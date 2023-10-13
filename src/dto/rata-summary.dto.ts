@@ -103,9 +103,9 @@ export class RataSummaryBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999999999.99999, {
+  @IsInRange(-9999999999.99999, 9999999999.99999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.99999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999999999.99999 and 9999999999.99999 for [${KEY}].`;
     },
   })
   meanCEMValue?: number;
@@ -137,9 +137,9 @@ export class RataSummaryBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999999999.99999, {
+  @IsInRange(-9999999999.99999, 9999999999.99999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.99999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999999999.99999 and 9999999999.99999 for [${KEY}].`;
     },
   })
   meanRATAReferenceValue?: number;
@@ -215,9 +215,9 @@ export class RataSummaryBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999999999.99999, {
+  @IsInRange(-9999999999.99999, 9999999999.99999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.99999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999999999.99999 and 9999999999.99999 for [${KEY}].`;
     },
   })
   confidenceCoefficient?: number;
@@ -241,7 +241,7 @@ export class RataSummaryBaseDTO {
       },
     },
   )
-  @IsInRange(0, 999.999, {
+  @IsInRange(-999.999, 999.999, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999.999 for [${KEY}].`;
     },
@@ -259,9 +259,10 @@ export class RataSummaryBaseDTO {
       });
     },
   })
+  @IsInt()
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be an integer of 0 and 1 for [${KEY}].`;
     },
   })
   apsIndicator?: number;
@@ -330,9 +331,9 @@ export class RataSummaryBaseDTO {
       },
     },
   )
-  @IsInRange(0, 99.999, {
+  @IsInRange(-99.999, 99.999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99.999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -99.999 and 99.999 for [${KEY}].`;
     },
   })
   biasAdjustmentFactor?: number;
@@ -417,9 +418,9 @@ export class RataSummaryBaseDTO {
       },
     },
   )
-  @IsInRange(0, 99.9999, {
+  @IsInRange(-99.9999, 99.9999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99.9999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -99.9999 and 99.9999 for [${KEY}].`;
     },
   })
   calculatedWAF?: number;
@@ -436,9 +437,9 @@ export class RataSummaryBaseDTO {
       },
     },
   )
-  @IsInRange(0, 99.9999, {
+  @IsInRange(-99.9999, 99.9999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99.9999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -99.9999 and 99.9999 for [${KEY}].`;
     },
   })
   defaultWAF?: number;

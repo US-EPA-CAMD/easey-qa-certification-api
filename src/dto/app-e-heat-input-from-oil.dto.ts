@@ -31,25 +31,25 @@ export class AppEHeatInputFromOilBaseDTO {
       },
     },
   )
-  @IsInRange(0, 999999999.9, {
+  @IsInRange(-999999999.9, 999999999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999999.9 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -999999999.9 and 999999999.9 for [${KEY}].`;
     },
   })
   oilMass?: number;
 
   @IsOptional()
   @IsNumber(
-    { maxDecimalPlaces: 6 },
+    { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
-        return `The value of [${args.value}] for [${args.property}] is allowed only 6 decimal place for $[${KEY}].`;
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
       },
     },
   )
-  @IsInRange(0.0, 20000.0, {
+  @IsInRange(-999999999.9, 999999999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0.000000 and 20000.000000 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -999999999.9 and 999999999.9 for [${KEY}].`;
     },
   })
   oilGCV?: number;
@@ -79,9 +79,9 @@ export class AppEHeatInputFromOilBaseDTO {
       },
     },
   )
-  @IsInRange(0, 999999.9, {
+  @IsInRange(-999999.9, 999999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999.9 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -999999.9 and 999999.9 for [${KEY}].`;
     },
   })
   oilHeatInput?: number;
@@ -95,9 +95,9 @@ export class AppEHeatInputFromOilBaseDTO {
       },
     },
   )
-  @IsInRange(0, 999999999.9, {
+  @IsInRange(-999999999.9, 999999999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999999.9 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -999999999.9 and 999999999.9 for [${KEY}].`;
     },
   })
   oilVolume?: number;
@@ -127,9 +127,9 @@ export class AppEHeatInputFromOilBaseDTO {
       },
     },
   )
-  @IsInRange(0.0, 20000.0, {
+  @IsInRange(-99999.999999, 99999.999999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0.000000 and 999999999.9 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -99999.999999 and 99999.999999 for [${KEY}].`;
     },
   })
   oilDensity?: number;

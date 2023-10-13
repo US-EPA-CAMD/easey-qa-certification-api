@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsInt,
   IsNotEmpty,
   IsNumber,
   ValidateNested,
@@ -96,9 +97,9 @@ export class LinearitySummaryBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999999999.999, {
+  @IsInRange(-9999999999.999, 9999999999.999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999999999.999 and 9999999999.999 for [${KEY}].`;
     },
   })
   meanReferenceValue?: number;
@@ -129,6 +130,7 @@ export class LinearitySummaryBaseDTO {
   })
   percentError?: number;
 
+  @IsInt()
   @ApiProperty(
     getMetadata(dataDictionary.apsIndicator, MetadataKeys.LINEARITY_SUMMARY),
   )
@@ -142,7 +144,7 @@ export class LinearitySummaryBaseDTO {
   })
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 1 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be an integer of 0 and 1 for [${KEY}].`;
     },
   })
   apsIndicator?: number;
