@@ -637,7 +637,7 @@ describe('Rata Traverse Check Service Test', () => {
       payload.yawAngle = 45;
 
       const returnValue = new RataTraverse();
-      returnValue.methodTraversePointID = '4';
+      returnValue.methodTraversePointId = '4';
       returnValue.yawAngle = 45;
 
       jest.spyOn(repository, 'findOne').mockResolvedValue(returnValue);
