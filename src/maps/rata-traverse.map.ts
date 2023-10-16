@@ -12,7 +12,7 @@ export class RataTraverseMap extends BaseMap<RataTraverse, RataTraverseDTO> {
       probeId: entity.probeID,
       probeTypeCode: entity.probeTypeCode,
       pressureMeasureCode: entity.pressureMeasureCode,
-      methodTraversePointId: entity.methodTraversePointID,
+      methodTraversePointId: entity.methodTraversePointId,
       velocityCalibrationCoefficient: entity.velocityCalibrationCoefficient,
       lastProbeDate: entity.lastProbeDate,
       averageVelocityDifferencePressure: entity.avgVelDiffPressure,

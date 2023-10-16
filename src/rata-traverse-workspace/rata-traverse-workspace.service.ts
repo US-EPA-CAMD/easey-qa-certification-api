@@ -105,7 +105,7 @@ export class RataTraverseWorkspaceService {
     record.probeID = payload.probeId;
     record.probeTypeCode = payload.probeTypeCode;
     record.pressureMeasureCode = payload.pressureMeasureCode;
-    record.methodTraversePointID = payload.methodTraversePointId;
+    record.methodTraversePointId = payload.methodTraversePointId;
     record.velocityCalibrationCoefficient =
       payload.velocityCalibrationCoefficient;
     record.lastProbeDate = payload.lastProbeDate;
@@ -170,7 +170,7 @@ export class RataTraverseWorkspaceService {
     if (isHistoricalRecord) {
       historicalRecord = await this.historicalRepository.findOne({
         flowRataRunId: flowRataRunId,
-        methodTraversePointID: payload.methodTraversePointId,
+        methodTraversePointId: payload.methodTraversePointId,
       });
     }
 

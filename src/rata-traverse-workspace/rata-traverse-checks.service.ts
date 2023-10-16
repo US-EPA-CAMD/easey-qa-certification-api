@@ -476,7 +476,7 @@ export class RataTraverseChecksService {
     if (flowRataRunId && !isImport) {
       duplicates = await this.repository.find({
         flowRataRunId: flowRataRunId,
-        methodTraversePointID: rataTraverse.methodTraversePointId,
+        methodTraversePointId: rataTraverse.methodTraversePointId,
       });
       if (duplicates.length > 0) {
         error = CheckCatalogService.formatResultMessage('RATA-110-A', {
