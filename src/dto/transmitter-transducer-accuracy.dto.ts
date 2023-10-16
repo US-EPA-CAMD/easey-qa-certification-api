@@ -19,9 +19,9 @@ export class TransmitterTransducerAccuracyBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999.9, {
+  @IsInRange(-9999.9, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.9 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999.9 and 9999.9 for [${KEY}].`;
     },
   })
   lowLevelAccuracy?: number;
@@ -51,9 +51,9 @@ export class TransmitterTransducerAccuracyBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999.9, {
+  @IsInRange(-9999.9, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.9 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999.9 and 9999.9 for [${KEY}].`;
     },
   })
   midLevelAccuracy?: number;
@@ -83,9 +83,9 @@ export class TransmitterTransducerAccuracyBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999.9, {
+  @IsInRange(-9999.9, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.9 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999.9 and 9999.9 for [${KEY}].`;
     },
   })
   highLevelAccuracy?: number;

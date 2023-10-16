@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { IsInRange } from '@us-epa-camd/easey-common/pipes';
+import { IsInRange, IsValidDate } from '@us-epa-camd/easey-common/pipes';
 import {
   IsNotEmpty,
   IsNumber,
@@ -14,6 +14,7 @@ const MIN_MINUTE = 0;
 const MAX_MINUTE = 59;
 const MIN_HOUR = 0;
 const MAX_HOUR = 23;
+const DATE_FORMAT = 'YYYY-MM-DD';
 
 export class LinearityInjectionBaseDTO {
   @ApiProperty({
@@ -25,6 +26,11 @@ export class LinearityInjectionBaseDTO {
         type: args.value,
         key: KEY,
       });
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}].`;
     },
   })
   injectionDate: Date;
@@ -127,7 +133,7 @@ export class LinearityInjectionBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999999999.999, {
+  @IsInRange(-9999999999.999, 9999999999.999, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999999999.999 for [${KEY}].`;
     },

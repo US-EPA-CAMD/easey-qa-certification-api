@@ -38,14 +38,14 @@ export class UnitDefaultTestBaseDTO {
 
   @IsOptional()
   @IsNumber(
-    { maxDecimalPlaces: 1 },
+    { maxDecimalPlaces: 3 },
     {
       message: (args: ValidationArguments) => {
-        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place.`;
+        return `The value of [${args.value}] for [${args.property}] is allowed only 3 decimal place.`;
       },
     },
   )
-  @IsInRange(0, 999.999, {
+  @IsInRange(-999.999, 999.999, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of 0 to 999.999.`;
     },

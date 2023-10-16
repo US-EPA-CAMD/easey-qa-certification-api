@@ -138,9 +138,7 @@ export class AirEmissionTestingBaseDTO {
   })
   @IsValidDate({
     message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
-      );
+      return `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}].`;
     },
   })
   examDate: Date;

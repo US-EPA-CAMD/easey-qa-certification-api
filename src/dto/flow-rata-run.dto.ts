@@ -2,6 +2,7 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { IsInRange, Max, Min } from '@us-epa-camd/easey-common/pipes';
 import { Type } from 'class-transformer';
 import {
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -35,6 +36,7 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
+  @IsInt()
   @Min(MIN_NO_OF_TRAVERSE_POINTS, {
     message: () => {
       return CheckCatalogService.formatResultMessage('RATA-85-B', {
@@ -57,6 +59,14 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 2 decimal place for $[${KEY}].`;
+      },
+    },
+  )
   @IsInRange(MIN_BAROMETRIC_PRESSURE, MAX_BAROMETRIC_PRESSURE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-63-B', {
@@ -78,6 +88,14 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
+  @IsNumber(
+    { maxDecimalPlaces: 2 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 2 decimal place for $[${KEY}].`;
+      },
+    },
+  )
   @IsInRange(MIN_STATIC_STACK_PRESSURE, MAX_STATIC_STACK_PRESSURE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-64-B', {
@@ -99,6 +117,14 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
+      },
+    },
+  )
   @IsInRange(
     MIN_PERCENT_CO2_PRESSURE,
     MAX_PERCENT_CO2_PRESSURE,
@@ -126,6 +152,14 @@ export class FlowRataRunBaseDTO {
       });
     },
   })
+  @IsNumber(
+    { maxDecimalPlaces: 1 },
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is allowed only 1 decimal place for $[${KEY}].`;
+      },
+    },
+  )
   @IsInRange(
     MIN_PERCENT_O2_PRESSURE,
     MAX_PERCENT_O2_PRESSURE,
@@ -161,9 +195,9 @@ export class FlowRataRunBaseDTO {
       },
     },
   )
-  @IsInRange(-9999.9, 75, {
+  @IsInRange(-9999.9, 9999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999.9 and 75 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999.9 and 9999.9 for [${KEY}].`;
     },
   })
   percentMoisture: number;
@@ -253,9 +287,9 @@ export class FlowRataRunBaseDTO {
       },
     },
   )
-  @IsInRange(0, 9999.99, {
+  @IsInRange(-9999.99, 9999.99, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 9999.99 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -9999.99 and 9999.99 for [${KEY}].`;
     },
   })
   averageVelocityWithWallEffects?: number;
@@ -269,13 +303,14 @@ export class FlowRataRunBaseDTO {
       },
     },
   )
-  @IsInRange(0, 99.9999, {
+  @IsInRange(-99.9999, 99.9999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99.9999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -99.9999 and 99.9999 for [${KEY}].`;
     },
   })
   calculatedWAF?: number;
 
+  @IsInt()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('RATA-94-A', {

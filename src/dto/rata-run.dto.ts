@@ -1,4 +1,5 @@
 import {
+  IsInt,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -10,7 +11,11 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { RunStatusCode } from '../entities/run-status-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { FlowRataRunDTO, FlowRataRunImportDTO } from './flow-rata-run.dto';
-import { IsInRange, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsInRange,
+  IsIsoFormat,
+  IsValidDate,
+} from '@us-epa-camd/easey-common/pipes';
 import { Type } from 'class-transformer';
 
 const KEY = 'RATA Run';
@@ -61,6 +66,11 @@ export class RataRunBaseDTO {
           key: KEY,
         },
       );
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}].`;
     },
   })
   beginDate: Date;
@@ -118,6 +128,11 @@ export class RataRunBaseDTO {
           key: KEY,
         },
       );
+    },
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}].`;
     },
   })
   endDate: Date;
@@ -191,7 +206,7 @@ export class RataRunBaseDTO {
   rataReferenceValue?: number;
 
   @IsOptional()
-  @IsNumber()
+  @IsInt()
   @IsInRange(-999999, 999999, {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be within the range of -999999 and 999999 for [${KEY}].`;
