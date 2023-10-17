@@ -627,7 +627,7 @@ export class TestSummaryBaseDTO {
   @IsInRange(0, 1, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `Grace Period Indicator must be a numeric number from 0 to 1. You reported an invalid value of [${
+        `Grace Period Indicator must be an integer from 0 or 1. You reported an invalid value of [${
           args.value
         }] in Test Summary record for Unit/Stack [${
           args.object['unitId']

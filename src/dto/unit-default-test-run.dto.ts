@@ -25,9 +25,9 @@ const KEY = 'Unit Default Test Run';
 export class UnitDefaultTestRunBaseDTO {
   @IsInt()
   @IsNotEmpty()
-  @IsInRange(1, 99, {
+  @IsInRange(0, 99, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 1 and 99 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99 for [${KEY}].`;
     },
   })
   operatingLevelForRun: number;
@@ -62,7 +62,7 @@ export class UnitDefaultTestRunBaseDTO {
   @IsValidDate({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
       );
     },
   })
@@ -123,7 +123,7 @@ export class UnitDefaultTestRunBaseDTO {
   @IsValidDate({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `[${args.property}] must be a valid date in the format of [${DATE_FORMAT}]. You reported an invalid date of [${args.value}]`,
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
       );
     },
   })
@@ -172,9 +172,9 @@ export class UnitDefaultTestRunBaseDTO {
 
   @IsOptional()
   @IsInt()
-  @IsInRange(0, 800, {
+  @IsInRange(0, 999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 800 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999 for [${KEY}].`;
     },
   })
   responseTime?: number;
@@ -188,9 +188,9 @@ export class UnitDefaultTestRunBaseDTO {
       },
     },
   )
-  @IsInRange(0, 99999.999, {
+  @IsInRange(-99999.999, 99999.999, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 99999.999 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -99999.999 and 99999.999 for [${KEY}].`;
     },
   })
   referenceValue?: number;

@@ -29,16 +29,16 @@ export class AppEHeatInputFromGasBaseDTO {
 
   @IsOptional()
   @IsNumber(
-    { maxDecimalPlaces: 6 },
+    { maxDecimalPlaces: 1 },
     {
       message: (args: ValidationArguments) => {
         return `The value of [${args.value}] for [${args.property}] is allowed only 6 decimal place for $[${KEY}].`;
       },
     },
   )
-  @IsInRange(0, 999999999.9, {
+  @IsInRange(-999999999.9, 999999999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0.0 and 999999999.9 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -999999999.9 and 999999999.9 for [${KEY}].`;
     },
   })
   gasGCV?: number;
@@ -52,9 +52,9 @@ export class AppEHeatInputFromGasBaseDTO {
       },
     },
   )
-  @IsInRange(0, 999999999.9, {
+  @IsInRange(-999999999.9, 999999999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999999.9 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -999999999.9 and 999999999.9 for [${KEY}].`;
     },
   })
   gasVolume?: number;
@@ -68,9 +68,9 @@ export class AppEHeatInputFromGasBaseDTO {
       },
     },
   )
-  @IsInRange(0, 999999.9, {
+  @IsInRange(-999999.9, 999999.9, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be within the range of 0 and 999999.9 for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be within the range of -999999.9 and 999999.9 for [${KEY}].`;
     },
   })
   gasHeatInput?: number;
