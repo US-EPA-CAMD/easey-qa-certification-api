@@ -278,7 +278,7 @@ export class RataTraverseChecksService {
     const fieldname = 'pitchAngle';
 
     if (referenceMethodCode && referenceMethodCode.startsWith('2F')) {
-      if (!pitchAngle) {
+      if (pitchAngle === null || pitchAngle === undefined) {
         error = this.getMessage('RATA-79-A', {
           fieldname,
           key: KEY,
