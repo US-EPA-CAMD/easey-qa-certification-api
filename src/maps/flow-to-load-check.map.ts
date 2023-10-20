@@ -14,7 +14,7 @@ export class FlowToLoadCheckMap extends BaseMap<
       testSumId: entity.testSumId,
       testBasisCode: entity.testBasisCode,
       biasAdjustedIndicator: entity.biasAdjustedIndicator,
-      averageAbsolutePercentDifference: entity.avgAbsolutePercentDiff,
+      averageAbsolutePercentDifference: entity.averageAbsolutePercentDifference,
       numberOfHours: entity.numberOfHours,
       numberOfHoursExcludedForFuel: entity.numberOfHoursExcludedForFuel,
       numberOfHoursExcludedRamping: entity.numberOfHoursExcludedRamping,

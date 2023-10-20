@@ -58,7 +58,7 @@ export class UnitDefaultTest extends BaseEntity {
     type: 'varchar',
     name: 'group_id',
   })
-  groupID: string;
+  groupId: string;
 
   @Column({
     transformer: new NumericColumnTransformer(),

@@ -53,7 +53,7 @@ export class FuelFlowToLoadBaseline extends BaseEntity {
   @Column({
     name: 'fuel_flow_load_uom_cd',
   })
-  fuelFlowToLoadUOMCode: string;
+  fuelFlowToLoadUnitsOfMeasureCode: string;
 
   @Column({
     name: 'avg_hrly_hi_rate',
