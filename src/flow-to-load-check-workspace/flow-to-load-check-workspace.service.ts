@@ -104,7 +104,7 @@ export class FlowToLoadCheckWorkspaceService {
 
     entity.testBasisCode = payload.testBasisCode;
     entity.biasAdjustedIndicator = payload.biasAdjustedIndicator;
-    entity.avgAbsolutePercentDiff = payload.averageAbsolutePercentDifference;
+    entity.averageAbsolutePercentDifference = payload.averageAbsolutePercentDifference;
     entity.numberOfHours = payload.numberOfHours;
     entity.numberOfHoursExcludedForFuel = payload.numberOfHoursExcludedForFuel;
     entity.numberOfHoursExcludedRamping = payload.numberOfHoursExcludedRamping;
