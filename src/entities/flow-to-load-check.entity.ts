@@ -51,7 +51,7 @@ export class FlowToLoadCheck extends BaseEntity {
     name: 'avg_abs_pct_diff',
     transformer: new NumericColumnTransformer(),
   })
-  avgAbsolutePercentDiff: number;
+  averageAbsolutePercentDifference: number;
 
   @Column({
     name: 'num_hrs',

@@ -113,7 +113,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     entity.averageFuelFlowRate = payload.averageFuelFlowRate;
     entity.averageLoad = payload.averageLoad;
     entity.baselineFuelFlowToLoadRatio = payload.baselineFuelFlowToLoadRatio;
-    entity.fuelFlowToLoadUOMCode = payload.fuelFlowToLoadUnitsOfMeasureCode;
+    entity.fuelFlowToLoadUnitsOfMeasureCode = payload.fuelFlowToLoadUnitsOfMeasureCode;
     entity.averageHourlyHeatInputRate = payload.averageHourlyHeatInputRate;
     entity.baselineGHR = payload.baselineGHR;
     entity.ghrUnitsOfMeasureCode = payload.ghrUnitsOfMeasureCode;

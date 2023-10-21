@@ -293,10 +293,10 @@ export const dataDictionary = {
       },
     },
   },
-  avgAbsolutePercentDiff: {
+  averageAbsolutePercentDifference: {
     fieldLabels: {
       label: 'Average Absolute Percent Difference',
-      value: 'avgAbsolutePercentDiff',
+      value: 'averageAbsolutePercentDifference',
     },
     metadata: {
       default: {

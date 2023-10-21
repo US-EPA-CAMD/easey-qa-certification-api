@@ -16,7 +16,7 @@ entity.averageReferenceMethodFlow = number;
 entity.referenceFlowLoadRatio = number;
 entity.averageHourlyHeatInputRate = number;
 entity.referenceGrossHeatRate = number;
-entity.calcSeparateReferenceIndicator = number;
+entity.calculatedSeparateReferenceIndicator = number;
 
 entity.calculatedAverageGrossUnitLoad = number;
 entity.calculatedAverageReferenceMethodFlow = number;

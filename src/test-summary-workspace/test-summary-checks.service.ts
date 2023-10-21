@@ -1129,7 +1129,13 @@ export class TestSummaryChecksService {
       fields.push('spanScaleCode');
     }
 
-    if (!moment(duplicate.endDate).isSame(moment(summary.endDate))) {
+    if (
+      (!duplicate.endDate && summary.endDate) ||
+      (duplicate.endDate && !summary.endDate) ||
+      (duplicate.endDate &&
+        summary.endDate &&
+        !moment(duplicate.endDate).isSame(moment(summary.endDate)))
+    ) {
       fields.push('endDate');
     }
 

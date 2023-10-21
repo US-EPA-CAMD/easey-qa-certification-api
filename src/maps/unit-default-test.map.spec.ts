@@ -13,7 +13,7 @@ entity.fuelCode = string;
 entity.noxDefaultRate = number;
 entity.calculatedNoxDefaultRate = number;
 entity.operatingConditionCode = string;
-entity.groupID = string;
+entity.groupId = string;
 entity.numberOfUnitsInGroup = number;
 entity.numberOfTestsForGroup = number;
 

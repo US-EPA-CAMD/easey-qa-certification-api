@@ -278,7 +278,7 @@ export class RataTraverseChecksService {
     const fieldname = 'pitchAngle';
 
     if (referenceMethodCode && referenceMethodCode.startsWith('2F')) {
-      if (!pitchAngle) {
+      if (pitchAngle === null || pitchAngle === undefined) {
         error = this.getMessage('RATA-79-A', {
           fieldname,
           key: KEY,
@@ -476,7 +476,7 @@ export class RataTraverseChecksService {
     if (flowRataRunId && !isImport) {
       duplicates = await this.repository.find({
         flowRataRunId: flowRataRunId,
-        methodTraversePointID: rataTraverse.methodTraversePointId,
+        methodTraversePointId: rataTraverse.methodTraversePointId,
       });
       if (duplicates.length > 0) {
         error = CheckCatalogService.formatResultMessage('RATA-110-A', {

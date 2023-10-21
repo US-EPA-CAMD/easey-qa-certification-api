@@ -93,7 +93,7 @@ export class FlowToLoadReference extends BaseEntity {
     name: 'calc_sep_ref_ind',
     transformer: new NumericColumnTransformer(),
   })
-  calcSeparateReferenceIndicator: number;
+  calculatedSeparateReferenceIndicator: number;
 
   @Column({
     type: 'varchar',
