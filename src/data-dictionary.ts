@@ -306,10 +306,10 @@ export const dataDictionary = {
       },
     },
   },
-  avgSquareVelDiffPressure: {
+  averageSquareVelocityDifferencePressure: {
     fieldLabels: {
       label: 'Avg Square Vel Diff Pressure',
-      value: 'avgSquareVelDiffPressure',
+      value: 'averageSquareVelocityDifferencePressure',
     },
     metadata: {
       default: {
@@ -319,10 +319,10 @@ export const dataDictionary = {
       },
     },
   },
-  avgVelDiffPressure: {
+  averageVelocityDifferencePressure: {
     fieldLabels: {
       label: 'Avg Vel Diff Pressure',
-      value: 'avgVelDiffPressure',
+      value: 'averageVelocityDifferencePressure',
     },
     metadata: {
       default: {
