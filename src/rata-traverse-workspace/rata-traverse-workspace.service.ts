@@ -102,15 +102,15 @@ export class RataTraverseWorkspaceService {
       );
     }
 
-    record.probeId = payload.probeId;
+    record.probeID = payload.probeId;
     record.probeTypeCode = payload.probeTypeCode;
     record.pressureMeasureCode = payload.pressureMeasureCode;
     record.methodTraversePointId = payload.methodTraversePointId;
     record.velocityCalibrationCoefficient =
       payload.velocityCalibrationCoefficient;
     record.lastProbeDate = payload.lastProbeDate;
-    record.averageVelocityDifferencePressure = payload.averageVelocityDifferencePressure;
-    record.averageSquareVelocityDifferencePressure =
+    record.avgVelDiffPressure = payload.averageVelocityDifferencePressure;
+    record.avgSquareVelDiffPressure =
       payload.averageSquareVelocityDifferencePressure;
     record.tStackTemperature = payload.tStackTemperature;
     record.pointUsedIndicator = payload.pointUsedIndicator;

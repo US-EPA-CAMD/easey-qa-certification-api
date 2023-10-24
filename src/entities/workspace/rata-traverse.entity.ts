@@ -27,7 +27,7 @@ export class RataTraverse extends BaseEntity {
     type: 'varchar',
     name: 'probeid',
   })
-  probeId: string;
+  probeID: string;
 
   @Column({
     type: 'varchar',
@@ -65,14 +65,14 @@ export class RataTraverse extends BaseEntity {
     transformer: new NumericColumnTransformer(),
     name: 'avg_vel_diff_pressure',
   })
-  averageVelocityDifferencePressure: number;
+  avgVelDiffPressure: number;
 
   @Column({
     type: 'numeric',
     transformer: new NumericColumnTransformer(),
     name: 'avg_sq_vel_diff_pressure',
   })
-  averageSquareVelocityDifferencePressure: number;
+  avgSquareVelDiffPressure: number;
 
   @Column({
     type: 'numeric',
