@@ -3,7 +3,6 @@ import {
   IsInRange,
   IsIsoFormat,
   IsValidDate,
-  MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
 import {
   IsNotEmpty,
@@ -13,6 +12,7 @@ import {
   IsOptional,
   MaxLength,
   IsInt,
+  MinLength,
 } from 'class-validator';
 import { PressureMeasureCode } from '../entities/workspace/pressure-measure-code.entity';
 import { IsValidCode } from '../pipes/is-valid-code.pipe';
@@ -92,9 +92,14 @@ export class RataTraverseBaseDTO {
     },
   })
   @IsString()
-  @MatchesRegEx('^[a-zA-Z0-9]{1,3}$', {
+  @MinLength(1, {
     message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] must be 1 to 3 characters and only consist of upper and lower case letters, numbers for [${KEY}].`;
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 3 characters for [${KEY}].`;
+    },
+  })
+  @MaxLength(3, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must be 1 to 3 characters for [${KEY}].`;
     },
   })
   methodTraversePointId: string;
