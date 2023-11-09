@@ -10,5 +10,6 @@ title: QA Certification Management
 description: QA & Certification management API endpoints for qa test data, qa cert events, and test extension & exemption data
 environment: development
 apiHost: api.epa.gov/easey/dev
+dbSvc: camd-pg-db
 awsRegion: us-gov-west-1
 matsImportBucket: cg-a5287c70-6f5f-4b41-acd4-a82bbb633f55
