@@ -73,7 +73,11 @@ export class ProtocolGasBaseDTO {
   })
   cylinderIdentifier?: string;
 
-  @IsOptional()
+  @IsNotEmpty({
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${args.property}] must not be empty`;
+    },
+  })
   @IsString()
   @MatchesRegEx('([A-Z0-9]{1,8})*', {
     message: (args: ValidationArguments) => {
