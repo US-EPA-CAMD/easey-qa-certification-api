@@ -6,7 +6,6 @@ import {
   Delete,
   Controller,
   Param,
-  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -14,12 +13,10 @@ import {
   ApiOkResponse,
   ApiCreatedResponse,
   ApiSecurity,
-  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -47,7 +44,11 @@ export class LinearityInjectionWorkspaceController {
       'Retrieves workspace Linearity Injection records by Linearity Summary Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getInjections(
@@ -64,7 +65,11 @@ export class LinearityInjectionWorkspaceController {
     description: 'Retrieves workspace Linearity Injection record by its Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getLinearityInjection(
@@ -77,7 +82,14 @@ export class LinearityInjectionWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiCreatedResponse({
     type: LinearityInjectionRecordDTO,
     description: 'Creates a Linearity Injection record in the workspace',
@@ -99,7 +111,14 @@ export class LinearityInjectionWorkspaceController {
   }
 
   @Put(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: LinearityInjectionRecordDTO,
     description: 'Updates a Linearity Injection record in the workspace',
@@ -123,7 +142,14 @@ export class LinearityInjectionWorkspaceController {
   }
 
   @Delete(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     description: 'Deletes a Linearity Injection record from the workspace',
   })

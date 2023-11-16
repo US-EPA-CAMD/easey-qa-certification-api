@@ -3,20 +3,17 @@ import {
   Param,
   Post,
   Body,
-  UseGuards,
   Get,
   Delete,
   Put,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { FlowToLoadCheckWorkspaceService } from './flow-to-load-check-workspace.service';
 import {
@@ -40,7 +37,11 @@ export class FlowToLoadCheckWorkspaceController {
       'Retrieves workspace Flow To Load Check records by Test Summary Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getFlowToLoadChecks(
@@ -57,7 +58,11 @@ export class FlowToLoadCheckWorkspaceController {
     description: 'Retrieves a workspace Flow To Load Check record by its Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getFlowToLoadCheck(
@@ -69,7 +74,14 @@ export class FlowToLoadCheckWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiCreatedResponse({
     type: FlowToLoadCheckRecordDTO,
     description: 'Creates a workspace Flow To Load Check record.',
@@ -84,7 +96,14 @@ export class FlowToLoadCheckWorkspaceController {
   }
 
   @Put(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: FlowToLoadCheckDTO,
     description: 'Updates a workspace Flow To Load Check record',
@@ -106,7 +125,14 @@ export class FlowToLoadCheckWorkspaceController {
   }
 
   @Delete(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     description: 'Deletes a Flow To Load Check record from the workspace',
   })

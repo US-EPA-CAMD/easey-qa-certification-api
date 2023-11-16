@@ -1,11 +1,4 @@
-import {
-  Get,
-  Body,
-  Post,
-  Query,
-  Controller,
-  UseInterceptors,
-} from '@nestjs/common';
+import { Get, Body, Post, Query, Controller } from '@nestjs/common';
 
 import {
   ApiTags,
@@ -86,7 +79,11 @@ export class QACertificationWorkspaceController {
     explode: false,
   })
   @RoleGuard(
-    { enforceCheckout: false, queryParam: 'facilityId' },
+    {
+      enforceCheckout: false,
+      queryParam: 'facilityId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Facility,
   )
   async export(
@@ -103,6 +100,9 @@ export class QACertificationWorkspaceController {
         'certificationEventData',
         'testExtensionExemptionData',
       ],
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
     },
     LookupType.Location,
   )
@@ -148,7 +148,12 @@ export class QACertificationWorkspaceController {
     explode: false,
   })
   @RoleGuard(
-    { enforceCheckout: false, queryParam: 'orisCodes', isPipeDelimitted: true },
+    {
+      enforceCheckout: false,
+      queryParam: 'orisCodes',
+      isPipeDelimitted: true,
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Facility,
   )
   async getFilteredCerts(
@@ -187,7 +192,12 @@ export class QACertificationWorkspaceController {
     explode: false,
   })
   @RoleGuard(
-    { enforceCheckout: false, queryParam: 'orisCodes', isPipeDelimitted: true },
+    {
+      enforceCheckout: false,
+      queryParam: 'orisCodes',
+      isPipeDelimitted: true,
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Facility,
   )
   async getFilteredTestSums(
@@ -226,7 +236,12 @@ export class QACertificationWorkspaceController {
     explode: false,
   })
   @RoleGuard(
-    { enforceCheckout: false, queryParam: 'orisCodes', isPipeDelimitted: true },
+    {
+      enforceCheckout: false,
+      queryParam: 'orisCodes',
+      isPipeDelimitted: true,
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Facility,
   )
   async getFilteredTee(
@@ -259,7 +274,12 @@ export class QACertificationWorkspaceController {
     explode: false,
   })
   @RoleGuard(
-    { enforceCheckout: false, queryParam: 'orisCodes', isPipeDelimitted: true },
+    {
+      enforceCheckout: false,
+      queryParam: 'orisCodes',
+      isPipeDelimitted: true,
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Facility,
   )
   async getFilteredMatsBulkFile(
