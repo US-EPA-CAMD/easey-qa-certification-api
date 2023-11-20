@@ -6,17 +6,14 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -44,7 +41,11 @@ export class TransmitterTransducerAccuracyWorkspaceController {
       'Retrieves workspace Transmitter Transducer Accuracy records by Test Summary Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getTransmitterTransducerAccuracies(
@@ -62,7 +63,11 @@ export class TransmitterTransducerAccuracyWorkspaceController {
       'Retrieves official Transmitter Transducer Accuracy record by its Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   getTransmitterTransducerAccuracy(
@@ -74,7 +79,14 @@ export class TransmitterTransducerAccuracyWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiCreatedResponse({
     type: TransmitterTransducerAccuracyRecordDTO,
     description:
@@ -94,7 +106,14 @@ export class TransmitterTransducerAccuracyWorkspaceController {
   }
 
   @Put(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: TransmitterTransducerAccuracyRecordDTO,
     description: 'Updates a workspace Transmitter Transducer Accuracy record',
@@ -115,7 +134,14 @@ export class TransmitterTransducerAccuracyWorkspaceController {
   }
 
   @Delete(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: TransmitterTransducerAccuracyRecordDTO,
     description: 'Deletes a workspace Transmitter Transducer Accuracy record',
