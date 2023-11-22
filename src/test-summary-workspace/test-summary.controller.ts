@@ -7,7 +7,6 @@ import {
   Delete,
   Controller,
   Param,
-  UseGuards,
 } from '@nestjs/common';
 
 import {
@@ -16,11 +15,9 @@ import {
   ApiCreatedResponse,
   ApiSecurity,
   ApiQuery,
-  ApiBearerAuth,
 } from '@nestjs/swagger';
 
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -55,7 +52,11 @@ export class TestSummaryWorkspaceController {
     explode: false,
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getTestSummaries(
@@ -77,7 +78,11 @@ export class TestSummaryWorkspaceController {
     description: 'Retrieves workspace Test Summary record by its id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getTestSummary(
@@ -88,7 +93,14 @@ export class TestSummaryWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiCreatedResponse({
     type: TestSummaryRecordDTO,
     description: 'Creates a Test Summary record in the workspace',
@@ -103,7 +115,14 @@ export class TestSummaryWorkspaceController {
   }
 
   @Put(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: TestSummaryRecordDTO,
     description: 'Updates a Test Summary record in the workspace',
@@ -119,7 +138,14 @@ export class TestSummaryWorkspaceController {
   }
 
   @Delete(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     description: 'Deletes a Test Summary record from the workspace',
   })

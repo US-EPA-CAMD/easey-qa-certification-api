@@ -6,10 +6,8 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
@@ -17,7 +15,6 @@ import {
 } from '@nestjs/swagger';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   FuelFlowToLoadTestBaseDTO,
@@ -39,7 +36,11 @@ export class FuelFlowToLoadTestWorkspaceController {
       'Retrieves workspace Fuel Flow To Load Test records by Test Summary Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getFuelFlowToLoadTests(
@@ -56,7 +57,11 @@ export class FuelFlowToLoadTestWorkspaceController {
     description: 'Retrieves workspace Fuel Flow To Load Test record by its Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getFuelFlowToLoadTest(
@@ -68,7 +73,14 @@ export class FuelFlowToLoadTestWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiCreatedResponse({
     type: FuelFlowToLoadTestRecordDTO,
     description: 'Creates a workspace Fuel Flow To Load Test record.',
@@ -87,7 +99,14 @@ export class FuelFlowToLoadTestWorkspaceController {
   }
 
   @Put(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: FuelFlowToLoadTestRecordDTO,
     description: 'Updates a Fuel Flow To Load Test record from the workspace',
@@ -108,7 +127,14 @@ export class FuelFlowToLoadTestWorkspaceController {
   }
 
   @Delete(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     description: 'Deletes a Fuel Flow To Load Test record from the workspace',
   })

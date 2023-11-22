@@ -6,10 +6,8 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
@@ -17,7 +15,6 @@ import {
 } from '@nestjs/swagger';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -44,7 +41,11 @@ export class CycleTimeInjectionWorkspaceController {
       'Retreives workspace Cycle Time Injection records by Cycle Time Summary Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getCycleTimeInjections(
@@ -61,7 +62,11 @@ export class CycleTimeInjectionWorkspaceController {
     description: 'Retrieves workspace Cycle Time Injection record by its Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getCycleTimeInjection(
@@ -74,7 +79,14 @@ export class CycleTimeInjectionWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiCreatedResponse({
     type: CycleTimeInjectionRecordDTO,
     description: 'Creates a Cycle Time Injection record in the workspace',
@@ -102,7 +114,14 @@ export class CycleTimeInjectionWorkspaceController {
   }
 
   @Put(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: CycleTimeInjectionRecordDTO,
     description: ' Updates a Cycle Time Injection record in the workspace',
@@ -131,7 +150,14 @@ export class CycleTimeInjectionWorkspaceController {
   }
 
   @Delete(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     description: 'Deletes a workspace Cycle Time Injection record',
   })

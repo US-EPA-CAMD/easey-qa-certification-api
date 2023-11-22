@@ -6,10 +6,8 @@ import {
   Param,
   Post,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
@@ -17,7 +15,6 @@ import {
 } from '@nestjs/swagger';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   CycleTimeSummaryBaseDTO,
@@ -39,7 +36,11 @@ export class CycleTimeSummaryWorkspaceController {
       'Retrieves workspace Cycle Time Summary records by Test Summary Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getCycleTimeSummaries(
@@ -56,7 +57,11 @@ export class CycleTimeSummaryWorkspaceController {
     description: 'Retrieves workspace Cycle Time Summary record by its Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getCycleTimeSummary(
@@ -68,7 +73,14 @@ export class CycleTimeSummaryWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiCreatedResponse({
     type: CycleTimeSummaryDTO,
     description: 'Creates a workspace Cycle Time Summary record.',
@@ -83,7 +95,14 @@ export class CycleTimeSummaryWorkspaceController {
   }
 
   @Put(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: CycleTimeSummaryDTO,
     description: 'Updates a workspace Cycle Time Summary record.',
@@ -104,7 +123,14 @@ export class CycleTimeSummaryWorkspaceController {
   }
 
   @Delete(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     description: 'Deletes a workspace Cycle Time Summary record.',
   })

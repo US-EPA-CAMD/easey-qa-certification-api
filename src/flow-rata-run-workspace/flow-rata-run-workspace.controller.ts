@@ -6,10 +6,8 @@ import {
   Body,
   Delete,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
@@ -17,7 +15,6 @@ import {
 } from '@nestjs/swagger';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   FlowRataRunBaseDTO,
@@ -43,7 +40,11 @@ export class FlowRataRunWorkspaceController {
       'Retrieves official Flow Rata Run records by Flow Rata Summary Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getFlowRataRuns(
@@ -63,7 +64,11 @@ export class FlowRataRunWorkspaceController {
     description: 'Retrieves official Flow Rata Run record by its Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getFlowRataRun(
@@ -78,7 +83,14 @@ export class FlowRataRunWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiCreatedResponse({
     isArray: false,
     type: FlowRataRunRecordDTO,
@@ -113,7 +125,14 @@ export class FlowRataRunWorkspaceController {
   }
 
   @Put(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: FlowRataRunRecordDTO,
     description: 'Updates a Flow Rata Run record in the workspace',
@@ -148,7 +167,14 @@ export class FlowRataRunWorkspaceController {
   }
 
   @Delete(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     description: 'Deletes a Flow Rata Run record from the workspace',
   })

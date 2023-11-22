@@ -6,10 +6,8 @@ import {
   Body,
   Put,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
@@ -17,7 +15,6 @@ import {
 } from '@nestjs/swagger';
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   FuelFlowmeterAccuracyBaseDTO,
@@ -41,7 +38,11 @@ export class FuelFlowmeterAccuracyWorkspaceController {
       'Retrieves Workspace Fuel Flowmeter Accuracy records by Test Summary Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getFuelFlowmeterAccuracies(
@@ -59,7 +60,11 @@ export class FuelFlowmeterAccuracyWorkspaceController {
       'Retrieves a Workspace Fuel Flowmeter Accuracy record by its Id',
   })
   @RoleGuard(
-    { enforceCheckout: false, pathParam: 'locId' },
+    {
+      enforceCheckout: false,
+      pathParam: 'locId',
+      enforceEvalSubmitCheck: false,
+    },
     LookupType.Location,
   )
   async getFuelFlowmeterAccuracy(
@@ -71,7 +76,14 @@ export class FuelFlowmeterAccuracyWorkspaceController {
   }
 
   @Post()
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiCreatedResponse({
     type: FuelFlowmeterAccuracyDTO,
     description: 'Creates a workspace Fuel Flowmeter Accuracy record.',
@@ -90,7 +102,14 @@ export class FuelFlowmeterAccuracyWorkspaceController {
   }
 
   @Put(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     type: FuelFlowmeterAccuracyDTO,
     description: 'Updates a workspace Fuel FLowmeter Accuracy record',
@@ -111,7 +130,14 @@ export class FuelFlowmeterAccuracyWorkspaceController {
   }
 
   @Delete(':id')
-  @RoleGuard({ pathParam: 'locId' }, LookupType.Location)
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      permissionsForFacility: ['DSQA', 'DPQA'],
+    },
+    LookupType.Location,
+  )
   @ApiOkResponse({
     description: 'Deletes a Fuel Flowmeter record from the workspace',
   })
