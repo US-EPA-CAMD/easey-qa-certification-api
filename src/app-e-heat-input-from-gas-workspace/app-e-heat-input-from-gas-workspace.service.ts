@@ -111,6 +111,7 @@ export class AppEHeatInputFromGasWorkspaceService {
   }
 
   async updateAppEHeatInputFromGas(
+    locationId: string,
     testSumId: string,
     id: string,
     payload: AppEHeatInputFromGasBaseDTO,
@@ -130,6 +131,21 @@ export class AppEHeatInputFromGasWorkspaceService {
       );
     }
 
+    const system = await this.monSysWorkspaceRepository.findOne({
+      locationId: locationId,
+      monitoringSystemID: payload.monitoringSystemId,
+    });
+
+    if (!system) {
+      throw new EaseyException(
+          new Error(
+              `Monitor System Identifier is invalid for this location [${locationId}].`,
+          ),
+          HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    entity.system = system;
     entity.gasVolume = payload.gasVolume;
     entity.gasGCV = payload.gasGCV;
     entity.gasHeatInput = payload.gasHeatInput;
