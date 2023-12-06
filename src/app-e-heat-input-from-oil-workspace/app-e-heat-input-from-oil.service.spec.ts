@@ -172,6 +172,7 @@ describe('AppEHeatInputOilWorkspaceService', () => {
   describe('updateAppEHeatInputFromOilRecord', () => {
     it('Copies input values onto an existing Appendix E Heat Input from Oil record and saves it', async () => {
       const result = await service.updateAppEHeatInputFromOilRecord(
+        locationId,
         testSumId,
         appECorrTestRunId,
         payload,
@@ -190,6 +191,7 @@ describe('AppEHeatInputOilWorkspaceService', () => {
 
       try {
         await service.updateAppEHeatInputFromOilRecord(
+          locationId,
           testSumId,
           appECorrTestRunId,
           payload,
