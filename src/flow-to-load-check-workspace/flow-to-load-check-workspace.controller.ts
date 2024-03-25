@@ -78,7 +78,7 @@ export class FlowToLoadCheckWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )
@@ -100,7 +100,7 @@ export class FlowToLoadCheckWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )
@@ -129,7 +129,7 @@ export class FlowToLoadCheckWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )

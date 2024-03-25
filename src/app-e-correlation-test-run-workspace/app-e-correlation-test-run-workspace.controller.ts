@@ -85,7 +85,7 @@ export class AppECorrelationTestRunWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )
@@ -116,7 +116,7 @@ export class AppECorrelationTestRunWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )
@@ -147,7 +147,7 @@ export class AppECorrelationTestRunWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )

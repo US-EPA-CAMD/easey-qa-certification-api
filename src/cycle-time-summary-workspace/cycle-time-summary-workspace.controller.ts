@@ -77,7 +77,7 @@ export class CycleTimeSummaryWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )
@@ -99,7 +99,7 @@ export class CycleTimeSummaryWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )
@@ -127,7 +127,7 @@ export class CycleTimeSummaryWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )
