@@ -41,7 +41,7 @@ export class TestQualificationWorkspaceService {
   }
 
   async getTestQualification(id: string): Promise<TestQualificationDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -77,7 +77,7 @@ export class TestQualificationWorkspaceService {
 
     await this.repository.save(entity);
 
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
@@ -118,7 +118,7 @@ export class TestQualificationWorkspaceService {
     isImport: boolean = false,
   ): Promise<TestQualificationRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOne(id);
+    const record = await this.repository.findOneBy({ id });
 
     if (!record) {
       throw new EaseyException(
@@ -172,7 +172,7 @@ export class TestQualificationWorkspaceService {
     let historicalRecord: TestQualification;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
+      historicalRecord = await this.historicalRepo.findOneBy({
         testSumId: testSumId,
         testClaimCode: payload.testClaimCode,
         highLoadPercentage: payload.highLoadPercentage,

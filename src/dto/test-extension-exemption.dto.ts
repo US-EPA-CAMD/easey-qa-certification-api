@@ -154,7 +154,7 @@ export class TestExtensionExemptionBaseDTO {
         }].`;
       },
     },
-    (args: ValidationArguments): FindOneOptions<FuelCode> => {
+    (_args: ValidationArguments): FindOneOptions<FuelCode> => {
       return { where: { fuelGroupCode: 'GAS' } };
     },
   )

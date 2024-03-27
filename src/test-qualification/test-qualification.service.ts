@@ -25,7 +25,7 @@ export class TestQualificationService {
   }
 
   async getTestQualification(id: string): Promise<TestQualificationDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

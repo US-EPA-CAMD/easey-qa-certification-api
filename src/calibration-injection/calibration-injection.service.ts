@@ -26,7 +26,7 @@ export class CalibrationInjectionService {
     id: string,
     testSumId: string,
   ): Promise<CalibrationInjectionDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });

@@ -28,7 +28,7 @@ export class FuelFlowmeterAccuracyService {
   async getFuelFlowmeterAccuracy(
     id: string,
   ): Promise<FuelFlowmeterAccuracyRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

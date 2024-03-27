@@ -26,7 +26,7 @@ export class FlowToLoadCheckService {
   }
 
   async getFlowToLoadCheck(id: string): Promise<FlowToLoadCheckRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

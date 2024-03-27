@@ -46,7 +46,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
   async getAppECorrelation(
     id: string,
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -79,7 +79,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -99,7 +99,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -140,8 +140,8 @@ export class AppECorrelationTestSummaryWorkspaceService {
     let historicalRecord: AppECorrelationTestSummary;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
-        testSumId: testSumId,
+      historicalRecord = await this.historicalRepo.findOneBy({
+        testSumId,
         operatingLevelForRun: payload.operatingLevelForRun,
       });
     }

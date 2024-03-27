@@ -41,7 +41,7 @@ export class AirEmissionTestingWorkspaceService {
   async getAirEmissionTesting(
     id: string,
   ): Promise<AirEmissionTestingRecordDTO> {
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -74,7 +74,7 @@ export class AirEmissionTestingWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -92,7 +92,7 @@ export class AirEmissionTestingWorkspaceService {
   ): Promise<AirEmissionTestingRecordDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -175,8 +175,8 @@ export class AirEmissionTestingWorkspaceService {
     let historicalRecord: AirEmissionTesting;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
-        testSumId: testSumId,
+      historicalRecord = await this.historicalRepo.findOneBy({
+        testSumId,
         qiLastName: payload.qiLastName,
         qiFirstName: payload.qiFirstName,
         aetbName: payload.aetbName,

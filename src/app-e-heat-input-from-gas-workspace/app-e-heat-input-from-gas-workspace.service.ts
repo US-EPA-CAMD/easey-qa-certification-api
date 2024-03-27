@@ -71,8 +71,8 @@ export class AppEHeatInputFromGasWorkspaceService {
   ): Promise<AppEHeatInputFromGasRecordDTO> {
     const timestamp = currentDateTime();
 
-    const system = await this.monSysWorkspaceRepository.findOne({
-      locationId: locationId,
+    const system = await this.monSysWorkspaceRepository.findOneBy({
+      locationId,
       monitoringSystemID: payload.monitoringSystemId,
     });
 
@@ -131,17 +131,17 @@ export class AppEHeatInputFromGasWorkspaceService {
       );
     }
 
-    const system = await this.monSysWorkspaceRepository.findOne({
-      locationId: locationId,
+    const system = await this.monSysWorkspaceRepository.findOneBy({
+      locationId,
       monitoringSystemID: payload.monitoringSystemId,
     });
 
     if (!system) {
       throw new EaseyException(
-          new Error(
-              `Monitor System Identifier is invalid for this location [${locationId}].`,
-          ),
-          HttpStatus.BAD_REQUEST,
+        new Error(
+          `Monitor System Identifier is invalid for this location [${locationId}].`,
+        ),
+        HttpStatus.BAD_REQUEST,
       );
     }
 

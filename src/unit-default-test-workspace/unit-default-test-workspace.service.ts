@@ -44,7 +44,7 @@ export class UnitDefaultTestWorkspaceService {
   }
 
   async getUnitDefaultTest(id: string): Promise<UnitDefaultTestRecordDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
     });
 
@@ -77,7 +77,7 @@ export class UnitDefaultTestWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -95,7 +95,7 @@ export class UnitDefaultTestWorkspaceService {
   ): Promise<UnitDefaultTestRecordDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne({
+    const entity = await this.repository.findOneBy({
       id,
     });
 
@@ -186,7 +186,7 @@ export class UnitDefaultTestWorkspaceService {
     const promises = [];
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
+      historicalRecord = await this.historicalRepo.findOneBy({
         testSumId: testSumId,
         noxDefaultRate: payload.noxDefaultRate,
       });

@@ -15,7 +15,6 @@ import { ProtocolGasRepository } from '../protocol-gas/protocol-gas.repository';
 import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { In } from 'typeorm';
-import { ProtocolGas } from '../entities/protocol-gas.entity';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
@@ -32,7 +31,7 @@ export class ProtocolGasWorkspaceService {
   ) {}
 
   async getProtocolGas(id: string): Promise<ProtocolGasDTO> {
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -70,7 +69,7 @@ export class ProtocolGasWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -88,7 +87,7 @@ export class ProtocolGasWorkspaceService {
   ): Promise<ProtocolGasDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(

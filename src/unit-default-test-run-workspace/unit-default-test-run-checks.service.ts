@@ -14,6 +14,7 @@ import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
 
 @Injectable()
 export class UnitDefaultTestRunChecksService {
@@ -46,7 +47,7 @@ export class UnitDefaultTestRunChecksService {
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
-    let testSumRecord;
+    let testSumRecord: TestSummary | TestSummaryImportDTO = null;
     this.logger.log('Running Unit Default Test Run Checks');
 
     if (isImport) {
@@ -102,7 +103,7 @@ export class UnitDefaultTestRunChecksService {
         error = errorMsg;
       }
     } else {
-      const record: UnitDefaultTestRun = await this.repository.findOne({
+      const record: UnitDefaultTestRun = await this.repository.findOneBy({
         unitDefaultTestSumId: unitDefaultTestSumId,
         operatingLevelForRun: unitDefaultTestRun.operatingLevelForRun,
         runNumber: unitDefaultTestRun.runNumber,

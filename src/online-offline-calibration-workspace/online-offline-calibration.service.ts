@@ -43,7 +43,7 @@ export class OnlineOfflineCalibrationWorkspaceService {
   async getOnlineOfflineCalibration(
     id: string,
   ): Promise<OnlineOfflineCalibrationDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -76,7 +76,7 @@ export class OnlineOfflineCalibrationWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -123,7 +123,7 @@ export class OnlineOfflineCalibrationWorkspaceService {
   ): Promise<OnlineOfflineCalibrationDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -196,9 +196,7 @@ export class OnlineOfflineCalibrationWorkspaceService {
     let historicalRecord: OnlineOfflineCalibration;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
-        testSumId,
-      });
+      historicalRecord = await this.historicalRepo.findOneBy({ testSumId });
     }
 
     const createdOnlineOfflineCalibration = await this.createOnlineOfflineCalibration(

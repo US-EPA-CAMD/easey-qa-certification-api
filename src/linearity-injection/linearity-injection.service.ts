@@ -19,7 +19,7 @@ export class LinearityInjectionService {
   ) {}
 
   async getInjectionById(id: string): Promise<LinearityInjectionDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -36,7 +36,7 @@ export class LinearityInjectionService {
   async getInjectionsByLinSumId(
     linSumId: string,
   ): Promise<LinearityInjectionDTO[]> {
-    const results = await this.repository.find({ linSumId });
+    const results = await this.repository.findBy({ linSumId });
     return this.map.many(results);
   }
 

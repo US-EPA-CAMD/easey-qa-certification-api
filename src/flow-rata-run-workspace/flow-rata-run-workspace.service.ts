@@ -41,7 +41,7 @@ export class FlowRataRunWorkspaceService {
   }
 
   async getFlowRataRun(id: string): Promise<FlowRataRunDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -73,7 +73,7 @@ export class FlowRataRunWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -91,7 +91,7 @@ export class FlowRataRunWorkspaceService {
     isImport: boolean = false,
   ): Promise<FlowRataRunRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOne(flowRataRunId);
+    const record = await this.repository.findOneBy({ id: flowRataRunId });
 
     if (!record) {
       throw new EaseyException(
@@ -173,8 +173,8 @@ export class FlowRataRunWorkspaceService {
     let historicalRecord: FlowRataRun;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
-        rataRunId: rataRunId,
+      historicalRecord = await this.historicalRepository.findOneBy({
+        rataRunId,
         numberOfTraversePoints: payload.numberOfTraversePoints,
       });
     }

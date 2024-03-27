@@ -23,7 +23,7 @@ export class HgInjectionService {
   }
 
   async getHgInjection(id: string) {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

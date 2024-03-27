@@ -32,7 +32,7 @@ export class LinearityInjectionWorkspaceService {
   ) {}
 
   async getInjectionById(id: string): Promise<LinearityInjectionDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -49,9 +49,7 @@ export class LinearityInjectionWorkspaceService {
   async getInjectionsByLinSumId(
     linSumId: string,
   ): Promise<LinearityInjectionDTO[]> {
-    const results = await this.repository.find({
-      linSumId: linSumId,
-    });
+    const results = await this.repository.findBy({ linSumId });
     return this.map.many(results);
   }
 
@@ -79,8 +77,8 @@ export class LinearityInjectionWorkspaceService {
     let historicalRecord: LinearityInjection;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
-        linSumId: linSumId,
+      historicalRecord = await this.historicalRepository.findOneBy({
+        linSumId,
         injectionDate: payload.injectionDate,
         injectionHour: payload.injectionHour,
         injectionMinute: payload.injectionMinute,
@@ -122,7 +120,7 @@ export class LinearityInjectionWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -139,7 +137,7 @@ export class LinearityInjectionWorkspaceService {
     isImport: boolean = false,
   ): Promise<LinearityInjectionRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(

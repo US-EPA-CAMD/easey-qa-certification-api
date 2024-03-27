@@ -39,7 +39,7 @@ export class RataTraverseWorkspaceService {
   }
 
   async getRataTraverse(id: string): Promise<RataTraverseRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -72,7 +72,7 @@ export class RataTraverseWorkspaceService {
 
     await this.repository.save(entity);
 
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
@@ -91,7 +91,7 @@ export class RataTraverseWorkspaceService {
     isImport: boolean = false,
   ): Promise<RataTraverseRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOne(rataTraverseId);
+    const record = await this.repository.findOneBy({ id: rataTraverseId });
 
     if (!record) {
       throw new EaseyException(
@@ -109,7 +109,8 @@ export class RataTraverseWorkspaceService {
     record.velocityCalibrationCoefficient =
       payload.velocityCalibrationCoefficient;
     record.lastProbeDate = payload.lastProbeDate;
-    record.averageVelocityDifferencePressure = payload.averageVelocityDifferencePressure;
+    record.averageVelocityDifferencePressure =
+      payload.averageVelocityDifferencePressure;
     record.averageSquareVelocityDifferencePressure =
       payload.averageSquareVelocityDifferencePressure;
     record.tStackTemperature = payload.tStackTemperature;
@@ -168,7 +169,7 @@ export class RataTraverseWorkspaceService {
     let historicalRecord: RataTraverse;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
+      historicalRecord = await this.historicalRepository.findOneBy({
         flowRataRunId: flowRataRunId,
         methodTraversePointId: payload.methodTraversePointId,
       });

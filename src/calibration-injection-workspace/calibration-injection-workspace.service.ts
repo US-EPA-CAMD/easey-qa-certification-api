@@ -41,7 +41,7 @@ export class CalibrationInjectionWorkspaceService {
     id: string,
     testSumId: string,
   ): Promise<CalibrationInjectionDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -77,7 +77,7 @@ export class CalibrationInjectionWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -93,7 +93,7 @@ export class CalibrationInjectionWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<CalibrationInjectionDTO> {
-    const entity = await this.repository.findOne({
+    const entity = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -188,8 +188,8 @@ export class CalibrationInjectionWorkspaceService {
     let historicalRecord: CalibrationInjection;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
-        testSumId: testSumId,
+      historicalRecord = await this.historicalRepository.findOneBy({
+        testSumId,
         upscaleGasLevelCode: payload.upscaleGasLevelCode,
         zeroInjectionDate: payload.zeroInjectionDate,
         zeroInjectionHour: payload.zeroInjectionHour,

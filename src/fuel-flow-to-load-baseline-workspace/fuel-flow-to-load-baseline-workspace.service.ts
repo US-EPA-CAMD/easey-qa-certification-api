@@ -42,7 +42,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     id: string,
     testSumId: string,
   ): Promise<FuelFlowToLoadBaselineDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -78,7 +78,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -94,7 +94,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<FuelFlowToLoadBaselineDTO> {
-    const entity = await this.repository.findOne({
+    const entity = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -113,7 +113,8 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     entity.averageFuelFlowRate = payload.averageFuelFlowRate;
     entity.averageLoad = payload.averageLoad;
     entity.baselineFuelFlowToLoadRatio = payload.baselineFuelFlowToLoadRatio;
-    entity.fuelFlowToLoadUnitsOfMeasureCode = payload.fuelFlowToLoadUnitsOfMeasureCode;
+    entity.fuelFlowToLoadUnitsOfMeasureCode =
+      payload.fuelFlowToLoadUnitsOfMeasureCode;
     entity.averageHourlyHeatInputRate = payload.averageHourlyHeatInputRate;
     entity.baselineGHR = payload.baselineGHR;
     entity.ghrUnitsOfMeasureCode = payload.ghrUnitsOfMeasureCode;
@@ -175,8 +176,8 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     let historicalRecord: FuelFlowToLoadBaseline;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
-        testSumId: testSumId,
+      historicalRecord = await this.historicalRepo.findOneBy({
+        testSumId,
         accuracyTestNumber: payload.accuracyTestNumber,
       });
     }

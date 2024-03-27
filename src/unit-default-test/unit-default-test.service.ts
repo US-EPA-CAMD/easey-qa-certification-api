@@ -32,7 +32,7 @@ export class UnitDefaultTestService {
     id: string,
     testSumId: string,
   ): Promise<UnitDefaultTestRecordDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });

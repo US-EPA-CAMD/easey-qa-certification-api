@@ -67,8 +67,10 @@ export class FlowRataRunChecksService {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
       );
-      rataSummaryRecord = await this.rataSummaryRepository.findOne(rataSumId);
-      rataRunRecord = await this.rataRunRepository.findOne(rataRunId);
+      rataSummaryRecord = await this.rataSummaryRepository.findOneBy({
+        id: rataSumId,
+      });
+      rataRunRecord = await this.rataRunRepository.findOneBy({ id: rataRunId });
     }
 
     if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
@@ -80,10 +82,7 @@ export class FlowRataRunChecksService {
         errorList.push(error);
       }
 
-      error = this.rata115Check(
-        rataSummaryRecord,
-        flowRataRun.averageVelocityWithoutWallEffects,
-      );
+      error = this.rata115Check(flowRataRun.averageVelocityWithoutWallEffects);
       if (error) {
         errorList.push(error);
       }
@@ -120,10 +119,7 @@ export class FlowRataRunChecksService {
     return error;
   }
 
-  private rata115Check(
-    rataSummaryRecord: RataSummary,
-    averageVelocityWithoutWallEffects: number,
-  ): string {
+  private rata115Check(averageVelocityWithoutWallEffects: number): string {
     let error: string = null;
     let FIELDNAME: string = 'averageVelocityWithoutWallEffects';
     if (averageVelocityWithoutWallEffects <= 0) {
