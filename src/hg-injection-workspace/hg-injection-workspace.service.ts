@@ -38,7 +38,7 @@ export class HgInjectionWorkspaceService {
   }
 
   async getHgInjection(id: string) {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -71,7 +71,7 @@ export class HgInjectionWorkspaceService {
 
     await this.repository.save(entity);
 
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
@@ -90,7 +90,7 @@ export class HgInjectionWorkspaceService {
     isImport: boolean = false,
   ): Promise<HgInjectionRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -166,8 +166,8 @@ export class HgInjectionWorkspaceService {
     let historicalRecord: HgInjection;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
-        hgTestSumId: hgTestSumId,
+      historicalRecord = await this.historicalRepository.findOneBy({
+        hgTestSumId,
         injectionDate: payload.injectionDate,
         injectionHour: payload.injectionHour,
         injectionMinute: payload.injectionMinute,

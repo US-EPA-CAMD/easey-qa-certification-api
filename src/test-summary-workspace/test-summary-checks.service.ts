@@ -1,5 +1,6 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { HttpStatus, Injectable } from '@nestjs/common';
+import moment from 'moment';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
@@ -31,7 +32,6 @@ import {
   VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION,
 } from '../utilities/constants';
 
-const moment = require('moment');
 const KEY = 'Test Summary';
 
 @Injectable()
@@ -103,7 +103,7 @@ export class TestSummaryChecksService {
       }
 
       // IMPORT-17 Extraneous Test Summary Data Check
-      error = this.import17Check(locationId, summary);
+      error = this.import17Check(summary);
       if (error) {
         errorList.push(error);
       }
@@ -360,7 +360,6 @@ export class TestSummaryChecksService {
 
   // IMPORT-17 Extraneous Test Summary Data Check
   private import17Check(
-    locationId: string,
     summary: TestSummaryBaseDTO | TestSummaryImportDTO,
   ): string {
     let error: string = null;
@@ -538,7 +537,7 @@ export class TestSummaryChecksService {
       },
     });
 
-    const component = await this.componentRepository.findOne({
+    const component = await this.componentRepository.findOneBy({
       componentID: summary.componentId,
       locationId: locationId,
     });
@@ -703,7 +702,7 @@ export class TestSummaryChecksService {
             if (rataSummary.rataRunData?.length > 0) {
               for (const rataRun of rataSummary.rataRunData) {
                 if (rataRun.flowRataRunData?.length > 0) {
-                  const monitorSystem = await this.monitorSystemRepository.findOne(
+                  const monitorSystem = await this.monitorSystemRepository.findOneBy(
                     {
                       locationId,
                       monitoringSystemID: summary.monitoringSystemId,
@@ -998,7 +997,7 @@ export class TestSummaryChecksService {
     let FIELDNAME: string = 'spanScalecode';
 
     if (summary.componentId) {
-      const component = await this.componentRepository.findOne({
+      const component = await this.componentRepository.findOneBy({
         componentID: summary.componentId,
         locationId: locationId,
       });
@@ -1075,7 +1074,7 @@ export class TestSummaryChecksService {
         TestTypeCodes.CYCLE.toString(),
       ].includes(summary.testTypeCode)
     ) {
-      const component = await this.componentRepository.findOne({
+      const component = await this.componentRepository.findOneBy({
         locationId: locationId,
         componentID: summary.componentId,
       });
@@ -1179,7 +1178,6 @@ export class TestSummaryChecksService {
   ): Promise<string> {
     let error: string = null;
     let duplicateQaSupp: TestSummary | QASuppData;
-    const resultA = this.getMessage('LINEAR-4-A', null);
 
     const duplicateTestSum = await this.repository.getTestSummaryByComponent(
       summary.componentId,
@@ -1347,9 +1345,9 @@ export class TestSummaryChecksService {
       !testResultCodes.includes(summary.testResultCode) &&
       [TestTypeCodes.LINE.toString()].includes(summary.testTypeCode)
     ) {
-      const option = await this.testResultCodeRepository.findOne(
-        summary.testResultCode,
-      );
+      const option = await this.testResultCodeRepository.findOneBy({
+        testResultCode: summary.testResultCode,
+      });
 
       if (option) {
         error = this.getMessage('LINEAR-10-C', {
@@ -1386,9 +1384,9 @@ export class TestSummaryChecksService {
         TestTypeCodes.ONOFF.toString(),
       ].includes(summary.testTypeCode)
     ) {
-      const option = await this.testResultCodeRepository.findOne(
-        summary.testResultCode,
-      );
+      const option = await this.testResultCodeRepository.findOneBy({
+        testResultCode: summary.testResultCode,
+      });
 
       if (option) {
         switch (summary.testTypeCode) {

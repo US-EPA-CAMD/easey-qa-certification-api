@@ -1,4 +1,4 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In } from 'typeorm';
 
@@ -18,7 +18,7 @@ export class TransmitterTransducerAccuracyService {
   async getTransmitterTransducerAccuracy(
     id: string,
   ): Promise<TransmitterTransducerAccuracyDTO> {
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(

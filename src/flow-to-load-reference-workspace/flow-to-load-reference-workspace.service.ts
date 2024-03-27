@@ -39,7 +39,7 @@ export class FlowToLoadReferenceWorkspaceService {
   }
 
   async getFlowToLoadReference(id: string): Promise<FlowToLoadReferenceDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -72,7 +72,7 @@ export class FlowToLoadReferenceWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -91,7 +91,7 @@ export class FlowToLoadReferenceWorkspaceService {
   ): Promise<FlowToLoadReferenceDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -170,8 +170,8 @@ export class FlowToLoadReferenceWorkspaceService {
     let historicalRecord: FlowToLoadReference;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
-        testSumId: testSumId,
+      historicalRecord = await this.historicalRepo.findOneBy({
+        testSumId,
         operatingLevelCode: payload.operatingLevelCode,
       });
     }

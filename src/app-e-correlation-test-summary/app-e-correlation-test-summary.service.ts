@@ -31,7 +31,7 @@ export class AppECorrelationTestSummaryService {
   async getAppECorrelation(
     id: string,
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

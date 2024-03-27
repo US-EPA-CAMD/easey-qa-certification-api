@@ -1,6 +1,6 @@
 import { In } from 'typeorm';
 
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
@@ -18,7 +18,7 @@ export class LinearitySummaryService {
   ) {}
 
   async getSummaryById(id: string): Promise<LinearitySummaryDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -35,7 +35,7 @@ export class LinearitySummaryService {
   async getSummariesByTestSumId(
     testSumId: string,
   ): Promise<LinearitySummaryDTO[]> {
-    const results = await this.repository.find({ testSumId });
+    const results = await this.repository.findBy({ testSumId });
     return this.map.many(results);
   }
 

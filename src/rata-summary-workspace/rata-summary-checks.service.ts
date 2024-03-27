@@ -67,9 +67,9 @@ export class RataSummaryChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-      testSumRecord.system = await this.monitorSystemRepository.findOne({
+      testSumRecord.system = await this.monitorSystemRepository.findOneBy({
         monitoringSystemID: testSummary.monitoringSystemId,
-        locationId: locationId,
+        locationId,
       });
 
       testSumRecord.location = await this.monitorLocationRepository.getLocationById(
@@ -238,8 +238,8 @@ export class RataSummaryChecksService {
     let duplicates: RataSummary[] | RataSummaryBaseDTO[];
 
     if (rataId && !isImport) {
-      duplicates = await this.repository.find({
-        rataId: rataId,
+      duplicates = await this.repository.findBy({
+        rataId,
         operatingLevelCode: rataSummary.operatingLevelCode,
       });
       if (duplicates.length > 0) {

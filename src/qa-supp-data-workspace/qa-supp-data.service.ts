@@ -10,9 +10,7 @@ export class QASuppDataWorkspaceService {
   ) {}
 
   async setSubmissionAvailCodeToRequire(testSumId: string): Promise<void> {
-    const entity = await this.repository.findOne({
-      testSumId: testSumId,
-    });
+    const entity = await this.repository.findOneBy({ testSumId });
 
     entity.submissionAvailabilityCode = 'REQUIRE';
 

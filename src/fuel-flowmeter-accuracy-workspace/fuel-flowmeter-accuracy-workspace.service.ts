@@ -42,7 +42,7 @@ export class FuelFlowmeterAccuracyWorkspaceService {
   async getFuelFlowmeterAccuracy(
     id: string,
   ): Promise<FuelFlowmeterAccuracyRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -65,7 +65,7 @@ export class FuelFlowmeterAccuracyWorkspaceService {
   ): Promise<FuelFlowmeterAccuracyDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -115,7 +115,7 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -175,8 +175,8 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     let historicalRecord: FuelFlowmeterAccuracy;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
-        testSumId: testSumId,
+      historicalRecord = await this.historicalRepo.findOneBy({
+        testSumId,
         accuracyTestMethodCode: payload.accuracyTestMethodCode,
       });
     }

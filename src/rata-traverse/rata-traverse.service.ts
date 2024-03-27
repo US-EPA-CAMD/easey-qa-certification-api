@@ -26,7 +26,7 @@ export class RataTraverseService {
   }
 
   async getRataTraverse(id: string): Promise<RataTraverseRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

@@ -120,8 +120,8 @@ export class QACertificationEventWorkspaceService {
     let monitoringSystemRecordId = null;
 
     if (payload.componentId) {
-      const component = await this.componentRepository.findOne({
-        locationId: locationId,
+      const component = await this.componentRepository.findOneBy({
+        locationId,
         componentID: payload.componentId,
       });
 
@@ -129,7 +129,7 @@ export class QACertificationEventWorkspaceService {
     }
 
     if (payload.monitoringSystemId) {
-      const monitorSystem = await this.monitoringSystemRepository.findOne({
+      const monitorSystem = await this.monitoringSystemRepository.findOneBy({
         locationId,
         monitoringSystemID: payload.monitoringSystemId,
       });
@@ -182,7 +182,7 @@ export class QACertificationEventWorkspaceService {
   ): Promise<QACertificationEventDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(

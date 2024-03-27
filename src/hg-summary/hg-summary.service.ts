@@ -25,7 +25,7 @@ export class HgSummaryService {
   }
 
   async getHgSummary(id: string, testSumId: string): Promise<HgSummaryDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });

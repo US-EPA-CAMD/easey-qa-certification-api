@@ -34,9 +34,7 @@ export class RataWorkspaceService {
   ) {}
 
   async getRataById(id: string): Promise<RataDTO> {
-    const result = await this.repository.findOne({
-      id: id,
-    });
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -49,9 +47,7 @@ export class RataWorkspaceService {
   }
 
   async getRatasByTestSumId(testSumId: string): Promise<RataDTO[]> {
-    const results = await this.repository.find({
-      testSumId: testSumId,
-    });
+    const results = await this.repository.findBy({ testSumId });
     return this.map.many(results);
   }
 
@@ -74,7 +70,7 @@ export class RataWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -91,7 +87,7 @@ export class RataWorkspaceService {
     isImport: boolean = false,
   ): Promise<RataRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -157,8 +153,8 @@ export class RataWorkspaceService {
     let historicalRecord: Rata;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
-        testSumId: testSumId,
+      historicalRecord = await this.historicalRepository.findOneBy({
+        testSumId,
         rataFrequencyCode: payload.rataFrequencyCode,
       });
     }

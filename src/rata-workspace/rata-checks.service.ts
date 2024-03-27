@@ -57,7 +57,7 @@ export class RataChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-      testSumRecord.system = await this.monitorSystemRepository.findOne({
+      testSumRecord.system = await this.monitorSystemRepository.findOneBy({
         monitoringSystemID: testSummary.monitoringSystemId,
         locationId: locationId,
       });
@@ -125,9 +125,9 @@ export class RataChecksService {
         summary.testResultCode,
       )
     ) {
-      const record = await this.testResultCodeRepository.findOne(
-        summary.testResultCode,
-      );
+      const record = await this.testResultCodeRepository.findOneBy({
+        testResultCode: summary.testResultCode,
+      });
 
       if (record) {
         error = resultC;

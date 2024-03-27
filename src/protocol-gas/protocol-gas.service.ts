@@ -24,7 +24,7 @@ export class ProtocolGasService {
   }
 
   async getProtocolGas(id: string): Promise<ProtocolGasDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

@@ -45,7 +45,7 @@ export class UnitDefaultTestRunWorkspaceService {
     id: string,
     unitDefaultTestSumId: string,
   ): Promise<UnitDefaultTestRunRecordDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       unitDefaultTestSumId,
     });
@@ -82,7 +82,7 @@ export class UnitDefaultTestRunWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
@@ -100,7 +100,7 @@ export class UnitDefaultTestRunWorkspaceService {
     isImport: boolean = false,
   ): Promise<UnitDefaultTestRunRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -188,7 +188,7 @@ export class UnitDefaultTestRunWorkspaceService {
     let historicalRecord: UnitDefaultTestRun;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
+      historicalRecord = await this.historicalRepository.findOneBy({
         unitDefaultTestSumId,
         operatingLevelForRun: payload.operatingLevelForRun,
         runNumber: payload.runNumber,

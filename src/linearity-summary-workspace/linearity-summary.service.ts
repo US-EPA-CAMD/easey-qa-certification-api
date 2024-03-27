@@ -94,8 +94,8 @@ export class LinearitySummaryWorkspaceService {
     let historicalRecord: LinearitySummary;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
-        testSumId: testSumId,
+      historicalRecord = await this.historicalRepository.findOneBy({
+        testSumId,
         gasLevelCode: payload.gasLevelCode,
       });
     }
@@ -150,7 +150,7 @@ export class LinearitySummaryWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -169,7 +169,7 @@ export class LinearitySummaryWorkspaceService {
     isImport: boolean = false,
   ): Promise<LinearitySummaryRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(

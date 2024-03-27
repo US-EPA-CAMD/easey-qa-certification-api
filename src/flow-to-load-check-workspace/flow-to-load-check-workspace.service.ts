@@ -39,7 +39,7 @@ export class FlowToLoadCheckWorkspaceService {
   }
 
   async getFlowToLoadCheck(id: string): Promise<FlowToLoadCheckRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -72,7 +72,7 @@ export class FlowToLoadCheckWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -91,7 +91,7 @@ export class FlowToLoadCheckWorkspaceService {
   ): Promise<FlowToLoadCheckDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -104,7 +104,8 @@ export class FlowToLoadCheckWorkspaceService {
 
     entity.testBasisCode = payload.testBasisCode;
     entity.biasAdjustedIndicator = payload.biasAdjustedIndicator;
-    entity.averageAbsolutePercentDifference = payload.averageAbsolutePercentDifference;
+    entity.averageAbsolutePercentDifference =
+      payload.averageAbsolutePercentDifference;
     entity.numberOfHours = payload.numberOfHours;
     entity.numberOfHoursExcludedForFuel = payload.numberOfHoursExcludedForFuel;
     entity.numberOfHoursExcludedRamping = payload.numberOfHoursExcludedRamping;
@@ -175,8 +176,8 @@ export class FlowToLoadCheckWorkspaceService {
     let historicalRecord: FlowToLoadCheck;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
-        testSumId: testSumId,
+      historicalRecord = await this.historicalRepo.findOneBy({
+        testSumId,
         testBasisCode: payload.testBasisCode,
       });
     }

@@ -28,7 +28,7 @@ export class FlowToLoadReferenceService {
   async getFlowToLoadReference(
     id: string,
   ): Promise<FlowToLoadReferenceRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

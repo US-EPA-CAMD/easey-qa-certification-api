@@ -1,4 +1,4 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -115,9 +115,9 @@ export class LinearityInjectionChecksService {
         error = errorMsg;
       }
     } else {
-      const record: LinearityInjection = await this.linearityInjectionRepository.findOne(
+      const record: LinearityInjection = await this.linearityInjectionRepository.findOneBy(
         {
-          linSumId: linSumId,
+          linSumId,
           injectionDate: linearityInjection.injectionDate,
           injectionHour: linearityInjection.injectionHour,
           injectionMinute: linearityInjection.injectionMinute,

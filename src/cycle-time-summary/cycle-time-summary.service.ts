@@ -29,7 +29,7 @@ export class CycleTimeSummaryService {
     id: string,
     testSumId: string,
   ): Promise<CycleTimeSummaryDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });

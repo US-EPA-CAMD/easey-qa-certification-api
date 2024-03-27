@@ -74,7 +74,7 @@ export class RataTraverseChecksService {
     if (isImport) {
       testSumRecord = testSummary;
       rataSumRecord = rataSummary;
-      testSumRecord.system = await this.monitorSystemRepository.findOne({
+      testSumRecord.system = await this.monitorSystemRepository.findOneBy({
         monitoringSystemID: testSummary.monitoringSystemId,
         locationId: locationId,
       });
@@ -82,7 +82,9 @@ export class RataTraverseChecksService {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
       );
-      rataSumRecord = await this.rataSummaryRepository.findOne(rataSumId);
+      rataSumRecord = await this.rataSummaryRepository.findOneBy({
+        id: rataSumId,
+      });
     }
 
     if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
@@ -474,7 +476,7 @@ export class RataTraverseChecksService {
       'runNumber, operatingLevelCode, and MethodTraversePointID';
 
     if (flowRataRunId && !isImport) {
-      duplicates = await this.repository.find({
+      duplicates = await this.repository.findBy({
         flowRataRunId: flowRataRunId,
         methodTraversePointId: rataTraverse.methodTraversePointId,
       });

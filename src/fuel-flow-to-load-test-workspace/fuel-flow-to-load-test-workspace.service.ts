@@ -44,7 +44,7 @@ export class FuelFlowToLoadTestWorkspaceService {
     id: string,
     testSumId: string,
   ): Promise<FuelFlowToLoadTestRecordDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -80,7 +80,7 @@ export class FuelFlowToLoadTestWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -96,7 +96,7 @@ export class FuelFlowToLoadTestWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ) {
-    const entity = await this.repository.findOne({
+    const entity = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -158,8 +158,8 @@ export class FuelFlowToLoadTestWorkspaceService {
     let historicalRecord: FuelFlowToLoadTest;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
-        testSumId: testSumId,
+      historicalRecord = await this.historicalRepo.findOneBy({
+        testSumId,
         testBasisCode: payload.testBasisCode,
       });
     }

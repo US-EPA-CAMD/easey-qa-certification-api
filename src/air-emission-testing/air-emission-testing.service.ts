@@ -23,7 +23,7 @@ export class AirEmissionTestingService {
   }
 
   async getAirEmissionTesting(id: string): Promise<AirEmissionTestingDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

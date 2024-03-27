@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import moment from 'moment';
 
 import { TestSummary } from '../entities/test-summary.entity';
 import { RataRunBaseDTO, RataRunImportDTO } from '../dto/rata-run.dto';
@@ -13,7 +14,6 @@ import { RataRun } from '../entities/workspace/rata-run.entity';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 
-const moment = require('moment');
 const KEY = 'RATA Run';
 @Injectable()
 export class RataRunChecksService {
@@ -55,9 +55,9 @@ export class RataRunChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-      testSumRecord.system = await this.monitorSystemRepository.findOne({
+      testSumRecord.system = await this.monitorSystemRepository.findOneBy({
         monitoringSystemID: testSummary.monitoringSystemId,
-        locationId: locationId,
+        locationId,
       });
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
@@ -216,8 +216,8 @@ export class RataRunChecksService {
     let duplicates: RataRun[] | RataRunBaseDTO[];
 
     if (rataSumId && !isImport) {
-      duplicates = await this.repository.find({
-        rataSumId: rataSumId,
+      duplicates = await this.repository.findBy({
+        rataSumId,
         runNumber: rataRun.runNumber,
       });
       if (duplicates.length > 0) {

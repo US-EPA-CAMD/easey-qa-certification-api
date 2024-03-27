@@ -111,7 +111,7 @@ export class TestExtensionExemptionsChecksService {
 
       const { extensionOrExemptionCode, fuelCode } = testExtensionExemption;
 
-      testExtExempts = await this.repository.find({
+      testExtExempts = await this.repository.findBy({
         locationId,
         reportPeriodId,
         monitoringSystemRecordId,

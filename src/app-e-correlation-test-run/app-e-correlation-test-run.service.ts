@@ -36,7 +36,7 @@ export class AppECorrelationTestRunService {
   async getAppECorrelationTestRun(
     id: string,
   ): Promise<AppECorrelationTestRunBaseDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

@@ -211,7 +211,7 @@ export class TestExtensionExemptionsWorkspaceService {
     userId: string,
   ): Promise<TestExtensionExemptionRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOne(id);
+    const record = await this.repository.findOneBy({ id });
 
     if (!record) {
       throw new EaseyException(
@@ -268,7 +268,7 @@ export class TestExtensionExemptionsWorkspaceService {
     let monitoringSystemRecordId = null;
 
     if (payload.year && payload.quarter) {
-      const rptPeriod = await this.reportingPeriodRepository.findOne({
+      const rptPeriod = await this.reportingPeriodRepository.findOneBy({
         year: payload.year,
         quarter: payload.quarter,
       });
@@ -277,7 +277,7 @@ export class TestExtensionExemptionsWorkspaceService {
     }
 
     if (payload.componentId) {
-      const component = await this.componentRepository.findOne({
+      const component = await this.componentRepository.findOneBy({
         locationId: locationId,
         componentID: payload.componentId,
       });
@@ -286,7 +286,7 @@ export class TestExtensionExemptionsWorkspaceService {
     }
 
     if (payload.monitoringSystemId) {
-      const monitorSystem = await this.monSysRepository.findOne({
+      const monitorSystem = await this.monSysRepository.findOneBy({
         locationId: locationId,
         monitoringSystemID: payload.monitoringSystemId,
       });

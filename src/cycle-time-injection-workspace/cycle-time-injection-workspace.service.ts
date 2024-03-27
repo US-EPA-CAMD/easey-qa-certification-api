@@ -42,7 +42,7 @@ export class CycleTimeInjectionWorkspaceService {
   }
 
   async getCycleTimeInjection(id: string) {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -77,7 +77,7 @@ export class CycleTimeInjectionWorkspaceService {
 
     await this.repository.save(entity);
 
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
@@ -112,8 +112,8 @@ export class CycleTimeInjectionWorkspaceService {
     let historicalRecord: CycleTimeInjection;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
-        cycleTimeSumId: cycleTimeSumId,
+      historicalRecord = await this.historicalRepository.findOneBy({
+        cycleTimeSumId,
         gasLevelCode: payload.gasLevelCode,
       });
     }
@@ -143,7 +143,7 @@ export class CycleTimeInjectionWorkspaceService {
   ): Promise<CycleTimeInjectionRecordDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(

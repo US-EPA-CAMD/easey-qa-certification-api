@@ -44,7 +44,7 @@ export class CycleTimeSummaryWorkspaceService {
     id: string,
     testSumId: string,
   ): Promise<CycleTimeSummaryDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -80,7 +80,7 @@ export class CycleTimeSummaryWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -96,7 +96,7 @@ export class CycleTimeSummaryWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<CycleTimeSummaryDTO> {
-    const entity = await this.repository.findOne({
+    const entity = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -191,8 +191,8 @@ export class CycleTimeSummaryWorkspaceService {
     let historicalRecord: CycleTimeSummary;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
-        testSumId: testSumId,
+      historicalRecord = await this.historicalRepository.findOneBy({
+        testSumId,
         totalTime: payload.totalTime,
       });
     }

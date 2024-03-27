@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import moment from 'moment';
 
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import {
@@ -15,7 +16,6 @@ import { MonitorSystemRepository } from '../monitor-system/monitor-system.reposi
 import { RataImportDTO } from '../dto/rata.dto';
 import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
 
-const moment = require('moment');
 const KEY = 'Test Qualification';
 
 @Injectable()
@@ -58,7 +58,7 @@ export class TestQualificationChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-      testSumRecord.system = await this.monitorSystemRepository.findOne({
+      testSumRecord.system = await this.monitorSystemRepository.findOneBy({
         monitoringSystemID: testSummary.monitoringSystemId,
         locationId: locationId,
       });
@@ -276,7 +276,7 @@ export class TestQualificationChecksService {
         });
       }
     } else {
-      testQuals = await this.testQualRepository.find({
+      testQuals = await this.testQualRepository.findBy({
         testSumId: testSumId,
         testClaimCode: testQualification.testClaimCode,
       });

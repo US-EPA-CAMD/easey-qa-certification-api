@@ -35,7 +35,7 @@ export class TransmitterTransducerAccuracyWorkspaceService {
   async getTransmitterTransducerAccuracy(
     id: string,
   ): Promise<TransmitterTransducerAccuracyDTO> {
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -90,7 +90,7 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -107,7 +107,7 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<TransmitterTransducerAccuracyDTO> {
-    const entity = await this.repository.findOne({ id, testSumId });
+    const entity = await this.repository.findOneBy({ id, testSumId });
 
     if (!entity) {
       throw new EaseyException(
@@ -178,7 +178,7 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     let historicalRecord: TransmitterTransducerAccuracy;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
+      historicalRecord = await this.historicalRepository.findOneBy({
         testSumId: testSumId,
         lowLevelAccuracy: payload.lowLevelAccuracy,
         lowLevelAccuracySpecCode: payload.lowLevelAccuracySpecCode,

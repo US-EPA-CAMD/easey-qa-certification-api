@@ -152,8 +152,8 @@ export class LinearitySummaryChecksService {
         error = errorMsg;
       }
     } else {
-      const record: LinearitySummary = await this.repository.findOne({
-        testSumId: testSumId,
+      const record: LinearitySummary = await this.repository.findOneBy({
+        testSumId,
         gasLevelCode: linearitySummary.gasLevelCode,
       });
 

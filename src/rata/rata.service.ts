@@ -17,9 +17,7 @@ export class RataService {
   ) {}
 
   async getRataById(id: string): Promise<RataDTO> {
-    const result = await this.repository.findOne({
-      id: id,
-    });
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -32,9 +30,7 @@ export class RataService {
   }
 
   async getRatasByTestSumId(testSumId: string): Promise<RataDTO[]> {
-    const results = await this.repository.find({
-      testSumId: testSumId,
-    });
+    const results = await this.repository.findBy({ testSumId });
     return this.map.many(results);
   }
 

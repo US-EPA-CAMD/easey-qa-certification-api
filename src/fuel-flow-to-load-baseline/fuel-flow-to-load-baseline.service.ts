@@ -24,7 +24,7 @@ export class FuelFlowToLoadBaselineService {
     id: string,
     testSumId: string,
   ): Promise<FuelFlowToLoadBaselineDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });

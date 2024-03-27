@@ -40,7 +40,7 @@ export class HgSummaryWorkspaceService {
   }
 
   async getHgSummary(id: string, testSumId: string): Promise<HgSummaryDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -74,7 +74,7 @@ export class HgSummaryWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -116,7 +116,7 @@ export class HgSummaryWorkspaceService {
   ): Promise<HgSummaryDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne({
+    const entity = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -184,8 +184,8 @@ export class HgSummaryWorkspaceService {
     let historicalRecord: HgSummary;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
-        testSumId: testSumId,
+      historicalRecord = await this.historicalRepo.findOneBy({
+        testSumId,
         gasLevelCode: payload.gasLevelCode,
       });
     }

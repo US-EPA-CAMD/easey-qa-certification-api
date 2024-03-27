@@ -32,7 +32,6 @@ import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-wo
 import { CalibrationInjectionWorkspaceService } from '../calibration-injection-workspace/calibration-injection-workspace.service';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
 import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
@@ -726,7 +725,7 @@ export class TestSummaryWorkspaceService {
     userId: string,
   ): Promise<TestSummaryRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -788,7 +787,7 @@ export class TestSummaryWorkspaceService {
   ): Promise<void> {
     if (!isImport) {
       const timestamp = currentDateTime();
-      const entity = await this.repository.findOne(testSumId);
+      const entity = await this.repository.findOneBy({ id: testSumId });
 
       entity.userId = userId;
       entity.updateDate = timestamp;
@@ -806,7 +805,7 @@ export class TestSummaryWorkspaceService {
     let monitoringSystemRecordId = null;
 
     if (payload.year && payload.quarter) {
-      const rptPeriod = await this.reportingPeriodRepository.findOne({
+      const rptPeriod = await this.reportingPeriodRepository.findOneBy({
         year: payload.year,
         quarter: payload.quarter,
       });
@@ -815,7 +814,7 @@ export class TestSummaryWorkspaceService {
     }
 
     if (payload.componentId) {
-      const component = await this.componentRepository.findOne({
+      const component = await this.componentRepository.findOneBy({
         locationId: locationId,
         componentID: payload.componentId,
       });
@@ -824,7 +823,7 @@ export class TestSummaryWorkspaceService {
     }
 
     if (payload.monitoringSystemId) {
-      const monitorSystem = await this.monSysWorkspaceRepository.findOne({
+      const monitorSystem = await this.monSysWorkspaceRepository.findOneBy({
         locationId: locationId,
         monitoringSystemID: payload.monitoringSystemId,
       });
