@@ -83,7 +83,7 @@ export class CycleTimeInjectionWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )
@@ -118,7 +118,7 @@ export class CycleTimeInjectionWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )
@@ -154,7 +154,7 @@ export class CycleTimeInjectionWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )

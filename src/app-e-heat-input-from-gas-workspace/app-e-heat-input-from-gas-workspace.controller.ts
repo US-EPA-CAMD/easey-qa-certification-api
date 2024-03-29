@@ -85,7 +85,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )
@@ -117,7 +117,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )
@@ -126,7 +126,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     description: 'Updates a workspace Appendix E Heat Input From Gas record.',
   })
   async updateAppEHeatInputFromGas(
-    @Param('locId') _locationId: string,
+    @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('appECorrTestSumId') _appECorrTestSumId: string,
     @Param('appECorrTestRunId') _appECorrTestRunId: string,
@@ -136,6 +136,7 @@ export class AppEHeatInputFromGasWorkspaceController {
   ): Promise<AppEHeatInputFromGasRecordDTO> {
     await this.checksService.runChecks(payload, null, _appECorrTestRunId);
     return this.service.updateAppEHeatInputFromGas(
+      locationId,
       testSumId,
       id,
       payload,
@@ -148,7 +149,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )

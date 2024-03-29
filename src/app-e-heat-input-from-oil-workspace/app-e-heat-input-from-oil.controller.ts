@@ -87,7 +87,7 @@ export class AppEHeatInputFromOilWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )
@@ -120,7 +120,7 @@ export class AppEHeatInputFromOilWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )
@@ -130,7 +130,7 @@ export class AppEHeatInputFromOilWorkspaceController {
       'Updates an Appendix E Heat Input from Oil record in the workspace',
   })
   async editAppEHeatInputFromOil(
-    @Param('locid') _locationId: string,
+    @Param('locid') locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('appECorrTestSumId') _aeCorrTestSumId: string,
     @Param('appECorrTestRunId') aeCorrTestRunId: string,
@@ -140,6 +140,7 @@ export class AppEHeatInputFromOilWorkspaceController {
   ) {
     await this.checksService.runChecks(payload, id, aeCorrTestRunId);
     return this.service.updateAppEHeatInputFromOilRecord(
+      locationId,
       testSumId,
       id,
       payload,
@@ -152,7 +153,7 @@ export class AppEHeatInputFromOilWorkspaceController {
     {
       pathParam: 'locId',
       requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
-      permissionsForFacility: ['DSQA', 'DPQA'],
+      permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
   )

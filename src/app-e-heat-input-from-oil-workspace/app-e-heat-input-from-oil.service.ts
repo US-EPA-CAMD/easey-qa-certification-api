@@ -113,6 +113,7 @@ export class AppEHeatInputFromOilWorkspaceService {
   }
 
   async updateAppEHeatInputFromOilRecord(
+    locationId: string,
     testSumId: string,
     id: string,
     payload: AppEHeatInputFromOilBaseDTO,
@@ -132,6 +133,21 @@ export class AppEHeatInputFromOilWorkspaceService {
       );
     }
 
+    const system = await this.monSysWorkspaceRepository.findOne({
+      locationId: locationId,
+      monitoringSystemID: payload.monitoringSystemId,
+    });
+
+    if (!system) {
+      throw new EaseyException(
+          new Error(
+              `Monitor System Identifier is invalid for this location [${locationId}].`,
+          ),
+          HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    entity.system = system;
     entity.oilMass = payload.oilMass;
     entity.oilHeatInput = payload.oilHeatInput;
     entity.oilGCV = payload.oilGCV;
