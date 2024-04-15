@@ -1,7 +1,13 @@
-import { Repository, EntityRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { MatsBulkFile } from '../entities/mats-bulk-file.entity';
 
-@EntityRepository(MatsBulkFile)
+@Injectable()
 export class MatsBulkFilesReviewAndSubmitRepository extends Repository<
   MatsBulkFile
-> {}
+> {
+  constructor(entityManager: EntityManager) {
+    super(MatsBulkFile, entityManager);
+  }
+}

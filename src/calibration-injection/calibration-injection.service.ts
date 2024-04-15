@@ -1,16 +1,15 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CalibrationInjectionMap } from '../maps/calibration-injection.map';
-import { CalibrationInjectionDTO } from '../dto/calibration-injection.dto';
-import { CalibrationInjectionRepository } from './calibration-injection.repository';
 import { In } from 'typeorm';
+
+import { CalibrationInjectionDTO } from '../dto/calibration-injection.dto';
+import { CalibrationInjectionMap } from '../maps/calibration-injection.map';
+import { CalibrationInjectionRepository } from './calibration-injection.repository';
 
 @Injectable()
 export class CalibrationInjectionService {
   constructor(
     private readonly map: CalibrationInjectionMap,
-    @InjectRepository(CalibrationInjectionRepository)
     private readonly repository: CalibrationInjectionRepository,
   ) {}
 
@@ -26,7 +25,7 @@ export class CalibrationInjectionService {
     id: string,
     testSumId: string,
   ): Promise<CalibrationInjectionDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });

@@ -1,22 +1,21 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import {
   FlowRataRunBaseDTO,
   FlowRataRunImportDTO,
 } from '../dto/flow-rata-run.dto';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { InjectRepository } from '@nestjs/typeorm';
-import { RataSummaryImportDTO } from '../dto/rata-summary.dto';
-import { RataSummaryWorkspaceRepository } from '../rata-summary-workspace/rata-summary-workspace.repository';
-import { RataSummary } from '../entities/workspace/rata-summary.entity';
 import { RataRunImportDTO } from '../dto/rata-run.dto';
-import { RataRunWorkspaceRepository } from '../rata-run-workspace/rata-run-workspace.repository';
-import { RataRun } from '../entities/workspace/rata-run.entity';
-import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { RataSummaryImportDTO } from '../dto/rata-summary.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { RataRun } from '../entities/workspace/rata-run.entity';
+import { RataSummary } from '../entities/workspace/rata-summary.entity';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { RataRunWorkspaceRepository } from '../rata-run-workspace/rata-run-workspace.repository';
+import { RataSummaryWorkspaceRepository } from '../rata-summary-workspace/rata-summary-workspace.repository';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 
 const KEY = 'Flow RATA Run';
 
@@ -24,11 +23,8 @@ const KEY = 'Flow RATA Run';
 export class FlowRataRunChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(RataSummaryWorkspaceRepository)
     private readonly rataSummaryRepository: RataSummaryWorkspaceRepository,
-    @InjectRepository(RataRunWorkspaceRepository)
     private readonly rataRunRepository: RataRunWorkspaceRepository,
-    @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
   ) {}
 
@@ -67,8 +63,10 @@ export class FlowRataRunChecksService {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
       );
-      rataSummaryRecord = await this.rataSummaryRepository.findOne(rataSumId);
-      rataRunRecord = await this.rataRunRepository.findOne(rataRunId);
+      rataSummaryRecord = await this.rataSummaryRepository.findOneBy({
+        id: rataSumId,
+      });
+      rataRunRecord = await this.rataRunRepository.findOneBy({ id: rataRunId });
     }
 
     if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {

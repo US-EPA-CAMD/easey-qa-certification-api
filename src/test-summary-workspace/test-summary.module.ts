@@ -1,11 +1,9 @@
 import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
 import { LinearitySummaryWorkspaceModule } from '../linearity-summary-workspace/linearity-summary.module';
 import { LinearityInjectionWorkspaceModule } from '../linearity-injection-workspace/linearity-injection.module';
 import { ProtocolGasWorkspaceModule } from '../protocol-gas-workspace/protocol-gas.module';
-
 import { TestSummaryWorkspaceController } from './test-summary.controller';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryWorkspaceService } from './test-summary.service';
@@ -88,9 +86,22 @@ import { QASuppDataWorkspaceModule } from '../qa-supp-data-workspace/qa-supp-dat
   ],
   controllers: [TestSummaryWorkspaceController],
   providers: [
+    AnalyzerRangeWorkspaceRepository,
+    CalibrationInjectionRepository,
+    ComponentWorkspaceRepository,
+    HgSummaryRepository,
+    MonitorLocationRepository,
+    MonitorMethodWorkspaceRepository,
+    MonitorSystemRepository,
+    QASuppDataWorkspaceRepository,
+    QAMonitorPlanWorkspaceRepository,
+    ReportingPeriodRepository,
     TestSummaryMap,
     TestSummaryChecksService,
     TestSummaryWorkspaceService,
+    TestSummaryWorkspaceRepository,
+    TestSummaryMasterDataRelationshipRepository,
+    TransmitterTransducerAccuracyRepository,
   ],
   exports: [
     TypeOrmModule,

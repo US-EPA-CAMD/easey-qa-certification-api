@@ -1,10 +1,16 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { AppEHeatInputFromGas } from '../entities/workspace/app-e-heat-input-from-gas.entity';
 
-@EntityRepository(AppEHeatInputFromGas)
+@Injectable()
 export class AppEHeatInputFromGasWorkspaceRepository extends Repository<
   AppEHeatInputFromGas
 > {
+  constructor(entityManager: EntityManager) {
+    super(AppEHeatInputFromGas, entityManager);
+  }
+
   async getAppEHeatInputFromGasById(id: string): Promise<AppEHeatInputFromGas> {
     const query = this.createQueryBuilder('aehig')
       .leftJoinAndSelect('aehig.system', 'ms')

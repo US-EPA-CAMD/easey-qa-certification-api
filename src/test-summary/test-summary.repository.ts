@@ -1,5 +1,7 @@
-import { Repository, EntityRepository, SelectQueryBuilder } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
 
+import { TestSummary } from '../entities/test-summary.entity';
 import {
   addJoins,
   addTestTypeWhere,
@@ -9,10 +11,12 @@ import {
   addSystemTypeWhere,
 } from '../utilities/test-summary.querybuilder';
 
-import { TestSummary } from '../entities/test-summary.entity';
-
-@EntityRepository(TestSummary)
+@Injectable()
 export class TestSummaryRepository extends Repository<TestSummary> {
+  constructor(entityManager: EntityManager) {
+    super(TestSummary, entityManager);
+  }
+
   private buildBaseQuery(): SelectQueryBuilder<TestSummary> {
     const query = this.createQueryBuilder('ts');
     return addJoins(query) as SelectQueryBuilder<TestSummary>;

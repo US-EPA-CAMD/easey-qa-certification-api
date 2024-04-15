@@ -1,35 +1,33 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
-import { InjectRepository } from '@nestjs/typeorm';
-import { RataRunMap } from '../maps/rata-run.map';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+
 import {
   RataRunBaseDTO,
   RataRunDTO,
   RataRunImportDTO,
   RataRunRecordDTO,
 } from '../dto/rata-run.dto';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { v4 as uuid } from 'uuid';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { In } from 'typeorm';
 import { RataRun } from '../entities/rata-run.entity';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { RataRunRepository } from '../rata-run/rata-run.repository';
 import { FlowRataRunWorkspaceService } from '../flow-rata-run-workspace/flow-rata-run-workspace.service';
+import { RataRunMap } from '../maps/rata-run.map';
+import { RataRunRepository } from '../rata-run/rata-run.repository';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
 
 @Injectable()
 export class RataRunWorkspaceService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(RataRunWorkspaceRepository)
     private readonly repository: RataRunWorkspaceRepository,
     private readonly map: RataRunMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @Inject(forwardRef(() => FlowRataRunWorkspaceService))
     private readonly flowRataRunService: FlowRataRunWorkspaceService,
-    @InjectRepository(RataRunRepository)
     private readonly historicalRepository: RataRunRepository,
   ) {}
 
@@ -40,7 +38,7 @@ export class RataRunWorkspaceService {
   }
 
   async getRataRun(id: string): Promise<RataRunDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -72,7 +70,7 @@ export class RataRunWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -105,7 +103,7 @@ export class RataRunWorkspaceService {
     isImport: boolean = false,
   ): Promise<RataRunRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOne(rataRunId);
+    const record = await this.repository.findOneBy({ id: rataRunId });
 
     if (!record) {
       throw new EaseyException(
@@ -157,7 +155,7 @@ export class RataRunWorkspaceService {
     let historicalRecord: RataRun;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
+      historicalRecord = await this.historicalRepository.findOneBy({
         rataSumId: rataSumId,
         runNumber: payload.runNumber,
       });

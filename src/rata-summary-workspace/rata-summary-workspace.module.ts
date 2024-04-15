@@ -32,9 +32,14 @@ import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/mo
   ],
   controllers: [RataSummaryWorkspaceController],
   providers: [
-    RataSummaryMap,
-    RataSummaryWorkspaceService,
+    LocationWorkspaceRepository,
+    MonitorSystemWorkspaceRepository,
+    QAMonitorPlanWorkspaceRepository,
     RataSummaryChecksService,
+    RataSummaryMap,
+    RataSummaryWorkspaceRepository,
+    RataSummaryWorkspaceService,
+    ReferenceMethodCodeRepository,
   ],
   exports: [
     TypeOrmModule,

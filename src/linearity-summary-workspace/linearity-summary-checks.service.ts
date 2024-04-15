@@ -1,30 +1,25 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import {
   LinearitySummaryBaseDTO,
   LinearitySummaryImportDTO,
 } from '../dto/linearity-summary.dto';
-import { LinearitySummary } from '../entities/linearity-summary.entity';
-
-import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
-import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
-import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { LinearitySummary } from '../entities/linearity-summary.entity';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
+import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 
 @Injectable()
 export class LinearitySummaryChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(LinearitySummaryWorkspaceRepository)
     private readonly repository: LinearitySummaryWorkspaceRepository,
-    @InjectRepository(TestSummaryMasterDataRelationshipRepository)
     private readonly testSummaryMDRepository: TestSummaryMasterDataRelationshipRepository,
-    @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
   ) {}
 
@@ -152,7 +147,7 @@ export class LinearitySummaryChecksService {
         error = errorMsg;
       }
     } else {
-      const record: LinearitySummary = await this.repository.findOne({
+      const record: LinearitySummary = await this.repository.findOneBy({
         testSumId: testSumId,
         gasLevelCode: linearitySummary.gasLevelCode,
       });

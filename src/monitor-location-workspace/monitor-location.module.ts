@@ -11,7 +11,7 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
     TestSummaryWorkspaceModule,
   ],
   controllers: [],
-  providers: [LocationChecksService],
+  providers: [LocationWorkspaceRepository, LocationChecksService],
   exports: [TypeOrmModule, LocationChecksService],
 })
 export class LocationWorkspaceModule {}

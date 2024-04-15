@@ -18,7 +18,11 @@ import { HgInjectionWorkspaceModule } from '../hg-injection-workspace/hg-injecti
     HttpModule,
   ],
   controllers: [HgSummaryWorkspaceController],
-  providers: [HgSummaryMap, HgSummaryWorkspaceService],
+  providers: [
+    HgSummaryMap,
+    HgSummaryWorkspaceRepository,
+    HgSummaryWorkspaceService,
+  ],
   exports: [TypeOrmModule, HgSummaryMap, HgSummaryWorkspaceService],
 })
 export class HgSummaryWorkspaceModule {}

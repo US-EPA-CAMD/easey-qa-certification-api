@@ -1,10 +1,16 @@
-import { Repository, EntityRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
 
-@EntityRepository(LinearitySummary)
+@Injectable()
 export class LinearitySummaryWorkspaceRepository extends Repository<
   LinearitySummary
 > {
+  constructor(entityManager: EntityManager) {
+    super(LinearitySummary, entityManager);
+  }
+
   async getSummaryById(linSumId: string): Promise<LinearitySummary> {
     return this.createQueryBuilder('ls')
       .innerJoinAndSelect('ls.injections', 'injections')

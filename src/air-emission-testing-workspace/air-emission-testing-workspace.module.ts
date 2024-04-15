@@ -19,6 +19,7 @@ import { AirEmissionTestingModule } from '../air-emission-testing/air-emission-t
   controllers: [AirEmissionTestingWorkspaceController],
   providers: [
     AirEmissionTestingMap,
+    AirEmissionTestingWorkspaceRepository,
     AirEmissionTestingWorkspaceService,
     AirEmissionTestingChecksService,
   ],

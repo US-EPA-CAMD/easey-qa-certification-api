@@ -1,10 +1,11 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { UnitDefaultTestService } from './unit-default-test.service';
-import { UnitDefaultTestController } from './unit-default-test.controller';
-import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UnitDefaultTestRepository } from './unit-default-test.repository';
+
+import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { UnitDefaultTestRunModule } from '../unit-default-test-run/unit-default-test-run.module';
+import { UnitDefaultTestController } from './unit-default-test.controller';
+import { UnitDefaultTestRepository } from './unit-default-test.repository';
+import { UnitDefaultTestService } from './unit-default-test.service';
 
 @Module({
   imports: [
@@ -12,7 +13,11 @@ import { UnitDefaultTestRunModule } from '../unit-default-test-run/unit-default-
     forwardRef(() => UnitDefaultTestRunModule),
   ],
   controllers: [UnitDefaultTestController],
-  providers: [UnitDefaultTestMap, UnitDefaultTestService],
+  providers: [
+    UnitDefaultTestMap,
+    UnitDefaultTestRepository,
+    UnitDefaultTestService,
+  ],
   exports: [TypeOrmModule, UnitDefaultTestMap, UnitDefaultTestService],
 })
 export class UnitDefaultTestModule {}

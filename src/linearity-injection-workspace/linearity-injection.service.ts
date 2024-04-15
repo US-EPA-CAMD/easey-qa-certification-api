@@ -1,22 +1,21 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
-  LinearityInjectionDTO,
   LinearityInjectionBaseDTO,
-  LinearityInjectionRecordDTO,
+  LinearityInjectionDTO,
   LinearityInjectionImportDTO,
+  LinearityInjectionRecordDTO,
 } from '../dto/linearity-injection.dto';
-import { LinearityInjectionMap } from '../maps/linearity-injection.map';
-import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
-import { TestSummaryWorkspaceService } from './../test-summary-workspace/test-summary.service';
 import { LinearityInjection } from '../entities/linearity-injection.entity';
 import { LinearityInjectionRepository } from '../linearity-injection/linearity-injection.repository';
+import { LinearityInjectionMap } from '../maps/linearity-injection.map';
+import { TestSummaryWorkspaceService } from './../test-summary-workspace/test-summary.service';
+import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
 
 @Injectable()
 export class LinearityInjectionWorkspaceService {
@@ -25,14 +24,12 @@ export class LinearityInjectionWorkspaceService {
     private readonly map: LinearityInjectionMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(LinearityInjectionWorkspaceRepository)
     private readonly repository: LinearityInjectionWorkspaceRepository,
-    @InjectRepository(LinearityInjectionRepository)
     private readonly historicalRepository: LinearityInjectionRepository,
   ) {}
 
   async getInjectionById(id: string): Promise<LinearityInjectionDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -49,7 +46,7 @@ export class LinearityInjectionWorkspaceService {
   async getInjectionsByLinSumId(
     linSumId: string,
   ): Promise<LinearityInjectionDTO[]> {
-    const results = await this.repository.find({
+    const results = await this.repository.findBy({
       linSumId: linSumId,
     });
     return this.map.many(results);
@@ -79,7 +76,7 @@ export class LinearityInjectionWorkspaceService {
     let historicalRecord: LinearityInjection;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
+      historicalRecord = await this.historicalRepository.findOneBy({
         linSumId: linSumId,
         injectionDate: payload.injectionDate,
         injectionHour: payload.injectionHour,
@@ -122,7 +119,7 @@ export class LinearityInjectionWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -139,7 +136,7 @@ export class LinearityInjectionWorkspaceService {
     isImport: boolean = false,
   ): Promise<LinearityInjectionRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(

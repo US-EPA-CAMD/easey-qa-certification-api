@@ -1,9 +1,14 @@
-import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
 
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 
-@EntityRepository(QASuppData)
+@Injectable()
 export class QASuppDataWorkspaceRepository extends Repository<QASuppData> {
+  constructor(entityManager: EntityManager) {
+    super(QASuppData, entityManager);
+  }
+
   private buildBaseQuery(): SelectQueryBuilder<QASuppData> {
     return this.createQueryBuilder('ts')
       .innerJoinAndSelect('ts.location', 'ml')

@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
-import { CalibrationInjectionService } from './calibration-injection.service';
-import { CalibrationInjectionController } from './calibration-injection.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CalibrationInjectionRepository } from './calibration-injection.repository';
+
 import { CalibrationInjectionMap } from '../maps/calibration-injection.map';
+import { CalibrationInjectionController } from './calibration-injection.controller';
+import { CalibrationInjectionRepository } from './calibration-injection.repository';
+import { CalibrationInjectionService } from './calibration-injection.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([CalibrationInjectionRepository])],
@@ -12,6 +13,7 @@ import { CalibrationInjectionMap } from '../maps/calibration-injection.map';
   exports: [
     TypeOrmModule,
     CalibrationInjectionMap,
+    CalibrationInjectionRepository,
     CalibrationInjectionService,
   ],
 })

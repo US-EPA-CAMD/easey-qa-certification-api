@@ -1,5 +1,11 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { RataRun } from '../entities/rata-run.entity';
 
-@EntityRepository(RataRun)
-export class RataRunRepository extends Repository<RataRun> {}
+@Injectable()
+export class RataRunRepository extends Repository<RataRun> {
+  constructor(entityManager: EntityManager) {
+    super(RataRun, entityManager);
+  }
+}

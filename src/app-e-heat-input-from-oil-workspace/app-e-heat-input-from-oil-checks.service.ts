@@ -1,23 +1,21 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { InjectRepository } from '@nestjs/typeorm';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
+import { AppECorrelationTestRunWorkspaceRepository } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.repository';
 import {
   AppEHeatInputFromOilBaseDTO,
   AppEHeatInputFromOilImportDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppECorrelationTestRun } from '../entities/workspace/app-e-correlation-test-run.entity';
-import { AppECorrelationTestRunWorkspaceRepository } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.repository';
 import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
 
 @Injectable()
 export class AppEHeatInputFromOilChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(AppECorrelationTestRunWorkspaceRepository)
     private readonly appETestRunRepo: AppECorrelationTestRunWorkspaceRepository,
-    @InjectRepository(AppEHeatInputFromOilWorkspaceRepository)
     private readonly repo: AppEHeatInputFromOilWorkspaceRepository,
   ) {}
 

@@ -1,5 +1,11 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { GasTypeCode } from '../entities/workspace/gas-type-code.entity';
 
-@EntityRepository(GasTypeCode)
-export class GasTypeCodeRepository extends Repository<GasTypeCode> {}
+@Injectable()
+export class GasTypeCodeRepository extends Repository<GasTypeCode> {
+  constructor(entityManager: EntityManager) {
+    super(GasTypeCode, entityManager);
+  }
+}

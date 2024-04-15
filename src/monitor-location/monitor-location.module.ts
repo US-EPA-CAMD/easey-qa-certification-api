@@ -9,7 +9,7 @@ import { MonitorLocationRepository } from './monitor-location.repository';
     TestSummaryModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [MonitorLocationRepository],
   exports: [TypeOrmModule],
 })
 export class MonitorLocationModule {}

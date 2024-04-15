@@ -1,11 +1,12 @@
-import { forwardRef, Module } from '@nestjs/common';
-import { CalibrationInjectionWorkspaceService } from './calibration-injection-workspace.service';
-import { CalibrationInjectionWorkspaceController } from './calibration-injection-workspace.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
-import { CalibrationInjectionWorkspaceRepository } from './calibration-injection-workspace.repository';
-import { CalibrationInjectionMap } from '../maps/calibration-injection.map';
 import { HttpModule } from '@nestjs/axios';
+import { forwardRef, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { CalibrationInjectionMap } from '../maps/calibration-injection.map';
+import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
+import { CalibrationInjectionWorkspaceController } from './calibration-injection-workspace.controller';
+import { CalibrationInjectionWorkspaceRepository } from './calibration-injection-workspace.repository';
+import { CalibrationInjectionWorkspaceService } from './calibration-injection-workspace.service';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { HttpModule } from '@nestjs/axios';
   exports: [
     TypeOrmModule,
     CalibrationInjectionMap,
+    CalibrationInjectionWorkspaceRepository,
     CalibrationInjectionWorkspaceService,
   ],
 })

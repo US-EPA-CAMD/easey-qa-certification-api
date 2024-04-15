@@ -10,12 +10,12 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import {
   IsIsoFormat,
   IsValidCode,
+  IsValidCodes,
   IsValidDate,
   MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
 import { GasLevelCode } from '../entities/workspace/gas-level-code.entity';
 import { GasComponentCode } from '../entities/gas-component-code.entity';
-import { IsValidCodes } from '../pipes/is-valid-codes.pipe';
 import { FindOneOptions, In } from 'typeorm';
 
 const KEY = 'Protocol Gas';

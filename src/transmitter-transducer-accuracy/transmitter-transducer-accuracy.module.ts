@@ -15,6 +15,7 @@ import { TransmitterTransducerAccuracyRepository } from './transmitter-transduce
   ],
   controllers: [TransmitterTransducerAccuracyController],
   providers: [
+    TransmitterTransducerAccuracyRepository,
     TransmitterTransducerAccuracyService,
     TransmitterTransducerAccuracyMap,
   ],

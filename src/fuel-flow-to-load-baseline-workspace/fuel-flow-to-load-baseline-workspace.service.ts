@@ -1,21 +1,21 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+
 import {
   FuelFlowToLoadBaselineBaseDTO,
   FuelFlowToLoadBaselineDTO,
   FuelFlowToLoadBaselineImportDTO,
   FuelFlowToLoadBaselineRecordDTO,
 } from '../dto/fuel-flow-to-load-baseline.dto';
+import { FuelFlowToLoadBaseline } from '../entities/fuel-flow-to-load-baseline.entity';
+import { FuelFlowToLoadBaselineRepository } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.repository';
 import { FuelFlowToLoadBaselineMap } from '../maps/fuel-flow-to-load-baseline.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FuelFlowToLoadBaselineWorkspaceRepository } from './fuel-flow-to-load-baseline-workspace.repository';
-import { v4 as uuid } from 'uuid';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { FuelFlowToLoadBaseline } from '../entities/fuel-flow-to-load-baseline.entity';
-import { FuelFlowToLoadBaselineRepository } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { In } from 'typeorm';
 
 @Injectable()
 export class FuelFlowToLoadBaselineWorkspaceService {
@@ -23,9 +23,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     private readonly map: FuelFlowToLoadBaselineMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(FuelFlowToLoadBaselineWorkspaceRepository)
     private readonly repository: FuelFlowToLoadBaselineWorkspaceRepository,
-    @InjectRepository(FuelFlowToLoadBaselineRepository)
     private readonly historicalRepo: FuelFlowToLoadBaselineRepository,
     private readonly logger: Logger,
   ) {}
@@ -42,7 +40,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     id: string,
     testSumId: string,
   ): Promise<FuelFlowToLoadBaselineDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -78,7 +76,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -94,7 +92,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<FuelFlowToLoadBaselineDTO> {
-    const entity = await this.repository.findOne({
+    const entity = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -113,7 +111,8 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     entity.averageFuelFlowRate = payload.averageFuelFlowRate;
     entity.averageLoad = payload.averageLoad;
     entity.baselineFuelFlowToLoadRatio = payload.baselineFuelFlowToLoadRatio;
-    entity.fuelFlowToLoadUnitsOfMeasureCode = payload.fuelFlowToLoadUnitsOfMeasureCode;
+    entity.fuelFlowToLoadUnitsOfMeasureCode =
+      payload.fuelFlowToLoadUnitsOfMeasureCode;
     entity.averageHourlyHeatInputRate = payload.averageHourlyHeatInputRate;
     entity.baselineGHR = payload.baselineGHR;
     entity.ghrUnitsOfMeasureCode = payload.ghrUnitsOfMeasureCode;
@@ -175,7 +174,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     let historicalRecord: FuelFlowToLoadBaseline;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
+      historicalRecord = await this.historicalRepo.findOneBy({
         testSumId: testSumId,
         accuracyTestNumber: payload.accuracyTestNumber,
       });

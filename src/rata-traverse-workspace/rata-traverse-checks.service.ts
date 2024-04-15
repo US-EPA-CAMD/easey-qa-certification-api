@@ -1,21 +1,20 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
-import { TestSummaryImportDTO } from '../dto/test-summary.dto';
-import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { RataSummaryImportDTO } from '../dto/rata-summary.dto';
 import {
   RataTraverseBaseDTO,
   RataTraverseImportDTO,
 } from '../dto/rata-traverse.dto';
+import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
-import { RataSummaryWorkspaceRepository } from '../rata-summary-workspace/rata-summary-workspace.repository';
-import { RataSummaryImportDTO } from '../dto/rata-summary.dto';
 import { RataTraverse } from '../entities/workspace/rata-traverse.entity';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { RataSummaryWorkspaceRepository } from '../rata-summary-workspace/rata-summary-workspace.repository';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { RataTraverseWorkspaceRepository } from './rata-traverse-workspace.repository';
 
 const KEY = 'RATA Traverse';
@@ -28,13 +27,9 @@ const PITCH_ANGLE_MAX_VALUE = 90;
 export class RataTraverseChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
-    @InjectRepository(RataTraverseWorkspaceRepository)
     private readonly repository: RataTraverseWorkspaceRepository,
-    @InjectRepository(MonitorSystemRepository)
     private readonly monitorSystemRepository: MonitorSystemRepository,
-    @InjectRepository(RataSummaryWorkspaceRepository)
     private readonly rataSummaryRepository: RataSummaryWorkspaceRepository,
   ) {}
 
@@ -74,7 +69,7 @@ export class RataTraverseChecksService {
     if (isImport) {
       testSumRecord = testSummary;
       rataSumRecord = rataSummary;
-      testSumRecord.system = await this.monitorSystemRepository.findOne({
+      testSumRecord.system = await this.monitorSystemRepository.findOneBy({
         monitoringSystemID: testSummary.monitoringSystemId,
         locationId: locationId,
       });
@@ -82,7 +77,9 @@ export class RataTraverseChecksService {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,
       );
-      rataSumRecord = await this.rataSummaryRepository.findOne(rataSumId);
+      rataSumRecord = await this.rataSummaryRepository.findOneBy({
+        id: rataSumId,
+      });
     }
 
     if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
@@ -474,7 +471,7 @@ export class RataTraverseChecksService {
       'runNumber, operatingLevelCode, and MethodTraversePointID';
 
     if (flowRataRunId && !isImport) {
-      duplicates = await this.repository.find({
+      duplicates = await this.repository.findBy({
         flowRataRunId: flowRataRunId,
         methodTraversePointId: rataTraverse.methodTraversePointId,
       });

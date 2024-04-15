@@ -1,19 +1,18 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
+
 import {
   UnitDefaultTestRunDTO,
   UnitDefaultTestRunRecordDTO,
 } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { UnitDefaultTestRunRepository } from './unit-default-test-run.repository';
-import { In } from 'typeorm';
 
 @Injectable()
 export class UnitDefaultTestRunService {
   constructor(
     private readonly map: UnitDefaultTestRunMap,
-    @InjectRepository(UnitDefaultTestRunRepository)
     private readonly repository: UnitDefaultTestRunRepository,
   ) {}
 
@@ -31,7 +30,7 @@ export class UnitDefaultTestRunService {
     id: string,
     unitDefaultTestSumId: string,
   ): Promise<UnitDefaultTestRunRecordDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       unitDefaultTestSumId,
     });

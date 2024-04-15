@@ -1,21 +1,20 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
-import { In } from 'typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { FlowToLoadReferenceMap } from '../maps/flow-to-load-reference.map';
-import { FlowToLoadReferenceWorkspaceRepository } from './flow-to-load-reference-workspace.repository';
+import { In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+
 import {
   FlowToLoadReferenceBaseDTO,
   FlowToLoadReferenceDTO,
   FlowToLoadReferenceImportDTO,
 } from '../dto/flow-to-load-reference.dto';
-import { FlowToLoadReferenceRepository } from '../flow-to-load-reference/flow-to-load-reference.repository';
 import { FlowToLoadReference } from '../entities/flow-to-load-reference.entity';
+import { FlowToLoadReferenceRepository } from '../flow-to-load-reference/flow-to-load-reference.repository';
+import { FlowToLoadReferenceMap } from '../maps/flow-to-load-reference.map';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { FlowToLoadReferenceWorkspaceRepository } from './flow-to-load-reference-workspace.repository';
 
 @Injectable()
 export class FlowToLoadReferenceWorkspaceService {
@@ -23,9 +22,7 @@ export class FlowToLoadReferenceWorkspaceService {
     private readonly map: FlowToLoadReferenceMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(FlowToLoadReferenceWorkspaceRepository)
     private readonly repository: FlowToLoadReferenceWorkspaceRepository,
-    @InjectRepository(FlowToLoadReferenceRepository)
     private readonly historicalRepo: FlowToLoadReferenceRepository,
     private readonly logger: Logger,
   ) {}
@@ -39,7 +36,7 @@ export class FlowToLoadReferenceWorkspaceService {
   }
 
   async getFlowToLoadReference(id: string): Promise<FlowToLoadReferenceDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -72,7 +69,7 @@ export class FlowToLoadReferenceWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -91,7 +88,7 @@ export class FlowToLoadReferenceWorkspaceService {
   ): Promise<FlowToLoadReferenceDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -170,7 +167,7 @@ export class FlowToLoadReferenceWorkspaceService {
     let historicalRecord: FlowToLoadReference;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
+      historicalRecord = await this.historicalRepo.findOneBy({
         testSumId: testSumId,
         operatingLevelCode: payload.operatingLevelCode,
       });

@@ -1,27 +1,25 @@
-import { Injectable, HttpStatus } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { getManager, In } from 'typeorm';
-import { ReportingPeriod } from '../entities/reporting-period.entity';
-import { CertEventReviewAndSubmitRepository } from './cert-event-review-and-submit.repository';
-import { CertEventReviewAndSubmitMap } from '../maps/cert-event-review-and-submit.map';
-import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
-import { CertEventReviewAndSubmitGlobalRepository } from './cert-event-review-and-submit-global.repository';
+import moment from 'moment';
+import { EntityManager, In } from 'typeorm';
 
-const moment = require('moment');
+import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
+import { ReportingPeriod } from '../entities/reporting-period.entity';
+import { CertEventReviewAndSubmitMap } from '../maps/cert-event-review-and-submit.map';
+import { CertEventReviewAndSubmitGlobalRepository } from './cert-event-review-and-submit-global.repository';
+import { CertEventReviewAndSubmitRepository } from './cert-event-review-and-submit.repository';
 
 @Injectable()
 export class CertEventReviewAndSubmitService {
   constructor(
-    @InjectRepository(CertEventReviewAndSubmitRepository)
+    private readonly entityManager: EntityManager,
     private readonly workspaceRepository: CertEventReviewAndSubmitRepository,
-    @InjectRepository(CertEventReviewAndSubmitGlobalRepository)
     private readonly globalRepository: CertEventReviewAndSubmitGlobalRepository,
     private readonly map: CertEventReviewAndSubmitMap,
   ) {}
 
   returnManager(): any {
-    return getManager();
+    return this.entityManager;
   }
 
   async getCertEventRecords(

@@ -1,20 +1,23 @@
-import { Repository, EntityRepository, SelectQueryBuilder } from 'typeorm';
-
-import {
-  addJoins,
-  addTestTypeWhere,
-  addSystemTypeWhere,
-  addTestNumberWhere,
-  addBeginAndEndDateWhere,
-  addTestSummaryIdWhere,
-} from '../utilities/test-summary.querybuilder';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
 
 import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { HttpStatus } from '@nestjs/common';
+import {
+  addBeginAndEndDateWhere,
+  addJoins,
+  addSystemTypeWhere,
+  addTestNumberWhere,
+  addTestSummaryIdWhere,
+  addTestTypeWhere,
+} from '../utilities/test-summary.querybuilder';
 
-@EntityRepository(TestSummary)
+@Injectable()
 export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
+  constructor(entityManager: EntityManager) {
+    super(TestSummary, entityManager);
+  }
+
   private buildBaseQuery(): SelectQueryBuilder<TestSummary> {
     const query = this.createQueryBuilder('ts');
     return addJoins(query) as SelectQueryBuilder<TestSummary>;

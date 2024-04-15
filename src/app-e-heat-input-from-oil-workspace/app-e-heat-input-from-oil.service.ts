@@ -1,35 +1,31 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-
-import { InjectRepository } from '@nestjs/typeorm';
-import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
-import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
-import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+
+import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
 import {
-  AppEHeatInputFromOilDTO,
   AppEHeatInputFromOilBaseDTO,
+  AppEHeatInputFromOilDTO,
   AppEHeatInputFromOilImportDTO,
   AppEHeatInputFromOilRecordDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOil } from '../entities/app-e-heat-input-from-oil.entity';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
 
 @Injectable()
 export class AppEHeatInputFromOilWorkspaceService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(AppEHeatInputFromOilWorkspaceRepository)
     private readonly repository: AppEHeatInputFromOilWorkspaceRepository,
-    @InjectRepository(AppEHeatInputFromOilRepository)
-    private readonly historicalRepo,
+    private readonly historicalRepo: AppEHeatInputFromOilRepository,
     private readonly map: AppEHeatInputFromOilMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(MonitorSystemWorkspaceRepository)
     private readonly monSysWorkspaceRepository: MonitorSystemWorkspaceRepository,
   ) {}
 
@@ -71,7 +67,7 @@ export class AppEHeatInputFromOilWorkspaceService {
   ): Promise<AppEHeatInputFromOilRecordDTO> {
     const timestamp = currentDateTime().toLocaleDateString();
 
-    const system = await this.monSysWorkspaceRepository.findOne({
+    const system = await this.monSysWorkspaceRepository.findOneBy({
       locationId: locationId,
       monitoringSystemID: payload.monitoringSystemId,
     });
@@ -133,17 +129,17 @@ export class AppEHeatInputFromOilWorkspaceService {
       );
     }
 
-    const system = await this.monSysWorkspaceRepository.findOne({
+    const system = await this.monSysWorkspaceRepository.findOneBy({
       locationId: locationId,
       monitoringSystemID: payload.monitoringSystemId,
     });
 
     if (!system) {
       throw new EaseyException(
-          new Error(
-              `Monitor System Identifier is invalid for this location [${locationId}].`,
-          ),
-          HttpStatus.BAD_REQUEST,
+        new Error(
+          `Monitor System Identifier is invalid for this location [${locationId}].`,
+        ),
+        HttpStatus.BAD_REQUEST,
       );
     }
 

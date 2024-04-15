@@ -1,16 +1,15 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { FlowRataRunRepository } from './flow-rata-run.repository';
-import { InjectRepository } from '@nestjs/typeorm';
-import { FlowRataRunMap } from '../maps/flow-rata-run.map';
-import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
+
+import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
+import { FlowRataRunMap } from '../maps/flow-rata-run.map';
 import { RataTraverseService } from '../rata-traverse/rata-traverse.service';
+import { FlowRataRunRepository } from './flow-rata-run.repository';
 
 @Injectable()
 export class FlowRataRunService {
   constructor(
-    @InjectRepository(FlowRataRunRepository)
     private readonly repository: FlowRataRunRepository,
     private readonly map: FlowRataRunMap,
     private readonly rataTravarseService: RataTraverseService,
@@ -23,7 +22,7 @@ export class FlowRataRunService {
   }
 
   async getFlowRataRun(id: string): Promise<FlowRataRunDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

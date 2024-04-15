@@ -1,10 +1,16 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { AppEHeatInputFromOil } from '../entities/app-e-heat-input-from-oil.entity';
 
-@EntityRepository(AppEHeatInputFromOil)
+@Injectable()
 export class AppEHeatInputFromOilRepository extends Repository<
   AppEHeatInputFromOil
 > {
+  constructor(entityManager: EntityManager) {
+    super(AppEHeatInputFromOil, entityManager);
+  }
+
   async getAppEHeatInputFromOilById(id: string): Promise<AppEHeatInputFromOil> {
     const query = this.createQueryBuilder('aehio')
       .leftJoinAndSelect('aehio.system', 'ms')

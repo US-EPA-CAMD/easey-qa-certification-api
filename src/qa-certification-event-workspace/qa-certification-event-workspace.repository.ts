@@ -1,15 +1,21 @@
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
+
 import {
   addBeginAndEndDateWhere,
   addJoins,
   addQACertEventIdWhere,
 } from '../utilities/qa-cert-events.querybuilder';
-import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
 import { QACertificationEvent } from '../entities/workspace/qa-certification-event.entity';
 
-@EntityRepository(QACertificationEvent)
+@Injectable()
 export class QACertificationEventWorkspaceRepository extends Repository<
   QACertificationEvent
 > {
+  constructor(entityManager: EntityManager) {
+    super(QACertificationEvent, entityManager);
+  }
+
   private buildBaseQuery(): SelectQueryBuilder<QACertificationEvent> {
     const query = this.createQueryBuilder('qce');
     return addJoins(query) as SelectQueryBuilder<QACertificationEvent>;

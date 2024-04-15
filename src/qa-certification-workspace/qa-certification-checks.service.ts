@@ -1,31 +1,30 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { QACertificationImportDTO } from '../dto/qa-certification.dto';
-import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
-import { LocationChecksService } from '../monitor-location-workspace/monitor-location-checks.service';
-import { TestSummaryChecksService } from '../test-summary-workspace/test-summary-checks.service';
-import { LinearitySummaryChecksService } from '../linearity-summary-workspace/linearity-summary-checks.service';
-import { LinearityInjectionChecksService } from '../linearity-injection-workspace/linearity-injection-checks.service';
-import { RataChecksService } from '../rata-workspace/rata-checks.service';
-import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary-checks.service';
-import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
-import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
-import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.service';
-import { FlowRataRunChecksService } from '../flow-rata-run-workspace/flow-rata-run-checks.service';
-import { RataTraverseChecksService } from '../rata-traverse-workspace/rata-traverse-checks.service';
-import { TestQualificationChecksService } from '../test-qualification-workspace/test-qualification-checks.service';
-import { TestExtensionExemptionsChecksService } from '../test-extension-exemptions-workspace/test-extension-exemptions-checks.service';
-import { CycleTimeInjectionChecksService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace-checks.service';
-import { QACertificationEventChecksService } from '../qa-certification-event-workspace/qa-certification-event-checks.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import { AppECorrelationTestRunChecksService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-checks.service';
 import { AppECorrelationTestSummaryChecksService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-checks.service';
 import { AppEHeatInputFromGasChecksService } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-checks.service';
 import { AppEHeatInputFromOilChecksService } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil-checks.service';
-import { UnitDefaultTestRunChecksService } from '../unit-default-test-run-workspace/unit-default-test-run-checks.service';
+import { CycleTimeInjectionChecksService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace-checks.service';
+import { QACertificationImportDTO } from '../dto/qa-certification.dto';
+import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { FlowRataRunChecksService } from '../flow-rata-run-workspace/flow-rata-run-checks.service';
+import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
+import { LinearityInjectionChecksService } from '../linearity-injection-workspace/linearity-injection-checks.service';
+import { LinearitySummaryChecksService } from '../linearity-summary-workspace/linearity-summary-checks.service';
+import { LocationChecksService } from '../monitor-location-workspace/monitor-location-checks.service';
 import { ProtocolGasChecksService } from '../protocol-gas-workspace/protocol-gas-checks.service';
+import { QACertificationEventChecksService } from '../qa-certification-event-workspace/qa-certification-event-checks.service';
+import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
+import { RataRunChecksService } from '../rata-run-workspace/rata-run-checks.service';
+import { RataSummaryChecksService } from '../rata-summary-workspace/rata-summary-checks.service';
+import { RataTraverseChecksService } from '../rata-traverse-workspace/rata-traverse-checks.service';
+import { RataChecksService } from '../rata-workspace/rata-checks.service';
+import { TestExtensionExemptionsChecksService } from '../test-extension-exemptions-workspace/test-extension-exemptions-checks.service';
+import { TestQualificationChecksService } from '../test-qualification-workspace/test-qualification-checks.service';
+import { TestSummaryChecksService } from '../test-summary-workspace/test-summary-checks.service';
+import { UnitDefaultTestRunChecksService } from '../unit-default-test-run-workspace/unit-default-test-run-checks.service';
 
 @Injectable()
 export class QACertificationChecksService {
@@ -50,7 +49,6 @@ export class QACertificationChecksService {
     private readonly appEOilChecksService: AppEHeatInputFromOilChecksService,
     private readonly unitDefaultTestRunChecksService: UnitDefaultTestRunChecksService,
     private readonly protocolGasChecksService: ProtocolGasChecksService,
-    @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
   ) {}
 

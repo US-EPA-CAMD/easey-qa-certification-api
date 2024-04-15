@@ -9,11 +9,11 @@ import {
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
 import { RunStatusCode } from '../entities/run-status-code.entity';
-import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { FlowRataRunDTO, FlowRataRunImportDTO } from './flow-rata-run.dto';
 import {
   IsInRange,
   IsIsoFormat,
+  IsValidCode,
   IsValidDate,
 } from '@us-epa-camd/easey-common/pipes';
 import { Type } from 'class-transformer';

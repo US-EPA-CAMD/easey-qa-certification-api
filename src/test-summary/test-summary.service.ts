@@ -1,28 +1,27 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { TestSummaryDTO } from '../dto/test-summary.dto';
-import { TestSummaryMap } from '../maps/test-summary.map';
-import { TestSummaryRepository } from './test-summary.repository';
-import { LinearitySummaryService } from '../linearity-summary/linearity-summary.service';
-import { RataService } from '../rata/rata.service';
-import { ProtocolGasService } from '../protocol-gas/protocol-gas.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
+import { AirEmissionTestingService } from '../air-emission-testing/air-emission-testing.service';
 import { AppECorrelationTestSummaryService } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.service';
-import { FuelFlowToLoadTestService } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.service';
 import { CalibrationInjectionService } from '../calibration-injection/calibration-injection.service';
+import { CycleTimeSummaryService } from '../cycle-time-summary/cycle-time-summary.service';
+import { TestSummaryDTO } from '../dto/test-summary.dto';
 import { FlowToLoadCheckService } from '../flow-to-load-check/flow-to-load-check.service';
 import { FlowToLoadReferenceService } from '../flow-to-load-reference/flow-to-load-reference.service';
-import { OnlineOfflineCalibrationService } from '../online-offline-calibration/online-offline-calibration.service';
 import { FuelFlowToLoadBaselineService } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.service';
-import { CycleTimeSummaryService } from '../cycle-time-summary/cycle-time-summary.service';
+import { FuelFlowToLoadTestService } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.service';
 import { FuelFlowmeterAccuracyService } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.service';
-import { UnitDefaultTestService } from '../unit-default-test/unit-default-test.service';
-import { TransmitterTransducerAccuracyService } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.service';
 import { HgSummaryService } from '../hg-summary/hg-summary.service';
-import { AirEmissionTestingService } from '../air-emission-testing/air-emission-testing.service';
+import { LinearitySummaryService } from '../linearity-summary/linearity-summary.service';
+import { TestSummaryMap } from '../maps/test-summary.map';
+import { OnlineOfflineCalibrationService } from '../online-offline-calibration/online-offline-calibration.service';
+import { ProtocolGasService } from '../protocol-gas/protocol-gas.service';
+import { RataService } from '../rata/rata.service';
 import { TestQualificationService } from '../test-qualification/test-qualification.service';
+import { TransmitterTransducerAccuracyService } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.service';
+import { UnitDefaultTestService } from '../unit-default-test/unit-default-test.service';
+import { TestSummaryRepository } from './test-summary.repository';
 
 @Injectable()
 export class TestSummaryService {
@@ -33,7 +32,6 @@ export class TestSummaryService {
     private readonly linearityService: LinearitySummaryService,
     @Inject(forwardRef(() => RataService))
     private readonly rataService: RataService,
-    @InjectRepository(TestSummaryRepository)
     private readonly repository: TestSummaryRepository,
     @Inject(forwardRef(() => ProtocolGasService))
     private readonly protocolGasService: ProtocolGasService,

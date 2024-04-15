@@ -1,12 +1,13 @@
 import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
-import { FuelFlowToLoadTestWorkspaceService } from './fuel-flow-to-load-test-workspace.service';
-import { FuelFlowToLoadTestWorkspaceController } from './fuel-flow-to-load-test-workspace.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FuelFlowToLoadTestWorkspaceRepository } from './fuel-flow-to-load-test-workspace.repository';
-import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
-import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
+
 import { FuelFlowToLoadTestModule } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.module';
+import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
+import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
+import { FuelFlowToLoadTestWorkspaceController } from './fuel-flow-to-load-test-workspace.controller';
+import { FuelFlowToLoadTestWorkspaceRepository } from './fuel-flow-to-load-test-workspace.repository';
+import { FuelFlowToLoadTestWorkspaceService } from './fuel-flow-to-load-test-workspace.service';
 
 @Module({
   imports: [
@@ -16,7 +17,11 @@ import { FuelFlowToLoadTestModule } from '../fuel-flow-to-load-test/fuel-flow-to
     HttpModule,
   ],
   controllers: [FuelFlowToLoadTestWorkspaceController],
-  providers: [FuelFlowToLoadTestMap, FuelFlowToLoadTestWorkspaceService],
+  providers: [
+    FuelFlowToLoadTestMap,
+    FuelFlowToLoadTestWorkspaceRepository,
+    FuelFlowToLoadTestWorkspaceService,
+  ],
   exports: [
     TypeOrmModule,
     FuelFlowToLoadTestMap,

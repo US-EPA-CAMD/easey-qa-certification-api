@@ -1,9 +1,10 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   ProtocolGasBaseDTO,
   ProtocolGasDTO,
@@ -12,27 +13,22 @@ import {
 } from '../dto/protocol-gas.dto';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { ProtocolGasRepository } from '../protocol-gas/protocol-gas.repository';
-import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { In } from 'typeorm';
-import { ProtocolGas } from '../entities/protocol-gas.entity';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
 
 @Injectable()
 export class ProtocolGasWorkspaceService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(ProtocolGasWorkspaceRepository)
     private readonly repository: ProtocolGasWorkspaceRepository,
     private readonly map: ProtocolGasMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(ProtocolGasRepository)
     private readonly historicalRepo: ProtocolGasRepository,
   ) {}
 
   async getProtocolGas(id: string): Promise<ProtocolGasDTO> {
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -70,7 +66,7 @@ export class ProtocolGasWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -88,7 +84,7 @@ export class ProtocolGasWorkspaceService {
   ): Promise<ProtocolGasDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(

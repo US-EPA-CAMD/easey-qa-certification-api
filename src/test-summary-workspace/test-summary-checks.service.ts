@@ -1,60 +1,48 @@
-import { InjectRepository } from '@nestjs/typeorm';
 import { HttpStatus, Injectable } from '@nestjs/common';
-
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import moment from 'moment';
 
+import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import {
   TestSummaryBaseDTO,
   TestSummaryImportDTO,
 } from '../dto/test-summary.dto';
-
-import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { TestSummaryWorkspaceRepository } from './test-summary.repository';
-import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
-import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
-import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
-import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method-workspace.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
+import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
 import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
+import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
 import {
-  VALID_CODES_FOR_BEGIN_MINUTE_VALIDATION,
-  VALID_CODES_FOR_END_MINUTE_VALIDATION,
   BEGIN_END_MINUTE_REQUIRED_TYPES,
   MISC_TEST_TYPE_CODES,
+  VALID_CODES_FOR_BEGIN_MINUTE_VALIDATION,
+  VALID_CODES_FOR_END_MINUTE_VALIDATION,
   VALID_CODES_FOR_SPAN_SCALE_CODE_VALIDATION,
 } from '../utilities/constants';
+import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 
-const moment = require('moment');
 const KEY = 'Test Summary';
 
 @Injectable()
 export class TestSummaryChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly repository: TestSummaryWorkspaceRepository,
-    @InjectRepository(QASuppDataWorkspaceRepository)
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
-    @InjectRepository(QAMonitorPlanWorkspaceRepository)
     private readonly qaMonitorPlanRepository: QAMonitorPlanWorkspaceRepository,
-    @InjectRepository(ComponentWorkspaceRepository)
     private readonly componentRepository: ComponentWorkspaceRepository,
-    @InjectRepository(AnalyzerRangeWorkspaceRepository)
     private readonly analyzerRangeRepository: AnalyzerRangeWorkspaceRepository,
-    @InjectRepository(TestSummaryMasterDataRelationshipRepository)
     private readonly testSummaryRelationshipsRepository: TestSummaryMasterDataRelationshipRepository,
-    @InjectRepository(MonitorSystemWorkspaceRepository)
     private readonly monitorSystemRepository: MonitorSystemWorkspaceRepository,
-    @InjectRepository(MonitorMethodWorkspaceRepository)
     private readonly monitorMethodRepository: MonitorMethodWorkspaceRepository,
-    @InjectRepository(TestResultCodeRepository)
     private readonly testResultCodeRepository: TestResultCodeRepository,
   ) {}
 
@@ -538,7 +526,7 @@ export class TestSummaryChecksService {
       },
     });
 
-    const component = await this.componentRepository.findOne({
+    const component = await this.componentRepository.findOneBy({
       componentID: summary.componentId,
       locationId: locationId,
     });
@@ -703,7 +691,7 @@ export class TestSummaryChecksService {
             if (rataSummary.rataRunData?.length > 0) {
               for (const rataRun of rataSummary.rataRunData) {
                 if (rataRun.flowRataRunData?.length > 0) {
-                  const monitorSystem = await this.monitorSystemRepository.findOne(
+                  const monitorSystem = await this.monitorSystemRepository.findOneBy(
                     {
                       locationId,
                       monitoringSystemID: summary.monitoringSystemId,
@@ -998,7 +986,7 @@ export class TestSummaryChecksService {
     let FIELDNAME: string = 'spanScalecode';
 
     if (summary.componentId) {
-      const component = await this.componentRepository.findOne({
+      const component = await this.componentRepository.findOneBy({
         componentID: summary.componentId,
         locationId: locationId,
       });
@@ -1075,7 +1063,7 @@ export class TestSummaryChecksService {
         TestTypeCodes.CYCLE.toString(),
       ].includes(summary.testTypeCode)
     ) {
-      const component = await this.componentRepository.findOne({
+      const component = await this.componentRepository.findOneBy({
         locationId: locationId,
         componentID: summary.componentId,
       });
@@ -1347,9 +1335,9 @@ export class TestSummaryChecksService {
       !testResultCodes.includes(summary.testResultCode) &&
       [TestTypeCodes.LINE.toString()].includes(summary.testTypeCode)
     ) {
-      const option = await this.testResultCodeRepository.findOne(
-        summary.testResultCode,
-      );
+      const option = await this.testResultCodeRepository.findOneBy({
+        testResultCode: summary.testResultCode,
+      });
 
       if (option) {
         error = this.getMessage('LINEAR-10-C', {
@@ -1386,9 +1374,9 @@ export class TestSummaryChecksService {
         TestTypeCodes.ONOFF.toString(),
       ].includes(summary.testTypeCode)
     ) {
-      const option = await this.testResultCodeRepository.findOne(
-        summary.testResultCode,
-      );
+      const option = await this.testResultCodeRepository.findOneBy({
+        testResultCode: summary.testResultCode,
+      });
 
       if (option) {
         switch (summary.testTypeCode) {

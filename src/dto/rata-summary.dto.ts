@@ -2,7 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ApsCode } from '../entities/workspace/aps-code.entity';
 import { ReferenceMethodCode } from '../entities/workspace/reference-method-code.entity';
 import { OperatingLevelCode } from '../entities/workspace/operating-level-code.entity';
-import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import {
   IsInt,
   IsNotEmpty,
@@ -17,7 +16,7 @@ import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { Type } from 'class-transformer';
 import { IsNotNegative } from '../pipes/is-not-negative.pipe';
-import { IsInRange } from '@us-epa-camd/easey-common/pipes';
+import { IsInRange, IsValidCode } from '@us-epa-camd/easey-common/pipes';
 
 const KEY = 'RATA Summary';
 

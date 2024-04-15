@@ -12,15 +12,12 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import {
   IsInRange,
-  IsValidDate,
+  IsValidCode,
   IsIsoFormat,
   MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
 
-import {
-  ErrorMessages,
-  propertyMetadata,
-} from '@us-epa-camd/easey-common/constants';
+import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
@@ -85,7 +82,6 @@ import {
 } from './app-e-correlation-test-summary.dto';
 
 import { RequireOne } from '../pipes/require-one.pipe';
-import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
 import { TestTypeCode } from '../entities/test-type-code.entity';
 import { SpanScaleCode } from '../entities/span-scale-code.entity';

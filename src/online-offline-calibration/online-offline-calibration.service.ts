@@ -1,24 +1,21 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-
-import { InjectRepository } from '@nestjs/typeorm';
-
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { In } from 'typeorm';
+
 import {
   OnlineOfflineCalibrationDTO,
   OnlineOfflineCalibrationRecordDTO,
 } from '../dto/online-offline-calibration.dto';
-import { OnlineOfflineCalibrationRepository } from './online-offline-calibration.repository';
 import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.map';
 import { TestSummaryService } from '../test-summary/test-summary.service';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
+import { OnlineOfflineCalibrationRepository } from './online-offline-calibration.repository';
 
 @Injectable()
 export class OnlineOfflineCalibrationService {
   constructor(
     private readonly logger: Logger,
     private readonly map: OnlineOfflineCalibrationMap,
-    @InjectRepository(OnlineOfflineCalibrationRepository)
     private readonly repository: OnlineOfflineCalibrationRepository,
     @Inject(forwardRef(() => TestSummaryService))
     private readonly testSummaryService: TestSummaryService,
@@ -37,7 +34,7 @@ export class OnlineOfflineCalibrationService {
   async getOnlineOfflineCalibration(
     id: string,
   ): Promise<OnlineOfflineCalibrationDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

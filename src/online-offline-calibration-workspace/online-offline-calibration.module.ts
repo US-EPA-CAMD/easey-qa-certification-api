@@ -16,6 +16,7 @@ import { OnlineOfflineCalibrationModule } from '../online-offline-calibration/on
     forwardRef(() => OnlineOfflineCalibrationModule),
   ],
   providers: [
+    OnlineOfflineCalibrationWorkspaceRepository,
     OnlineOfflineCalibrationWorkspaceService,
     OnlineOfflineCalibrationMap,
   ],

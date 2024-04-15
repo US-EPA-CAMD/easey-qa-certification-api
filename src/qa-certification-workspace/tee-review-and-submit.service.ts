@@ -1,25 +1,24 @@
-import { Injectable, HttpStatus } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { getManager, In } from 'typeorm';
-import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository';
-import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
+import { EntityManager, In } from 'typeorm';
+
 import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
+import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
 import { TeeReviewAndSubmitGlobalRepository } from './tee-review-and-submit-global.repository';
+import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository';
 
 @Injectable()
 export class TeeReviewAndSubmitService {
   constructor(
-    @InjectRepository(TeeReviewAndSubmitRepository)
+    private readonly entityManager: EntityManager,
     private readonly workspaceRepository: TeeReviewAndSubmitRepository,
-    @InjectRepository(TeeReviewAndSubmitGlobalRepository)
     private readonly globalRepository: TeeReviewAndSubmitGlobalRepository,
 
     private readonly map: TeeReviewAndSubmitMap,
   ) {}
 
   returnManager(): any {
-    return getManager();
+    return this.entityManager;
   }
 
   async getTeeRecords(

@@ -1,28 +1,26 @@
-import { Injectable, HttpStatus } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
-import { getManager, In } from 'typeorm';
-import { TestSummaryReviewAndSubmitRepository } from './test-summary-review-and-submit.repository';
-import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
-import { ReportingPeriod } from '../entities/reporting-period.entity';
-import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
+import moment from 'moment';
+import { EntityManager, In } from 'typeorm';
 
-const moment = require('moment');
+import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
+import { ReportingPeriod } from '../entities/reporting-period.entity';
+import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
+import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
+import { TestSummaryReviewAndSubmitRepository } from './test-summary-review-and-submit.repository';
 
 @Injectable()
 export class TestSummaryReviewAndSubmitService {
   constructor(
-    @InjectRepository(TestSummaryReviewAndSubmitRepository)
+    private readonly entityManager: EntityManager,
     private readonly workspaceRepository: TestSummaryReviewAndSubmitRepository,
-    @InjectRepository(TestSummaryReviewAndSubmitGlobalRepository)
     private readonly globalRepository: TestSummaryReviewAndSubmitGlobalRepository,
 
     private readonly map: ReviewAndSubmitTestSummaryMap,
   ) {}
 
   returnManager(): any {
-    return getManager();
+    return this.entityManager;
   }
 
   async getTestSummaryRecords(

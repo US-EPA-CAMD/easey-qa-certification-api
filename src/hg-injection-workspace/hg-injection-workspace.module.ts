@@ -1,13 +1,14 @@
+import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
-import { HttpModule } from '@nestjs/axios';
-import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.repository';
-import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
-import { HgInjectionWorkspaceController } from './hg-injection-workspace.controller';
-import { HgInjectionMap } from '../maps/hg-injection.map';
+
 import { HgInjectionModule } from '../hg-injection/hg-injection.module';
 import { HgSummaryWorkspaceModule } from '../hg-summary-workspace/hg-summary-workspace.module';
+import { HgInjectionMap } from '../maps/hg-injection.map';
+import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
+import { HgInjectionWorkspaceController } from './hg-injection-workspace.controller';
+import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.repository';
+import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
 
 @Module({
   imports: [
@@ -18,7 +19,11 @@ import { HgSummaryWorkspaceModule } from '../hg-summary-workspace/hg-summary-wor
     HttpModule,
   ],
   controllers: [HgInjectionWorkspaceController],
-  providers: [HgInjectionMap, HgInjectionWorkspaceService],
+  providers: [
+    HgInjectionMap,
+    HgInjectionWorkspaceRepository,
+    HgInjectionWorkspaceService,
+  ],
   exports: [TypeOrmModule, HgInjectionMap, HgInjectionWorkspaceService],
 })
 export class HgInjectionWorkspaceModule {}

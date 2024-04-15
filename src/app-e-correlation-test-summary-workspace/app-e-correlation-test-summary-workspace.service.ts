@@ -1,34 +1,32 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
-import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
+import { In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+
+import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
+import { AppendixETestSummaryRepository } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.repository';
 import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryDTO,
   AppECorrelationTestSummaryImportDTO,
   AppECorrelationTestSummaryRecordDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { AppendixETestSummaryRepository } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.repository';
 import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { In } from 'typeorm';
+import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
 
 @Injectable()
 export class AppECorrelationTestSummaryWorkspaceService {
   constructor(
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(AppendixETestSummaryWorkspaceRepository)
     private readonly repository: AppendixETestSummaryWorkspaceRepository,
     private readonly map: AppECorrelationTestSummaryMap,
     @Inject(forwardRef(() => AppECorrelationTestRunWorkspaceService))
     private readonly appECorrelationTestRunService: AppECorrelationTestRunWorkspaceService,
-    @InjectRepository(AppendixETestSummaryRepository)
     private readonly historicalRepo: AppendixETestSummaryRepository,
     @Inject(forwardRef(() => AppECorrelationTestRunWorkspaceService))
     private readonly appECorrTestRunService: AppECorrelationTestRunWorkspaceService,
@@ -46,7 +44,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
   async getAppECorrelation(
     id: string,
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -79,7 +77,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -99,7 +97,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -140,7 +138,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
     let historicalRecord: AppECorrelationTestSummary;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
+      historicalRecord = await this.historicalRepo.findOneBy({
         testSumId: testSumId,
         operatingLevelForRun: payload.operatingLevelForRun,
       });

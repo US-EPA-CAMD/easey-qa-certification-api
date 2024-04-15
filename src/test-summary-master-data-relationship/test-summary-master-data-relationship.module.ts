@@ -7,7 +7,7 @@ import { TestSummaryMasterDataRelationshipRepository } from './test-summary-mast
     TypeOrmModule.forFeature([TestSummaryMasterDataRelationshipRepository]),
   ],
   controllers: [],
-  providers: [],
+  providers: [TestSummaryMasterDataRelationshipRepository],
   exports: [TypeOrmModule],
 })
 export class TestSummaryMasterDataRelationshipModule {}

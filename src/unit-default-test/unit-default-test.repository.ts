@@ -1,5 +1,11 @@
-import { UnitDefaultTest } from '../entities/unit-default-test.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
-@EntityRepository(UnitDefaultTest)
-export class UnitDefaultTestRepository extends Repository<UnitDefaultTest> {}
+import { UnitDefaultTest } from '../entities/unit-default-test.entity';
+
+@Injectable()
+export class UnitDefaultTestRepository extends Repository<UnitDefaultTest> {
+  constructor(entityManager: EntityManager) {
+    super(UnitDefaultTest, entityManager);
+  }
+}

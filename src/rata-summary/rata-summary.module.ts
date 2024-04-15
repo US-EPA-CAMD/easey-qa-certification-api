@@ -9,7 +9,7 @@ import { RataRunModule } from '../rata-run/rata-run.module';
 @Module({
   imports: [TypeOrmModule.forFeature([RataSummaryRepository]), RataRunModule],
   controllers: [RataSummaryController],
-  providers: [RataSummaryMap, RataSummaryService],
+  providers: [RataSummaryMap, RataSummaryRepository, RataSummaryService],
   exports: [TypeOrmModule, RataSummaryMap, RataSummaryService],
 })
 export class RataSummaryModule {}

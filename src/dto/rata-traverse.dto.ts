@@ -2,6 +2,7 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import {
   IsInRange,
   IsIsoFormat,
+  IsValidCode,
   IsValidDate,
 } from '@us-epa-camd/easey-common/pipes';
 import {
@@ -15,7 +16,6 @@ import {
   MinLength,
 } from 'class-validator';
 import { PressureMeasureCode } from '../entities/workspace/pressure-measure-code.entity';
-import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { ProbeTypeCode } from '../entities/probe-type-code.entity';
 
 const KEY = 'RATA Traverse';

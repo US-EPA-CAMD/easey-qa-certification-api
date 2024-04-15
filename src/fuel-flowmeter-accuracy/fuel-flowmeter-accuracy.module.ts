@@ -1,11 +1,12 @@
+import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
-import { HttpModule } from '@nestjs/axios';
+import { FuelFlowmeterAccuracyController } from './fuel-flowmeter-accuracy.controller';
 import { FuelFlowmeterAccuracyRepository } from './fuel-flowmeter-accuracy.repository';
 import { FuelFlowmeterAccuracyService } from './fuel-flowmeter-accuracy.service';
-import { FuelFlowmeterAccuracyController } from './fuel-flowmeter-accuracy.controller';
-import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
 
 @Module({
   imports: [
@@ -14,7 +15,11 @@ import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
     HttpModule,
   ],
   controllers: [FuelFlowmeterAccuracyController],
-  providers: [FuelFlowmeterAccuracyMap, FuelFlowmeterAccuracyService],
+  providers: [
+    FuelFlowmeterAccuracyMap,
+    FuelFlowmeterAccuracyRepository,
+    FuelFlowmeterAccuracyService,
+  ],
   exports: [
     TypeOrmModule,
     FuelFlowmeterAccuracyMap,
