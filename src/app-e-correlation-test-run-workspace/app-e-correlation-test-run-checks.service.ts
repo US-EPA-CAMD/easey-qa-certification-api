@@ -40,9 +40,9 @@ export class AppECorrelationTestRunChecksService {
 
     this.logger.log('Running Appendix E Test Run Checks');
 
-    const appETestSummary = await this.appETestSummaryRepository.findOne(
-      appETestSumId,
-    );
+    const appETestSummary = await this.appETestSummaryRepository.findOneBy({
+      id: appETestSumId,
+    });
 
     error = await this.appE49Check(appETestRunId, dto, appETestSummary);
     if (error) {

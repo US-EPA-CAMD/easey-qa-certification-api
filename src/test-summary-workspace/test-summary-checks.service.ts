@@ -2,7 +2,8 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import moment from 'moment';
+
+const moment = require('moment');
 
 import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
@@ -519,11 +520,9 @@ export class TestSummaryChecksService {
     const resultE = this.getMessage('IMPORT-18-E', locTestTypeNumber);
     const resultF = this.getMessage('IMPORT-18-F', locTestTypeNumber);
 
-    const monitorSystem = await this.monitorSystemRepository.findOne({
-      where: {
-        locationId: locationId,
-        monitoringSystemID: summary.monitoringSystemId,
-      },
+    const monitorSystem = await this.monitorSystemRepository.findOneBy({
+      locationId: locationId,
+      monitoringSystemID: summary.monitoringSystemId,
     });
 
     const component = await this.componentRepository.findOneBy({
@@ -659,12 +658,10 @@ export class TestSummaryChecksService {
       if (summary.monitoringSystemId !== null || summary.componentId !== null) {
         return resultE;
       } else {
-        const monitorMethod = await this.monitorMethodRepository.findOne({
-          where: {
-            locationId,
-            parameterCode: 'NOXM',
-            monitoringMethodCode: 'LME',
-          },
+        const monitorMethod = await this.monitorMethodRepository.findOneBy({
+          locationId,
+          parameterCode: 'NOXM',
+          monitoringMethodCode: 'LME',
         });
         // Level 3
         if (!monitorMethod) {

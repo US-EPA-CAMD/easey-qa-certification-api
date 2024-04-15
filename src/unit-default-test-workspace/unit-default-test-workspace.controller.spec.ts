@@ -1,14 +1,16 @@
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnitDefaultTestWorkspaceController } from './unit-default-test-workspace.controller';
-import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import {
   UnitDefaultTestBaseDTO,
   UnitDefaultTestRecordDTO,
 } from '../dto/unit-default-test.dto';
-import { HttpModule } from '@nestjs/axios';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
+import { UnitDefaultTestWorkspaceController } from './unit-default-test-workspace.controller';
+import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
 
 const locId = '';
 const id = '';
@@ -43,6 +45,10 @@ describe('UnitDefaultTestWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: UnitDefaultTestWorkspaceService,
           useFactory: mockService,

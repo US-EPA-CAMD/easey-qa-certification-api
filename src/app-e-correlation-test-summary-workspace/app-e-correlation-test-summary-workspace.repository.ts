@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Not, Repository } from 'typeorm';
 
 import { AppECorrelationTestSummary } from '../entities/workspace/app-e-correlation-test-summary.entity';
 

@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { FlowToLoadCheck } from '../entities/workspace/flow-to-load-check.entity';
-import { SelectQueryBuilder } from 'typeorm';
 import { FlowToLoadCheckWorkspaceRepository } from './flow-to-load-check-workspace.repository';
 
 const flowToLoadCheck = new FlowToLoadCheck();
@@ -19,6 +20,7 @@ describe('FlowToLoadCheckWorkspaceRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         FlowToLoadCheckWorkspaceRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

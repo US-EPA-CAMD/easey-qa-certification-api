@@ -1,11 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { DataSource } from 'typeorm';
+
 import { TestExtensionExemptionsWorkspaceController } from './test-extension-exemptions-workspace.controller';
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
 
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   TestExtensionExemptionBaseDTO,
   TestExtensionExemptionRecordDTO,
@@ -50,7 +52,10 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
-
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: TestExtensionExemptionsWorkspaceService,
           useFactory: mockTestExtensionExemptionWorkspaceService,

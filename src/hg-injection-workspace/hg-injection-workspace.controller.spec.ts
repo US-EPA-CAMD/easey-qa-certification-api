@@ -1,8 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { HttpModule } from '@nestjs/axios';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import { HgInjectionBaseDTO, HgInjectionDTO } from '../dto/hg-injection.dto';
 import { HgInjectionWorkspaceController } from './hg-injection-workspace.controller';
 import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
@@ -44,6 +46,10 @@ describe('HgInjectionWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: HgInjectionWorkspaceService,
           useFactory: mockService,

@@ -1,12 +1,14 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import { FlowRataRunBaseDTO, FlowRataRunDTO } from '../dto/flow-rata-run.dto';
+import { FlowRataRunChecksService } from './flow-rata-run-checks.service';
 import { FlowRataRunWorkspaceController } from './flow-rata-run-workspace.controller';
 import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { FlowRataRunChecksService } from './flow-rata-run-checks.service';
 
 const locId = 'a1b2c3';
 const testSumId = 'd4e5f6';
@@ -63,6 +65,10 @@ describe('FlowRataRunWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: FlowRataRunWorkspaceService,
           useFactory: mockFlowRataRunService,

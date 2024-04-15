@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
-import { SelectQueryBuilder } from 'typeorm';
 import { QAMonitorPlanWorkspaceRepository } from './qa-monitor-plan.repository';
 
 const mockQueryBuilder = () => ({
@@ -18,6 +19,7 @@ describe('TestSummaryRelationshipsRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         QAMonitorPlanWorkspaceRepository,
         {
           provide: SelectQueryBuilder,

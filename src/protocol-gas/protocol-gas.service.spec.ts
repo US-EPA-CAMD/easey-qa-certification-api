@@ -1,24 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { ProtocolGasDTO } from '../dto/protocol-gas.dto';
+import { ProtocolGas } from '../entities/protocol-gas.entity';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { ProtocolGasRepository } from './protocol-gas.repository';
 import { ProtocolGasService } from './protocol-gas.service';
-import { ProtocolGas } from '../entities/protocol-gas.entity';
-import { ProtocolGasBaseDTO, ProtocolGasDTO } from '../dto/protocol-gas.dto';
-import { ProtocolGasWorkspaceRepository } from '../protocol-gas-workspace/protocol-gas.repository';
-import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 
 const protocolGasId = 'a1b2c3';
 const testSumId = 'd4e5f6';
 const protocolGas = new ProtocolGas();
 const protocolGasDTO = new ProtocolGasDTO();
-
-const payload: ProtocolGasBaseDTO = {
-  gasLevelCode: '',
-  gasTypeCode: '',
-  vendorIdentifier: '',
-  cylinderIdentifier: '',
-  expirationDate: new Date(),
-};
 
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(protocolGasDTO),
@@ -29,7 +20,7 @@ const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([protocolGas]),
   create: jest.fn().mockResolvedValue(protocolGas),
   save: jest.fn().mockResolvedValue(protocolGas),
-  findOne: jest.fn().mockResolvedValue(protocolGas),
+  findOneBy: jest.fn().mockResolvedValue(protocolGas),
 });
 
 describe('ProtocolGasService', () => {
@@ -61,14 +52,14 @@ describe('ProtocolGasService', () => {
   });
 
   describe('getProtocolGas', () => {
-    it('Calls repository.findOne({id}) to get a single Protocol Gas record', async () => {
+    it('Calls repository.findOneBy({id}) to get a single Protocol Gas record', async () => {
       const result = await service.getProtocolGas(protocolGasId);
       expect(result).toEqual(protocolGasDTO);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Protocol Gas record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let errored = false;
 

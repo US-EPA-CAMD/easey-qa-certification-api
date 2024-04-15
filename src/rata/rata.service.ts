@@ -38,8 +38,8 @@ export class RataService {
   }
 
   async getRatasByTestSumIds(testSumIds: string[]): Promise<RataDTO[]> {
-    const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
+    const results = await this.repository.findBy({
+      testSumId: In(testSumIds),
     });
     return this.map.many(results);
   }

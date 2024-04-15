@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { LinearityInjectionDTO } from '../dto/linearity-injection.dto';
+import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
+import { LinearitySummary } from '../entities/linearity-summary.entity';
+import { LinearityInjectionService } from '../linearity-injection/linearity-injection.service';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryRepository } from './linearity-summary.repository';
 import { LinearitySummaryService } from './linearity-summary.service';
-import { LinearitySummary } from '../entities/linearity-summary.entity';
-import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
-import { LinearityInjectionService } from '../linearity-injection/linearity-injection.service';
-import { LinearityInjectionDTO } from '../dto/linearity-injection.dto';
 
 const linSumId = 'a1b2c3';
 const testSumId = 'd4e5f6';
@@ -19,7 +20,8 @@ const mockMap = () => ({
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([linearitySummary]),
-  findOne: jest.fn().mockResolvedValue(linearitySummary),
+  findBy: jest.fn().mockResolvedValue([linearitySummary]),
+  findOneBy: jest.fn().mockResolvedValue(linearitySummary),
 });
 
 const mockLinearityInjectionService = () => ({
@@ -57,14 +59,14 @@ describe('linearitySummaryService', () => {
   });
 
   describe('getlinearitySummary', () => {
-    it('Calls repository.findOne({id}) to get a single Flow Rata Run record', async () => {
+    it('Calls repository.findOneBy({id}) to get a single Flow Rata Run record', async () => {
       const result = await service.getSummaryById(linSumId);
       expect(result).toEqual(linearitySummaryDTO);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Flow Rata Run record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let errored = false;
 
@@ -82,7 +84,7 @@ describe('linearitySummaryService', () => {
     it('Should return an array of Flow Rata Run records', async () => {
       const result = await service.getSummariesByTestSumId(testSumId);
       expect(result).toEqual([linearitySummary]);
-      expect(repository.find).toHaveBeenCalled();
+      expect(repository.findBy).toHaveBeenCalled();
     });
   });
 

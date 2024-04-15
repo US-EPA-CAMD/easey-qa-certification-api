@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { FuelFlowToLoadTestDTO } from '../dto/fuel-flow-to-load-test.dto';
 import { FuelFlowToLoadTest } from '../entities/fuel-flow-to-load-test.entity';
 import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
@@ -12,7 +13,7 @@ const dto = new FuelFlowToLoadTestDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
 });
 
 const mockMap = () => ({
@@ -61,7 +62,7 @@ describe('FuelFlowToLoadTestService', () => {
     });
 
     it('Should throw error when a Fuel Flow To Load Test record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {

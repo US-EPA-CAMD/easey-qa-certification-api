@@ -1,6 +1,5 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import moment from 'moment';
 import { EntityManager, In } from 'typeorm';
 
 import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
@@ -8,6 +7,8 @@ import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
 import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
 import { TestSummaryReviewAndSubmitRepository } from './test-summary-review-and-submit.repository';
+
+const moment = require('moment');
 
 @Injectable()
 export class TestSummaryReviewAndSubmitService {

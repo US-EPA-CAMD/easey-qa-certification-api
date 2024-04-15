@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
+
 import { CycleTimeInjectionDTO } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjection } from '../entities/cycle-time-injection.entity';
+import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
 import { CycleTimeInjectionRepository } from './cycle-time-injection.repository';
 import { CycleTimeInjectionService } from './cycle-time-injection.service';
 
@@ -13,7 +14,7 @@ const cycleTimeInjectionDTO = new CycleTimeInjectionDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([cycleTimeInjection]),
-  findOne: jest.fn().mockResolvedValue(cycleTimeInjection),
+  findOneBy: jest.fn().mockResolvedValue(cycleTimeInjection),
 });
 
 const mockMap = () => ({
@@ -64,7 +65,7 @@ describe('CycleTimeInjectionService', () => {
     });
 
     it('should throw an error when a Cycle Time Injection record is not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
 

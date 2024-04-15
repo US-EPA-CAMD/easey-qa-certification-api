@@ -55,8 +55,8 @@ export class LinearityInjectionWorkspaceService {
   async getInjectionsByLinSumIds(
     linSumIds: string[],
   ): Promise<LinearityInjectionDTO[]> {
-    const results = await this.repository.find({
-      where: { linSumId: In(linSumIds) },
+    const results = await this.repository.findBy({
+      linSumId: In(linSumIds),
     });
     return this.map.many(results);
   }

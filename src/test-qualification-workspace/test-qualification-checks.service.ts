@@ -2,7 +2,6 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import moment from 'moment';
 
 import { RataImportDTO } from '../dto/rata.dto';
 import {
@@ -14,6 +13,8 @@ import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
+
+const moment = require('moment');
 
 const KEY = 'Test Qualification';
 

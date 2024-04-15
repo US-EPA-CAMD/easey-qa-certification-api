@@ -1,15 +1,17 @@
 import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import {
   AppECorrelationTestRunBaseDTO,
   AppECorrelationTestRunDTO,
 } from '../dto/app-e-correlation-test-run.dto';
+import { AppECorrelationTestRunChecksService } from './app-e-correlation-test-run-checks.service';
 import { AppECorrelationTestRunWorkspaceController } from './app-e-correlation-test-run-workspace.controller';
 import { AppECorrelationTestRunWorkspaceService } from './app-e-correlation-test-run-workspace.service';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { AppECorrelationTestRunChecksService } from './app-e-correlation-test-run-checks.service';
 
 const user: CurrentUser = {
   userId: 'testUser',
@@ -60,6 +62,10 @@ describe('AppECorrelationTestRunWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: AppECorrelationTestRunWorkspaceService,
           useFactory: mockService,

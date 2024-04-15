@@ -1,6 +1,5 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import {
@@ -8,12 +7,12 @@ import {
   LinearityInjectionImportDTO,
   LinearityInjectionRecordDTO,
 } from '../dto/linearity-injection.dto';
-import { LinearityInjectionWorkspaceService } from './linearity-injection.service';
-import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
+import { LinearityInjection } from '../entities/workspace/linearity-injection.entity';
+import { LinearityInjectionRepository } from '../linearity-injection/linearity-injection.repository';
 import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { LinearityInjectionRepository } from '../linearity-injection/linearity-injection.repository';
-import { LinearityInjection } from '../entities/workspace/linearity-injection.entity';
+import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
+import { LinearityInjectionWorkspaceService } from './linearity-injection.service';
 
 const testSumId = '1';
 const linSumId = '1';
@@ -27,15 +26,15 @@ const lineInjectionRecordDto = new LinearityInjectionRecordDTO();
 const payload = new LinearityInjectionImportDTO();
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue([lineInjection]),
+  findBy: jest.fn().mockResolvedValue([lineInjection]),
   create: jest.fn().mockResolvedValue(lineInjection),
   save: jest.fn().mockResolvedValue(lineInjection),
-  findOne: jest.fn().mockResolvedValue(lineInjection),
+  findOneBy: jest.fn().mockResolvedValue(lineInjection),
   delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockOfficialRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(new LinearityInjection()),
+  findOneBy: jest.fn().mockResolvedValue(new LinearityInjection()),
 });
 
 const mockTestSummaryService = () => ({});
@@ -90,7 +89,7 @@ describe('LinearityInjectionWorkspaceService', () => {
     });
 
     it('Should through error while getting a Linearity Injection record', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
       try {
@@ -159,7 +158,7 @@ describe('LinearityInjectionWorkspaceService', () => {
     });
 
     it('Should through error while updating a Linearity Injection record', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
       try {

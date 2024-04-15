@@ -1,16 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
 import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
 
-import { LinearitySummaryWorkspaceController } from './linearity-summary.controller';
-import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   LinearitySummaryBaseDTO,
   LinearitySummaryDTO,
 } from '../dto/linearity-summary.dto';
+import { LinearitySummaryWorkspaceController } from './linearity-summary.controller';
+import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
 
 const locId = '1';
 const testSumId = '2';
@@ -47,6 +48,10 @@ describe('Linearity Summary Controller', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: LinearitySummaryWorkspaceService,
           useFactory: mockService,

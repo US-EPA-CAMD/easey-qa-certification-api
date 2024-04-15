@@ -1,12 +1,12 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { HgInjectionDTO } from '../dto/hg-injection.dto';
+
 import { HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgSummary } from '../entities/hg-summary.entity';
+import { HgInjectionService } from '../hg-injection/hg-injection.service';
 import { HgSummaryMap } from '../maps/hg-summary.map';
 import { HgSummaryRepository } from './hg-summary.repository';
 import { HgSummaryService } from './hg-summary.service';
-import { HgInjectionService } from '../hg-injection/hg-injection.service';
-import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -15,7 +15,7 @@ const dto = new HgSummaryDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
 });
 
 const mockMap = () => ({
@@ -72,7 +72,7 @@ describe('HgSummaryService', () => {
     });
 
     it('Should throw error when a Hg Summary record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {

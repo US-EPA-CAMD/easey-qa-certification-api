@@ -27,7 +27,7 @@ export class RataWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     private readonly repository: RataWorkspaceRepository,
     private readonly historicalRepository: RataRepository,
-
+    @Inject(forwardRef(() => RataSummaryWorkspaceService))
     private readonly rataSummaryService: RataSummaryWorkspaceService,
   ) {}
 
@@ -138,8 +138,8 @@ export class RataWorkspaceService {
   }
 
   async getRatasByTestSumIds(testSumIds: string[]): Promise<RataDTO[]> {
-    const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
+    const results = await this.repository.findBy({
+      testSumId: In(testSumIds),
     });
     return this.map.many(results);
   }

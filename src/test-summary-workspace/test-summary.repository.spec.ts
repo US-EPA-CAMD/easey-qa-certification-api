@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { SelectQueryBuilder } from 'typeorm';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 
 import * as testSummaryQueryBuilder from '../utilities/test-summary.querybuilder';
@@ -23,6 +24,7 @@ describe('TestSummaryWorkspaceRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         TestSummaryWorkspaceRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

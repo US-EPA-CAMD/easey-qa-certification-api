@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import { FlowToLoadReferenceBaseDTO } from '../dto/flow-to-load-reference.dto';
 import { FlowToLoadReferenceWorkspaceController } from './flow-to-load-reference-workspace.controller';
 import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference-workspace.service';
@@ -41,6 +43,10 @@ describe('FlowToLoadReferenceWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: FlowToLoadReferenceWorkspaceService,
           useFactory: mockService,

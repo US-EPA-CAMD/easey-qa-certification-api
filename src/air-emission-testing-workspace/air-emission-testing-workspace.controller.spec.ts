@@ -1,15 +1,17 @@
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import {
   AirEmissionTestingBaseDTO,
   AirEmissionTestingRecordDTO,
 } from '../dto/air-emission-test.dto';
+import { AirEmissionTestingChecksService } from './air-emission-testing-checks.service';
 import { AirEmissionTestingWorkspaceController } from './air-emission-testing-workspace.controller';
 import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
-import { ConfigService } from '@nestjs/config';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { HttpModule } from '@nestjs/axios';
-import { AirEmissionTestingChecksService } from './air-emission-testing-checks.service';
 
 const locId = '';
 const testSumId = '';
@@ -56,6 +58,10 @@ describe('AirEmissionTestingWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: AirEmissionTestingWorkspaceService,
           useFactory: mockService,

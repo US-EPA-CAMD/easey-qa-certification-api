@@ -1,15 +1,17 @@
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import {
   TestQualificationBaseDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
+import { TestQualificationChecksService } from './test-qualification-checks.service';
 import { TestQualificationWorkspaceController } from './test-qualification-workspace.controller';
 import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { HttpModule } from '@nestjs/axios';
-import { TestQualificationChecksService } from './test-qualification-checks.service';
 
 const locId = '';
 const testSumId = '';
@@ -57,6 +59,10 @@ describe('TestQualificationWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: TestQualificationWorkspaceService,
           useFactory: mockTestQualificationWorkspaceService,

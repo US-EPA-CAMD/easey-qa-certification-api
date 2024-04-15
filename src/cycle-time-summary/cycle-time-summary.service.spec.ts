@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { CycleTimeSummaryService } from './cycle-time-summary.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
+import { CycleTimeInjectionService } from '../cycle-time-injection/cycle-time-injection.service';
+import { CycleTimeInjectionDTO } from '../dto/cycle-time-injection.dto';
 import { CycleTimeSummaryDTO } from '../dto/cycle-time-summary.dto';
 import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
 import { CycleTimeSummaryRepository } from './cycle-time-summary.repository';
-import { CycleTimeInjectionDTO } from '../dto/cycle-time-injection.dto';
-import { CycleTimeInjectionService } from '../cycle-time-injection/cycle-time-injection.service';
+import { CycleTimeSummaryService } from './cycle-time-summary.service';
 
 const id = '';
 const testSumId = '';
@@ -19,7 +19,7 @@ cycleTimeInjDto.cycleTimeSumId = 'SOME_ID';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
 });
 
 const mockMap = () => ({
@@ -78,7 +78,7 @@ describe('CycleTimeSummaryService', () => {
     });
 
     it('Should throw error when a Cycle Time Summary record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {

@@ -1,12 +1,13 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestSummaryService } from '../test-summary/test-summary.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
 import { OnlineOfflineCalibration } from '../entities/online-offline-calibration.entity';
 import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.map';
+import { TestSummaryService } from '../test-summary/test-summary.service';
 import { OnlineOfflineCalibrationRepository } from './online-offline-calibration.repository';
 import { OnlineOfflineCalibrationService } from './online-offline-calibration.service';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { ConfigService } from '@nestjs/config';
 
 const testSumId = '1';
 const onlineOfflineCalibrationId = 'abc123';
@@ -14,7 +15,7 @@ const onlineOfflineCalibration = new OnlineOfflineCalibration();
 const onlineOfflineCalibrationDTO = new OnlineOfflineCalibrationDTO();
 
 const mockRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(onlineOfflineCalibration),
+  findOneBy: jest.fn().mockResolvedValue(onlineOfflineCalibration),
   find: jest.fn().mockResolvedValue([onlineOfflineCalibration]),
 });
 
@@ -57,16 +58,16 @@ describe('OnlineOfflineCalibrationService', () => {
   });
 
   describe('getOnlineOfflineCalibration', () => {
-    it('Calls repository.findOne({id}) to get a single Online Offline Calibration record', async () => {
+    it('Calls repository.findOneBy({id}) to get a single Online Offline Calibration record', async () => {
       const result = await service.getOnlineOfflineCalibration(
         onlineOfflineCalibrationId,
       );
       expect(result).toEqual(onlineOfflineCalibrationDTO);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Online Offline Calibration record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let errored = false;
 

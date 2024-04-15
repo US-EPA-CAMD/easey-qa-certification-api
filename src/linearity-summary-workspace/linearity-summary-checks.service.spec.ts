@@ -1,13 +1,14 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
+
 import { LinearitySummaryBaseDTO } from '../dto/linearity-summary.dto';
+import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
-import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
-import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 const testSumId = '1';
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
@@ -41,7 +42,7 @@ describe('Linearity Summary Check Service Test', () => {
         {
           provide: LinearitySummaryWorkspaceRepository,
           useFactory: () => ({
-            findOne: jest.fn(),
+            findOneBy: jest.fn(),
           }),
         },
         {
@@ -60,7 +61,7 @@ describe('Linearity Summary Check Service Test', () => {
   describe('Linearity Injection Checks', () => {
     const payload = new LinearitySummaryBaseDTO();
     it('Should pass all checks', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
       const result = await service.runChecks(payload, testSumId);
 
       expect(result).toEqual([]);
@@ -71,7 +72,7 @@ describe('Linearity Summary Check Service Test', () => {
     const payload = new LinearitySummary();
     it('Should get GasLevelCode is not equal to "HIGH", "MID", or "LOW" error', async () => {
       payload.gasLevelCode = 'NOTHIGH';
-      jest.spyOn(repository, 'findOne').mockResolvedValue(payload);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(payload);
 
       try {
         await service.runChecks(payload, testSumId, false, false);
@@ -91,7 +92,7 @@ describe('Linearity Summary Check Service Test', () => {
     returnValue.gasLevelCode = 'LOW';
 
     it('Should get already exists error', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(returnValue);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(returnValue);
       try {
         await service.runChecks(payload, testSumId);
       } catch (err) {

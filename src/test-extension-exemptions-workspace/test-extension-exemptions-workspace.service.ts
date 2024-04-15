@@ -109,15 +109,13 @@ export class TestExtensionExemptionsWorkspaceService {
       componentRecordId,
     } = await this.lookupValues(locationId, payload);
 
-    const record = await this.repository.findOne({
-      where: {
-        locationId,
-        fuelCode: payload.fuelCode,
-        extensionOrExemptionCode: payload.extensionOrExemptionCode,
-        reportPeriodId,
-        monitoringSystemRecordId,
-        componentRecordId,
-      },
+    const record = await this.repository.findOneBy({
+      locationId,
+      fuelCode: payload.fuelCode,
+      extensionOrExemptionCode: payload.extensionOrExemptionCode,
+      reportPeriodId,
+      monitoringSystemRecordId,
+      componentRecordId,
     });
 
     let importedTestExtensionExemption;

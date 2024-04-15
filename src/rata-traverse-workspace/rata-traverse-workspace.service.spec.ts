@@ -1,17 +1,18 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { RataTraverseMap } from '../maps/rata-traverse.map';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import {
   RataTraverseDTO,
   RataTraverseImportDTO,
 } from '../dto/rata-traverse.dto';
-import { RataTraverse } from '../entities/workspace/rata-traverse.entity';
 import { RataTraverse as RataTraverseOfficial } from '../entities/rata-traverse.entity';
+import { RataTraverse } from '../entities/workspace/rata-traverse.entity';
+import { RataTraverseMap } from '../maps/rata-traverse.map';
+import { RataTraverseRepository } from '../rata-traverse/rata-traverse.repository';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { RataTraverseWorkspaceRepository } from './rata-traverse-workspace.repository';
 import { RataTraverseWorkspaceService } from './rata-traverse-workspace.service';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { RataTraverseRepository } from '../rata-traverse/rata-traverse.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { ConfigService } from '@nestjs/config';
 
 const testSumId = '';
 const userId = '';
@@ -21,7 +22,7 @@ const rataTravarseDto = new RataTraverseDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([rataTravarse]),
-  findOne: jest.fn().mockResolvedValue(rataTravarse),
+  findOneBy: jest.fn().mockResolvedValue(rataTravarse),
 });
 
 const mockMap = () => ({
@@ -36,7 +37,7 @@ const mockTestSummaryService = () => ({
 const officialRecord = new RataTraverseOfficial();
 officialRecord.id = 'uuid';
 const mockOfficialRepository = () => ({
-  findOne: jest.fn(),
+  findOneBy: jest.fn(),
 });
 
 describe('RataTraverseWorkspaceService', () => {
@@ -106,7 +107,7 @@ describe('RataTraverseWorkspaceService', () => {
         .spyOn(service, 'createRataTraverse')
         .mockResolvedValue(rataTravarseDto);
       jest
-        .spyOn(officialRepository, 'findOne')
+        .spyOn(officialRepository, 'findOneBy')
         .mockResolvedValue(officialRecord);
       const result = await service.import(
         testSumId,

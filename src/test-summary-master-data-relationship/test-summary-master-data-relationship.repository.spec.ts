@@ -1,7 +1,8 @@
 import { Test } from '@nestjs/testing';
-import { SelectQueryBuilder } from 'typeorm';
-import { TestSummaryMasterDataRelationshipRepository } from './test-summary-master-data-relationship.repository';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { TestSummaryMasterDataRelationship } from '../entities/workspace/vw-test-summary-md-relationships.entity';
+import { TestSummaryMasterDataRelationshipRepository } from './test-summary-master-data-relationship.repository';
 
 const mockQueryBuilder = () => ({
   distinct: jest.fn(),
@@ -19,6 +20,7 @@ describe('TestSummaryRelationshipsRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         TestSummaryMasterDataRelationshipRepository,
         {
           provide: SelectQueryBuilder,

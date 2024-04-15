@@ -1,7 +1,9 @@
 import { HttpStatus } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import { AirEmissionTestingRepository } from '../air-emission-testing/air-emission-testing.repository';
 import {
   AirEmissionTestingBaseDTO,
@@ -13,7 +15,6 @@ import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { AirEmissionTestingWorkspaceRepository } from './air-emission-testing-workspace.repository';
 import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
-import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -27,7 +28,7 @@ const payload: AirEmissionTestingBaseDTO = new AirEmissionTestingBaseDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
@@ -39,7 +40,7 @@ const mockMap = () => ({
 });
 
 const mockHistoricalRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(airEmissionTestingRecord),
+  findOneBy: jest.fn().mockResolvedValue(airEmissionTestingRecord),
 });
 
 const mockTestSumService = () => ({
@@ -103,7 +104,7 @@ describe('AirEmissionTestingWorkspaceService', () => {
     });
 
     it('Should throw error when a Air Emission Testing record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {
@@ -153,7 +154,7 @@ describe('AirEmissionTestingWorkspaceService', () => {
     });
 
     it('should throw error with invalid Air Emission Testing', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
       try {

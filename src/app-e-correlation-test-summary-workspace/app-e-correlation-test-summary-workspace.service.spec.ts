@@ -1,10 +1,12 @@
 import { HttpStatus } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { AppECorrelationTestRunDTO } from '../dto/app-e-correlation-test-run.dto';
+
 import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
 import { AppendixETestSummaryRepository } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.repository';
+import { AppECorrelationTestRunDTO } from '../dto/app-e-correlation-test-run.dto';
 import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryDTO,
@@ -15,7 +17,6 @@ import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
 import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-test-summary-workspace.service';
-import { ConfigService } from '@nestjs/config';
 
 const locationId = '5';
 const testSumId = '';
@@ -29,7 +30,7 @@ const payload = new AppECorrelationTestSummaryBaseDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
@@ -50,7 +51,7 @@ const mockTestRunService = () => ({
 });
 
 const mockOfficialRepository = () => ({
-  findOne: jest.fn(),
+  findOneBy: jest.fn(),
 });
 
 describe('AppECorrelationTestSummaryWorkspaceService', () => {
@@ -130,7 +131,7 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
       });
 
       it('should throw error with invalid Appendix E Correlation Test Summary', async () => {
-        jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+        jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
         let errored = false;
         try {

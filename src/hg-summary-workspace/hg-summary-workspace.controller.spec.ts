@@ -1,11 +1,13 @@
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
+import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgSummaryWorkspaceController } from './hg-summary-workspace.controller';
 import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
-import { HttpModule } from '@nestjs/axios';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
 
 const locId = '';
 const testSumId = '';
@@ -40,6 +42,10 @@ describe('HgSummaryWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: HgSummaryWorkspaceService,
           useFactory: mockService,

@@ -1,10 +1,12 @@
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { DataSource } from 'typeorm';
+
+import { RataTraverseChecksService } from './rata-traverse-checks.service';
 import { RataTraverseWorkspaceController } from './rata-traverse-workspace.controller';
 import { RataTraverseWorkspaceService } from './rata-traverse-workspace.service';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
-import { HttpModule } from '@nestjs/axios';
-import { RataTraverseChecksService } from './rata-traverse-checks.service';
 
 describe('RataTraverseWorkspaceController', () => {
   let controller: RataTraverseWorkspaceController;
@@ -16,6 +18,10 @@ describe('RataTraverseWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: RataTraverseWorkspaceService,
           useFactory: () => ({}),

@@ -1,8 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
+import { EntityManager } from 'typeorm';
+
+import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
 import { MatsBulkFileMap } from '../maps/mats-bulk-file.map';
 import { MatsBulkFilesReviewAndSubmitRepository } from './mats-bulk-files-review-and-submit.repository';
-import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
+import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
 
 const mockRepo = () => ({
   find: jest.fn().mockImplementation(args => {
@@ -28,6 +30,7 @@ describe('MatsBulkFilesReviewAndSubmitService', () => {
       imports: [],
       controllers: [],
       providers: [
+        EntityManager,
         MatsBulkFilesReviewAndSubmitService,
         { provide: MatsBulkFileMap, useFactory: mockMap },
         {

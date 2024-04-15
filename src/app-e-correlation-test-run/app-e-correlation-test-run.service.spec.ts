@@ -1,14 +1,15 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { AppEHeatInputFromGasService } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.service';
+import { AppEHeatInputFromOilService } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.service';
+import { AppECorrelationTestRunDTO } from '../dto/app-e-correlation-test-run.dto';
 import { AppEHeatInputFromGasDTO } from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromOilDTO } from '../dto/app-e-heat-input-from-oil.dto';
-import { AppECorrelationTestRunDTO } from '../dto/app-e-correlation-test-run.dto';
 import { AppECorrelationTestRun } from '../entities/app-e-correlation-test-run.entity';
 import { AppECorrelationTestRunMap } from '../maps/app-e-correlation-test-run.map';
 import { AppECorrelationTestRunRepository } from './app-e-correlation-test-run.repository';
 import { AppECorrelationTestRunService } from './app-e-correlation-test-run.service';
-import { AppEHeatInputFromGasService } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.service';
-import { AppEHeatInputFromOilService } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.service';
-import { ConfigService } from '@nestjs/config';
 
 const testSumId = '1';
 const appECorrTestSumId = 'g7h8i9';
@@ -23,7 +24,7 @@ const mockMap = () => ({
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([appECorrelationTestRunEntity]),
-  findOne: jest.fn().mockResolvedValue(appECorrelationTestRunEntity),
+  findOneBy: jest.fn().mockResolvedValue(appECorrelationTestRunEntity),
 });
 
 const mockAppEHeatInputFromGasService = () => ({
@@ -70,14 +71,14 @@ describe('AppECorrelationTestRunService', () => {
   });
 
   describe('getAppECorrelationTestRun', () => {
-    it('Calls repository.findOne({id}) to get a single Appendix E Correlation Test Run record', async () => {
+    it('Calls repository.findOneBy({id}) to get a single Appendix E Correlation Test Run record', async () => {
       const result = await service.getAppECorrelationTestRun(appECorrTestRunId);
       expect(result).toEqual(appECorrelationTestRunRecord);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Appendix E Correlation Test Run record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let errored = false;
 

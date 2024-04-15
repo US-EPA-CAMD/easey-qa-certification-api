@@ -4,6 +4,7 @@ import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
 
+import { AppEHeatInputFromGasRepository } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.repository';
 import {
   AppEHeatInputFromGasBaseDTO,
   AppEHeatInputFromGasDTO,
@@ -24,7 +25,7 @@ export class AppEHeatInputFromGasWorkspaceService {
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     private readonly repository: AppEHeatInputFromGasWorkspaceRepository,
-    private readonly historicalRepo,
+    private readonly historicalRepo: AppEHeatInputFromGasRepository,
     private readonly monSysWorkspaceRepository: MonitorSystemWorkspaceRepository,
   ) {}
 

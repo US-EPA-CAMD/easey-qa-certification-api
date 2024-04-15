@@ -1,20 +1,19 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { InternalServerErrorException } from '@nestjs/common';
-
+import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { TransmitterTransducerAccuracyWorkspaceService } from './transmitter-transducer-accuracy.service';
-import { TransmitterTransducerAccuracyWorkspaceRepository } from './transmitter-transducer-accuracy.repository';
-import { TransmitterTransducerAccuracy } from '../entities/workspace/transmitter-transducer-accuracy.entity';
-import { TransmitterTransducerAccuracy as TransmitterTransducerAccuracyOfficial } from '../entities/transmitter-transducer-accuracy.entity';
 import {
   TransmitterTransducerAccuracyBaseDTO,
   TransmitterTransducerAccuracyRecordDTO,
 } from '../dto/transmitter-transducer-accuracy.dto';
+import { TransmitterTransducerAccuracy as TransmitterTransducerAccuracyOfficial } from '../entities/transmitter-transducer-accuracy.entity';
+import { TransmitterTransducerAccuracy } from '../entities/workspace/transmitter-transducer-accuracy.entity';
 import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { TransmitterTransducerAccuracyRepository } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.repository';
-import { ConfigService } from '@nestjs/config';
+import { TransmitterTransducerAccuracyWorkspaceRepository } from './transmitter-transducer-accuracy.repository';
+import { TransmitterTransducerAccuracyWorkspaceService } from './transmitter-transducer-accuracy.service';
 
 const testSumID = 'TEST-SUM-ID';
 const userID = 'USER-ID';
@@ -24,7 +23,7 @@ const recordDTO: TransmitterTransducerAccuracyRecordDTO = new TransmitterTransdu
 
 const mockRepo = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   save: jest.fn(),
   create: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
@@ -40,7 +39,7 @@ const mockTestSummaryService = () => ({
 });
 
 const mockHistoricalRepo = () => ({
-  findOne: jest
+  findOneBy: jest
     .fn()
     .mockResolvedValue(new TransmitterTransducerAccuracyOfficial()),
 });
@@ -113,7 +112,7 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
     });
 
     it('Should throw error when a Transmitter Transducer Accuracy record not found', async () => {
-      jest.spyOn(repo, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repo, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {

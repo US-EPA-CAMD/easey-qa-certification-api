@@ -1,14 +1,15 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { AppECorrelationTestRunChecksService } from './app-e-correlation-test-run-checks.service';
+
 import { AppECorrelationTestRunWorkspaceRepository } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.repository';
+import { AppendixETestSummaryWorkspaceRepository } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.repository';
 import {
   AppECorrelationTestRunBaseDTO,
   AppECorrelationTestRunImportDTO,
 } from '../dto/app-e-correlation-test-run.dto';
 import { AppECorrelationTestRun } from '../entities/workspace/app-e-correlation-test-run.entity';
 import { AppECorrelationTestSummary } from '../entities/workspace/app-e-correlation-test-summary.entity';
-import { AppendixETestSummaryWorkspaceRepository } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.repository';
+import { AppECorrelationTestRunChecksService } from './app-e-correlation-test-run-checks.service';
 
 const MOCK_ERROR_MSG = 'ERROR MSG';
 const mockAppETestSummary = new AppECorrelationTestSummary();
@@ -23,7 +24,7 @@ const mockRepo = () => ({
 });
 
 const mockAppETestSumRepo = () => ({
-  findOne: jest.fn().mockResolvedValue(mockAppETestSummary),
+  findOneBy: jest.fn().mockResolvedValue(mockAppETestSummary),
 });
 
 describe('Appendix E Correlation Test Run Checks Service Test', () => {
