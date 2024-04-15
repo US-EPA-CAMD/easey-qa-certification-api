@@ -246,7 +246,7 @@ export class RataTraverseChecksService {
       (referenceMethodCode.startsWith('2F') ||
         referenceMethodCode.startsWith('2G'))
     ) {
-      if (!yawAngle) {
+      if (yawAngle === null || yawAngle === undefined) {
         error = this.getMessage('RATA-78-A', {
           key: KEY,
         });
