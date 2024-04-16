@@ -8,6 +8,8 @@ import {
   MaxLength,
   ValidationArguments,
 } from 'class-validator';
+import { FindOneOptions } from 'typeorm';
+
 import { UnitsOfMeasureCode } from '../entities/units-of-measure-code.entity';
 
 const KEY = 'Fuel Flow To Load Baseline';
@@ -74,18 +76,24 @@ export class FuelFlowToLoadBaselineBaseDTO {
 
   @IsOptional()
   @IsString()
-  @IsValidCode(UnitsOfMeasureCode, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
-        {
-          value: args.value,
-          fieldname: args.property,
-          key: KEY,
-        },
-      );
+  @IsValidCode(
+    UnitsOfMeasureCode,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatMessage(
+          'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+          {
+            value: args.value,
+            fieldname: args.property,
+            key: KEY,
+          },
+        );
+      },
     },
-  })
+    (args: ValidationArguments): FindOneOptions<UnitsOfMeasureCode> => {
+      return { where: { unitsOfMeasureCode: args.value } };
+    },
+  )
   fuelFlowToLoadUnitsOfMeasureCode?: string;
 
   @IsOptional()
@@ -115,18 +123,24 @@ export class FuelFlowToLoadBaselineBaseDTO {
 
   @IsOptional()
   @IsString()
-  @IsValidCode(UnitsOfMeasureCode, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
-        {
-          value: args.value,
-          fieldname: args.property,
-          key: KEY,
-        },
-      );
+  @IsValidCode(
+    UnitsOfMeasureCode,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatMessage(
+          'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+          {
+            value: args.value,
+            fieldname: args.property,
+            key: KEY,
+          },
+        );
+      },
     },
-  })
+    (args: ValidationArguments): FindOneOptions<UnitsOfMeasureCode> => {
+      return { where: { unitsOfMeasureCode: args.value } };
+    },
+  )
   ghrUnitsOfMeasureCode?: string;
 
   @IsOptional()

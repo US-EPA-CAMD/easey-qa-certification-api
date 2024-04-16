@@ -12,6 +12,8 @@ import {
   IsOptional,
   IsInt,
 } from 'class-validator';
+import { FindOneOptions } from 'typeorm';
+
 import {
   MAX_HOUR,
   MAX_MINUTE,
@@ -35,11 +37,17 @@ export class CalibrationInjectionBaseDTO {
 
   @IsOptional()
   @IsString()
-  @IsValidCode(GasLevelCode, {
-    message: (args: ValidationArguments) => {
-      return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
+  @IsValidCode(
+    GasLevelCode,
+    {
+      message: (args: ValidationArguments) => {
+        return `The value of [${args.value}] for [${args.property}] is invalid for [${KEY}]`;
+      },
     },
-  })
+    (args: ValidationArguments): FindOneOptions<GasLevelCode> => {
+      return { where: { gasLevelCode: args.value } };
+    },
+  )
   upscaleGasLevelCode?: string;
 
   @IsOptional()

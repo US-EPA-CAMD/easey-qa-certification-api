@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ApsCode } from '../entities/workspace/aps-code.entity';
-import { ReferenceMethodCode } from '../entities/workspace/reference-method-code.entity';
-import { OperatingLevelCode } from '../entities/workspace/operating-level-code.entity';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { IsInRange, IsValidCode } from '@us-epa-camd/easey-common/pipes';
+import { Type } from 'class-transformer';
 import {
   IsInt,
   IsNotEmpty,
@@ -11,12 +11,14 @@ import {
   ValidateNested,
   ValidationArguments,
 } from 'class-validator';
-import { RataRunDTO, RataRunImportDTO } from './rata-run.dto';
+import { FindOneOptions } from 'typeorm';
+
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { Type } from 'class-transformer';
+import { ApsCode } from '../entities/workspace/aps-code.entity';
+import { OperatingLevelCode } from '../entities/workspace/operating-level-code.entity';
+import { ReferenceMethodCode } from '../entities/workspace/reference-method-code.entity';
 import { IsNotNegative } from '../pipes/is-not-negative.pipe';
-import { IsInRange, IsValidCode } from '@us-epa-camd/easey-common/pipes';
+import { RataRunDTO, RataRunImportDTO } from './rata-run.dto';
 
 const KEY = 'RATA Summary';
 
@@ -341,18 +343,24 @@ export class RataSummaryBaseDTO {
     description: 'co2OrO2ReferenceMethodCode. ADD TO PROPERTY METADATA',
   })
   @IsOptional()
-  @IsValidCode(ReferenceMethodCode, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        'You reported the value [value], which is not in the list of valid values, in the field [fieldname] for [key].',
-        {
-          value: args.value,
-          fieldname: args.property,
-          key: KEY,
-        },
-      );
+  @IsValidCode(
+    ReferenceMethodCode,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatMessage(
+          'You reported the value [value], which is not in the list of valid values, in the field [fieldname] for [key].',
+          {
+            value: args.value,
+            fieldname: args.property,
+            key: KEY,
+          },
+        );
+      },
     },
-  })
+    (args: ValidationArguments): FindOneOptions<ReferenceMethodCode> => {
+      return { where: { referenceMethodCode: args.value } };
+    },
+  )
   co2OrO2ReferenceMethodCode?: string;
 
   @ApiProperty({

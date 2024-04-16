@@ -12,6 +12,8 @@ import {
   IsString,
   ValidationArguments,
 } from 'class-validator';
+import { FindOneOptions } from 'typeorm';
+
 import { GasLevelCode } from '../entities/workspace/gas-level-code.entity';
 import { MAX_HOUR, MIN_HOUR } from '../utilities/constants';
 
@@ -369,18 +371,24 @@ export class OnlineOfflineCalibrationBaseDTO {
 
   @IsOptional()
   @IsString()
-  @IsValidCode(GasLevelCode, {
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
-        {
-          value: args.value,
-          fieldname: args.property,
-          key: KEY,
-        },
-      );
+  @IsValidCode(
+    GasLevelCode,
+    {
+      message: (args: ValidationArguments) => {
+        return CheckCatalogService.formatMessage(
+          'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+          {
+            value: args.value,
+            fieldname: args.property,
+            key: KEY,
+          },
+        );
+      },
     },
-  })
+    (args: ValidationArguments): FindOneOptions<GasLevelCode> => {
+      return { where: { gasLevelCode: args.value } };
+    },
+  )
   upscaleGasLevelCode?: string;
 }
 
