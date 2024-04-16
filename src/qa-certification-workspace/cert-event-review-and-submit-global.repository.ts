@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { CertEventReviewAndSubmitGlobal } from '../entities/cert-event-review-and-submit.entity';
 

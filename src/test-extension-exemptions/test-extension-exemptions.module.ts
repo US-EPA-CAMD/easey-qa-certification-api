@@ -13,11 +13,14 @@ import { TestExtensionExemptionsService } from './test-extension-exemptions.serv
     HttpModule,
   ],
   controllers: [TestExtensionExemptionsController],
-  providers: [TestExtensionExemptionMap, TestExtensionExemptionsService],
+  providers: [
+    TestExtensionExemptionMap,
+    TestExtensionExemptionsRepository,
+    TestExtensionExemptionsService,
+  ],
   exports: [
     TypeOrmModule,
     TestExtensionExemptionMap,
-    TestExtensionExemptionsRepository,
     TestExtensionExemptionsService,
   ],
 })

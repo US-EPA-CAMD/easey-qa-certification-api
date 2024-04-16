@@ -18,6 +18,11 @@ import { LinearitySummaryService } from './linearity-summary.service';
     LinearitySummaryRepository,
     LinearitySummaryService,
   ],
-  exports: [TypeOrmModule, LinearitySummaryMap, LinearitySummaryService],
+  exports: [
+    TypeOrmModule,
+    LinearitySummaryMap,
+    LinearitySummaryRepository,
+    LinearitySummaryService,
+  ],
 })
 export class LinearitySummaryModule {}

@@ -15,11 +15,14 @@ import { CalibrationInjectionWorkspaceService } from './calibration-injection-wo
     HttpModule,
   ],
   controllers: [CalibrationInjectionWorkspaceController],
-  providers: [CalibrationInjectionMap, CalibrationInjectionWorkspaceService],
+  providers: [
+    CalibrationInjectionMap,
+    CalibrationInjectionWorkspaceRepository,
+    CalibrationInjectionWorkspaceService,
+  ],
   exports: [
     TypeOrmModule,
     CalibrationInjectionMap,
-    CalibrationInjectionWorkspaceRepository,
     CalibrationInjectionWorkspaceService,
   ],
 })

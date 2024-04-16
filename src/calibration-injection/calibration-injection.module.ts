@@ -9,11 +9,14 @@ import { CalibrationInjectionService } from './calibration-injection.service';
 @Module({
   imports: [TypeOrmModule.forFeature([CalibrationInjectionRepository])],
   controllers: [CalibrationInjectionController],
-  providers: [CalibrationInjectionMap, CalibrationInjectionService],
+  providers: [
+    CalibrationInjectionMap,
+    CalibrationInjectionRepository,
+    CalibrationInjectionService,
+  ],
   exports: [
     TypeOrmModule,
     CalibrationInjectionMap,
-    CalibrationInjectionRepository,
     CalibrationInjectionService,
   ],
 })

@@ -19,11 +19,14 @@ import { CycleTimeSummaryWorkspaceService } from './cycle-time-summary-workspace
     HttpModule,
   ],
   controllers: [CycleTimeSummaryWorkspaceController],
-  providers: [CycleTimeSummaryMap, CycleTimeSummaryWorkspaceService],
+  providers: [
+    CycleTimeSummaryMap,
+    CycleTimeSummaryWorkspaceRepository,
+    CycleTimeSummaryWorkspaceService,
+  ],
   exports: [
     TypeOrmModule,
     CycleTimeSummaryMap,
-    CycleTimeSummaryWorkspaceRepository,
     CycleTimeSummaryWorkspaceService,
   ],
 })

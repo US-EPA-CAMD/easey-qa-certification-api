@@ -8,12 +8,11 @@ import { FlowToLoadCheckService } from './flow-to-load-check.service';
 @Module({
   imports: [TypeOrmModule.forFeature([FlowToLoadCheckRepository])],
   controllers: [FlowToLoadCheckController],
-  providers: [FlowToLoadCheckMap, FlowToLoadCheckService],
-  exports: [
-    TypeOrmModule,
+  providers: [
     FlowToLoadCheckMap,
     FlowToLoadCheckRepository,
     FlowToLoadCheckService,
   ],
+  exports: [TypeOrmModule, FlowToLoadCheckMap, FlowToLoadCheckService],
 })
 export class FlowToLoadCheckModule {}

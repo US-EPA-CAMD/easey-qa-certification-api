@@ -17,11 +17,14 @@ import { FuelFlowmeterAccuracyWorkspaceService } from './fuel-flowmeter-accuracy
     HttpModule,
   ],
   controllers: [FuelFlowmeterAccuracyWorkspaceController],
-  providers: [FuelFlowmeterAccuracyMap, FuelFlowmeterAccuracyWorkspaceService],
+  providers: [
+    FuelFlowmeterAccuracyMap,
+    FuelFlowmeterAccuracyWorkspaceRepository,
+    FuelFlowmeterAccuracyWorkspaceService,
+  ],
   exports: [
     TypeOrmModule,
     FuelFlowmeterAccuracyMap,
-    FuelFlowmeterAccuracyWorkspaceRepository,
     FuelFlowmeterAccuracyWorkspaceService,
   ],
 })

@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { LinearitySummary } from '../entities/linearity-summary.entity';
 
 @Injectable()
-export class LinearitySummaryRepository extends Repository<LinearitySummary> {}
+export class LinearitySummaryRepository extends Repository<LinearitySummary> {
+  constructor(entityManager: EntityManager) {
+    super(LinearitySummary, entityManager);
+  }
+}

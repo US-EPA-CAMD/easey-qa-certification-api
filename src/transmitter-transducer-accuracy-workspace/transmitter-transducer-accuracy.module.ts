@@ -21,12 +21,12 @@ import { TransmitterTransducerAccuracyWorkspaceService } from './transmitter-tra
   controllers: [TransmitterTransducerAccuracyWorkspaceController],
   providers: [
     TransmitterTransducerAccuracyWorkspaceService,
+    TransmitterTransducerAccuracyWorkspaceRepository,
     TransmitterTransducerAccuracyMap,
   ],
   exports: [
     TypeOrmModule,
     TransmitterTransducerAccuracyMap,
-    TransmitterTransducerAccuracyWorkspaceRepository,
     TransmitterTransducerAccuracyWorkspaceService,
   ],
 })
