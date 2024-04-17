@@ -10,10 +10,7 @@ import {
   IsString,
   ValidationArguments,
 } from 'class-validator';
-import { FindOneOptions } from 'typeorm';
-
 import { UnitsOfMeasureCode } from '../entities/units-of-measure-code.entity';
-
 const KEY = 'Appendix E Heat Input From Oil';
 
 export class AppEHeatInputFromOilBaseDTO {
@@ -59,24 +56,18 @@ export class AppEHeatInputFromOilBaseDTO {
 
   @IsOptional()
   @IsString()
-  @IsValidCode(
-    UnitsOfMeasureCode,
-    {
-      message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatMessage(
-          'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
-          {
-            value: args.value,
-            fieldname: args.property,
-            key: KEY,
-          },
-        );
-      },
+  @IsValidCode(UnitsOfMeasureCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
-    (args: ValidationArguments): FindOneOptions<UnitsOfMeasureCode> => {
-      return { where: { unitsOfMeasureCode: args.value } };
-    },
-  )
+  })
   oilGCVUnitsOfMeasureCode?: string;
 
   @IsOptional()
@@ -113,24 +104,18 @@ export class AppEHeatInputFromOilBaseDTO {
 
   @IsOptional()
   @IsString()
-  @IsValidCode(
-    UnitsOfMeasureCode,
-    {
-      message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatMessage(
-          'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
-          {
-            value: args.value,
-            fieldname: args.property,
-            key: KEY,
-          },
-        );
-      },
+  @IsValidCode(UnitsOfMeasureCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
-    (args: ValidationArguments): FindOneOptions<UnitsOfMeasureCode> => {
-      return { where: { unitsOfMeasureCode: args.value } };
-    },
-  )
+  })
   oilVolumeUnitsOfMeasureCode?: string;
 
   @IsOptional()
@@ -151,24 +136,18 @@ export class AppEHeatInputFromOilBaseDTO {
 
   @IsOptional()
   @IsString()
-  @IsValidCode(
-    UnitsOfMeasureCode,
-    {
-      message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatMessage(
-          'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
-          {
-            value: args.value,
-            fieldname: args.property,
-            key: KEY,
-          },
-        );
-      },
+  @IsValidCode(UnitsOfMeasureCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
-    (args: ValidationArguments): FindOneOptions<UnitsOfMeasureCode> => {
-      return { where: { unitsOfMeasureCode: args.value } };
-    },
-  )
+  })
   oilDensityUnitsOfMeasureCode?: string;
 }
 

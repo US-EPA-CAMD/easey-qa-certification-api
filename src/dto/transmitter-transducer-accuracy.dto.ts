@@ -6,12 +6,9 @@ import {
   IsString,
   ValidationArguments,
 } from 'class-validator';
-import { FindOneOptions } from 'typeorm';
-
 import { AccuracySpecCode } from '../entities/accuracy-spec-code.entity';
 
 const KEY = 'Transmitter Transducer Accuracy';
-
 export class TransmitterTransducerAccuracyBaseDTO {
   @IsOptional()
   @IsNumber(
@@ -31,24 +28,18 @@ export class TransmitterTransducerAccuracyBaseDTO {
 
   @IsOptional()
   @IsString()
-  @IsValidCode(
-    AccuracySpecCode,
-    {
-      message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatMessage(
-          'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
-          {
-            value: args.value,
-            fieldname: args.property,
-            key: KEY,
-          },
-        );
-      },
+  @IsValidCode(AccuracySpecCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
-    (args: ValidationArguments): FindOneOptions<AccuracySpecCode> => {
-      return { where: { accuracySpecCode: args.value } };
-    },
-  )
+  })
   lowLevelAccuracySpecCode?: string;
 
   @IsOptional()
@@ -69,24 +60,18 @@ export class TransmitterTransducerAccuracyBaseDTO {
 
   @IsOptional()
   @IsString()
-  @IsValidCode(
-    AccuracySpecCode,
-    {
-      message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatMessage(
-          'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
-          {
-            value: args.value,
-            fieldname: args.property,
-            key: KEY,
-          },
-        );
-      },
+  @IsValidCode(AccuracySpecCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
-    (args: ValidationArguments): FindOneOptions<AccuracySpecCode> => {
-      return { where: { accuracySpecCode: args.value } };
-    },
-  )
+  })
   midLevelAccuracySpecCode?: string;
 
   @IsOptional()
@@ -107,24 +92,18 @@ export class TransmitterTransducerAccuracyBaseDTO {
 
   @IsOptional()
   @IsString()
-  @IsValidCode(
-    AccuracySpecCode,
-    {
-      message: (args: ValidationArguments) => {
-        return CheckCatalogService.formatMessage(
-          'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
-          {
-            value: args.value,
-            fieldname: args.property,
-            key: KEY,
-          },
-        );
-      },
+  @IsValidCode(AccuracySpecCode, {
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        'You reported the value [value] for [fieldname], which is not in the list of valid values for [key].',
+        {
+          value: args.value,
+          fieldname: args.property,
+          key: KEY,
+        },
+      );
     },
-    (args: ValidationArguments): FindOneOptions<AccuracySpecCode> => {
-      return { where: { accuracySpecCode: args.value } };
-    },
-  )
+  })
   highLevelAccuracySpecCode?: string;
 }
 

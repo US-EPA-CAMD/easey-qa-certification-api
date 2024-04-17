@@ -154,30 +154,24 @@ export class TestExtensionExemptionBaseDTO {
         }].`;
       },
     },
-    (_args: ValidationArguments): FindOneOptions<FuelCode> => {
+    (args: ValidationArguments): FindOneOptions<FuelCode> => {
       return { where: { fuelGroupCode: 'GAS' } };
     },
   )
   fuelCode?: string;
 
   @IsString()
-  @IsValidCode(
-    ExtensionExemptionCode,
-    {
-      message: (args: ValidationArguments) => {
-        return `The value of [${args.value}] for [${
-          args.property
-        }] is invalid in ${KEY} record for Unit/Stack [${
-          args.object['unitId']
-            ? args.object['unitId']
-            : args.object['stackPipeId']
-        }].`;
-      },
+  @IsValidCode(ExtensionExemptionCode, {
+    message: (args: ValidationArguments) => {
+      return `The value of [${args.value}] for [${
+        args.property
+      }] is invalid in ${KEY} record for Unit/Stack [${
+        args.object['unitId']
+          ? args.object['unitId']
+          : args.object['stackPipeId']
+      }].`;
     },
-    (args: ValidationArguments): FindOneOptions<ExtensionExemptionCode> => {
-      return { where: { extensionExemptionCode: args.value } };
-    },
-  )
+  })
   extensionOrExemptionCode: string;
 }
 
