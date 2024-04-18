@@ -184,6 +184,7 @@ describe('Flow Rata Run Check Service Test', () => {
   describe('RATA-115 Average Velocity Without Wall Effects Valid', () => {
     it('Should get [RATA-115-A] error', async () => {
       importPayload.averageVelocityWithoutWallEffects = 0;
+      importPayload.calculatedWAF = null;
 
       try {
         await service.runChecks(

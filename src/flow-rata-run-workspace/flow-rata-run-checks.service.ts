@@ -74,7 +74,7 @@ export class FlowRataRunChecksService {
     if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
       error = this.rata114Check(
         rataSummaryRecord,
-        flowRataRun.averageVelocityWithWallEffects,
+        flowRataRun
       );
       if (error) {
         errorList.push(error);
@@ -137,13 +137,13 @@ export class FlowRataRunChecksService {
 
   private rata114Check(
     rataSummaryRecord: RataSummary,
-    averageVelocityWithWallEffects: number,
+    flowRataRun: FlowRataRunBaseDTO | FlowRataRunImportDTO,
   ): string {
     let error: string = null;
     let FIELDNAME: string = 'averageVelocityWithWallEffects';
     if (
-      averageVelocityWithWallEffects !== null ||
-      averageVelocityWithWallEffects === 0
+      flowRataRun.averageVelocityWithWallEffects !== null ||
+      flowRataRun.averageVelocityWithWallEffects === 0
     ) {
       if (
         ['2F', '2G', '2FJ', '2GJ'].includes(
@@ -155,8 +155,8 @@ export class FlowRataRunChecksService {
           key: KEY,
         });
       } else if (
-        averageVelocityWithWallEffects <= 0 ||
-        averageVelocityWithWallEffects >= 20000
+        flowRataRun.averageVelocityWithWallEffects <= 0 ||
+        flowRataRun.averageVelocityWithWallEffects >= 20000
       ) {
         error = this.getMessage('RATA-114-B', {
           fieldname: FIELDNAME,
@@ -166,7 +166,7 @@ export class FlowRataRunChecksService {
     } else {
       if (
         rataSummaryRecord.referenceMethodCode === 'M2H' ||
-        rataSummaryRecord.calculatedWAF
+        flowRataRun.calculatedWAF
       ) {
         error = this.getMessage('RATA-114-C', {
           fieldname: FIELDNAME,
