@@ -159,8 +159,7 @@ export class RataTraverseChecksService {
 
     if (rataTraverse.probeTypeCode) {
       if (
-        rataSumRecord.referenceMethodCode &&
-        rataSumRecord.referenceMethodCode.startsWith('2F')
+        rataSumRecord.referenceMethodCode?.startsWith('2F')
       ) {
         if (
           !['PRISM', 'PRISM-T', 'SPHERE'].includes(rataTraverse.probeTypeCode)
@@ -172,8 +171,7 @@ export class RataTraverseChecksService {
           });
         }
       } else if (
-        rataSumRecord.referenceMethodCode &&
-        rataSumRecord.referenceMethodCode.startsWith('2G')
+        rataSumRecord.referenceMethodCode?.startsWith('2G')
       ) {
         if (rataTraverse.probeTypeCode === 'PRANDT1') {
           error = this.getMessage('RATA-72-B', {
@@ -246,7 +244,7 @@ export class RataTraverseChecksService {
       (referenceMethodCode.startsWith('2F') ||
         referenceMethodCode.startsWith('2G'))
     ) {
-      if (!yawAngle) {
+      if (yawAngle === null || yawAngle === undefined) {
         error = this.getMessage('RATA-78-A', {
           key: KEY,
         });
@@ -277,7 +275,7 @@ export class RataTraverseChecksService {
     let error: string = null;
     const fieldname = 'pitchAngle';
 
-    if (referenceMethodCode && referenceMethodCode.startsWith('2F')) {
+    if (referenceMethodCode?.startsWith('2F')) {
       if (pitchAngle === null || pitchAngle === undefined) {
         error = this.getMessage('RATA-79-A', {
           fieldname,
