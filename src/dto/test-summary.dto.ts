@@ -799,7 +799,7 @@ export class TestSummaryImportDTO extends TestSummaryBaseDTO {
 
   @ValidateNested({ each: true })
   @Type(() => AirEmissionTestingImportDTO)
-  airEmissionTestData: AirEmissionTestingImportDTO[];
+  airEmissionTestingData: AirEmissionTestingImportDTO[];
 }
 
 export class TestSummaryDTO extends TestSummaryRecordDTO {
@@ -819,5 +819,5 @@ export class TestSummaryDTO extends TestSummaryRecordDTO {
   hgSummaryData: HgSummaryDTO[];
   testQualificationData: TestQualificationDTO[];
   protocolGasData: ProtocolGasDTO[];
-  airEmissionTestData: AirEmissionTestingDTO[];
+  airEmissionTestingData: AirEmissionTestingDTO[];
 }

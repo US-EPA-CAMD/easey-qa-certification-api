@@ -157,7 +157,7 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       hgSummaryData: hgSummary,
       testQualificationData: testQuals,
       protocolGasData: protocolGases,
-      airEmissionTestData: airEmissionTestings,
+      airEmissionTestingData: airEmissionTestings,
     };
   }
 }

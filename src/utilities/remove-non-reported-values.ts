@@ -78,7 +78,7 @@ async function removeTestSummaryNonReportedValues(
       removeHgSummaryNonReportedValues(dto.hgSummaryData),
       removeTestQualificationNonReportedValues(dto.testQualificationData),
       removeProtocolGasNonReportedValues(dto.protocolGasData),
-      removeAirEmissionTestingNonReportedValues(dto.airEmissionTestData),
+      removeAirEmissionTestingNonReportedValues(dto.airEmissionTestingData),
     );
     delete dto.id;
     delete dto.locationId;
@@ -381,8 +381,8 @@ async function removeAppECorrelationTestRunNonReportedValues(
   const promises = [];
   appECorrelationTestRunData?.forEach(dto => {
     promises.push(
-      removeAppEHeatInputFromOilNonReportedValues(dto.appEHeatInputFromOilData),
-      removeAppEHeatInputFromGasNonReportedValues(dto.appEHeatInputFromGasData),
+      removeAppEHeatInputFromOilNonReportedValues(dto.appendixEHeatInputFromOilData),
+      removeAppEHeatInputFromGasNonReportedValues(dto.appendixEHeatInputFromGasData),
     );
     delete dto.id;
     delete dto.appECorrTestSumId;

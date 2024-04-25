@@ -73,7 +73,7 @@ testSummary.unitDefaultTestData = [unitDefaultTest];
 testSummary.hgSummaryData = [hgSummary];
 testSummary.testQualificationData = [testQualification];
 testSummary.protocolGasData = [protocolGas];
-testSummary.airEmissionTestData = [airEmissionTesting];
+testSummary.airEmissionTestingData = [airEmissionTesting];
 qaCertDto.testExtensionExemptionData = [testExtExmtDto];
 qaCertDto.certificationEventData = [qaCertEventDto];
 
