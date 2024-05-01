@@ -244,10 +244,10 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
     });
 
     it('Should Import Appendix E Corrleation Test Run from Historical Record', async () => {
-      importDTO.appEHeatInputFromGasData = [
+      importDTO.appendixEHeatInputFromGasData = [
         new AppEHeatInputFromGasImportDTO(),
       ];
-      importDTO.appEHeatInputFromOilData = [
+      importDTO.appendixEHeatInputFromOilData = [
         new AppEHeatInputFromOilImportDTO(),
       ];
 

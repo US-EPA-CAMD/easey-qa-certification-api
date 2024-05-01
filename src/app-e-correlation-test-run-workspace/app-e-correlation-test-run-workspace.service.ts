@@ -198,8 +198,8 @@ export class AppECorrelationTestRunWorkspaceService {
       `Appendix E Correlation Test Run Successfully Imported. Record Id: ${createdTestRun.id}`,
     );
 
-    if (payload.appEHeatInputFromGasData?.length > 0) {
-      for (const appEHeatInputFromGas of payload.appEHeatInputFromGasData) {
+    if (payload.appendixEHeatInputFromGasData?.length > 0) {
+      for (const appEHeatInputFromGas of payload.appendixEHeatInputFromGasData) {
         promises.push(
           this.appEHeatInputFromGasService.import(
             locationId,
@@ -213,8 +213,8 @@ export class AppECorrelationTestRunWorkspaceService {
       }
     }
 
-    if (payload.appEHeatInputFromOilData?.length > 0) {
-      for (const appEHeatInputFromOil of payload.appEHeatInputFromOilData) {
+    if (payload.appendixEHeatInputFromOilData?.length > 0) {
+      for (const appEHeatInputFromOil of payload.appendixEHeatInputFromOilData) {
         promises.push(
           this.appEHeatInputFromOilService.import(
             locationId,
@@ -256,10 +256,10 @@ export class AppECorrelationTestRunWorkspaceService {
       const hIOil = await this.appEHeatInputFromOilService.export(testRunIds);
 
       appECorrelationTestRuns.forEach(s => {
-        s.appEHeatInputFromGasData = hIGas.filter(
+        s.appendixEHeatInputFromGasData = hIGas.filter(
           i => i.appECorrTestRunId === s.id,
         );
-        s.appEHeatInputFromOilData = hIOil.filter(
+        s.appendixEHeatInputFromOilData = hIOil.filter(
           i => i.appECorrTestRunId === s.id,
         );
       });

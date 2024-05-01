@@ -376,7 +376,7 @@ describe('Test Summary Check Service Test', () => {
         new AppECorrelationTestSummaryImportDTO(),
       ];
       importPayload.unitDefaultTestData = [new UnitDefaultTestImportDTO()];
-      importPayload.airEmissionTestData = [new AirEmissionTestingImportDTO()];
+      importPayload.airEmissionTestingData = [new AirEmissionTestingImportDTO()];
 
       try {
         await service.runChecks(locationId, importPayload, true, false, [
