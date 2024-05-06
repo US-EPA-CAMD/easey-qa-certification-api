@@ -95,7 +95,7 @@ export class TestSummaryService {
     delete dto.hgSummaryData;
     delete dto.testQualificationData;
     delete dto.protocolGasData;
-    delete dto.airEmissionTestData;
+    delete dto.airEmissionTestingData;
 
     return dto;
   }
@@ -270,7 +270,7 @@ export class TestSummaryService {
         s.testQualificationData = testQualificationData.filter(
           i => i.testSumId === s.id,
         );
-        s.airEmissionTestData = airEmissionTestData.filter(
+        s.airEmissionTestingData = airEmissionTestData.filter(
           i => i.testSumId === s.id,
         );
         s.hgSummaryData = hgSummaryData.filter(i => i.testSumId === s.id);

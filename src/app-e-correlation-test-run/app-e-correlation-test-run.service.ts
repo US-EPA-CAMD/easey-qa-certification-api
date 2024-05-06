@@ -71,10 +71,10 @@ export class AppECorrelationTestRunService {
       const hIOil = await this.appEHeatInputFromOilService.export(testRunIds);
 
       appECorrelationTestRuns.forEach(s => {
-        s.appEHeatInputFromGasData = hIGas.filter(
+        s.appendixEHeatInputFromGasData = hIGas.filter(
           i => i.appECorrTestRunId === s.id,
         );
-        s.appEHeatInputFromOilData = hIOil.filter(
+        s.appendixEHeatInputFromOilData = hIOil.filter(
           i => i.appECorrTestRunId === s.id,
         );
       });

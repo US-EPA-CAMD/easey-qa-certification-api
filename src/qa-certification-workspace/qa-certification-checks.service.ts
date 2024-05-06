@@ -339,7 +339,7 @@ export class QACertificationChecksService {
                 promises.push(
                   new Promise((resolve, _reject) => {
                     const results = this.appEGasChecksService.runImportChecks(
-                      appETestRun.appEHeatInputFromGasData,
+                      appETestRun.appendixEHeatInputFromGasData,
                     );
                     resolve(results);
                   }),
@@ -348,7 +348,7 @@ export class QACertificationChecksService {
                 promises.push(
                   new Promise((resolve, _reject) => {
                     const results = this.appEOilChecksService.runImportChecks(
-                      appETestRun.appEHeatInputFromOilData,
+                      appETestRun.appendixEHeatInputFromOilData,
                     );
                     resolve(results);
                   }),

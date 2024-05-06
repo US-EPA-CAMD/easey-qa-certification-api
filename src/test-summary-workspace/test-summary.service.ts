@@ -110,7 +110,7 @@ export class TestSummaryWorkspaceService {
     delete dto.hgSummaryData;
     delete dto.testQualificationData;
     delete dto.protocolGasData;
-    delete dto.airEmissionTestData;
+    delete dto.airEmissionTestingData;
     delete dto.appendixECorrelationTestSummaryData;
 
     return dto;
@@ -252,7 +252,7 @@ export class TestSummaryWorkspaceService {
         );
         s.rataData = rataData.filter(i => i.testSumId === s.id);
         s.protocolGasData = protocolGasData.filter(i => i.testSumId === s.id);
-        s.appECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
+        s.appendixECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
           i => i.testSumId === s.id,
         );
         s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
@@ -612,14 +612,14 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.airEmissionTestData?.length > 0 &&
+      payload.airEmissionTestingData?.length > 0 &&
       [
         TestTypeCodes.RATA.toString(),
         TestTypeCodes.UNITDEF.toString(),
         TestTypeCodes.APPE.toString(),
       ].includes(payload.testTypeCode)
     ) {
-      for (const airEmissionTesting of payload.airEmissionTestData) {
+      for (const airEmissionTesting of payload.airEmissionTestingData) {
         promises.push(
           this.airEmissionTestingWorkspaceService.import(
             createdTestSummary.id,
@@ -703,7 +703,7 @@ export class TestSummaryWorkspaceService {
     delete dto.hgSummaryData;
     delete dto.testQualificationData;
     delete dto.protocolGasData;
-    delete dto.airEmissionTestData;
+    delete dto.airEmissionTestingData;
 
     return dto;
   }
