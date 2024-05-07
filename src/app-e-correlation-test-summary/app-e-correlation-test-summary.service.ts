@@ -1,20 +1,19 @@
-import { Injectable, HttpStatus, forwardRef, Inject } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { AppendixETestSummaryRepository } from './app-e-correlation-test-summary.repository';
-import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
+
+import { AppECorrelationTestRunService } from '../app-e-correlation-test-run/app-e-correlation-test-run.service';
 import {
   AppECorrelationTestSummaryDTO,
   AppECorrelationTestSummaryRecordDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
-import { AppECorrelationTestRunService } from '../app-e-correlation-test-run/app-e-correlation-test-run.service';
+import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
+import { AppendixETestSummaryRepository } from './app-e-correlation-test-summary.repository';
 
 @Injectable()
 export class AppECorrelationTestSummaryService {
   constructor(
     private readonly map: AppECorrelationTestSummaryMap,
-    @InjectRepository(AppendixETestSummaryRepository)
     private readonly repository: AppendixETestSummaryRepository,
     @Inject(forwardRef(() => AppECorrelationTestRunService))
     private readonly appECorrelationTestRunService: AppECorrelationTestRunService,
@@ -31,7 +30,7 @@ export class AppECorrelationTestSummaryService {
   async getAppECorrelation(
     id: string,
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

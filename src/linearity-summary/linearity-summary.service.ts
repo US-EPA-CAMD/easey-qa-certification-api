@@ -1,24 +1,22 @@
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
 import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
+import { LinearityInjectionService } from '../linearity-injection/linearity-injection.service';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryRepository } from './linearity-summary.repository';
-import { LinearityInjectionService } from '../linearity-injection/linearity-injection.service';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+
 @Injectable()
 export class LinearitySummaryService {
   constructor(
     private readonly map: LinearitySummaryMap,
     private readonly injectionService: LinearityInjectionService,
-    @InjectRepository(LinearitySummaryRepository)
     private readonly repository: LinearitySummaryRepository,
   ) {}
 
   async getSummaryById(id: string): Promise<LinearitySummaryDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -35,7 +33,7 @@ export class LinearitySummaryService {
   async getSummariesByTestSumId(
     testSumId: string,
   ): Promise<LinearitySummaryDTO[]> {
-    const results = await this.repository.find({ testSumId });
+    const results = await this.repository.findBy({ testSumId });
     return this.map.many(results);
   }
 

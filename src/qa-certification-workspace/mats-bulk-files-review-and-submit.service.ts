@@ -1,23 +1,21 @@
-import { Injectable, HttpStatus } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { getManager, In } from 'typeorm';
-import { MatsBulkFilesReviewAndSubmitRepository } from './mats-bulk-files-review-and-submit.repository';
-import { MatsBulkFileMap } from '../maps/mats-bulk-file.map';
-import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
+import { EntityManager, In } from 'typeorm';
 
-const moment = require('moment');
+import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
+import { MatsBulkFileMap } from '../maps/mats-bulk-file.map';
+import { MatsBulkFilesReviewAndSubmitRepository } from './mats-bulk-files-review-and-submit.repository';
 
 @Injectable()
 export class MatsBulkFilesReviewAndSubmitService {
   constructor(
-    @InjectRepository(MatsBulkFilesReviewAndSubmitRepository)
+    private readonly entityManager: EntityManager,
     private readonly repository: MatsBulkFilesReviewAndSubmitRepository,
     private readonly map: MatsBulkFileMap,
   ) {}
 
   returnManager(): any {
-    return getManager();
+    return this.entityManager;
   }
 
   async getMatsBulkFileRecords(

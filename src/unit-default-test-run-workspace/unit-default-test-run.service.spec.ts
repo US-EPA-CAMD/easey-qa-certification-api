@@ -1,20 +1,20 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { HttpStatus } from '@nestjs/common';
-
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { UnitDefaultTestRun } from '../entities/workspace/unit-default-test-run.entity';
-import { UnitDefaultTestRun as UnitDefaultTestRunOfficial } from '../entities//unit-default-test-run.entity';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import {
   UnitDefaultTestRunBaseDTO,
   UnitDefaultTestRunRecordDTO,
 } from '../dto/unit-default-test-run.dto';
+import { UnitDefaultTestRun as UnitDefaultTestRunOfficial } from '../entities//unit-default-test-run.entity';
+import { UnitDefaultTestRun } from '../entities/workspace/unit-default-test-run.entity';
 import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { UnitDefaultTestRunRepository } from '../unit-default-test-run/unit-default-test-run.repository';
 import { UnitDefaultTestRunWorkspaceRepository } from './unit-default-test-run.repository';
 import { UnitDefaultTestRunWorkspaceService } from './unit-default-test-run.service';
-import { UnitDefaultTestRunRepository } from '../unit-default-test-run/unit-default-test-run.repository';
-import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -28,7 +28,7 @@ const dto = new UnitDefaultTestRunRecordDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
@@ -44,7 +44,7 @@ const mockTestSumService = () => ({
 });
 
 const mockOfficialRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(new UnitDefaultTestRunOfficial()),
+  findOneBy: jest.fn().mockResolvedValue(new UnitDefaultTestRunOfficial()),
 });
 
 describe('UnitDefaultTestRunWorkspaceService', () => {
@@ -103,7 +103,7 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
     });
 
     it('Should throw error when a UnitDefaultTestRun record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {
@@ -154,7 +154,7 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
     });
 
     it('should throw error with invalid Unit Default Test Run', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
       try {

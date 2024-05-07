@@ -1,11 +1,12 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FlowRataRunRepository } from './flow-rata-run.repository';
-import { RataRunModule } from '../rata-run/rata-run.module';
-import { FlowRataRunController } from './flow-rata-run.controller';
-import { FlowRataRunService } from './flow-rata-run.service';
+
 import { FlowRataRunMap } from '../maps/flow-rata-run.map';
+import { RataRunModule } from '../rata-run/rata-run.module';
 import { RataTraverseModule } from '../rata-traverse/rata-traverse.module';
+import { FlowRataRunController } from './flow-rata-run.controller';
+import { FlowRataRunRepository } from './flow-rata-run.repository';
+import { FlowRataRunService } from './flow-rata-run.service';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { RataTraverseModule } from '../rata-traverse/rata-traverse.module';
     RataTraverseModule,
   ],
   controllers: [FlowRataRunController],
-  providers: [FlowRataRunService, FlowRataRunMap],
+  providers: [FlowRataRunRepository, FlowRataRunService, FlowRataRunMap],
   exports: [TypeOrmModule, FlowRataRunMap, FlowRataRunService],
 })
 export class FlowRataRunModule {}

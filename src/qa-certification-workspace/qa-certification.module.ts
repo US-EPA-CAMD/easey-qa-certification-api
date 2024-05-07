@@ -77,6 +77,13 @@ import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-revie
   ],
   controllers: [QACertificationWorkspaceController],
   providers: [
+    CertEventReviewAndSubmitRepository,
+    CertEventReviewAndSubmitGlobalRepository,
+    TestSummaryReviewAndSubmitRepository,
+    TestSummaryReviewAndSubmitGlobalRepository,
+    TeeReviewAndSubmitRepository,
+    TeeReviewAndSubmitGlobalRepository,
+    MatsBulkFilesReviewAndSubmitRepository,
     QACertificationChecksService,
     QACertificationWorkspaceService,
     CertEventReviewAndSubmitService,

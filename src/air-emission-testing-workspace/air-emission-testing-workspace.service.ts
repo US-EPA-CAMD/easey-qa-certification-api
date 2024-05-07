@@ -1,21 +1,21 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+
+import { AirEmissionTestingRepository } from '../air-emission-testing/air-emission-testing.repository';
 import {
   AirEmissionTestingBaseDTO,
-  AirEmissionTestingRecordDTO,
   AirEmissionTestingDTO,
   AirEmissionTestingImportDTO,
+  AirEmissionTestingRecordDTO,
 } from '../dto/air-emission-test.dto';
+import { AirEmissionTesting } from '../entities/air-emission-test.entity';
 import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { AirEmissionTestingWorkspaceRepository } from './air-emission-testing-workspace.repository';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { v4 as uuid } from 'uuid';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
-import { AirEmissionTesting } from '../entities/air-emission-test.entity';
-import { AirEmissionTestingRepository } from '../air-emission-testing/air-emission-testing.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class AirEmissionTestingWorkspaceService {
@@ -24,9 +24,7 @@ export class AirEmissionTestingWorkspaceService {
     private readonly map: AirEmissionTestingMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(AirEmissionTestingWorkspaceRepository)
     private readonly repository: AirEmissionTestingWorkspaceRepository,
-    @InjectRepository(AirEmissionTestingRepository)
     private readonly historicalRepo: AirEmissionTestingRepository,
   ) {}
 
@@ -41,7 +39,7 @@ export class AirEmissionTestingWorkspaceService {
   async getAirEmissionTesting(
     id: string,
   ): Promise<AirEmissionTestingRecordDTO> {
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -74,7 +72,7 @@ export class AirEmissionTestingWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -92,7 +90,7 @@ export class AirEmissionTestingWorkspaceService {
   ): Promise<AirEmissionTestingRecordDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -175,7 +173,7 @@ export class AirEmissionTestingWorkspaceService {
     let historicalRecord: AirEmissionTesting;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
+      historicalRecord = await this.historicalRepo.findOneBy({
         testSumId: testSumId,
         qiLastName: payload.qiLastName,
         qiFirstName: payload.qiFirstName,

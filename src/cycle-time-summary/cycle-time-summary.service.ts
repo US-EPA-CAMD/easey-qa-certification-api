@@ -1,8 +1,8 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { CycleTimeInjectionService } from '../cycle-time-injection/cycle-time-injection.service';
 import { In } from 'typeorm';
+
+import { CycleTimeInjectionService } from '../cycle-time-injection/cycle-time-injection.service';
 import { CycleTimeSummaryDTO } from '../dto/cycle-time-summary.dto';
 import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
 import { CycleTimeSummaryRepository } from './cycle-time-summary.repository';
@@ -11,7 +11,6 @@ import { CycleTimeSummaryRepository } from './cycle-time-summary.repository';
 export class CycleTimeSummaryService {
   constructor(
     private readonly map: CycleTimeSummaryMap,
-    @InjectRepository(CycleTimeSummaryRepository)
     private readonly repository: CycleTimeSummaryRepository,
     @Inject(forwardRef(() => CycleTimeInjectionService))
     private readonly cycleTimeInjectionService: CycleTimeInjectionService,
@@ -29,7 +28,7 @@ export class CycleTimeSummaryService {
     id: string,
     testSumId: string,
   ): Promise<CycleTimeSummaryDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });

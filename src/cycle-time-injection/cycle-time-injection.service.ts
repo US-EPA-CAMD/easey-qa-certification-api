@@ -1,8 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CycleTimeInjectionDTO } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
 import { CycleTimeInjectionRepository } from './cycle-time-injection.repository';
@@ -11,7 +10,6 @@ import { CycleTimeInjectionRepository } from './cycle-time-injection.repository'
 export class CycleTimeInjectionService {
   constructor(
     private readonly map: CycleTimeInjectionMap,
-    @InjectRepository(CycleTimeInjectionRepository)
     private readonly repository: CycleTimeInjectionRepository,
   ) {}
 
@@ -35,7 +33,7 @@ export class CycleTimeInjectionService {
   }
 
   async getCycleTimeInjection(id: string) {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

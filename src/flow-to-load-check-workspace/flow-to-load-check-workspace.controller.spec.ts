@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import { FlowToLoadCheckBaseDTO } from '../dto/flow-to-load-check.dto';
 import { FlowToLoadCheckWorkspaceController } from './flow-to-load-check-workspace.controller';
 import { FlowToLoadCheckWorkspaceService } from './flow-to-load-check-workspace.service';
@@ -41,6 +43,10 @@ describe('FlowToLoadCheckWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: FlowToLoadCheckWorkspaceService,
           useFactory: mockService,

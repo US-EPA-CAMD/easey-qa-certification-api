@@ -1,10 +1,11 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { AppECorrelationTestRunModule } from '../app-e-correlation-test-run/app-e-correlation-test-run.module';
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
-import { AppECorrelationTestSummaryService } from './app-e-correlation-test-summary.service';
 import { AppendixETestSummaryController } from './app-e-correlation-test-summary.controller';
 import { AppendixETestSummaryRepository } from './app-e-correlation-test-summary.repository';
-import { AppECorrelationTestRunModule } from '../app-e-correlation-test-run/app-e-correlation-test-run.module';
+import { AppECorrelationTestSummaryService } from './app-e-correlation-test-summary.service';
 
 @Module({
   imports: [
@@ -12,7 +13,11 @@ import { AppECorrelationTestRunModule } from '../app-e-correlation-test-run/app-
     forwardRef(() => AppECorrelationTestRunModule),
   ],
   controllers: [AppendixETestSummaryController],
-  providers: [AppECorrelationTestSummaryMap, AppECorrelationTestSummaryService],
+  providers: [
+    AppECorrelationTestSummaryMap,
+    AppendixETestSummaryRepository,
+    AppECorrelationTestSummaryService,
+  ],
   exports: [
     TypeOrmModule,
     AppECorrelationTestSummaryMap,

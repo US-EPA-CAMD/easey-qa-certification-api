@@ -1,21 +1,21 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
+import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
+import { AppEHeatInputFromGasRecordDTO } from '../dto/app-e-heat-input-from-gas.dto';
 import {
   AppEHeatInputFromOilDTO,
   AppEHeatInputFromOilImportDTO,
   AppEHeatInputFromOilRecordDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOil } from '../entities/workspace/app-e-heat-input-from-oil.entity';
+import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
 import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oil.service';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
-import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { AppEHeatInputFromGasRecordDTO } from '../dto/app-e-heat-input-from-gas.dto';
-import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
-import { ConfigService } from '@nestjs/config';
 
 const locationId = '5';
 const aeHiOilId = 'a1b2c3';
@@ -44,7 +44,7 @@ const mockRepository = () => ({
 });
 
 const mockMonSysWorkspaceRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
+  findOneBy: jest.fn().mockResolvedValue(new MonitorSystem()),
 });
 
 const mockMap = () => ({
@@ -113,7 +113,7 @@ describe('AppEHeatInputOilWorkspaceService', () => {
   });
 
   describe('getAppEHeatInputFromOilRecord', () => {
-    it('Calls repository.findOne({id}) to get a Appendix E Heat Input from Oil record', async () => {
+    it('Calls repository.findOneBy({id}) to get a Appendix E Heat Input from Oil record', async () => {
       const result = await service.getAppEHeatInputFromOilRecord(aeHiOilId);
       expect(result).toEqual(mockAeHiFromOilDTO);
     });
@@ -149,7 +149,9 @@ describe('AppEHeatInputOilWorkspaceService', () => {
     });
 
     it('Should throw error with invalid monSysID', async () => {
-      jest.spyOn(monSysWorkspaceRepository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(monSysWorkspaceRepository, 'findOneBy')
+        .mockResolvedValue(null);
 
       let errored = false;
 

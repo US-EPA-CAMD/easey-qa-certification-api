@@ -6,7 +6,7 @@ import { MonitorSystemWorkspaceService } from './monitor-system-workspace.servic
 
 @Module({
   imports: [TypeOrmModule.forFeature([MonitorSystemWorkspaceRepository])],
-  providers: [MonitorSystemWorkspaceService],
+  providers: [MonitorSystemWorkspaceRepository, MonitorSystemWorkspaceService],
   exports: [TypeOrmModule, MonitorSystemWorkspaceService],
 })
 export class MonitorSystemWorkspaceModule {}

@@ -1,4 +1,10 @@
+import { HttpService } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import {
   OnlineOfflineCalibrationBaseDTO,
   OnlineOfflineCalibrationDTO,
@@ -6,10 +12,6 @@ import {
 } from '../dto/online-offline-calibration.dto';
 import { OnlineOfflineCalibrationWorkspaceController } from './online-offline-calibration.controller';
 import { OnlineOfflineCalibrationWorkspaceService } from './online-offline-calibration.service';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
-import { HttpService } from '@nestjs/axios';
 
 const locId = '';
 const testSumId = '';
@@ -54,6 +56,10 @@ describe('Online Offline Calibration Workspace Controller', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [OnlineOfflineCalibrationWorkspaceController],
       providers: [
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: AuthGuard,
           useFactory: mockAuthGuard,

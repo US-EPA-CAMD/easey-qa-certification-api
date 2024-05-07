@@ -1,24 +1,22 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
-import { In } from 'typeorm';
-
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+
 import {
   UnitDefaultTestBaseDTO,
-  UnitDefaultTestRecordDTO,
-  UnitDefaultTestImportDTO,
   UnitDefaultTestDTO,
+  UnitDefaultTestImportDTO,
+  UnitDefaultTestRecordDTO,
 } from '../dto/unit-default-test.dto';
+import { UnitDefaultTest } from '../entities/unit-default-test.entity';
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
-import { UnitDefaultTest } from '../entities/unit-default-test.entity';
-import { UnitDefaultTestRepository } from '../unit-default-test/unit-default-test.repository';
 import { UnitDefaultTestRunWorkspaceService } from '../unit-default-test-run-workspace/unit-default-test-run.service';
+import { UnitDefaultTestRepository } from '../unit-default-test/unit-default-test.repository';
+import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
 
 @Injectable()
 export class UnitDefaultTestWorkspaceService {
@@ -26,9 +24,7 @@ export class UnitDefaultTestWorkspaceService {
     private readonly map: UnitDefaultTestMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(UnitDefaultTestWorkspaceRepository)
     private readonly repository: UnitDefaultTestWorkspaceRepository,
-    @InjectRepository(UnitDefaultTestRepository)
     private readonly historicalRepo: UnitDefaultTestRepository,
     private readonly logger: Logger,
     @Inject(forwardRef(() => UnitDefaultTestRunWorkspaceService))
@@ -44,7 +40,7 @@ export class UnitDefaultTestWorkspaceService {
   }
 
   async getUnitDefaultTest(id: string): Promise<UnitDefaultTestRecordDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
     });
 
@@ -77,7 +73,7 @@ export class UnitDefaultTestWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -95,7 +91,7 @@ export class UnitDefaultTestWorkspaceService {
   ): Promise<UnitDefaultTestRecordDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne({
+    const entity = await this.repository.findOneBy({
       id,
     });
 
@@ -186,7 +182,7 @@ export class UnitDefaultTestWorkspaceService {
     const promises = [];
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
+      historicalRecord = await this.historicalRepo.findOneBy({
         testSumId: testSumId,
         noxDefaultRate: payload.noxDefaultRate,
       });

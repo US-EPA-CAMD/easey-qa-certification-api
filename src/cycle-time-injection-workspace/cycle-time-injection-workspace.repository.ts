@@ -1,10 +1,16 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { CycleTimeInjection } from '../entities/workspace/cycle-time-injection.entity';
 
-@EntityRepository(CycleTimeInjection)
+@Injectable()
 export class CycleTimeInjectionWorkspaceRepository extends Repository<
   CycleTimeInjection
 > {
+  constructor(entityManager: EntityManager) {
+    super(CycleTimeInjection, entityManager);
+  }
+
   async findDuplicate(
     cycleTimeInjectionId: string,
     testSumId: string,

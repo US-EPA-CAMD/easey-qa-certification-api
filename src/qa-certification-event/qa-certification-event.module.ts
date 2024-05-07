@@ -1,10 +1,11 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HttpModule } from '@nestjs/axios';
-import { QaCertificationEventService } from './qa-certification-event.service';
+
+import { QACertificationEventMap } from '../maps/qa-certification-event.map';
 import { QaCertificationEventController } from './qa-certification-event.controller';
 import { QACertificationEventRepository } from './qa-certification-event.repository';
-import { QACertificationEventMap } from '../maps/qa-certification-event.map';
+import { QaCertificationEventService } from './qa-certification-event.service';
 
 @Module({
   imports: [
@@ -12,7 +13,11 @@ import { QACertificationEventMap } from '../maps/qa-certification-event.map';
     HttpModule,
   ],
   controllers: [QaCertificationEventController],
-  providers: [QaCertificationEventService, QACertificationEventMap],
+  providers: [
+    QACertificationEventRepository,
+    QaCertificationEventService,
+    QACertificationEventMap,
+  ],
   exports: [
     TypeOrmModule,
     QaCertificationEventService,

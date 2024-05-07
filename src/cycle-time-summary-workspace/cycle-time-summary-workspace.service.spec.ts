@@ -1,24 +1,25 @@
+import { InternalServerErrorException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
+import { CycleTimeInjectionWorkspaceService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace.service';
+import { CycleTimeSummaryRepository } from '../cycle-time-summary/cycle-time-summary.repository';
+import {
+  CycleTimeInjectionDTO,
+  CycleTimeInjectionImportDTO,
+} from '../dto/cycle-time-injection.dto';
 import {
   CycleTimeSummaryBaseDTO,
   CycleTimeSummaryDTO,
   CycleTimeSummaryImportDTO,
 } from '../dto/cycle-time-summary.dto';
-import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
 import { CycleTimeSummary as CycleTimeSummaryOfficial } from '../entities/cycle-time-summary.entity';
+import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
+import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { CycleTimeSummaryWorkspaceRepository } from './cycle-time-summary-workspace.repository';
 import { CycleTimeSummaryWorkspaceService } from './cycle-time-summary-workspace.service';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { InternalServerErrorException } from '@nestjs/common';
-import { CycleTimeSummaryRepository } from '../cycle-time-summary/cycle-time-summary.repository';
-import { CycleTimeInjectionWorkspaceService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace.service';
-import {
-  CycleTimeInjectionDTO,
-  CycleTimeInjectionImportDTO,
-} from '../dto/cycle-time-injection.dto';
-import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -34,7 +35,7 @@ cycleTimeInjDto.cycleTimeSumId = 'SOME_ID';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
@@ -55,7 +56,7 @@ const mockTestSumService = () => ({
 });
 
 const mockHistoricalRepo = () => ({
-  findOne: jest.fn().mockResolvedValue(new CycleTimeSummaryOfficial()),
+  findOneBy: jest.fn().mockResolvedValue(new CycleTimeSummaryOfficial()),
 });
 
 describe('CycleTimeSummaryWorkspaceService', () => {
@@ -115,7 +116,7 @@ describe('CycleTimeSummaryWorkspaceService', () => {
     });
 
     it('Should throw error when a Cycle Time Summary record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {
@@ -165,7 +166,7 @@ describe('CycleTimeSummaryWorkspaceService', () => {
     });
 
     it('Should throw error when a Cycle Time Summary record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {

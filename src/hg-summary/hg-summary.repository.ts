@@ -1,5 +1,11 @@
-import { HgSummary } from '../entities/hg-summary.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
-@EntityRepository(HgSummary)
-export class HgSummaryRepository extends Repository<HgSummary> {}
+import { HgSummary } from '../entities/hg-summary.entity';
+
+@Injectable()
+export class HgSummaryRepository extends Repository<HgSummary> {
+  constructor(entityManager: EntityManager) {
+    super(HgSummary, entityManager);
+  }
+}

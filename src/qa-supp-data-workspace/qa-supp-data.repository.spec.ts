@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
-import { SelectQueryBuilder } from 'typeorm';
 import { QASuppDataWorkspaceRepository } from './qa-supp-data.repository';
 
 const locationId = '1';
@@ -33,6 +34,7 @@ describe('QASuppDataWorkspaceRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         QASuppDataWorkspaceRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

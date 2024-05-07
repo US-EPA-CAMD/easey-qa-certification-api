@@ -1,4 +1,3 @@
-import { v4 as uuid } from 'uuid';
 import {
   forwardRef,
   HttpStatus,
@@ -6,47 +5,42 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import {
-  TestSummaryDTO,
-  TestSummaryBaseDTO,
-  TestSummaryRecordDTO,
-  TestSummaryImportDTO,
-} from '../dto/test-summary.dto';
-
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { TestSummaryMap } from '../maps/test-summary.map';
-import { TestSummaryWorkspaceRepository } from './test-summary.repository';
-import { LinearitySummaryWorkspaceService } from '../linearity-summary-workspace/linearity-summary.service';
+import { v4 as uuid } from 'uuid';
 
-import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
-
-import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
+import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
-import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
 import { CalibrationInjectionWorkspaceService } from '../calibration-injection-workspace/calibration-injection-workspace.service';
-import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
-import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
-import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
-import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
-import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
-import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
 import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
+import {
+  TestSummaryBaseDTO,
+  TestSummaryDTO,
+  TestSummaryImportDTO,
+  TestSummaryRecordDTO,
+} from '../dto/test-summary.dto';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
+import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
+import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
+import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
 import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
+import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-workspace.service';
+import { LinearitySummaryWorkspaceService } from '../linearity-summary-workspace/linearity-summary.service';
+import { TestSummaryMap } from '../maps/test-summary.map';
+import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
+import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
+import { QASuppDataWorkspaceService } from '../qa-supp-data-workspace/qa-supp-data.service';
+import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
+import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
+import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
 import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
-import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-workspace.service';
-import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
-import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
-import { QASuppDataWorkspaceService } from '../qa-supp-data-workspace/qa-supp-data.service';
+import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -55,7 +49,6 @@ export class TestSummaryWorkspaceService {
     private readonly map: TestSummaryMap,
     @Inject(forwardRef(() => LinearitySummaryWorkspaceService))
     private readonly linearityService: LinearitySummaryWorkspaceService,
-    @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly repository: TestSummaryWorkspaceRepository,
     @Inject(forwardRef(() => RataWorkspaceService))
     private readonly rataService: RataWorkspaceService,
@@ -67,13 +60,9 @@ export class TestSummaryWorkspaceService {
     private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
     @Inject(forwardRef(() => CalibrationInjectionWorkspaceService))
     private readonly calInjWorkspaceService: CalibrationInjectionWorkspaceService,
-    @InjectRepository(MonitorLocationRepository)
     private readonly monitorLocationRepository: MonitorLocationRepository,
-    @InjectRepository(ComponentWorkspaceRepository)
     private readonly componentRepository: ComponentWorkspaceRepository,
-    @InjectRepository(MonitorSystemWorkspaceRepository)
     private readonly monSysWorkspaceRepository: MonitorSystemWorkspaceRepository,
-    @InjectRepository(ReportingPeriodRepository)
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
     @Inject(forwardRef(() => FuelFlowToLoadBaselineWorkspaceService))
     private readonly fuelFlowToLoadBaselineWorkspaceService: FuelFlowToLoadBaselineWorkspaceService,
@@ -726,7 +715,7 @@ export class TestSummaryWorkspaceService {
     userId: string,
   ): Promise<TestSummaryRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -788,7 +777,7 @@ export class TestSummaryWorkspaceService {
   ): Promise<void> {
     if (!isImport) {
       const timestamp = currentDateTime();
-      const entity = await this.repository.findOne(testSumId);
+      const entity = await this.repository.findOneBy({ id: testSumId });
 
       entity.userId = userId;
       entity.updateDate = timestamp;
@@ -806,7 +795,7 @@ export class TestSummaryWorkspaceService {
     let monitoringSystemRecordId = null;
 
     if (payload.year && payload.quarter) {
-      const rptPeriod = await this.reportingPeriodRepository.findOne({
+      const rptPeriod = await this.reportingPeriodRepository.findOneBy({
         year: payload.year,
         quarter: payload.quarter,
       });
@@ -815,7 +804,7 @@ export class TestSummaryWorkspaceService {
     }
 
     if (payload.componentId) {
-      const component = await this.componentRepository.findOne({
+      const component = await this.componentRepository.findOneBy({
         locationId: locationId,
         componentID: payload.componentId,
       });
@@ -824,7 +813,7 @@ export class TestSummaryWorkspaceService {
     }
 
     if (payload.monitoringSystemId) {
-      const monitorSystem = await this.monSysWorkspaceRepository.findOne({
+      const monitorSystem = await this.monSysWorkspaceRepository.findOneBy({
         locationId: locationId,
         monitoringSystemID: payload.monitoringSystemId,
       });

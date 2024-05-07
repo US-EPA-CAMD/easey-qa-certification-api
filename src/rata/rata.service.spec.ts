@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { RataSummaryDTO } from '../dto/rata-summary.dto';
+import { RataDTO, RataRecordDTO } from '../dto/rata.dto';
 import { Rata } from '../entities/rata.entity';
 import { RataMap } from '../maps/rata.map';
-import { RataDTO, RataRecordDTO } from '../dto/rata.dto';
+import { RataSummaryService } from '../rata-summary/rata-summary.service';
 import { RataRepository } from './rata.repository';
 import { RataService } from './rata.service';
-import { RataSummaryService } from '../rata-summary/rata-summary.service';
-import { RataSummaryDTO } from '../dto/rata-summary.dto';
 
 const rataId = '';
 const testSumId = '';
@@ -19,8 +20,8 @@ const mockMap = () => ({
 });
 
 const mockRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(rataEntity),
-  find: jest.fn().mockResolvedValue([rataEntity]),
+  findOneBy: jest.fn().mockResolvedValue(rataEntity),
+  findBy: jest.fn().mockResolvedValue([rataEntity]),
 });
 
 const mockRataSummaryService = () => ({
@@ -55,14 +56,14 @@ describe('RataService', () => {
   });
 
   describe('getRataById', () => {
-    it('calls the repository.findOne() and get one rata record', async () => {
+    it('calls the repository.findOneBy() and get one rata record', async () => {
       const result = await service.getRataById(rataId);
       expect(result).toEqual(rataRecord);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should through error while not finding a Rata record', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
       try {
@@ -75,10 +76,10 @@ describe('RataService', () => {
   });
 
   describe('getRatasByTestSumId', () => {
-    it('calls the repository.find() and get many rata record', async () => {
+    it('calls the repository.findBy() and get many rata record', async () => {
       const result = await service.getRatasByTestSumId(rataId);
       expect(result).toEqual([rataRecord]);
-      expect(repository.find).toHaveBeenCalled();
+      expect(repository.findBy).toHaveBeenCalled();
     });
   });
 

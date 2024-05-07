@@ -1,6 +1,8 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -9,15 +11,11 @@ import {
   FuelFlowToLoadTestImportDTO,
   FuelFlowToLoadTestRecordDTO,
 } from '../dto/fuel-flow-to-load-test.dto';
+import { FuelFlowToLoadTest } from '../entities/fuel-flow-to-load-test.entity';
+import { FuelFlowToLoadTestRepository } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.repository';
 import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FuelFlowToLoadTestWorkspaceRepository } from './fuel-flow-to-load-test-workspace.repository';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-
-import { FuelFlowToLoadTest } from '../entities/fuel-flow-to-load-test.entity';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { FuelFlowToLoadTestRepository } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.repository';
-import { In } from 'typeorm';
 
 @Injectable()
 export class FuelFlowToLoadTestWorkspaceService {
@@ -25,9 +23,7 @@ export class FuelFlowToLoadTestWorkspaceService {
     private readonly map: FuelFlowToLoadTestMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(FuelFlowToLoadTestWorkspaceRepository)
     private readonly repository: FuelFlowToLoadTestWorkspaceRepository,
-    @InjectRepository(FuelFlowToLoadTestRepository)
     private readonly historicalRepo: FuelFlowToLoadTestRepository,
     private readonly logger: Logger,
   ) {}
@@ -44,7 +40,7 @@ export class FuelFlowToLoadTestWorkspaceService {
     id: string,
     testSumId: string,
   ): Promise<FuelFlowToLoadTestRecordDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -80,7 +76,7 @@ export class FuelFlowToLoadTestWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -96,7 +92,7 @@ export class FuelFlowToLoadTestWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ) {
-    const entity = await this.repository.findOne({
+    const entity = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -158,7 +154,7 @@ export class FuelFlowToLoadTestWorkspaceService {
     let historicalRecord: FuelFlowToLoadTest;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
+      historicalRecord = await this.historicalRepo.findOneBy({
         testSumId: testSumId,
         testBasisCode: payload.testBasisCode,
       });

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource, EntityManager } from 'typeorm';
 
 import {
   CycleTimeInjectionBaseDTO,
@@ -67,7 +68,12 @@ describe('CycleTimeInjectionWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        EntityManager,
         CycleTimeInjectionWorkspaceRepository,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: CycleTimeInjectionWorkspaceService,
           useFactory: mockService,

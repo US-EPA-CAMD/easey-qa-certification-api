@@ -1,21 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
+import { EntityManager } from 'typeorm';
+import { DataSource } from 'typeorm';
+
 import {
   TestSummaryBaseDTO,
   TestSummaryDTO,
   TestSummaryRecordDTO,
 } from '../dto/test-summary.dto';
-import { TestSummaryChecksService } from './test-summary-checks.service';
+import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
 import { TestQualificationChecksService } from '../test-qualification-workspace/test-qualification-checks.service';
+import { TestSummaryChecksService } from './test-summary-checks.service';
 
-import { TestSummaryWorkspaceController } from './test-summary.controller';
-import { TestSummaryWorkspaceRepository } from './test-summary.repository';
-import { TestSummaryWorkspaceService } from './test-summary.service';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
+import { TestSummaryWorkspaceController } from './test-summary.controller';
+import { TestSummaryWorkspaceRepository } from './test-summary.repository';
+import { TestSummaryWorkspaceService } from './test-summary.service';
 
 const user: CurrentUser = {
   userId: 'testUser',
@@ -59,6 +62,11 @@ describe('Test Summary Controller', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        EntityManager,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSummaryWorkspaceService,

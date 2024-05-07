@@ -1,21 +1,21 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
-import { FlowToLoadCheckWorkspaceRepository } from './flow-to-load-check-workspace.repository';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+
 import {
   FlowToLoadCheckBaseDTO,
   FlowToLoadCheckDTO,
   FlowToLoadCheckImportDTO,
   FlowToLoadCheckRecordDTO,
 } from '../dto/flow-to-load-check.dto';
-import { In } from 'typeorm';
 import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { FlowToLoadCheckRepository } from '../flow-to-load-check/flow-to-load-check.repository';
+import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { FlowToLoadCheckWorkspaceRepository } from './flow-to-load-check-workspace.repository';
 
 @Injectable()
 export class FlowToLoadCheckWorkspaceService {
@@ -23,9 +23,7 @@ export class FlowToLoadCheckWorkspaceService {
     private readonly map: FlowToLoadCheckMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(FlowToLoadCheckWorkspaceRepository)
     private readonly repository: FlowToLoadCheckWorkspaceRepository,
-    @InjectRepository(FlowToLoadCheckRepository)
     private readonly historicalRepo: FlowToLoadCheckRepository,
     private readonly logger: Logger,
   ) {}
@@ -39,7 +37,7 @@ export class FlowToLoadCheckWorkspaceService {
   }
 
   async getFlowToLoadCheck(id: string): Promise<FlowToLoadCheckRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -72,7 +70,7 @@ export class FlowToLoadCheckWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -91,7 +89,7 @@ export class FlowToLoadCheckWorkspaceService {
   ): Promise<FlowToLoadCheckDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -104,7 +102,8 @@ export class FlowToLoadCheckWorkspaceService {
 
     entity.testBasisCode = payload.testBasisCode;
     entity.biasAdjustedIndicator = payload.biasAdjustedIndicator;
-    entity.averageAbsolutePercentDifference = payload.averageAbsolutePercentDifference;
+    entity.averageAbsolutePercentDifference =
+      payload.averageAbsolutePercentDifference;
     entity.numberOfHours = payload.numberOfHours;
     entity.numberOfHoursExcludedForFuel = payload.numberOfHoursExcludedForFuel;
     entity.numberOfHoursExcludedRamping = payload.numberOfHoursExcludedRamping;
@@ -175,7 +174,7 @@ export class FlowToLoadCheckWorkspaceService {
     let historicalRecord: FlowToLoadCheck;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
+      historicalRecord = await this.historicalRepo.findOneBy({
         testSumId: testSumId,
         testBasisCode: payload.testBasisCode,
       });

@@ -1,19 +1,18 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
-import { FlowToLoadCheckRepository } from './flow-to-load-check.repository';
+import { In } from 'typeorm';
+
 import {
   FlowToLoadCheckDTO,
   FlowToLoadCheckRecordDTO,
 } from '../dto/flow-to-load-check.dto';
-import { In } from 'typeorm';
+import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
+import { FlowToLoadCheckRepository } from './flow-to-load-check.repository';
 
 @Injectable()
 export class FlowToLoadCheckService {
   constructor(
     private readonly map: FlowToLoadCheckMap,
-    @InjectRepository(FlowToLoadCheckRepository)
     private readonly repository: FlowToLoadCheckRepository,
   ) {}
 
@@ -26,7 +25,7 @@ export class FlowToLoadCheckService {
   }
 
   async getFlowToLoadCheck(id: string): Promise<FlowToLoadCheckRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

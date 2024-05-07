@@ -3,17 +3,12 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { v4 as uuid } from 'uuid';
 
-import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
-import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
-
 import {
   QACertificationEventBaseDTO,
   QACertificationEventDTO,
@@ -21,19 +16,18 @@ import {
   QACertificationEventRecordDTO,
 } from '../dto/qa-certification-event.dto';
 import { QACertificationEventMap } from '../maps/qa-certification-event.map';
+import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
 
 @Injectable()
 export class QACertificationEventWorkspaceService {
   constructor(
     private readonly logger: Logger,
     private readonly map: QACertificationEventMap,
-    @InjectRepository(QACertificationEventWorkspaceRepository)
     private readonly repository: QACertificationEventWorkspaceRepository,
-    @InjectRepository(MonitorLocationRepository)
     private readonly monitorLocationRepository: MonitorLocationRepository,
-    @InjectRepository(ComponentWorkspaceRepository)
     private readonly componentRepository: ComponentWorkspaceRepository,
-    @InjectRepository(MonitorSystemWorkspaceRepository)
     private readonly monitoringSystemRepository: MonitorSystemWorkspaceRepository,
   ) {}
 
@@ -120,7 +114,7 @@ export class QACertificationEventWorkspaceService {
     let monitoringSystemRecordId = null;
 
     if (payload.componentId) {
-      const component = await this.componentRepository.findOne({
+      const component = await this.componentRepository.findOneBy({
         locationId: locationId,
         componentID: payload.componentId,
       });
@@ -129,7 +123,7 @@ export class QACertificationEventWorkspaceService {
     }
 
     if (payload.monitoringSystemId) {
-      const monitorSystem = await this.monitoringSystemRepository.findOne({
+      const monitorSystem = await this.monitoringSystemRepository.findOneBy({
         locationId,
         monitoringSystemID: payload.monitoringSystemId,
       });
@@ -182,7 +176,7 @@ export class QACertificationEventWorkspaceService {
   ): Promise<QACertificationEventDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -251,15 +245,13 @@ export class QACertificationEventWorkspaceService {
       monitoringSystemRecordId,
     } = await this.lookupValues(locationId, payload);
 
-    const record = await this.repository.findOne({
-      where: {
-        locationId,
-        certificationEventHour: payload.certificationEventHour,
-        certificationEventDate: payload.certificationEventDate,
-        certificationEventCode: payload.certificationEventCode,
-        componentRecordId,
-        monitoringSystemRecordId,
-      },
+    const record = await this.repository.findOneBy({
+      locationId,
+      certificationEventHour: payload.certificationEventHour,
+      certificationEventDate: payload.certificationEventDate,
+      certificationEventCode: payload.certificationEventCode,
+      componentRecordId,
+      monitoringSystemRecordId,
     });
 
     let importedQACertEvent;

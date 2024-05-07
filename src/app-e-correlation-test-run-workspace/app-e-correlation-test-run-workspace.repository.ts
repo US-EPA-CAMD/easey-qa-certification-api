@@ -1,10 +1,16 @@
-import { EntityRepository, Not, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Not, Repository } from 'typeorm';
+
 import { AppECorrelationTestRun } from '../entities/workspace/app-e-correlation-test-run.entity';
 
-@EntityRepository(AppECorrelationTestRun)
+@Injectable()
 export class AppECorrelationTestRunWorkspaceRepository extends Repository<
   AppECorrelationTestRun
 > {
+  constructor(entityManager: EntityManager) {
+    super(AppECorrelationTestRun, entityManager);
+  }
+
   /**
      Returns (one) duplicate AppendixETestRun if found,
      where a duplicate is defined as having the same AppETestSumId,

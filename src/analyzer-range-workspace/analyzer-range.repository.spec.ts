@@ -1,8 +1,9 @@
-import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 import { Test } from '@nestjs/testing';
-import { SelectQueryBuilder } from 'typeorm';
-import { AnalyzerRange } from '../entities/workspace/analyzerRange.entity';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { TestSummaryBaseDTO } from '../dto/test-summary.dto';
+import { AnalyzerRange } from '../entities/workspace/analyzerRange.entity';
+import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 
 const analyzerRange = new AnalyzerRange();
 
@@ -20,6 +21,7 @@ describe('AppEHeatInputFromOilWorkspaceRepository', () => {
     const module = await Test.createTestingModule({
       providers: [
         AnalyzerRangeWorkspaceRepository,
+        EntityManager,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],
     }).compile();

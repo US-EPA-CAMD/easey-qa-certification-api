@@ -1,21 +1,20 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
-import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { TestResultCodes } from '../enums/test-result-code.enum';
-import { RataFrequencyCodeRepository } from '../rata-frequency-code/rata-frequency-code.repository';
-import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { RataBaseDTO, RataImportDTO } from '../dto/rata.dto';
 import {
   TestSummaryBaseDTO,
   TestSummaryImportDTO,
 } from '../dto/test-summary.dto';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { TestResultCodes } from '../enums/test-result-code.enum';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { RataFrequencyCodeRepository } from '../rata-frequency-code/rata-frequency-code.repository';
 import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 
 const KEY = 'RATA';
 
@@ -24,11 +23,8 @@ export class RataChecksService {
   constructor(
     private readonly logger: Logger,
     private readonly rataFreqCodeRepository: RataFrequencyCodeRepository,
-    @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
-    @InjectRepository(MonitorSystemRepository)
     private readonly monitorSystemRepository: MonitorSystemRepository,
-    @InjectRepository(TestResultCodeRepository)
     private readonly testResultCodeRepository: TestResultCodeRepository,
   ) {}
 
@@ -57,7 +53,7 @@ export class RataChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-      testSumRecord.system = await this.monitorSystemRepository.findOne({
+      testSumRecord.system = await this.monitorSystemRepository.findOneBy({
         monitoringSystemID: testSummary.monitoringSystemId,
         locationId: locationId,
       });
@@ -125,9 +121,9 @@ export class RataChecksService {
         summary.testResultCode,
       )
     ) {
-      const record = await this.testResultCodeRepository.findOne(
-        summary.testResultCode,
-      );
+      const record = await this.testResultCodeRepository.findOneBy({
+        testResultCode: summary.testResultCode,
+      });
 
       if (record) {
         error = resultC;

@@ -3,10 +3,12 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import { AppECorrelationTestSummaryBaseDTO } from '../dto/app-e-correlation-test-summary.dto';
+import { AppECorrelationTestSummaryChecksService } from './app-e-correlation-test-summary-checks.service';
 import { AppendixETestSummaryWorkspaceController } from './app-e-correlation-test-summary-workspace.controller';
 import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-test-summary-workspace.service';
-import { AppECorrelationTestSummaryChecksService } from './app-e-correlation-test-summary-checks.service';
 
 const locId = '';
 const testSumId = '';
@@ -45,6 +47,10 @@ describe('AppendixETestSummaryWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: AppECorrelationTestSummaryWorkspaceService,
           useFactory: mockService,

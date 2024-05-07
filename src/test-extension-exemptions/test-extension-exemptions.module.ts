@@ -1,10 +1,11 @@
-import { Module } from '@nestjs/common';
-import { TestExtensionExemptionsService } from './test-extension-exemptions.service';
-import { TestExtensionExemptionsController } from './test-extension-exemptions.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { TestExtensionExemptionsRepository } from './test-extension-exemptions.repository';
-import { TestExtensionExemptionMap } from '../maps/test-extension-exemption.map';
 import { HttpModule } from '@nestjs/axios';
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { TestExtensionExemptionMap } from '../maps/test-extension-exemption.map';
+import { TestExtensionExemptionsController } from './test-extension-exemptions.controller';
+import { TestExtensionExemptionsRepository } from './test-extension-exemptions.repository';
+import { TestExtensionExemptionsService } from './test-extension-exemptions.service';
 
 @Module({
   imports: [
@@ -12,7 +13,11 @@ import { HttpModule } from '@nestjs/axios';
     HttpModule,
   ],
   controllers: [TestExtensionExemptionsController],
-  providers: [TestExtensionExemptionMap, TestExtensionExemptionsService],
+  providers: [
+    TestExtensionExemptionMap,
+    TestExtensionExemptionsRepository,
+    TestExtensionExemptionsService,
+  ],
   exports: [
     TypeOrmModule,
     TestExtensionExemptionMap,

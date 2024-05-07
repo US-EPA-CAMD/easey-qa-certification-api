@@ -1,22 +1,21 @@
-import { HttpStatus, forwardRef, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import {
   FuelFlowmeterAccuracyBaseDTO,
   FuelFlowmeterAccuracyDTO,
   FuelFlowmeterAccuracyImportDTO,
   FuelFlowmeterAccuracyRecordDTO,
 } from '../dto/fuel-flowmeter-accuracy.dto';
-import { FuelFlowmeterAccuracyWorkspaceRepository } from './fuel-flowmeter-accuracy-workspace.repository';
-import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
 import { FuelFlowmeterAccuracy } from '../entities/fuel-flowmeter-accuracy.entity';
 import { FuelFlowmeterAccuracyRepository } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.repository';
+import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { FuelFlowmeterAccuracyWorkspaceRepository } from './fuel-flowmeter-accuracy-workspace.repository';
 
 @Injectable()
 export class FuelFlowmeterAccuracyWorkspaceService {
@@ -24,9 +23,7 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     private readonly map: FuelFlowmeterAccuracyMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(FuelFlowmeterAccuracyWorkspaceRepository)
     private readonly repository: FuelFlowmeterAccuracyWorkspaceRepository,
-    @InjectRepository(FuelFlowmeterAccuracyRepository)
     private readonly historicalRepo: FuelFlowmeterAccuracyRepository,
     private readonly logger: Logger,
   ) {}
@@ -42,7 +39,7 @@ export class FuelFlowmeterAccuracyWorkspaceService {
   async getFuelFlowmeterAccuracy(
     id: string,
   ): Promise<FuelFlowmeterAccuracyRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -65,7 +62,7 @@ export class FuelFlowmeterAccuracyWorkspaceService {
   ): Promise<FuelFlowmeterAccuracyDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -115,7 +112,7 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -175,7 +172,7 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     let historicalRecord: FuelFlowmeterAccuracy;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
+      historicalRecord = await this.historicalRepo.findOneBy({
         testSumId: testSumId,
         accuracyTestMethodCode: payload.accuracyTestMethodCode,
       });

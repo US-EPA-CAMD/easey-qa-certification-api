@@ -1,23 +1,23 @@
 import { Test } from '@nestjs/testing';
-import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
-import { RataTraverseChecksService } from './rata-traverse-checks.service';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { TestSummary } from '../entities/workspace/test-summary.entity';
+
+import { FlowRataRunImportDTO } from '../dto/flow-rata-run.dto';
+import { RataSummaryImportDTO } from '../dto/rata-summary.dto';
 import {
   RataTraverseBaseDTO,
   RataTraverseImportDTO,
 } from '../dto/rata-traverse.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { RataSummaryImportDTO } from '../dto/rata-summary.dto';
-import { FlowRataRunImportDTO } from '../dto/flow-rata-run.dto';
+import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
-import { RataTraverseWorkspaceRepository } from './rata-traverse-workspace.repository';
-import { RataSummaryWorkspaceRepository } from '../rata-summary-workspace/rata-summary-workspace.repository';
 import { RataTraverse } from '../entities/workspace/rata-traverse.entity';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { RataSummaryWorkspaceRepository } from '../rata-summary-workspace/rata-summary-workspace.repository';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
+import { RataTraverseChecksService } from './rata-traverse-checks.service';
+import { RataTraverseWorkspaceRepository } from './rata-traverse-workspace.repository';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -50,15 +50,15 @@ const mockTestSumRepository = () => ({
 });
 
 const mockRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(importPayload),
+  findOneBy: jest.fn().mockResolvedValue(importPayload),
 });
 
 const mockRataSumRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(rataSummary),
+  findOneBy: jest.fn().mockResolvedValue(rataSummary),
 });
 
 const mockMonitorSystemRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
+  findOneBy: jest.fn().mockResolvedValue(new MonitorSystem()),
 });
 
 describe('Rata Traverse Check Service Test', () => {
@@ -640,7 +640,7 @@ describe('Rata Traverse Check Service Test', () => {
       returnValue.methodTraversePointId = '4';
       returnValue.yawAngle = 45;
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(returnValue);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(returnValue);
       try {
         await checkService.runChecks(
           payload,

@@ -1,18 +1,19 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { HgInjectionRepository } from '../hg-injection/hg-injection.repository';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+
 import {
   HgInjectionBaseDTO,
   HgInjectionDTO,
   HgInjectionImportDTO,
 } from '../dto/hg-injection.dto';
-import { HgInjection } from '../entities/workspace/hg-injection.entity';
 import { HgInjection as HgInjectionOfficial } from '../entities/hg-injection.entity';
+import { HgInjection } from '../entities/workspace/hg-injection.entity';
+import { HgInjectionRepository } from '../hg-injection/hg-injection.repository';
 import { HgInjectionMap } from '../maps/hg-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.repository';
 import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 const id = '';
 const hgTestSumId = '';
@@ -26,14 +27,14 @@ const payload = new HgInjectionBaseDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockHistoricalRepo = () => ({
-  findOne: jest.fn().mockResolvedValue(new HgInjectionOfficial()),
+  findOneBy: jest.fn().mockResolvedValue(new HgInjectionOfficial()),
 });
 
 const mockMap = () => ({
@@ -97,7 +98,7 @@ describe('HgInjectionWorkspaceService', () => {
     });
 
     it('Should throw error when a Hg Injection record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {
@@ -149,7 +150,7 @@ describe('HgInjectionWorkspaceService', () => {
     });
 
     it('Should throw error when a Hg Injection record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {

@@ -1,5 +1,7 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import {
   ProtocolGasBaseDTO,
   ProtocolGasDTO,
@@ -7,11 +9,10 @@ import {
 } from '../dto/protocol-gas.dto';
 import { ProtocolGas } from '../entities/workspace/protocol-gas.entity';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
+import { ProtocolGasRepository } from '../protocol-gas/protocol-gas.repository';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
 import { ProtocolGasWorkspaceService } from './protocol-gas.service';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { ProtocolGasRepository } from '../protocol-gas/protocol-gas.repository';
-import { ConfigService } from '@nestjs/config';
 
 const protocolGasId = 'a1b2c3';
 const testSumId = '1';
@@ -35,11 +36,11 @@ const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([protocolGas]),
   create: jest.fn().mockResolvedValue(protocolGas),
   save: jest.fn().mockResolvedValue(protocolGas),
-  findOne: jest.fn().mockResolvedValue(protocolGas),
+  findOneBy: jest.fn().mockResolvedValue(protocolGas),
 });
 
 const mockHistoricalRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(protocolGas),
+  findOneBy: jest.fn().mockResolvedValue(protocolGas),
 });
 
 const mockMap = () => ({
@@ -93,14 +94,14 @@ describe('ProtocolGasWorkspaceService', () => {
   });
 
   describe('getProtocolGas', () => {
-    it('Calls repository.findOne({id}) to get a single Protocol Gas record', async () => {
+    it('Calls repository.findOneBy({id}) to get a single Protocol Gas record', async () => {
       const result = await service.getProtocolGas(protocolGasId);
       expect(result).toEqual(protocolGasDTO);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Protocol Gas record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let errored = false;
 

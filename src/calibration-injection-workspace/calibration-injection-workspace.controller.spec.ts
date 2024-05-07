@@ -1,14 +1,16 @@
 import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import {
   CalibrationInjectionBaseDTO,
   CalibrationInjectionDTO,
 } from '../dto/calibration-injection.dto';
 import { CalibrationInjectionWorkspaceController } from './calibration-injection-workspace.controller';
 import { CalibrationInjectionWorkspaceService } from './calibration-injection-workspace.service';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 const locId = '';
 const testSumId = '';
@@ -43,6 +45,10 @@ describe('CalibrationInjectionWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: CalibrationInjectionWorkspaceService,
           useFactory: mockService,

@@ -2,15 +2,15 @@ import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { TestSummaryWorkspaceModule } from './../test-summary-workspace/test-summary.module';
 import { LinearityInjectionWorkspaceModule } from '../linearity-injection-workspace/linearity-injection.module';
+import { LinearitySummaryModule } from '../linearity-summary/linearity-summary.module';
+import { LinearitySummaryMap } from '../maps/linearity-summary.map';
+import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
+import { TestSummaryWorkspaceModule } from './../test-summary-workspace/test-summary.module';
+import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
 import { LinearitySummaryWorkspaceController } from './linearity-summary.controller';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
-import { LinearitySummaryMap } from '../maps/linearity-summary.map';
-import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
-import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
-import { LinearitySummaryModule } from '../linearity-summary/linearity-summary.module';
 
 @Module({
   imports: [
@@ -26,8 +26,10 @@ import { LinearitySummaryModule } from '../linearity-summary/linearity-summary.m
   controllers: [LinearitySummaryWorkspaceController],
   providers: [
     LinearitySummaryMap,
+    LinearitySummaryWorkspaceRepository,
     LinearitySummaryWorkspaceService,
     LinearitySummaryChecksService,
+    TestSummaryMasterDataRelationshipRepository,
   ],
   exports: [
     TypeOrmModule,

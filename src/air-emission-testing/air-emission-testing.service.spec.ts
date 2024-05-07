@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import {
   AirEmissionTestingBaseDTO,
   AirEmissionTestingDTO,
@@ -19,7 +20,7 @@ const payload: AirEmissionTestingBaseDTO = new AirEmissionTestingBaseDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
 });
 
 const mockMap = () => ({
@@ -68,7 +69,7 @@ describe('AirEmissionTestingService', () => {
     });
 
     it('Should throw error when a Air Emission Testing record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {

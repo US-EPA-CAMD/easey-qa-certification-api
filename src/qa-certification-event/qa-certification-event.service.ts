@@ -1,18 +1,17 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { QACertificationEventMap } from '../maps/qa-certification-event.map';
-import { QACertificationEventRepository } from './qa-certification-event.repository';
+
 import {
   QACertificationEventDTO,
   QACertificationEventRecordDTO,
 } from '../dto/qa-certification-event.dto';
+import { QACertificationEventMap } from '../maps/qa-certification-event.map';
+import { QACertificationEventRepository } from './qa-certification-event.repository';
 
 @Injectable()
 export class QaCertificationEventService {
   constructor(
     private readonly map: QACertificationEventMap,
-    @InjectRepository(QACertificationEventRepository)
     private readonly repository: QACertificationEventRepository,
   ) {}
 

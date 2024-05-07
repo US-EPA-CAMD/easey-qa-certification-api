@@ -1,14 +1,10 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
-
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { TransmitterTransducerAccuracyWorkspaceRepository } from './transmitter-transducer-accuracy.repository';
-import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+
 import {
   TransmitterTransducerAccuracyBaseDTO,
   TransmitterTransducerAccuracyDTO,
@@ -16,26 +12,26 @@ import {
   TransmitterTransducerAccuracyRecordDTO,
 } from '../dto/transmitter-transducer-accuracy.dto';
 import { TransmitterTransducerAccuracy } from '../entities/transmitter-transducer-accuracy.entity';
+import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { TransmitterTransducerAccuracyRepository } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.repository';
-import { In } from 'typeorm';
+import { TransmitterTransducerAccuracyWorkspaceRepository } from './transmitter-transducer-accuracy.repository';
 
 @Injectable()
 export class TransmitterTransducerAccuracyWorkspaceService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(TransmitterTransducerAccuracyWorkspaceRepository)
     private readonly repository: TransmitterTransducerAccuracyWorkspaceRepository,
     private readonly map: TransmitterTransducerAccuracyMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(TransmitterTransducerAccuracyRepository)
     private readonly historicalRepository: TransmitterTransducerAccuracyRepository,
   ) {}
 
   async getTransmitterTransducerAccuracy(
     id: string,
   ): Promise<TransmitterTransducerAccuracyDTO> {
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -90,7 +86,7 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -107,7 +103,7 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<TransmitterTransducerAccuracyDTO> {
-    const entity = await this.repository.findOne({ id, testSumId });
+    const entity = await this.repository.findOneBy({ id, testSumId });
 
     if (!entity) {
       throw new EaseyException(
@@ -178,7 +174,7 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     let historicalRecord: TransmitterTransducerAccuracy;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
+      historicalRecord = await this.historicalRepository.findOneBy({
         testSumId: testSumId,
         lowLevelAccuracy: payload.lowLevelAccuracy,
         lowLevelAccuracySpecCode: payload.lowLevelAccuracySpecCode,

@@ -1,29 +1,26 @@
-import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
-import { LinearitySummaryWorkspaceRepository } from '../linearity-summary-workspace/linearity-summary.repository';
+
 import {
   LinearityInjectionBaseDTO,
   LinearityInjectionImportDTO,
 } from '../dto/linearity-injection.dto';
-import { LinearityInjection } from '../entities/workspace/linearity-injection.entity';
-import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { LinearityInjection } from '../entities/workspace/linearity-injection.entity';
+import { LinearitySummary } from '../entities/workspace/linearity-summary.entity';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { LinearitySummaryWorkspaceRepository } from '../linearity-summary-workspace/linearity-summary.repository';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
+import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
 
 @Injectable()
 export class LinearityInjectionChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(LinearityInjectionWorkspaceRepository)
     private readonly linearityInjectionRepository: LinearityInjectionWorkspaceRepository,
     private readonly linearitySummaryRepository: LinearitySummaryWorkspaceRepository,
-    @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
   ) {}
 
@@ -115,7 +112,7 @@ export class LinearityInjectionChecksService {
         error = errorMsg;
       }
     } else {
-      const record: LinearityInjection = await this.linearityInjectionRepository.findOne(
+      const record: LinearityInjection = await this.linearityInjectionRepository.findOneBy(
         {
           linSumId: linSumId,
           injectionDate: linearityInjection.injectionDate,

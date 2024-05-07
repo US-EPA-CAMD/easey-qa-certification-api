@@ -5,7 +5,7 @@ import { RataFrequencyCodeRepository } from './rata-frequency-code.repository';
 @Module({
   imports: [TypeOrmModule.forFeature([RataFrequencyCodeRepository])],
   controllers: [],
-  providers: [],
+  providers: [RataFrequencyCodeRepository],
   exports: [TypeOrmModule],
 })
 export class RataFrequencyCodeModule {}

@@ -2,14 +2,14 @@ import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { TestSummaryWorkspaceModule } from './../test-summary-workspace/test-summary.module';
+import { LinearityInjectionModule } from '../linearity-injection/linearity-injection.module';
+import { LinearitySummaryWorkspaceModule } from '../linearity-summary-workspace/linearity-summary.module';
+import { LinearityInjectionMap } from '../maps/linearity-injection.map';
+import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
+import { LinearityInjectionChecksService } from './linearity-injection-checks.service';
 import { LinearityInjectionWorkspaceController } from './linearity-injection.controller';
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
 import { LinearityInjectionWorkspaceService } from './linearity-injection.service';
-import { LinearityInjectionMap } from '../maps/linearity-injection.map';
-import { LinearityInjectionChecksService } from './linearity-injection-checks.service';
-import { LinearitySummaryWorkspaceModule } from '../linearity-summary-workspace/linearity-summary.module';
-import { LinearityInjectionModule } from '../linearity-injection/linearity-injection.module';
 
 @Module({
   imports: [
@@ -22,6 +22,7 @@ import { LinearityInjectionModule } from '../linearity-injection/linearity-injec
   controllers: [LinearityInjectionWorkspaceController],
   providers: [
     LinearityInjectionMap,
+    LinearityInjectionWorkspaceRepository,
     LinearityInjectionWorkspaceService,
     LinearityInjectionChecksService,
   ],

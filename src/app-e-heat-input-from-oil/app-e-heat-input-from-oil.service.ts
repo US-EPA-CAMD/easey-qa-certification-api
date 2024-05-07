@@ -1,15 +1,13 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-
-import { InjectRepository } from '@nestjs/typeorm';
-import { AppEHeatInputFromOilRepository } from './app-e-heat-input-from-oil.repository';
-import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+
 import { AppEHeatInputFromOilDTO } from '../dto/app-e-heat-input-from-oil.dto';
+import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
+import { AppEHeatInputFromOilRepository } from './app-e-heat-input-from-oil.repository';
 
 @Injectable()
 export class AppEHeatInputFromOilService {
   constructor(
-    @InjectRepository(AppEHeatInputFromOilRepository)
     private readonly repository: AppEHeatInputFromOilRepository,
     private readonly map: AppEHeatInputFromOilMap,
   ) {}

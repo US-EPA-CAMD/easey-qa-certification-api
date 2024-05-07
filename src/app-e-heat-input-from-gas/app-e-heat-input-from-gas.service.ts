@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+
 import {
   AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasRecordDTO,
@@ -12,7 +12,6 @@ import { AppEHeatInputFromGasRepository } from './app-e-heat-input-from-gas.repo
 export class AppEHeatInputFromGasService {
   constructor(
     private readonly map: AppEHeatInputFromGasMap,
-    @InjectRepository(AppEHeatInputFromGasRepository)
     private readonly repository: AppEHeatInputFromGasRepository,
   ) {}
 

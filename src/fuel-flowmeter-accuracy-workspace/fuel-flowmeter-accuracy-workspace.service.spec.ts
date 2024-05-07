@@ -1,18 +1,19 @@
 import { InternalServerErrorException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { Logger, LoggerModule } from '@us-epa-camd/easey-common/logger';
+
 import {
   FuelFlowmeterAccuracyBaseDTO,
   FuelFlowmeterAccuracyDTO,
   FuelFlowmeterAccuracyImportDTO,
 } from '../dto/fuel-flowmeter-accuracy.dto';
-import { FuelFlowmeterAccuracyWorkspaceRepository } from './fuel-flowmeter-accuracy-workspace.repository';
-import { FuelFlowmeterAccuracyWorkspaceService } from './fuel-flowmeter-accuracy-workspace.service';
+import { FuelFlowmeterAccuracy } from '../entities/fuel-flowmeter-accuracy.entity';
 import { FuelFlowmeterAccuracyRepository } from '../fuel-flowmeter-accuracy/fuel-flowmeter-accuracy.repository';
 import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
-import { FuelFlowmeterAccuracy } from '../entities/fuel-flowmeter-accuracy.entity';
-import { ConfigService } from '@nestjs/config';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { FuelFlowmeterAccuracyWorkspaceRepository } from './fuel-flowmeter-accuracy-workspace.repository';
+import { FuelFlowmeterAccuracyWorkspaceService } from './fuel-flowmeter-accuracy-workspace.service';
 
 const testSumId = '';
 const userId = 'user';
@@ -23,14 +24,14 @@ const payload = new FuelFlowmeterAccuracyBaseDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockOfficialRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(new FuelFlowmeterAccuracy()),
+  findOneBy: jest.fn().mockResolvedValue(new FuelFlowmeterAccuracy()),
 });
 
 const mockMap = () => ({
@@ -85,16 +86,16 @@ describe('FuelFlowmeterWorkspaceService', () => {
   });
 
   describe('getFuelFlowmeterAccuracy', () => {
-    it('Calls repository.findOne({id}) to get a single Fuel Flowmeter Accuracy record', async () => {
+    it('Calls repository.findOneBy({id}) to get a single Fuel Flowmeter Accuracy record', async () => {
       const result = await service.getFuelFlowmeterAccuracy(
         fuelFlowmeterAccuracyId,
       );
       expect(result).toEqual(fuelFlowmeterAccuracy);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when a Fuel Flowmeter Accuracy record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let errored = false;
 
@@ -154,7 +155,7 @@ describe('FuelFlowmeterWorkspaceService', () => {
     });
 
     it('should throw error with invalid Fuel Flowmeter Accuracy', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
       try {

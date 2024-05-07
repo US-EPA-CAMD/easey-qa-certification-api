@@ -1,10 +1,16 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { TestSummaryMasterDataRelationship } from '../entities/workspace/vw-test-summary-md-relationships.entity';
 
-@EntityRepository(TestSummaryMasterDataRelationship)
+@Injectable()
 export class TestSummaryMasterDataRelationshipRepository extends Repository<
   TestSummaryMasterDataRelationship
 > {
+  constructor(entityManager: EntityManager) {
+    super(TestSummaryMasterDataRelationship, entityManager);
+  }
+
   async getTestTypeCodesRelationships(
     testTypeCode: string,
     distinctColumnName: string,

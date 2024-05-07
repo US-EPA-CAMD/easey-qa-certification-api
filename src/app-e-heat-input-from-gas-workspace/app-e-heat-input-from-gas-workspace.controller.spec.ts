@@ -1,11 +1,13 @@
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
+
+import { AppEHeatInputFromGasChecksService } from './app-e-heat-input-from-gas-checks.service';
 import { AppEHeatInputFromGasWorkspaceController } from './app-e-heat-input-from-gas-workspace.controller';
 import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-gas-workspace.service';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
-import { HttpModule } from '@nestjs/axios';
-import { AppEHeatInputFromGasChecksService } from './app-e-heat-input-from-gas-checks.service';
 
 const mockService = () => ({});
 const mockChecksService = () => ({});
@@ -21,6 +23,10 @@ describe('AppEHeatInputFromGasWorkspaceController', () => {
         Logger,
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: AppEHeatInputFromGasWorkspaceService,
           useFactory: mockService,

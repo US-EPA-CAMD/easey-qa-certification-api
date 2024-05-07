@@ -1,17 +1,17 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-
+import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
 
-import { QACertificationEventWorkspaceController } from './qa-certification-event-workspace.controller';
-import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
 import {
   QACertificationEventBaseDTO,
   QACertificationEventDTO,
 } from '../dto/qa-certification-event.dto';
 import { QACertificationEventChecksService } from './qa-certification-event-checks.service';
+import { QACertificationEventWorkspaceController } from './qa-certification-event-workspace.controller';
+import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
 
 const locationId = '';
 const payload = new QACertificationEventBaseDTO();
@@ -48,6 +48,10 @@ describe('QACertificationEventWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: QACertificationEventWorkspaceService,
           useFactory: mockService,

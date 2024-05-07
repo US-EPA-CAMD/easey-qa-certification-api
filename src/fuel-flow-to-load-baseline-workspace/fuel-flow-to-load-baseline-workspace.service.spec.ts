@@ -1,19 +1,19 @@
-import { HttpStatus, InternalServerErrorException } from '@nestjs/common';
+import { InternalServerErrorException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { FuelFlowToLoadBaselineRepository } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.repository';
 import {
   FuelFlowToLoadBaselineBaseDTO,
   FuelFlowToLoadBaselineDTO,
   FuelFlowToLoadBaselineImportDTO,
 } from '../dto/fuel-flow-to-load-baseline.dto';
 import { FuelFlowToLoadBaseline } from '../entities/workspace/fuel-flow-to-load-baseline.entity';
+import { FuelFlowToLoadBaselineRepository } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.repository';
 import { FuelFlowToLoadBaselineMap } from '../maps/fuel-flow-to-load-baseline.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FuelFlowToLoadBaselineWorkspaceRepository } from './fuel-flow-to-load-baseline-workspace.repository';
 import { FuelFlowToLoadBaselineWorkspaceService } from './fuel-flow-to-load-baseline-workspace.service';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -25,7 +25,7 @@ const payload = new FuelFlowToLoadBaselineBaseDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
@@ -41,7 +41,7 @@ const mockTestSumService = () => ({
 });
 
 const mockOfficialRepository = () => ({
-  findOne: jest.fn(),
+  findOneBy: jest.fn(),
 });
 
 describe('FuelFlowToLoadBaselineWorkspaceService', () => {
@@ -105,7 +105,7 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
     });
 
     it('Should throw error when a Fuel Flow To Load Baseline record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {
@@ -145,7 +145,7 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
     });
 
     it('Should throw error when a Fuel Flow To Load Baseline record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {

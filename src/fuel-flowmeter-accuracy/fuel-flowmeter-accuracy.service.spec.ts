@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { FuelFlowmeterAccuracyDTO } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracy } from '../entities/fuel-flowmeter-accuracy.entity';
 import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
@@ -12,7 +13,7 @@ const fuelFlowmeterAccuracy = new FuelFlowmeterAccuracyDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
 });
 
 const mockMap = () => ({
@@ -63,7 +64,7 @@ describe('FuelFlowmeterAccuracyService', () => {
     });
 
     it('Should throw error when a Fuel Flowmeter Accuracy record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {

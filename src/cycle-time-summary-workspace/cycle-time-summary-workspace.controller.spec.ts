@@ -1,14 +1,16 @@
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import {
   CycleTimeSummaryBaseDTO,
   CycleTimeSummaryDTO,
 } from '../dto/cycle-time-summary.dto';
 import { CycleTimeSummaryWorkspaceController } from './cycle-time-summary-workspace.controller';
 import { CycleTimeSummaryWorkspaceService } from './cycle-time-summary-workspace.service';
-import { HttpModule } from '@nestjs/axios';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
 
 const locId = '';
 const testSumId = '';
@@ -43,6 +45,10 @@ describe('CycleTimeSummaryWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: CycleTimeSummaryWorkspaceService,
           useFactory: mockService,

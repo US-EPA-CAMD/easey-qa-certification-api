@@ -1,14 +1,13 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
-import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import {
   AirEmissionTestingBaseDTO,
   AirEmissionTestingImportDTO,
 } from '../dto/air-emission-test.dto';
+import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 
@@ -18,7 +17,6 @@ const KEY = 'Air Emission Testing';
 export class AirEmissionTestingChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
   ) {}
 

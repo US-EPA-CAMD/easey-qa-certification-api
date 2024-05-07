@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+
 import {
   TestExtensionExemptionDTO,
   TestExtensionExemptionRecordDTO,
@@ -12,7 +12,6 @@ import { TestExtensionExemptionsRepository } from './test-extension-exemptions.r
 export class TestExtensionExemptionsService {
   constructor(
     private readonly map: TestExtensionExemptionMap,
-    @InjectRepository(TestExtensionExemptionsRepository)
     private readonly repository: TestExtensionExemptionsRepository,
   ) {}
 

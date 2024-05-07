@@ -1,13 +1,14 @@
-import { forwardRef, Module } from '@nestjs/common';
-import { CycleTimeSummaryWorkspaceService } from './cycle-time-summary-workspace.service';
-import { CycleTimeSummaryWorkspaceController } from './cycle-time-summary-workspace.controller';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { CycleTimeSummaryWorkspaceRepository } from './cycle-time-summary-workspace.repository';
-import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { HttpModule } from '@nestjs/axios';
-import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
-import { CycleTimeSummaryModule } from '../cycle-time-summary/cycle-time-summary.module';
+import { forwardRef, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { CycleTimeInjectionWorkspaceModule } from '../cycle-time-injection-workspace/cycle-time-injection-workspace.module';
+import { CycleTimeSummaryModule } from '../cycle-time-summary/cycle-time-summary.module';
+import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
+import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
+import { CycleTimeSummaryWorkspaceController } from './cycle-time-summary-workspace.controller';
+import { CycleTimeSummaryWorkspaceRepository } from './cycle-time-summary-workspace.repository';
+import { CycleTimeSummaryWorkspaceService } from './cycle-time-summary-workspace.service';
 
 @Module({
   imports: [
@@ -18,7 +19,11 @@ import { CycleTimeInjectionWorkspaceModule } from '../cycle-time-injection-works
     HttpModule,
   ],
   controllers: [CycleTimeSummaryWorkspaceController],
-  providers: [CycleTimeSummaryMap, CycleTimeSummaryWorkspaceService],
+  providers: [
+    CycleTimeSummaryMap,
+    CycleTimeSummaryWorkspaceRepository,
+    CycleTimeSummaryWorkspaceService,
+  ],
   exports: [
     TypeOrmModule,
     CycleTimeSummaryMap,

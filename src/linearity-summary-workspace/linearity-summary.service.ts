@@ -1,27 +1,22 @@
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Logger } from '@us-epa-camd/easey-common/logger';
-
 import {
-  LinearitySummaryDTO,
   LinearitySummaryBaseDTO,
-  LinearitySummaryRecordDTO,
+  LinearitySummaryDTO,
   LinearitySummaryImportDTO,
+  LinearitySummaryRecordDTO,
 } from '../dto/linearity-summary.dto';
-
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { LinearitySummaryMap } from '../maps/linearity-summary.map';
-import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
-import { LinearityInjectionWorkspaceService } from '../linearity-injection-workspace/linearity-injection.service';
-import { TestSummaryWorkspaceService } from './../test-summary-workspace/test-summary.service';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { LinearitySummary } from '../entities/linearity-summary.entity';
+import { LinearityInjectionWorkspaceService } from '../linearity-injection-workspace/linearity-injection.service';
 import { LinearitySummaryRepository } from '../linearity-summary/linearity-summary.repository';
+import { LinearitySummaryMap } from '../maps/linearity-summary.map';
+import { TestSummaryWorkspaceService } from './../test-summary-workspace/test-summary.service';
+import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
 
 @Injectable()
 export class LinearitySummaryWorkspaceService {
@@ -32,9 +27,7 @@ export class LinearitySummaryWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @Inject(forwardRef(() => LinearityInjectionWorkspaceService))
     private readonly injectionService: LinearityInjectionWorkspaceService,
-    @InjectRepository(LinearitySummaryWorkspaceRepository)
     private readonly repository: LinearitySummaryWorkspaceRepository,
-    @InjectRepository(LinearitySummaryRepository)
     private readonly historicalRepository: LinearitySummaryRepository,
   ) {}
 
@@ -94,7 +87,7 @@ export class LinearitySummaryWorkspaceService {
     let historicalRecord: LinearitySummary;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
+      historicalRecord = await this.historicalRepository.findOneBy({
         testSumId: testSumId,
         gasLevelCode: payload.gasLevelCode,
       });
@@ -150,7 +143,7 @@ export class LinearitySummaryWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -169,7 +162,7 @@ export class LinearitySummaryWorkspaceService {
     isImport: boolean = false,
   ): Promise<LinearitySummaryRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(

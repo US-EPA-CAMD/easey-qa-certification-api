@@ -1,15 +1,17 @@
+import { HttpStatus } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { DataSource } from 'typeorm';
+
 import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
 import { OnlineOfflineCalibration } from '../entities/workspace/online-offline-calibration.entity';
 import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.map';
 import { OnlineOfflineCalibrationRepository } from '../online-offline-calibration/online-offline-calibration.repository';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { OnlineOfflineCalibrationWorkspaceRepository } from './online-offline-calibration.repository';
 import { OnlineOfflineCalibrationWorkspaceService } from './online-offline-calibration.service';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { HttpStatus } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 
 const testSumId = '1';
 const onlineOfflineCalibrationId = 'abc123';
@@ -26,7 +28,7 @@ const mockTestSumService = () => ({
 const mockRepository = () => ({
   create: jest.fn().mockResolvedValue(onlineOfflineCalibration),
   save: jest.fn().mockResolvedValue(onlineOfflineCalibration),
-  findOne: jest.fn().mockResolvedValue(onlineOfflineCalibration),
+  findOneBy: jest.fn().mockResolvedValue(onlineOfflineCalibration),
   find: jest.fn().mockResolvedValue([onlineOfflineCalibration]),
   delete: jest.fn().mockResolvedValue(null),
 });
@@ -48,6 +50,10 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
         Logger,
         ConfigService,
         OnlineOfflineCalibrationWorkspaceService,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSumService,
@@ -76,16 +82,16 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
   });
 
   describe('getOnlineOfflineCalibration', () => {
-    it('Calls repository.findOne({id}) to get a single Online Offline Calibration record', async () => {
+    it('Calls repository.findOneBy({id}) to get a single Online Offline Calibration record', async () => {
       const result = await service.getOnlineOfflineCalibration(
         onlineOfflineCalibrationId,
       );
       expect(result).toEqual(onlineOfflineCalibrationDTO);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Online Offline Calibration record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let errored = false;
 

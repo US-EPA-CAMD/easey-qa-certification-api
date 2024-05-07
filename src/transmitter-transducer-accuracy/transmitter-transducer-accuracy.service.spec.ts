@@ -1,12 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
-import { TransmitterTransducerAccuracyRepository } from './transmitter-transducer-accuracy.repository';
-import { TransmitterTransducerAccuracyService } from './transmitter-transducer-accuracy.service';
-import { TransmitterTransducerAccuracy } from '../entities/transmitter-transducer-accuracy.entity';
+
 import {
   TransmitterTransducerAccuracyBaseDTO,
   TransmitterTransducerAccuracyDTO,
 } from '../dto/transmitter-transducer-accuracy.dto';
+import { TransmitterTransducerAccuracy } from '../entities/transmitter-transducer-accuracy.entity';
+import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
+import { TransmitterTransducerAccuracyRepository } from './transmitter-transducer-accuracy.repository';
+import { TransmitterTransducerAccuracyService } from './transmitter-transducer-accuracy.service';
 
 const entityId = 'a1b2c3';
 const testSumId = 'd4e5f6';
@@ -29,7 +30,7 @@ const mockMap = () => ({
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
 });
 
 describe('TransmitterTransducerAccuracyService', () => {
@@ -61,14 +62,14 @@ describe('TransmitterTransducerAccuracyService', () => {
   });
 
   describe('getProtocolGas', () => {
-    it('Calls repository.findOne({id}) to get a single Transmitter Transducer Accuracy record', async () => {
+    it('Calls repository.findOneBy({id}) to get a single Transmitter Transducer Accuracy record', async () => {
       const result = await service.getTransmitterTransducerAccuracy(entityId);
       expect(result).toEqual(dto);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Gas record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let errored = false;
 

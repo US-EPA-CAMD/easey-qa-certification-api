@@ -2,12 +2,15 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { ValidationArguments } from 'class-validator';
 
-import { IsValidDate, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsValidDate,
+  IsIsoFormat,
+  IsValidCodes,
+} from '@us-epa-camd/easey-common/pipes';
 import { FindOneOptions, In } from 'typeorm';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
-import { IsValidCodes } from '../pipes/is-valid-codes.pipe';
 
 import { TestTypeCode } from '../entities/test-type-code.entity';
 import { TestTypeCodes } from '../enums/test-type-code.enum';

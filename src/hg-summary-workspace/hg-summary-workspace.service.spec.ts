@@ -1,22 +1,22 @@
 import { InternalServerErrorException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { HgSummaryRepository } from '../hg-summary/hg-summary.repository';
+
+import { HgInjectionDTO, HgInjectionImportDTO } from '../dto/hg-injection.dto';
 import {
   HgSummaryBaseDTO,
   HgSummaryDTO,
   HgSummaryImportDTO,
-  HgSummaryRecordDTO,
 } from '../dto/hg-summary.dto';
-import { HgSummary } from '../entities/workspace/hg-summary.entity';
 import { HgSummary as HgSummaryOffical } from '../entities/hg-summary.entity';
+import { HgSummary } from '../entities/workspace/hg-summary.entity';
+import { HgInjectionWorkspaceService } from '../hg-injection-workspace/hg-injection-workspace.service';
+import { HgSummaryRepository } from '../hg-summary/hg-summary.repository';
 import { HgSummaryMap } from '../maps/hg-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
 import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
-import { HgInjectionWorkspaceService } from '../hg-injection-workspace/hg-injection-workspace.service';
-import { HgInjectionDTO, HgInjectionImportDTO } from '../dto/hg-injection.dto';
-import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -30,14 +30,14 @@ hgInjDto.hgTestSumId = 'ID';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockHistoricalRepo = () => ({
-  findOne: jest.fn().mockResolvedValue(new HgSummaryOffical()),
+  findOneBy: jest.fn().mockResolvedValue(new HgSummaryOffical()),
 });
 
 const mockMap = () => ({
@@ -113,7 +113,7 @@ describe('HgSummaryWorkspaceService', () => {
     });
 
     it('Should throw error when a Hg Summary record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {
@@ -178,7 +178,7 @@ describe('HgSummaryWorkspaceService', () => {
     });
 
     it('Should throw error when a Hg Summary record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {

@@ -1,25 +1,26 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import {
   TestExtensionExemptionBaseDTO,
   TestExtensionExemptionDTO,
   TestExtensionExemptionRecordDTO,
 } from '../dto/test-extension-exemption.dto';
+import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { Component } from '../entities/workspace/component.entity';
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { TestExtensionExemption } from '../entities/workspace/test-extension-exemption.entity';
 import { Unit } from '../entities/workspace/unit.entity';
 import { TestExtensionExemptionMap } from '../maps/test-extension-exemption.map';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 
 const locationId = '121';
 const testExtExpId = '1';
@@ -58,7 +59,7 @@ const mockRepository = () => ({
   getTestExtensionExemptionsByLocationId: jest.fn().mockResolvedValue([entity]),
   getTestExtensionsByUnitStack: jest.fn().mockResolvedValue([entity]),
   delete: jest.fn().mockResolvedValue(null),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
 });
@@ -100,19 +101,19 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
         {
           provide: ReportingPeriodRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(rp),
+            findOneBy: jest.fn().mockResolvedValue(rp),
           }),
         },
         {
           provide: MonitorSystemWorkspaceRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(ms),
+            findOneBy: jest.fn().mockResolvedValue(ms),
           }),
         },
         {
           provide: ComponentWorkspaceRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(comp),
+            findOneBy: jest.fn().mockResolvedValue(comp),
           }),
         },
       ],
@@ -258,7 +259,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
   describe('updateTestExtensionExemption', () => {
     it('should call the updateTestExtensionExemption and update Test Extension Exemption', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
-      jest.spyOn(repository, 'findOne').mockResolvedValue(entity);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(entity);
 
       const result = await service.updateTestExtensionExemption(
         locationId,
@@ -271,7 +272,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
     });
 
     it('should call updateTestExtensionExemption and throw error while Test Extension Exemption not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
 
@@ -335,9 +336,11 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
       payload.componentId = '1';
       payload.monitoringSystemId = 'abc';
 
-      jest.spyOn(componentRepository, 'findOne').mockResolvedValue(null);
-      jest.spyOn(monSysRepository, 'findOne').mockResolvedValue(null);
-      jest.spyOn(reportingPeriodRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(componentRepository, 'findOneBy').mockResolvedValue(null);
+      jest.spyOn(monSysRepository, 'findOneBy').mockResolvedValue(null);
+      jest
+        .spyOn(reportingPeriodRepository, 'findOneBy')
+        .mockResolvedValue(null);
 
       const result = await service.lookupValues(locationId, payload);
 
@@ -375,7 +378,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
   describe('import', () => {
     it('Should create QA Test Extension Exemption ', async () => {
       const importPayload = payload;
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       const result = await service.import(locationId, importPayload, userId);
 
@@ -385,7 +388,7 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
     it('Should update QA Test Extension Exemption ', async () => {
       entity.id = '1';
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(entity);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(entity);
 
       const importPayload = payload;
 

@@ -19,6 +19,7 @@ import { TestQualificationModule } from '../test-qualification/test-qualificatio
   controllers: [TestQualificationWorkspaceController],
   providers: [
     TestQualificationMap,
+    TestQualificationWorkspaceRepository,
     TestQualificationWorkspaceService,
     TestQualificationChecksService,
   ],

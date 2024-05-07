@@ -1,21 +1,21 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+
 import {
   TestQualificationBaseDTO,
   TestQualificationDTO,
   TestQualificationImportDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
+import { TestQualification } from '../entities/test-qualification.entity';
 import { TestQualificationMap } from '../maps/test-qualification.map';
+import { TestQualificationRepository } from '../test-qualification/test-qualification.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
-import { In } from 'typeorm';
-import { TestQualification } from '../entities/test-qualification.entity';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { TestQualificationRepository } from '../test-qualification/test-qualification.repository';
 
 @Injectable()
 export class TestQualificationWorkspaceService {
@@ -24,9 +24,7 @@ export class TestQualificationWorkspaceService {
     private readonly map: TestQualificationMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(TestQualificationWorkspaceRepository)
     private readonly repository: TestQualificationWorkspaceRepository,
-    @InjectRepository(TestQualificationRepository)
     private readonly historicalRepo: TestQualificationRepository,
   ) {}
 
@@ -41,7 +39,7 @@ export class TestQualificationWorkspaceService {
   }
 
   async getTestQualification(id: string): Promise<TestQualificationDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -77,7 +75,7 @@ export class TestQualificationWorkspaceService {
 
     await this.repository.save(entity);
 
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
@@ -118,7 +116,7 @@ export class TestQualificationWorkspaceService {
     isImport: boolean = false,
   ): Promise<TestQualificationRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOne(id);
+    const record = await this.repository.findOneBy({ id });
 
     if (!record) {
       throw new EaseyException(
@@ -172,7 +170,7 @@ export class TestQualificationWorkspaceService {
     let historicalRecord: TestQualification;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
+      historicalRecord = await this.historicalRepo.findOneBy({
         testSumId: testSumId,
         testClaimCode: payload.testClaimCode,
         highLoadPercentage: payload.highLoadPercentage,
