@@ -9,6 +9,7 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
 import { RataWorkspaceModule } from '../rata-workspace/rata-workspace.module';
 import { RataSummaryChecksService } from './rata-summary-checks.service';
 import { RataSummaryModule } from '../rata-summary/rata-summary.module';
+import { RataSummaryRepository } from '../rata-summary/rata-summary.repository';
 import { RataRunWorkspaceModule } from '../rata-run-workspace/rata-run-workspace.module';
 import { ReferenceMethodCodeRepository } from '../reference-method-code/reference-method-code.repository';
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
@@ -19,6 +20,7 @@ import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/mo
   imports: [
     TypeOrmModule.forFeature([
       RataSummaryWorkspaceRepository,
+      RataSummaryRepository,
       ReferenceMethodCodeRepository,
       QAMonitorPlanWorkspaceRepository,
       LocationWorkspaceRepository,
@@ -37,6 +39,7 @@ import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/mo
     QAMonitorPlanWorkspaceRepository,
     RataSummaryChecksService,
     RataSummaryMap,
+    RataSummaryRepository,
     RataSummaryWorkspaceRepository,
     RataSummaryWorkspaceService,
     ReferenceMethodCodeRepository,

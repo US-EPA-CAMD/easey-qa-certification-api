@@ -9,4 +9,4 @@ import { QAMonitorPlanWorkspaceRepository } from './qa-monitor-plan.repository';
   providers: [QAMonitorPlanWorkspaceRepository],
   exports: [TypeOrmModule],
 })
-export class QASuppDataWorkspaceModule {}
+export class QAMonitorPlanWorkspaceModule {}

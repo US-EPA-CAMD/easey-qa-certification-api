@@ -28,6 +28,7 @@ import { TestSummaryService } from './test-summary.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([TestSummaryRepository]),
+
     LinearitySummaryModule,
     LinearityInjectionModule,
     ProtocolGasModule,
