@@ -28,6 +28,7 @@ import { AirEmissionTestingRepository } from '../air-emission-testing/air-emissi
   exports: [
     TypeOrmModule,
     AirEmissionTestingMap,
+    AirEmissionTestingWorkspaceRepository,
     AirEmissionTestingWorkspaceService,
     AirEmissionTestingChecksService,
   ],

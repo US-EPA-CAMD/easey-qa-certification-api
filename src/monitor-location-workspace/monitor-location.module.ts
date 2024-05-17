@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { LocationChecksService } from './monitor-location-checks.service';
@@ -8,10 +8,10 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
 @Module({
   imports: [
     TypeOrmModule.forFeature([LocationWorkspaceRepository]),
-    TestSummaryWorkspaceModule,
+    forwardRef(() => TestSummaryWorkspaceModule),
   ],
   controllers: [],
   providers: [LocationWorkspaceRepository, LocationChecksService],
-  exports: [TypeOrmModule, LocationChecksService],
+  exports: [TypeOrmModule, LocationWorkspaceRepository, LocationChecksService],
 })
 export class LocationWorkspaceModule {}

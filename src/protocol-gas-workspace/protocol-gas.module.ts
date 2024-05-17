@@ -2,10 +2,10 @@ import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { GasComponentCodeRepository } from '../gas-component-code/gas-component-code.repository';
+import { ComponentModule } from '../component-workspace/component.module';
+import { GasComponentCodeModule } from '../gas-component-code/gas-component-code.module';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { MonitorSystemWorkspaceModule } from '../monitor-system-workspace/monitor-system-workspace.module';
 import { ProtocolGasModule } from '../protocol-gas/protocol-gas.module';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { ProtocolGasChecksService } from './protocol-gas-checks.service';
@@ -15,21 +15,16 @@ import { ProtocolGasWorkspaceService } from './protocol-gas.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      ProtocolGasWorkspaceRepository,
-      GasComponentCodeRepository,
-      MonitorSystemWorkspaceRepository,
-      ComponentWorkspaceRepository,
-    ]),
+    TypeOrmModule.forFeature([ProtocolGasWorkspaceRepository]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => ProtocolGasModule),
     HttpModule,
+    GasComponentCodeModule,
+    MonitorSystemWorkspaceModule,
+    ComponentModule,
   ],
   controllers: [ProtocolGasWorkspaceController],
   providers: [
-    ComponentWorkspaceRepository,
-    GasComponentCodeRepository,
-    MonitorSystemWorkspaceRepository,
     ProtocolGasMap,
     ProtocolGasChecksService,
     ProtocolGasWorkspaceRepository,
@@ -38,6 +33,7 @@ import { ProtocolGasWorkspaceService } from './protocol-gas.service';
   exports: [
     TypeOrmModule,
     ProtocolGasMap,
+    ProtocolGasWorkspaceRepository,
     ProtocolGasWorkspaceService,
     ProtocolGasChecksService,
   ],

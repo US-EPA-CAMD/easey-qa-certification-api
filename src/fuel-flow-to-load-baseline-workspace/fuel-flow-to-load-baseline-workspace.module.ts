@@ -24,6 +24,7 @@ import { FuelFlowToLoadBaselineModule } from '../fuel-flow-to-load-baseline/fuel
   exports: [
     TypeOrmModule,
     FuelFlowToLoadBaselineMap,
+    FuelFlowToLoadBaselineWorkspaceRepository,
     FuelFlowToLoadBaselineWorkspaceService,
   ],
 })

@@ -17,6 +17,7 @@ import { FuelFlowToLoadBaselineService } from './fuel-flow-to-load-baseline.serv
   exports: [
     TypeOrmModule,
     FuelFlowToLoadBaselineMap,
+    FuelFlowToLoadBaselineRepository,
     FuelFlowToLoadBaselineService,
   ],
 })

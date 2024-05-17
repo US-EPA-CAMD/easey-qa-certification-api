@@ -26,6 +26,7 @@ import { CycleTimeSummaryWorkspaceService } from './cycle-time-summary-workspace
   ],
   exports: [
     TypeOrmModule,
+    CycleTimeSummaryWorkspaceRepository,
     CycleTimeSummaryMap,
     CycleTimeSummaryWorkspaceService,
   ],

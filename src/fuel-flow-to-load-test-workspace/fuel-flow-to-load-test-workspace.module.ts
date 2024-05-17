@@ -25,6 +25,7 @@ import { FuelFlowToLoadTestWorkspaceService } from './fuel-flow-to-load-test-wor
   exports: [
     TypeOrmModule,
     FuelFlowToLoadTestMap,
+    FuelFlowToLoadTestWorkspaceRepository,
     FuelFlowToLoadTestWorkspaceService,
   ],
 })

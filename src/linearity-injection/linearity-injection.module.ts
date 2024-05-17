@@ -14,6 +14,11 @@ import { LinearityInjectionService } from './linearity-injection.service';
     LinearityInjectionRepository,
     LinearityInjectionService,
   ],
-  exports: [TypeOrmModule, LinearityInjectionMap, LinearityInjectionService],
+  exports: [
+    TypeOrmModule,
+    LinearityInjectionMap,
+    LinearityInjectionRepository,
+    LinearityInjectionService,
+  ],
 })
 export class LinearityInjectionModule {}

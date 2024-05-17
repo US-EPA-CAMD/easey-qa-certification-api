@@ -25,6 +25,7 @@ import { FuelFlowmeterAccuracyWorkspaceService } from './fuel-flowmeter-accuracy
   exports: [
     TypeOrmModule,
     FuelFlowmeterAccuracyMap,
+    FuelFlowmeterAccuracyWorkspaceRepository,
     FuelFlowmeterAccuracyWorkspaceService,
   ],
 })

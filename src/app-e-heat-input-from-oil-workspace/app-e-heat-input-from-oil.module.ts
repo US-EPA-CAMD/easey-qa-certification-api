@@ -30,6 +30,7 @@ import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oi
   ],
   exports: [
     TypeOrmModule,
+    AppEHeatInputFromOilWorkspaceRepository,
     AppEHeatInputFromOilMap,
     AppEHeatInputFromOilWorkspaceService,
     AppEHeatInputFromOilChecksService,

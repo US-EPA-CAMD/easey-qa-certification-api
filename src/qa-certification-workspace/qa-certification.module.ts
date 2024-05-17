@@ -96,6 +96,13 @@ import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-revie
     MatsBulkFileMap,
   ],
   exports: [
+    CertEventReviewAndSubmitRepository,
+    TestSummaryReviewAndSubmitRepository,
+    TeeReviewAndSubmitRepository,
+    MatsBulkFilesReviewAndSubmitRepository,
+    CertEventReviewAndSubmitGlobalRepository,
+    TeeReviewAndSubmitGlobalRepository,
+    TestSummaryReviewAndSubmitGlobalRepository,
     QACertificationChecksService,
     QACertificationWorkspaceService,
     CertEventReviewAndSubmitService,

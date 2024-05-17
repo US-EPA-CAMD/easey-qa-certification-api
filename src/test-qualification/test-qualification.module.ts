@@ -18,6 +18,11 @@ import { TestQualificationService } from './test-qualification.service';
     TestQualificationRepository,
     TestQualificationService,
   ],
-  exports: [TypeOrmModule, TestQualificationMap, TestQualificationService],
+  exports: [
+    TypeOrmModule,
+    TestQualificationMap,
+    TestQualificationRepository,
+    TestQualificationService,
+  ],
 })
 export class TestQualificationModule {}

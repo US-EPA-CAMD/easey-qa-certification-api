@@ -18,6 +18,11 @@ import { FlowToLoadReferenceService } from './flow-to-load-reference.service';
     FlowToLoadReferenceRepository,
     FlowToLoadReferenceService,
   ],
-  exports: [TypeOrmModule, FlowToLoadReferenceMap, FlowToLoadReferenceService],
+  exports: [
+    TypeOrmModule,
+    FlowToLoadReferenceMap,
+    FlowToLoadReferenceRepository,
+    FlowToLoadReferenceService,
+  ],
 })
 export class FlowToLoadReferenceModule {}

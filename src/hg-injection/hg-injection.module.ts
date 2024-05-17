@@ -10,6 +10,11 @@ import { HgInjectionService } from './hg-injection.service';
   imports: [TypeOrmModule.forFeature([HgInjectionRepository])],
   controllers: [HgInjectionController],
   providers: [HgInjectionMap, HgInjectionRepository, HgInjectionService],
-  exports: [TypeOrmModule, HgInjectionMap, HgInjectionService],
+  exports: [
+    TypeOrmModule,
+    HgInjectionMap,
+    HgInjectionRepository,
+    HgInjectionService,
+  ],
 })
 export class HgInjectionModule {}

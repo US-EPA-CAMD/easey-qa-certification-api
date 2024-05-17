@@ -13,6 +13,11 @@ import { FlowToLoadCheckService } from './flow-to-load-check.service';
     FlowToLoadCheckRepository,
     FlowToLoadCheckService,
   ],
-  exports: [TypeOrmModule, FlowToLoadCheckMap, FlowToLoadCheckService],
+  exports: [
+    TypeOrmModule,
+    FlowToLoadCheckMap,
+    FlowToLoadCheckRepository,
+    FlowToLoadCheckService,
+  ],
 })
 export class FlowToLoadCheckModule {}

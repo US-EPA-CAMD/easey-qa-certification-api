@@ -29,6 +29,7 @@ import { LinearityInjectionWorkspaceService } from './linearity-injection.servic
   exports: [
     TypeOrmModule,
     LinearityInjectionMap,
+    LinearityInjectionWorkspaceRepository,
     LinearityInjectionWorkspaceService,
     LinearityInjectionChecksService,
   ],

@@ -11,14 +11,11 @@ import { RataRunChecksService } from './rata-run-checks.service';
 import { RataRunWorkspaceController } from './rata-run-workspace.controller';
 import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
 import { RataRunWorkspaceService } from './rata-run-workspace.service';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
-import { RataRunRepository } from '../rata-run/rata-run.repository';
 import { MonitorSystemModule } from '../monitor-system/monitor-system.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([RataRunWorkspaceRepository]),
-
     forwardRef(() => RataRunModule),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => RataSummaryWorkspaceModule),
@@ -31,13 +28,12 @@ import { MonitorSystemModule } from '../monitor-system/monitor-system.module';
     RataRunWorkspaceRepository,
     RataRunWorkspaceService,
     RataRunMap,
-    RataRunRepository,
-    MonitorSystemRepository,
     RataRunChecksService,
   ],
   exports: [
     TypeOrmModule,
     RataRunMap,
+    RataRunWorkspaceRepository,
     RataRunWorkspaceService,
     RataRunChecksService,
   ],

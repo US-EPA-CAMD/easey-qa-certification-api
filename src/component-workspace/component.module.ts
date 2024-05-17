@@ -7,6 +7,6 @@ import { ComponentWorkspaceRepository } from './component.repository';
   imports: [TypeOrmModule.forFeature([ComponentWorkspaceRepository])],
   controllers: [],
   providers: [ComponentWorkspaceRepository],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, ComponentWorkspaceRepository],
 })
 export class ComponentModule {}
