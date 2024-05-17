@@ -65,7 +65,7 @@ export class AppEHeatInputFromOilWorkspaceService {
     isImport: boolean = false,
     historicalRecordId?: string,
   ): Promise<AppEHeatInputFromOilRecordDTO> {
-    const timestamp = currentDateTime().toLocaleDateString();
+    const timestamp = currentDateTime().toISOString();
 
     const system = await this.monSysWorkspaceRepository.findOneBy({
       locationId: locationId,
