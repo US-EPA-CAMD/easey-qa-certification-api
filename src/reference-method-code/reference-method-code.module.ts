@@ -6,6 +6,6 @@ import { ReferenceMethodCodeRepository } from './reference-method-code.repositor
   imports: [TypeOrmModule.forFeature([ReferenceMethodCodeRepository])],
   controllers: [],
   providers: [ReferenceMethodCodeRepository],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, ReferenceMethodCodeRepository],
 })
 export class ReferenceMethodCodeModule {}

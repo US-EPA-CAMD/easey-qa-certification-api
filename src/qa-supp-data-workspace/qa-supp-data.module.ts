@@ -8,6 +8,10 @@ import { QASuppDataWorkspaceService } from './qa-supp-data.service';
   imports: [TypeOrmModule.forFeature([QASuppDataWorkspaceRepository])],
   controllers: [],
   providers: [QASuppDataWorkspaceRepository, QASuppDataWorkspaceService],
-  exports: [TypeOrmModule, QASuppDataWorkspaceService],
+  exports: [
+    TypeOrmModule,
+    QASuppDataWorkspaceRepository,
+    QASuppDataWorkspaceService,
+  ],
 })
 export class QASuppDataWorkspaceModule {}

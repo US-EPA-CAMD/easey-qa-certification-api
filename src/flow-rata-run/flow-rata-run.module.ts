@@ -16,6 +16,11 @@ import { FlowRataRunService } from './flow-rata-run.service';
   ],
   controllers: [FlowRataRunController],
   providers: [FlowRataRunRepository, FlowRataRunService, FlowRataRunMap],
-  exports: [TypeOrmModule, FlowRataRunMap, FlowRataRunService],
+  exports: [
+    TypeOrmModule,
+    FlowRataRunRepository,
+    FlowRataRunMap,
+    FlowRataRunService,
+  ],
 })
 export class FlowRataRunModule {}

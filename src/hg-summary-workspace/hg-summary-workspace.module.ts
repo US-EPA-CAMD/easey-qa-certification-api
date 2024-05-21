@@ -23,6 +23,11 @@ import { HgInjectionWorkspaceModule } from '../hg-injection-workspace/hg-injecti
     HgSummaryWorkspaceRepository,
     HgSummaryWorkspaceService,
   ],
-  exports: [TypeOrmModule, HgSummaryMap, HgSummaryWorkspaceService],
+  exports: [
+    TypeOrmModule,
+    HgSummaryMap,
+    HgSummaryWorkspaceRepository,
+    HgSummaryWorkspaceService,
+  ],
 })
 export class HgSummaryWorkspaceModule {}

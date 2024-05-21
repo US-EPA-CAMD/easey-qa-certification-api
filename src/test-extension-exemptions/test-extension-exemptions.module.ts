@@ -20,6 +20,7 @@ import { TestExtensionExemptionsService } from './test-extension-exemptions.serv
   ],
   exports: [
     TypeOrmModule,
+    TestExtensionExemptionsRepository,
     TestExtensionExemptionMap,
     TestExtensionExemptionsService,
   ],

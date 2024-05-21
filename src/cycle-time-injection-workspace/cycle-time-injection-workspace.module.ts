@@ -29,6 +29,7 @@ import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-works
   exports: [
     TypeOrmModule,
     CycleTimeInjectionMap,
+    CycleTimeInjectionWorkspaceRepository,
     CycleTimeInjectionWorkspaceService,
     CycleTimeInjectionChecksService,
   ],

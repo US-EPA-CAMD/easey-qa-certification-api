@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { LinearityInjectionWorkspaceModule } from '../linearity-injection-workspace/linearity-injection.module';
 import { LinearitySummaryModule } from '../linearity-summary/linearity-summary.module';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
-import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
+import { TestSummaryMasterDataRelationshipModule } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.module';
 import { TestSummaryWorkspaceModule } from './../test-summary-workspace/test-summary.module';
 import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
 import { LinearitySummaryWorkspaceController } from './linearity-summary.controller';
@@ -14,14 +14,12 @@ import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      LinearitySummaryWorkspaceRepository,
-      TestSummaryMasterDataRelationshipRepository,
-    ]),
+    TypeOrmModule.forFeature([LinearitySummaryWorkspaceRepository]),
     forwardRef(() => LinearitySummaryModule),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => LinearityInjectionWorkspaceModule),
     HttpModule,
+    TestSummaryMasterDataRelationshipModule,
   ],
   controllers: [LinearitySummaryWorkspaceController],
   providers: [
@@ -29,10 +27,10 @@ import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
     LinearitySummaryWorkspaceRepository,
     LinearitySummaryWorkspaceService,
     LinearitySummaryChecksService,
-    TestSummaryMasterDataRelationshipRepository,
   ],
   exports: [
     TypeOrmModule,
+    LinearitySummaryWorkspaceRepository,
     LinearitySummaryMap,
     LinearitySummaryWorkspaceService,
     LinearitySummaryChecksService,

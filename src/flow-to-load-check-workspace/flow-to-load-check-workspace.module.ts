@@ -22,6 +22,11 @@ import { FlowToLoadCheckWorkspaceService } from './flow-to-load-check-workspace.
     FlowToLoadCheckWorkspaceRepository,
     FlowToLoadCheckWorkspaceService,
   ],
-  exports: [TypeOrmModule, FlowToLoadCheckMap, FlowToLoadCheckWorkspaceService],
+  exports: [
+    TypeOrmModule,
+    FlowToLoadCheckMap,
+    FlowToLoadCheckWorkspaceRepository,
+    FlowToLoadCheckWorkspaceService,
+  ],
 })
 export class FlowToLoadCheckWorkspaceModule {}

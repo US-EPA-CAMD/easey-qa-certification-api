@@ -7,6 +7,6 @@ import { ReportingPeriodRepository } from './reporting-period.repository';
   imports: [TypeOrmModule.forFeature([ReportingPeriodRepository])],
   controllers: [],
   providers: [ReportingPeriodRepository],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, ReportingPeriodRepository],
 })
 export class ReportingPeriodModule {}

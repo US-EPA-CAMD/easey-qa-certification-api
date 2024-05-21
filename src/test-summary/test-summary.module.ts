@@ -50,6 +50,11 @@ import { TestSummaryService } from './test-summary.service';
   ],
   controllers: [TestSummaryController],
   providers: [TestSummaryMap, TestSummaryRepository, TestSummaryService],
-  exports: [TypeOrmModule, TestSummaryMap, TestSummaryService],
+  exports: [
+    TypeOrmModule,
+    TestSummaryMap,
+    TestSummaryRepository,
+    TestSummaryService,
+  ],
 })
 export class TestSummaryModule {}

@@ -18,6 +18,11 @@ import { UnitDefaultTestService } from './unit-default-test.service';
     UnitDefaultTestRepository,
     UnitDefaultTestService,
   ],
-  exports: [TypeOrmModule, UnitDefaultTestMap, UnitDefaultTestService],
+  exports: [
+    TypeOrmModule,
+    UnitDefaultTestMap,
+    UnitDefaultTestRepository,
+    UnitDefaultTestService,
+  ],
 })
 export class UnitDefaultTestModule {}

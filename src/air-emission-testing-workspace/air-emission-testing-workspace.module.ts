@@ -8,6 +8,7 @@ import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summa
 import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
 import { AirEmissionTestingChecksService } from './air-emission-testing-checks.service';
 import { AirEmissionTestingModule } from '../air-emission-testing/air-emission-testing.module';
+import { AirEmissionTestingRepository } from '../air-emission-testing/air-emission-testing.repository';
 
 @Module({
   imports: [
@@ -22,10 +23,12 @@ import { AirEmissionTestingModule } from '../air-emission-testing/air-emission-t
     AirEmissionTestingWorkspaceRepository,
     AirEmissionTestingWorkspaceService,
     AirEmissionTestingChecksService,
+    AirEmissionTestingRepository,
   ],
   exports: [
     TypeOrmModule,
     AirEmissionTestingMap,
+    AirEmissionTestingWorkspaceRepository,
     AirEmissionTestingWorkspaceService,
     AirEmissionTestingChecksService,
   ],
