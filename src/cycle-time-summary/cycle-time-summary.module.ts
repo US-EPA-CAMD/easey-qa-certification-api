@@ -18,6 +18,11 @@ import { CycleTimeSummaryService } from './cycle-time-summary.service';
     CycleTimeSummaryRepository,
     CycleTimeSummaryService,
   ],
-  exports: [TypeOrmModule, CycleTimeSummaryMap, CycleTimeSummaryService],
+  exports: [
+    TypeOrmModule,
+    CycleTimeSummaryMap,
+    CycleTimeSummaryRepository,
+    CycleTimeSummaryService,
+  ],
 })
 export class CycleTimeSummaryModule {}

@@ -14,6 +14,11 @@ import { UnitDefaultTestRunService } from './unit-default-test-run.service';
     UnitDefaultTestRunRepository,
     UnitDefaultTestRunService,
   ],
-  exports: [TypeOrmModule, UnitDefaultTestRunMap, UnitDefaultTestRunService],
+  exports: [
+    TypeOrmModule,
+    UnitDefaultTestRunMap,
+    UnitDefaultTestRunRepository,
+    UnitDefaultTestRunService,
+  ],
 })
 export class UnitDefaultTestRunModule {}

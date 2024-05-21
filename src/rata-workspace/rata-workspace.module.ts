@@ -3,6 +3,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { RataMap } from '../maps/rata.map';
+import { MonitorSystemModule } from '../monitor-system/monitor-system.module';
 import { RataFrequencyCodeModule } from '../rata-frequency-code/rata-frequency-code.module';
 import { RataSummaryWorkspaceModule } from '../rata-summary-workspace/rata-summary-workspace.module';
 import { RataModule } from '../rata/rata.module';
@@ -16,20 +17,27 @@ import { RataWorkspaceService } from './rata-workspace.service';
 @Module({
   imports: [
     TypeOrmModule.forFeature([RataWorkspaceRepository]),
-    forwardRef(() => TestSummaryWorkspaceModule),
-    forwardRef(() => RataSummaryWorkspaceModule),
-    forwardRef(() => RataModule),
-    RataFrequencyCodeModule,
-    TestResultCodeModule,
     HttpModule,
+    MonitorSystemModule,
+    RataFrequencyCodeModule,
+    forwardRef(() => RataModule),
+    forwardRef(() => RataSummaryWorkspaceModule),
+    forwardRef(() => TestSummaryWorkspaceModule),
+    TestResultCodeModule,
   ],
   controllers: [RataWorkspaceController],
   providers: [
+    RataWorkspaceRepository,
+    RataMap,
+    RataChecksService,
+    RataWorkspaceService,
+  ],
+  exports: [
+    TypeOrmModule,
     RataMap,
     RataWorkspaceRepository,
     RataChecksService,
     RataWorkspaceService,
   ],
-  exports: [TypeOrmModule, RataMap, RataChecksService, RataWorkspaceService],
 })
 export class RataWorkspaceModule {}

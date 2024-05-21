@@ -28,6 +28,7 @@ import { UnitDefaultTestRunWorkspaceService } from './unit-default-test-run.serv
   ],
   exports: [
     TypeOrmModule,
+    UnitDefaultTestRunWorkspaceRepository,
     UnitDefaultTestRunMap,
     UnitDefaultTestRunWorkspaceService,
     UnitDefaultTestRunChecksService,

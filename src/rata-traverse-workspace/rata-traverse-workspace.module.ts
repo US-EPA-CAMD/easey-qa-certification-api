@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FlowRataRunWorkspaceModule } from '../flow-rata-run-workspace/flow-rata-run-workspace.module';
 import { RataTraverseMap } from '../maps/rata-traverse.map';
+import { MonitorSystemModule } from '../monitor-system/monitor-system.module';
 import { RataSummaryWorkspaceModule } from '../rata-summary-workspace/rata-summary-workspace.module';
 import { RataTraverseModule } from '../rata-traverse/rata-traverse.module';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
@@ -20,6 +21,7 @@ import { RataTraverseWorkspaceService } from './rata-traverse-workspace.service'
     forwardRef(() => RataSummaryWorkspaceModule),
     forwardRef(() => FlowRataRunWorkspaceModule),
     HttpModule,
+    MonitorSystemModule,
   ],
   controllers: [RataTraverseWorkspaceController],
   providers: [
@@ -30,6 +32,7 @@ import { RataTraverseWorkspaceService } from './rata-traverse-workspace.service'
   ],
   exports: [
     TypeOrmModule,
+    RataTraverseWorkspaceRepository,
     RataTraverseMap,
     RataTraverseWorkspaceService,
     RataTraverseChecksService,

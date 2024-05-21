@@ -21,6 +21,7 @@ import { AppECorrelationTestSummaryService } from './app-e-correlation-test-summ
   exports: [
     TypeOrmModule,
     AppECorrelationTestSummaryMap,
+    AppendixETestSummaryRepository,
     AppECorrelationTestSummaryService,
   ],
 })

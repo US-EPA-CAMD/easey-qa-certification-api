@@ -18,6 +18,11 @@ import { AirEmissionTestingService } from './air-emission-testing.service';
     AirEmissionTestingRepository,
     AirEmissionTestingService,
   ],
-  exports: [TypeOrmModule, AirEmissionTestingMap, AirEmissionTestingService],
+  exports: [
+    TypeOrmModule,
+    AirEmissionTestingMap,
+    AirEmissionTestingRepository,
+    AirEmissionTestingService,
+  ],
 })
 export class AirEmissionTestingModule {}

@@ -10,6 +10,11 @@ import { RataTraverseService } from './rata-traverse.service';
   imports: [TypeOrmModule.forFeature([RataTraverseRepository])],
   controllers: [RataTraverseController],
   providers: [RataTraverseRepository, RataTraverseService, RataTraverseMap],
-  exports: [TypeOrmModule, RataTraverseMap, RataTraverseService],
+  exports: [
+    TypeOrmModule,
+    RataTraverseRepository,
+    RataTraverseMap,
+    RataTraverseService,
+  ],
 })
 export class RataTraverseModule {}

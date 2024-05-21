@@ -74,7 +74,7 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     isImport: boolean = false,
     historicalRecordId?: string,
   ): Promise<TransmitterTransducerAccuracyRecordDTO> {
-    const timestamp = currentDateTime().toLocaleDateString();
+    const timestamp = currentDateTime().toISOString();
 
     let entity = this.repository.create({
       ...payload,

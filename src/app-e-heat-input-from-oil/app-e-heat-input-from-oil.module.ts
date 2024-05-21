@@ -16,6 +16,7 @@ import { AppEHeatInputFromOilService } from './app-e-heat-input-from-oil.service
   ],
   exports: [
     TypeOrmModule,
+    AppEHeatInputFromOilRepository,
     AppEHeatInputFromOilMap,
     AppEHeatInputFromOilService,
   ],

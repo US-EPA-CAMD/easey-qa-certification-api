@@ -32,6 +32,7 @@ import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
   ],
   exports: [
     TypeOrmModule,
+    FlowRataRunWorkspaceRepository,
     FlowRataRunMap,
     FlowRataRunWorkspaceService,
     FlowRataRunChecksService,

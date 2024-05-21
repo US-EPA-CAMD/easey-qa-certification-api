@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 
@@ -12,6 +12,7 @@ export class RataRunService {
   constructor(
     private readonly repository: RataRunRepository,
     private readonly map: RataRunMap,
+    @Inject(forwardRef(() => FlowRataRunService))
     private readonly flowRataRunService: FlowRataRunService,
   ) {}
 

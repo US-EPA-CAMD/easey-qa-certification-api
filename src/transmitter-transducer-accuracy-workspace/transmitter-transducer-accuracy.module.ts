@@ -27,6 +27,7 @@ import { TransmitterTransducerAccuracyWorkspaceService } from './transmitter-tra
   exports: [
     TypeOrmModule,
     TransmitterTransducerAccuracyMap,
+    TransmitterTransducerAccuracyWorkspaceRepository,
     TransmitterTransducerAccuracyWorkspaceService,
   ],
 })

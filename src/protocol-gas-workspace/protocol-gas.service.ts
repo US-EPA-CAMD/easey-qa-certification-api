@@ -54,7 +54,7 @@ export class ProtocolGasWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<ProtocolGasRecordDTO> {
-    const timestamp = currentDateTime().toLocaleDateString();
+    const timestamp = currentDateTime().toISOString();
 
     let entity = this.repository.create({
       ...payload,

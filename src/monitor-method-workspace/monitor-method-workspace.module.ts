@@ -7,6 +7,6 @@ import { MonitorMethodWorkspaceRepository } from './monitor-method-workspace.rep
   imports: [TypeOrmModule.forFeature([MonitorMethodWorkspaceRepository])],
   controllers: [],
   providers: [MonitorMethodWorkspaceRepository],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, MonitorMethodWorkspaceRepository],
 })
 export class MonitorMethodWorkspaceModule {}
