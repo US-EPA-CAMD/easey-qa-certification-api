@@ -2,7 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In } from 'typeorm';
+import { In, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { CycleTimeInjectionWorkspaceService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace.service';
@@ -191,7 +191,7 @@ export class CycleTimeSummaryWorkspaceService {
     if (isHistoricalRecord) {
       historicalRecord = await this.historicalRepository.findOneBy({
         testSumId: testSumId,
-        totalTime: payload.totalTime,
+        totalTime: payload.totalTime ?? IsNull(),
       });
     }
 

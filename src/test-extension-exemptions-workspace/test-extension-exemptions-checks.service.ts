@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { IsNull } from 'typeorm';
 
 import {
   TestExtensionExemptionBaseDTO,
@@ -111,11 +112,11 @@ export class TestExtensionExemptionsChecksService {
 
       testExtExempts = await this.repository.findBy({
         locationId,
-        reportPeriodId,
-        monitoringSystemRecordId,
-        componentRecordId,
+        reportPeriodId: reportPeriodId ?? IsNull(),
+        monitoringSystemRecordId: monitoringSystemRecordId ?? IsNull(),
+        componentRecordId: componentRecordId ?? IsNull(),
         extensionOrExemptionCode,
-        fuelCode,
+        fuelCode: fuelCode ?? IsNull(),
       });
 
       if (testExtExempts.length > 0) {
