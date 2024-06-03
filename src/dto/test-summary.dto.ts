@@ -280,7 +280,7 @@ export class TestSummaryBaseDTO {
       return `The value of [${args.value}] for [${args.property}] must be 1 to 3 characters and only consist of upper case letters, numbers for [${KEY}].`;
     },
   })
-  componentId?: string;
+  componentId: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSpanDTOSpanScaleCode.description,

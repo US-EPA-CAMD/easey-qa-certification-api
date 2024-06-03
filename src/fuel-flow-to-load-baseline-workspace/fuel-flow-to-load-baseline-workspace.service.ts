@@ -2,7 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In } from 'typeorm';
+import { In, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -176,7 +176,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     if (isHistoricalRecord) {
       historicalRecord = await this.historicalRepo.findOneBy({
         testSumId: testSumId,
-        accuracyTestNumber: payload.accuracyTestNumber,
+        accuracyTestNumber: payload.accuracyTestNumber ?? IsNull(),
       });
     }
 

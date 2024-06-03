@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { IsNull } from 'typeorm';
 
 const moment = require('moment');
 
@@ -1333,7 +1334,7 @@ export class TestSummaryChecksService {
       [TestTypeCodes.LINE.toString()].includes(summary.testTypeCode)
     ) {
       const option = await this.testResultCodeRepository.findOneBy({
-        testResultCode: summary.testResultCode,
+        testResultCode: summary.testResultCode ?? IsNull(),
       });
 
       if (option) {
@@ -1372,7 +1373,7 @@ export class TestSummaryChecksService {
       ].includes(summary.testTypeCode)
     ) {
       const option = await this.testResultCodeRepository.findOneBy({
-        testResultCode: summary.testResultCode,
+        testResultCode: summary.testResultCode ?? IsNull(),
       });
 
       if (option) {

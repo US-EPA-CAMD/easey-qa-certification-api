@@ -2,7 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In } from 'typeorm';
+import { In, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { CalibrationInjectionRepository } from '../calibration-injection/calibration-injection.repository';
@@ -188,13 +188,13 @@ export class CalibrationInjectionWorkspaceService {
     if (isHistoricalRecord) {
       historicalRecord = await this.historicalRepository.findOneBy({
         testSumId: testSumId,
-        upscaleGasLevelCode: payload.upscaleGasLevelCode,
-        zeroInjectionDate: payload.zeroInjectionDate,
-        zeroInjectionHour: payload.zeroInjectionHour,
-        zeroInjectionMinute: payload.zeroInjectionMinute,
-        upscaleInjectionDate: payload.upscaleInjectionDate,
-        upscaleInjectionHour: payload.upscaleInjectionHour,
-        upscaleInjectionMinute: payload.upscaleInjectionMinute,
+        upscaleGasLevelCode: payload.upscaleGasLevelCode ?? IsNull(),
+        zeroInjectionDate: payload.zeroInjectionDate ?? IsNull(),
+        zeroInjectionHour: payload.zeroInjectionHour ?? IsNull(),
+        zeroInjectionMinute: payload.zeroInjectionMinute ?? IsNull(),
+        upscaleInjectionDate: payload.upscaleInjectionDate ?? IsNull(),
+        upscaleInjectionHour: payload.upscaleInjectionHour ?? IsNull(),
+        upscaleInjectionMinute: payload.upscaleInjectionMinute ?? IsNull(),
       });
     }
 

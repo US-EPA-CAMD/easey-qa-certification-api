@@ -141,13 +141,13 @@ export class RataSummaryChecksService {
       summary.endDate,
     );
 
-    const referenceMethodCodeDataSet = await this.referenceMethodCodeRepository.find(
-      {
-        where: {
-          referenceMethodCode,
-        },
-      },
-    );
+    const referenceMethodCodeDataSet = referenceMethodCode
+      ? await this.referenceMethodCodeRepository.find({
+          where: {
+            referenceMethodCode,
+          },
+        })
+      : [];
 
     const parameterCodes = referenceMethodCodeDataSet.reduce((acc, ds) => {
       const paramCodes = ds.parameterCode.split(',');

@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { IsNull } from 'typeorm';
 
 import {
   LinearityInjectionBaseDTO,
@@ -116,7 +117,7 @@ export class LinearityInjectionChecksService {
         {
           linSumId: linSumId,
           injectionDate: linearityInjection.injectionDate,
-          injectionHour: linearityInjection.injectionHour,
+          injectionHour: linearityInjection.injectionHour ?? IsNull(),
           injectionMinute: linearityInjection.injectionMinute,
         },
       );
