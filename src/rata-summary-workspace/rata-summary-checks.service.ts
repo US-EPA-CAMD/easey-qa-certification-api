@@ -1,24 +1,23 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { TestSummaryImportDTO } from '../dto/test-summary.dto';
-import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import {
   RataSummaryBaseDTO,
   RataSummaryImportDTO,
 } from '../dto/rata-summary.dto';
-import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
+import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
 import { RataSummary } from '../entities/workspace/rata-summary.entity';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { LocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
 import { ReferenceMethodCodeRepository } from '../reference-method-code/reference-method-code.repository';
-import { LocationWorkspaceRepository } from '../monitor-location-workspace/monitor-location.repository';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
+import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 
 const KEY = 'RATA Summary';
 
@@ -26,17 +25,11 @@ const KEY = 'RATA Summary';
 export class RataSummaryChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(RataSummaryWorkspaceRepository)
     private readonly repository: RataSummaryWorkspaceRepository,
-    @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
-    @InjectRepository(MonitorSystemWorkspaceRepository)
     private readonly monitorSystemRepository: MonitorSystemWorkspaceRepository,
-    @InjectRepository(QAMonitorPlanWorkspaceRepository)
     private readonly qaMonitorPlanRepository: QAMonitorPlanWorkspaceRepository,
-    @InjectRepository(ReferenceMethodCodeRepository)
     private readonly referenceMethodCodeRepository: ReferenceMethodCodeRepository,
-    @InjectRepository(LocationWorkspaceRepository)
     private readonly monitorLocationRepository: LocationWorkspaceRepository,
   ) {}
 
@@ -67,7 +60,7 @@ export class RataSummaryChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-      testSumRecord.system = await this.monitorSystemRepository.findOne({
+      testSumRecord.system = await this.monitorSystemRepository.findOneBy({
         monitoringSystemID: testSummary.monitoringSystemId,
         locationId: locationId,
       });
@@ -148,13 +141,13 @@ export class RataSummaryChecksService {
       summary.endDate,
     );
 
-    const referenceMethodCodeDataSet = await this.referenceMethodCodeRepository.find(
-      {
-        where: {
-          referenceMethodCode,
-        },
-      },
-    );
+    const referenceMethodCodeDataSet = referenceMethodCode
+      ? await this.referenceMethodCodeRepository.find({
+          where: {
+            referenceMethodCode,
+          },
+        })
+      : [];
 
     const parameterCodes = referenceMethodCodeDataSet.reduce((acc, ds) => {
       const paramCodes = ds.parameterCode.split(',');
@@ -238,7 +231,7 @@ export class RataSummaryChecksService {
     let duplicates: RataSummary[] | RataSummaryBaseDTO[];
 
     if (rataId && !isImport) {
-      duplicates = await this.repository.find({
+      duplicates = await this.repository.findBy({
         rataId: rataId,
         operatingLevelCode: rataSummary.operatingLevelCode,
       });

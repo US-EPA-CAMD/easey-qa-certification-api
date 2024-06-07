@@ -1,32 +1,30 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { RataTraverseMap } from '../maps/rata-traverse.map';
-import { RataTraverseWorkspaceRepository } from './rata-traverse-workspace.repository';
+import { In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+
 import {
   RataTraverseBaseDTO,
   RataTraverseDTO,
   RataTraverseImportDTO,
   RataTraverseRecordDTO,
 } from '../dto/rata-traverse.dto';
-import { In } from 'typeorm';
 import { RataTraverse } from '../entities/rata-traverse.entity';
+import { RataTraverseMap } from '../maps/rata-traverse.map';
 import { RataTraverseRepository } from '../rata-traverse/rata-traverse.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { RataTraverseWorkspaceRepository } from './rata-traverse-workspace.repository';
 
 @Injectable()
 export class RataTraverseWorkspaceService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(RataTraverseWorkspaceRepository)
     private readonly repository: RataTraverseWorkspaceRepository,
     private readonly map: RataTraverseMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(RataTraverseRepository)
     private readonly historicalRepository: RataTraverseRepository,
   ) {}
 
@@ -39,7 +37,7 @@ export class RataTraverseWorkspaceService {
   }
 
   async getRataTraverse(id: string): Promise<RataTraverseRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -72,7 +70,7 @@ export class RataTraverseWorkspaceService {
 
     await this.repository.save(entity);
 
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
@@ -91,7 +89,7 @@ export class RataTraverseWorkspaceService {
     isImport: boolean = false,
   ): Promise<RataTraverseRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOne(rataTraverseId);
+    const record = await this.repository.findOneBy({ id: rataTraverseId });
 
     if (!record) {
       throw new EaseyException(
@@ -109,7 +107,8 @@ export class RataTraverseWorkspaceService {
     record.velocityCalibrationCoefficient =
       payload.velocityCalibrationCoefficient;
     record.lastProbeDate = payload.lastProbeDate;
-    record.averageVelocityDifferencePressure = payload.averageVelocityDifferencePressure;
+    record.averageVelocityDifferencePressure =
+      payload.averageVelocityDifferencePressure;
     record.averageSquareVelocityDifferencePressure =
       payload.averageSquareVelocityDifferencePressure;
     record.tStackTemperature = payload.tStackTemperature;
@@ -168,7 +167,7 @@ export class RataTraverseWorkspaceService {
     let historicalRecord: RataTraverse;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
+      historicalRecord = await this.historicalRepository.findOneBy({
         flowRataRunId: flowRataRunId,
         methodTraversePointId: payload.methodTraversePointId,
       });

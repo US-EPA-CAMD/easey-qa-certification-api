@@ -5,7 +5,7 @@ import { ReferenceMethodCodeRepository } from './reference-method-code.repositor
 @Module({
   imports: [TypeOrmModule.forFeature([ReferenceMethodCodeRepository])],
   controllers: [],
-  providers: [],
-  exports: [TypeOrmModule],
+  providers: [ReferenceMethodCodeRepository],
+  exports: [TypeOrmModule, ReferenceMethodCodeRepository],
 })
 export class ReferenceMethodCodeModule {}

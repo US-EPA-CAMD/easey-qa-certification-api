@@ -15,11 +15,13 @@ import { TransmitterTransducerAccuracyRepository } from './transmitter-transduce
   ],
   controllers: [TransmitterTransducerAccuracyController],
   providers: [
+    TransmitterTransducerAccuracyRepository,
     TransmitterTransducerAccuracyService,
     TransmitterTransducerAccuracyMap,
   ],
   exports: [
     TypeOrmModule,
+    TransmitterTransducerAccuracyRepository,
     TransmitterTransducerAccuracyMap,
     TransmitterTransducerAccuracyService,
   ],

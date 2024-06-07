@@ -13,7 +13,7 @@ import { HgInjectionModule } from '../hg-injection/hg-injection.module';
     forwardRef(() => HgInjectionModule),
   ],
   controllers: [HgSummaryController],
-  providers: [HgSummaryMap, HgSummaryService],
-  exports: [TypeOrmModule, HgSummaryMap, HgSummaryService],
+  providers: [HgSummaryMap, HgSummaryRepository, HgSummaryService],
+  exports: [TypeOrmModule, HgSummaryMap, HgSummaryRepository, HgSummaryService],
 })
 export class HgSummaryModule {}

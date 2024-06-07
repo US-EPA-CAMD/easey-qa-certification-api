@@ -1,7 +1,13 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { CalibrationInjection } from '../entities/workspace/calibration-injection.entity';
 
-@EntityRepository(CalibrationInjection)
+@Injectable()
 export class CalibrationInjectionWorkspaceRepository extends Repository<
   CalibrationInjection
-> {}
+> {
+  constructor(entityManager: EntityManager) {
+    super(CalibrationInjection, entityManager);
+  }
+}

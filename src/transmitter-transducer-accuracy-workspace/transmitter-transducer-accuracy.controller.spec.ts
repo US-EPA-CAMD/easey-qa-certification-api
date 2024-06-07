@@ -1,17 +1,18 @@
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-
-import { Test, TestingModule } from '@nestjs/testing';
 import { HttpModule } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
-import { TransmitterTransducerAccuracyWorkspaceService } from './transmitter-transducer-accuracy.service';
-import { TransmitterTransducerAccuracyWorkspaceController } from './transmitter-transducer-accuracy.controller';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import {
   TransmitterTransducerAccuracyBaseDTO,
   TransmitterTransducerAccuracyDTO,
   TransmitterTransducerAccuracyRecordDTO,
 } from '../dto/transmitter-transducer-accuracy.dto';
+import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
+import { TransmitterTransducerAccuracyWorkspaceController } from './transmitter-transducer-accuracy.controller';
+import { TransmitterTransducerAccuracyWorkspaceService } from './transmitter-transducer-accuracy.service';
 
 const locId = '';
 const testSumId = '';
@@ -57,6 +58,10 @@ describe('Transmitter Transducer Workspace Controller', () => {
         ConfigService,
         AuthGuard,
         TestSummaryWorkspaceModule,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: TransmitterTransducerAccuracyWorkspaceService,
           useFactory: mockService,

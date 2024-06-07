@@ -5,6 +5,7 @@ import { AnalyzerRangeWorkspaceRepository } from './analyzer-range.repository';
 @Module({
   imports: [TypeOrmModule.forFeature([AnalyzerRangeWorkspaceRepository])],
   controllers: [],
-  providers: [],
+  providers: [AnalyzerRangeWorkspaceRepository],
+  exports: [TypeOrmModule, AnalyzerRangeWorkspaceRepository],
 })
 export class AnalyzerRangeModule {}

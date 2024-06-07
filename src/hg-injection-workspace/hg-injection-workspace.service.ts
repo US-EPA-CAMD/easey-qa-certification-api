@@ -1,21 +1,21 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
 import {
   HgInjectionBaseDTO,
   HgInjectionDTO,
   HgInjectionImportDTO,
   HgInjectionRecordDTO,
 } from '../dto/hg-injection.dto';
-import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.repository';
-import { HgInjectionMap } from '../maps/hg-injection.map';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
 import { HgInjection } from '../entities/hg-injection.entity';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { HgInjectionRepository } from '../hg-injection/hg-injection.repository';
+import { HgInjectionMap } from '../maps/hg-injection.map';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.repository';
 
 @Injectable()
 export class HgInjectionWorkspaceService {
@@ -24,10 +24,7 @@ export class HgInjectionWorkspaceService {
     private readonly map: HgInjectionMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(HgInjectionWorkspaceRepository)
     private readonly repository: HgInjectionWorkspaceRepository,
-
-    @InjectRepository(HgInjectionRepository)
     private readonly historicalRepository: HgInjectionRepository,
   ) {}
 
@@ -38,7 +35,7 @@ export class HgInjectionWorkspaceService {
   }
 
   async getHgInjection(id: string) {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -71,7 +68,7 @@ export class HgInjectionWorkspaceService {
 
     await this.repository.save(entity);
 
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
@@ -90,7 +87,7 @@ export class HgInjectionWorkspaceService {
     isImport: boolean = false,
   ): Promise<HgInjectionRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -166,7 +163,7 @@ export class HgInjectionWorkspaceService {
     let historicalRecord: HgInjection;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
+      historicalRecord = await this.historicalRepository.findOneBy({
         hgTestSumId: hgTestSumId,
         injectionDate: payload.injectionDate,
         injectionHour: payload.injectionHour,

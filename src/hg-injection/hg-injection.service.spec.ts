@@ -1,18 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { HgInjectionDTO } from '../dto/hg-injection.dto';
 import { HgInjection } from '../entities/hg-injection.entity';
 import { HgInjectionMap } from '../maps/hg-injection.map';
-import { HgInjectionDTO } from '../dto/hg-injection.dto';
 import { HgInjectionRepository } from './hg-injection.repository';
 import { HgInjectionService } from './hg-injection.service';
 
-const id = '';
 const hgTestSumId = '';
 const entity = new HgInjection();
 const dto = new HgInjectionDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
 });
 
 const mockMap = () => ({
@@ -59,7 +59,7 @@ describe('HgInjectionService', () => {
     });
 
     it('Should throw error when a Hg Injection record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {

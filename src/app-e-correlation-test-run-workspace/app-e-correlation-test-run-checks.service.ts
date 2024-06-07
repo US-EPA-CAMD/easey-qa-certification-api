@@ -1,23 +1,21 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { InjectRepository } from '@nestjs/typeorm';
-import { AppECorrelationTestRunWorkspaceRepository } from './app-e-correlation-test-run-workspace.repository';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
+import { AppendixETestSummaryWorkspaceRepository } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.repository';
 import {
   AppECorrelationTestRunBaseDTO,
   AppECorrelationTestRunImportDTO,
 } from '../dto/app-e-correlation-test-run.dto';
-import { AppendixETestSummaryWorkspaceRepository } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.repository';
 import { AppECorrelationTestSummary } from '../entities/workspace/app-e-correlation-test-summary.entity';
+import { AppECorrelationTestRunWorkspaceRepository } from './app-e-correlation-test-run-workspace.repository';
 
 @Injectable()
 export class AppECorrelationTestRunChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(AppECorrelationTestRunWorkspaceRepository)
     private readonly repository: AppECorrelationTestRunWorkspaceRepository,
-    @InjectRepository(AppendixETestSummaryWorkspaceRepository)
     private readonly appETestSummaryRepository: AppendixETestSummaryWorkspaceRepository,
   ) {}
 
@@ -42,9 +40,9 @@ export class AppECorrelationTestRunChecksService {
 
     this.logger.log('Running Appendix E Test Run Checks');
 
-    const appETestSummary = await this.appETestSummaryRepository.findOne(
-      appETestSumId,
-    );
+    const appETestSummary = await this.appETestSummaryRepository.findOneBy({
+      id: appETestSumId,
+    });
 
     error = await this.appE49Check(appETestRunId, dto, appETestSummary);
     if (error) {

@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { MonitorSystemRepository } from './monitor-system.repository';
 import { MonitorSystemService } from './monitor-system.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([MonitorSystemRepository])],
   controllers: [],
-  providers: [MonitorSystemService],
-  exports: [TypeOrmModule, MonitorSystemService],
+  providers: [MonitorSystemRepository, MonitorSystemService],
+  exports: [TypeOrmModule, MonitorSystemRepository, MonitorSystemService],
 })
 export class MonitorSystemModule {}

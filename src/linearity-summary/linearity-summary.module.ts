@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { LinearityInjectionModule } from '../linearity-injection/linearity-injection.module';
+import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryController } from './linearity-summary.controller';
 import { LinearitySummaryRepository } from './linearity-summary.repository';
 import { LinearitySummaryService } from './linearity-summary.service';
-import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 
 @Module({
   imports: [
@@ -13,7 +13,16 @@ import { LinearitySummaryMap } from '../maps/linearity-summary.map';
     LinearityInjectionModule,
   ],
   controllers: [LinearitySummaryController],
-  providers: [LinearitySummaryMap, LinearitySummaryService],
-  exports: [TypeOrmModule, LinearitySummaryMap, LinearitySummaryService],
+  providers: [
+    LinearitySummaryMap,
+    LinearitySummaryRepository,
+    LinearitySummaryService,
+  ],
+  exports: [
+    TypeOrmModule,
+    LinearitySummaryMap,
+    LinearitySummaryRepository,
+    LinearitySummaryService,
+  ],
 })
 export class LinearitySummaryModule {}

@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
+
+import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
+import { RataRunDTO } from '../dto/rata-run.dto';
+import { RataRun } from '../entities/rata-run.entity';
+import { FlowRataRunService } from '../flow-rata-run/flow-rata-run.service';
 import { RataRunMap } from '../maps/rata-run.map';
 import { RataRunRepository } from './rata-run.repository';
 import { RataRunService } from './rata-run.service';
-import { RataRun } from '../entities/rata-run.entity';
-import { RataRunDTO } from '../dto/rata-run.dto';
-import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
-import { FlowRataRunService } from '../flow-rata-run/flow-rata-run.service';
 
 const rataRunId = 'a1b2c3';
 const rataSumId = 'd4e5f6';
@@ -19,7 +20,7 @@ const mockMap = () => ({
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([rataRun]),
-  findOne: jest.fn().mockResolvedValue(rataRun),
+  findOneBy: jest.fn().mockResolvedValue(rataRun),
 });
 
 const mockFlowRataRunService = () => ({
@@ -55,14 +56,14 @@ describe('RataRunService', () => {
   });
 
   describe('getRataRun', () => {
-    it('Calls repository.findOne({id}) to get a single Rata Run record', async () => {
+    it('Calls repository.findOneBy({id}) to get a single Rata Run record', async () => {
       const result = await service.getRataRun(rataRunId);
       expect(result).toEqual(rataRunDTO);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Rata Run record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let errored = false;
 

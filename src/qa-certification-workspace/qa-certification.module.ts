@@ -11,7 +11,7 @@ import { LinearitySummaryWorkspaceModule } from '../linearity-summary-workspace/
 import { LinearityInjectionWorkspaceModule } from '../linearity-injection-workspace/linearity-injection.module';
 import { RataWorkspaceModule } from '../rata-workspace/rata-workspace.module';
 import { RataSummaryWorkspaceModule } from '../rata-summary-workspace/rata-summary-workspace.module';
-import { QASuppDataWorkspaceModule } from '../qa-monitor-plan-workspace/qa-monitor-plan.module';
+import { QASuppDataWorkspaceModule } from '../qa-supp-data-workspace/qa-supp-data.module';
 import { RataRunWorkspaceModule } from '../rata-run-workspace/rata-run-workspace.module';
 import { FlowRataRunWorkspaceModule } from '../flow-rata-run-workspace/flow-rata-run-workspace.module';
 import { RataTraverseWorkspaceModule } from '../rata-traverse-workspace/rata-traverse-workspace.module';
@@ -77,6 +77,13 @@ import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-revie
   ],
   controllers: [QACertificationWorkspaceController],
   providers: [
+    CertEventReviewAndSubmitRepository,
+    CertEventReviewAndSubmitGlobalRepository,
+    TestSummaryReviewAndSubmitRepository,
+    TestSummaryReviewAndSubmitGlobalRepository,
+    TeeReviewAndSubmitRepository,
+    TeeReviewAndSubmitGlobalRepository,
+    MatsBulkFilesReviewAndSubmitRepository,
     QACertificationChecksService,
     QACertificationWorkspaceService,
     CertEventReviewAndSubmitService,
@@ -89,6 +96,13 @@ import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-revie
     MatsBulkFileMap,
   ],
   exports: [
+    CertEventReviewAndSubmitRepository,
+    TestSummaryReviewAndSubmitRepository,
+    TeeReviewAndSubmitRepository,
+    MatsBulkFilesReviewAndSubmitRepository,
+    CertEventReviewAndSubmitGlobalRepository,
+    TeeReviewAndSubmitGlobalRepository,
+    TestSummaryReviewAndSubmitGlobalRepository,
     QACertificationChecksService,
     QACertificationWorkspaceService,
     CertEventReviewAndSubmitService,

@@ -1,14 +1,20 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { RataTraverseService } from './rata-traverse.service';
+
+import { RataTraverseMap } from '../maps/rata-traverse.map';
 import { RataTraverseController } from './rata-traverse.controller';
 import { RataTraverseRepository } from './rata-traverse.repository';
-import { RataTraverseMap } from '../maps/rata-traverse.map';
+import { RataTraverseService } from './rata-traverse.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([RataTraverseRepository])],
   controllers: [RataTraverseController],
-  providers: [RataTraverseService, RataTraverseMap],
-  exports: [TypeOrmModule, RataTraverseMap, RataTraverseService],
+  providers: [RataTraverseRepository, RataTraverseService, RataTraverseMap],
+  exports: [
+    TypeOrmModule,
+    RataTraverseRepository,
+    RataTraverseMap,
+    RataTraverseService,
+  ],
 })
 export class RataTraverseModule {}

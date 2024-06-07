@@ -17,10 +17,15 @@ import { FlowToLoadReferenceModule } from '../flow-to-load-reference/flow-to-loa
     HttpModule,
   ],
   controllers: [FlowToLoadReferenceWorkspaceController],
-  providers: [FlowToLoadReferenceMap, FlowToLoadReferenceWorkspaceService],
+  providers: [
+    FlowToLoadReferenceMap,
+    FlowToLoadReferenceWorkspaceRepository,
+    FlowToLoadReferenceWorkspaceService,
+  ],
   exports: [
     TypeOrmModule,
     FlowToLoadReferenceMap,
+    FlowToLoadReferenceWorkspaceRepository,
     FlowToLoadReferenceWorkspaceService,
   ],
 })

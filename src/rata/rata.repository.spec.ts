@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { Rata } from '../entities/rata.entity';
-import { SelectQueryBuilder } from 'typeorm';
 import { RataRepository } from './rata.repository';
 
 const mockQueryBuilder = () => ({});
@@ -12,6 +13,7 @@ describe('RataRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         RataRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

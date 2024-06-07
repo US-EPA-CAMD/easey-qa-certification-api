@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
-import { SelectQueryBuilder } from 'typeorm';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
 
+import { QACertificationEvent } from '../entities/workspace/qa-certification-event.entity';
 import * as qaCertQueryBuilder from '../utilities/qa-cert-events.querybuilder';
 import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
-import { QACertificationEvent } from '../entities/workspace/qa-certification-event.entity';
 
 const qaCertEvent = new QACertificationEvent();
 
@@ -23,6 +23,7 @@ describe('QACertificationEventWorkspaceRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         QACertificationEventWorkspaceRepository,
         {
           provide: SelectQueryBuilder,

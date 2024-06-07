@@ -18,11 +18,13 @@ import { FuelFlowToLoadBaselineModule } from '../fuel-flow-to-load-baseline/fuel
   controllers: [FuelFlowToLoadBaselineWorkspaceController],
   providers: [
     FuelFlowToLoadBaselineMap,
+    FuelFlowToLoadBaselineWorkspaceRepository,
     FuelFlowToLoadBaselineWorkspaceService,
   ],
   exports: [
     TypeOrmModule,
     FuelFlowToLoadBaselineMap,
+    FuelFlowToLoadBaselineWorkspaceRepository,
     FuelFlowToLoadBaselineWorkspaceService,
   ],
 })

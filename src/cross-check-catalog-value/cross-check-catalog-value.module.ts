@@ -4,6 +4,7 @@ import { CrossCheckCatalogValueRepository } from './cross-check-catalog-value.re
 
 @Module({
   imports: [TypeOrmModule.forFeature([CrossCheckCatalogValueRepository])],
-  exports: [TypeOrmModule],
+  providers: [CrossCheckCatalogValueRepository],
+  exports: [TypeOrmModule, CrossCheckCatalogValueRepository],
 })
 export class CrossCheckCatalogValueModule {}

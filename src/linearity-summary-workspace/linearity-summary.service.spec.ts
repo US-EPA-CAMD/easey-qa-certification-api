@@ -1,8 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { InternalServerErrorException } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { LinearitySummary } from '../entities/linearity-summary.entity';
-import { LinearitySummaryRepository } from '../linearity-summary/linearity-summary.repository';
+
 import {
   LinearityInjectionDTO,
   LinearityInjectionImportDTO,
@@ -12,7 +11,9 @@ import {
   LinearitySummaryImportDTO,
   LinearitySummaryRecordDTO,
 } from '../dto/linearity-summary.dto';
+import { LinearitySummary } from '../entities/linearity-summary.entity';
 import { LinearityInjectionWorkspaceService } from '../linearity-injection-workspace/linearity-injection.service';
+import { LinearitySummaryRepository } from '../linearity-summary/linearity-summary.repository';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { LinearitySummaryWorkspaceRepository } from './linearity-summary.repository';
@@ -39,7 +40,7 @@ const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([lineSummary]),
   create: jest.fn().mockResolvedValue(lineSummary),
   save: jest.fn().mockResolvedValue(lineSummary),
-  findOne: jest.fn().mockResolvedValue(lineSummary),
+  findOneBy: jest.fn().mockResolvedValue(lineSummary),
   delete: jest.fn().mockResolvedValue(null),
 });
 
@@ -47,7 +48,7 @@ const historicalLinSum = new LinearitySummary();
 historicalLinSum.id = 'HISTORICAL-ID';
 
 const mockOfficialRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(historicalLinSum),
+  findOneBy: jest.fn().mockResolvedValue(historicalLinSum),
 });
 
 const mockTestSumService = () => ({
@@ -222,7 +223,7 @@ describe('LinearitySummaryWorkspaceService', () => {
     });
 
     it('Should through error while updating a Linearity Summary record', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
       try {

@@ -27,12 +27,14 @@ import { AppECorrelationTestSummaryChecksService } from './app-e-correlation-tes
   controllers: [AppendixETestSummaryWorkspaceController],
   providers: [
     AppECorrelationTestSummaryMap,
+    AppendixETestSummaryWorkspaceRepository,
     AppECorrelationTestSummaryWorkspaceService,
     AppECorrelationTestSummaryChecksService,
   ],
   exports: [
     TypeOrmModule,
     AppECorrelationTestSummaryMap,
+    AppendixETestSummaryWorkspaceRepository,
     AppECorrelationTestSummaryWorkspaceService,
     AppECorrelationTestSummaryChecksService,
   ],

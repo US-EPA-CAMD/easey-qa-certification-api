@@ -1,5 +1,11 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { ProtocolGas } from '../entities/workspace/protocol-gas.entity';
 
-@EntityRepository(ProtocolGas)
-export class ProtocolGasWorkspaceRepository extends Repository<ProtocolGas> {}
+@Injectable()
+export class ProtocolGasWorkspaceRepository extends Repository<ProtocolGas> {
+  constructor(entityManager: EntityManager) {
+    super(ProtocolGas, entityManager);
+  }
+}

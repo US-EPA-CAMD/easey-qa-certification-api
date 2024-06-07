@@ -1,9 +1,14 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
 import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 
-@EntityRepository(MonitorLocation)
+@Injectable()
 export class LocationWorkspaceRepository extends Repository<MonitorLocation> {
+  constructor(entityManager: EntityManager) {
+    super(MonitorLocation, entityManager);
+  }
+
   private buildBaseQuery() {
     return this.createQueryBuilder('ml')
       .leftJoinAndSelect('ml.systems', 'ms')

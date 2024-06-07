@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { QACertificationEvent } from '../entities/qa-certification-event.entity';
-import { SelectQueryBuilder } from 'typeorm';
 import * as qaCertQueryBuilder from '../utilities/qa-cert-events.querybuilder';
 import { QACertificationEventRepository } from './qa-certification-event.repository';
 
@@ -22,6 +23,7 @@ describe('QACertificationEventWorkspaceRepository', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
+        EntityManager,
         QACertificationEventRepository,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],

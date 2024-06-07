@@ -1,23 +1,23 @@
+import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
-import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
-import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
-import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import {
   QACertificationEventBaseDTO,
   QACertificationEventDTO,
 } from '../dto/qa-certification-event.dto';
-import { QACertificationEventMap } from '../maps/qa-certification-event.map';
-import { QACertificationEvent } from '../entities/workspace/qa-certification-event.entity';
-import { Unit } from '../entities/workspace/unit.entity';
-import { StackPipe } from '../entities/workspace/stack-pipe.entity';
-import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { Component } from '../entities/workspace/component.entity';
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { InternalServerErrorException } from '@nestjs/common';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { QACertificationEvent } from '../entities/workspace/qa-certification-event.entity';
+import { StackPipe } from '../entities/workspace/stack-pipe.entity';
+import { Unit } from '../entities/workspace/unit.entity';
+import { QACertificationEventMap } from '../maps/qa-certification-event.map';
+import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
+import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
 
 const locationId = '';
 const qaCertEventId = '';
@@ -50,7 +50,7 @@ const mockRepository = () => ({
   getQaCertEventsByUnitStack: jest.fn().mockResolvedValue([entity]),
   getQACertificationEventsByLocationId: jest.fn().mockResolvedValue([entity]),
   getQACertificationEventById: jest.fn().mockResolvedValue(entity),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
@@ -92,13 +92,13 @@ describe('QACertificationEventWorkspaceService', () => {
         {
           provide: ComponentWorkspaceRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(component),
+            findOneBy: jest.fn().mockResolvedValue(component),
           }),
         },
         {
           provide: MonitorSystemWorkspaceRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(monitoringSystem),
+            findOneBy: jest.fn().mockResolvedValue(monitoringSystem),
           }),
         },
       ],
@@ -275,8 +275,8 @@ describe('QACertificationEventWorkspaceService', () => {
       payload.componentId = '1';
       payload.monitoringSystemId = 'abc';
 
-      jest.spyOn(componentRepository, 'findOne').mockResolvedValue(null);
-      jest.spyOn(monSysRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(componentRepository, 'findOneBy').mockResolvedValue(null);
+      jest.spyOn(monSysRepository, 'findOneBy').mockResolvedValue(null);
 
       const result = await service.lookupValues(locationId, payload);
 
@@ -307,7 +307,7 @@ describe('QACertificationEventWorkspaceService', () => {
     });
 
     it('should throw an error while updating a QA Certification Event record', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
 
@@ -345,7 +345,7 @@ describe('QACertificationEventWorkspaceService', () => {
   describe('import', () => {
     it('Should create QA Cert Event ', async () => {
       const importPayload = payload;
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       const result = await service.import(locationId, importPayload, userId);
 
@@ -355,7 +355,7 @@ describe('QACertificationEventWorkspaceService', () => {
     it('Should update QA Cert Event ', async () => {
       entity.id = '1';
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(entity);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(entity);
 
       const importPayload = payload;
 

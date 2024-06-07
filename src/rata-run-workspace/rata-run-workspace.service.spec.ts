@@ -1,20 +1,21 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { RataRunMap } from '../maps/rata-run.map';
-import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
-import { RataRunWorkspaceService } from './rata-run-workspace.service';
-import { RataRun } from '../entities/workspace/rata-run.entity';
-import { RataRun as RataRunOfficial } from '../entities/rata-run.entity';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
+import { FlowRataRunDTO, FlowRataRunImportDTO } from '../dto/flow-rata-run.dto';
 import {
   RataRunBaseDTO,
   RataRunDTO,
   RataRunImportDTO,
 } from '../dto/rata-run.dto';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { RataRunRepository } from '../rata-run/rata-run.repository';
+import { RataRun as RataRunOfficial } from '../entities/rata-run.entity';
+import { RataRun } from '../entities/workspace/rata-run.entity';
 import { FlowRataRunWorkspaceService } from '../flow-rata-run-workspace/flow-rata-run-workspace.service';
-import { FlowRataRunDTO, FlowRataRunImportDTO } from '../dto/flow-rata-run.dto';
-import { ConfigService } from '@nestjs/config';
+import { RataRunMap } from '../maps/rata-run.map';
+import { RataRunRepository } from '../rata-run/rata-run.repository';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
+import { RataRunWorkspaceService } from './rata-run-workspace.service';
 
 const rataRunId = 'a1b2c3';
 const testSumId = 'd4e5f6';
@@ -54,7 +55,7 @@ const mockMap = () => ({
 const mockRepository = () => ({
   save: jest.fn().mockResolvedValue(rataRun),
   find: jest.fn().mockResolvedValue([rataRun]),
-  findOne: jest.fn().mockResolvedValue(rataRun),
+  findOneBy: jest.fn().mockResolvedValue(rataRun),
   create: jest.fn().mockResolvedValue(rataRun),
   delete: jest.fn().mockReturnValue(''),
 });
@@ -62,7 +63,7 @@ const mockRepository = () => ({
 const officialRecord = new RataRunOfficial();
 officialRecord.id = 'uuid';
 const mockOfficialRepository = () => ({
-  findOne: jest.fn(),
+  findOneBy: jest.fn(),
 });
 
 describe('RataRunWorkspaceService', () => {
@@ -111,14 +112,14 @@ describe('RataRunWorkspaceService', () => {
   });
 
   describe('getRataRun', () => {
-    it('Calls repository.findOne({id}) to get a single Rata Run record', async () => {
+    it('Calls repository.findOneBy({id}) to get a single Rata Run record', async () => {
       const result = await service.getRataRun(rataRunId);
       expect(result).toEqual(rataRunDTO);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Rata Run record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let errored = false;
 
@@ -152,7 +153,7 @@ describe('RataRunWorkspaceService', () => {
       expect(result).toEqual(rataRun);
       expect(repository.create).toHaveBeenCalled();
       expect(repository.save).toHaveBeenCalled();
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
     it('Should create and return a new Rata Run record with historical record id', async () => {
@@ -189,7 +190,7 @@ describe('RataRunWorkspaceService', () => {
     });
 
     it('should throw error with invalid rata run record id', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
       try {
@@ -236,7 +237,7 @@ describe('RataRunWorkspaceService', () => {
       importPayload.flowRataRunData = [new FlowRataRunImportDTO()];
       jest.spyOn(service, 'createRataRun').mockResolvedValue(rataRunDTO);
       jest
-        .spyOn(officialRepository, 'findOne')
+        .spyOn(officialRepository, 'findOneBy')
         .mockResolvedValue(officialRecord);
       const result = await service.import(
         testSumId,

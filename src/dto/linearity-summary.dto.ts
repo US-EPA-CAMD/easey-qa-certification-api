@@ -8,7 +8,6 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { IsNotNegative } from '../pipes/is-not-negative.pipe';
 import {
   LinearityInjectionImportDTO,
@@ -17,7 +16,7 @@ import {
 import { GasLevelCode } from '../entities/workspace/gas-level-code.entity';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { IsInRange } from '@us-epa-camd/easey-common/pipes';
+import { IsInRange, IsValidCode } from '@us-epa-camd/easey-common/pipes';
 
 const KEY = 'Linearity Summary';
 

@@ -2,20 +2,20 @@ import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { MonitorSystemRecordDTO } from '../dto/monitor-system.dto';
-import { TestSummaryImportDTO } from '../dto/test-summary.dto';
-import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { TestQualificationChecksService } from './test-qualification-checks.service';
+import { RataImportDTO } from '../dto/rata.dto';
 import {
   TestQualificationBaseDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
-import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
-import { RataImportDTO } from '../dto/rata.dto';
-import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { TestQualification } from '../entities/workspace/test-qualification.entity';
+import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
+import { TestQualification } from '../entities/workspace/test-qualification.entity';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
+import { TestQualificationChecksService } from './test-qualification-checks.service';
+import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
 
 const locationId = '';
 const testSumId = '';
@@ -33,11 +33,11 @@ const mockTestSummaryRepository = () => ({
 });
 
 const mockMonitorSystemRepository = () => ({
-  findOne: jest.fn().mockRejectedValue(monitorSystemRecord),
+  findOneBy: jest.fn().mockRejectedValue(monitorSystemRecord),
 });
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue([]),
+  findBy: jest.fn().mockResolvedValue([]),
 });
 
 describe('TestQualificationChecksService', () => {
@@ -81,12 +81,12 @@ describe('TestQualificationChecksService', () => {
       payload.testClaimCode = 'SLC';
 
       const returnValue = new TestQualification();
-      jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
+      jest.spyOn(repository, 'findBy').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
       monSysRec.systemTypeCode = 'FLOW';
       jest
-        .spyOn(monitorSystemRepository, 'findOne')
+        .spyOn(monitorSystemRepository, 'findOneBy')
         .mockResolvedValue(monSysRec);
 
       const result = await service.runChecks(
@@ -111,12 +111,12 @@ describe('TestQualificationChecksService', () => {
       testSumRec.testTypeCode = TestTypeCodes.RATA;
 
       const returnValue = new TestQualification();
-      jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
+      jest.spyOn(repository, 'findBy').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
       monSysRec.systemTypeCode = 'FLOW';
       jest
-        .spyOn(monitorSystemRepository, 'findOne')
+        .spyOn(monitorSystemRepository, 'findOneBy')
         .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -147,12 +147,12 @@ describe('TestQualificationChecksService', () => {
       testSumRec.testTypeCode = TestTypeCodes.RATA;
 
       const returnValue = new TestQualification();
-      jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
+      jest.spyOn(repository, 'findBy').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
       monSysRec.systemTypeCode = 'FLOW';
       jest
-        .spyOn(monitorSystemRepository, 'findOne')
+        .spyOn(monitorSystemRepository, 'findOneBy')
         .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -183,12 +183,12 @@ describe('TestQualificationChecksService', () => {
       testSumRec.testTypeCode = TestTypeCodes.RATA;
 
       const returnValue = new TestQualification();
-      jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
+      jest.spyOn(repository, 'findBy').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
       monSysRec.systemTypeCode = 'FLOW';
       jest
-        .spyOn(monitorSystemRepository, 'findOne')
+        .spyOn(monitorSystemRepository, 'findOneBy')
         .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -218,12 +218,12 @@ describe('TestQualificationChecksService', () => {
       testSumRec.testTypeCode = TestTypeCodes.RATA;
 
       const returnValue = new TestQualification();
-      jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
+      jest.spyOn(repository, 'findBy').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
       monSysRec.systemTypeCode = 'FLOW';
       jest
-        .spyOn(monitorSystemRepository, 'findOne')
+        .spyOn(monitorSystemRepository, 'findOneBy')
         .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -251,12 +251,12 @@ describe('TestQualificationChecksService', () => {
       testSumRec.testTypeCode = TestTypeCodes.RATA;
 
       const returnValue = new TestQualification();
-      jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
+      jest.spyOn(repository, 'findBy').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
       monSysRec.systemTypeCode = 'NOTFLOW';
       jest
-        .spyOn(monitorSystemRepository, 'findOne')
+        .spyOn(monitorSystemRepository, 'findOneBy')
         .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -284,12 +284,12 @@ describe('TestQualificationChecksService', () => {
       testSumRec.testTypeCode = TestTypeCodes.RATA;
 
       const returnValue = new TestQualification();
-      jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
+      jest.spyOn(repository, 'findBy').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
       monSysRec.systemTypeCode = 'NOTFLOW';
       jest
-        .spyOn(monitorSystemRepository, 'findOne')
+        .spyOn(monitorSystemRepository, 'findOneBy')
         .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -318,12 +318,12 @@ describe('TestQualificationChecksService', () => {
       testSumRec.testTypeCode = TestTypeCodes.RATA;
 
       const returnValue = new TestQualification();
-      jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
+      jest.spyOn(repository, 'findBy').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
       monSysRec.systemTypeCode = 'FLOW';
       jest
-        .spyOn(monitorSystemRepository, 'findOne')
+        .spyOn(monitorSystemRepository, 'findOneBy')
         .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -352,12 +352,12 @@ describe('TestQualificationChecksService', () => {
       testSumRec.testTypeCode = TestTypeCodes.RATA;
 
       const returnValue = new TestQualification();
-      jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
+      jest.spyOn(repository, 'findBy').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
       monSysRec.systemTypeCode = 'FLOW';
       jest
-        .spyOn(monitorSystemRepository, 'findOne')
+        .spyOn(monitorSystemRepository, 'findOneBy')
         .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -386,12 +386,12 @@ describe('TestQualificationChecksService', () => {
       testSumRec.testTypeCode = TestTypeCodes.RATA;
 
       const returnValue = new TestQualification();
-      jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
+      jest.spyOn(repository, 'findBy').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
       monSysRec.systemTypeCode = 'FLOW';
       jest
-        .spyOn(monitorSystemRepository, 'findOne')
+        .spyOn(monitorSystemRepository, 'findOneBy')
         .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -422,12 +422,12 @@ describe('TestQualificationChecksService', () => {
       testSumRec.testTypeCode = TestTypeCodes.RATA;
 
       const returnValue = new TestQualification();
-      jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
+      jest.spyOn(repository, 'findBy').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
       monSysRec.systemTypeCode = 'FLOW';
       jest
-        .spyOn(monitorSystemRepository, 'findOne')
+        .spyOn(monitorSystemRepository, 'findOneBy')
         .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -458,12 +458,12 @@ describe('TestQualificationChecksService', () => {
       testSumRecord.beginDate = new Date('2000-01-01');
 
       const returnValue = new TestQualification();
-      jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
+      jest.spyOn(repository, 'findBy').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
       monSysRec.systemTypeCode = 'FLOW';
       jest
-        .spyOn(monitorSystemRepository, 'findOne')
+        .spyOn(monitorSystemRepository, 'findOneBy')
         .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')
@@ -494,12 +494,12 @@ describe('TestQualificationChecksService', () => {
 
       const returnValue = new TestQualification();
       returnValue.testClaimCode = 'thesame';
-      jest.spyOn(repository, 'find').mockResolvedValue([returnValue]);
+      jest.spyOn(repository, 'findBy').mockResolvedValue([returnValue]);
 
       const monSysRec = new MonitorSystem();
       monSysRec.systemTypeCode = 'FLOW';
       jest
-        .spyOn(monitorSystemRepository, 'findOne')
+        .spyOn(monitorSystemRepository, 'findOneBy')
         .mockResolvedValue(monSysRec);
       jest
         .spyOn(testSummaryRepository, 'getTestSummaryById')

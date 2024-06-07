@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager, SelectQueryBuilder } from 'typeorm';
+
 import { AppEHeatInputFromGas } from '../entities/workspace/app-e-heat-input-from-gas.entity';
-import { SelectQueryBuilder } from 'typeorm';
 import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
 
 const appEHeatInputFromGas = new AppEHeatInputFromGas();
@@ -20,6 +21,7 @@ describe('AppEHeatInputFromGasWorkspaceRepository', () => {
     const module = await Test.createTestingModule({
       providers: [
         AppEHeatInputFromGasWorkspaceRepository,
+        EntityManager,
         { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],
     }).compile();

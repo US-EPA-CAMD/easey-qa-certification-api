@@ -14,7 +14,7 @@ import { RataSummaryModule } from '../rata-summary/rata-summary.module';
     RataSummaryModule,
   ],
   controllers: [RataController],
-  providers: [RataMap, RataService],
-  exports: [TypeOrmModule, RataMap, RataService],
+  providers: [RataMap, RataRepository, RataService],
+  exports: [TypeOrmModule, RataMap, RataRepository, RataService],
 })
 export class RataModule {}

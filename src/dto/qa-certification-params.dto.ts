@@ -1,7 +1,11 @@
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-import { IsOrisCode, IsIsoFormat } from '@us-epa-camd/easey-common/pipes';
+import {
+  IsOrisCode,
+  IsIsoFormat,
+  IsValidCodes,
+} from '@us-epa-camd/easey-common/pipes';
 
 import {
   ErrorMessages,
@@ -12,7 +16,6 @@ import { OneOrMore } from '../pipes/one-or-more.pipe';
 import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestTypeCode } from './../entities/test-type-code.entity';
-import { IsValidCodes } from '../pipes/is-valid-codes.pipe';
 import { IsOptional, ValidationArguments } from 'class-validator';
 import { FindOneOptions, In } from 'typeorm';
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';

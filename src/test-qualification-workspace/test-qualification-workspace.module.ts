@@ -1,13 +1,15 @@
 import { HttpModule } from '@nestjs/axios';
 import { forwardRef, Module } from '@nestjs/common';
-import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
-import { TestQualificationWorkspaceController } from './test-qualification-workspace.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
+
 import { TestQualificationMap } from '../maps/test-qualification.map';
+import { MonitorSystemModule } from '../monitor-system/monitor-system.module';
+import { TestQualificationModule } from '../test-qualification/test-qualification.module';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { TestQualificationChecksService } from './test-qualification-checks.service';
-import { TestQualificationModule } from '../test-qualification/test-qualification.module';
+import { TestQualificationWorkspaceController } from './test-qualification-workspace.controller';
+import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
+import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
 
 @Module({
   imports: [
@@ -15,15 +17,18 @@ import { TestQualificationModule } from '../test-qualification/test-qualificatio
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => TestQualificationModule),
     HttpModule,
+    MonitorSystemModule,
   ],
   controllers: [TestQualificationWorkspaceController],
   providers: [
     TestQualificationMap,
+    TestQualificationWorkspaceRepository,
     TestQualificationWorkspaceService,
     TestQualificationChecksService,
   ],
   exports: [
     TypeOrmModule,
+    TestQualificationWorkspaceRepository,
     TestQualificationMap,
     TestQualificationWorkspaceService,
     TestQualificationChecksService,

@@ -1,5 +1,11 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { FlowRataRun } from '../entities/workspace/flow-rata-run.entity';
 
-@EntityRepository(FlowRataRun)
-export class FlowRataRunWorkspaceRepository extends Repository<FlowRataRun> {}
+@Injectable()
+export class FlowRataRunWorkspaceRepository extends Repository<FlowRataRun> {
+  constructor(entityManager: EntityManager) {
+    super(FlowRataRun, entityManager);
+  }
+}

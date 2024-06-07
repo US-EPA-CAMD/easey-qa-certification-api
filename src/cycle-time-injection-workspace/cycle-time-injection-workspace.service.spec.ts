@@ -1,19 +1,18 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
-import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
+import { CycleTimeInjectionRepository } from '../cycle-time-injection/cycle-time-injection.repository';
 import {
   CycleTimeInjectionDTO,
   CycleTimeInjectionImportDTO,
 } from '../dto/cycle-time-injection.dto';
-import { CycleTimeInjection } from '../entities/workspace/cycle-time-injection.entity';
 import { CycleTimeInjection as CycleTimeInjectionOfficial } from '../entities/cycle-time-injection.entity';
+import { CycleTimeInjection } from '../entities/workspace/cycle-time-injection.entity';
+import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { CycleTimeInjectionWorkspaceRepository } from './cycle-time-injection-workspace.repository';
 import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-workspace.service';
-import { CycleTimeInjectionRepository } from '../cycle-time-injection/cycle-time-injection.repository';
 
 const testSumId = '1';
 const cycleTimeSumId = '1';
@@ -29,7 +28,7 @@ const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([cycleTimeInjection]),
   create: jest.fn().mockResolvedValue(cycleTimeInjection),
   save: jest.fn().mockResolvedValue(cycleTimeInjection),
-  findOne: jest.fn().mockResolvedValue(cycleTimeInjection),
+  findOneBy: jest.fn().mockResolvedValue(cycleTimeInjection),
   delete: jest.fn().mockResolvedValue(null),
 });
 
@@ -41,7 +40,7 @@ const mockMap = () => ({
 });
 
 const mockHistoricalRepo = () => ({
-  findOne: jest.fn().mockResolvedValue(new CycleTimeInjectionOfficial()),
+  findOneBy: jest.fn().mockResolvedValue(new CycleTimeInjectionOfficial()),
 });
 
 describe('CycleTimeInjectionWorkspaceService', () => {
@@ -104,7 +103,7 @@ describe('CycleTimeInjectionWorkspaceService', () => {
     });
 
     it('should throw an error when a Cycle Time Injection record is not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
 
@@ -209,7 +208,7 @@ describe('CycleTimeInjectionWorkspaceService', () => {
     });
 
     it('should throw an error while updating a Cycle Time Injection record', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
 

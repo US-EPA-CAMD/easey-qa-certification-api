@@ -1,7 +1,13 @@
-import { CertEventReviewAndSubmit } from '../entities/workspace/cert-event-review-and-submit.entity';
-import { Repository, EntityRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
-@EntityRepository(CertEventReviewAndSubmit)
+import { CertEventReviewAndSubmit } from '../entities/workspace/cert-event-review-and-submit.entity';
+
+@Injectable()
 export class CertEventReviewAndSubmitRepository extends Repository<
   CertEventReviewAndSubmit
-> {}
+> {
+  constructor(entityManager: EntityManager) {
+    super(CertEventReviewAndSubmit, entityManager);
+  }
+}

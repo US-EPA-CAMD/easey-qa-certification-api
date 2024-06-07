@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
+
 import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
 import { FuelFlowToLoadBaselineMap } from '../maps/fuel-flow-to-load-baseline.map';
 import { FuelFlowToLoadBaselineRepository } from './fuel-flow-to-load-baseline.repository';
@@ -24,7 +25,7 @@ export class FuelFlowToLoadBaselineService {
     id: string,
     testSumId: string,
   ): Promise<FuelFlowToLoadBaselineDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });

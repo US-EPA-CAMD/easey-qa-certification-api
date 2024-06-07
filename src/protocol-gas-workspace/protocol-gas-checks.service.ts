@@ -1,20 +1,18 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
-import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import {
   ProtocolGasBaseDTO,
   ProtocolGasImportDTO,
 } from '../dto/protocol-gas.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
-import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { GasComponentCodeRepository } from '../gas-component-code/gas-component-code.repository';
+import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 
 const KEY = 'Protocol Gas';
 const GAS_TYPE_CODE_FIELDNAME = 'gasTypeCode';
@@ -23,13 +21,9 @@ const GAS_TYPE_CODE_FIELDNAME = 'gasTypeCode';
 export class ProtocolGasChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
-    @InjectRepository(MonitorSystemWorkspaceRepository)
     private readonly monitorSystemWorkspaceRepository: MonitorSystemWorkspaceRepository,
-    @InjectRepository(ComponentWorkspaceRepository)
     private readonly componentWorkspaceRepository: ComponentWorkspaceRepository,
-    @InjectRepository(GasComponentCodeRepository)
     private readonly gasComponentCodeRepository: GasComponentCodeRepository,
   ) {}
 
@@ -58,22 +52,26 @@ export class ProtocolGasChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-      testSumRecord.system = await this.monitorSystemWorkspaceRepository.findOne(
-        {
-          where: {
-            monitoringSystemID: testSummary.monitoringSystemId,
-            locationId,
+      if (testSummary.monitoringSystemId) {
+        testSumRecord.system = await this.monitorSystemWorkspaceRepository.findOne(
+          {
+            where: {
+              monitoringSystemID: testSummary.monitoringSystemId,
+              locationId,
+            },
           },
-        },
-      );
-      testSumRecord.component = await this.componentWorkspaceRepository.findOne(
-        {
-          where: {
-            componentID: testSummary.componentId,
-            locationId,
+        );
+      }
+      if (testSummary.componentId) {
+        testSumRecord.component = await this.componentWorkspaceRepository.findOne(
+          {
+            where: {
+              componentID: testSummary.componentId,
+              locationId,
+            },
           },
-        },
-      );
+        );
+      }
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,

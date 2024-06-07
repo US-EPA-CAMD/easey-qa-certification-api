@@ -1,13 +1,13 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { InjectRepository } from '@nestjs/typeorm';
-import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryImportDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
 
 @Injectable()
 export class AppECorrelationTestSummaryChecksService {
@@ -15,7 +15,6 @@ export class AppECorrelationTestSummaryChecksService {
 
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(AppendixETestSummaryWorkspaceRepository)
     private readonly repository: AppendixETestSummaryWorkspaceRepository,
   ) {}
 

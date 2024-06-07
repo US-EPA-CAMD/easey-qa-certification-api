@@ -1,48 +1,48 @@
 import { Test } from '@nestjs/testing';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
-import { TestSummaryWorkspaceRepository } from './test-summary.repository';
-import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
-import { TestSummaryChecksService } from './test-summary-checks.service';
+import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { AirEmissionTestingImportDTO } from '../dto/air-emission-test.dto';
+import { AppECorrelationTestSummaryImportDTO } from '../dto/app-e-correlation-test-summary.dto';
+import { CalibrationInjectionImportDTO } from '../dto/calibration-injection.dto';
+import { CycleTimeSummaryImportDTO } from '../dto/cycle-time-summary.dto';
+import { FlowToLoadCheckImportDTO } from '../dto/flow-to-load-check.dto';
+import { FlowToLoadReferenceImportDTO } from '../dto/flow-to-load-reference.dto';
+import { FuelFlowToLoadBaselineImportDTO } from '../dto/fuel-flow-to-load-baseline.dto';
+import { FuelFlowToLoadTestImportDTO } from '../dto/fuel-flow-to-load-test.dto';
+import { FuelFlowmeterAccuracyImportDTO } from '../dto/fuel-flowmeter-accuracy.dto';
+import { HgSummaryImportDTO } from '../dto/hg-summary.dto';
+import { LinearitySummaryImportDTO } from '../dto/linearity-summary.dto';
+import { OnlineOfflineCalibrationImportDTO } from '../dto/online-offline-calibration.dto';
+import { ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
+import { RataImportDTO } from '../dto/rata.dto';
+import { TestQualificationImportDTO } from '../dto/test-qualification.dto';
 import {
   TestSummaryBaseDTO,
   TestSummaryImportDTO,
 } from '../dto/test-summary.dto';
-import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
-import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
-import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
-import { LinearitySummaryImportDTO } from '../dto/linearity-summary.dto';
-import { Component } from '../entities/workspace/component.entity';
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { AnalyzerRangeWorkspaceRepository } from '../analyzer-range-workspace/analyzer-range.repository';
-import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
-import { TestResultCode } from '../entities/test-result-code.entity';
-import { ReportingPeriod } from '../entities/reporting-period.entity';
-import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { RataImportDTO } from '../dto/rata.dto';
-import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method-workspace.repository';
-import { MonitorMethod } from '../entities/monitor-method.entity';
-import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
-import { ProtocolGasImportDTO } from '../dto/protocol-gas.dto';
-import { TestQualificationImportDTO } from '../dto/test-qualification.dto';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { AnalyzerRange } from '../entities/workspace/analyzerRange.entity';
-import { AirEmissionTestingImportDTO } from '../dto/air-emission-test.dto';
-import { AppECorrelationTestSummaryImportDTO } from '../dto/app-e-correlation-test-summary.dto';
-import { FuelFlowToLoadTestImportDTO } from '../dto/fuel-flow-to-load-test.dto';
-import { FuelFlowToLoadBaselineImportDTO } from '../dto/fuel-flow-to-load-baseline.dto';
-import { CalibrationInjectionImportDTO } from '../dto/calibration-injection.dto';
-import { FlowToLoadReferenceImportDTO } from '../dto/flow-to-load-reference.dto';
-import { FlowToLoadCheckImportDTO } from '../dto/flow-to-load-check.dto';
-import { OnlineOfflineCalibrationImportDTO } from '../dto/online-offline-calibration.dto';
-import { CycleTimeSummaryImportDTO } from '../dto/cycle-time-summary.dto';
-import { FuelFlowmeterAccuracyImportDTO } from '../dto/fuel-flowmeter-accuracy.dto';
 import { TransmitterTransducerAccuracyImportDTO } from '../dto/transmitter-transducer-accuracy.dto';
 import { UnitDefaultTestImportDTO } from '../dto/unit-default-test.dto';
-import { HgSummaryImportDTO } from '../dto/hg-summary.dto';
+import { MonitorMethod } from '../entities/monitor-method.entity';
+import { ReportingPeriod } from '../entities/reporting-period.entity';
+import { TestResultCode } from '../entities/test-result-code.entity';
+import { AnalyzerRange } from '../entities/workspace/analyzerRange.entity';
+import { Component } from '../entities/workspace/component.entity';
+import { MonitorPlan } from '../entities/workspace/monitor-plan.entity';
+import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
+import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { MonitorMethodWorkspaceRepository } from '../monitor-method-workspace/monitor-method-workspace.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { QAMonitorPlanWorkspaceRepository } from '../qa-monitor-plan-workspace/qa-monitor-plan.repository';
+import { QASuppDataWorkspaceRepository } from '../qa-supp-data-workspace/qa-supp-data.repository';
+import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
+import { TestSummaryMasterDataRelationshipRepository } from '../test-summary-master-data-relationship/test-summary-master-data-relationship.repository';
+import { TestSummaryChecksService } from './test-summary-checks.service';
+import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 
 jest.mock('@us-epa-camd/easey-common/check-catalog');
 
@@ -58,13 +58,13 @@ const mockTestSummaryRelationshipRepository = () => ({
 });
 
 const mockComponentWorkspaceRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(component),
+  findOneBy: jest.fn().mockResolvedValue(component),
 });
 
 const analyerRange = new AnalyzerRange();
 
 const mockAnalyzerRangeWorkspaceRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(analyerRange),
+  findOneBy: jest.fn().mockResolvedValue(analyerRange),
   getAnalyzerRangeByComponentIdAndDate: jest
     .fn()
     .mockResolvedValue([analyerRange]),
@@ -73,11 +73,11 @@ const mockAnalyzerRangeWorkspaceRepository = () => ({
 const mockRepository = () => ({
   getTestSummaryByLocationId: jest.fn().mockResolvedValue(null),
   getTestSummaryByComponent: jest.fn().mockResolvedValue(null),
-  findOne: jest.fn().mockResolvedValue(null),
+  findOneBy: jest.fn().mockResolvedValue(null),
 });
 
 const mockQARepository = () => ({
-  findOne: jest.fn().mockResolvedValue(null),
+  findOneBy: jest.fn().mockResolvedValue(null),
   getUnassociatedQASuppDataByTestTypeCodeComponentIdEndDateEndTime: jest
     .fn()
     .mockResolvedValue(null),
@@ -147,19 +147,19 @@ describe('Test Summary Check Service Test', () => {
         {
           provide: MonitorSystemWorkspaceRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(new MonitorSystem()),
+            findOneBy: jest.fn().mockResolvedValue(new MonitorSystem()),
           }),
         },
         {
           provide: TestResultCodeRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(new TestResultCode()),
+            findOneBy: jest.fn().mockResolvedValue(new TestResultCode()),
           }),
         },
         {
           provide: MonitorMethodWorkspaceRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(new MonitorMethod()),
+            findOneBy: jest.fn().mockResolvedValue(new MonitorMethod()),
           }),
         },
       ],
@@ -376,7 +376,7 @@ describe('Test Summary Check Service Test', () => {
         new AppECorrelationTestSummaryImportDTO(),
       ];
       importPayload.unitDefaultTestData = [new UnitDefaultTestImportDTO()];
-      importPayload.airEmissionTestData = [new AirEmissionTestingImportDTO()];
+      importPayload.airEmissionTestingData = [new AirEmissionTestingImportDTO()];
 
       try {
         await service.runChecks(locationId, importPayload, true, false, [
@@ -531,7 +531,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('Should get error for TEST-8 - Test Span Scale Valid check Result A', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(new TestSummary());
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(new TestSummary());
 
       try {
         await service.runChecks(locationId, payload, false, false, [payload]);
@@ -553,7 +553,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('Should get error for LINEAR-4 check Result A', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
       jest
         .spyOn(
           qaRepository,
@@ -569,7 +569,7 @@ describe('Test Summary Check Service Test', () => {
     });
 
     it('Should get error for LINEAR-4 check Result B', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
       jest
         .spyOn(
           qaRepository,
@@ -617,7 +617,7 @@ describe('Test Summary Check Service Test', () => {
       p.endDate = new Date('2022-01-01');
       p.injectionProtocolCode = null;
 
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
       jest
         .spyOn(
           qaRepository,
@@ -655,7 +655,7 @@ describe('Test Summary Check Service Test', () => {
           'getTestTypeCodesRelationships',
         )
         .mockResolvedValue([]);
-      jest.spyOn(testResultCodeRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(testResultCodeRepository, 'findOneBy').mockResolvedValue(null);
 
       try {
         await service.runChecks(locationId, payload, true, false, [payload]);
@@ -691,7 +691,7 @@ describe('Test Summary Check Service Test', () => {
           'getTestTypeCodesRelationships',
         )
         .mockResolvedValue([]);
-      jest.spyOn(testResultCodeRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(testResultCodeRepository, 'findOneBy').mockResolvedValue(null);
 
       try {
         await service.runChecks(locationId, payload, true, false, [payload]);
@@ -713,7 +713,7 @@ describe('Test Summary Check Service Test', () => {
           'getTestTypeCodesRelationships',
         )
         .mockResolvedValue([]);
-      jest.spyOn(testResultCodeRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(testResultCodeRepository, 'findOneBy').mockResolvedValue(null);
 
       try {
         await service.runChecks(locationId, payload, true, false, [payload]);

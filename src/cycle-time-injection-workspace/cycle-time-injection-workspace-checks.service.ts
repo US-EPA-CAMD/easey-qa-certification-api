@@ -1,29 +1,25 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import { CycleTimeSummaryWorkspaceRepository } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.repository';
 import {
   CycleTimeInjectionBaseDTO,
   CycleTimeInjectionImportDTO,
 } from '../dto/cycle-time-injection.dto';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { CycleTimeInjectionWorkspaceRepository } from './cycle-time-injection-workspace.repository';
-import { TestSummary } from '../entities/workspace/test-summary.entity';
 
 @Injectable()
 export class CycleTimeInjectionChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(CycleTimeInjectionWorkspaceRepository)
     private readonly repo: CycleTimeInjectionWorkspaceRepository,
-    @InjectRepository(CycleTimeSummaryWorkspaceRepository)
     private readonly cycleTimeSummaryWorkspaceRepository: CycleTimeSummaryWorkspaceRepository,
-    @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
   ) {}
 

@@ -1,6 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+
 import { QACertificationEventBaseDTO } from '../dto/qa-certification-event.dto';
 import { QACertificationEventChecksService } from './qa-certification-event-checks.service';
 import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
@@ -11,7 +12,7 @@ const payload = new QACertificationEventBaseDTO();
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue([]),
+  findBy: jest.fn().mockResolvedValue([]),
 });
 
 const mockService = () => ({
@@ -61,7 +62,7 @@ describe('QACertificationEventChecksService', () => {
     it('should return error message A for QACERT-11', async () => {
       let duplicate;
       jest
-        .spyOn(repository, 'find')
+        .spyOn(repository, 'findBy')
         .mockImplementation(() => Promise.resolve([duplicate]));
       try {
         await service.runChecks(locationId, payload, null, false, false);

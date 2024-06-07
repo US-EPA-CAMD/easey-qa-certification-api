@@ -1,5 +1,11 @@
-import { TestResultCode } from '../entities/test-result-code.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
-@EntityRepository(TestResultCode)
-export class TestResultCodeRepository extends Repository<TestResultCode> {}
+import { TestResultCode } from '../entities/test-result-code.entity';
+
+@Injectable()
+export class TestResultCodeRepository extends Repository<TestResultCode> {
+  constructor(entityManager: EntityManager) {
+    super(TestResultCode, entityManager);
+  }
+}

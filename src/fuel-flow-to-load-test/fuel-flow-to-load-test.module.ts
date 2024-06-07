@@ -1,10 +1,11 @@
 import { forwardRef, Module } from '@nestjs/common';
-import { FuelFlowToLoadTestService } from './fuel-flow-to-load-test.service';
-import { FuelFlowToLoadTestController } from './fuel-flow-to-load-test.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FuelFlowToLoadTestRepository } from './fuel-flow-to-load-test.repository';
-import { TestSummaryModule } from '../test-summary/test-summary.module';
+
 import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
+import { TestSummaryModule } from '../test-summary/test-summary.module';
+import { FuelFlowToLoadTestController } from './fuel-flow-to-load-test.controller';
+import { FuelFlowToLoadTestRepository } from './fuel-flow-to-load-test.repository';
+import { FuelFlowToLoadTestService } from './fuel-flow-to-load-test.service';
 
 @Module({
   imports: [
@@ -12,7 +13,16 @@ import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
     forwardRef(() => TestSummaryModule),
   ],
   controllers: [FuelFlowToLoadTestController],
-  providers: [FuelFlowToLoadTestMap, FuelFlowToLoadTestService],
-  exports: [TypeOrmModule, FuelFlowToLoadTestMap, FuelFlowToLoadTestService],
+  providers: [
+    FuelFlowToLoadTestMap,
+    FuelFlowToLoadTestRepository,
+    FuelFlowToLoadTestService,
+  ],
+  exports: [
+    TypeOrmModule,
+    FuelFlowToLoadTestMap,
+    FuelFlowToLoadTestRepository,
+    FuelFlowToLoadTestService,
+  ],
 })
 export class FuelFlowToLoadTestModule {}

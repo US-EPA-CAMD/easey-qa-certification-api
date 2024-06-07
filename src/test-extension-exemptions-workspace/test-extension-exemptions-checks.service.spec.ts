@@ -12,7 +12,7 @@ const payload = new TestExtensionExemptionBaseDTO();
 const MOCK_ERROR_MSG = 'MOCK_ERROR_MSG';
 
 const mockRepository = () => ({
-  find: jest.fn().mockResolvedValue([]),
+  findBy: jest.fn().mockResolvedValue([]),
 });
 
 const mockService = () => ({
@@ -66,7 +66,7 @@ describe('TestExtensionExemptionsChecksService', () => {
     it('should return error message A for EXTEXEM-8', async () => {
       let duplicate;
       jest
-        .spyOn(repository, 'find')
+        .spyOn(repository, 'findBy')
         .mockImplementation(() => Promise.resolve([duplicate]));
       try {
         await service.runChecks(locationId, payload, null, false, false);

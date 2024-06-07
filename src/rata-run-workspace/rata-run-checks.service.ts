@@ -1,29 +1,27 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
-import { TestSummary } from '../entities/test-summary.entity';
 import { RataRunBaseDTO, RataRunImportDTO } from '../dto/rata-run.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
-import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
+import { TestSummary } from '../entities/test-summary.entity';
 import { RataRun } from '../entities/workspace/rata-run.entity';
-import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
+import { RataRunWorkspaceRepository } from './rata-run-workspace.repository';
 
 const moment = require('moment');
+
 const KEY = 'RATA Run';
+
 @Injectable()
 export class RataRunChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
-    @InjectRepository(RataRunWorkspaceRepository)
     private readonly repository: RataRunWorkspaceRepository,
-    @InjectRepository(MonitorSystemRepository)
     private readonly monitorSystemRepository: MonitorSystemRepository,
   ) {}
 
@@ -55,7 +53,7 @@ export class RataRunChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-      testSumRecord.system = await this.monitorSystemRepository.findOne({
+      testSumRecord.system = await this.monitorSystemRepository.findOneBy({
         monitoringSystemID: testSummary.monitoringSystemId,
         locationId: locationId,
       });
@@ -216,7 +214,7 @@ export class RataRunChecksService {
     let duplicates: RataRun[] | RataRunBaseDTO[];
 
     if (rataSumId && !isImport) {
-      duplicates = await this.repository.find({
+      duplicates = await this.repository.findBy({
         rataSumId: rataSumId,
         runNumber: rataRun.runNumber,
       });

@@ -1,26 +1,27 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UnitDefaultTest } from '../entities/workspace/unit-default-test.entity';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import {
-  UnitDefaultTestBaseDTO,
-  UnitDefaultTestRecordDTO,
-  UnitDefaultTestImportDTO,
-  UnitDefaultTestDTO,
-} from '../dto/unit-default-test.dto';
-import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
-import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
-import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { HttpStatus } from '@nestjs/common';
-import { UnitDefaultTest as UnitDefaultTestOfficial } from '../entities/unit-default-test.entity';
-import { UnitDefaultTestRepository } from '../unit-default-test/unit-default-test.repository';
+import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import {
   UnitDefaultTestRunDTO,
   UnitDefaultTestRunImportDTO,
 } from '../dto/unit-default-test-run.dto';
+import {
+  UnitDefaultTestBaseDTO,
+  UnitDefaultTestDTO,
+  UnitDefaultTestImportDTO,
+  UnitDefaultTestRecordDTO,
+} from '../dto/unit-default-test.dto';
+import { UnitDefaultTest as UnitDefaultTestOfficial } from '../entities/unit-default-test.entity';
+import { UnitDefaultTest } from '../entities/workspace/unit-default-test.entity';
+import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { UnitDefaultTestRunWorkspaceService } from '../unit-default-test-run-workspace/unit-default-test-run.service';
-import { ConfigService } from '@nestjs/config';
+import { UnitDefaultTestRepository } from '../unit-default-test/unit-default-test.repository';
+import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
+import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
 
 const id = '';
 const testSumId = '';
@@ -40,7 +41,7 @@ historicalUnitDefaulTest.id = 'HISTORICAL-ID';
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
@@ -56,7 +57,7 @@ const mockTestSumService = () => ({
 });
 
 const mockOfficialRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(historicalUnitDefaulTest),
+  findOneBy: jest.fn().mockResolvedValue(historicalUnitDefaulTest),
 });
 
 const mockUnitDefaultTestRunService = () => ({
@@ -125,7 +126,7 @@ describe('UnitDefaultTestWorkspaceService', () => {
     });
 
     it('Should throw error when a UnitDefaultTest record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {
@@ -175,7 +176,7 @@ describe('UnitDefaultTestWorkspaceService', () => {
     });
 
     it('should throw error with invalid Unit Default Test', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
       try {

@@ -1,32 +1,29 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
-import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { RataImportDTO } from '../dto/rata.dto';
 import {
   TestQualificationBaseDTO,
   TestQualificationImportDTO,
 } from '../dto/test-qualification.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
-import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
-import { RataImportDTO } from '../dto/rata.dto';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
 
 const moment = require('moment');
+
 const KEY = 'Test Qualification';
 
 @Injectable()
 export class TestQualificationChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
-    @InjectRepository(MonitorSystemRepository)
     private readonly monitorSystemRepository: MonitorSystemRepository,
-    @InjectRepository(TestQualificationWorkspaceRepository)
     private readonly testQualRepository: TestQualificationWorkspaceRepository,
   ) {}
 
@@ -58,7 +55,7 @@ export class TestQualificationChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-      testSumRecord.system = await this.monitorSystemRepository.findOne({
+      testSumRecord.system = await this.monitorSystemRepository.findOneBy({
         monitoringSystemID: testSummary.monitoringSystemId,
         locationId: locationId,
       });
@@ -276,7 +273,7 @@ export class TestQualificationChecksService {
         });
       }
     } else {
-      testQuals = await this.testQualRepository.find({
+      testQuals = await this.testQualRepository.findBy({
         testSumId: testSumId,
         testClaimCode: testQualification.testClaimCode,
       });

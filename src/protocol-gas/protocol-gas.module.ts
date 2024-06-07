@@ -12,7 +12,12 @@ import { ProtocolGasMap } from '../maps/protocol-gas.map';
     forwardRef(() => TestSummaryModule),
   ],
   controllers: [ProtocolGasController],
-  providers: [ProtocolGasService, ProtocolGasMap],
-  exports: [TypeOrmModule, ProtocolGasMap, ProtocolGasService],
+  providers: [ProtocolGasRepository, ProtocolGasService, ProtocolGasMap],
+  exports: [
+    TypeOrmModule,
+    ProtocolGasMap,
+    ProtocolGasRepository,
+    ProtocolGasService,
+  ],
 })
 export class ProtocolGasModule {}

@@ -13,10 +13,15 @@ import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.
     HttpModule,
     forwardRef(() => TestSummaryModule),
   ],
-  providers: [OnlineOfflineCalibrationService, OnlineOfflineCalibrationMap],
+  providers: [
+    OnlineOfflineCalibrationRepository,
+    OnlineOfflineCalibrationService,
+    OnlineOfflineCalibrationMap,
+  ],
   controllers: [OnlineOfflineCalibrationController],
   exports: [
     TypeOrmModule,
+    OnlineOfflineCalibrationRepository,
     OnlineOfflineCalibrationService,
     OnlineOfflineCalibrationMap,
   ],

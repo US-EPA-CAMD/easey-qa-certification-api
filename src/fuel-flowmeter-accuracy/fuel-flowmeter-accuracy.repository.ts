@@ -1,7 +1,13 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { FuelFlowmeterAccuracy } from '../entities/fuel-flowmeter-accuracy.entity';
 
-@EntityRepository(FuelFlowmeterAccuracy)
+@Injectable()
 export class FuelFlowmeterAccuracyRepository extends Repository<
   FuelFlowmeterAccuracy
-> {}
+> {
+  constructor(entityManager: EntityManager) {
+    super(FuelFlowmeterAccuracy, entityManager);
+  }
+}

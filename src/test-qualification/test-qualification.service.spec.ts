@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TestQualificationService } from './test-qualification.service';
+
 import { TestQualificationDTO } from '../dto/test-qualification.dto';
-import { TestQualificationRepository } from './test-qualification.repository';
 import { TestQualificationMap } from '../maps/test-qualification.map';
+import { TestQualificationRepository } from './test-qualification.repository';
+import { TestQualificationService } from './test-qualification.service';
 
 const testSumId = 'd4e5f6';
 const testQualificationId = 'a1b2c3';
@@ -16,7 +17,7 @@ const mockMap = () => ({
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue(testQualifications),
-  findOne: jest.fn().mockResolvedValue(testQualificationRecord),
+  findOneBy: jest.fn().mockResolvedValue(testQualificationRecord),
 });
 
 describe('TestQualificationService', () => {
@@ -49,14 +50,14 @@ describe('TestQualificationService', () => {
   });
 
   describe('getTestQualification', () => {
-    it('Calls repository.findOne({id}) to get a single Test Qualification record', async () => {
+    it('Calls repository.findOneBy({id}) to get a single Test Qualification record', async () => {
       const result = await service.getTestQualification(testQualificationId);
       expect(result).toEqual(testQualificationRecord);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Test Qualification record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let errored = false;
 

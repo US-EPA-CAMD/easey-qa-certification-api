@@ -1,7 +1,13 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { TransmitterTransducerAccuracy } from '../entities/transmitter-transducer-accuracy.entity';
 
-@EntityRepository(TransmitterTransducerAccuracy)
+@Injectable()
 export class TransmitterTransducerAccuracyRepository extends Repository<
   TransmitterTransducerAccuracy
-> {}
+> {
+  constructor(entityManager: EntityManager) {
+    super(TransmitterTransducerAccuracy, entityManager);
+  }
+}

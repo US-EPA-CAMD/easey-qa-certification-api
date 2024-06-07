@@ -1,15 +1,17 @@
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UnitDefaultTestRunWorkspaceController } from './unit-default-test-run.controller';
-import { UnitDefaultTestRunWorkspaceService } from './unit-default-test-run.service';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import {
   UnitDefaultTestRunBaseDTO,
   UnitDefaultTestRunRecordDTO,
 } from '../dto/unit-default-test-run.dto';
-import { HttpModule } from '@nestjs/axios';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
 import { UnitDefaultTestRunChecksService } from './unit-default-test-run-checks.service';
+import { UnitDefaultTestRunWorkspaceController } from './unit-default-test-run.controller';
+import { UnitDefaultTestRunWorkspaceService } from './unit-default-test-run.service';
 
 const id = '';
 const locId = '';
@@ -45,6 +47,10 @@ describe('UnitDefaultTestRunWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: UnitDefaultTestRunWorkspaceService,
           useFactory: mockService,

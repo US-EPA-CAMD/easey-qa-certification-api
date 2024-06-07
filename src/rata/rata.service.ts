@@ -1,24 +1,23 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { RataSummaryService } from '../rata-summary/rata-summary.service';
 import { In } from 'typeorm';
+
 import { RataDTO } from '../dto/rata.dto';
 import { RataMap } from '../maps/rata.map';
+import { RataSummaryService } from '../rata-summary/rata-summary.service';
 import { RataRepository } from './rata.repository';
 
 @Injectable()
 export class RataService {
   constructor(
     private readonly map: RataMap,
-    @InjectRepository(RataRepository)
     private readonly repository: RataRepository,
     private readonly rataSummaryService: RataSummaryService,
   ) {}
 
   async getRataById(id: string): Promise<RataDTO> {
-    const result = await this.repository.findOne({
-      id: id,
+    const result = await this.repository.findOneBy({
+      id,
     });
 
     if (!result) {
@@ -32,15 +31,15 @@ export class RataService {
   }
 
   async getRatasByTestSumId(testSumId: string): Promise<RataDTO[]> {
-    const results = await this.repository.find({
-      testSumId: testSumId,
+    const results = await this.repository.findBy({
+      testSumId,
     });
     return this.map.many(results);
   }
 
   async getRatasByTestSumIds(testSumIds: string[]): Promise<RataDTO[]> {
-    const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
+    const results = await this.repository.findBy({
+      testSumId: In(testSumIds),
     });
     return this.map.many(results);
   }

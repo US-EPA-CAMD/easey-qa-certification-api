@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
 
 import { FlowToLoadCheckDTO } from '../dto/flow-to-load-check.dto';
+import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
+import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
 import { FlowToLoadCheckRepository } from './flow-to-load-check.repository';
 import { FlowToLoadCheckService } from './flow-to-load-check.service';
-import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
 
 const testSumId = 'j5ft68';
 const flowToLoadCheckId = '';
@@ -13,7 +13,7 @@ const flowToLoadCheck = new FlowToLoadCheckDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
 });
 
 const mockMap = () => ({
@@ -52,14 +52,14 @@ describe('FlowToLoadCheckService', () => {
   });
 
   describe('getFlowToLoadCheck', () => {
-    it('Calls repository.findOne({id}) to get a single Flow To Load Check record', async () => {
+    it('Calls repository.findOneBy({id}) to get a single Flow To Load Check record', async () => {
       const result = await service.getFlowToLoadCheck(flowToLoadCheckId);
       expect(result).toEqual(flowToLoadCheck);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when a Flow To Load Check record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let errored = false;
 

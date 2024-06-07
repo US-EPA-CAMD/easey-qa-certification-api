@@ -1,7 +1,11 @@
-import { TestQualification } from '../entities/test-qualification.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
-@EntityRepository(TestQualification)
-export class TestQualificationRepository extends Repository<
-  TestQualification
-> {}
+import { TestQualification } from '../entities/test-qualification.entity';
+
+@Injectable()
+export class TestQualificationRepository extends Repository<TestQualification> {
+  constructor(entityManager: EntityManager) {
+    super(TestQualification, entityManager);
+  }
+}

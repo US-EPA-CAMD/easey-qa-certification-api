@@ -1,8 +1,10 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { HttpModule } from '@nestjs/axios';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import {
   FuelFlowToLoadTestBaseDTO,
   FuelFlowToLoadTestDTO,
@@ -44,6 +46,10 @@ describe('FuelFlowToLoadTestWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: FuelFlowToLoadTestWorkspaceService,
           useFactory: mockService,

@@ -1,15 +1,21 @@
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
+
+import { TestExtensionExemption } from '../entities/test-extension-exemption.entity';
 import {
   addBeginAndEndDateWhere,
   addJoins,
   addTestExtExemIdWhere,
 } from '../utilities/test-extension-exemption.querybuilder';
-import { EntityRepository, Repository, SelectQueryBuilder } from 'typeorm';
-import { TestExtensionExemption } from '../entities/test-extension-exemption.entity';
 
-@EntityRepository(TestExtensionExemption)
+@Injectable()
 export class TestExtensionExemptionsRepository extends Repository<
   TestExtensionExemption
 > {
+  constructor(entityManager: EntityManager) {
+    super(TestExtensionExemption, entityManager);
+  }
+
   private buildBaseQuery(): SelectQueryBuilder<TestExtensionExemption> {
     const query = this.createQueryBuilder('tee');
     return addJoins(query) as SelectQueryBuilder<TestExtensionExemption>;

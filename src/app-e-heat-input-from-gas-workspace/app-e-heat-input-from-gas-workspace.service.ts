@@ -1,22 +1,21 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
 
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { AppEHeatInputFromGasRepository } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.repository';
-import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import {
   AppEHeatInputFromGasBaseDTO,
-  AppEHeatInputFromGasImportDTO,
   AppEHeatInputFromGasDTO,
+  AppEHeatInputFromGasImportDTO,
   AppEHeatInputFromGasRecordDTO,
 } from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromGas } from '../entities/app-e-heat-input-from-gas.entity';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
 
 @Injectable()
 export class AppEHeatInputFromGasWorkspaceService {
@@ -25,11 +24,8 @@ export class AppEHeatInputFromGasWorkspaceService {
     private readonly map: AppEHeatInputFromGasMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(AppEHeatInputFromGasWorkspaceRepository)
     private readonly repository: AppEHeatInputFromGasWorkspaceRepository,
-    @InjectRepository(AppEHeatInputFromGasRepository)
-    private readonly historicalRepo,
-    @InjectRepository(MonitorSystemWorkspaceRepository)
+    private readonly historicalRepo: AppEHeatInputFromGasRepository,
     private readonly monSysWorkspaceRepository: MonitorSystemWorkspaceRepository,
   ) {}
 
@@ -71,7 +67,7 @@ export class AppEHeatInputFromGasWorkspaceService {
   ): Promise<AppEHeatInputFromGasRecordDTO> {
     const timestamp = currentDateTime();
 
-    const system = await this.monSysWorkspaceRepository.findOne({
+    const system = await this.monSysWorkspaceRepository.findOneBy({
       locationId: locationId,
       monitoringSystemID: payload.monitoringSystemId,
     });
@@ -131,17 +127,17 @@ export class AppEHeatInputFromGasWorkspaceService {
       );
     }
 
-    const system = await this.monSysWorkspaceRepository.findOne({
+    const system = await this.monSysWorkspaceRepository.findOneBy({
       locationId: locationId,
       monitoringSystemID: payload.monitoringSystemId,
     });
 
     if (!system) {
       throw new EaseyException(
-          new Error(
-              `Monitor System Identifier is invalid for this location [${locationId}].`,
-          ),
-          HttpStatus.BAD_REQUEST,
+        new Error(
+          `Monitor System Identifier is invalid for this location [${locationId}].`,
+        ),
+        HttpStatus.BAD_REQUEST,
       );
     }
 

@@ -1,12 +1,13 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { UnitDefaultTestRun } from '../entities/workspace/unit-default-test-run.entity';
+
 import { UnitDefaultTestRunBaseDTO } from '../dto/unit-default-test-run.dto';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { UnitDefaultTestRun } from '../entities/workspace/unit-default-test-run.entity';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { UnitDefaultTestRunChecksService } from './unit-default-test-run-checks.service';
 import { UnitDefaultTestRunWorkspaceRepository } from './unit-default-test-run.repository';
-import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
-import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 const testSumId = '1';
 const unitDefaultTestSumId = '1';
@@ -31,7 +32,7 @@ describe('Linearity Summary Check Service Test', () => {
         {
           provide: UnitDefaultTestRunWorkspaceRepository,
           useFactory: () => ({
-            findOne: jest.fn(),
+            findOneBy: jest.fn(),
           }),
         },
         {
@@ -51,7 +52,7 @@ describe('Linearity Summary Check Service Test', () => {
   describe('Unit Default Test Run Checks', () => {
     const payload = new UnitDefaultTestRunBaseDTO();
     it('Should pass all checks', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       jest
         .spyOn(testSumRepository, 'getTestSummaryById')
@@ -79,7 +80,7 @@ describe('Linearity Summary Check Service Test', () => {
     returnValue.runNumber = 1;
 
     it('Should get already exists error', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(returnValue);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(returnValue);
       jest
         .spyOn(testSumRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRecord);

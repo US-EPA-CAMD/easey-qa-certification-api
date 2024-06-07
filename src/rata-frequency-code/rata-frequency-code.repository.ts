@@ -1,8 +1,14 @@
-import { RataFrequencyCode } from '../entities/workspace/rata-frequency-code.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
-@EntityRepository(RataFrequencyCode)
+import { RataFrequencyCode } from '../entities/workspace/rata-frequency-code.entity';
+
+@Injectable()
 export class RataFrequencyCodeRepository extends Repository<RataFrequencyCode> {
+  constructor(entityManager: EntityManager) {
+    super(RataFrequencyCode, entityManager);
+  }
+
   async getRataFrequencyCode(
     rataFrequencyCode: string,
   ): Promise<RataFrequencyCode> {

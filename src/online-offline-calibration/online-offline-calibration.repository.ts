@@ -1,7 +1,13 @@
-import { Repository, EntityRepository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { OnlineOfflineCalibration } from '../entities/online-offline-calibration.entity';
 
-@EntityRepository(OnlineOfflineCalibration)
+@Injectable()
 export class OnlineOfflineCalibrationRepository extends Repository<
   OnlineOfflineCalibration
-> {}
+> {
+  constructor(entityManager: EntityManager) {
+    super(OnlineOfflineCalibration, entityManager);
+  }
+}

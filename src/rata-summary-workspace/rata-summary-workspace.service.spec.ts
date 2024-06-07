@@ -1,26 +1,27 @@
 import { HttpStatus } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { RataRunWorkspaceService } from '../rata-run-workspace/rata-run-workspace.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
+import { RataRunDTO, RataRunImportDTO } from '../dto/rata-run.dto';
 import {
   RataSummaryBaseDTO,
   RataSummaryDTO,
   RataSummaryImportDTO,
   RataSummaryRecordDTO,
 } from '../dto/rata-summary.dto';
-import { RataSummary } from '../entities/workspace/rata-summary.entity';
 import { RataSummary as RataSummaryOfficial } from '../entities/rata-summary.entity';
+import { RataSummary } from '../entities/workspace/rata-summary.entity';
+import { Rata } from '../entities/workspace/rata.entity';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { RataSummaryMap } from '../maps/rata-summary.map';
+import { RataRunWorkspaceService } from '../rata-run-workspace/rata-run-workspace.service';
+import { RataSummaryRepository } from '../rata-summary/rata-summary.repository';
+import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
 import { RataSummaryWorkspaceService } from './rata-summary-workspace.service';
-import { RataRunDTO, RataRunImportDTO } from '../dto/rata-run.dto';
-import { RataSummaryRepository } from '../rata-summary/rata-summary.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
-import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { Rata } from '../entities/workspace/rata.entity';
-import { ConfigService } from '@nestjs/config';
 
 const dto = new RataSummaryDTO();
 
@@ -55,7 +56,7 @@ const payload: RataSummaryBaseDTO = {
 const mockRepository = () => ({
   create: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   find: jest.fn().mockResolvedValue([entity]),
   delete: jest.fn().mockResolvedValue(null),
 });
@@ -83,7 +84,7 @@ const officialRecord = new RataSummaryOfficial();
 officialRecord.id = 'uuid';
 
 const mockOfficialRepository = () => ({
-  findOne: jest.fn(),
+  findOneBy: jest.fn(),
 });
 
 describe('RataSummaryWorkspaceService', () => {
@@ -173,7 +174,7 @@ describe('RataSummaryWorkspaceService', () => {
     });
 
     it('should throw error with invalid rata summary record id', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
       try {
@@ -241,7 +242,7 @@ describe('RataSummaryWorkspaceService', () => {
     it('Should import Rata Summary with historical data', async () => {
       jest.spyOn(service, 'createRataSummary').mockResolvedValue(dto);
       jest
-        .spyOn(officialRepository, 'findOne')
+        .spyOn(officialRepository, 'findOneBy')
         .mockResolvedValue(officialRecord);
       const result = await service.import(
         testSumId,

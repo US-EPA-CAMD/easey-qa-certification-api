@@ -1,15 +1,17 @@
+import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import {
   AppEHeatInputFromOilDTO,
   AppEHeatInputFromOilRecordDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
+import { AppEHeatInputFromOilChecksService } from './app-e-heat-input-from-oil-checks.service';
 import { AppEHeatInputFromOilWorkspaceController } from './app-e-heat-input-from-oil.controller';
 import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oil.service';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { ConfigService } from '@nestjs/config';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { HttpModule } from '@nestjs/axios';
-import { AppEHeatInputFromOilChecksService } from './app-e-heat-input-from-oil-checks.service';
 
 const locId = '';
 const testSumId = '';
@@ -52,6 +54,10 @@ describe('Appendix E Heat Input from Oil Controller', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: AppEHeatInputFromOilWorkspaceService,
           useFactory: mockService,

@@ -1,7 +1,13 @@
-import { UnitDefaultTestRun } from '../entities/unit-default-test-run.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
-@EntityRepository(UnitDefaultTestRun)
+import { UnitDefaultTestRun } from '../entities/unit-default-test-run.entity';
+
+@Injectable()
 export class UnitDefaultTestRunRepository extends Repository<
   UnitDefaultTestRun
-> {}
+> {
+  constructor(entityManager: EntityManager) {
+    super(UnitDefaultTestRun, entityManager);
+  }
+}

@@ -1,20 +1,20 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { In, IsNull } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+
+import { CalibrationInjectionRepository } from '../calibration-injection/calibration-injection.repository';
 import {
   CalibrationInjectionBaseDTO,
   CalibrationInjectionDTO,
   CalibrationInjectionImportDTO,
 } from '../dto/calibration-injection.dto';
+import { CalibrationInjection } from '../entities/calibration-injection.entity';
 import { CalibrationInjectionMap } from '../maps/calibration-injection.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { CalibrationInjectionWorkspaceRepository } from './calibration-injection-workspace.repository';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { v4 as uuid } from 'uuid';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
-import { CalibrationInjection } from '../entities/calibration-injection.entity';
-import { CalibrationInjectionRepository } from '../calibration-injection/calibration-injection.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 
 @Injectable()
 export class CalibrationInjectionWorkspaceService {
@@ -23,9 +23,7 @@ export class CalibrationInjectionWorkspaceService {
     private readonly map: CalibrationInjectionMap,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(CalibrationInjectionWorkspaceRepository)
     private readonly repository: CalibrationInjectionWorkspaceRepository,
-    @InjectRepository(CalibrationInjectionRepository)
     private readonly historicalRepository: CalibrationInjectionRepository,
   ) {}
 
@@ -41,7 +39,7 @@ export class CalibrationInjectionWorkspaceService {
     id: string,
     testSumId: string,
   ): Promise<CalibrationInjectionDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -77,7 +75,7 @@ export class CalibrationInjectionWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -93,7 +91,7 @@ export class CalibrationInjectionWorkspaceService {
     userId: string,
     isImport: boolean = false,
   ): Promise<CalibrationInjectionDTO> {
-    const entity = await this.repository.findOne({
+    const entity = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -188,15 +186,15 @@ export class CalibrationInjectionWorkspaceService {
     let historicalRecord: CalibrationInjection;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
+      historicalRecord = await this.historicalRepository.findOneBy({
         testSumId: testSumId,
-        upscaleGasLevelCode: payload.upscaleGasLevelCode,
-        zeroInjectionDate: payload.zeroInjectionDate,
-        zeroInjectionHour: payload.zeroInjectionHour,
-        zeroInjectionMinute: payload.zeroInjectionMinute,
-        upscaleInjectionDate: payload.upscaleInjectionDate,
-        upscaleInjectionHour: payload.upscaleInjectionHour,
-        upscaleInjectionMinute: payload.upscaleInjectionMinute,
+        upscaleGasLevelCode: payload.upscaleGasLevelCode ?? IsNull(),
+        zeroInjectionDate: payload.zeroInjectionDate ?? IsNull(),
+        zeroInjectionHour: payload.zeroInjectionHour ?? IsNull(),
+        zeroInjectionMinute: payload.zeroInjectionMinute ?? IsNull(),
+        upscaleInjectionDate: payload.upscaleInjectionDate ?? IsNull(),
+        upscaleInjectionHour: payload.upscaleInjectionHour ?? IsNull(),
+        upscaleInjectionMinute: payload.upscaleInjectionMinute ?? IsNull(),
       });
     }
 

@@ -1,13 +1,14 @@
-import { forwardRef, Module } from '@nestjs/common';
-import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
-import { UnitDefaultTestWorkspaceController } from './unit-default-test-workspace.controller';
-import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
-import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
-import { UnitDefaultTestModule } from '../unit-default-test/unit-default-test.module';
-import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
+import { forwardRef, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
+import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
+import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { UnitDefaultTestRunWorkspaceModule } from '../unit-default-test-run-workspace/unit-default-test-run.module';
+import { UnitDefaultTestModule } from '../unit-default-test/unit-default-test.module';
+import { UnitDefaultTestWorkspaceController } from './unit-default-test-workspace.controller';
+import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
+import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
 
 @Module({
   imports: [
@@ -18,7 +19,16 @@ import { UnitDefaultTestRunWorkspaceModule } from '../unit-default-test-run-work
     HttpModule,
   ],
   controllers: [UnitDefaultTestWorkspaceController],
-  providers: [UnitDefaultTestMap, UnitDefaultTestWorkspaceService],
-  exports: [TypeOrmModule, UnitDefaultTestMap, UnitDefaultTestWorkspaceService],
+  providers: [
+    UnitDefaultTestMap,
+    UnitDefaultTestWorkspaceRepository,
+    UnitDefaultTestWorkspaceService,
+  ],
+  exports: [
+    TypeOrmModule,
+    UnitDefaultTestMap,
+    UnitDefaultTestWorkspaceRepository,
+    UnitDefaultTestWorkspaceService,
+  ],
 })
 export class UnitDefaultTestWorkspaceModule {}

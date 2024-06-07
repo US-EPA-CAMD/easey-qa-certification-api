@@ -3,7 +3,13 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { IsNull } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import {
   TestExtensionExemptionBaseDTO,
   TestExtensionExemptionDTO,
@@ -11,30 +17,20 @@ import {
   TestExtensionExemptionRecordDTO,
 } from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionMap } from '../maps/test-extension-exemption.map';
-import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
-import { v4 as uuid } from 'uuid';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
+import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
 
 @Injectable()
 export class TestExtensionExemptionsWorkspaceService {
   constructor(
     private readonly logger: Logger,
     private readonly map: TestExtensionExemptionMap,
-    @InjectRepository(TestExtensionExemptionsWorkspaceRepository)
     private readonly repository: TestExtensionExemptionsWorkspaceRepository,
-    @InjectRepository(MonitorLocationRepository)
     private readonly monitorLocationRepository: MonitorLocationRepository,
-    @InjectRepository(ComponentWorkspaceRepository)
     private readonly componentRepository: ComponentWorkspaceRepository,
-    @InjectRepository(MonitorSystemWorkspaceRepository)
     private readonly monSysRepository: MonitorSystemWorkspaceRepository,
-    @InjectRepository(ReportingPeriodRepository)
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
   ) {}
 
@@ -114,15 +110,13 @@ export class TestExtensionExemptionsWorkspaceService {
       componentRecordId,
     } = await this.lookupValues(locationId, payload);
 
-    const record = await this.repository.findOne({
-      where: {
-        locationId,
-        fuelCode: payload.fuelCode,
-        extensionOrExemptionCode: payload.extensionOrExemptionCode,
-        reportPeriodId,
-        monitoringSystemRecordId,
-        componentRecordId,
-      },
+    const record = await this.repository.findOneBy({
+      locationId,
+      fuelCode: payload.fuelCode ?? IsNull(),
+      extensionOrExemptionCode: payload.extensionOrExemptionCode,
+      reportPeriodId: reportPeriodId ?? IsNull(),
+      monitoringSystemRecordId: monitoringSystemRecordId ?? IsNull(),
+      componentRecordId: componentRecordId ?? IsNull(),
     });
 
     let importedTestExtensionExemption;
@@ -211,7 +205,7 @@ export class TestExtensionExemptionsWorkspaceService {
     userId: string,
   ): Promise<TestExtensionExemptionRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOne(id);
+    const record = await this.repository.findOneBy({ id });
 
     if (!record) {
       throw new EaseyException(
@@ -268,7 +262,7 @@ export class TestExtensionExemptionsWorkspaceService {
     let monitoringSystemRecordId = null;
 
     if (payload.year && payload.quarter) {
-      const rptPeriod = await this.reportingPeriodRepository.findOne({
+      const rptPeriod = await this.reportingPeriodRepository.findOneBy({
         year: payload.year,
         quarter: payload.quarter,
       });
@@ -277,7 +271,7 @@ export class TestExtensionExemptionsWorkspaceService {
     }
 
     if (payload.componentId) {
-      const component = await this.componentRepository.findOne({
+      const component = await this.componentRepository.findOneBy({
         locationId: locationId,
         componentID: payload.componentId,
       });
@@ -286,7 +280,7 @@ export class TestExtensionExemptionsWorkspaceService {
     }
 
     if (payload.monitoringSystemId) {
-      const monitorSystem = await this.monSysRepository.findOne({
+      const monitorSystem = await this.monSysRepository.findOneBy({
         locationId: locationId,
         monitoringSystemID: payload.monitoringSystemId,
       });

@@ -1,7 +1,13 @@
-import { AirEmissionTesting } from '../entities/workspace/air-emission-test.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
 
-@EntityRepository(AirEmissionTesting)
+import { AirEmissionTesting } from '../entities/workspace/air-emission-test.entity';
+
+@Injectable()
 export class AirEmissionTestingWorkspaceRepository extends Repository<
   AirEmissionTesting
-> {}
+> {
+  constructor(entityManager: EntityManager) {
+    super(AirEmissionTesting, entityManager);
+  }
+}

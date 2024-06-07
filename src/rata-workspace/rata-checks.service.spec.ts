@@ -1,20 +1,19 @@
 import { Test } from '@nestjs/testing';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { TestResultCodes } from '../enums/test-result-code.enum';
+
 import { RataImportDTO } from '../dto/rata.dto';
 import { TestSummaryImportDTO } from '../dto/test-summary.dto';
+import { TestResultCode } from '../entities/test-result-code.entity';
 import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
 import { RataFrequencyCode } from '../entities/workspace/rata-frequency-code.entity';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { TestResultCodes } from '../enums/test-result-code.enum';
+import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { RataFrequencyCodeRepository } from '../rata-frequency-code/rata-frequency-code.repository';
+import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { RataChecksService } from './rata-checks.service';
-import { TestResultCodeRepository } from '../test-result-code/test-result-code.repository';
-import { TestResultCode } from '../entities/test-result-code.entity';
-import { Rata } from '../entities/workspace/rata.entity';
-import { TestTypeCodes } from '../enums/test-type-code.enum';
 
 const locationId = '';
 const testSumId = '';
@@ -43,10 +42,10 @@ const mockRataFrequencyCodeRepository = () => ({
   getRataFrequencyCode: jest.fn().mockResolvedValue(rataFreqCdRecord),
 });
 const mockTestResultCodeRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(testResultCode),
+  findOneBy: jest.fn().mockResolvedValue(testResultCode),
 });
 const mockMonitorSystemRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(monitorSystemRecord),
+  findOneBy: jest.fn().mockResolvedValue(monitorSystemRecord),
 });
 
 describe('Rata Checks Service Test', () => {
@@ -124,7 +123,7 @@ describe('Rata Checks Service Test', () => {
         .spyOn(testSummaryRepository, 'getTestSummaryById')
         .mockResolvedValue(testSumRec);
 
-      jest.spyOn(testResultCodeRepository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(testResultCodeRepository, 'findOneBy').mockResolvedValue(null);
 
       try {
         await service.runChecks(locationId, importPayload, testSumId);
@@ -147,7 +146,7 @@ describe('Rata Checks Service Test', () => {
         .mockResolvedValue(testSumRec);
 
       jest
-        .spyOn(testResultCodeRepository, 'findOne')
+        .spyOn(testResultCodeRepository, 'findOneBy')
         .mockResolvedValue(testResultRec);
 
       try {

@@ -1,21 +1,21 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+
 import {
   HgSummaryBaseDTO,
   HgSummaryDTO,
   HgSummaryImportDTO,
 } from '../dto/hg-summary.dto';
-import { HgSummaryRepository } from '../hg-summary/hg-summary.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
 import { HgSummary } from '../entities/hg-summary.entity';
-import { v4 as uuid } from 'uuid';
-import { In } from 'typeorm';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { HgInjectionWorkspaceService } from '../hg-injection-workspace/hg-injection-workspace.service';
+import { HgSummaryRepository } from '../hg-summary/hg-summary.repository';
 import { HgSummaryMap } from '../maps/hg-summary.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { HgSummaryWorkspaceRepository } from './hg-summary-workspace.repository';
-import { HgInjectionWorkspaceService } from '../hg-injection-workspace/hg-injection-workspace.service';
 
 @Injectable()
 export class HgSummaryWorkspaceService {
@@ -26,10 +26,7 @@ export class HgSummaryWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     @Inject(forwardRef(() => HgInjectionWorkspaceService))
     private readonly hgInjectionService: HgInjectionWorkspaceService,
-    @InjectRepository(HgSummaryWorkspaceRepository)
     private readonly repository: HgSummaryWorkspaceRepository,
-
-    @InjectRepository(HgSummaryRepository)
     private readonly historicalRepo: HgSummaryRepository,
   ) {}
 
@@ -40,7 +37,7 @@ export class HgSummaryWorkspaceService {
   }
 
   async getHgSummary(id: string, testSumId: string): Promise<HgSummaryDTO> {
-    const result = await this.repository.findOne({
+    const result = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -74,7 +71,7 @@ export class HgSummaryWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -116,7 +113,7 @@ export class HgSummaryWorkspaceService {
   ): Promise<HgSummaryDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOne({
+    const entity = await this.repository.findOneBy({
       id,
       testSumId,
     });
@@ -184,7 +181,7 @@ export class HgSummaryWorkspaceService {
     let historicalRecord: HgSummary;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
+      historicalRecord = await this.historicalRepo.findOneBy({
         testSumId: testSumId,
         gasLevelCode: payload.gasLevelCode,
       });

@@ -1,12 +1,14 @@
 import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource } from 'typeorm';
+
 import { RataBaseDTO, RataRecordDTO } from '../dto/rata.dto';
 import { RataChecksService } from './rata-checks.service';
 import { RataWorkspaceController } from './rata-workspace.controller';
 import { RataWorkspaceService } from './rata-workspace.service';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
 
 const locId = '';
 const testSumId = '';
@@ -47,6 +49,10 @@ describe('RataWorkspaceController', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: RataWorkspaceService,
           useFactory: mockService,

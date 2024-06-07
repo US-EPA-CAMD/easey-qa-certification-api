@@ -1,18 +1,19 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { InternalServerErrorException } from '@nestjs/common';
-import { FuelFlowToLoadTestRepository } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.repository';
+import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import {
   FuelFlowToLoadTestBaseDTO,
   FuelFlowToLoadTestDTO,
   FuelFlowToLoadTestImportDTO,
 } from '../dto/fuel-flow-to-load-test.dto';
 import { FuelFlowToLoadTest } from '../entities/fuel-flow-to-load-test.entity';
+import { FuelFlowToLoadTestRepository } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.repository';
 import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FuelFlowToLoadTestWorkspaceRepository } from './fuel-flow-to-load-test-workspace.repository';
 import { FuelFlowToLoadTestWorkspaceService } from './fuel-flow-to-load-test-workspace.service';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const testSumId = '';
@@ -25,7 +26,7 @@ const payload = new FuelFlowToLoadTestBaseDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
@@ -41,7 +42,7 @@ const mockTestSumService = () => ({
 });
 
 const mockOfficialRepository = () => ({
-  findOne: jest.fn(),
+  findOneBy: jest.fn(),
 });
 
 describe('FuelFlowToLoadTestWorkspaceService', () => {
@@ -120,7 +121,7 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
     });
 
     it('Should throw error when a Fuel Flow To Load Test record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {
@@ -160,7 +161,7 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
     });
 
     it('Should throw error when a Fuel Flow To Load Test record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {

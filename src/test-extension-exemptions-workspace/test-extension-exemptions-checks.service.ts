@@ -1,8 +1,8 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { IsNull } from 'typeorm';
 
 import {
   TestExtensionExemptionBaseDTO,
@@ -17,7 +17,6 @@ const KEY = 'Test Extension Exemption';
 export class TestExtensionExemptionsChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(TestExtensionExemptionsWorkspaceRepository)
     private readonly repository: TestExtensionExemptionsWorkspaceRepository,
     private readonly service: TestExtensionExemptionsWorkspaceService,
   ) {}
@@ -111,13 +110,13 @@ export class TestExtensionExemptionsChecksService {
 
       const { extensionOrExemptionCode, fuelCode } = testExtensionExemption;
 
-      testExtExempts = await this.repository.find({
+      testExtExempts = await this.repository.findBy({
         locationId,
-        reportPeriodId,
-        monitoringSystemRecordId,
-        componentRecordId,
+        reportPeriodId: reportPeriodId ?? IsNull(),
+        monitoringSystemRecordId: monitoringSystemRecordId ?? IsNull(),
+        componentRecordId: componentRecordId ?? IsNull(),
         extensionOrExemptionCode,
-        fuelCode,
+        fuelCode: fuelCode ?? IsNull(),
       });
 
       if (testExtExempts.length > 0) {

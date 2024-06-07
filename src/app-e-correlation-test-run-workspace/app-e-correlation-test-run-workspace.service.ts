@@ -1,23 +1,23 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+
+import { AppECorrelationTestRunRepository } from '../app-e-correlation-test-run/app-e-correlation-test-run.repository';
+import { AppEHeatInputFromGasWorkspaceService } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.service';
+import { AppEHeatInputFromOilWorkspaceService } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.service';
 import {
   AppECorrelationTestRunBaseDTO,
   AppECorrelationTestRunDTO,
-  AppECorrelationTestRunRecordDTO,
   AppECorrelationTestRunImportDTO,
+  AppECorrelationTestRunRecordDTO,
 } from '../dto/app-e-correlation-test-run.dto';
+import { AppECorrelationTestRun } from '../entities/app-e-correlation-test-run.entity';
 import { AppECorrelationTestRunMap } from '../maps/app-e-correlation-test-run.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AppEHeatInputFromGasWorkspaceService } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.service';
-import { AppEHeatInputFromOilWorkspaceService } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.service';
 import { AppECorrelationTestRunWorkspaceRepository } from './app-e-correlation-test-run-workspace.repository';
-import { AppECorrelationTestRunRepository } from '../app-e-correlation-test-run/app-e-correlation-test-run.repository';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { v4 as uuid } from 'uuid';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { AppECorrelationTestRun } from '../entities/app-e-correlation-test-run.entity';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { In } from 'typeorm';
 
 @Injectable()
 export class AppECorrelationTestRunWorkspaceService {
@@ -30,9 +30,7 @@ export class AppECorrelationTestRunWorkspaceService {
     private readonly appEHeatInputFromGasService: AppEHeatInputFromGasWorkspaceService,
     @Inject(forwardRef(() => AppEHeatInputFromOilWorkspaceService))
     private readonly appEHeatInputFromOilService: AppEHeatInputFromOilWorkspaceService,
-    @InjectRepository(AppECorrelationTestRunWorkspaceRepository)
     private readonly repository: AppECorrelationTestRunWorkspaceRepository,
-    @InjectRepository(AppECorrelationTestRunRepository)
     private readonly historicalRepo: AppECorrelationTestRunRepository,
   ) {}
 
@@ -49,7 +47,7 @@ export class AppECorrelationTestRunWorkspaceService {
   async getAppECorrelationTestRun(
     id: string,
   ): Promise<AppECorrelationTestRunBaseDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -83,7 +81,7 @@ export class AppECorrelationTestRunWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -101,7 +99,7 @@ export class AppECorrelationTestRunWorkspaceService {
     isImport: boolean = false,
   ): Promise<AppECorrelationTestRunRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOne({
+    const entity = await this.repository.findOneBy({
       id,
       appECorrTestSumId,
     });
@@ -179,7 +177,7 @@ export class AppECorrelationTestRunWorkspaceService {
     let historicalRecord: AppECorrelationTestRun;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOne({
+      historicalRecord = await this.historicalRepo.findOneBy({
         appECorrTestSumId: appECorrTestSumId,
         runNumber: payload.runNumber,
       });
@@ -198,8 +196,8 @@ export class AppECorrelationTestRunWorkspaceService {
       `Appendix E Correlation Test Run Successfully Imported. Record Id: ${createdTestRun.id}`,
     );
 
-    if (payload.appEHeatInputFromGasData?.length > 0) {
-      for (const appEHeatInputFromGas of payload.appEHeatInputFromGasData) {
+    if (payload.appendixEHeatInputFromGasData?.length > 0) {
+      for (const appEHeatInputFromGas of payload.appendixEHeatInputFromGasData) {
         promises.push(
           this.appEHeatInputFromGasService.import(
             locationId,
@@ -213,8 +211,8 @@ export class AppECorrelationTestRunWorkspaceService {
       }
     }
 
-    if (payload.appEHeatInputFromOilData?.length > 0) {
-      for (const appEHeatInputFromOil of payload.appEHeatInputFromOilData) {
+    if (payload.appendixEHeatInputFromOilData?.length > 0) {
+      for (const appEHeatInputFromOil of payload.appendixEHeatInputFromOilData) {
         promises.push(
           this.appEHeatInputFromOilService.import(
             locationId,
@@ -256,10 +254,10 @@ export class AppECorrelationTestRunWorkspaceService {
       const hIOil = await this.appEHeatInputFromOilService.export(testRunIds);
 
       appECorrelationTestRuns.forEach(s => {
-        s.appEHeatInputFromGasData = hIGas.filter(
+        s.appendixEHeatInputFromGasData = hIGas.filter(
           i => i.appECorrTestRunId === s.id,
         );
-        s.appEHeatInputFromOilData = hIOil.filter(
+        s.appendixEHeatInputFromOilData = hIOil.filter(
           i => i.appECorrTestRunId === s.id,
         );
       });

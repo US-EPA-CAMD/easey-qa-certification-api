@@ -1,10 +1,16 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { FlowToLoadCheck } from '../entities/workspace/flow-to-load-check.entity';
 
-@EntityRepository(FlowToLoadCheck)
+@Injectable()
 export class FlowToLoadCheckWorkspaceRepository extends Repository<
   FlowToLoadCheck
 > {
+  constructor(entityManager: EntityManager) {
+    super(FlowToLoadCheck, entityManager);
+  }
+
   async getFlowToLoadChecksByTestSumIds(
     testSumIds: string[],
   ): Promise<FlowToLoadCheck[]> {

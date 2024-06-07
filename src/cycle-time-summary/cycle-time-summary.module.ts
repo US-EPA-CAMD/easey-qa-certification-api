@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CycleTimeSummaryService } from './cycle-time-summary.service';
+import { CycleTimeInjectionModule } from '../cycle-time-injection/cycle-time-injection.module';
+import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
 import { CycleTimeSummaryController } from './cycle-time-summary.controller';
 import { CycleTimeSummaryRepository } from './cycle-time-summary.repository';
-import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
-import { CycleTimeInjectionModule } from '../cycle-time-injection/cycle-time-injection.module';
+import { CycleTimeSummaryService } from './cycle-time-summary.service';
 
 @Module({
   imports: [
@@ -13,7 +13,16 @@ import { CycleTimeInjectionModule } from '../cycle-time-injection/cycle-time-inj
     CycleTimeInjectionModule,
   ],
   controllers: [CycleTimeSummaryController],
-  providers: [CycleTimeSummaryMap, CycleTimeSummaryService],
-  exports: [TypeOrmModule, CycleTimeSummaryMap, CycleTimeSummaryService],
+  providers: [
+    CycleTimeSummaryMap,
+    CycleTimeSummaryRepository,
+    CycleTimeSummaryService,
+  ],
+  exports: [
+    TypeOrmModule,
+    CycleTimeSummaryMap,
+    CycleTimeSummaryRepository,
+    CycleTimeSummaryService,
+  ],
 })
 export class CycleTimeSummaryModule {}

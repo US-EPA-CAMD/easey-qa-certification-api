@@ -1,36 +1,33 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { v4 as uuid } from 'uuid';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
-import { RataTraverseWorkspaceService } from '../rata-traverse-workspace/rata-traverse-workspace.service';
-
+import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.repository';
-import { FlowRataRunMap } from '../maps/flow-rata-run.map';
+import { In } from 'typeorm';
+import { v4 as uuid } from 'uuid';
+
 import {
   FlowRataRunBaseDTO,
   FlowRataRunDTO,
   FlowRataRunImportDTO,
   FlowRataRunRecordDTO,
 } from '../dto/flow-rata-run.dto';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FlowRataRun } from '../entities/flow-rata-run.entity';
 import { FlowRataRunRepository } from '../flow-rata-run/flow-rata-run.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { FlowRataRunMap } from '../maps/flow-rata-run.map';
+import { RataTraverseWorkspaceService } from '../rata-traverse-workspace/rata-traverse-workspace.service';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.repository';
 
 @Injectable()
 export class FlowRataRunWorkspaceService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(FlowRataRunWorkspaceRepository)
     private readonly repository: FlowRataRunWorkspaceRepository,
     private readonly map: FlowRataRunMap,
     @Inject(forwardRef(() => RataTraverseWorkspaceService))
     private readonly rataTravarseService: RataTraverseWorkspaceService,
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
-    @InjectRepository(FlowRataRunRepository)
     private readonly historicalRepository: FlowRataRunRepository,
   ) {}
 
@@ -41,7 +38,7 @@ export class FlowRataRunWorkspaceService {
   }
 
   async getFlowRataRun(id: string): Promise<FlowRataRunDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -73,7 +70,7 @@ export class FlowRataRunWorkspaceService {
     });
 
     await this.repository.save(entity);
-    entity = await this.repository.findOne(entity.id);
+    entity = await this.repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -91,7 +88,7 @@ export class FlowRataRunWorkspaceService {
     isImport: boolean = false,
   ): Promise<FlowRataRunRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOne(flowRataRunId);
+    const record = await this.repository.findOneBy({ id: flowRataRunId });
 
     if (!record) {
       throw new EaseyException(
@@ -173,7 +170,7 @@ export class FlowRataRunWorkspaceService {
     let historicalRecord: FlowRataRun;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOne({
+      historicalRecord = await this.historicalRepository.findOneBy({
         rataRunId: rataRunId,
         numberOfTraversePoints: payload.numberOfTraversePoints,
       });

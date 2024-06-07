@@ -1,10 +1,11 @@
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+
 import { UnitDefaultTestRunRecordDTO } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRun } from '../entities/unit-default-test-run.entity';
 import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
 import { UnitDefaultTestRunRepository } from './unit-default-test-run.repository';
 import { UnitDefaultTestRunService } from './unit-default-test-run.service';
-import { ConfigService } from '@nestjs/config';
 
 const id = '';
 const unitDefaultTestSumId = '';
@@ -14,7 +15,7 @@ const dto = new UnitDefaultTestRunRecordDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
 });
 
 const mockMap = () => ({
@@ -67,7 +68,7 @@ describe('UnitDefaultTestRunService', () => {
     });
 
     it('Should throw error when a UnitDefaultTestRun record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
       let errored = false;
 
       try {

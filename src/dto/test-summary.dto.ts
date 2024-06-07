@@ -12,15 +12,12 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import {
   IsInRange,
-  IsValidDate,
+  IsValidCode,
   IsIsoFormat,
   MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
 
-import {
-  ErrorMessages,
-  propertyMetadata,
-} from '@us-epa-camd/easey-common/constants';
+import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 
@@ -85,7 +82,6 @@ import {
 } from './app-e-correlation-test-summary.dto';
 
 import { RequireOne } from '../pipes/require-one.pipe';
-import { IsValidCode } from '../pipes/is-valid-code.pipe';
 import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
 import { TestTypeCode } from '../entities/test-type-code.entity';
 import { SpanScaleCode } from '../entities/span-scale-code.entity';
@@ -284,7 +280,7 @@ export class TestSummaryBaseDTO {
       return `The value of [${args.value}] for [${args.property}] must be 1 to 3 characters and only consist of upper case letters, numbers for [${KEY}].`;
     },
   })
-  componentId?: string;
+  componentId: string;
 
   @ApiProperty({
     description: propertyMetadata.monitorSpanDTOSpanScaleCode.description,
@@ -799,7 +795,7 @@ export class TestSummaryImportDTO extends TestSummaryBaseDTO {
 
   @ValidateNested({ each: true })
   @Type(() => AirEmissionTestingImportDTO)
-  airEmissionTestData: AirEmissionTestingImportDTO[];
+  airEmissionTestingData: AirEmissionTestingImportDTO[];
 }
 
 export class TestSummaryDTO extends TestSummaryRecordDTO {
@@ -819,5 +815,5 @@ export class TestSummaryDTO extends TestSummaryRecordDTO {
   hgSummaryData: HgSummaryDTO[];
   testQualificationData: TestQualificationDTO[];
   protocolGasData: ProtocolGasDTO[];
-  airEmissionTestData: AirEmissionTestingDTO[];
+  airEmissionTestingData: AirEmissionTestingDTO[];
 }

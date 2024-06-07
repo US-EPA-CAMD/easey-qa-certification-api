@@ -1,18 +1,19 @@
+import { InternalServerErrorException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
 import {
   FlowToLoadCheckBaseDTO,
   FlowToLoadCheckDTO,
   FlowToLoadCheckImportDTO,
 } from '../dto/flow-to-load-check.dto';
+import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
+import { FlowToLoadCheckRepository } from '../flow-to-load-check/flow-to-load-check.repository';
+import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
+import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FlowToLoadCheckWorkspaceRepository } from './flow-to-load-check-workspace.repository';
 import { FlowToLoadCheckWorkspaceService } from './flow-to-load-check-workspace.service';
-import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
-import { InternalServerErrorException } from '@nestjs/common';
-import { FlowToLoadCheckRepository } from '../flow-to-load-check/flow-to-load-check.repository';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { ConfigService } from '@nestjs/config';
 
 const testSumId = '';
 const userId = 'user';
@@ -24,7 +25,7 @@ const payload = new FlowToLoadCheckBaseDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
@@ -40,7 +41,7 @@ const mockTestSumService = () => ({
 });
 
 const mockOfficialRepository = () => ({
-  findOne: jest.fn(),
+  findOneBy: jest.fn(),
 });
 
 describe('FlowToLoadCheckWorkspaceService', () => {
@@ -89,14 +90,14 @@ describe('FlowToLoadCheckWorkspaceService', () => {
   });
 
   describe('getFlowToLoadCheck', () => {
-    it('Calls repository.findOne({id}) to get a single Flow To Load Check record', async () => {
+    it('Calls repository.findOneBy({id}) to get a single Flow To Load Check record', async () => {
       const result = await service.getFlowToLoadCheck(flowToLoadCheckId);
       expect(result).toEqual(flowToLoadCheck);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when a Flow To Load Check record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let errored = false;
 
@@ -142,7 +143,7 @@ describe('FlowToLoadCheckWorkspaceService', () => {
     });
 
     it('should throw error with invalid Flow To Load Check', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
       try {

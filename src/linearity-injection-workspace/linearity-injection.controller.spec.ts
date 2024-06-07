@@ -1,6 +1,10 @@
+import { HttpModule } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
-import { HttpModule } from '@nestjs/axios';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { DataSource, EntityManager } from 'typeorm';
+
 import {
   LinearityInjectionBaseDTO,
   LinearityInjectionDTO,
@@ -9,8 +13,6 @@ import { LinearityInjectionChecksService } from './linearity-injection-checks.se
 import { LinearityInjectionWorkspaceController } from './linearity-injection.controller';
 import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
 import { LinearityInjectionWorkspaceService } from './linearity-injection.service';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 
 const locId = '';
 const testSumId = '';
@@ -58,8 +60,13 @@ describe('Linearity Injection Controller', () => {
       controllers: [LinearityInjectionWorkspaceController],
       providers: [
         ConfigService,
+        EntityManager,
         AuthGuard,
         LinearityInjectionWorkspaceRepository,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: LinearityInjectionWorkspaceService,
           useFactory: mockService,

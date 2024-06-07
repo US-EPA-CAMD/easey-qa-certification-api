@@ -1,60 +1,61 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { LinearitySummaryWorkspaceService } from '../linearity-summary-workspace/linearity-summary.service';
-import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
-import { TestSummaryMap } from '../maps/test-summary.map';
-import { TestSummaryWorkspaceRepository } from './test-summary.repository';
-import { TestSummaryWorkspaceService } from './test-summary.service';
+
+import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
+import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
+import { CalibrationInjectionWorkspaceService } from '../calibration-injection-workspace/calibration-injection-workspace.service';
+import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
+import { FlowToLoadCheckDTO } from '../dto/flow-to-load-check.dto';
+import { FlowToLoadReferenceDTO } from '../dto/flow-to-load-reference.dto';
+import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
+import { FuelFlowmeterAccuracyDTO } from '../dto/fuel-flowmeter-accuracy.dto';
 import {
   LinearitySummaryDTO,
   LinearitySummaryImportDTO,
 } from '../dto/linearity-summary.dto';
-import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
-import { StackPipe } from '../entities/workspace/stack-pipe.entity';
-import { Unit } from '../entities/workspace/unit.entity';
-import { Rata } from '../entities/workspace/rata.entity';
-import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
-import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
-import { ProtocolGas } from '../entities/workspace/protocol-gas.entity';
-import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
-import { AppECorrelationTestSummary } from '../entities/workspace/app-e-correlation-test-summary.entity';
-import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
-import { CalibrationInjectionWorkspaceService } from '../calibration-injection-workspace/calibration-injection-workspace.service';
-import { CalibrationInjection } from '../entities/workspace/calibration-injection.entity';
-import { FuelFlowToLoadTest } from '../entities/workspace/fuel-flow-to-load-test.entity';
-import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
-import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
-import { ReportingPeriod } from '../entities/reporting-period.entity';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
-import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { Component } from '../entities/workspace/component.entity';
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
-import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
-import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
-import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
-import { FlowToLoadCheckDTO } from '../dto/flow-to-load-check.dto';
-import { FlowToLoadReferenceDTO } from '../dto/flow-to-load-reference.dto';
 import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
-import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
-import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
-import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
-import { FuelFlowmeterAccuracyDTO } from '../dto/fuel-flowmeter-accuracy.dto';
-import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
+import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TransmitterTransducerAccuracyDTO } from '../dto/transmitter-transducer-accuracy.dto';
-import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
+import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { UnitDefaultTest } from '../entities/unit-default-test.entity';
-import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
-import { HgSummary } from '../entities/workspace/hg-summary.entity';
-import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-workspace.service';
 import { AirEmissionTesting } from '../entities/workspace/air-emission-test.entity';
+import { AppECorrelationTestSummary } from '../entities/workspace/app-e-correlation-test-summary.entity';
+import { CalibrationInjection } from '../entities/workspace/calibration-injection.entity';
+import { Component } from '../entities/workspace/component.entity';
+import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
+import { FuelFlowToLoadTest } from '../entities/workspace/fuel-flow-to-load-test.entity';
+import { HgSummary } from '../entities/workspace/hg-summary.entity';
+import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
+import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
+import { ProtocolGas } from '../entities/workspace/protocol-gas.entity';
+import { Rata } from '../entities/workspace/rata.entity';
+import { StackPipe } from '../entities/workspace/stack-pipe.entity';
 import { TestQualification } from '../entities/workspace/test-qualification.entity';
-import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
-import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { Unit } from '../entities/workspace/unit.entity';
+import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
+import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
+import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
+import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
+import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
+import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-workspace.service';
+import { LinearitySummaryWorkspaceService } from '../linearity-summary-workspace/linearity-summary.service';
+import { TestSummaryMap } from '../maps/test-summary.map';
+import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
+import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
+import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
 import { QASuppDataWorkspaceService } from '../qa-supp-data-workspace/qa-supp-data.service';
+import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
+import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
+import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
+import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
+import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
+import { TestSummaryWorkspaceRepository } from './test-summary.repository';
+import { TestSummaryWorkspaceService } from './test-summary.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -82,7 +83,7 @@ const mockRepository = () => ({
   getTestSummariesByUnitStack: jest.fn().mockResolvedValue([testSummary]),
   getTestSummaryByLocationId: jest.fn().mockResolvedValue(testSummary),
   delete: jest.fn().mockResolvedValue(null),
-  findOne: jest.fn().mockResolvedValue(testSummary),
+  findOneBy: jest.fn().mockResolvedValue(testSummary),
   create: jest.fn().mockResolvedValue(testSummary),
   save: jest.fn().mockResolvedValue(testSummary),
 });
@@ -260,25 +261,25 @@ describe('TestSummaryWorkspaceService', () => {
         {
           provide: ReportingPeriodRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(rp),
+            findOneBy: jest.fn().mockResolvedValue(rp),
           }),
         },
         {
           provide: MonitorSystemRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(ms),
+            findOneBy: jest.fn().mockResolvedValue(ms),
           }),
         },
         {
           provide: MonitorSystemWorkspaceRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(ms),
+            findOneBy: jest.fn().mockResolvedValue(ms),
           }),
         },
         {
           provide: ComponentWorkspaceRepository,
           useFactory: () => ({
-            findOne: jest.fn().mockResolvedValue(comp),
+            findOneBy: jest.fn().mockResolvedValue(comp),
           }),
         },
         {
@@ -411,7 +412,7 @@ describe('TestSummaryWorkspaceService', () => {
   describe('updateTestSummary', () => {
     it('should call the updateTestSummary and update test summariy', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
-      jest.spyOn(repository, 'findOne').mockResolvedValue(testSummary);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(testSummary);
 
       const result = await service.updateTestSummary(
         locationId,
@@ -424,7 +425,7 @@ describe('TestSummaryWorkspaceService', () => {
     });
 
     it('should call updateTestSummary and throw error while test summariy not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
 
@@ -467,7 +468,7 @@ describe('TestSummaryWorkspaceService', () => {
       const result = await service.resetToNeedsEvaluation(testSumId, userId);
 
       expect(result).toEqual(undefined);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
       expect(repository.save).toHaveBeenCalled();
     });
   });
@@ -494,7 +495,7 @@ describe('TestSummaryWorkspaceService', () => {
       monSysData.id = '1';
 
       const monSysWksFindOne = jest
-        .spyOn(monitorSystemWorkspaceRepository, 'findOne')
+        .spyOn(monitorSystemWorkspaceRepository, 'findOneBy')
         .mockResolvedValue(monSysData);
 
       const result = await service.lookupValues(locationId, payload);

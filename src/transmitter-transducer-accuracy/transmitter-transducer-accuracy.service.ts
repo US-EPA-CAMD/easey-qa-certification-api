@@ -1,16 +1,14 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { HttpStatus, Injectable } from '@nestjs/common';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
 
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { TransmitterTransducerAccuracyRepository } from './transmitter-transducer-accuracy.repository';
-import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
 import { TransmitterTransducerAccuracyDTO } from '../dto/transmitter-transducer-accuracy.dto';
+import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
+import { TransmitterTransducerAccuracyRepository } from './transmitter-transducer-accuracy.repository';
 
 @Injectable()
 export class TransmitterTransducerAccuracyService {
   constructor(
-    @InjectRepository(TransmitterTransducerAccuracyRepository)
     private readonly repository: TransmitterTransducerAccuracyRepository,
     private readonly map: TransmitterTransducerAccuracyMap,
   ) {}
@@ -18,7 +16,7 @@ export class TransmitterTransducerAccuracyService {
   async getTransmitterTransducerAccuracy(
     id: string,
   ): Promise<TransmitterTransducerAccuracyDTO> {
-    const entity = await this.repository.findOne(id);
+    const entity = await this.repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(

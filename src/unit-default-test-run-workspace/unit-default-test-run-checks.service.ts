@@ -1,27 +1,23 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
+import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+
+import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import {
   UnitDefaultTestRunBaseDTO,
   UnitDefaultTestRunImportDTO,
 } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRun } from '../entities/unit-default-test-run.entity';
-
-import { UnitDefaultTestRunWorkspaceRepository } from './unit-default-test-run.repository';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
-import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
+import { UnitDefaultTestRunWorkspaceRepository } from './unit-default-test-run.repository';
 
 @Injectable()
 export class UnitDefaultTestRunChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(UnitDefaultTestRunWorkspaceRepository)
     private readonly repository: UnitDefaultTestRunWorkspaceRepository,
-    @InjectRepository(TestSummaryWorkspaceRepository)
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
   ) {}
 
@@ -102,7 +98,7 @@ export class UnitDefaultTestRunChecksService {
         error = errorMsg;
       }
     } else {
-      const record: UnitDefaultTestRun = await this.repository.findOne({
+      const record: UnitDefaultTestRun = await this.repository.findOneBy({
         unitDefaultTestSumId: unitDefaultTestSumId,
         operatingLevelForRun: unitDefaultTestRun.operatingLevelForRun,
         runNumber: unitDefaultTestRun.runNumber,

@@ -1,39 +1,41 @@
-import { Test, TestingModule } from '@nestjs/testing';
 import { HttpModule } from '@nestjs/axios';
+import { ConfigService } from '@nestjs/config';
+import { Test, TestingModule } from '@nestjs/testing';
+import { AuthGuard } from '@us-epa-camd/easey-common/guards';
+import { DataSource } from 'typeorm';
+import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { EntityManager } from 'typeorm';
 
-import { QACertificationWorkspaceController } from './qa-certification.controller';
-import { QACertificationWorkspaceService } from './qa-certification.service';
-import { QACertificationChecksService } from './qa-certification-checks.service';
+import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
+import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
+import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import {
   QACertificationDTO,
   QACertificationImportDTO,
 } from '../dto/qa-certification.dto';
-import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
-import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
-import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { ConfigService } from '@nestjs/config';
-import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
-import { ReviewAndSubmitMultipleParamsDTO } from '../dto/review-and-submit-multiple-params.dto';
-import { CertEventReviewAndSubmitService } from './cert-event-review-and-submit.service';
-import { CertEventReviewAndSubmitRepository } from './cert-event-review-and-submit.repository';
-import { CertEventReviewAndSubmitMap } from '../maps/cert-event-review-and-submit.map';
-import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
-import { TestSummaryReviewAndSubmitService } from './test-summary-review-and-submit.service';
-import { TestSummaryReviewAndSubmitRepository } from './test-summary-review-and-submit.repository';
-import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
-import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
-import { TeeReviewAndSubmitService } from './tee-review-and-submit.service';
-import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository';
-import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
-import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
-import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
-import { MatsBulkFileMap } from '../maps/mats-bulk-file.map';
 import { ReviewAndSubmitMultipleParamsMatsDTO } from '../dto/review-and-submit-multiple-params-mats.dto';
-import { MatsBulkFilesReviewAndSubmitRepository } from './mats-bulk-files-review-and-submit.repository';
+import { ReviewAndSubmitMultipleParamsDTO } from '../dto/review-and-submit-multiple-params.dto';
+import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
+import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
+import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { CertEventReviewAndSubmitMap } from '../maps/cert-event-review-and-submit.map';
+import { MatsBulkFileMap } from '../maps/mats-bulk-file.map';
+import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
+import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
 import { CertEventReviewAndSubmitGlobalRepository } from './cert-event-review-and-submit-global.repository';
-import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
+import { CertEventReviewAndSubmitRepository } from './cert-event-review-and-submit.repository';
+import { CertEventReviewAndSubmitService } from './cert-event-review-and-submit.service';
+import { MatsBulkFilesReviewAndSubmitRepository } from './mats-bulk-files-review-and-submit.repository';
+import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
+import { QACertificationChecksService } from './qa-certification-checks.service';
+import { QACertificationWorkspaceController } from './qa-certification.controller';
+import { QACertificationWorkspaceService } from './qa-certification.service';
 import { TeeReviewAndSubmitGlobalRepository } from './tee-review-and-submit-global.repository';
+import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository';
+import { TeeReviewAndSubmitService } from './tee-review-and-submit.service';
+import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
+import { TestSummaryReviewAndSubmitRepository } from './test-summary-review-and-submit.repository';
+import { TestSummaryReviewAndSubmitService } from './test-summary-review-and-submit.service';
 
 const qaCertDto = new QACertificationDTO();
 const qaParamsDto = new QACertificationParamsDTO();
@@ -82,6 +84,11 @@ describe('QA Certification Workspace Controller Test', () => {
       providers: [
         ConfigService,
         AuthGuard,
+        EntityManager,
+        {
+          provide: DataSource,
+          useValue: {},
+        },
         {
           provide: QACertificationWorkspaceService,
           useFactory: mockService,

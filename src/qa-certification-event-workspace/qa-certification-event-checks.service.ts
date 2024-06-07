@@ -1,14 +1,15 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
-import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
+import { IsNull } from 'typeorm';
+
 import {
   QACertificationEventBaseDTO,
   QACertificationEventImportDTO,
 } from '../dto/qa-certification-event.dto';
+import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
+import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
 
 const KEY = 'QA Certification Event';
 
@@ -16,7 +17,6 @@ const KEY = 'QA Certification Event';
 export class QACertificationEventChecksService {
   constructor(
     private readonly logger: Logger,
-    @InjectRepository(QACertificationEventWorkspaceRepository)
     private readonly repository: QACertificationEventWorkspaceRepository,
     private readonly service: QACertificationEventWorkspaceService,
   ) {}
@@ -114,13 +114,13 @@ export class QACertificationEventChecksService {
         certificationEventCode,
       } = qaCertificationEvent;
 
-      qaCertEvents = await this.repository.find({
+      qaCertEvents = await this.repository.findBy({
         locationId,
         certificationEventCode,
-        certificationEventHour,
+        certificationEventHour: certificationEventHour ?? IsNull(),
         certificationEventDate,
-        monitoringSystemRecordId,
-        componentRecordId,
+        monitoringSystemRecordId: monitoringSystemRecordId ?? IsNull(),
+        componentRecordId: componentRecordId ?? IsNull(),
       });
 
       if (qaCertEvents.length > 0) {

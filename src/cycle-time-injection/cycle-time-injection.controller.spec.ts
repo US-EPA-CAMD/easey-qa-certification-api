@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 
 import { CycleTimeInjectionDTO } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
@@ -28,6 +29,7 @@ describe('CycleTimeInjectionController', () => {
       controllers: [CycleTimeInjectionController],
       providers: [
         CycleTimeInjectionRepository,
+        EntityManager,
         {
           provide: CycleTimeInjectionService,
           useFactory: mockService,

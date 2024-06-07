@@ -1,7 +1,7 @@
-import { HttpStatus, Injectable, forwardRef, Inject } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In } from 'typeorm';
+
 import { AppEHeatInputFromGasService } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.service';
 import { AppEHeatInputFromOilService } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.service';
 import {
@@ -15,7 +15,6 @@ import { AppECorrelationTestRunRepository } from './app-e-correlation-test-run.r
 export class AppECorrelationTestRunService {
   constructor(
     private readonly map: AppECorrelationTestRunMap,
-    @InjectRepository(AppECorrelationTestRunRepository)
     private readonly repository: AppECorrelationTestRunRepository,
     @Inject(forwardRef(() => AppEHeatInputFromGasService))
     private readonly appEHeatInputFromGasService: AppEHeatInputFromGasService,
@@ -36,7 +35,7 @@ export class AppECorrelationTestRunService {
   async getAppECorrelationTestRun(
     id: string,
   ): Promise<AppECorrelationTestRunBaseDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -72,10 +71,10 @@ export class AppECorrelationTestRunService {
       const hIOil = await this.appEHeatInputFromOilService.export(testRunIds);
 
       appECorrelationTestRuns.forEach(s => {
-        s.appEHeatInputFromGasData = hIGas.filter(
+        s.appendixEHeatInputFromGasData = hIGas.filter(
           i => i.appECorrTestRunId === s.id,
         );
-        s.appEHeatInputFromOilData = hIOil.filter(
+        s.appendixEHeatInputFromOilData = hIOil.filter(
           i => i.appECorrTestRunId === s.id,
         );
       });

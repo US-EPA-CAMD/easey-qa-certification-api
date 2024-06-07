@@ -1,12 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { QASuppDataWorkspaceService } from './qa-supp-data.service';
-import { QASuppDataWorkspaceRepository } from './qa-supp-data.repository';
+
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { QASuppDataWorkspaceRepository } from './qa-supp-data.repository';
+import { QASuppDataWorkspaceService } from './qa-supp-data.service';
 
 const testSumId = '';
 const qaSuppData = new QASuppData();
 const mockRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(qaSuppData),
+  findOneBy: jest.fn().mockResolvedValue(qaSuppData),
   save: jest.fn().mockResolvedValue(qaSuppData),
 });
 
@@ -34,9 +35,9 @@ describe('QASuppDataWorkspaceService', () => {
   });
 
   describe('setSubmissionAvailCodeToRequire', () => {
-    it('calls the repository.findOne() and update submissionAvailCode QA-Supp-Data record', async () => {
+    it('calls the repository.findOneBy() and update submissionAvailCode QA-Supp-Data record', async () => {
       await service.setSubmissionAvailCodeToRequire(testSumId);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
       expect(repository.save).toHaveBeenCalled();
     });
   });

@@ -1,17 +1,18 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { FlowToLoadReferenceMap } from '../maps/flow-to-load-reference.map';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+
 import {
   FlowToLoadReferenceBaseDTO,
   FlowToLoadReferenceDTO,
 } from '../dto/flow-to-load-reference.dto';
 import { FlowToLoadReference as FlowToLoadReferenceOfficial } from '../entities/flow-to-load-reference.entity';
 import { FlowToLoadReference } from '../entities/workspace/flow-to-load-reference.entity';
+import { FlowToLoadReferenceRepository } from '../flow-to-load-reference/flow-to-load-reference.repository';
+import { FlowToLoadReferenceMap } from '../maps/flow-to-load-reference.map';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { FlowToLoadReferenceWorkspaceRepository } from './flow-to-load-reference-workspace.repository';
 import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference-workspace.service';
-import { FlowToLoadReferenceRepository } from '../flow-to-load-reference/flow-to-load-reference.repository';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 const testSumId = '';
 const userId = 'user';
@@ -22,14 +23,14 @@ const payload = new FlowToLoadReferenceBaseDTO();
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
-  findOne: jest.fn().mockResolvedValue(entity),
+  findOneBy: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
 });
 
 const mockOfficialRepository = () => ({
-  findOne: jest.fn().mockResolvedValue(new FlowToLoadReferenceOfficial()),
+  findOneBy: jest.fn().mockResolvedValue(new FlowToLoadReferenceOfficial()),
 });
 
 const mockMap = () => ({
@@ -82,16 +83,16 @@ describe('FlowToLoadReferenceWorkspaceService', () => {
   });
 
   describe('getFlowToLoadReference', () => {
-    it('Calls repository.findOne({id}) to get a single Flow To Load Check record', async () => {
+    it('Calls repository.findOneBy({id}) to get a single Flow To Load Check record', async () => {
       const result = await service.getFlowToLoadReference(
         flowToLoadReferenceId,
       );
       expect(result).toEqual(flowToLoadReference);
-      expect(repository.findOne).toHaveBeenCalled();
+      expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when a Flow To Load Check record not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
       let errored = false;
 
@@ -139,7 +140,7 @@ describe('FlowToLoadReferenceWorkspaceService', () => {
     });
 
     it('should throw error with invalid Flow To Load Reference', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(undefined);
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
       try {

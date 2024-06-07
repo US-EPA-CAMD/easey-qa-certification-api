@@ -1,16 +1,14 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { In } from 'typeorm';
 
 import { ProtocolGasDTO } from '../dto/protocol-gas.dto';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { ProtocolGasRepository } from './protocol-gas.repository';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
 
 @Injectable()
 export class ProtocolGasService {
   constructor(
-    @InjectRepository(ProtocolGasRepository)
     private readonly repository: ProtocolGasRepository,
     private readonly map: ProtocolGasMap,
   ) {}
@@ -24,7 +22,7 @@ export class ProtocolGasService {
   }
 
   async getProtocolGas(id: string): Promise<ProtocolGasDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

@@ -6,7 +6,7 @@ import { QAMonitorPlanWorkspaceRepository } from './qa-monitor-plan.repository';
 @Module({
   imports: [TypeOrmModule.forFeature([QAMonitorPlanWorkspaceRepository])],
   controllers: [],
-  providers: [],
-  exports: [TypeOrmModule],
+  providers: [QAMonitorPlanWorkspaceRepository],
+  exports: [TypeOrmModule, QAMonitorPlanWorkspaceRepository],
 })
-export class QASuppDataWorkspaceModule {}
+export class QAMonitorPlanWorkspaceModule {}

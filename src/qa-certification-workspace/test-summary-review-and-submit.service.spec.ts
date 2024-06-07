@@ -1,9 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
+
+import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
 import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
+import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
 import { TestSummaryReviewAndSubmitRepository } from './test-summary-review-and-submit.repository';
 import { TestSummaryReviewAndSubmitService } from './test-summary-review-and-submit.service';
-import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
-import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
 
 const dto = new ReviewAndSubmitTestSummaryDTO();
 dto.beginDate = '2021-04-04';
@@ -40,6 +42,7 @@ describe('TestSummaryReviewAndSubmitService', () => {
       controllers: [],
       providers: [
         TestSummaryReviewAndSubmitService,
+        EntityManager,
         { provide: ReviewAndSubmitTestSummaryMap, useFactory: mockMap },
         { provide: TestSummaryReviewAndSubmitRepository, useFactory: mockRepo },
         {

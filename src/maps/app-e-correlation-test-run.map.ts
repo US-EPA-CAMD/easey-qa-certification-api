@@ -48,8 +48,8 @@ export class AppECorrelationTestRunMap extends BaseMap<
       userId: entity.userId,
       addDate: entity.addDate ? entity.addDate.toISOString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toISOString() : null,
-      appEHeatInputFromOilData: appEHeatInputFromOils,
-      appEHeatInputFromGasData: appEHeatInputFromGases,
+      appendixEHeatInputFromOilData: appEHeatInputFromOils,
+      appendixEHeatInputFromGasData: appEHeatInputFromGases,
     };
   }
 }

@@ -1,19 +1,18 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
+import { In } from 'typeorm';
+
 import {
   FuelFlowmeterAccuracyDTO,
   FuelFlowmeterAccuracyRecordDTO,
 } from '../dto/fuel-flowmeter-accuracy.dto';
+import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
 import { FuelFlowmeterAccuracyRepository } from './fuel-flowmeter-accuracy.repository';
-import { In } from 'typeorm';
 
 @Injectable()
 export class FuelFlowmeterAccuracyService {
   constructor(
     private readonly map: FuelFlowmeterAccuracyMap,
-    @InjectRepository(FuelFlowmeterAccuracyRepository)
     private readonly repository: FuelFlowmeterAccuracyRepository,
   ) {}
 
@@ -28,7 +27,7 @@ export class FuelFlowmeterAccuracyService {
   async getFuelFlowmeterAccuracy(
     id: string,
   ): Promise<FuelFlowmeterAccuracyRecordDTO> {
-    const result = await this.repository.findOne(id);
+    const result = await this.repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

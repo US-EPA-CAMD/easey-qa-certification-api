@@ -1,5 +1,11 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { Injectable } from '@nestjs/common';
+import { EntityManager, Repository } from 'typeorm';
+
 import { HgInjection } from '../entities/hg-injection.entity';
 
-@EntityRepository(HgInjection)
-export class HgInjectionRepository extends Repository<HgInjection> {}
+@Injectable()
+export class HgInjectionRepository extends Repository<HgInjection> {
+  constructor(entityManager: EntityManager) {
+    super(HgInjection, entityManager);
+  }
+}
