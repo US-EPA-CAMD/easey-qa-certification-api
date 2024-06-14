@@ -182,6 +182,9 @@ export class QACertificationEventBaseDTO {
     },
   })
   completionTestHour?: number;
+  @IsOptional()
+  @IsString()
+  version?: string;
 }
 
 export class QACertificationEventRecordDTO extends QACertificationEventBaseDTO {

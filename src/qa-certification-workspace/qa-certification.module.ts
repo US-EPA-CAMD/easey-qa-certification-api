@@ -41,6 +41,7 @@ import { MatsBulkFileMap } from '../maps/mats-bulk-file.map';
 import { CertEventReviewAndSubmitGlobalRepository } from './cert-event-review-and-submit-global.repository';
 import { TeeReviewAndSubmitGlobalRepository } from './tee-review-and-submit-global.repository';
 import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
+import { EaseyContentModule } from '../qa-certification-easey-content/easey-content.module';
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-revie
       TeeReviewAndSubmitGlobalRepository,
       TestSummaryReviewAndSubmitGlobalRepository,
     ]),
+    EaseyContentModule,
     HttpModule,
     QASuppDataWorkspaceModule,
     LocationWorkspaceModule,

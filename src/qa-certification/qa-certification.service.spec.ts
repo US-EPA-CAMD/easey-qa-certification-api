@@ -8,6 +8,7 @@ import { QACertificationDTO } from '../dto/qa-certification.dto';
 import { TestSummaryDTO } from '../dto/test-summary.dto';
 import { TestExtensionExemptionDTO } from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionsService } from '../test-extension-exemptions/test-extension-exemptions.service';
+import { EaseyContentService } from '../qa-certification-easey-content/easey-content.service';
 
 const mockTestSummaryService = () => ({
   export: jest.fn(),
@@ -43,6 +44,14 @@ describe('QA Certification Service', () => {
           provide: TestExtensionExemptionsService,
           useFactory: mockTestExtensionExemptionsService,
         },
+        {
+          provide: EaseyContentService,
+          useFactory:  () => ({
+            QaCertificationSchema: jest.fn().mockResolvedValue({
+              version : '1.0.0'
+            }),
+          })
+        }
       ],
     }).compile();
 

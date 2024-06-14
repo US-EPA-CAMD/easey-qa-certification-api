@@ -10,6 +10,7 @@ import { HttpModule } from '@nestjs/axios';
 import { CertEventReviewAndSubmitService } from '../qa-certification-workspace/cert-event-review-and-submit.service';
 import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
 import { TeeReviewAndSubmitService } from '../qa-certification-workspace/tee-review-and-submit.service';
+import { EaseyContentService } from '../qa-certification-easey-content/easey-content.service';
 
 jest.mock('../qa-certification-workspace/cert-event-review-and-submit.service');
 jest.mock(
@@ -26,6 +27,7 @@ describe('QA Certification Controller Test', () => {
       imports: [HttpModule],
       controllers: [QACertificationController],
       providers: [
+        EaseyContentService,
         ConfigService,
         AuthGuard,
         {

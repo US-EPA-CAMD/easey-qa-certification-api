@@ -36,6 +36,7 @@ import { TeeReviewAndSubmitService } from './tee-review-and-submit.service';
 import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
 import { TestSummaryReviewAndSubmitRepository } from './test-summary-review-and-submit.repository';
 import { TestSummaryReviewAndSubmitService } from './test-summary-review-and-submit.service';
+import { EaseyContentService } from '../qa-certification-easey-content/easey-content.service';
 
 const qaCertDto = new QACertificationDTO();
 const qaParamsDto = new QACertificationParamsDTO();
@@ -82,6 +83,7 @@ describe('QA Certification Workspace Controller Test', () => {
       imports: [HttpModule],
       controllers: [QACertificationWorkspaceController],
       providers: [
+        EaseyContentService,
         ConfigService,
         AuthGuard,
         EntityManager,
