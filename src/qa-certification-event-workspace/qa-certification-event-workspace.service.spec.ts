@@ -18,6 +18,7 @@ import { MonitorLocationRepository } from '../monitor-location/monitor-location.
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
 import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
+import { QACertificationEventRepository } from '../qa-certification-event/qa-certification-event.repository';
 
 const locationId = '';
 const qaCertEventId = '';
@@ -56,6 +57,14 @@ const mockRepository = () => ({
   delete: jest.fn().mockResolvedValue(null),
 });
 
+const mockQACertRepository = () => ({
+  getQACertificationEventsByLocationId: jest.fn().mockResolvedValue([entity]),
+  findOneBy: jest.fn().mockResolvedValue(entity),
+  create: jest.fn().mockResolvedValue(entity),
+  save: jest.fn().mockResolvedValue(entity),
+  delete: jest.fn().mockResolvedValue(null),
+});
+
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(qaCertEventDTO),
   many: jest.fn().mockResolvedValue([qaCertEventDTO]),
@@ -64,6 +73,7 @@ const mockMap = () => ({
 describe('QACertificationEventWorkspaceService', () => {
   let service: QACertificationEventWorkspaceService;
   let repository: QACertificationEventWorkspaceRepository;
+  let qaCertificationEventRepository: QACertificationEventRepository;
   let locationRepository: MonitorLocationRepository;
   let componentRepository: ComponentWorkspaceRepository;
   let monSysRepository: MonitorSystemWorkspaceRepository;
@@ -80,6 +90,10 @@ describe('QACertificationEventWorkspaceService', () => {
         {
           provide: QACertificationEventWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: QACertificationEventRepository,
+          useFactory: mockQACertRepository,
         },
         {
           provide: MonitorLocationRepository,
@@ -109,6 +123,9 @@ describe('QACertificationEventWorkspaceService', () => {
     );
     repository = module.get<QACertificationEventWorkspaceRepository>(
       QACertificationEventWorkspaceRepository,
+    );
+    qaCertificationEventRepository = module.get<QACertificationEventRepository>(
+      QACertificationEventRepository,
     );
     locationRepository = module.get<MonitorLocationRepository>(
       MonitorLocationRepository,
