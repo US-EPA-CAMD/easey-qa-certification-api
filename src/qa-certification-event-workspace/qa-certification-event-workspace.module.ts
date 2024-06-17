@@ -4,8 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ComponentModule } from '../component-workspace/component.module';
 import { QACertificationEventMap } from '../maps/qa-certification-event.map';
-import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import { MonitorLocationModule } from '../monitor-location/monitor-location.module';
 import { MonitorSystemWorkspaceModule } from '../monitor-system-workspace/monitor-system-workspace.module';
 import { QACertificationEventChecksService } from './qa-certification-event-checks.service';
