@@ -15,7 +15,7 @@ import { QaCertificationEventModule } from '../qa-certification-event/qa-certifi
 @Module({
   imports: [
     TypeOrmModule.forFeature([QACertificationEventWorkspaceRepository]),
-    QACertificationEventRepository,
+    QaCertificationEventModule,
     HttpModule,
     MonitorLocationModule,
     ComponentModule,
