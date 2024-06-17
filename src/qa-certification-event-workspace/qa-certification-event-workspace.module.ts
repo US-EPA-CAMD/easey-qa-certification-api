@@ -23,9 +23,6 @@ import { QaCertificationEventModule } from '../qa-certification-event/qa-certifi
   ],
   controllers: [QACertificationEventWorkspaceController],
   providers: [
-    ComponentWorkspaceRepository,
-    MonitorLocationRepository,
-    MonitorSystemWorkspaceRepository,
     QACertificationEventWorkspaceRepository,
     QACertificationEventRepository,
     QACertificationEventWorkspaceService,
