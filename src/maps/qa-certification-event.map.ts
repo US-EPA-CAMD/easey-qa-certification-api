@@ -41,6 +41,8 @@ export class QACertificationEventMap extends BaseMap<
       userId: entity.userId,
       addDate: entity.addDate ? entity.addDate.toISOString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toISOString() : null,
+      isSubmitted: entity.isSubmitted,
+      isSavedNotSubmitted: entity.isSavedNotSubmitted,
     };
   }
 }

@@ -164,4 +164,8 @@ export class QACertificationEvent extends BaseEntity {
   )
   @JoinColumn({ name: 'mon_sys_id' })
   system: MonitorSystem;
+
+  // New optional properties
+  isSubmitted?: boolean;
+  isSavedNotSubmitted?: boolean;
 }

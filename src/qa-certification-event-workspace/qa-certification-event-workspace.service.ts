@@ -19,6 +19,7 @@ import { QACertificationEventMap } from '../maps/qa-certification-event.map';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
+import { QACertificationEventRepository } from '../qa-certification-event/qa-certification-event.repository';
 
 @Injectable()
 export class QACertificationEventWorkspaceService {
@@ -26,6 +27,7 @@ export class QACertificationEventWorkspaceService {
     private readonly logger: Logger,
     private readonly map: QACertificationEventMap,
     private readonly repository: QACertificationEventWorkspaceRepository,
+    private readonly qaCertificationEventRepository: QACertificationEventRepository,
     private readonly monitorLocationRepository: MonitorLocationRepository,
     private readonly componentRepository: ComponentWorkspaceRepository,
     private readonly monitoringSystemRepository: MonitorSystemWorkspaceRepository,
@@ -105,6 +107,21 @@ export class QACertificationEventWorkspaceService {
     const results = await this.repository.getQACertificationEventsByLocationId(
       locationId,
     );
+
+    // Extract event IDs
+    const eventIds = results.map(event => event.id);
+
+    if (eventIds.length > 0) {
+      // Step 2: Retrieve corresponding data from camdecmps.qa_cert_event
+      const submittedEvents = await this.qaCertificationEventRepository.getQACertificationEventsByLocationId(locationId);
+      const submittedEventIds = submittedEvents.map(event => event.id);
+
+      // Step 3: Process results to include isSubmitted and isSavedNotSubmitted values
+      results.forEach(event => {
+        event.isSubmitted = submittedEventIds.includes(event.id);
+        event.isSavedNotSubmitted = !event.isSubmitted;
+      });
+    }
 
     return this.map.many(results);
   }
