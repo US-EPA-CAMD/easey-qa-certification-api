@@ -10,13 +10,12 @@ import { QACertificationEventChecksService } from './qa-certification-event-chec
 import { QACertificationEventWorkspaceController } from './qa-certification-event-workspace.controller';
 import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
 import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
-import { QACertificationEventRepository } from '../qa-certification-event/qa-certification-event.repository';
 import { QaCertificationEventModule } from '../qa-certification-event/qa-certification-event.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([QACertificationEventWorkspaceRepository]),
-    QACertificationEventRepository,
+    QaCertificationEventModule,
     HttpModule,
     MonitorLocationModule,
     ComponentModule,
@@ -25,7 +24,6 @@ import { QaCertificationEventModule } from '../qa-certification-event/qa-certifi
   controllers: [QACertificationEventWorkspaceController],
   providers: [
     QACertificationEventWorkspaceRepository,
-    QaCertificationEventModule,
     QACertificationEventWorkspaceService,
     QACertificationEventMap,
     QACertificationEventChecksService,
