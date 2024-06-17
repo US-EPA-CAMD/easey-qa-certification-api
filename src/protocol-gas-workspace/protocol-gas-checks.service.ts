@@ -52,22 +52,26 @@ export class ProtocolGasChecksService {
 
     if (isImport) {
       testSumRecord = testSummary;
-      testSumRecord.system = await this.monitorSystemWorkspaceRepository.findOne(
-        {
-          where: {
-            monitoringSystemID: testSummary.monitoringSystemId,
-            locationId,
+      if (testSummary.monitoringSystemId) {
+        testSumRecord.system = await this.monitorSystemWorkspaceRepository.findOne(
+          {
+            where: {
+              monitoringSystemID: testSummary.monitoringSystemId,
+              locationId,
+            },
           },
-        },
-      );
-      testSumRecord.component = await this.componentWorkspaceRepository.findOne(
-        {
-          where: {
-            componentID: testSummary.componentId,
-            locationId,
+        );
+      }
+      if (testSummary.componentId) {
+        testSumRecord.component = await this.componentWorkspaceRepository.findOne(
+          {
+            where: {
+              componentID: testSummary.componentId,
+              locationId,
+            },
           },
-        },
-      );
+        );
+      }
     } else {
       testSumRecord = await this.testSummaryRepository.getTestSummaryById(
         testSumId,

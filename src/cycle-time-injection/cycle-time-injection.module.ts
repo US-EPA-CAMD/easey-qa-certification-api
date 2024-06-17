@@ -14,6 +14,11 @@ import { CycleTimeInjectionService } from './cycle-time-injection.service';
     CycleTimeInjectionRepository,
     CycleTimeInjectionService,
   ],
-  exports: [TypeOrmModule, CycleTimeInjectionMap, CycleTimeInjectionService],
+  exports: [
+    TypeOrmModule,
+    CycleTimeInjectionMap,
+    CycleTimeInjectionRepository,
+    CycleTimeInjectionService,
+  ],
 })
 export class CycleTimeInjectionModule {}

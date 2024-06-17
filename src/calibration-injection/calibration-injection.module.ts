@@ -17,6 +17,7 @@ import { CalibrationInjectionService } from './calibration-injection.service';
   exports: [
     TypeOrmModule,
     CalibrationInjectionMap,
+    CalibrationInjectionRepository,
     CalibrationInjectionService,
   ],
 })

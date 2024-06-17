@@ -8,6 +8,6 @@ import { MonitorSystemService } from './monitor-system.service';
   imports: [TypeOrmModule.forFeature([MonitorSystemRepository])],
   controllers: [],
   providers: [MonitorSystemRepository, MonitorSystemService],
-  exports: [TypeOrmModule, MonitorSystemService],
+  exports: [TypeOrmModule, MonitorSystemRepository, MonitorSystemService],
 })
 export class MonitorSystemModule {}

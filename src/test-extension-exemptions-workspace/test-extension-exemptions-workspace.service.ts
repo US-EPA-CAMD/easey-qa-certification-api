@@ -6,6 +6,7 @@ import {
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
@@ -111,11 +112,11 @@ export class TestExtensionExemptionsWorkspaceService {
 
     const record = await this.repository.findOneBy({
       locationId,
-      fuelCode: payload.fuelCode,
+      fuelCode: payload.fuelCode ?? IsNull(),
       extensionOrExemptionCode: payload.extensionOrExemptionCode,
-      reportPeriodId,
-      monitoringSystemRecordId,
-      componentRecordId,
+      reportPeriodId: reportPeriodId ?? IsNull(),
+      monitoringSystemRecordId: monitoringSystemRecordId ?? IsNull(),
+      componentRecordId: componentRecordId ?? IsNull(),
     });
 
     let importedTestExtensionExemption;

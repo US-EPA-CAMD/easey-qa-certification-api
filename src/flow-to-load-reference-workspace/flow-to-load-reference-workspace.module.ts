@@ -25,6 +25,7 @@ import { FlowToLoadReferenceModule } from '../flow-to-load-reference/flow-to-loa
   exports: [
     TypeOrmModule,
     FlowToLoadReferenceMap,
+    FlowToLoadReferenceWorkspaceRepository,
     FlowToLoadReferenceWorkspaceService,
   ],
 })

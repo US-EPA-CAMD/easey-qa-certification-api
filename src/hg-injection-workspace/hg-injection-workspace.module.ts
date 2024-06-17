@@ -24,6 +24,11 @@ import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
     HgInjectionWorkspaceRepository,
     HgInjectionWorkspaceService,
   ],
-  exports: [TypeOrmModule, HgInjectionMap, HgInjectionWorkspaceService],
+  exports: [
+    TypeOrmModule,
+    HgInjectionMap,
+    HgInjectionWorkspaceRepository,
+    HgInjectionWorkspaceService,
+  ],
 })
 export class HgInjectionWorkspaceModule {}

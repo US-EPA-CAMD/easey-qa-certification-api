@@ -14,6 +14,6 @@ import { HgInjectionModule } from '../hg-injection/hg-injection.module';
   ],
   controllers: [HgSummaryController],
   providers: [HgSummaryMap, HgSummaryRepository, HgSummaryService],
-  exports: [TypeOrmModule, HgSummaryMap, HgSummaryService],
+  exports: [TypeOrmModule, HgSummaryMap, HgSummaryRepository, HgSummaryService],
 })
 export class HgSummaryModule {}

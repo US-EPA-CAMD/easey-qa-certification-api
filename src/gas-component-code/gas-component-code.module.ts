@@ -6,6 +6,6 @@ import { GasComponentCodeRepository } from './gas-component-code.repository';
 @Module({
   imports: [TypeOrmModule.forFeature([GasComponentCodeRepository])],
   providers: [GasComponentCodeRepository],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, GasComponentCodeRepository],
 })
 export class GasComponentCodeModule {}

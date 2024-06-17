@@ -18,6 +18,11 @@ import { FuelFlowToLoadTestService } from './fuel-flow-to-load-test.service';
     FuelFlowToLoadTestRepository,
     FuelFlowToLoadTestService,
   ],
-  exports: [TypeOrmModule, FuelFlowToLoadTestMap, FuelFlowToLoadTestService],
+  exports: [
+    TypeOrmModule,
+    FuelFlowToLoadTestMap,
+    FuelFlowToLoadTestRepository,
+    FuelFlowToLoadTestService,
+  ],
 })
 export class FuelFlowToLoadTestModule {}

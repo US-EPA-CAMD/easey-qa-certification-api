@@ -22,6 +22,7 @@ import { AppECorrelationTestRunService } from './app-e-correlation-test-run.serv
   ],
   exports: [
     TypeOrmModule,
+    AppECorrelationTestRunRepository,
     AppECorrelationTestRunMap,
     AppECorrelationTestRunService,
   ],

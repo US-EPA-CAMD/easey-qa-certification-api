@@ -7,6 +7,6 @@ import { TestResultCodeRepository } from './test-result-code.repository';
   imports: [TypeOrmModule.forFeature([TestResultCodeRepository])],
   controllers: [],
   providers: [TestResultCodeRepository],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, TestResultCodeRepository],
 })
 export class TestResultCodeModule {}

@@ -21,6 +21,7 @@ import { TransmitterTransducerAccuracyRepository } from './transmitter-transduce
   ],
   exports: [
     TypeOrmModule,
+    TransmitterTransducerAccuracyRepository,
     TransmitterTransducerAccuracyMap,
     TransmitterTransducerAccuracyService,
   ],

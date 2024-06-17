@@ -12,10 +12,10 @@ import { RataRunService } from './rata-run.service';
   imports: [
     TypeOrmModule.forFeature([RataRunRepository]),
     forwardRef(() => RataSummaryModule),
-    FlowRataRunModule,
+    forwardRef(() => FlowRataRunModule),
   ],
   controllers: [RataRunController],
   providers: [RataRunRepository, RataRunService, RataRunMap],
-  exports: [TypeOrmModule, RataRunMap, RataRunService],
+  exports: [TypeOrmModule, RataRunRepository, RataRunMap, RataRunService],
 })
 export class RataRunModule {}

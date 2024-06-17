@@ -24,6 +24,11 @@ import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.s
     UnitDefaultTestWorkspaceRepository,
     UnitDefaultTestWorkspaceService,
   ],
-  exports: [TypeOrmModule, UnitDefaultTestMap, UnitDefaultTestWorkspaceService],
+  exports: [
+    TypeOrmModule,
+    UnitDefaultTestMap,
+    UnitDefaultTestWorkspaceRepository,
+    UnitDefaultTestWorkspaceService,
+  ],
 })
 export class UnitDefaultTestWorkspaceModule {}

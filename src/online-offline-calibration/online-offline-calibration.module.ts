@@ -21,6 +21,7 @@ import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.
   controllers: [OnlineOfflineCalibrationController],
   exports: [
     TypeOrmModule,
+    OnlineOfflineCalibrationRepository,
     OnlineOfflineCalibrationService,
     OnlineOfflineCalibrationMap,
   ],

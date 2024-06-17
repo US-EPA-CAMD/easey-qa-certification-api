@@ -33,6 +33,7 @@ import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-ga
   ],
   exports: [
     TypeOrmModule,
+    AppEHeatInputFromGasWorkspaceRepository,
     AppEHeatInputFromGasMap,
     AppEHeatInputFromGasWorkspaceService,
     AppEHeatInputFromGasChecksService,

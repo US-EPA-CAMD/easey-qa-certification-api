@@ -33,6 +33,7 @@ import { AppECorrelationTestRunWorkspaceService } from './app-e-correlation-test
   exports: [
     TypeOrmModule,
     AppECorrelationTestRunMap,
+    AppECorrelationTestRunWorkspaceRepository,
     AppECorrelationTestRunWorkspaceService,
     AppECorrelationTestRunChecksService,
   ],

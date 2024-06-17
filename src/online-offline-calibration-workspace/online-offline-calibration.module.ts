@@ -23,6 +23,7 @@ import { OnlineOfflineCalibrationModule } from '../online-offline-calibration/on
   controllers: [OnlineOfflineCalibrationWorkspaceController],
   exports: [
     TypeOrmModule,
+    OnlineOfflineCalibrationWorkspaceRepository,
     OnlineOfflineCalibrationWorkspaceService,
     OnlineOfflineCalibrationMap,
   ],

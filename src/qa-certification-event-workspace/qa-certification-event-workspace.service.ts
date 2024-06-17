@@ -6,6 +6,7 @@ import {
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
@@ -264,7 +265,7 @@ export class QACertificationEventWorkspaceService {
 
     const record = await this.repository.findOneBy({
       locationId,
-      certificationEventHour: payload.certificationEventHour,
+      certificationEventHour: payload.certificationEventHour ?? IsNull(),
       certificationEventDate: payload.certificationEventDate,
       certificationEventCode: payload.certificationEventCode,
       componentRecordId,

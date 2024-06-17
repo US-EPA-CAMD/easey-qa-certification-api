@@ -16,6 +16,7 @@ import { AppEHeatInputFromGasService } from './app-e-heat-input-from-gas.service
   ],
   exports: [
     TypeOrmModule,
+    AppEHeatInputFromGasRepository,
     AppEHeatInputFromGasMap,
     AppEHeatInputFromGasService,
   ],

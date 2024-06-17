@@ -2,6 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { IsNull } from 'typeorm';
 
 import {
   QACertificationEventBaseDTO,
@@ -116,10 +117,10 @@ export class QACertificationEventChecksService {
       qaCertEvents = await this.repository.findBy({
         locationId,
         certificationEventCode,
-        certificationEventHour,
+        certificationEventHour: certificationEventHour ?? IsNull(),
         certificationEventDate,
-        monitoringSystemRecordId,
-        componentRecordId,
+        monitoringSystemRecordId: monitoringSystemRecordId ?? IsNull(),
+        componentRecordId: componentRecordId ?? IsNull(),
       });
 
       if (qaCertEvents.length > 0) {

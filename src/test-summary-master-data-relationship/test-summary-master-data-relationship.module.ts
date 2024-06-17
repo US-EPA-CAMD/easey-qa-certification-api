@@ -8,6 +8,6 @@ import { TestSummaryMasterDataRelationshipRepository } from './test-summary-mast
   ],
   controllers: [],
   providers: [TestSummaryMasterDataRelationshipRepository],
-  exports: [TypeOrmModule],
+  exports: [TypeOrmModule, TestSummaryMasterDataRelationshipRepository],
 })
 export class TestSummaryMasterDataRelationshipModule {}

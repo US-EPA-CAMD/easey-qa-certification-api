@@ -20,6 +20,7 @@ import { QaCertificationEventService } from './qa-certification-event.service';
   ],
   exports: [
     TypeOrmModule,
+    QACertificationEventRepository,
     QaCertificationEventService,
     QACertificationEventMap,
   ],

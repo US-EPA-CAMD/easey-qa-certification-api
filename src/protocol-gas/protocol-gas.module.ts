@@ -13,6 +13,11 @@ import { ProtocolGasMap } from '../maps/protocol-gas.map';
   ],
   controllers: [ProtocolGasController],
   providers: [ProtocolGasRepository, ProtocolGasService, ProtocolGasMap],
-  exports: [TypeOrmModule, ProtocolGasMap, ProtocolGasService],
+  exports: [
+    TypeOrmModule,
+    ProtocolGasMap,
+    ProtocolGasRepository,
+    ProtocolGasService,
+  ],
 })
 export class ProtocolGasModule {}
