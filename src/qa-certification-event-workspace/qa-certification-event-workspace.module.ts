@@ -2,7 +2,6 @@ import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { ComponentModule } from '../component-workspace/component.module';
 import { QACertificationEventMap } from '../maps/qa-certification-event.map';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
