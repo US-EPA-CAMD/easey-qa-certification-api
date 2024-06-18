@@ -20,6 +20,7 @@ import { QACertificationEventMap } from '../maps/qa-certification-event.map';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
+import { QACertificationEventRepository } from '../qa-certification-event/qa-certification-event.repository';
 
 @Injectable()
 export class QACertificationEventWorkspaceService {
@@ -27,6 +28,7 @@ export class QACertificationEventWorkspaceService {
     private readonly logger: Logger,
     private readonly map: QACertificationEventMap,
     private readonly repository: QACertificationEventWorkspaceRepository,
+    private readonly qaCertificationEventRepository: QACertificationEventRepository,
     private readonly monitorLocationRepository: MonitorLocationRepository,
     private readonly componentRepository: ComponentWorkspaceRepository,
     private readonly monitoringSystemRepository: MonitorSystemWorkspaceRepository,
@@ -107,7 +109,25 @@ export class QACertificationEventWorkspaceService {
       locationId,
     );
 
-    return this.map.many(results);
+    // Extract event IDs
+    const eventIds = results.map(event => event.id);
+
+    let submittedEventIds: string[] = [];
+    if (eventIds.length > 0) {
+      // Step 2: Retrieve corresponding data from camdecmps.qa_cert_event
+      const submittedEvents = await this.qaCertificationEventRepository.getQACertificationEventsByLocationId(locationId);
+      submittedEventIds = submittedEvents.map(event => event.id);
+    }
+
+    // Step 3: Map the results to DTOs and include isSubmitted and isSavedNotSubmitted values
+    const dtoPromises = results.map(async event => {
+      const dto = await this.map.one(event);
+      dto.isSubmitted = submittedEventIds.includes(event.id);
+      dto.isSavedNotSubmitted = !dto.isSubmitted;
+      return dto;
+    });
+
+    return Promise.all(dtoPromises);
   }
 
   async lookupValues(locationId: string, payload: QACertificationEventBaseDTO) {
