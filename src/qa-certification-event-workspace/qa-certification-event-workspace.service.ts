@@ -112,19 +112,22 @@ export class QACertificationEventWorkspaceService {
     // Extract event IDs
     const eventIds = results.map(event => event.id);
 
+    let submittedEventIds: string[] = [];
     if (eventIds.length > 0) {
       // Step 2: Retrieve corresponding data from camdecmps.qa_cert_event
       const submittedEvents = await this.qaCertificationEventRepository.getQACertificationEventsByLocationId(locationId);
-      const submittedEventIds = submittedEvents.map(event => event.id);
-
-      // Step 3: Process results to include isSubmitted and isSavedNotSubmitted values
-      results.forEach(event => {
-        event.isSubmitted = submittedEventIds.includes(event.id);
-        event.isSavedNotSubmitted = !event.isSubmitted;
-      });
+      submittedEventIds = submittedEvents.map(event => event.id);
     }
 
-    return this.map.many(results);
+    // Step 3: Map the results to DTOs and include isSubmitted and isSavedNotSubmitted values
+    const dtoPromises = results.map(async event => {
+      const dto = await this.map.one(event);
+      dto.isSubmitted = submittedEventIds.includes(event.id);
+      dto.isSavedNotSubmitted = !dto.isSubmitted;
+      return dto;
+    });
+
+    return Promise.all(dtoPromises);
   }
 
   async lookupValues(locationId: string, payload: QACertificationEventBaseDTO) {
