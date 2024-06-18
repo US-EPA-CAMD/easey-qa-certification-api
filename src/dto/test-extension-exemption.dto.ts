@@ -187,6 +187,8 @@ export class TestExtensionExemptionRecordDTO extends TestExtensionExemptionBaseD
   userId: string;
   addDate: string;
   updateDate: string;
+  isSubmitted?: boolean;
+  isSavedNotSubmitted?: boolean;
 }
 
 export class TestExtensionExemptionImportDTO extends TestExtensionExemptionBaseDTO {}
