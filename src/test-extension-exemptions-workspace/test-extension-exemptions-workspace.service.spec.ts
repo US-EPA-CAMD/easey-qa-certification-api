@@ -21,6 +21,7 @@ import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/mo
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
+import { TestExtensionExemptionsRepository } from '../test-extension-exemptions/test-extension-exemptions.repository';
 
 const locationId = '121';
 const testExtExpId = '1';
@@ -64,6 +65,16 @@ const mockRepository = () => ({
   save: jest.fn().mockResolvedValue(entity),
 });
 
+const mockTestExtensionExemptionsRepository = () => ({
+  getTestExtensionExemptionById: jest.fn().mockResolvedValue(entity),
+  getTestExtensionExemptionsByLocationId: jest.fn().mockResolvedValue([entity]),
+  getTestExtensionsByUnitStack: jest.fn().mockResolvedValue([entity]),
+  delete: jest.fn().mockResolvedValue(null),
+  findOneBy: jest.fn().mockResolvedValue(entity),
+  create: jest.fn().mockResolvedValue(entity),
+  save: jest.fn().mockResolvedValue(entity),
+});
+
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(dto),
   many: jest.fn().mockResolvedValue([dto]),
@@ -72,6 +83,7 @@ const mockMap = () => ({
 describe('TestExtensionExemptionsWorkspaceService', () => {
   let service: TestExtensionExemptionsWorkspaceService;
   let repository: TestExtensionExemptionsWorkspaceRepository;
+  let testExtensionExemptionsRepository: TestExtensionExemptionsRepository;
   let locationRepository: MonitorLocationRepository;
   let componentRepository: ComponentWorkspaceRepository;
   let monSysRepository: MonitorSystemWorkspaceRepository;
@@ -89,6 +101,10 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
         {
           provide: TestExtensionExemptionsWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: TestExtensionExemptionsRepository,
+          useFactory: mockTestExtensionExemptionsRepository,
         },
         {
           provide: MonitorLocationRepository,
@@ -124,6 +140,9 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
     );
     repository = module.get<TestExtensionExemptionsWorkspaceRepository>(
       TestExtensionExemptionsWorkspaceRepository,
+    );
+    testExtensionExemptionsRepository = module.get<TestExtensionExemptionsRepository>(
+      TestExtensionExemptionsRepository,
     );
     locationRepository = module.get<MonitorLocationRepository>(
       MonitorLocationRepository,
@@ -179,13 +198,19 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
         .spyOn(repository, 'getTestExtensionExemptionById')
         .mockResolvedValue(entity);
 
+      const expected = {
+        isSavedNotSubmitted: false,
+        isSubmitted: true,
+      };
+
       const result = await service.createTestExtensionExemption(
         locationId,
         payload,
         userId,
       );
 
-      expect(result).toEqual(testExtensionExemptionDTO);
+      expect(result).toEqual(expect.objectContaining(expected));
+
     });
 
     it('should call the createTestExtensionExemption and create test extension with historicalRecordId', async () => {

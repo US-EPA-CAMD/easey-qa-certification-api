@@ -201,6 +201,8 @@ export class QACertificationEventRecordDTO extends QACertificationEventBaseDTO {
   userId: string;
   addDate: string;
   updateDate: string;
+  isSubmitted?: boolean;
+  isSavedNotSubmitted?: boolean;
 }
 
 export class QACertificationEventImportDTO extends QACertificationEventBaseDTO {}
