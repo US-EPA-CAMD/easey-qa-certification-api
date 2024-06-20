@@ -21,6 +21,7 @@ import { MonitorLocationRepository } from '../monitor-location/monitor-location.
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
+import { TestExtensionExemptionsRepository } from '../test-extension-exemptions/test-extension-exemptions.repository';
 
 @Injectable()
 export class TestExtensionExemptionsWorkspaceService {
@@ -28,6 +29,7 @@ export class TestExtensionExemptionsWorkspaceService {
     private readonly logger: Logger,
     private readonly map: TestExtensionExemptionMap,
     private readonly repository: TestExtensionExemptionsWorkspaceRepository,
+    private readonly testExtensionExemptionsRepository: TestExtensionExemptionsRepository,
     private readonly monitorLocationRepository: MonitorLocationRepository,
     private readonly componentRepository: ComponentWorkspaceRepository,
     private readonly monSysRepository: MonitorSystemWorkspaceRepository,
@@ -58,7 +60,25 @@ export class TestExtensionExemptionsWorkspaceService {
       locationId,
     );
 
-    return this.map.many(results);
+    // Extract event IDs
+    const extExemptionIds = results.map(event => event.id);
+
+    let submittedExtExemptionIds: string[] = [];
+    if (extExemptionIds.length > 0) {
+      // Step 2: Retrieve corresponding data from camdecmps.test_extension_exemption
+      const submittedExtExemptions = await this.testExtensionExemptionsRepository.getTestExtensionExemptionsByLocationId(locationId);
+      submittedExtExemptionIds = submittedExtExemptions.map(event => event.id);
+    }
+
+    // Step 3: Map the results to DTOs and include isSubmitted and isSavedNotSubmitted values
+    const dtoPromises = results.map(async event => {
+      const dto = await this.map.one(event);
+      dto.isSubmitted = submittedExtExemptionIds.includes(event.id);
+      dto.isSavedNotSubmitted = !dto.isSubmitted;
+      return dto;
+    });
+
+    return Promise.all(dtoPromises);
   }
 
   async getTestExtensions(
