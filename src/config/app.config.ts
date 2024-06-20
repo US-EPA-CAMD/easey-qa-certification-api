@@ -96,6 +96,12 @@ export default registerAs('app', () => ({
   authApi: {
     uri: getConfigValue('EASEY_AUTH_API', `https://${apiHost}/auth-mgmt`),
   },
+  contentApi: {
+    uri: getConfigValue(
+      'EASEY_CONTENT_API',
+      `https://${apiHost}/content-mgmt`,
+    ),
+  },
   awsRegion: getConfigValue('EASEY_AWS_S3_REGION'),
   matsImportBucket: getConfigValue('EASEY_MATS_BULK_FILES_IMPORT_BUCKET'),
   matsImportBucketAccessKey: getConfigValue(

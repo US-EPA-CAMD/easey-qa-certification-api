@@ -8,6 +8,7 @@ import { TestSummaryService } from '../test-summary/test-summary.service';
 import { TestExtensionExemptionsService } from '../test-extension-exemptions/test-extension-exemptions.service';
 import { QaCertificationEventService } from '../qa-certification-event/qa-certification-event.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
+import { EaseyContentService } from '../qa-certification-easey-content/easey-content.service';
 
 @Injectable()
 export class QACertificationService {
@@ -16,6 +17,7 @@ export class QACertificationService {
     private readonly testSummaryService: TestSummaryService,
     private readonly testExtensionExemptionService: TestExtensionExemptionsService,
     private readonly qaCertEventService: QaCertificationEventService,
+    private readonly easeyContentService: EaseyContentService,
   ) {}
 
   async export(
@@ -76,9 +78,11 @@ export class QACertificationService {
         : [],
     );
 
+    const version = this.easeyContentService.QaCertificationSchema?.version;
     const results = await Promise.all(promises);
 
     const resultObject = {
+      version: version,
       orisCode: Number(params.facilityId),
       testSummaryData: results[SUMMARIES],
       certificationEventData: results[EVENTS],

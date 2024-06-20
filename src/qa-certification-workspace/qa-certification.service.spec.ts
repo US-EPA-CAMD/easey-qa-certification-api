@@ -36,6 +36,7 @@ import { HgSummaryDTO } from '../dto/hg-summary.dto';
 import { TestQualificationDTO } from '../dto/test-qualification.dto';
 import { ProtocolGasDTO } from '../dto/protocol-gas.dto';
 import { AirEmissionTestingDTO } from '../dto/air-emission-test.dto';
+import { EaseyContentService } from '../qa-certification-easey-content/easey-content.service';
 
 const testSummary = new TestSummaryDTO();
 const calibrationInjection = new CalibrationInjectionDTO();
@@ -135,6 +136,14 @@ describe('QA Certification Workspace Service Test', () => {
         {
           provide: TestExtensionExemptionsWorkspaceService,
           useFactory: mockQATestExtensionExemptionService,
+        },
+        {
+          provide: EaseyContentService,
+          useFactory:  () => ({
+            QaCertificationSchema: jest.fn().mockResolvedValue({
+              version : '1.0.0'
+            }),
+          })
         },
       ],
     }).compile();

@@ -14,6 +14,7 @@ import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { TestExtensionExemptionsWorkspaceService } from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.service';
 import { QACertificationEventWorkspaceService } from '../qa-certification-event-workspace/qa-certification-event-workspace.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
+import { EaseyContentService } from '../qa-certification-easey-content/easey-content.service';
 
 @Injectable()
 export class QACertificationWorkspaceService {
@@ -22,6 +23,7 @@ export class QACertificationWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     private readonly testExtensionExemptionService: TestExtensionExemptionsWorkspaceService,
     private readonly qaCertEventService: QACertificationEventWorkspaceService,
+    private readonly easeyContentService: EaseyContentService,
   ) {}
 
   async export(
@@ -82,7 +84,8 @@ export class QACertificationWorkspaceService {
         : [],
     );
 
-    const results = await Promise.all(promises);
+    const version = this.easeyContentService.QaCertificationSchema?.version;
+    const results = {version, ...await Promise.all(promises)};
 
     const resultObject = {
       orisCode: Number(params.facilityId),
