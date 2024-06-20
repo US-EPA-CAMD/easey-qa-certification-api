@@ -130,7 +130,7 @@ export class AppEHeatInputFromOilWorkspaceController {
       'Updates an Appendix E Heat Input from Oil record in the workspace',
   })
   async editAppEHeatInputFromOil(
-    @Param('locid') locationId: string,
+    @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('appECorrTestSumId') _aeCorrTestSumId: string,
     @Param('appECorrTestRunId') aeCorrTestRunId: string,
