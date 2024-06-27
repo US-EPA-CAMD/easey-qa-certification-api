@@ -88,6 +88,7 @@ export class QACertificationWorkspaceService {
     const results = {version, ...await Promise.all(promises)};
 
     const resultObject = {
+      version,
       orisCode: Number(params.facilityId),
       testSummaryData: results[SUMMARIES],
       certificationEventData: results[EVENTS],
