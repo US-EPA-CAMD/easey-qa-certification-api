@@ -80,7 +80,6 @@ export class AppEHeatInputFromOilChecksService {
   ) {
     let error: string = null;
     let appETestSummary = appETestRun.appECorrelationTestSummary;
-    let testSummary = appETestSummary.testSummary;
 
     if (
       dto.monitoringSystemId &&
@@ -89,7 +88,7 @@ export class AppEHeatInputFromOilChecksService {
     ) {
       const duplicate = await this.repo.findDuplicate(
         aehiOilId,
-        testSummary.id,
+        appETestSummary.id,
         appETestSummary.operatingLevelForRun,
         appETestRun.runNumber,
         dto.monitoringSystemId,

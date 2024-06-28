@@ -182,6 +182,9 @@ export class QACertificationEventBaseDTO {
     },
   })
   completionTestHour?: number;
+  @IsOptional()
+  @IsString()
+  version?: string;
 }
 
 export class QACertificationEventRecordDTO extends QACertificationEventBaseDTO {
@@ -198,6 +201,8 @@ export class QACertificationEventRecordDTO extends QACertificationEventBaseDTO {
   userId: string;
   addDate: string;
   updateDate: string;
+  isSubmitted?: boolean;
+  isSavedNotSubmitted?: boolean;
 }
 
 export class QACertificationEventImportDTO extends QACertificationEventBaseDTO {}

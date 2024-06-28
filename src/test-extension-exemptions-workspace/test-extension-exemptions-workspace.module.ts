@@ -11,10 +11,12 @@ import { TestExtensionExemptionsChecksService } from './test-extension-exemption
 import { TestExtensionExemptionsWorkspaceController } from './test-extension-exemptions-workspace.controller';
 import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
+import { TestExtensionExemptionsModule } from '../test-extension-exemptions/test-extension-exemptions.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([TestExtensionExemptionsWorkspaceRepository]),
+    TestExtensionExemptionsModule,
     HttpModule,
     ComponentModule,
     MonitorSystemWorkspaceModule,

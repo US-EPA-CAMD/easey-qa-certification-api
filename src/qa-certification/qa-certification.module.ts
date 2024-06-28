@@ -7,6 +7,7 @@ import { TestSummaryModule } from '../test-summary/test-summary.module';
 import { QACertificationController } from './qa-certification.controller';
 import { QACertificationService } from './qa-certification.service';
 import { QACertificationWorkspaceModule } from '../qa-certification-workspace/qa-certification.module';
+import { EaseyContentModule } from '../qa-certification-easey-content/easey-content.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { QACertificationWorkspaceModule } from '../qa-certification-workspace/qa
     QaCertificationEventModule,
     TestExtensionExemptionsModule,
     QACertificationWorkspaceModule,
+    EaseyContentModule,
   ],
   controllers: [QACertificationController],
   providers: [QACertificationService],
