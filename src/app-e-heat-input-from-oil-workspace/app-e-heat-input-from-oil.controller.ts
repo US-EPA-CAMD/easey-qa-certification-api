@@ -86,7 +86,7 @@ export class AppEHeatInputFromOilWorkspaceController {
   @RoleGuard(
     {
       pathParam: 'locId',
-      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
@@ -119,7 +119,7 @@ export class AppEHeatInputFromOilWorkspaceController {
   @RoleGuard(
     {
       pathParam: 'locId',
-      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
@@ -152,7 +152,7 @@ export class AppEHeatInputFromOilWorkspaceController {
   @RoleGuard(
     {
       pathParam: 'locId',
-      requiredRoles: ['Preparer', 'Submitter', 'Sponsor'],
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSQA'],
     },
     LookupType.Location,
