@@ -1,6 +1,6 @@
 import { FindOneOptions } from 'typeorm';
 import { Type } from 'class-transformer';
-import { ValidationArguments, ValidateNested } from 'class-validator';
+import { ValidationArguments, ValidateNested, IsString, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
@@ -51,6 +51,10 @@ export class QACertificationImportDTO extends QACertificationBaseDTO {
   @ValidateNested({ each: true })
   @Type(() => TestExtensionExemptionImportDTO)
   testExtensionExemptionData: TestExtensionExemptionImportDTO[];
+
+  @IsString()
+  @IsNotEmpty()
+  version: string;
 }
 
 export class QACertificationDTO extends QACertificationBaseDTO {
