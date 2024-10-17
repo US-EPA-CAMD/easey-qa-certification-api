@@ -97,4 +97,33 @@ export class TestSummaryReviewAndSubmitService {
       throw new EaseyException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async getTestSummaryRecordsByTestSumIds(
+    testSumIds: string[],
+    isWorkspace: boolean = true,
+  ): Promise<ReviewAndSubmitTestSummaryDTO[]> {
+
+    let repository;
+
+    if (isWorkspace) {
+      repository = this.workspaceRepository;
+    } else {
+      repository = this.globalRepository;
+    }
+
+    let data: ReviewAndSubmitTestSummaryDTO[];
+
+    try {
+      data = [];
+      if (testSumIds && testSumIds.length > 0) {
+        data = await this.map.many(
+          await repository.find({ where: { testSumId: In(testSumIds) } }),
+        );
+      } 
+      return data;
+    } catch (e) {
+      throw new EaseyException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
+  }
 }

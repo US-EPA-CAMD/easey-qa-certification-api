@@ -40,6 +40,9 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
 
   public async one(entity: TestSummary): Promise<TestSummaryDTO> {
     let evalStatusCode = null;
+    let evalStatusCodeDescription = null;
+    let submissionAvailabilityCode = null;
+    let submissionAvailabilityCodeDescription = null;
 
     const linearitySummaries = entity.linearitySummaries
       ? await this.linearityMap.many(entity.linearitySummaries)
@@ -136,6 +139,9 @@ export class TestSummaryMap extends BaseMap<TestSummary, TestSummaryDTO> {
       injectionProtocolCode: entity.injectionProtocolCode,
       calculatedSpanValue: entity.calculatedSpanValue,
       evalStatusCode,
+      evalStatusCodeDescription,
+      submissionAvailabilityCode,
+      submissionAvailabilityCodeDescription,
       userId: entity.userId,
       addDate: entity.addDate ? entity.addDate.toISOString() : null,
       updateDate: entity.updateDate ? entity.updateDate.toISOString() : null,

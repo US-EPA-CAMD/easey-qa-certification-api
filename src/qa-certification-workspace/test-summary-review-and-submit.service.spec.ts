@@ -11,6 +11,8 @@ const dto = new ReviewAndSubmitTestSummaryDTO();
 dto.beginDate = '2021-04-04';
 dto.endDate = '2021-04-05';
 dto.periodAbbreviation = '2022 Q1';
+dto.testSumId = 'testSumId1';
+dto.evalStatusCode = 'PENDING';
 
 const dto2 = new ReviewAndSubmitTestSummaryDTO();
 dto2.beginDate = '2022-04-04';
@@ -21,6 +23,8 @@ const mockRepo = () => ({
   find: jest.fn().mockImplementation(args => {
     if (args.where['monPlanId']) {
       return [new ReviewAndSubmitTestSummaryDTO()];
+    } else if (args.where['testSumId']) {
+      return [dto];
     } else {
       return [dto, dto2];
     }
@@ -99,6 +103,15 @@ describe('TestSummaryReviewAndSubmitService', () => {
 
       const result = await service.getTestSummaryRecords([], [], ['2021 Q1']);
       expect(result.length).toBe(1);
+    });
+  });
+
+
+  describe('getTestSummaryRecordsByTestSumIds', () => {
+    it('should call the getTestSummaryRecordsByTestSumIds test summary service function given list of testSumIds', async () => {
+      const result = await service.getTestSummaryRecordsByTestSumIds(['testSumId1']);
+      expect(result.length).toBe(1);
+      expect(result[0].evalStatusCode).toBe('PENDING');
     });
   });
 });
