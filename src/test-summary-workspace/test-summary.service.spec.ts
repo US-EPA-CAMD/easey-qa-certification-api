@@ -56,6 +56,8 @@ import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-tr
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryWorkspaceService } from './test-summary.service';
+import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
+import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -69,6 +71,10 @@ const testSummaryDto = new TestSummaryDTO();
 const lineSumDto = new LinearitySummaryDTO();
 const lineSumImportDto = new LinearitySummaryImportDTO();
 lineSumDto.testSumId = testSumId;
+
+const reviewAndSubmitTestSummaryDTO = new ReviewAndSubmitTestSummaryDTO();
+reviewAndSubmitTestSummaryDTO.testSumId = testSumId;
+reviewAndSubmitTestSummaryDTO.evalStatusCode = 'PENDING'; 
 
 const payload = new TestSummaryImportDTO();
 payload.testTypeCode = 'code';
@@ -86,6 +92,10 @@ const mockRepository = () => ({
   findOneBy: jest.fn().mockResolvedValue(testSummary),
   create: jest.fn().mockResolvedValue(testSummary),
   save: jest.fn().mockResolvedValue(testSummary),
+});
+
+const mockTestSummaryReviewAndSubmitService = () => ({
+  getTestSummaryRecordsByTestSumIds: jest.fn().mockResolvedValue([reviewAndSubmitTestSummaryDTO]),
 });
 
 const mockLinearitySummaryService = () => ({
@@ -206,6 +216,10 @@ describe('TestSummaryWorkspaceService', () => {
       imports: [LoggerModule],
       providers: [
         TestSummaryWorkspaceService,
+        {
+          provide: TestSummaryReviewAndSubmitService,
+          useFactory: mockTestSummaryReviewAndSubmitService,
+        },
         {
           provide: LinearitySummaryWorkspaceService,
           useFactory: mockLinearitySummaryService,
@@ -338,8 +352,11 @@ describe('TestSummaryWorkspaceService', () => {
 
   describe('getTestSummariesByLocationId', () => {
     it('calls the repository.getTestSummariesByLocationId() and get test summaries by locationId', async () => {
+      testSummaryDto.id = testSumId;
       const result = await service.getTestSummariesByLocationId(locationId);
-      expect(result).toEqual([testSummaryDto]);
+      expect(result.length).toEqual(1);
+      expect(result[0].id).toEqual(testSumId);
+      expect(result[0].evalStatusCode).toEqual(reviewAndSubmitTestSummaryDTO.evalStatusCode);
     });
   });
 
