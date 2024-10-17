@@ -42,10 +42,15 @@ import { TestSummaryChecksService } from './test-summary-checks.service';
 import { TestSummaryWorkspaceController } from './test-summary.controller';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryWorkspaceService } from './test-summary.service';
+import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
+import { TestSummaryReviewAndSubmitRepository } from '../qa-certification-workspace/test-summary-review-and-submit.repository';
+import { TestSummaryReviewAndSubmitGlobalRepository } from '../qa-certification-workspace/test-summary-review-and-submit-global.repository';
+import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
+
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TestSummaryWorkspaceRepository]),
+    TypeOrmModule.forFeature([TestSummaryWorkspaceRepository, TestSummaryReviewAndSubmitRepository, TestSummaryReviewAndSubmitGlobalRepository]),
     ComponentModule,
     AnalyzerRangeModule,
     TestSummaryMasterDataRelationshipModule,
@@ -89,6 +94,10 @@ import { TestSummaryWorkspaceService } from './test-summary.service';
     TestSummaryChecksService,
     TestSummaryWorkspaceService,
     TestSummaryWorkspaceRepository,
+    TestSummaryReviewAndSubmitService,
+    TestSummaryReviewAndSubmitRepository,
+    TestSummaryReviewAndSubmitGlobalRepository,
+    ReviewAndSubmitTestSummaryMap,
   ],
   exports: [
     TypeOrmModule,

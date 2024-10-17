@@ -41,12 +41,15 @@ import { TestQualificationWorkspaceService } from '../test-qualification-workspa
 import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
+import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
   constructor(
     private readonly logger: Logger,
     private readonly map: TestSummaryMap,
+    @Inject(forwardRef(() => TestSummaryReviewAndSubmitService))
+    private readonly testSummaryReviewAndSubmitService: TestSummaryReviewAndSubmitService,
     @Inject(forwardRef(() => LinearitySummaryWorkspaceService))
     private readonly linearityService: LinearitySummaryWorkspaceService,
     private readonly repository: TestSummaryWorkspaceRepository,
@@ -131,7 +134,24 @@ export class TestSummaryWorkspaceService {
       endDate,
     );
 
-    return this.map.many(results);
+    let testSummaries = await this.map.many(results);
+    const testSummaryIds = testSummaries.map(ts => ts.id);
+    const testSummaryReviewAndSubmitRecords = await this.testSummaryReviewAndSubmitService.getTestSummaryRecordsByTestSumIds(testSummaryIds); 
+
+    testSummaries = testSummaries.map(testSummary => {
+      const matchingRecord = testSummaryReviewAndSubmitRecords.find(record => record.testSumId === testSummary.id);
+      
+      if (matchingRecord) {
+        testSummary.evalStatusCode = matchingRecord.evalStatusCode || '';
+        testSummary.evalStatusCodeDescription = matchingRecord.evalStatusCodeDescription || ''; 
+        testSummary.submissionAvailabilityCode = matchingRecord.submissionAvailabilityCode || ''; 
+        testSummary.submissionAvailabilityCodeDescription = matchingRecord.submissionCodeDescription || ''; 
+      }
+
+      return testSummary;
+    });
+
+    return testSummaries;
   }
 
   async getTestSummaries(

@@ -726,6 +726,9 @@ export class TestSummaryRecordDTO extends TestSummaryBaseDTO {
   addDate: string;
   updateDate: string;
   evalStatusCode: string;
+  evalStatusCodeDescription: string;
+  submissionAvailabilityCode: string;
+  submissionAvailabilityCodeDescription: string;
 }
 
 export class TestSummaryImportDTO extends TestSummaryBaseDTO {
