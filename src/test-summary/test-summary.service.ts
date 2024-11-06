@@ -22,12 +22,15 @@ import { TestQualificationService } from '../test-qualification/test-qualificati
 import { TransmitterTransducerAccuracyService } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.service';
 import { UnitDefaultTestService } from '../unit-default-test/unit-default-test.service';
 import { TestSummaryRepository } from './test-summary.repository';
+import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service'
 
 @Injectable()
 export class TestSummaryService {
   constructor(
     private readonly logger: Logger,
     private readonly map: TestSummaryMap,
+    @Inject(forwardRef(() => TestSummaryReviewAndSubmitService))
+    private readonly testSummaryReviewAndSubmitService: TestSummaryReviewAndSubmitService,
     @Inject(forwardRef(() => LinearitySummaryService))
     private readonly linearityService: LinearitySummaryService,
     @Inject(forwardRef(() => RataService))
@@ -115,7 +118,24 @@ export class TestSummaryService {
       endDate,
     );
 
-    return this.map.many(results);
+    let testSummaries = await this.map.many(results);
+    const testSummaryIds = testSummaries.map(ts => ts.id);
+    const testSummaryReviewAndSubmitRecords = await this.testSummaryReviewAndSubmitService.getTestSummaryRecordsByTestSumIds(testSummaryIds, false); 
+
+    testSummaries = testSummaries.map(testSummary => {
+      const matchingRecord = testSummaryReviewAndSubmitRecords.find(record => record.testSumId === testSummary.id);
+      
+      if (matchingRecord) {
+        testSummary.evalStatusCode = matchingRecord.evalStatusCode || '';
+        testSummary.evalStatusCodeDescription = matchingRecord.evalStatusCodeDescription || ''; 
+        testSummary.submissionAvailabilityCode = matchingRecord.submissionAvailabilityCode || ''; 
+        testSummary.submissionAvailabilityCodeDescription = matchingRecord.submissionCodeDescription || ''; 
+      }
+
+      return testSummary;
+    });
+
+    return testSummaries;
   }
 
   async getTestSummaries(
