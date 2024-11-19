@@ -22,6 +22,7 @@ import {
   FlowToLoadReferenceDTO,
 } from '../dto/flow-to-load-reference.dto';
 import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -44,6 +45,7 @@ export class FlowToLoadReferenceWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getFlowToLoadReferences(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -66,6 +68,7 @@ export class FlowToLoadReferenceWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getFlowToLoadReference(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -83,6 +86,7 @@ export class FlowToLoadReferenceWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: FlowToLoadReferenceDTO,
     description: 'Creates a workspace Flow To Load Reference record.',
@@ -109,6 +113,7 @@ export class FlowToLoadReferenceWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: FlowToLoadReferenceDTO,
     description: 'Updates a workspace Flow To Load Reference record',
@@ -137,6 +142,7 @@ export class FlowToLoadReferenceWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a Flow To Load Reference record from the workspace',
   })

@@ -22,6 +22,7 @@ import {
 } from '../dto/test-qualification.dto';
 import { TestQualificationChecksService } from './test-qualification-checks.service';
 import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -47,6 +48,7 @@ export class TestQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getTestQualifications(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -68,6 +70,7 @@ export class TestQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getTestQualification(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -85,6 +88,7 @@ export class TestQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: TestQualificationRecordDTO,
     description: 'Creates a workspace Test Qualification record.',
@@ -121,6 +125,7 @@ export class TestQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: TestQualificationRecordDTO,
     description: 'Updates a test qualification record in the workspace',
@@ -159,6 +164,7 @@ export class TestQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a test qualification record from the workspace',
   })

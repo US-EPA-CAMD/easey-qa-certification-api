@@ -26,6 +26,7 @@ import {
 import { LinearityInjectionChecksService } from './linearity-injection-checks.service';
 
 import { LinearityInjectionWorkspaceService } from './linearity-injection.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -51,6 +52,7 @@ export class LinearityInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -72,6 +74,7 @@ export class LinearityInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getLinearityInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -90,6 +93,7 @@ export class LinearityInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: LinearityInjectionRecordDTO,
     description: 'Creates a Linearity Injection record in the workspace',
@@ -119,6 +123,7 @@ export class LinearityInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: LinearityInjectionRecordDTO,
     description: 'Updates a Linearity Injection record in the workspace',
@@ -150,6 +155,7 @@ export class LinearityInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a Linearity Injection record from the workspace',
   })

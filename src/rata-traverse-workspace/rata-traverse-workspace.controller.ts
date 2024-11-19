@@ -22,6 +22,7 @@ import {
 } from '../dto/rata-traverse.dto';
 import { RataTraverseChecksService } from './rata-traverse-checks.service';
 import { RataTraverseWorkspaceService } from './rata-traverse-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -47,6 +48,7 @@ export class RataTraverseWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getRataTraverses(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -72,6 +74,7 @@ export class RataTraverseWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getRataTraverse(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -93,6 +96,7 @@ export class RataTraverseWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: RataTraverseRecordDTO,
     description: 'Creates a workspace RATA Traverse record.',
@@ -135,6 +139,7 @@ export class RataTraverseWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: RataTraverseRecordDTO,
     description: 'Updates a RATA Traverse record in the workspace',
@@ -173,6 +178,7 @@ export class RataTraverseWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a RATA Traverse record from the workspace',
   })

@@ -23,6 +23,7 @@ import {
 import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oil.service';
 import { AppEHeatInputFromOilChecksService } from './app-e-heat-input-from-oil-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -48,6 +49,7 @@ export class AppEHeatInputFromOilWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getAppEHeatInputFromOilRecords(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -72,6 +74,7 @@ export class AppEHeatInputFromOilWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getAppEHeatInputFromOilRecord(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -91,6 +94,7 @@ export class AppEHeatInputFromOilWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: AppEHeatInputFromOilRecordDTO,
     description:
@@ -124,6 +128,7 @@ export class AppEHeatInputFromOilWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: AppEHeatInputFromOilRecordDTO,
     description:
@@ -157,6 +162,7 @@ export class AppEHeatInputFromOilWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a workspace Appendix E Correlation Test Run record.',
   })

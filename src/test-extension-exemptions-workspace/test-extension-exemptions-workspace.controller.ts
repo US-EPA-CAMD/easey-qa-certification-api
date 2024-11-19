@@ -22,6 +22,7 @@ import {
 } from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionsChecksService } from './test-extension-exemptions-checks.service';
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -47,6 +48,7 @@ export class TestExtensionExemptionsWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getTestExtensionExemptions(
     @Param('locId') locationId: string,
   ): Promise<TestExtensionExemptionRecordDTO[]> {
@@ -67,6 +69,7 @@ export class TestExtensionExemptionsWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getTestExtensionExemption(
     @Param('locId') _locationId: string,
     @Param('id') id: string,
@@ -83,6 +86,7 @@ export class TestExtensionExemptionsWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: TestExtensionExemptionRecordDTO,
     description: 'Creates a Test Extension Exemption record in the workspace',
@@ -109,6 +113,7 @@ export class TestExtensionExemptionsWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: TestExtensionExemptionRecordDTO,
     description: 'Updates a Test Extension Exemption record in the workspace',
@@ -137,6 +142,7 @@ export class TestExtensionExemptionsWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a Test Extension Exemption from the workspace',
   })

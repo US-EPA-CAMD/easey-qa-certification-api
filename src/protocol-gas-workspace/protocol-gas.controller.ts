@@ -24,6 +24,7 @@ import {
 import { ProtocolGasWorkspaceService } from './protocol-gas.service';
 import { ProtocolGasChecksService } from './protocol-gas-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -48,6 +49,7 @@ export class ProtocolGasWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getProtocolGases(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -69,6 +71,7 @@ export class ProtocolGasWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getProtocolGas(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -86,6 +89,7 @@ export class ProtocolGasWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: ProtocolGasRecordDTO,
     description: 'Creates a Protocol Gas record in the workspace',
@@ -115,6 +119,7 @@ export class ProtocolGasWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: ProtocolGasRecordDTO,
     description: 'Updates a Protocol Gas record in the workspace',
@@ -145,6 +150,7 @@ export class ProtocolGasWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a Protocol Gas record from the workspace',
   })

@@ -24,6 +24,7 @@ import {
 } from '../dto/transmitter-transducer-accuracy.dto';
 import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -48,6 +49,7 @@ export class TransmitterTransducerAccuracyWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getTransmitterTransducerAccuracies(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -70,6 +72,7 @@ export class TransmitterTransducerAccuracyWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getTransmitterTransducerAccuracy(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -87,6 +90,7 @@ export class TransmitterTransducerAccuracyWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: TransmitterTransducerAccuracyRecordDTO,
     description:
@@ -114,6 +118,7 @@ export class TransmitterTransducerAccuracyWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: TransmitterTransducerAccuracyRecordDTO,
     description: 'Updates a workspace Transmitter Transducer Accuracy record',
@@ -142,6 +147,7 @@ export class TransmitterTransducerAccuracyWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: TransmitterTransducerAccuracyRecordDTO,
     description: 'Deletes a workspace Transmitter Transducer Accuracy record',

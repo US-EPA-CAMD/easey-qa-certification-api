@@ -21,6 +21,7 @@ import {
   FuelFlowToLoadBaselineDTO,
 } from '../dto/fuel-flow-to-load-baseline.dto';
 import { FuelFlowToLoadBaselineWorkspaceService } from './fuel-flow-to-load-baseline-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -45,6 +46,7 @@ export class FuelFlowToLoadBaselineWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getFuelFlowToLoadBaselines(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -67,6 +69,7 @@ export class FuelFlowToLoadBaselineWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getFuelFlowToLoadBaseline(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -84,6 +87,7 @@ export class FuelFlowToLoadBaselineWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: FuelFlowToLoadBaselineDTO,
     description: 'Creates a workspace Fuel Flow To Load Baseline record.',
@@ -110,6 +114,7 @@ export class FuelFlowToLoadBaselineWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: FuelFlowToLoadBaselineDTO,
     description: 'Updates a workspace Fuel Flow To Load Baseline record.',
@@ -138,6 +143,7 @@ export class FuelFlowToLoadBaselineWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description:
       'Deletes a Fuel Flow To Load Baseline record from the workspace',

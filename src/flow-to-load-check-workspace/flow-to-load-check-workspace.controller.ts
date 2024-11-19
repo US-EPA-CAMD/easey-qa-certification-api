@@ -22,6 +22,7 @@ import {
   FlowToLoadCheckRecordDTO,
 } from '../dto/flow-to-load-check.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -44,6 +45,7 @@ export class FlowToLoadCheckWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getFlowToLoadChecks(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -65,6 +67,7 @@ export class FlowToLoadCheckWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getFlowToLoadCheck(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -82,6 +85,7 @@ export class FlowToLoadCheckWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: FlowToLoadCheckRecordDTO,
     description: 'Creates a workspace Flow To Load Check record.',
@@ -104,6 +108,7 @@ export class FlowToLoadCheckWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: FlowToLoadCheckDTO,
     description: 'Updates a workspace Flow To Load Check record',
@@ -133,6 +138,7 @@ export class FlowToLoadCheckWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a Flow To Load Check record from the workspace',
   })

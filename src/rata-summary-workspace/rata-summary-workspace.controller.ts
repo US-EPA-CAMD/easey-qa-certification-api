@@ -22,6 +22,7 @@ import {
 } from '../dto/rata-summary.dto';
 import { RataSummaryChecksService } from './rata-summary-checks.service';
 import { RataSummaryWorkspaceService } from './rata-summary-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -46,6 +47,7 @@ export class RataSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getRataSummaryes(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -68,6 +70,7 @@ export class RataSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getRataSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -86,6 +89,7 @@ export class RataSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: RataSummaryRecordDTO,
     description: 'Creates a workspace Rata Summary record.',
@@ -122,6 +126,7 @@ export class RataSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: RataSummaryRecordDTO,
     description: 'Updates a Rata summary record in the workspace',
@@ -154,6 +159,7 @@ export class RataSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a Rata summary record from the workspace',
   })

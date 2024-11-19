@@ -19,6 +19,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { RataBaseDTO, RataRecordDTO } from '../dto/rata.dto';
 import { RataChecksService } from './rata-checks.service';
 import { RataWorkspaceService } from './rata-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -43,6 +44,7 @@ export class RataWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getRatas(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -63,6 +65,7 @@ export class RataWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getRata(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -80,6 +83,7 @@ export class RataWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: RataRecordDTO,
     description: 'Creates a Rata record in the workspace',
@@ -103,6 +107,7 @@ export class RataWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: RataRecordDTO,
     description: 'Updates a Rata record in the workspace',
@@ -133,6 +138,7 @@ export class RataWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a RATA record from the workspace',
   })

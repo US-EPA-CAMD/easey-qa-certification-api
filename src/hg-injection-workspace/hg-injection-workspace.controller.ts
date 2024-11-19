@@ -15,6 +15,7 @@ import {
   HgInjectionRecordDTO,
 } from '../dto/hg-injection.dto';
 import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -37,6 +38,7 @@ export class HgInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getHgInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -58,6 +60,7 @@ export class HgInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getHgInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -76,6 +79,7 @@ export class HgInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: HgInjectionRecordDTO,
     description: 'Creates a workspace Hg Injection record.',
@@ -104,6 +108,7 @@ export class HgInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: HgInjectionRecordDTO,
     description: 'Updates a workspace Hg Injection record.',
@@ -128,6 +133,7 @@ export class HgInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a workspace HG Injection record',
   })

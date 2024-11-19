@@ -23,6 +23,7 @@ import {
 import { AppECorrelationTestRunWorkspaceService } from './app-e-correlation-test-run-workspace.service';
 import { AppECorrelationTestRunChecksService } from './app-e-correlation-test-run-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -48,6 +49,7 @@ export class AppECorrelationTestRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getAppECorrelationTestRuns(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -71,6 +73,7 @@ export class AppECorrelationTestRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getAppECorrelationTestRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -89,6 +92,7 @@ export class AppECorrelationTestRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: AppECorrelationTestRunRecordDTO,
     description: 'Creates a workspace Appendix E Correlation Test Run record.',
@@ -120,6 +124,7 @@ export class AppECorrelationTestRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: AppECorrelationTestRunRecordDTO,
     description: 'Updates a workspace Appendix E Correlation Test Run record.',
@@ -151,6 +156,7 @@ export class AppECorrelationTestRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a workspace Appendix E Correlation Test Run record.',
   })

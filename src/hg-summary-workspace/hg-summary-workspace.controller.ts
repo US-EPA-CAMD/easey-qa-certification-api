@@ -18,6 +18,7 @@ import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -39,6 +40,7 @@ export class HgSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getHgSummaries(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -60,6 +62,7 @@ export class HgSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getHgSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -77,6 +80,7 @@ export class HgSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: HgSummaryDTO,
     description: 'Creates a workspace Hg Summary record.',
@@ -99,6 +103,7 @@ export class HgSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: HgSummaryDTO,
     description: 'Updates a workspace Hg Summary record.',
@@ -122,6 +127,7 @@ export class HgSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a workspace Hg Summary record.',
   })

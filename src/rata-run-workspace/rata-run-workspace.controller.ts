@@ -23,6 +23,7 @@ import {
 } from '../dto/rata-run.dto';
 import { RataRunChecksService } from './rata-run-checks.service';
 import { RataRunWorkspaceService } from './rata-run-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -47,6 +48,7 @@ export class RataRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getRataRuns(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -70,6 +72,7 @@ export class RataRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getRataRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -89,6 +92,7 @@ export class RataRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     isArray: false,
     type: RataRunRecordDTO,
@@ -128,6 +132,7 @@ export class RataRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a Rata Run record from the workspace',
   })
@@ -151,6 +156,7 @@ export class RataRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: RataRunRecordDTO,
     description: 'Updates a Rata Run record in the workspace',

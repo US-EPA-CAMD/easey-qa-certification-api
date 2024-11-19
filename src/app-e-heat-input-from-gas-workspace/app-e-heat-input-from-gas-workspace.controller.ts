@@ -22,6 +22,7 @@ import {
 import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-gas-workspace.service';
 import { AppEHeatInputFromGasChecksService } from './app-e-heat-input-from-gas-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -47,6 +48,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getAppEHeatInputFromGases(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -70,6 +72,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getAppEHeatInputFromGas(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -89,6 +92,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: AppEHeatInputFromGasRecordDTO,
     description: 'Creates a workspace Appendix E Heat Input From Gas record.',
@@ -121,6 +125,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: AppEHeatInputFromGasRecordDTO,
     description: 'Updates a workspace Appendix E Heat Input From Gas record.',
@@ -153,6 +158,7 @@ export class AppEHeatInputFromGasWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a workspace Appendix E Correlation Test Run record.',
   })

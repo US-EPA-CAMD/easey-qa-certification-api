@@ -23,6 +23,7 @@ import {
 } from '../dto/flow-rata-run.dto';
 import { FlowRataRunChecksService } from './flow-rata-run-checks.service';
 import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -47,6 +48,7 @@ export class FlowRataRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getFlowRataRuns(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -71,6 +73,7 @@ export class FlowRataRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getFlowRataRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -91,6 +94,7 @@ export class FlowRataRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     isArray: false,
     type: FlowRataRunRecordDTO,
@@ -133,6 +137,7 @@ export class FlowRataRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: FlowRataRunRecordDTO,
     description: 'Updates a Flow Rata Run record in the workspace',
@@ -175,6 +180,7 @@ export class FlowRataRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a Flow Rata Run record from the workspace',
   })

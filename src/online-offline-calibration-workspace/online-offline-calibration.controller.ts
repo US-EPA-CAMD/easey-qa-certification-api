@@ -22,6 +22,7 @@ import {
   OnlineOfflineCalibrationRecordDTO,
 } from '../dto/online-offline-calibration.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -46,6 +47,7 @@ export class OnlineOfflineCalibrationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getOnlineOfflineCalibrations(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -68,6 +70,7 @@ export class OnlineOfflineCalibrationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getOnlineOfflineCalibration(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -85,6 +88,7 @@ export class OnlineOfflineCalibrationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: OnlineOfflineCalibrationRecordDTO,
     description:
@@ -112,6 +116,7 @@ export class OnlineOfflineCalibrationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Delete a workspace Online Offline Calibration record',
   })
@@ -137,6 +142,7 @@ export class OnlineOfflineCalibrationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: OnlineOfflineCalibrationRecordDTO,
     description:

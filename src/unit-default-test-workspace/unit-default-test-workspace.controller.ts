@@ -23,6 +23,7 @@ import {
 } from '../dto/unit-default-test.dto';
 import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -45,6 +46,7 @@ export class UnitDefaultTestWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getUnitDefaultTests(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -66,6 +68,7 @@ export class UnitDefaultTestWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getUnitDefaultTest(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -83,6 +86,7 @@ export class UnitDefaultTestWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: UnitDefaultTestRecordDTO,
     description: 'Creates a workspace Unit Default Test record.',
@@ -105,6 +109,7 @@ export class UnitDefaultTestWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     isArray: true,
     type: UnitDefaultTestRecordDTO,
@@ -134,6 +139,7 @@ export class UnitDefaultTestWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a unit default test record from the workspace',
   })

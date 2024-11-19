@@ -21,6 +21,7 @@ import {
   CycleTimeSummaryDTO,
 } from '../dto/cycle-time-summary.dto';
 import { CycleTimeSummaryWorkspaceService } from './cycle-time-summary-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -43,6 +44,7 @@ export class CycleTimeSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getCycleTimeSummaries(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -64,6 +66,7 @@ export class CycleTimeSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getCycleTimeSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -81,6 +84,7 @@ export class CycleTimeSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: CycleTimeSummaryDTO,
     description: 'Creates a workspace Cycle Time Summary record.',
@@ -103,6 +107,7 @@ export class CycleTimeSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: CycleTimeSummaryDTO,
     description: 'Updates a workspace Cycle Time Summary record.',
@@ -131,6 +136,7 @@ export class CycleTimeSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a workspace Cycle Time Summary record.',
   })

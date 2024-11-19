@@ -23,6 +23,7 @@ import {
 import { AirEmissionTestingChecksService } from './air-emission-testing-checks.service';
 import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -48,6 +49,7 @@ export class AirEmissionTestingWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getAirEmissionTestings(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -69,6 +71,7 @@ export class AirEmissionTestingWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getAirEmissionsTesting(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -86,6 +89,7 @@ export class AirEmissionTestingWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: AirEmissionTestingRecordDTO,
     description: 'Creates a workspace Air Emission Testing record.',
@@ -113,6 +117,7 @@ export class AirEmissionTestingWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: AirEmissionTestingRecordDTO,
     description: 'Updates a workspace Air Emission Testing record',
@@ -142,6 +147,7 @@ export class AirEmissionTestingWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a workspace Air Emission Testing record',
   })

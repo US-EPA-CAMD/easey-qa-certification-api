@@ -21,6 +21,7 @@ import {
   FuelFlowToLoadTestRecordDTO,
 } from '../dto/fuel-flow-to-load-test.dto';
 import { FuelFlowToLoadTestWorkspaceService } from './fuel-flow-to-load-test-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -43,6 +44,7 @@ export class FuelFlowToLoadTestWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getFuelFlowToLoadTests(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -64,6 +66,7 @@ export class FuelFlowToLoadTestWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getFuelFlowToLoadTest(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -81,6 +84,7 @@ export class FuelFlowToLoadTestWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: FuelFlowToLoadTestRecordDTO,
     description: 'Creates a workspace Fuel Flow To Load Test record.',
@@ -107,6 +111,7 @@ export class FuelFlowToLoadTestWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: FuelFlowToLoadTestRecordDTO,
     description: 'Updates a Fuel Flow To Load Test record from the workspace',
@@ -135,6 +140,7 @@ export class FuelFlowToLoadTestWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a Fuel Flow To Load Test record from the workspace',
   })

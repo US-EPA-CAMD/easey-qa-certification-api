@@ -29,6 +29,7 @@ import { TestSummaryParamsDTO } from '../dto/test-summary-params.dto';
 import { TestSummaryWorkspaceService } from './test-summary.service';
 import { TestSummaryChecksService } from './test-summary-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -59,6 +60,7 @@ export class TestSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getTestSummaries(
     @Param('locId') locationId: string,
     @Query() params: TestSummaryParamsDTO,
@@ -85,6 +87,7 @@ export class TestSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getTestSummary(
     @Param('locId') _locationId: string,
     @Param('id') id: string,
@@ -101,6 +104,7 @@ export class TestSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: TestSummaryRecordDTO,
     description: 'Creates a Test Summary record in the workspace',
@@ -123,6 +127,7 @@ export class TestSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: TestSummaryRecordDTO,
     description: 'Updates a Test Summary record in the workspace',
@@ -146,6 +151,7 @@ export class TestSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a Test Summary record from the workspace',
   })

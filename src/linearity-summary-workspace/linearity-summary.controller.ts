@@ -25,6 +25,7 @@ import {
 } from '../dto/linearity-summary.dto';
 import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
 import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -50,6 +51,7 @@ export class LinearitySummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getSummariesByTestSumId(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -70,6 +72,7 @@ export class LinearitySummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getSummaryById(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -87,6 +90,7 @@ export class LinearitySummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: LinearitySummaryRecordDTO,
     description: 'Creates a Linearity Summary record in the workspace',
@@ -110,6 +114,7 @@ export class LinearitySummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: LinearitySummaryRecordDTO,
     description: 'Updates a Linearity Summary record in the workspace',
@@ -134,6 +139,7 @@ export class LinearitySummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a Linearity Summary record from the workspace',
   })

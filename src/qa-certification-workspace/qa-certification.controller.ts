@@ -32,6 +32,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
 import { ReviewAndSubmitMultipleParamsMatsDTO } from '../dto/review-and-submit-multiple-params-mats.dto';
 import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -86,6 +87,7 @@ export class QACertificationWorkspaceController {
     },
     LookupType.Facility,
   )
+  @ApiExcludeEndpointByEnv()
   async export(
     @Query() params: QACertificationParamsDTO,
   ): Promise<QACertificationDTO> {
@@ -106,6 +108,7 @@ export class QACertificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: QACertificationDTO,
     description:
@@ -156,6 +159,7 @@ export class QACertificationWorkspaceController {
     },
     LookupType.Facility,
   )
+  @ApiExcludeEndpointByEnv()
   async getFilteredCerts(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
   ): Promise<CertEventReviewAndSubmitDTO[]> {
@@ -200,6 +204,7 @@ export class QACertificationWorkspaceController {
     },
     LookupType.Facility,
   )
+  @ApiExcludeEndpointByEnv()
   async getFilteredTestSums(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
   ): Promise<ReviewAndSubmitTestSummaryDTO[]> {
@@ -244,6 +249,7 @@ export class QACertificationWorkspaceController {
     },
     LookupType.Facility,
   )
+  @ApiExcludeEndpointByEnv()
   async getFilteredTee(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
   ): Promise<TeeReviewAndSubmitDTO[]> {
@@ -282,6 +288,7 @@ export class QACertificationWorkspaceController {
     },
     LookupType.Facility,
   )
+  @ApiExcludeEndpointByEnv()
   async getFilteredMatsBulkFile(
     @Query() dto: ReviewAndSubmitMultipleParamsMatsDTO,
   ): Promise<MatsBulkFileDTO[]> {

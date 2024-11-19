@@ -21,6 +21,7 @@ import {
   FuelFlowmeterAccuracyDTO,
 } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracyWorkspaceService } from './fuel-flowmeter-accuracy-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -45,6 +46,7 @@ export class FuelFlowmeterAccuracyWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getFuelFlowmeterAccuracies(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -67,6 +69,7 @@ export class FuelFlowmeterAccuracyWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getFuelFlowmeterAccuracy(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -84,6 +87,7 @@ export class FuelFlowmeterAccuracyWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: FuelFlowmeterAccuracyDTO,
     description: 'Creates a workspace Fuel Flowmeter Accuracy record.',
@@ -110,6 +114,7 @@ export class FuelFlowmeterAccuracyWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: FuelFlowmeterAccuracyDTO,
     description: 'Updates a workspace Fuel FLowmeter Accuracy record',
@@ -138,6 +143,7 @@ export class FuelFlowmeterAccuracyWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a Fuel Flowmeter record from the workspace',
   })

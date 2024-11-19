@@ -25,6 +25,7 @@ import {
 } from '../dto/qa-certification-event.dto';
 import { QACertificationEventChecksService } from './qa-certification-event-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -50,6 +51,7 @@ export class QACertificationEventWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getQACertEvents(
     @Param('locId') locationId: string,
   ): Promise<QACertificationEventDTO[]> {
@@ -70,6 +72,7 @@ export class QACertificationEventWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   getQACertEvent(
     @Param('locId') locationId: string,
     @Param('id') id: string,
@@ -86,6 +89,7 @@ export class QACertificationEventWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: QACertificationEventBaseDTO,
     description: 'Create a QA Certification Event record in the workspace',
@@ -108,6 +112,7 @@ export class QACertificationEventWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: QACertificationEventBaseDTO,
     description: 'Updates a QA Certification Event record in the workspace',
@@ -131,6 +136,7 @@ export class QACertificationEventWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a QA Certification Event from the workspace',
   })

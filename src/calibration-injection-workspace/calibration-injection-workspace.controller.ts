@@ -21,6 +21,7 @@ import {
   CalibrationInjectionDTO,
 } from '../dto/calibration-injection.dto';
 import { CalibrationInjectionWorkspaceService } from './calibration-injection-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -43,6 +44,7 @@ export class CalibrationInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getCalibrationInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -64,6 +66,7 @@ export class CalibrationInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getCalibrationInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -81,6 +84,7 @@ export class CalibrationInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: CalibrationInjectionDTO,
     description: 'Creates a workspace Calibration Injection record.',
@@ -107,6 +111,7 @@ export class CalibrationInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: CalibrationInjectionDTO,
     description: 'Updates a workspace Calibration Injection record.',
@@ -135,6 +140,7 @@ export class CalibrationInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a workspace Calibration Injection record.',
   })

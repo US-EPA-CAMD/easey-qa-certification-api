@@ -23,6 +23,7 @@ import {
 } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjectionChecksService } from './cycle-time-injection-workspace-checks.service';
 import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-workspace.service';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -48,6 +49,7 @@ export class CycleTimeInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getCycleTimeInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -69,6 +71,7 @@ export class CycleTimeInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getCycleTimeInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -87,6 +90,7 @@ export class CycleTimeInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: CycleTimeInjectionRecordDTO,
     description: 'Creates a Cycle Time Injection record in the workspace',
@@ -122,6 +126,7 @@ export class CycleTimeInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: CycleTimeInjectionRecordDTO,
     description: ' Updates a Cycle Time Injection record in the workspace',
@@ -158,6 +163,7 @@ export class CycleTimeInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description: 'Deletes a workspace Cycle Time Injection record',
   })

@@ -22,6 +22,7 @@ import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { AppECorrelationTestSummaryChecksService } from './app-e-correlation-test-summary-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeEndpointByEnv } from '../utilities/swagger-decorator.const';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -47,6 +48,7 @@ export class AppendixETestSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getAppECorrelations(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -69,6 +71,7 @@ export class AppendixETestSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   async getAppECorrelation(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -86,6 +89,7 @@ export class AppendixETestSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiCreatedResponse({
     type: AppECorrelationTestSummaryRecordDTO,
     description:
@@ -110,6 +114,7 @@ export class AppendixETestSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     type: AppECorrelationTestSummaryRecordDTO,
     description: 'Updates a workspace Appendix E Test Summary record',
@@ -139,6 +144,7 @@ export class AppendixETestSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @ApiExcludeEndpointByEnv()
   @ApiOkResponse({
     description:
       'Deletes a workspace Appendix E Correlation Test Summary record',
