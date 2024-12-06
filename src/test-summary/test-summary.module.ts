@@ -24,10 +24,14 @@ import { UnitDefaultTestModule } from '../unit-default-test/unit-default-test.mo
 import { TestSummaryController } from './test-summary.controller';
 import { TestSummaryRepository } from './test-summary.repository';
 import { TestSummaryService } from './test-summary.service';
+import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
+import { TestSummaryReviewAndSubmitRepository } from '../qa-certification-workspace/test-summary-review-and-submit.repository';
+import { TestSummaryReviewAndSubmitGlobalRepository } from '../qa-certification-workspace/test-summary-review-and-submit-global.repository';
+import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TestSummaryRepository]),
+    TypeOrmModule.forFeature([TestSummaryRepository, TestSummaryReviewAndSubmitRepository, TestSummaryReviewAndSubmitGlobalRepository,]),
     LinearitySummaryModule,
     LinearityInjectionModule,
     ProtocolGasModule,
@@ -49,7 +53,7 @@ import { TestSummaryService } from './test-summary.service';
     HgInjectionModule,
   ],
   controllers: [TestSummaryController],
-  providers: [TestSummaryMap, TestSummaryRepository, TestSummaryService],
+  providers: [TestSummaryMap, TestSummaryRepository, TestSummaryService, TestSummaryReviewAndSubmitService, TestSummaryReviewAndSubmitRepository, TestSummaryReviewAndSubmitGlobalRepository, ReviewAndSubmitTestSummaryMap, ],
   exports: [
     TypeOrmModule,
     TestSummaryMap,
