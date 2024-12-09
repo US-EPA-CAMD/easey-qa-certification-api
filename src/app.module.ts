@@ -1,6 +1,11 @@
-import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
-import { RouterModule } from 'nest-router';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { RouterModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
 
@@ -91,7 +96,7 @@ import { WhatHasDataModule } from './what-has-data/what-has-data.module';
 
 @Module({
   imports: [
-    RouterModule.forRoutes(routes),
+    RouterModule.register(routes),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [dbConfig, appConfig],
@@ -179,6 +184,8 @@ import { WhatHasDataModule } from './what-has-data/what-has-data.module';
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(MaintenanceMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL })
+    consumer
+      .apply(MaintenanceMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }
