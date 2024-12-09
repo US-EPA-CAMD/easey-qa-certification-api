@@ -1,4 +1,9 @@
-import { Module } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { RouterModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,6 +17,7 @@ import {
   DbLookupValidator,
   IsValidCodesValidator,
 } from '@us-epa-camd/easey-common/validators';
+import { MaintenanceMiddleware } from '@us-epa-camd/easey-common/middleware/maintenance.middleware';
 
 import routes from './routes';
 import appConfig from './config/app.config';
@@ -176,4 +182,10 @@ import { WhatHasDataModule } from './what-has-data/what-has-data.module';
   ],
   providers: [DbLookupValidator, IsValidCodesValidator],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(MaintenanceMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
+  }
+}
