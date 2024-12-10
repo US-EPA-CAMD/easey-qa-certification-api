@@ -1,5 +1,3 @@
-import { Routes } from 'nest-router';
-
 import { QACertificationModule } from './qa-certification/qa-certification.module';
 import { QACertificationWorkspaceModule } from './qa-certification-workspace/qa-certification.module';
 import { LocationWorkspaceModule } from './monitor-location-workspace/monitor-location.module';
@@ -68,7 +66,7 @@ import { QaCertificationEventModule } from './qa-certification-event/qa-certific
 import { MonitorLocationModule } from './monitor-location/monitor-location.module';
 import { WhatHasDataModule } from './what-has-data/what-has-data.module';
 
-const routes: Routes = [
+const routes = [
   {
     path: '/what-has-data',
     module: WhatHasDataModule,
