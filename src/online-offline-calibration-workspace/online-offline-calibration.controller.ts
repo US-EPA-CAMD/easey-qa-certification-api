@@ -8,7 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -26,6 +26,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Online Offline Calibration')
+@ApiExcludeController()
 export class OnlineOfflineCalibrationWorkspaceController {
   constructor(
     private readonly service: OnlineOfflineCalibrationWorkspaceService,

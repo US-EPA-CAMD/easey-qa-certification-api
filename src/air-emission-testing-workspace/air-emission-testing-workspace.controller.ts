@@ -8,7 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -27,6 +27,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Air Emission Testing')
+@ApiExcludeController()
 export class AirEmissionTestingWorkspaceController {
   constructor(
     private readonly service: AirEmissionTestingWorkspaceService,

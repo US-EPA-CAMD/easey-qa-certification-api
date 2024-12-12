@@ -8,7 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -26,6 +26,7 @@ import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference-wo
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Flow To Load Reference')
+@ApiExcludeController()
 export class FlowToLoadReferenceWorkspaceController {
   constructor(private readonly service: FlowToLoadReferenceWorkspaceService) {}
 

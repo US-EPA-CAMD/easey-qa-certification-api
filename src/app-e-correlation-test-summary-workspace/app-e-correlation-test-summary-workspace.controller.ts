@@ -8,7 +8,7 @@ import {
   Body,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -26,6 +26,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Correlation Test Summary')
+@ApiExcludeController()
 export class AppendixETestSummaryWorkspaceController {
   constructor(
     private readonly service: AppECorrelationTestSummaryWorkspaceService,

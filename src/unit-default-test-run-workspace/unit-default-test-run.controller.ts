@@ -8,7 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -28,6 +28,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Default Test Run')
+@ApiExcludeController()
 export class UnitDefaultTestRunWorkspaceController {
   constructor(
     private readonly service: UnitDefaultTestRunWorkspaceService,

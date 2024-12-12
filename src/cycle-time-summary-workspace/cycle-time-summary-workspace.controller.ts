@@ -8,7 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -25,6 +25,7 @@ import { CycleTimeSummaryWorkspaceService } from './cycle-time-summary-workspace
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Cycle Time Summary')
+@ApiExcludeController()
 export class CycleTimeSummaryWorkspaceController {
   constructor(private readonly service: CycleTimeSummaryWorkspaceService) {}
 

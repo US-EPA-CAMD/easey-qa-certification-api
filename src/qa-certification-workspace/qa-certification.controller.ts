@@ -5,7 +5,7 @@ import {
   ApiOkResponse,
   ApiSecurity,
   ApiQuery,
-  ApiOperation,
+  ApiOperation, ApiExcludeController,
 } from '@nestjs/swagger';
 
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
@@ -36,6 +36,7 @@ import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-an
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('QA Certification')
+@ApiExcludeController()
 export class QACertificationWorkspaceController {
   constructor(
     private readonly service: QACertificationWorkspaceService,

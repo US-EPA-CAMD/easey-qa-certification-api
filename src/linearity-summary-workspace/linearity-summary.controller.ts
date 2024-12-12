@@ -12,7 +12,7 @@ import {
   ApiTags,
   ApiOkResponse,
   ApiCreatedResponse,
-  ApiSecurity,
+  ApiSecurity, ApiExcludeController,
 } from '@nestjs/swagger';
 
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
@@ -29,6 +29,7 @@ import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Linearity Summary')
+@ApiExcludeController()
 export class LinearitySummaryWorkspaceController {
   constructor(
     private readonly service: LinearitySummaryWorkspaceService,

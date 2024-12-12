@@ -8,7 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -25,6 +25,7 @@ import { CalibrationInjectionWorkspaceService } from './calibration-injection-wo
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Calibration Injection')
+@ApiExcludeController()
 export class CalibrationInjectionWorkspaceController {
   constructor(private readonly service: CalibrationInjectionWorkspaceService) {}
 

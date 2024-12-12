@@ -8,7 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -28,6 +28,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Transmitter Transducer Accuracy')
+@ApiExcludeController()
 export class TransmitterTransducerAccuracyWorkspaceController {
   constructor(
     private readonly service: TransmitterTransducerAccuracyWorkspaceService,

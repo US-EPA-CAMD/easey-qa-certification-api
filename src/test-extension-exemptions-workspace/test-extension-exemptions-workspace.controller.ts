@@ -8,7 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -26,6 +26,7 @@ import { TestExtensionExemptionsWorkspaceService } from './test-extension-exempt
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Test Extension Exemption')
+@ApiExcludeController()
 export class TestExtensionExemptionsWorkspaceController {
   constructor(
     private readonly service: TestExtensionExemptionsWorkspaceService,

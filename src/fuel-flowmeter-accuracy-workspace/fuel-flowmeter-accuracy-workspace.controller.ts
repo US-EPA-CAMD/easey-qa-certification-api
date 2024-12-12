@@ -8,7 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -25,6 +25,7 @@ import { FuelFlowmeterAccuracyWorkspaceService } from './fuel-flowmeter-accuracy
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Fuel Flowmeter Accuracy')
+@ApiExcludeController()
 export class FuelFlowmeterAccuracyWorkspaceController {
   constructor(
     private readonly service: FuelFlowmeterAccuracyWorkspaceService,

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { Delete } from '@nestjs/common/decorators';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -19,6 +19,7 @@ import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Hg Injection')
+@ApiExcludeController()
 export class HgInjectionWorkspaceController {
   constructor(private readonly service: HgInjectionWorkspaceService) {}
 

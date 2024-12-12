@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -27,6 +27,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Correlation Test Run')
+@ApiExcludeController()
 export class AppECorrelationTestRunWorkspaceController {
   constructor(
     private readonly service: AppECorrelationTestRunWorkspaceService,

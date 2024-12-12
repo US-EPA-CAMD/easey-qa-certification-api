@@ -8,7 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -27,6 +27,7 @@ import { RataRunWorkspaceService } from './rata-run-workspace.service';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Rata Run')
+@ApiExcludeController()
 export class RataRunWorkspaceController {
   constructor(
     private readonly service: RataRunWorkspaceService,

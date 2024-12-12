@@ -8,7 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController, ApiExcludeEndpoint,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -26,6 +26,7 @@ import { TestQualificationWorkspaceService } from './test-qualification-workspac
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Test Qualification')
+@ApiExcludeController()
 export class TestQualificationWorkspaceController {
   constructor(
     private readonly service: TestQualificationWorkspaceService,

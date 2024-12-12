@@ -8,7 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -25,6 +25,7 @@ import { FuelFlowToLoadTestWorkspaceService } from './fuel-flow-to-load-test-wor
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Fuel Flow To Load Test')
+@ApiExcludeController()
 export class FuelFlowToLoadTestWorkspaceController {
   constructor(private readonly service: FuelFlowToLoadTestWorkspaceService) {}
 

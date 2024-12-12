@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -29,6 +29,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('QA Certification Event')
+@ApiExcludeController()
 export class QACertificationEventWorkspaceController {
   constructor(
     private readonly service: QACertificationEventWorkspaceService,

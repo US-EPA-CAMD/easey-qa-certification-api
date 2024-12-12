@@ -8,7 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
+  ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
   ApiTags,
@@ -27,6 +27,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Heat Input From Oil')
+@ApiExcludeController()
 export class AppEHeatInputFromOilWorkspaceController {
   constructor(
     private readonly service: AppEHeatInputFromOilWorkspaceService,

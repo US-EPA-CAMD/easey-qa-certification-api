@@ -14,7 +14,7 @@ import {
   ApiOkResponse,
   ApiCreatedResponse,
   ApiSecurity,
-  ApiQuery,
+  ApiQuery, ApiExcludeEndpoint, ApiExcludeController,
 } from '@nestjs/swagger';
 
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
@@ -33,6 +33,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Test Summary')
+@ApiExcludeController()
 export class TestSummaryWorkspaceController {
   constructor(
     private readonly service: TestSummaryWorkspaceService,
