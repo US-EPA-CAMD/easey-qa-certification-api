@@ -13,7 +13,7 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   AppEHeatInputFromGasBaseDTO,
@@ -30,7 +30,7 @@ export class AppEHeatInputFromGasWorkspaceController {
   constructor(
     private readonly service: AppEHeatInputFromGasWorkspaceService,
     private readonly checksService: AppEHeatInputFromGasChecksService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -47,6 +47,10 @@ export class AppEHeatInputFromGasWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved appendix E heat input from gases for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId', 'appECorrTestRunId']
+  })
   async getAppEHeatInputFromGases(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -70,6 +74,10 @@ export class AppEHeatInputFromGasWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved appendix E heat input from gas by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId', 'appECorrTestRunId', 'id']
+  })
   async getAppEHeatInputFromGas(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -92,6 +100,11 @@ export class AppEHeatInputFromGasWorkspaceController {
   @ApiCreatedResponse({
     type: AppEHeatInputFromGasRecordDTO,
     description: 'Creates a workspace Appendix E Heat Input From Gas record.',
+  })
+  @AuditLog({
+    label: 'Created appendix E heat input from gas for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId', 'appECorrTestRunId'],
+    responseBodyOutFields: '*'
   })
   async createAppEHeatInputFromGas(
     @Param('locId') locationId: string,
@@ -125,6 +138,11 @@ export class AppEHeatInputFromGasWorkspaceController {
     type: AppEHeatInputFromGasRecordDTO,
     description: 'Updates a workspace Appendix E Heat Input From Gas record.',
   })
+  @AuditLog({
+    label: 'Updated appendix E heat input from gas by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId', 'appECorrTestRunId', 'id'],
+    responseBodyOutFields: '*'
+  })
   async updateAppEHeatInputFromGas(
     @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
@@ -155,6 +173,10 @@ export class AppEHeatInputFromGasWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a workspace Appendix E Correlation Test Run record.',
+  })
+  @AuditLog({
+    label: 'Deleted appendix E heat input from gas by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId', 'appECorrTestRunId', 'id']
   })
   async deleteAppEHeatInputFromGas(
     @Param('locId') _locationId: string,
