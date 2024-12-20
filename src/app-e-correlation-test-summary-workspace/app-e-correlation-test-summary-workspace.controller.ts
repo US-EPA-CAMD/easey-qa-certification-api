@@ -18,7 +18,7 @@ import {
   AppECorrelationTestSummaryRecordDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
 import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-test-summary-workspace.service';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { AppECorrelationTestSummaryChecksService } from './app-e-correlation-test-summary-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
@@ -47,6 +47,10 @@ export class AppendixETestSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved appendix E correlation test summaries for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   async getAppECorrelations(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -69,6 +73,10 @@ export class AppendixETestSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved appendix E correlation test summary by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   async getAppECorrelation(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -90,6 +98,11 @@ export class AppendixETestSummaryWorkspaceController {
     type: AppECorrelationTestSummaryRecordDTO,
     description:
       'Creates a workspace Appendix E Correlation Test Summary record.',
+  })
+  @AuditLog({
+    label: 'Created appendix E correlation test summary for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   async createAppECorrelation(
     @Param('locId') _locationId: string,
@@ -113,6 +126,11 @@ export class AppendixETestSummaryWorkspaceController {
   @ApiOkResponse({
     type: AppECorrelationTestSummaryRecordDTO,
     description: 'Updates a workspace Appendix E Test Summary record',
+  })
+  @AuditLog({
+    label: 'Updated appendix E correlation test summary by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
   })
   async editAppECorrelation(
     @Param('locId') _locationId: string,
@@ -142,6 +160,10 @@ export class AppendixETestSummaryWorkspaceController {
   @ApiOkResponse({
     description:
       'Deletes a workspace Appendix E Correlation Test Summary record',
+  })
+  @AuditLog({
+    label: 'Deleted appendix E correlation test summary by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
   })
   async deleteAppECorrelation(
     @Param('locId') _locationId: string,
