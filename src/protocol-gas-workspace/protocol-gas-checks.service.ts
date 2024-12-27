@@ -48,7 +48,7 @@ export class ProtocolGasChecksService {
     let errorList: string[] = [];
     let testSumRecord;
 
-    this.logger.log('Running Protocol Gas Checks');
+    this.logger.debug('Running Protocol Gas Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
@@ -89,7 +89,7 @@ export class ProtocolGasChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.log('Completed Protocol Gas Checks');
+    this.logger.debug('Completed Protocol Gas Checks');
     return errorList;
   }
 

@@ -170,7 +170,7 @@ export class RataRunWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.log(
+    this.logger.debug(
       `Rata Run Successfully Imported. Record Id: ${createdRataRun.id}`,
     );
 

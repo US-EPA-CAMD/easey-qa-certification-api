@@ -73,7 +73,7 @@ export class LocationChecksService {
   async runChecks(
     payload: QACertificationImportDTO,
   ): Promise<[LocationIdentifiers[], string[]]> {
-    this.logger.log('Running Unit/Stack Location Checks');
+    this.logger.debug('Running Unit/Stack Location Checks');
 
     let errorList = [];
     const orisCode = payload.orisCode;
@@ -158,7 +158,7 @@ export class LocationChecksService {
       });
     }
 
-    this.logger.log('Completed Unit/Stack Location Checks');
+    this.logger.debug('Completed Unit/Stack Location Checks');
     return [locations, errorList];
   }
 

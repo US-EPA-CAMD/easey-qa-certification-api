@@ -38,7 +38,7 @@ export class AppECorrelationTestRunChecksService {
     let error: string = null;
     const errorList: string[] = [];
 
-    this.logger.log('Running Appendix E Test Run Checks');
+    this.logger.debug('Running Appendix E Test Run Checks');
 
     const appETestSummary = await this.appETestSummaryRepository.findOneBy({
       id: appETestSumId,
@@ -50,7 +50,7 @@ export class AppECorrelationTestRunChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.log('Completed Appendix E Test Run Checks');
+    this.logger.debug('Completed Appendix E Test Run Checks');
     return errorList;
   }
 

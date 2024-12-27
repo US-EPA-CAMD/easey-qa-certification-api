@@ -47,7 +47,7 @@ export class LinearityInjectionChecksService {
     let error: string = null;
     const errorList: string[] = [];
     let testSumRecord;
-    this.logger.log('Running Linearity Injection Checks');
+    this.logger.debug('Running Linearity Injection Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
@@ -76,7 +76,7 @@ export class LinearityInjectionChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.log('Completed Linearity Injection Checks');
+    this.logger.debug('Completed Linearity Injection Checks');
     return errorList;
   }
 

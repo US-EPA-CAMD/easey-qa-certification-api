@@ -108,7 +108,7 @@ export class QACertificationWorkspaceService {
     userId: string,
     qaSupprecords: QASuppData[],
   ): Promise<any> {
-    this.logger.log(
+    this.logger.debug(
       `Importing QA Certification data for Facility Id/Oris Code [${payload.orisCode}]`,
     );
 

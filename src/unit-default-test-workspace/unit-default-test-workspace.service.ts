@@ -196,7 +196,7 @@ export class UnitDefaultTestWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.log(
+    this.logger.debug(
       `Unit Default Successfully Imported.  Record Id: ${createdUnitDefaultTest.id}`,
     );
 

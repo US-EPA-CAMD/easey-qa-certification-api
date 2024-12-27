@@ -207,7 +207,7 @@ export class OnlineOfflineCalibrationWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.log(
+    this.logger.debug(
       `Online Offline Calibration successfully imported. Record Id: ${createdOnlineOfflineCalibration.id}`,
     );
   }

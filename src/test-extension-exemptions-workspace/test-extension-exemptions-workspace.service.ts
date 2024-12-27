@@ -155,7 +155,7 @@ export class TestExtensionExemptionsWorkspaceService {
       );
     }
 
-    this.logger.log(
+    this.logger.debug(
       `QA Test Extension Exemption Record Successfully Imported. Record Id: ${importedTestExtensionExemption.id}`,
     );
 

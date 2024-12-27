@@ -200,7 +200,7 @@ export class RataSummaryWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.log(
+    this.logger.debug(
       `Rata Summary Successfully Imported. Record Id: ${createdRataSummary.id}`,
     );
 

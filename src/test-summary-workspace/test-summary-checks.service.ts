@@ -68,7 +68,7 @@ export class TestSummaryChecksService {
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
-    this.logger.log('Running Test Summary Checks');
+    this.logger.debug('Running Test Summary Checks');
 
     if (!isImport) {
       const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
@@ -205,7 +205,7 @@ export class TestSummaryChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.log('Completed Test Summary Checks');
+    this.logger.debug('Completed Test Summary Checks');
     return errorList;
   }
 

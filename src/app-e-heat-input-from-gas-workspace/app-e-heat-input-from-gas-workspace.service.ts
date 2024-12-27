@@ -211,7 +211,7 @@ export class AppEHeatInputFromGasWorkspaceService {
       isHistoricalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.log(
+    this.logger.debug(
       `Appendix E Heat Input from Gas Successfully Imported.  Record Id: ${createdHeatInputFromGas.id}`,
     );
   }

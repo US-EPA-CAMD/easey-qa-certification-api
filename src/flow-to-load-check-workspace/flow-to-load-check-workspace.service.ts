@@ -188,7 +188,7 @@ export class FlowToLoadCheckWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.log(
+    this.logger.debug(
       `Flow To Load Check Successfully Imported.  Record Id: ${createdFlowToLoadCheck.id}`,
     );
   }

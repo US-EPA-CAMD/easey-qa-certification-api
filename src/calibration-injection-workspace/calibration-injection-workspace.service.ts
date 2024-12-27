@@ -206,7 +206,7 @@ export class CalibrationInjectionWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.log(
+    this.logger.debug(
       `Calibration Injection Successfully Imported. Record Id: ${createdCalibrationInjection.id}`,
     );
 

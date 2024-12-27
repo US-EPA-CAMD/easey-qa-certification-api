@@ -181,7 +181,7 @@ export class FlowToLoadReferenceWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.log(
+    this.logger.debug(
       `Flow To Load Reference Successfully Imported.  Record Id: ${createdFlowToLoadReference.id}`,
     );
   }

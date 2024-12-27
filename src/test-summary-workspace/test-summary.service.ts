@@ -365,7 +365,7 @@ export class TestSummaryWorkspaceService {
       historicalrecordId,
     );
 
-    this.logger.log(
+    this.logger.debug(
       `Test Summary Successfully Imported. Record Id: ${createdTestSummary.id}`,
     );
 

@@ -182,7 +182,7 @@ export class RataTraverseWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.log(
+    this.logger.debug(
       `Rata Traverse Successfully Imported. Record Id: ${createdRataRun.id}`,
     );
 

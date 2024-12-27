@@ -194,7 +194,7 @@ export class TransmitterTransducerAccuracyWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.log(
+    this.logger.debug(
       `Transmitter Transducer Accuracy successfully imported. Record Id: ${createdTransmitterTransducerAccuracy.id}`,
     );
 

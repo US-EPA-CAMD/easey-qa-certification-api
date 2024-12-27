@@ -43,7 +43,7 @@ export class UnitDefaultTestRunChecksService {
     let error: string = null;
     const errorList: string[] = [];
     let testSumRecord;
-    this.logger.log('Running Unit Default Test Run Checks');
+    this.logger.debug('Running Unit Default Test Run Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
@@ -68,7 +68,7 @@ export class UnitDefaultTestRunChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.log('Completed Unit Default Test Run Checks');
+    this.logger.debug('Completed Unit Default Test Run Checks');
     return errorList;
   }
 

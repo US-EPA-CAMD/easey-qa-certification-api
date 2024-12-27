@@ -203,7 +203,7 @@ export class CycleTimeSummaryWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.log(
+    this.logger.debug(
       `Cycle Time Summary Successfully Imported. Record Id: ${createdCycleTimeSummary.id}`,
     );
 

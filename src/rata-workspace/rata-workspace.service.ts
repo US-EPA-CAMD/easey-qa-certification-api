@@ -169,7 +169,7 @@ export class RataWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.log(`Rata Successfully Imported. Record Id: ${createdRata.id}`);
+    this.logger.debug(`Rata Successfully Imported. Record Id: ${createdRata.id}`);
 
     if (payload.rataSummaryData?.length > 0) {
       for (const rataSummary of payload.rataSummaryData) {

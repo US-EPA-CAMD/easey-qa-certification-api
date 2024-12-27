@@ -44,7 +44,7 @@ export class LinearitySummaryChecksService {
     let error: string = null;
     const errorList: string[] = [];
     let testSumRecord;
-    this.logger.log('Running Linearity Summary Checks');
+    this.logger.debug('Running Linearity Summary Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
@@ -82,7 +82,7 @@ export class LinearitySummaryChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.log('Completed Linearity Summary Checks');
+    this.logger.debug('Completed Linearity Summary Checks');
     return errorList;
   }
 

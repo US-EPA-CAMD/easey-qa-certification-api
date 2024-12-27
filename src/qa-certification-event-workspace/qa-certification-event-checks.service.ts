@@ -45,7 +45,7 @@ export class QACertificationEventChecksService {
     let error: string = null;
     const errorList: string[] = [];
 
-    this.logger.log('Running QA Certification Event Checks');
+    this.logger.debug('Running QA Certification Event Checks');
 
     if (!isUpdate) {
       error = await this.QACertEvent11DuplicateCheck(
@@ -60,7 +60,7 @@ export class QACertificationEventChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.log('Completed QA Certification Event Checks');
+    this.logger.debug('Completed QA Certification Event Checks');
     return errorList;
   }
 
