@@ -173,8 +173,7 @@ export class LinearityInjectionWorkspaceController {
   })
   @AuditLog({
     label: 'Deleted injection record by ID for linearity summary',
-    requestParamsOutFields: ['locId', 'testSumId', 'linSumId', 'id'],
-    responseBodyOutFields: '*'
+    requestParamsOutFields: ['locId', 'testSumId', 'linSumId', 'id']
   })
   async deleteLinearityInjection(
     @Param('locId') _locationId: string,

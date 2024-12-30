@@ -158,8 +158,7 @@ export class FuelFlowToLoadTestWorkspaceController {
   })
   @AuditLog({
     label: 'Deleted fuel flow to load test record by ID for test summary',
-    requestParamsOutFields: ['locId', 'testSumId', 'id'],
-    responseBodyOutFields: '*'
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   deleteFuelFlowToLoadTest(
     @Param('locId') _locationId: string,
