@@ -13,7 +13,7 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { FlowToLoadCheckWorkspaceService } from './flow-to-load-check-workspace.service';
 import {
@@ -27,7 +27,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 @ApiSecurity('APIKey')
 @ApiTags('Flow To Load Check')
 export class FlowToLoadCheckWorkspaceController {
-  constructor(private readonly service: FlowToLoadCheckWorkspaceService) {}
+  constructor(private readonly service: FlowToLoadCheckWorkspaceService) { }
 
   @Get()
   @ApiOkResponse({
@@ -44,6 +44,10 @@ export class FlowToLoadCheckWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved flow to load check records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   async getFlowToLoadChecks(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -65,6 +69,10 @@ export class FlowToLoadCheckWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved flow to load check record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   async getFlowToLoadCheck(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -85,6 +93,11 @@ export class FlowToLoadCheckWorkspaceController {
   @ApiCreatedResponse({
     type: FlowToLoadCheckRecordDTO,
     description: 'Creates a workspace Flow To Load Check record.',
+  })
+  @AuditLog({
+    label: 'Created flow to load check record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   async createFlowToLoadCheck(
     @Param('locId') _locationId: string,
@@ -107,6 +120,11 @@ export class FlowToLoadCheckWorkspaceController {
   @ApiOkResponse({
     type: FlowToLoadCheckDTO,
     description: 'Updates a workspace Flow To Load Check record',
+  })
+  @AuditLog({
+    label: 'Updated flow to load check record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
   })
   editFlowToLoadCheck(
     @Param('locId') _locationId: string,
@@ -135,6 +153,10 @@ export class FlowToLoadCheckWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a Flow To Load Check record from the workspace',
+  })
+  @AuditLog({
+    label: 'Deleted flow to load check record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   async deleteFlowToLoadCheck(
     @Param('locId') _locationId: string,

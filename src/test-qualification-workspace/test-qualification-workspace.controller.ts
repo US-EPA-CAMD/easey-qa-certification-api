@@ -13,7 +13,7 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -47,6 +47,10 @@ export class TestQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved test qualification records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   async getTestQualifications(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -68,6 +72,10 @@ export class TestQualificationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved test qualification record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   async getTestQualification(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -88,6 +96,11 @@ export class TestQualificationWorkspaceController {
   @ApiCreatedResponse({
     type: TestQualificationRecordDTO,
     description: 'Creates a workspace Test Qualification record.',
+  })
+  @AuditLog({
+    label: 'Created test qualification record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   async createTestQualification(
     @Param('locId') locationId: string,
@@ -125,6 +138,11 @@ export class TestQualificationWorkspaceController {
     type: TestQualificationRecordDTO,
     description: 'Updates a test qualification record in the workspace',
   })
+  @AuditLog({
+    label: 'Updated test qualification record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
+  })
   async testQualificationSummary(
     @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
@@ -161,6 +179,10 @@ export class TestQualificationWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a test qualification record from the workspace',
+  })
+  @AuditLog({
+    label: 'Deleted test qualification record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   async deleteTestQualification(
     @Param('locId') _locationId: string,
