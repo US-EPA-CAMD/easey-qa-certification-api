@@ -163,7 +163,7 @@ export class AppendixETestSummaryWorkspaceController {
   })
   @AuditLog({
     label: 'Deleted appendix E correlation test summary by ID for test summary',
-    requestParamsOutFields: ['locId', 'testSumId']
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   async deleteAppECorrelation(
     @Param('locId') _locationId: string,
