@@ -192,7 +192,7 @@ export class AppECorrelationTestRunWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.debug(
+    this.logger.log(
       `Appendix E Correlation Test Run Successfully Imported. Record Id: ${createdTestRun.id}`,
     );
 

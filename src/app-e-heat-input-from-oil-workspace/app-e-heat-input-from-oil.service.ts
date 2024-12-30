@@ -219,7 +219,7 @@ export class AppEHeatInputFromOilWorkspaceService {
       isHistoricalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.debug(
+    this.logger.log(
       `Appendix E Heat Input from Oil Successfully Imported.  Record Id: ${createdHeatInputFromOil.id}`,
     );
   }

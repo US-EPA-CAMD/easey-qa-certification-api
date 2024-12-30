@@ -53,7 +53,7 @@ export class FlowRataRunChecksService {
     const errorList: string[] = [];
     let rataSummaryRecord, rataRunRecord, testSumRecord;
 
-    this.logger.debug('Running Flow Rata Run Checks');
+    this.logger.log('Running Flow Rata Run Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
@@ -98,7 +98,7 @@ export class FlowRataRunChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.debug('Completed Flow Rata Run Checks');
+    this.logger.log('Completed Flow Rata Run Checks');
     return errorList;
   }
 

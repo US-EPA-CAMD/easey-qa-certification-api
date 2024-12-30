@@ -185,7 +185,7 @@ export class TestQualificationWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.debug(
+    this.logger.log(
       `Test Qualification Successfully Imported.  Record Id: ${createdTestQualification.id}`,
     );
   }

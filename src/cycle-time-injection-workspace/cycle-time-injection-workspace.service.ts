@@ -124,7 +124,7 @@ export class CycleTimeInjectionWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.debug(
+    this.logger.log(
       `Cycle Time Injection Successfully Imported. Record Id: ${createdCycleTimeInjection.id}`,
     );
 

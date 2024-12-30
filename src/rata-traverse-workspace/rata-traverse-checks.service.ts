@@ -64,7 +64,7 @@ export class RataTraverseChecksService {
     let testSumRecord;
     let rataSumRecord;
 
-    this.logger.debug('Running RATA Traverse Checks');
+    this.logger.log('Running RATA Traverse Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
@@ -144,7 +144,7 @@ export class RataTraverseChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.debug('Completed RATA Traverse Checks');
+    this.logger.log('Completed RATA Traverse Checks');
     return errorList;
   }
 

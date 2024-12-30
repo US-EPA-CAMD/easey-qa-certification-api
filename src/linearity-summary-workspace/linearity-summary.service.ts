@@ -101,7 +101,7 @@ export class LinearitySummaryWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.debug(
+    this.logger.log(
       `Linear Summary Successfully Imported. Record Id: ${createdLineSummary.id}`,
     );
 

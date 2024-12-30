@@ -195,7 +195,7 @@ export class HgSummaryWorkspaceService {
       historicalRecord?.id,
     );
 
-    this.logger.debug(
+    this.logger.log(
       `Hg Summary Successfully Imported. Record Id: ${createdHgSummary.id}`,
     );
 

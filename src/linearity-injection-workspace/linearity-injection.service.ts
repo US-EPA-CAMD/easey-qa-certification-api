@@ -93,7 +93,7 @@ export class LinearityInjectionWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.debug(
+    this.logger.log(
       `Linearity Injection Successfully Imported. Record Id: ${result.id}`,
     );
     return null;

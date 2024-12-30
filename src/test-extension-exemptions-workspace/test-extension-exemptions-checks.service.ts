@@ -45,7 +45,7 @@ export class TestExtensionExemptionsChecksService {
     let error: string = null;
     const errorList: string[] = [];
 
-    this.logger.debug('Running Test Extension Exemption Checks');
+    this.logger.log('Running Test Extension Exemption Checks');
 
     if (!isUpdate) {
       error = await this.extexem8DuplicateCheck(
@@ -60,7 +60,7 @@ export class TestExtensionExemptionsChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.debug('Completed Test Extension Exemption Checks');
+    this.logger.log('Completed Test Extension Exemption Checks');
     return errorList;
   }
 

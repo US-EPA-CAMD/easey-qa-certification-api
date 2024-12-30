@@ -48,7 +48,7 @@ export class RataChecksService {
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
-    this.logger.debug('Running RATA Checks');
+    this.logger.log('Running RATA Checks');
     let testSumRecord;
 
     if (isImport) {
@@ -99,7 +99,7 @@ export class RataChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.debug('Completed RATA Checks');
+    this.logger.log('Completed RATA Checks');
     return errorList;
   }
 

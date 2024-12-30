@@ -49,7 +49,7 @@ export class RataRunChecksService {
     const errorList: string[] = [];
     let testSumRecord;
 
-    this.logger.debug('Running RATA Run Checks');
+    this.logger.log('Running RATA Run Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
@@ -112,7 +112,7 @@ export class RataRunChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.debug('Completed RATA Run Checks');
+    this.logger.log('Completed RATA Run Checks');
     return errorList;
   }
 

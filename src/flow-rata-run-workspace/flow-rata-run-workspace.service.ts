@@ -185,7 +185,7 @@ export class FlowRataRunWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.debug(
+    this.logger.log(
       `Flow Rata Run Successfully Imported. Record Id: ${createdFlowRataRun.id}`,
     );
 

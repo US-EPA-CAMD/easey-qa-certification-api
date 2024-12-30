@@ -154,7 +154,7 @@ export class ProtocolGasWorkspaceService {
       isImport,
     );
 
-    this.logger.debug(
+    this.logger.log(
       `Protocol Gas Successfully Imported.  Record Id: ${createdProtocolGas.id}`,
     );
   }

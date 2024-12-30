@@ -76,7 +76,7 @@ export class QACertificationChecksService {
   async runChecks(
     payload: QACertificationImportDTO,
   ): Promise<[LocationIdentifiers[], QASuppData[]]> {
-    this.logger.debug('Running QA Certification Checks');
+    this.logger.log('Running QA Certification Checks');
 
     const errorList: string[] = [];
     const promises: Promise<string[]>[] = [];
@@ -431,7 +431,7 @@ export class QACertificationChecksService {
     }
 
     this.throwIfErrors(await this.extractErrors(promises));
-    this.logger.debug('Completed QA Certification Checks');
+    this.logger.log('Completed QA Certification Checks');
     return [locations, duplicateQaSuppRecords];
   }
 }

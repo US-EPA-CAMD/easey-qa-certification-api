@@ -37,7 +37,7 @@ export class AppEHeatInputFromGasChecksService {
     let error: string = null;
     const errorList: string[] = [];
 
-    this.logger.debug('Running Appendix E Heat Input From Gas Checks');
+    this.logger.log('Running Appendix E Heat Input From Gas Checks');
 
     const appETestRun = await this.appETestRunRepo.findOneWithAncestors(
       appETestRunId,
@@ -49,7 +49,7 @@ export class AppEHeatInputFromGasChecksService {
     }
 
     this.throwIfErrors(errorList);
-    this.logger.debug('Completed Appendix E Heat Input From Gas Checks');
+    this.logger.log('Completed Appendix E Heat Input From Gas Checks');
     return errorList;
   }
 

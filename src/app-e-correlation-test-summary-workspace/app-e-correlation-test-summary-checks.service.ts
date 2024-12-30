@@ -39,7 +39,7 @@ export class AppECorrelationTestSummaryChecksService {
     let error: string = null;
     const errorList: string[] = [];
 
-    this.logger.debug('Running Appendix E Test Summary Checks');
+    this.logger.log('Running Appendix E Test Summary Checks');
 
     error = await this.appE48Check(
       appETestSumId,
@@ -51,7 +51,7 @@ export class AppECorrelationTestSummaryChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.debug('Completed Appendix E Test Summary Checks');
+    this.logger.log('Completed Appendix E Test Summary Checks');
     return errorList;
   }
 

@@ -188,7 +188,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.debug(
+    this.logger.log(
       `Fuel Flow To Load Baseline Successfully Imported.  Record Id: ${createdFuelFlowToLoadBaseline.id}`,
     );
   }

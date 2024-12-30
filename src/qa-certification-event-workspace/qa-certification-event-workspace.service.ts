@@ -291,7 +291,7 @@ export class QACertificationEventWorkspaceService {
       );
     }
 
-    this.logger.debug(
+    this.logger.log(
       `QA Certification Record Successfully Imported. Record Id: ${importedQACertEvent.id}`,
     );
 

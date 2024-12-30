@@ -168,7 +168,7 @@ export class FuelFlowToLoadTestWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.debug(
+    this.logger.log(
       `Fuel FLow To Load Test Successfully Imported.  Record Id: ${createdFuelFlowToLoadTest.id}`,
     );
   }

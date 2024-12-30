@@ -51,7 +51,7 @@ export class TestQualificationChecksService {
     const errorList: string[] = [];
     let testSumRecord, rataRecord;
 
-    this.logger.debug('Running Test Qualification Checks');
+    this.logger.log('Running Test Qualification Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
@@ -114,7 +114,7 @@ export class TestQualificationChecksService {
     }
 
     this.throwIfErrors(errorList, isImport);
-    this.logger.debug('Completed Test Qualification Checks');
+    this.logger.log('Completed Test Qualification Checks');
     return errorList;
   }
 

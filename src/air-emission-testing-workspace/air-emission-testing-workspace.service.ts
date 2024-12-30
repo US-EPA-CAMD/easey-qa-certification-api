@@ -190,7 +190,7 @@ export class AirEmissionTestingWorkspaceService {
       historicalRecord ? historicalRecord.id : null,
     );
 
-    this.logger.debug(
+    this.logger.log(
       `Air Emission Testing Successfully Imported.  Record Id: ${createdAirEmissionTesting.id}`,
     );
   }

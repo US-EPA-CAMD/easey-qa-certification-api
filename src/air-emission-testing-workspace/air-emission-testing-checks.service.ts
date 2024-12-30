@@ -41,7 +41,7 @@ export class AirEmissionTestingChecksService {
     const errorList: string[] = [];
     let testSumRecord;
 
-    this.logger.debug('Running Air Emission Testing Checks');
+    this.logger.log('Running Air Emission Testing Checks');
 
     if (isImport) {
       testSumRecord = testSummary;
@@ -61,7 +61,7 @@ export class AirEmissionTestingChecksService {
 
     this.throwIfErrors(errorList, isImport);
 
-    this.logger.debug('Completed Air Emission Testing Checks');
+    this.logger.log('Completed Air Emission Testing Checks');
 
     return errorList;
   }
