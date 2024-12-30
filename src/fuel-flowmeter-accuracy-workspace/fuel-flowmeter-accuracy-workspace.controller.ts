@@ -8,8 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse, ApiExcludeController,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -21,11 +20,12 @@ import {
   FuelFlowmeterAccuracyDTO,
 } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracyWorkspaceService } from './fuel-flowmeter-accuracy-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Fuel Flowmeter Accuracy')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class FuelFlowmeterAccuracyWorkspaceController {
   constructor(
     private readonly service: FuelFlowmeterAccuracyWorkspaceService,

@@ -8,8 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse, ApiExcludeController,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -22,11 +21,12 @@ import {
   FlowToLoadCheckRecordDTO,
 } from '../dto/flow-to-load-check.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Flow To Load Check')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class FlowToLoadCheckWorkspaceController {
   constructor(private readonly service: FlowToLoadCheckWorkspaceService) {}
 

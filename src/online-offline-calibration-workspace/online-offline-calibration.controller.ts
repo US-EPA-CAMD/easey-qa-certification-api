@@ -8,8 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse, ApiExcludeController,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -22,11 +21,12 @@ import {
   OnlineOfflineCalibrationRecordDTO,
 } from '../dto/online-offline-calibration.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Online Offline Calibration')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class OnlineOfflineCalibrationWorkspaceController {
   constructor(
     private readonly service: OnlineOfflineCalibrationWorkspaceService,

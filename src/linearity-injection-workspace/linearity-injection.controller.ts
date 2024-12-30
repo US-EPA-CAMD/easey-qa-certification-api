@@ -12,7 +12,7 @@ import {
   ApiTags,
   ApiOkResponse,
   ApiCreatedResponse,
-  ApiSecurity, ApiExcludeController,
+  ApiSecurity,
 } from '@nestjs/swagger';
 
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
@@ -26,11 +26,12 @@ import {
 import { LinearityInjectionChecksService } from './linearity-injection-checks.service';
 
 import { LinearityInjectionWorkspaceService } from './linearity-injection.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Linearity Injection')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class LinearityInjectionWorkspaceController {
   constructor(
     private readonly service: LinearityInjectionWorkspaceService,

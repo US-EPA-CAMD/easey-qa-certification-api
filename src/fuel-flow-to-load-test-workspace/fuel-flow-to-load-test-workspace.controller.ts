@@ -8,8 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse, ApiExcludeController,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -21,11 +20,12 @@ import {
   FuelFlowToLoadTestRecordDTO,
 } from '../dto/fuel-flow-to-load-test.dto';
 import { FuelFlowToLoadTestWorkspaceService } from './fuel-flow-to-load-test-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Fuel Flow To Load Test')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class FuelFlowToLoadTestWorkspaceController {
   constructor(private readonly service: FuelFlowToLoadTestWorkspaceService) {}
 

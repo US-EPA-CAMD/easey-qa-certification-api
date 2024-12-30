@@ -8,8 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse, ApiExcludeController,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -18,11 +17,12 @@ import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Hg Summary')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class HgSummaryWorkspaceController {
   constructor(private readonly service: HgSummaryWorkspaceService) {}
 

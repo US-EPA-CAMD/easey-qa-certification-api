@@ -8,8 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse, ApiExcludeController,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -22,11 +21,12 @@ import {
   FlowToLoadReferenceDTO,
 } from '../dto/flow-to-load-reference.dto';
 import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Flow To Load Reference')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class FlowToLoadReferenceWorkspaceController {
   constructor(private readonly service: FlowToLoadReferenceWorkspaceService) {}
 

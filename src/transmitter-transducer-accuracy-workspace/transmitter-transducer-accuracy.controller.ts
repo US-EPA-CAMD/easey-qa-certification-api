@@ -8,8 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse, ApiExcludeController,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -24,11 +23,12 @@ import {
 } from '../dto/transmitter-transducer-accuracy.dto';
 import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Transmitter Transducer Accuracy')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class TransmitterTransducerAccuracyWorkspaceController {
   constructor(
     private readonly service: TransmitterTransducerAccuracyWorkspaceService,

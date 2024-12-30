@@ -8,8 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse, ApiExcludeController,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -23,11 +22,12 @@ import {
 } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjectionChecksService } from './cycle-time-injection-workspace-checks.service';
 import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Cycle Time Injection')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class CycleTimeInjectionWorkspaceController {
   constructor(
     private readonly service: CycleTimeInjectionWorkspaceService,

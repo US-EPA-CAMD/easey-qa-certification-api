@@ -22,11 +22,12 @@ import {
 import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-gas-workspace.service';
 import { AppEHeatInputFromGasChecksService } from './app-e-heat-input-from-gas-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Heat Input From Gas')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class AppEHeatInputFromGasWorkspaceController {
   constructor(
     private readonly service: AppEHeatInputFromGasWorkspaceService,

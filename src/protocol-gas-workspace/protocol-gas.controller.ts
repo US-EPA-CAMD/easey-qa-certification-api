@@ -8,8 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse, ApiExcludeController,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -24,11 +23,12 @@ import {
 import { ProtocolGasWorkspaceService } from './protocol-gas.service';
 import { ProtocolGasChecksService } from './protocol-gas-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Protocol Gas')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class ProtocolGasWorkspaceController {
   constructor(
     private readonly service: ProtocolGasWorkspaceService,

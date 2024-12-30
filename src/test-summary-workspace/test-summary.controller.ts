@@ -14,7 +14,7 @@ import {
   ApiOkResponse,
   ApiCreatedResponse,
   ApiSecurity,
-  ApiQuery, ApiExcludeEndpoint, ApiExcludeController,
+  ApiQuery,
 } from '@nestjs/swagger';
 
 import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
@@ -29,11 +29,12 @@ import { TestSummaryParamsDTO } from '../dto/test-summary-params.dto';
 import { TestSummaryWorkspaceService } from './test-summary.service';
 import { TestSummaryChecksService } from './test-summary-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Test Summary')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class TestSummaryWorkspaceController {
   constructor(
     private readonly service: TestSummaryWorkspaceService,

@@ -8,8 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse, ApiExcludeController,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -19,11 +18,12 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { RataBaseDTO, RataRecordDTO } from '../dto/rata.dto';
 import { RataChecksService } from './rata-checks.service';
 import { RataWorkspaceService } from './rata-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Rata')
-@ApiExcludeController()
+@ApiExcludeControllerByEnv()
 export class RataWorkspaceController {
   constructor(
     private readonly service: RataWorkspaceService,
