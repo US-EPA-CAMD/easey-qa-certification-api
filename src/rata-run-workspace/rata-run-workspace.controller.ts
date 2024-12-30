@@ -13,7 +13,7 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -31,7 +31,7 @@ export class RataRunWorkspaceController {
   constructor(
     private readonly service: RataRunWorkspaceService,
     private readonly checksService: RataRunChecksService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -47,6 +47,10 @@ export class RataRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved RATA run records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'rataId', 'rataSumId']
+  })
   async getRataRuns(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -70,6 +74,10 @@ export class RataRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved RATA run record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'rataId', 'rataSumId', 'id']
+  })
   async getRataRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -93,6 +101,11 @@ export class RataRunWorkspaceController {
     isArray: false,
     type: RataRunRecordDTO,
     description: 'Creates a Rata Run record in the workspace',
+  })
+  @AuditLog({
+    label: 'Created RATA run record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'rataId', 'rataSumId'],
+    responseBodyOutFields: '*'
   })
   async createRataRun(
     @Param('locId') locationId: string,
@@ -131,6 +144,10 @@ export class RataRunWorkspaceController {
   @ApiOkResponse({
     description: 'Deletes a Rata Run record from the workspace',
   })
+  @AuditLog({
+    label: 'Deleted RATA run record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'rataId', 'rataSumId', 'id']
+  })
   deleteRataRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -154,6 +171,11 @@ export class RataRunWorkspaceController {
   @ApiOkResponse({
     type: RataRunRecordDTO,
     description: 'Updates a Rata Run record in the workspace',
+  })
+  @AuditLog({
+    label: 'Updated RATA run record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'rataId', 'rataSumId', 'id'],
+    responseBodyOutFields: '*'
   })
   async updateRataRun(
     @Param('locId') locationId: string,

@@ -13,7 +13,7 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -26,7 +26,7 @@ import { CalibrationInjectionWorkspaceService } from './calibration-injection-wo
 @ApiSecurity('APIKey')
 @ApiTags('Calibration Injection')
 export class CalibrationInjectionWorkspaceController {
-  constructor(private readonly service: CalibrationInjectionWorkspaceService) {}
+  constructor(private readonly service: CalibrationInjectionWorkspaceService) { }
 
   @Get()
   @ApiOkResponse({
@@ -43,6 +43,10 @@ export class CalibrationInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved calibration injection records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   async getCalibrationInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -64,6 +68,10 @@ export class CalibrationInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved calibration injection record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   async getCalibrationInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -84,6 +92,11 @@ export class CalibrationInjectionWorkspaceController {
   @ApiCreatedResponse({
     type: CalibrationInjectionDTO,
     description: 'Creates a workspace Calibration Injection record.',
+  })
+  @AuditLog({
+    label: 'Created calibration injection record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   createCalibrationInjection(
     @Param('locId') _locationId: string,
@@ -111,6 +124,11 @@ export class CalibrationInjectionWorkspaceController {
     type: CalibrationInjectionDTO,
     description: 'Updates a workspace Calibration Injection record.',
   })
+  @AuditLog({
+    label: 'Updated calibration injection record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
+  })
   updateCalibrationInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -137,6 +155,10 @@ export class CalibrationInjectionWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a workspace Calibration Injection record.',
+  })
+  @AuditLog({
+    label: 'Deleted calibration injection record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   async deleteCalibrationInjection(
     @Param('locId') _locationId: string,

@@ -15,7 +15,7 @@ import {
   ApiSecurity,
 } from '@nestjs/swagger';
 
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -33,7 +33,7 @@ export class LinearitySummaryWorkspaceController {
   constructor(
     private readonly service: LinearitySummaryWorkspaceService,
     private readonly checksService: LinearitySummaryChecksService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -50,6 +50,10 @@ export class LinearitySummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved linearity records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   async getSummariesByTestSumId(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -70,6 +74,10 @@ export class LinearitySummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved linearity record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   async getSummaryById(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -90,6 +98,11 @@ export class LinearitySummaryWorkspaceController {
   @ApiCreatedResponse({
     type: LinearitySummaryRecordDTO,
     description: 'Creates a Linearity Summary record in the workspace',
+  })
+  @AuditLog({
+    label: 'Created linearity record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   async createSummary(
     @Param('locId') _locationId: string,
@@ -114,6 +127,11 @@ export class LinearitySummaryWorkspaceController {
     type: LinearitySummaryRecordDTO,
     description: 'Updates a Linearity Summary record in the workspace',
   })
+  @AuditLog({
+    label: 'Updated linearity record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
+  })
   async updateSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -136,6 +154,10 @@ export class LinearitySummaryWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a Linearity Summary record from the workspace',
+  })
+  @AuditLog({
+    label: 'Deleted linearity record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   async deleteSummary(
     @Param('locId') _locationId: string,

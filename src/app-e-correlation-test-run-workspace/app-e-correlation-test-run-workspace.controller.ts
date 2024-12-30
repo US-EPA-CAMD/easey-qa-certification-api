@@ -14,7 +14,7 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   AppECorrelationTestRunBaseDTO,
@@ -31,7 +31,7 @@ export class AppECorrelationTestRunWorkspaceController {
   constructor(
     private readonly service: AppECorrelationTestRunWorkspaceService,
     private readonly checkService: AppECorrelationTestRunChecksService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -48,6 +48,10 @@ export class AppECorrelationTestRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved appendix E correlation test runs for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId']
+  })
   async getAppECorrelationTestRuns(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -71,6 +75,10 @@ export class AppECorrelationTestRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved appendix E correlation test run by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId', 'id']
+  })
   async getAppECorrelationTestRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -92,6 +100,11 @@ export class AppECorrelationTestRunWorkspaceController {
   @ApiCreatedResponse({
     type: AppECorrelationTestRunRecordDTO,
     description: 'Creates a workspace Appendix E Correlation Test Run record.',
+  })
+  @AuditLog({
+    label: 'Created appendix E correlation test run for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId'],
+    responseBodyOutFields: '*'
   })
   async createAppECorrelationTestRun(
     @Param('locId') _locationId: string,
@@ -124,6 +137,11 @@ export class AppECorrelationTestRunWorkspaceController {
     type: AppECorrelationTestRunRecordDTO,
     description: 'Updates a workspace Appendix E Correlation Test Run record.',
   })
+  @AuditLog({
+    label: 'Updated appendix E correlation test run by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId', 'id'],
+    responseBodyOutFields: '*'
+  })
   async updateAppECorrelationTestRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -153,6 +171,10 @@ export class AppECorrelationTestRunWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a workspace Appendix E Correlation Test Run record.',
+  })
+  @AuditLog({
+    label: 'Deleted appendix E correlation test run by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId', 'id']
   })
   async deleteAppECorrelationTestRun(
     @Param('locId') _locationId: string,
