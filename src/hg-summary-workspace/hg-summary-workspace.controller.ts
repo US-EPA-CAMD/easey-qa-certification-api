@@ -8,22 +8,23 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Hg Summary')
+@ApiExcludeControllerByEnv()
 export class HgSummaryWorkspaceController {
-  constructor(private readonly service: HgSummaryWorkspaceService) {}
+  constructor(private readonly service: HgSummaryWorkspaceService) { }
 
   @Get()
   @ApiOkResponse({
@@ -39,6 +40,10 @@ export class HgSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved Hg summary records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   async getHgSummaries(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -60,6 +65,10 @@ export class HgSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved Hg summary record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   async getHgSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -80,6 +89,11 @@ export class HgSummaryWorkspaceController {
   @ApiCreatedResponse({
     type: HgSummaryDTO,
     description: 'Creates a workspace Hg Summary record.',
+  })
+  @AuditLog({
+    label: 'Created Hg summary record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   createHgSummary(
     @Param('locId') _locationId: string,
@@ -103,6 +117,11 @@ export class HgSummaryWorkspaceController {
     type: HgSummaryDTO,
     description: 'Updates a workspace Hg Summary record.',
   })
+  @AuditLog({
+    label: 'Updated Hg summary record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
+  })
   updateHgSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -124,6 +143,10 @@ export class HgSummaryWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a workspace Hg Summary record.',
+  })
+  @AuditLog({
+    label: 'Deleted Hg summary record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   async deleteHgSummary(
     @Param('locId') _locationId: string,

@@ -8,13 +8,12 @@ import {
   Post,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   AppEHeatInputFromOilBaseDTO,
@@ -23,15 +22,17 @@ import {
 import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oil.service';
 import { AppEHeatInputFromOilChecksService } from './app-e-heat-input-from-oil-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Heat Input From Oil')
+@ApiExcludeControllerByEnv()
 export class AppEHeatInputFromOilWorkspaceController {
   constructor(
     private readonly service: AppEHeatInputFromOilWorkspaceService,
     private readonly checksService: AppEHeatInputFromOilChecksService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -48,6 +49,10 @@ export class AppEHeatInputFromOilWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved appendix E heat input from oils for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId', 'appECorrTestRunId']
+  })
   getAppEHeatInputFromOilRecords(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -72,6 +77,10 @@ export class AppEHeatInputFromOilWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved appendix E heat input from oil by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId', 'appECorrTestRunId', 'id']
+  })
   getAppEHeatInputFromOilRecord(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -95,6 +104,11 @@ export class AppEHeatInputFromOilWorkspaceController {
     type: AppEHeatInputFromOilRecordDTO,
     description:
       'Creates an Appendix E Heat Input from Oil record in the workspace',
+  })
+  @AuditLog({
+    label: 'Created appendix E heat input from oil for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId', 'appECorrTestRunId'],
+    responseBodyOutFields: '*'
   })
   async createAppEHeatInputFromOilRecord(
     @Param('locId') locationId: string,
@@ -129,6 +143,11 @@ export class AppEHeatInputFromOilWorkspaceController {
     description:
       'Updates an Appendix E Heat Input from Oil record in the workspace',
   })
+  @AuditLog({
+    label: 'Updated appendix E heat input from oil by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId', 'appECorrTestRunId', 'id'],
+    responseBodyOutFields: '*'
+  })
   async editAppEHeatInputFromOil(
     @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
@@ -159,6 +178,10 @@ export class AppEHeatInputFromOilWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a workspace Appendix E Correlation Test Run record.',
+  })
+  @AuditLog({
+    label: 'Deleted appendix E heat input from oil by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId', 'appECorrTestRunId', 'id']
   })
   async deleteAppEHeatInputFromOil(
     @Param('locId') _locationId: string,

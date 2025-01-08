@@ -8,12 +8,11 @@ import {
   Delete,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -22,12 +21,14 @@ import {
   FlowToLoadReferenceDTO,
 } from '../dto/flow-to-load-reference.dto';
 import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Flow To Load Reference')
+@ApiExcludeControllerByEnv()
 export class FlowToLoadReferenceWorkspaceController {
-  constructor(private readonly service: FlowToLoadReferenceWorkspaceService) {}
+  constructor(private readonly service: FlowToLoadReferenceWorkspaceService) { }
 
   @Get()
   @ApiOkResponse({
@@ -44,6 +45,10 @@ export class FlowToLoadReferenceWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved flow to load reference records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   async getFlowToLoadReferences(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -66,6 +71,10 @@ export class FlowToLoadReferenceWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved flow to load reference record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   async getFlowToLoadReference(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -86,6 +95,11 @@ export class FlowToLoadReferenceWorkspaceController {
   @ApiCreatedResponse({
     type: FlowToLoadReferenceDTO,
     description: 'Creates a workspace Flow To Load Reference record.',
+  })
+  @AuditLog({
+    label: 'Created flow to load reference record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   async createFlowToLoadReference(
     @Param('locId') _locationId: string,
@@ -113,6 +127,11 @@ export class FlowToLoadReferenceWorkspaceController {
     type: FlowToLoadReferenceDTO,
     description: 'Updates a workspace Flow To Load Reference record',
   })
+  @AuditLog({
+    label: 'Updated flow to load reference record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
+  })
   editFlowToLoadReference(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -139,6 +158,10 @@ export class FlowToLoadReferenceWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a Flow To Load Reference record from the workspace',
+  })
+  @AuditLog({
+    label: 'Deleted flow to load reference record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   async deleteFlowToLoadReference(
     @Param('locId') _locationId: string,

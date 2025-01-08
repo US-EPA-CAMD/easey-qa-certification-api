@@ -8,12 +8,11 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -21,10 +20,12 @@ import {
   FuelFlowToLoadBaselineDTO,
 } from '../dto/fuel-flow-to-load-baseline.dto';
 import { FuelFlowToLoadBaselineWorkspaceService } from './fuel-flow-to-load-baseline-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Fuel Flow To Load Baseline')
+@ApiExcludeControllerByEnv()
 export class FuelFlowToLoadBaselineWorkspaceController {
   constructor(
     private readonly service: FuelFlowToLoadBaselineWorkspaceService,
@@ -45,6 +46,10 @@ export class FuelFlowToLoadBaselineWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved fuel flow to load baseline records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   async getFuelFlowToLoadBaselines(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -67,6 +72,10 @@ export class FuelFlowToLoadBaselineWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved fuel flow to load baseline record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   async getFuelFlowToLoadBaseline(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -87,6 +96,11 @@ export class FuelFlowToLoadBaselineWorkspaceController {
   @ApiCreatedResponse({
     type: FuelFlowToLoadBaselineDTO,
     description: 'Creates a workspace Fuel Flow To Load Baseline record.',
+  })
+  @AuditLog({
+    label: 'Created fuel flow to load baseline record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   async createFuelFlowToLoadBaseline(
     @Param('locId') _locationId: string,
@@ -113,6 +127,11 @@ export class FuelFlowToLoadBaselineWorkspaceController {
   @ApiOkResponse({
     type: FuelFlowToLoadBaselineDTO,
     description: 'Updates a workspace Fuel Flow To Load Baseline record.',
+  })
+  @AuditLog({
+    label: 'Updated fuel flow to load baseline record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
   })
   updateFuelFlowToLoadBaseline(
     @Param('locId') _locationId: string,
@@ -141,6 +160,10 @@ export class FuelFlowToLoadBaselineWorkspaceController {
   @ApiOkResponse({
     description:
       'Deletes a Fuel Flow To Load Baseline record from the workspace',
+  })
+  @AuditLog({
+    label: 'Deleted fuel flow to load baseline record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   async deleteFuelFlowToLoadBaseline(
     @Param('locId') _locationId: string,

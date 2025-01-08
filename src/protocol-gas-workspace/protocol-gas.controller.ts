@@ -8,13 +8,12 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -24,15 +23,17 @@ import {
 import { ProtocolGasWorkspaceService } from './protocol-gas.service';
 import { ProtocolGasChecksService } from './protocol-gas-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Protocol Gas')
+@ApiExcludeControllerByEnv()
 export class ProtocolGasWorkspaceController {
   constructor(
     private readonly service: ProtocolGasWorkspaceService,
     private readonly checksService: ProtocolGasChecksService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -48,6 +49,10 @@ export class ProtocolGasWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved protocol gas records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   getProtocolGases(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -69,6 +74,10 @@ export class ProtocolGasWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved protocol gas record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   getProtocolGas(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -89,6 +98,11 @@ export class ProtocolGasWorkspaceController {
   @ApiCreatedResponse({
     type: ProtocolGasRecordDTO,
     description: 'Creates a Protocol Gas record in the workspace',
+  })
+  @AuditLog({
+    label: 'Created protocol gas record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   async createProtocolGas(
     @Param('locId') locationId: string,
@@ -119,6 +133,11 @@ export class ProtocolGasWorkspaceController {
     type: ProtocolGasRecordDTO,
     description: 'Updates a Protocol Gas record in the workspace',
   })
+  @AuditLog({
+    label: 'Updated protocol gas record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
+  })
   async editProtolGas(
     @Param('locid') locationId: string,
     @Param('testSumId') testSumId: string,
@@ -147,6 +166,10 @@ export class ProtocolGasWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a Protocol Gas record from the workspace',
+  })
+  @AuditLog({
+    label: 'Deleted protocol gas record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   deleteProtolGas(
     @Param('locId') _locationId: string,

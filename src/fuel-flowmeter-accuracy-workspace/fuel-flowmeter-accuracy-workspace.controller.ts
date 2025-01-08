@@ -8,12 +8,11 @@ import {
   Delete,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -21,14 +20,16 @@ import {
   FuelFlowmeterAccuracyDTO,
 } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracyWorkspaceService } from './fuel-flowmeter-accuracy-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Fuel Flowmeter Accuracy')
+@ApiExcludeControllerByEnv()
 export class FuelFlowmeterAccuracyWorkspaceController {
   constructor(
     private readonly service: FuelFlowmeterAccuracyWorkspaceService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -45,6 +46,10 @@ export class FuelFlowmeterAccuracyWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved fuel flowmeter accuracy records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   async getFuelFlowmeterAccuracies(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -67,6 +72,10 @@ export class FuelFlowmeterAccuracyWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved fuel flowmeter accuracy record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   async getFuelFlowmeterAccuracy(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -87,6 +96,11 @@ export class FuelFlowmeterAccuracyWorkspaceController {
   @ApiCreatedResponse({
     type: FuelFlowmeterAccuracyDTO,
     description: 'Creates a workspace Fuel Flowmeter Accuracy record.',
+  })
+  @AuditLog({
+    label: 'Created fuel flowmeter accuracy record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   async createFuelFlowmeterAccuracy(
     @Param('locId') _locationId: string,
@@ -114,6 +128,11 @@ export class FuelFlowmeterAccuracyWorkspaceController {
     type: FuelFlowmeterAccuracyDTO,
     description: 'Updates a workspace Fuel FLowmeter Accuracy record',
   })
+  @AuditLog({
+    label: 'Updated fuel flowmeter accuracy record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
+  })
   editFuelFlowmeterAccuracy(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -140,6 +159,10 @@ export class FuelFlowmeterAccuracyWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a Fuel Flowmeter record from the workspace',
+  })
+  @AuditLog({
+    label: 'Deleted fuel flowmeter accuracy record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   async deleteFuelFlowmeterAccuracy(
     @Param('locId') _locationId: string,
