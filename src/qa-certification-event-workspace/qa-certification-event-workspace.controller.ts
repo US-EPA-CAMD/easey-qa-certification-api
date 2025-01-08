@@ -14,7 +14,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -51,6 +51,10 @@ export class QACertificationEventWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved QA certification events for location',
+    requestParamsOutFields: ['locId']
+  })
   async getQACertEvents(
     @Param('locId') locationId: string,
   ): Promise<QACertificationEventDTO[]> {
@@ -71,6 +75,10 @@ export class QACertificationEventWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved QA certification event by ID for location',
+    requestParamsOutFields: ['locId', 'id']
+  })
   getQACertEvent(
     @Param('locId') locationId: string,
     @Param('id') id: string,
@@ -90,6 +98,11 @@ export class QACertificationEventWorkspaceController {
   @ApiCreatedResponse({
     type: QACertificationEventBaseDTO,
     description: 'Create a QA Certification Event record in the workspace',
+  })
+  @AuditLog({
+    label: 'Created QA certification event for location',
+    requestParamsOutFields: ['locId'],
+    responseBodyOutFields: '*'
   })
   async createQACertEvent(
     @Param('locId') locationId: string,
@@ -113,6 +126,11 @@ export class QACertificationEventWorkspaceController {
     type: QACertificationEventBaseDTO,
     description: 'Updates a QA Certification Event record in the workspace',
   })
+  @AuditLog({
+    label: 'Updated QA certification event by ID for location',
+    requestParamsOutFields: ['locId', 'id'],
+    responseBodyOutFields: '*'
+  })
   async updateQACertEvent(
     @Param('locId') locationId: string,
     @Param('id') id: string,
@@ -134,6 +152,10 @@ export class QACertificationEventWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a QA Certification Event from the workspace',
+  })
+  @AuditLog({
+    label: 'Deleted QA certification event by ID for location',
+    requestParamsOutFields: ['locId', 'id']
   })
   async deleteTestExtensionExemption(
     @Param('locId') _locationId: string,

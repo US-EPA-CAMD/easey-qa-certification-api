@@ -6,7 +6,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -21,7 +21,7 @@ import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 @ApiTags('Hg Injection')
 @ApiExcludeControllerByEnv()
 export class HgInjectionWorkspaceController {
-  constructor(private readonly service: HgInjectionWorkspaceService) {}
+  constructor(private readonly service: HgInjectionWorkspaceService) { }
 
   @Get()
   @ApiOkResponse({
@@ -38,6 +38,10 @@ export class HgInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved Hg injection records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'hgTestSumId']
+  })
   async getHgInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -59,6 +63,10 @@ export class HgInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved Hg injection record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'hgTestSumId', 'id']
+  })
   async getHgInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -80,6 +88,11 @@ export class HgInjectionWorkspaceController {
   @ApiCreatedResponse({
     type: HgInjectionRecordDTO,
     description: 'Creates a workspace Hg Injection record.',
+  })
+  @AuditLog({
+    label: 'Created Hg injection record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'hgTestSumId'],
+    responseBodyOutFields: '*'
   })
   async createHgInjection(
     @Param('locId') _locationId: string,
@@ -109,6 +122,11 @@ export class HgInjectionWorkspaceController {
     type: HgInjectionRecordDTO,
     description: 'Updates a workspace Hg Injection record.',
   })
+  @AuditLog({
+    label: 'Updated Hg injection record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'hgTestSumId', 'id'],
+    responseBodyOutFields: '*'
+  })
   updateHgInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -131,6 +149,10 @@ export class HgInjectionWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a workspace HG Injection record',
+  })
+  @AuditLog({
+    label: 'Deleted Hg injection record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'hgTestSumId', 'id']
   })
   async deleteHgInjection(
     @Param('locId') _locationId: string,

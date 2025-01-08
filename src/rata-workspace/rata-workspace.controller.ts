@@ -12,7 +12,7 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { RataBaseDTO, RataRecordDTO } from '../dto/rata.dto';
@@ -44,6 +44,10 @@ export class RataWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved RATA records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   async getRatas(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -64,6 +68,10 @@ export class RataWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved RATA record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   async getRata(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -84,6 +92,11 @@ export class RataWorkspaceController {
   @ApiCreatedResponse({
     type: RataRecordDTO,
     description: 'Creates a Rata record in the workspace',
+  })
+  @AuditLog({
+    label: 'Created RATA record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   async createRata(
     @Param('locId') locationId: string,
@@ -107,6 +120,11 @@ export class RataWorkspaceController {
   @ApiOkResponse({
     type: RataRecordDTO,
     description: 'Updates a Rata record in the workspace',
+  })
+  @AuditLog({
+    label: 'Updated RATA record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
   })
   async updateRata(
     @Param('locId') locationId: string,
@@ -136,6 +154,10 @@ export class RataWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a RATA record from the workspace',
+  })
+  @AuditLog({
+    label: 'Deleted RATA record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   async deleteRata(
     @Param('locId') _locationId: string,

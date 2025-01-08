@@ -39,7 +39,7 @@
     "@nestjs/swagger": "^8.0.2",
     "@nestjs/typeorm": "^10.0.2",
     "@types/multer": "^1.4.7",
-    "@us-epa-camd/easey-common": "19.0.3",
+    "@us-epa-camd/easey-common": "19.0.5",
     "axios": "^1.7.7",
     "class-transformer": "0.4.0",
     "class-validator": "0.14.0",

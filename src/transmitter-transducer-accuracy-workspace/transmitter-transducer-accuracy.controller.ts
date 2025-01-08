@@ -13,7 +13,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -32,7 +32,7 @@ import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 export class TransmitterTransducerAccuracyWorkspaceController {
   constructor(
     private readonly service: TransmitterTransducerAccuracyWorkspaceService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -49,6 +49,10 @@ export class TransmitterTransducerAccuracyWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved transmitter transducer accuracy records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   getTransmitterTransducerAccuracies(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -71,6 +75,10 @@ export class TransmitterTransducerAccuracyWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved transmitter transducer accuracy record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   getTransmitterTransducerAccuracy(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -92,6 +100,11 @@ export class TransmitterTransducerAccuracyWorkspaceController {
     type: TransmitterTransducerAccuracyRecordDTO,
     description:
       'Creates a Transmitter Transducer Accuracy record in the workspace',
+  })
+  @AuditLog({
+    label: 'Created transmitter transducer accuracy record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   async createTransmitterTransducerAccuracy(
     @Param('locId') _locationId: string,
@@ -118,6 +131,11 @@ export class TransmitterTransducerAccuracyWorkspaceController {
   @ApiOkResponse({
     type: TransmitterTransducerAccuracyRecordDTO,
     description: 'Updates a workspace Transmitter Transducer Accuracy record',
+  })
+  @AuditLog({
+    label: 'Updated transmitter transducer accuracy record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
   })
   updateTransmitterTransducerAccuracy(
     @Param('locId') _locationId: string,
@@ -146,6 +164,10 @@ export class TransmitterTransducerAccuracyWorkspaceController {
   @ApiOkResponse({
     type: TransmitterTransducerAccuracyRecordDTO,
     description: 'Deletes a workspace Transmitter Transducer Accuracy record',
+  })
+  @AuditLog({
+    label: 'Deleted transmitter transducer accuracy record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   deleteTransmitterTransducerAccuracy(
     @Param('locId') _locationId: string,

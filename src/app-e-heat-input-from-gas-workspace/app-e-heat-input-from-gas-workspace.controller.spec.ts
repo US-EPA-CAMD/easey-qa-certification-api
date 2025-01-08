@@ -2,7 +2,7 @@ import { HttpModule } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import { Logger, LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { DataSource } from 'typeorm';
 
 import { AppEHeatInputFromGasChecksService } from './app-e-heat-input-from-gas-checks.service';
@@ -17,7 +17,7 @@ describe('AppEHeatInputFromGasWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [AppEHeatInputFromGasWorkspaceController],
       providers: [
         Logger,

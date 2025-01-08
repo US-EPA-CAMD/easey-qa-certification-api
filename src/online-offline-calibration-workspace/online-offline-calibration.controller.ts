@@ -13,7 +13,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
 import {
@@ -47,6 +47,10 @@ export class OnlineOfflineCalibrationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved online offline calibration records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   getOnlineOfflineCalibrations(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -69,6 +73,10 @@ export class OnlineOfflineCalibrationWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved online offline calibration record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   getOnlineOfflineCalibration(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -90,6 +98,11 @@ export class OnlineOfflineCalibrationWorkspaceController {
     type: OnlineOfflineCalibrationRecordDTO,
     description:
       'Creates an Online Offline Calibration record in the workspace',
+  })
+  @AuditLog({
+    label: 'Created online offline calibration record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   async createOnlineOfflineCalibration(
     @Param('locId') _locationId: string,
@@ -115,6 +128,10 @@ export class OnlineOfflineCalibrationWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Delete a workspace Online Offline Calibration record',
+  })
+  @AuditLog({
+    label: 'Deleted online offline calibration record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   async deleteOnlineOfflineCalibration(
     @Param('locId') _locationId: string,
@@ -142,6 +159,11 @@ export class OnlineOfflineCalibrationWorkspaceController {
     type: OnlineOfflineCalibrationRecordDTO,
     description:
       'Updates an Online Offline Calibration record in the workspace',
+  })
+  @AuditLog({
+    label: 'Updated online offline calibration record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
   })
   async updateOnlineOfflineCalibration(
     @Param('locid') _locationId: string,
