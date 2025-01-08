@@ -8,8 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -23,10 +22,12 @@ import {
 import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oil.service';
 import { AppEHeatInputFromOilChecksService } from './app-e-heat-input-from-oil-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Heat Input From Oil')
+@ApiExcludeControllerByEnv()
 export class AppEHeatInputFromOilWorkspaceController {
   constructor(
     private readonly service: AppEHeatInputFromOilWorkspaceService,

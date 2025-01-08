@@ -32,10 +32,12 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
 import { ReviewAndSubmitMultipleParamsMatsDTO } from '../dto/review-and-submit-multiple-params-mats.dto';
 import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('QA Certification')
+@ApiExcludeControllerByEnv()
 export class QACertificationWorkspaceController {
   constructor(
     private readonly service: QACertificationWorkspaceService,

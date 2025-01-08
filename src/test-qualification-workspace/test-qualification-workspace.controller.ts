@@ -8,8 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -22,10 +21,12 @@ import {
 } from '../dto/test-qualification.dto';
 import { TestQualificationChecksService } from './test-qualification-checks.service';
 import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Test Qualification')
+@ApiExcludeControllerByEnv()
 export class TestQualificationWorkspaceController {
   constructor(
     private readonly service: TestQualificationWorkspaceService,

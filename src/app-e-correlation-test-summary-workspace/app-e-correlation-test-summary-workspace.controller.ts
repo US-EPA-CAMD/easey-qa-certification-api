@@ -8,8 +8,7 @@ import {
   Body,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -22,10 +21,12 @@ import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators'
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { AppECorrelationTestSummaryChecksService } from './app-e-correlation-test-summary-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Correlation Test Summary')
+@ApiExcludeControllerByEnv()
 export class AppendixETestSummaryWorkspaceController {
   constructor(
     private readonly service: AppECorrelationTestSummaryWorkspaceService,

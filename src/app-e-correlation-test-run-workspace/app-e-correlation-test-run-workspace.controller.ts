@@ -8,9 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiBearerAuth,
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -23,10 +21,12 @@ import {
 import { AppECorrelationTestRunWorkspaceService } from './app-e-correlation-test-run-workspace.service';
 import { AppECorrelationTestRunChecksService } from './app-e-correlation-test-run-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Correlation Test Run')
+@ApiExcludeControllerByEnv()
 export class AppECorrelationTestRunWorkspaceController {
   constructor(
     private readonly service: AppECorrelationTestRunWorkspaceService,

@@ -26,10 +26,12 @@ import {
 import { LinearityInjectionChecksService } from './linearity-injection-checks.service';
 
 import { LinearityInjectionWorkspaceService } from './linearity-injection.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Linearity Injection')
+@ApiExcludeControllerByEnv()
 export class LinearityInjectionWorkspaceController {
   constructor(
     private readonly service: LinearityInjectionWorkspaceService,

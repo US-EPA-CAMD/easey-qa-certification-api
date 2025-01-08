@@ -8,8 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -24,10 +23,12 @@ import {
 import { UnitDefaultTestRunWorkspaceService } from './unit-default-test-run.service';
 import { UnitDefaultTestRunChecksService } from './unit-default-test-run-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Default Test Run')
+@ApiExcludeControllerByEnv()
 export class UnitDefaultTestRunWorkspaceController {
   constructor(
     private readonly service: UnitDefaultTestRunWorkspaceService,

@@ -8,8 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -21,10 +20,12 @@ import {
   FuelFlowToLoadBaselineDTO,
 } from '../dto/fuel-flow-to-load-baseline.dto';
 import { FuelFlowToLoadBaselineWorkspaceService } from './fuel-flow-to-load-baseline-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Fuel Flow To Load Baseline')
+@ApiExcludeControllerByEnv()
 export class FuelFlowToLoadBaselineWorkspaceController {
   constructor(
     private readonly service: FuelFlowToLoadBaselineWorkspaceService,

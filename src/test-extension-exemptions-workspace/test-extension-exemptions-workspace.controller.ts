@@ -8,8 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -22,10 +21,12 @@ import {
 } from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionsChecksService } from './test-extension-exemptions-checks.service';
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Test Extension Exemption')
+@ApiExcludeControllerByEnv()
 export class TestExtensionExemptionsWorkspaceController {
   constructor(
     private readonly service: TestExtensionExemptionsWorkspaceService,

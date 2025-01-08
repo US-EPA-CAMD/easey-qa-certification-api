@@ -8,8 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -21,10 +20,12 @@ import {
   CalibrationInjectionDTO,
 } from '../dto/calibration-injection.dto';
 import { CalibrationInjectionWorkspaceService } from './calibration-injection-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Calibration Injection')
+@ApiExcludeControllerByEnv()
 export class CalibrationInjectionWorkspaceController {
   constructor(private readonly service: CalibrationInjectionWorkspaceService) { }
 

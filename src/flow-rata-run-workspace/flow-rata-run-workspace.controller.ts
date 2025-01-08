@@ -8,8 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -23,10 +22,12 @@ import {
 } from '../dto/flow-rata-run.dto';
 import { FlowRataRunChecksService } from './flow-rata-run-checks.service';
 import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Flow Rata Run')
+@ApiExcludeControllerByEnv()
 export class FlowRataRunWorkspaceController {
   constructor(
     private readonly service: FlowRataRunWorkspaceService,

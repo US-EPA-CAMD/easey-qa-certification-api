@@ -9,8 +9,7 @@ import {
 } from '@nestjs/common';
 import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -25,10 +24,12 @@ import {
 } from '../dto/qa-certification-event.dto';
 import { QACertificationEventChecksService } from './qa-certification-event-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('QA Certification Event')
+@ApiExcludeControllerByEnv()
 export class QACertificationEventWorkspaceController {
   constructor(
     private readonly service: QACertificationEventWorkspaceService,

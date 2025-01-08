@@ -8,8 +8,7 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -23,10 +22,12 @@ import {
 import { AirEmissionTestingChecksService } from './air-emission-testing-checks.service';
 import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Air Emission Testing')
+@ApiExcludeControllerByEnv()
 export class AirEmissionTestingWorkspaceController {
   constructor(
     private readonly service: AirEmissionTestingWorkspaceService,

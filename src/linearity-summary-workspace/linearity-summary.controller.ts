@@ -25,10 +25,12 @@ import {
 } from '../dto/linearity-summary.dto';
 import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
 import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Linearity Summary')
+@ApiExcludeControllerByEnv()
 export class LinearitySummaryWorkspaceController {
   constructor(
     private readonly service: LinearitySummaryWorkspaceService,

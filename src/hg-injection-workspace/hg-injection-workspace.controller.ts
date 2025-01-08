@@ -1,8 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { Delete } from '@nestjs/common/decorators';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -15,10 +14,12 @@ import {
   HgInjectionRecordDTO,
 } from '../dto/hg-injection.dto';
 import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Hg Injection')
+@ApiExcludeControllerByEnv()
 export class HgInjectionWorkspaceController {
   constructor(private readonly service: HgInjectionWorkspaceService) { }
 
