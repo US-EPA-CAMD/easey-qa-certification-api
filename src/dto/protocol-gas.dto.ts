@@ -53,7 +53,7 @@ export class ProtocolGasBaseDTO {
   @IsValidCodes(
     GasComponentCode,
     (args: ValidationArguments): FindOneOptions<GasComponentCode> => {
-      let codes = args.value.split(',');
+      let codes = args.value.toString().split(',');
       return { where: { gasComponentCode: In(codes) } };
     },
     {
