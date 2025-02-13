@@ -2,6 +2,7 @@ import { UnitDefaultTestRunService } from './unit-default-test-run.service';
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { UnitDefaultTestRunRecordDTO } from '../dto/unit-default-test-run.dto';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -20,8 +21,12 @@ export class UnitDefaultTestRunController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('unitDefaultTestSumId') unitDefaultTestSumId: string,
-  ): Promise<UnitDefaultTestRunRecordDTO[]> {
-    return this.service.getUnitDefaultTestRuns(unitDefaultTestSumId);
+  ): Promise<ArrayResponse<UnitDefaultTestRunRecordDTO>> {
+    const unitDefaultTestRunRecordDTOS =  await  this.service.getUnitDefaultTestRuns(unitDefaultTestSumId);
+
+    return  {
+      items: unitDefaultTestRunRecordDTOS
+    };
   }
 
   @Get(':id')

@@ -4,6 +4,7 @@ import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery } from '@nestjs/swagger';
 import { TestSummaryRecordDTO } from '../dto/test-summary.dto';
 import { TestSummaryParamsDTO } from '../dto/test-summary-params.dto';
 import { TestSummaryService } from './test-summary.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -26,14 +27,18 @@ export class TestSummaryController {
   async getTestSummaries(
     @Param('locId') locationId: string,
     @Query() params: TestSummaryParamsDTO,
-  ): Promise<TestSummaryRecordDTO[]> {
-    return this.service.getTestSummariesByLocationId(
+  ): Promise<ArrayResponse<TestSummaryRecordDTO>> {
+    const testSummaryDTOS =  await  this.service.getTestSummariesByLocationId(
       locationId,
       params.testTypeCodes,
       params.systemTypeCodes,
       params.beginDate,
       params.endDate,
     );
+
+    return  {
+      items: testSummaryDTOS
+    };
   }
 
   @Get(':id')

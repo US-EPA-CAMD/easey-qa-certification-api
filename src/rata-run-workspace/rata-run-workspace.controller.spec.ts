@@ -105,7 +105,7 @@ describe('RataRunWorkspaceController', () => {
         rataId,
         rataSumId,
       );
-      expect(result).toEqual(rataRuns);
+      expect(result).toEqual({ items: rataRuns});
       expect(service.getRataRuns).toHaveBeenCalled();
     });
   });

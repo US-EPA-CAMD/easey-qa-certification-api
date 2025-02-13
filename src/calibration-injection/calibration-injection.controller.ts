@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { CalibrationInjectionDTO } from '../dto/calibration-injection.dto';
 import { CalibrationInjectionService } from './calibration-injection.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -19,8 +20,12 @@ export class CalibrationInjectionController {
   async getCalibrationInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<CalibrationInjectionDTO[]> {
-    return this.service.getCalibrationInjections(testSumId);
+  ): Promise<ArrayResponse<CalibrationInjectionDTO>> {
+    const calibrationInjections =  await this.service.getCalibrationInjections(testSumId);
+
+    return  {
+      items: calibrationInjections
+    };
   }
 
   @Get(':id')

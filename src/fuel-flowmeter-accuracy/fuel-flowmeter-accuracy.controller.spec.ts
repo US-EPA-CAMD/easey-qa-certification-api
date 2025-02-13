@@ -51,7 +51,7 @@ describe('FuelFlowToLoadTestController', () => {
         locId,
         testSumId,
       );
-      expect(result).toEqual([fuelFlowmeterAccuracy]);
+      expect(result).toEqual({ items: [fuelFlowmeterAccuracy]});
     });
   });
 

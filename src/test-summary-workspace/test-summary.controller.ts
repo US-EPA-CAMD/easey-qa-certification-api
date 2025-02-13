@@ -30,6 +30,7 @@ import { TestSummaryWorkspaceService } from './test-summary.service';
 import { TestSummaryChecksService } from './test-summary-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -68,14 +69,18 @@ export class TestSummaryWorkspaceController {
   async getTestSummaries(
     @Param('locId') locationId: string,
     @Query() params: TestSummaryParamsDTO,
-  ): Promise<TestSummaryRecordDTO[]> {
-    return this.service.getTestSummariesByLocationId(
+  ): Promise<ArrayResponse<TestSummaryRecordDTO>> {
+    const testSummaryDTOS =  await this.service.getTestSummariesByLocationId(
       locationId,
       params.testTypeCodes,
       params.systemTypeCodes,
       params.beginDate,
       params.endDate,
     );
+
+    return  {
+      items: testSummaryDTOS
+    };
   }
 
   @Get(':id')

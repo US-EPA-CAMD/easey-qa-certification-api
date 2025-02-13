@@ -87,8 +87,8 @@ describe('Protocol Gas Workspace Controller', () => {
   describe('getProtocolGases', () => {
     it('should call the ProtocolGasWorkspaceService.getProtocolGases', async () => {
       jest.spyOn(service, 'getProtocolGases').mockResolvedValue(protocolGases);
-      expect(await controller.getProtocolGases(locId, testSumId)).toBe(
-        protocolGases,
+      expect(await controller.getProtocolGases(locId, testSumId)).toStrictEqual(
+        { items: protocolGases},
       );
     });
   });

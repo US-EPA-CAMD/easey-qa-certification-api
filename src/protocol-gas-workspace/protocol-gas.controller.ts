@@ -24,6 +24,7 @@ import { ProtocolGasWorkspaceService } from './protocol-gas.service';
 import { ProtocolGasChecksService } from './protocol-gas-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -53,11 +54,15 @@ export class ProtocolGasWorkspaceController {
     label: 'Retrieved protocol gas records for test summary',
     requestParamsOutFields: ['locId', 'testSumId']
   })
-  getProtocolGases(
+  async getProtocolGases(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<ProtocolGasRecordDTO[]> {
-    return this.service.getProtocolGases(testSumId);
+  ): Promise<ArrayResponse<ProtocolGasRecordDTO>> {
+    const protocolGasDTOS =  await this.service.getProtocolGases(testSumId);
+
+    return  {
+      items: protocolGasDTOS
+    };
   }
 
   @Get(':id')

@@ -82,7 +82,7 @@ describe('HgInjectionWorkspaceController', () => {
         testSumId,
         hgTestSumId,
       );
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items: [dto]});
     });
   });
 

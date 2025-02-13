@@ -23,6 +23,7 @@ import {
 import { RataRunChecksService } from './rata-run-checks.service';
 import { RataRunWorkspaceService } from './rata-run-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -57,8 +58,12 @@ export class RataRunWorkspaceController {
     @Param('testSumId') _testSumId: string,
     @Param('rataId') _rataId: string,
     @Param('rataSumId') rataSumId: string,
-  ): Promise<RataRunDTO[]> {
-    return this.service.getRataRuns(rataSumId);
+  ): Promise<ArrayResponse<RataRunDTO>> {
+    const rataRunDTOS =  await  this.service.getRataRuns(rataSumId);
+
+    return  {
+      items: rataRunDTOS
+    };
   }
 
   @Get(':id')

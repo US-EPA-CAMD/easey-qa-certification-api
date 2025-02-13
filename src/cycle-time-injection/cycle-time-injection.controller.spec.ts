@@ -54,7 +54,7 @@ describe('CycleTimeInjectionController', () => {
         testSumId,
         cycleTimeSumId,
       );
-      expect(result).toEqual([cycleTimeInjDTO]);
+      expect(result).toEqual({ items: [cycleTimeInjDTO] });
     });
   });
 

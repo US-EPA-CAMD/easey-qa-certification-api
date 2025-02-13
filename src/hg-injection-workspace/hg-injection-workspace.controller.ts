@@ -15,6 +15,7 @@ import {
 } from '../dto/hg-injection.dto';
 import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -46,8 +47,12 @@ export class HgInjectionWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('hgTestSumId') hgTestSumId: string,
-  ): Promise<HgInjectionRecordDTO[]> {
-    return this.service.getHgInjectionsByHgTestSumId(hgTestSumId);
+  ): Promise<ArrayResponse<HgInjectionRecordDTO>> {
+    const hgInjectionDTOS =  await this.service.getHgInjectionsByHgTestSumId(hgTestSumId);
+
+    return  {
+      items: hgInjectionDTOS
+    };
   }
 
   @Get(':id')

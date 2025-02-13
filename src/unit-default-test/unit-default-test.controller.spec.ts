@@ -51,7 +51,7 @@ describe('UnitDefaultTestController', () => {
   describe('getUnitDefaultTests', () => {
     it('Calls the service to many Unit Default Test records', async () => {
       const result = await controller.getUnitDefaultTests(locId, testSumId);
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items: [dto]});
     });
   });
 });

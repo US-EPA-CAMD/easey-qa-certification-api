@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { RataTraverseRecordDTO } from '../dto/rata-traverse.dto';
 import { RataTraverseService } from './rata-traverse.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -22,8 +23,12 @@ export class RataTraverseController {
     @Param('rataSumId') _rataSumId: string,
     @Param('rataRunId') _rataRunId: string,
     @Param('flowRataRunId') flowRataRunId: string,
-  ): Promise<RataTraverseRecordDTO[]> {
-    return this.service.getRataTraverses(flowRataRunId);
+  ): Promise<ArrayResponse<RataTraverseRecordDTO>> {
+    const rataTraverseRecordDTOS =  await  this.service.getRataTraverses(flowRataRunId);
+
+    return  {
+      items: rataTraverseRecordDTOS
+    };
   }
 
   @Get(':id')

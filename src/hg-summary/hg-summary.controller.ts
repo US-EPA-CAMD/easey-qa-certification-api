@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgSummaryService } from './hg-summary.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -18,8 +19,12 @@ export class HgSummaryController {
   async getHgSummaries(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<HgSummaryDTO[]> {
-    return this.service.getHgSummaries(testSumId);
+  ): Promise<ArrayResponse<HgSummaryDTO>> {
+    const hgSummaryDTOS =  await this.service.getHgSummaries(testSumId);
+
+    return  {
+      items: hgSummaryDTOS
+    };
   }
 
   @Get(':id')

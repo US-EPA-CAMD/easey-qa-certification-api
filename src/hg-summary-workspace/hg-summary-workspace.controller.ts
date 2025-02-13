@@ -18,6 +18,7 @@ import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -47,8 +48,12 @@ export class HgSummaryWorkspaceController {
   async getHgSummaries(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<HgSummaryDTO[]> {
-    return this.service.getHgSummaries(testSumId);
+  ): Promise<ArrayResponse<HgSummaryDTO>> {
+    const hgSummaryDTOS =  await this.service.getHgSummaries(testSumId);
+
+    return  {
+      items: hgSummaryDTOS
+    };
   }
 
   @Get(':id')

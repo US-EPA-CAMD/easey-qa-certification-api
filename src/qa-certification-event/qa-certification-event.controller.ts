@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { QaCertificationEventService } from './qa-certification-event.service';
 import { QACertificationEventDTO } from '../dto/qa-certification-event.dto';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -18,8 +19,12 @@ export class QaCertificationEventController {
   })
   async getQACertEvents(
     @Param('locId') locationId: string,
-  ): Promise<QACertificationEventDTO[]> {
-    return this.service.getQACertEventsByLocationId(locationId);
+  ): Promise<ArrayResponse<QACertificationEventDTO>> {
+    const qaCertificationEventRecordDTOS =  await this.service.getQACertEventsByLocationId(locationId);
+
+    return  {
+      items: qaCertificationEventRecordDTOS
+    };
   }
 
   @Get(':id')

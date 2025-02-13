@@ -113,7 +113,7 @@ describe('FlowRataRunWorkspaceController', () => {
         rataSumId,
         rataRunId,
       );
-      expect(result).toEqual(flowRataRuns);
+      expect(result).toEqual({ items: flowRataRuns} );
       expect(service.getFlowRataRuns).toHaveBeenCalled();
     });
   });
