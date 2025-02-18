@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { AirEmissionTestingDTO } from '../dto/air-emission-test.dto';
 import { AirEmissionTestingService } from './air-emission-testing.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -19,8 +20,12 @@ export class AirEmissionTestingController {
   async getAirEmissionsTestings(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<AirEmissionTestingDTO[]> {
-    return this.service.getAirEmissionTestings(testSumId);
+  ): Promise<ArrayResponse<AirEmissionTestingDTO>> {
+    const airEmissionTestingDTOS = await this.service.getAirEmissionTestings(testSumId);
+
+    return  {
+      items: airEmissionTestingDTOS
+    };
   }
 
   @Get(':id')

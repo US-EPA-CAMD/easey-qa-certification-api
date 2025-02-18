@@ -22,6 +22,7 @@ import {
 import { RataTraverseChecksService } from './rata-traverse-checks.service';
 import { RataTraverseWorkspaceService } from './rata-traverse-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -59,8 +60,12 @@ export class RataTraverseWorkspaceController {
     @Param('rataSumId') _rataSumId: string,
     @Param('rataRunId') _rataRunId: string,
     @Param('flowRataRunId') flowRataRunId: string,
-  ): Promise<RataTraverseRecordDTO[]> {
-    return this.service.getRataTraverses(flowRataRunId);
+  ): Promise<ArrayResponse<RataTraverseRecordDTO>> {
+    const rataTraverseRecordDTOS =  await  this.service.getRataTraverses(flowRataRunId);
+
+    return  {
+      items: rataTraverseRecordDTOS
+    };
   }
 
   @Get(':id')

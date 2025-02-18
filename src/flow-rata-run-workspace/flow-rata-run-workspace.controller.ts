@@ -23,6 +23,7 @@ import {
 import { FlowRataRunChecksService } from './flow-rata-run-checks.service';
 import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -58,8 +59,12 @@ export class FlowRataRunWorkspaceController {
     @Param('rataId') _rataId: string,
     @Param('rataSumId') _rataSumId: string,
     @Param('rataRunId') rataRunId: string,
-  ): Promise<FlowRataRunDTO[]> {
-    return this.service.getFlowRataRuns(rataRunId);
+  ): Promise<ArrayResponse<FlowRataRunDTO>> {
+    const flowRataRuns =  await this.service.getFlowRataRuns(rataRunId);
+
+    return  {
+      items: flowRataRuns
+    };
   }
 
   @Get(':id')

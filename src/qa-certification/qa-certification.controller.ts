@@ -18,6 +18,7 @@ import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace
 import { TeeReviewAndSubmitService } from '../qa-certification-workspace/tee-review-and-submit.service';
 import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
 import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -95,13 +96,17 @@ export class QACertificationController {
   })
   async getFilteredCerts(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
-  ): Promise<CertEventReviewAndSubmitDTO[]> {
-    return this.reviewSubmitServiceCert.getCertEventRecords(
+  ): Promise<ArrayResponse<CertEventReviewAndSubmitDTO>> {
+    const certEventReviewAndSubmitDTOS =  await  this.reviewSubmitServiceCert.getCertEventRecords(
       dto.orisCodes,
       dto.monPlanIds,
       dto.quarters,
       false,
     );
+
+    return  {
+      items: certEventReviewAndSubmitDTOS
+    };
   }
 
   @Get('test-summary')
@@ -131,13 +136,17 @@ export class QACertificationController {
   })
   async getFilteredTestSums(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
-  ): Promise<ReviewAndSubmitTestSummaryDTO[]> {
-    return this.reviewSubmitServiceTestSum.getTestSummaryRecords(
+  ): Promise<ArrayResponse<ReviewAndSubmitTestSummaryDTO>> {
+    const testSummaryDTOS =  await  this.reviewSubmitServiceTestSum.getTestSummaryRecords(
       dto.orisCodes,
       dto.monPlanIds,
       dto.quarters,
       false,
     );
+
+    return  {
+      items: testSummaryDTOS
+    };
   }
 
   @Get('test-extension-exemption')
@@ -167,12 +176,16 @@ export class QACertificationController {
   })
   async getFilteredTee(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
-  ): Promise<TeeReviewAndSubmitDTO[]> {
-    return this.reviewSubmitServiceTee.getTeeRecords(
+  ): Promise<ArrayResponse<TeeReviewAndSubmitDTO>> {
+    const teeRecords =  await this.reviewSubmitServiceTee.getTeeRecords(
       dto.orisCodes,
       dto.monPlanIds,
       dto.quarters,
       false,
     );
+
+    return  {
+      items: teeRecords
+    };
   }
 }

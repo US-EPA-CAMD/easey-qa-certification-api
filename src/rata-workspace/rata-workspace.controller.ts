@@ -19,6 +19,7 @@ import { RataBaseDTO, RataRecordDTO } from '../dto/rata.dto';
 import { RataChecksService } from './rata-checks.service';
 import { RataWorkspaceService } from './rata-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -51,8 +52,12 @@ export class RataWorkspaceController {
   async getRatas(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<RataRecordDTO[]> {
-    return this.service.getRatasByTestSumId(testSumId);
+  ): Promise<ArrayResponse<RataRecordDTO>> {
+    const rataDTOS =  await  this.service.getRatasByTestSumId(testSumId);
+
+    return  {
+      items: rataDTOS
+    };
   }
 
   @Get(':id')

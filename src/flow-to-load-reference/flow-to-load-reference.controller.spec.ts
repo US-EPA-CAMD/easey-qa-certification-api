@@ -43,7 +43,7 @@ describe('FlowToLoadCheckController', () => {
   describe('flowToLoadReferences', () => {
     it('Calls the repository to get all Flow To Load Reference records by Test Summary Id', async () => {
       const result = await controller.getFlowToLoadReferences(locId, testSumId);
-      expect(result).toEqual(flowToLoadReferences);
+      expect(result).toEqual({ items: flowToLoadReferences });
     });
   });
 

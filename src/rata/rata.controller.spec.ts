@@ -35,7 +35,7 @@ describe('RataController', () => {
   describe('getRata', () => {
     it('should call the RataService.getRataById and get one rata record', async () => {
       expect(await controller.getRata(locId, testSumId, rataId)).toEqual(
-        rataRecord,
+         rataRecord,
       );
       expect(service.getRataById).toHaveBeenCalled();
     });
@@ -43,7 +43,7 @@ describe('RataController', () => {
 
   describe('getRatas', () => {
     it('should call the RataService.getRatasByTestSumId and get many rata record', async () => {
-      expect(await controller.getRatas(locId, testSumId)).toEqual([rataRecord]);
+      expect(await controller.getRatas(locId, testSumId)).toEqual({ items:[rataRecord] });
       expect(service.getRatasByTestSumId).toHaveBeenCalled();
     });
   });

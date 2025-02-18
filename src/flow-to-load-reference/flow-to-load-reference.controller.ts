@@ -2,6 +2,7 @@ import { Controller, Param, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { FlowToLoadReferenceRecordDTO } from '../dto/flow-to-load-reference.dto';
 import { FlowToLoadReferenceService } from './flow-to-load-reference.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -18,8 +19,12 @@ export class FlowToLoadReferenceController {
   async getFlowToLoadReferences(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<FlowToLoadReferenceRecordDTO[]> {
-    return this.service.getFlowToLoadReferences(testSumId);
+  ): Promise<ArrayResponse<FlowToLoadReferenceRecordDTO>> {
+    const flowToLoadReferenceRecordDTOS =  await this.service.getFlowToLoadReferences(testSumId);
+
+    return  {
+      items: flowToLoadReferenceRecordDTOS
+    };
   }
 
   @Get(':id')

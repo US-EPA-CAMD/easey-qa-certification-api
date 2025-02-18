@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { HgInjectionRecordDTO } from '../dto/hg-injection.dto';
 import { HgInjectionService } from './hg-injection.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -19,8 +20,12 @@ export class HgInjectionController {
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('hgTestSumId') hgTestSumId: string,
-  ): Promise<HgInjectionRecordDTO[]> {
-    return this.service.getHgInjectionsByHgTestSumId(hgTestSumId);
+  ): Promise<ArrayResponse<HgInjectionRecordDTO>> {
+    const hgInjectionDTOS =  await this.service.getHgInjectionsByHgTestSumId(hgTestSumId);
+
+    return  {
+      items: hgInjectionDTOS
+    };
   }
 
   @Get(':id')

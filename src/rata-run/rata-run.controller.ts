@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { RataRunDTO } from '../dto/rata-run.dto';
 import { RataRunService } from './rata-run.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -19,8 +20,12 @@ export class RataRunController {
     @Param('testSumId') _testSumId: string,
     @Param('rataId') _rataId: string,
     @Param('rataSumId') rataSumId: string,
-  ): Promise<RataRunDTO[]> {
-    return this.service.getRataRuns(rataSumId);
+  ): Promise<ArrayResponse<RataRunDTO>> {
+    const rataRunDTOS = await this.service.getRataRuns(rataSumId);
+
+    return  {
+      items: rataRunDTOS
+    };
   }
 
   @Get(':id')

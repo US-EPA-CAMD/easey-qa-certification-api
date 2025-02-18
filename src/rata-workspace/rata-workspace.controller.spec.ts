@@ -82,7 +82,7 @@ describe('RataWorkspaceController', () => {
 
   describe('getRatas', () => {
     it('should call the RataService.getRatasByTestSumId and get many rata record', async () => {
-      expect(await controller.getRatas(locId, testSumId)).toEqual([rataRecord]);
+      expect(await controller.getRatas(locId, testSumId)).toEqual({ items: [rataRecord] });
       expect(service.getRatasByTestSumId).toHaveBeenCalled();
     });
   });
