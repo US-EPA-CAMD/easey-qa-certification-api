@@ -22,6 +22,7 @@ import {
 import { TestExtensionExemptionsChecksService } from './test-extension-exemptions-checks.service';
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -54,8 +55,9 @@ export class TestExtensionExemptionsWorkspaceController {
   })
   async getTestExtensionExemptions(
     @Param('locId') locationId: string,
-  ): Promise<TestExtensionExemptionRecordDTO[]> {
-    return this.service.getTestExtensionExemptionsByLocationId(locationId);
+  ): Promise<ArrayResponse<TestExtensionExemptionRecordDTO>> {
+    const exemptionRecords = await this.service.getTestExtensionExemptionsByLocationId(locationId);
+    return { items: exemptionRecords };
   }
 
   @Get(':id')

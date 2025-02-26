@@ -21,6 +21,7 @@ import {
 } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracyWorkspaceService } from './fuel-flowmeter-accuracy-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -53,8 +54,9 @@ export class FuelFlowmeterAccuracyWorkspaceController {
   async getFuelFlowmeterAccuracies(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<FuelFlowmeterAccuracyDTO[]> {
-    return this.service.getFuelFlowmeterAccuracies(testSumId);
+  ): Promise<ArrayResponse<FuelFlowmeterAccuracyDTO>> {
+    const fuelFlowmeterAccuracies = await this.service.getFuelFlowmeterAccuracies(testSumId);
+    return { items: fuelFlowmeterAccuracies };
   }
 
   @Get(':id')

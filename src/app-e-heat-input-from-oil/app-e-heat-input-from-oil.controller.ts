@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { AppEHeatInputFromOilRecordDTO } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOilService } from './app-e-heat-input-from-oil.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @ApiTags('Appendix E Heat Input From Oil')
 @ApiSecurity('APIKey')
@@ -16,13 +17,14 @@ export class AppEHeatInputFromOilController {
     description:
       'Retrieves official Appendix E Heat Input from Oil records by Appendix E Correlation Test Run Id',
   })
-  getAppEHeatInputFromOilRecords(
+  async getAppEHeatInputFromOilRecords(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('appECorrTestSumId') _appECorrTestSumId: string,
     @Param('appECorrTestRunId') appECorrTestRunId: string,
-  ): Promise<AppEHeatInputFromOilRecordDTO[]> {
-    return this.service.getAppEHeatInputFromOilRecords(appECorrTestRunId);
+  ): Promise<ArrayResponse<AppEHeatInputFromOilRecordDTO>> {
+    const heatInputFromOilRecords = await this.service.getAppEHeatInputFromOilRecords(appECorrTestRunId);
+    return { items: heatInputFromOilRecords };
   }
 
   @Get(':id')
