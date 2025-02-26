@@ -21,6 +21,7 @@ import {
 } from '../dto/fuel-flow-to-load-test.dto';
 import { FuelFlowToLoadTestWorkspaceService } from './fuel-flow-to-load-test-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -51,8 +52,9 @@ export class FuelFlowToLoadTestWorkspaceController {
   async getFuelFlowToLoadTests(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<FuelFlowToLoadTestRecordDTO[]> {
-    return this.service.getFuelFlowToLoadTests(testSumId);
+  ): Promise<ArrayResponse<FuelFlowToLoadTestRecordDTO>> {
+    const fuelFlowToLoadTests = await this.service.getFuelFlowToLoadTests(testSumId);
+    return { items: fuelFlowToLoadTests };
   }
 
   @Get(':id')

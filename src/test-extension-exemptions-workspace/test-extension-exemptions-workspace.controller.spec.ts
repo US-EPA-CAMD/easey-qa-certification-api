@@ -91,7 +91,7 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
         'getTestExtensionExemptionsByLocationId',
       );
       const result = await controller.getTestExtensionExemptions('1');
-      expect(result).toEqual([testExtExp]);
+      expect(result).toEqual({ items:[testExtExp]});
       expect(spyService).toHaveBeenCalled();
     });
   });

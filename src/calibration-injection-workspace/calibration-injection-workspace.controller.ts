@@ -21,6 +21,7 @@ import {
 } from '../dto/calibration-injection.dto';
 import { CalibrationInjectionWorkspaceService } from './calibration-injection-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -51,8 +52,9 @@ export class CalibrationInjectionWorkspaceController {
   async getCalibrationInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<CalibrationInjectionDTO[]> {
-    return this.service.getCalibrationInjections(testSumId);
+  ): Promise<ArrayResponse<CalibrationInjectionDTO>> {
+    const calibrationInjections = await this.service.getCalibrationInjections(testSumId);
+    return { items: calibrationInjections };
   }
 
   @Get(':id')

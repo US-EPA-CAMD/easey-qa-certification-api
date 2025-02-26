@@ -71,7 +71,7 @@ describe('FuelFlowmeterAccuracyWorkspaceController', () => {
         locId,
         testSumId,
       );
-      expect(result).toEqual(fuelFlowmeterAccuracies);
+      expect(result).toEqual({ items:fuelFlowmeterAccuracies });
     });
   });
 

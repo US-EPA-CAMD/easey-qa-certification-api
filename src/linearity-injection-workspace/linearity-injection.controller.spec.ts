@@ -87,7 +87,7 @@ describe('Linearity Injection Controller', () => {
   describe('getInjections', () => {
     it('should get Linearity injection records by Linearity Summary Id', async () => {
       const result = await controller.getInjections(locId, testSumId, linSumId);
-      expect(result).toEqual([linInjDto]);
+      expect(result).toEqual({ items:[linInjDto]});
     });
   });
 

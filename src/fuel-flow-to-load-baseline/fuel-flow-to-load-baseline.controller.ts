@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
 import { FuelFlowToLoadBaselineService } from './fuel-flow-to-load-baseline.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -19,8 +20,12 @@ export class FuelFlowToLoadBaselineController {
   async getFuelFlowToLoadBaselines(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<FuelFlowToLoadBaselineDTO[]> {
-    return this.service.getFuelFlowToLoadBaselines(testSumId);
+  ): Promise<ArrayResponse<FuelFlowToLoadBaselineDTO>> {
+    const loadBaselineDTOS =  await this.service.getFuelFlowToLoadBaselines(testSumId);
+
+    return  {
+      items: loadBaselineDTOS
+    };
   }
 
   @Get(':id')

@@ -21,6 +21,7 @@ import {
 } from '../dto/fuel-flow-to-load-baseline.dto';
 import { FuelFlowToLoadBaselineWorkspaceService } from './fuel-flow-to-load-baseline-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -53,8 +54,9 @@ export class FuelFlowToLoadBaselineWorkspaceController {
   async getFuelFlowToLoadBaselines(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<FuelFlowToLoadBaselineDTO[]> {
-    return this.service.getFuelFlowToLoadBaselines(testSumId);
+  ): Promise<ArrayResponse<FuelFlowToLoadBaselineDTO>> {
+    const fuelFlowToLoadBaselines = await this.service.getFuelFlowToLoadBaselines(testSumId);
+    return { items: fuelFlowToLoadBaselines };
   }
 
   @Get(':id')
