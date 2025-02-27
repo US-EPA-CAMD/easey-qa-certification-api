@@ -1,19 +1,12 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  JoinColumn,
-  OneToMany,
-  PrimaryColumn,
-} from 'typeorm';
+import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity({ name: 'camdecmpsmd.mats_report_type_code' })
 export class MatsReportTypeCode extends BaseEntity {
   @PrimaryColumn({ name: 'mats_rpt_type_cd' })
-  matsReportTypeCode: string;
+  code: string;
 
   @Column({ name: 'mats_rpt_type_description' })
-  matsReportTypeDescription: string;
+  description: string;
 
   @Column({ name: 'metadata_rpt_type_cd' })
   metadataReportTypeCode: string;

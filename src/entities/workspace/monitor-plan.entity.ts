@@ -6,10 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
   OneToMany,
-  ManyToMany,
-  JoinTable,
 } from 'typeorm';
-import { MonitorLocation } from '../monitor-location.entity';
 import { ReportingPeriod } from '../reporting-period.entity';
 import { MonitorPlanLocation } from './monitor-plan-location.entity';
 
