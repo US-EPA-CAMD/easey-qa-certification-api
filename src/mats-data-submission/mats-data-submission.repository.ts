@@ -10,4 +10,26 @@ export class MatsDataSubmissionRepository extends Repository<
   constructor(entityManager: EntityManager) {
     super(MatsDataSubmission, entityManager);
   }
+
+  getMatsDataSubmissions(monPlanId: string): Promise<MatsDataSubmission[]> {
+    return this.find({
+      where: {
+        plan: {
+          id: monPlanId,
+        },
+      },
+      relations: {
+        averagingGroup: true,
+        facility: true,
+        location: {
+          stackPipe: true,
+          unit: true,
+        },
+        pollutants: true,
+        reportType: true,
+        status: true,
+        testMethods: true,
+      },
+    });
+  }
 }

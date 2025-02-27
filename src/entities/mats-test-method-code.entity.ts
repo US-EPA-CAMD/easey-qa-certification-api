@@ -6,7 +6,7 @@ export class MatsTestMethodCode extends BaseEntity {
   @PrimaryColumn({ name: 'mats_test_meth_cd' })
   code: string;
 
-  @Column({ name: 'mats_test_method_description' })
+  @Column({ name: 'mats_test_meth_description' })
   description: string;
 
   @Column({

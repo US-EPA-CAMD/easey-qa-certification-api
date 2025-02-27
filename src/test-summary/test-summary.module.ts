@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AirEmissionTestingModule } from '../air-emission-testing/air-emission-testing.module';
@@ -37,7 +37,7 @@ import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-su
     ProtocolGasModule,
     RataModule,
     TestQualificationModule,
-    FuelFlowToLoadTestModule,
+    forwardRef(() => FuelFlowToLoadTestModule),
     FuelFlowToLoadBaselineModule,
     FuelFlowmeterAccuracyModule,
     FlowToLoadCheckModule,

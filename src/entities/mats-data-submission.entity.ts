@@ -15,7 +15,7 @@ import { MatsAveragingGroupCode } from './mats-averaging-group-code.entity';
 import { MatsReportTypeCode } from './mats-report-type-code.entity';
 import { MatsStatusCode } from './mats-status-code.entity';
 import { MatsTestMethodCode } from './mats-test-method-code.entity';
-import { MatsPollutantCode } from './mats_pollutant_code.entity';
+import { MatsPollutantCode } from './mats-pollutant-code.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { MonitorPlan } from './monitor-plan.entity';
 import { Plant } from './plant.entity';
@@ -92,7 +92,7 @@ export class MatsDataSubmission extends BaseEntity {
   @JoinTable({
     name: 'camdecmpsaux.mats_data_submission_test_method',
     joinColumn: { name: 'mats_data_sub_id' },
-    inverseJoinColumn: { name: 'mats_test_method_cd' },
+    inverseJoinColumn: { name: 'mats_test_meth_cd' },
   })
   testMethods: MatsTestMethodCode[];
 }

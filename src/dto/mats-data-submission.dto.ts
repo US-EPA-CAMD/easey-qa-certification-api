@@ -1,29 +1,31 @@
+import { MatsCodeDTO } from './mats-code.dto';
+
 export class MatsDataSubmissionDTO {
   id: number;
 
-  averagingGroup?: string;
+  averagingGroup?: MatsCodeDTO;
 
   facilityName: string;
 
   frsId?: string;
 
-  location: string;
+  location: { id: string; name: string };
 
   orisCode: number;
 
-  pollutants?: string[];
+  pollutants?: MatsCodeDTO[];
 
   quarter?: number;
 
-  reportType: string;
+  reportType: MatsCodeDTO;
 
-  status: string;
+  status: MatsCodeDTO;
 
   testComment?: string;
 
   testDate?: Date;
 
-  testMethods?: string[];
+  testMethods?: MatsCodeDTO[];
 
   testNumber?: string;
 
