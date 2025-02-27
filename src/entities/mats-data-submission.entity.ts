@@ -28,15 +28,6 @@ export class MatsDataSubmission extends BaseEntity {
   })
   id: number;
 
-  //@Column({ name: 'mon_loc_id' })
-  //locationId: string;
-
-  //@Column({ name: 'mats_rpt_type_cd' })
-  //matsReportTypeCode: string;
-
-  //@Column({ name: 'mats_avg_group_cd' })
-  //matsAverageGroupCode: string;
-
   @Column({ name: 'test_number' })
   testNumber: string;
 
@@ -51,21 +42,6 @@ export class MatsDataSubmission extends BaseEntity {
 
   @Column({ name: 'quarter', transformer: new NumericColumnTransformer() })
   quarter: number;
-
-  //@Column({
-  //  name: 'original_sub_id',
-  //  transformer: new NumericColumnTransformer(),
-  //})
-  //originalSubmissionId: number;
-
-  //@Column({ name: 'fac_id', transformer: new NumericColumnTransformer() })
-  //facilityId: number;
-
-  //@Column({ name: 'mon_plan_id' })
-  //monitorPlanId: string;
-
-  //@Column({ name: 'mats_status_cd' })
-  //matsStatusCode: string;
 
   @Column({ name: 'user_id' })
   userId: string;
@@ -119,16 +95,4 @@ export class MatsDataSubmission extends BaseEntity {
     inverseJoinColumn: { name: 'mats_test_method_cd' },
   })
   testMethods: MatsTestMethodCode[];
-
-  //@OneToMany(
-  //  () => MatsDataSubmissionPollutant,
-  //  p => p.submission,
-  //)
-  //pollutants: MatsDataSubmissionPollutant[];
-
-  //@OneToMany(
-  //  () => MatsDataSubmissionTestMethod,
-  //  t => t.submission,
-  //)
-  //testMethods: MatsDataSubmissionTestMethod[];
 }
