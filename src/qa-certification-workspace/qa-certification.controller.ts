@@ -33,6 +33,7 @@ import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
 import { ReviewAndSubmitMultipleParamsMatsDTO } from '../dto/review-and-submit-multiple-params-mats.dto';
 import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -172,12 +173,13 @@ export class QACertificationWorkspaceController {
   })
   async getFilteredCerts(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
-  ): Promise<CertEventReviewAndSubmitDTO[]> {
-    return this.reviewSubmitServiceCert.getCertEventRecords(
+  ): Promise<ArrayResponse<CertEventReviewAndSubmitDTO>> {
+    const certEventRecords = await this.reviewSubmitServiceCert.getCertEventRecords(
       dto.orisCodes,
       dto.monPlanIds,
-      dto.quarters,
+      dto.quarters
     );
+    return { items: certEventRecords };
   }
 
   @Get('test-summary')
@@ -220,12 +222,13 @@ export class QACertificationWorkspaceController {
   })
   async getFilteredTestSums(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
-  ): Promise<ReviewAndSubmitTestSummaryDTO[]> {
-    return this.reviewSubmitServiceTestSum.getTestSummaryRecords(
+  ): Promise<ArrayResponse<ReviewAndSubmitTestSummaryDTO>> {
+    const testSummaryRecords = await this.reviewSubmitServiceTestSum.getTestSummaryRecords(
       dto.orisCodes,
       dto.monPlanIds,
-      dto.quarters,
+      dto.quarters
     );
+    return { items: testSummaryRecords };
   }
 
   @Get('test-extension-exemption')
@@ -268,12 +271,13 @@ export class QACertificationWorkspaceController {
   })
   async getFilteredTee(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
-  ): Promise<TeeReviewAndSubmitDTO[]> {
-    return this.reviewSubmitServiceTee.getTeeRecords(
+  ): Promise<ArrayResponse<TeeReviewAndSubmitDTO>> {
+    const teeRecords = await this.reviewSubmitServiceTee.getTeeRecords(
       dto.orisCodes,
       dto.monPlanIds,
-      dto.quarters,
+      dto.quarters
     );
+    return { items: teeRecords };
   }
 
   @Get('mats-bulk-file')
@@ -310,10 +314,11 @@ export class QACertificationWorkspaceController {
   })
   async getFilteredMatsBulkFile(
     @Query() dto: ReviewAndSubmitMultipleParamsMatsDTO,
-  ): Promise<MatsBulkFileDTO[]> {
-    return this.reviewSubmitServiceMats.getMatsBulkFileRecords(
+  ): Promise<ArrayResponse<MatsBulkFileDTO>> {
+    const matsBulkFileRecords = await this.reviewSubmitServiceMats.getMatsBulkFileRecords(
       dto.orisCodes,
-      dto.monPlanIds,
+      dto.monPlanIds
     );
+    return { items: matsBulkFileRecords };
   }
 }

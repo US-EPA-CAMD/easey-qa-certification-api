@@ -82,7 +82,7 @@ describe('AirEmissionTestingWorkspaceController', () => {
   describe('getAirEmissionTestings', () => {
     it('should get Air Emission Testing records by Linearity Summary Id', async () => {
       const result = await controller.getAirEmissionTestings(locId, testSumId);
-      expect(result).toEqual([airEmissionTestingRecord]);
+      expect(result).toEqual({ items: [airEmissionTestingRecord] });
     });
   });
 

@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { TestExtensionExemptionRecordDTO } from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionsService } from './test-extension-exemptions.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -18,8 +19,11 @@ export class TestExtensionExemptionsController {
   })
   async getTestExtensionExemptions(
     @Param('locId') locationId: string,
-  ): Promise<TestExtensionExemptionRecordDTO[]> {
-    return this.service.getTestExtensionExemptionsByLocationId(locationId);
+  ): Promise<ArrayResponse<TestExtensionExemptionRecordDTO>> {
+    const exemptionRecordDTOS = await this.service.getTestExtensionExemptionsByLocationId(locationId);
+    return {
+      items: exemptionRecordDTOS
+    };
   }
 
   @Get(':id')

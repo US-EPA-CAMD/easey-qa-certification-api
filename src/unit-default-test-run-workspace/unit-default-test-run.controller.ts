@@ -24,6 +24,7 @@ import { UnitDefaultTestRunWorkspaceService } from './unit-default-test-run.serv
 import { UnitDefaultTestRunChecksService } from './unit-default-test-run-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -58,8 +59,9 @@ export class UnitDefaultTestRunWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('unitDefaultTestSumId') unitDefaultTestSumId: string,
-  ): Promise<UnitDefaultTestRunRecordDTO[]> {
-    return this.service.getUnitDefaultTestRuns(unitDefaultTestSumId);
+  ): Promise<ArrayResponse<UnitDefaultTestRunRecordDTO>> {
+    const unitDefaultTestRuns = await this.service.getUnitDefaultTestRuns(unitDefaultTestSumId);
+    return { items: unitDefaultTestRuns };
   }
 
   @Get(':id')

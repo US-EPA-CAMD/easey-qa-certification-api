@@ -23,6 +23,7 @@ import {
 import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -53,8 +54,12 @@ export class UnitDefaultTestWorkspaceController {
   async getUnitDefaultTests(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<UnitDefaultTestRecordDTO[]> {
-    return this.service.getUnitDefaultTests(testSumId);
+  ): Promise<ArrayResponse<UnitDefaultTestRecordDTO>> {
+    const testRecordDTOS =  await this.service.getUnitDefaultTests(testSumId);
+
+    return  {
+      items: testRecordDTOS
+    };
   }
 
   @Get(':id')

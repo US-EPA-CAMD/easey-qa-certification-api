@@ -27,6 +27,7 @@ import { LinearityInjectionChecksService } from './linearity-injection-checks.se
 
 import { LinearityInjectionWorkspaceService } from './linearity-injection.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -61,8 +62,12 @@ export class LinearityInjectionWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('linSumId') linSumId: string,
-  ): Promise<LinearityInjectionRecordDTO[]> {
-    return this.service.getInjectionsByLinSumId(linSumId);
+  ): Promise<ArrayResponse<LinearityInjectionRecordDTO>> {
+    const linearityInjectionDTOS =  await this.service.getInjectionsByLinSumId(linSumId);
+
+    return  {
+      items: linearityInjectionDTOS
+    };
   }
 
   @Get(':id')

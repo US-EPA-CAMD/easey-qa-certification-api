@@ -55,7 +55,7 @@ describe('FuelFlowToLoadBaselineController', () => {
         locId,
         testSumId,
       );
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items:[dto]});
     });
   });
 });

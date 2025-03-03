@@ -22,6 +22,7 @@ import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { AppECorrelationTestSummaryChecksService } from './app-e-correlation-test-summary-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -55,8 +56,12 @@ export class AppendixETestSummaryWorkspaceController {
   async getAppECorrelations(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
-    return this.service.getAppECorrelations(testSumId);
+  ): Promise<ArrayResponse<AppECorrelationTestSummaryRecordDTO>> {
+    const summaryRecordDTOS =  await this.service.getAppECorrelations(testSumId);
+
+    return  {
+      items: summaryRecordDTOS
+    };
   }
 
   @Get(':id')

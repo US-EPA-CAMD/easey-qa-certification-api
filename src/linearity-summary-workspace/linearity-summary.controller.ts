@@ -26,6 +26,7 @@ import {
 import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
 import { LinearitySummaryWorkspaceService } from './linearity-summary.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -59,8 +60,9 @@ export class LinearitySummaryWorkspaceController {
   async getSummariesByTestSumId(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<LinearitySummaryRecordDTO[]> {
-    return this.service.getSummariesByTestSumId(testSumId);
+  ): Promise<ArrayResponse<LinearitySummaryRecordDTO>> {
+    const linearitySummaries = await this.service.getSummariesByTestSumId(testSumId);
+    return { items: linearitySummaries };
   }
 
   @Get(':id')

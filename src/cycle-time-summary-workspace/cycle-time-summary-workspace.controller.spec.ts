@@ -72,7 +72,7 @@ describe('CycleTimeSummaryWorkspaceController', () => {
   describe('getCycleTimeSummaries', () => {
     it('Calls the service to many Cycle Time Summary records', async () => {
       const result = await controller.getCycleTimeSummaries(locId, testSumId);
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items:[dto]});
     });
   });
 

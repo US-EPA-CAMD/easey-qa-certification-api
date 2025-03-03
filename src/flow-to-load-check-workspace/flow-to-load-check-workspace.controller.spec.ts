@@ -63,7 +63,7 @@ describe('FlowToLoadCheckWorkspaceController', () => {
   describe('getflowToLoadChecks', () => {
     it('Calls the repository to get all Flow To Load Check records by Test Summary Id', async () => {
       const result = await controller.getFlowToLoadChecks(locId, testSumId);
-      expect(result).toEqual(flowToLoadChecks);
+      expect(result).toEqual({ items : flowToLoadChecks });
     });
   });
 

@@ -22,6 +22,7 @@ import {
 } from '../dto/flow-to-load-check.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -52,8 +53,9 @@ export class FlowToLoadCheckWorkspaceController {
   async getFlowToLoadChecks(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<FlowToLoadCheckRecordDTO[]> {
-    return this.service.getFlowToLoadChecks(testSumId);
+  ): Promise<ArrayResponse<FlowToLoadCheckRecordDTO>> {
+    const flowToLoadCheckRecords = await this.service.getFlowToLoadChecks(testSumId);
+    return { items: flowToLoadCheckRecords };
   }
 
   @Get(':id')

@@ -72,7 +72,7 @@ describe('Linearity Summary Controller', () => {
   describe('getSummariesByTestSumId', () => {
     it('Calls the repository to get all Linearity Summary records by Test Summary Id', async () => {
       const result = await controller.getSummariesByTestSumId(locId, testSumId);
-      expect(result).toEqual(linearitySummaryRecords);
+      expect(result).toEqual({ items:linearitySummaryRecords});
     });
   });
 

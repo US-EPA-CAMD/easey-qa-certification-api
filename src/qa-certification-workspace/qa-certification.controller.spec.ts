@@ -155,7 +155,7 @@ describe('QA Certification Workspace Controller Test', () => {
         new ReviewAndSubmitMultipleParamsDTO(),
       );
 
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items:[dto]});
     });
   });
 
@@ -170,7 +170,7 @@ describe('QA Certification Workspace Controller Test', () => {
         new ReviewAndSubmitMultipleParamsDTO(),
       );
 
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items:[dto]});
     });
   });
 
@@ -183,7 +183,7 @@ describe('QA Certification Workspace Controller Test', () => {
         new ReviewAndSubmitMultipleParamsDTO(),
       );
 
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items:[dto]});
     });
   });
 
@@ -198,7 +198,7 @@ describe('QA Certification Workspace Controller Test', () => {
         new ReviewAndSubmitMultipleParamsMatsDTO(),
       );
 
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items:[dto]});
     });
   });
 });

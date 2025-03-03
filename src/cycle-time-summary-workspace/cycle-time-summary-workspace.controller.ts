@@ -21,6 +21,7 @@ import {
 } from '../dto/cycle-time-summary.dto';
 import { CycleTimeSummaryWorkspaceService } from './cycle-time-summary-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -51,8 +52,9 @@ export class CycleTimeSummaryWorkspaceController {
   async getCycleTimeSummaries(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<CycleTimeSummaryDTO[]> {
-    return this.service.getCycleTimeSummaries(testSumId);
+  ): Promise<ArrayResponse<CycleTimeSummaryDTO>> {
+    const cycleTimeSummaries = await this.service.getCycleTimeSummaries(testSumId);
+    return { items: cycleTimeSummaries };
   }
 
   @Get(':id')

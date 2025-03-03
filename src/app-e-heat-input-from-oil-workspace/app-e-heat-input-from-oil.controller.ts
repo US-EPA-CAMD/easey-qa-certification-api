@@ -23,6 +23,7 @@ import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oi
 import { AppEHeatInputFromOilChecksService } from './app-e-heat-input-from-oil-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -53,13 +54,14 @@ export class AppEHeatInputFromOilWorkspaceController {
     label: 'Retrieved appendix E heat input from oils for test summary',
     requestParamsOutFields: ['locId', 'testSumId', 'appECorrTestSumId', 'appECorrTestRunId']
   })
-  getAppEHeatInputFromOilRecords(
+  async getAppEHeatInputFromOilRecords(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('appECorrTestSumId') _appECorrTestSumId: string,
     @Param('appECorrTestRunId') appECorrTestRunId: string,
-  ): Promise<AppEHeatInputFromOilRecordDTO[]> {
-    return this.service.getAppEHeatInputFromOilRecords(appECorrTestRunId);
+  ): Promise<ArrayResponse<AppEHeatInputFromOilRecordDTO>> {
+    const heatInputFromOilRecords = await this.service.getAppEHeatInputFromOilRecords(appECorrTestRunId);
+    return { items: heatInputFromOilRecords };
   }
 
   @Get(':id')
