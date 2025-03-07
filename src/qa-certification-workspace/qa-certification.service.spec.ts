@@ -59,7 +59,7 @@ const airEmissionTesting = new AirEmissionTestingDTO();
 const qaCertEventDto = new QACertificationEventDTO();
 const qaCertDto = new QACertificationDTO();
 const testExtExmtDto = new TestExtensionExemptionDTO();
-qaCertDto.testSummaryData = [testSummary];
+qaCertDto.testSummaryData = [testSummary];//
 testSummary.calibrationInjectionData = [calibrationInjection];
 testSummary.linearitySummaryData = [linearitySummary];
 testSummary.rataData = [rata];
@@ -128,6 +128,40 @@ describe('QA Certification Workspace Service Test', () => {
   let service: QACertificationWorkspaceService;
   let entityManager: EntityManager;
 
+  // Helper for export test assertions
+  const assertExportResult = (result: any, expected: any): void => {
+    expect(result.orisCode).toEqual(expected.orisCode);
+    expect(result.testSummaryData).toEqual(expected.testSummaryData);
+    expect(result.certificationEventData).toEqual(expected.certificationEventData);
+    expect(result.testExtensionExemptionData).toEqual(expected.testExtensionExemptionData);
+  };
+
+  // Helper for creating export params
+  const createExportParams = (options: {
+    reportedValuesOnly?: boolean;
+    testSummaryIds?: string[];
+    qaCertificationEventIds?: string[];
+    qaTestExtensionExemptionIds?: string[];
+  } = {}): QACertificationParamsDTO => {
+    const paramsDTO = new QACertificationParamsDTO();
+    paramsDTO.facilityId = 1;
+    paramsDTO.reportedValuesOnly = options.reportedValuesOnly ?? false;
+
+    if (options.testSummaryIds) paramsDTO.testSummaryIds = options.testSummaryIds;
+    if (options.qaCertificationEventIds) paramsDTO.qaCertificationEventIds = options.qaCertificationEventIds;
+    if (options.qaTestExtensionExemptionIds) paramsDTO.qaTestExtensionExemptionIds = options.qaTestExtensionExemptionIds;
+
+    return paramsDTO;
+  };
+
+  // Helper for import test assertions
+  const assertImportResult = (result: any, orisCode: number): void => {
+    expect(result).toEqual({
+      message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${orisCode}]`,
+    });
+    expect(entityManager.transaction).toHaveBeenCalled();
+  };
+
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [LoggerModule],
@@ -172,13 +206,8 @@ describe('QA Certification Workspace Service Test', () => {
       expected.testExtensionExemptionData = [testExtExmtDto];
       expected.orisCode = 1;
 
-      const paramsDTO = new QACertificationParamsDTO();
-      paramsDTO.facilityId = 1;
-      paramsDTO.reportedValuesOnly = true;
-      const result = await service.export(
-        paramsDTO,
-        paramsDTO.reportedValuesOnly,
-      );
+      const paramsDTO = createExportParams({ reportedValuesOnly: true });
+      const result = await service.export(paramsDTO, paramsDTO.reportedValuesOnly);
 
       expect(result).toEqual(expected);
     });
@@ -192,20 +221,10 @@ describe('QA Certification Workspace Service Test', () => {
         testExtensionExemptionData: [],
       };
 
-      const paramsDTO = new QACertificationParamsDTO();
-      paramsDTO.facilityId = 1;
-      paramsDTO.testSummaryIds = ['1'];
-      paramsDTO.reportedValuesOnly = false;
+      const paramsDTO = createExportParams({ testSummaryIds: ['1'] });
+      const result = await service.export(paramsDTO, paramsDTO.reportedValuesOnly);
 
-      const result = await service.export(
-        paramsDTO,
-        paramsDTO.reportedValuesOnly,
-      );
-
-      expect(result.orisCode).toEqual(expected.orisCode);
-      expect(result.testSummaryData).toEqual(expected.testSummaryData);
-      expect(result.certificationEventData).toEqual(expected.certificationEventData);
-      expect(result.testExtensionExemptionData).toEqual(expected.testExtensionExemptionData);
+      assertExportResult(result, expected);
     });
 
     it('successfully calls export() with only qaCertificationEventIds', async () => {
@@ -217,20 +236,10 @@ describe('QA Certification Workspace Service Test', () => {
         testExtensionExemptionData: [],
       };
 
-      const paramsDTO = new QACertificationParamsDTO();
-      paramsDTO.facilityId = 1;
-      paramsDTO.qaCertificationEventIds = ['1'];
-      paramsDTO.reportedValuesOnly = false;
+      const paramsDTO = createExportParams({ qaCertificationEventIds: ['1'] });
+      const result = await service.export(paramsDTO, paramsDTO.reportedValuesOnly);
 
-      const result = await service.export(
-        paramsDTO,
-        paramsDTO.reportedValuesOnly,
-      );
-
-      expect(result.orisCode).toEqual(expected.orisCode);
-      expect(result.testSummaryData).toEqual(expected.testSummaryData);
-      expect(result.certificationEventData).toEqual(expected.certificationEventData);
-      expect(result.testExtensionExemptionData).toEqual(expected.testExtensionExemptionData);
+      assertExportResult(result, expected);
     });
 
     it('successfully calls export() with only qaTestExtensionExemptionIds', async () => {
@@ -242,20 +251,10 @@ describe('QA Certification Workspace Service Test', () => {
         testExtensionExemptionData: [testExtExmtDto],
       };
 
-      const paramsDTO = new QACertificationParamsDTO();
-      paramsDTO.facilityId = 1;
-      paramsDTO.qaTestExtensionExemptionIds = ['1'];
-      paramsDTO.reportedValuesOnly = false;
+      const paramsDTO = createExportParams({ qaTestExtensionExemptionIds: ['1'] });
+      const result = await service.export(paramsDTO, paramsDTO.reportedValuesOnly);
 
-      const result = await service.export(
-        paramsDTO,
-        paramsDTO.reportedValuesOnly,
-      );
-
-      expect(result.orisCode).toEqual(expected.orisCode);
-      expect(result.testSummaryData).toEqual(expected.testSummaryData);
-      expect(result.certificationEventData).toEqual(expected.certificationEventData);
-      expect(result.testExtensionExemptionData).toEqual(expected.testExtensionExemptionData);
+      assertExportResult(result, expected);
     });
 
     it('successfully calls export() with all ID parameters defined', async () => {
@@ -267,22 +266,15 @@ describe('QA Certification Workspace Service Test', () => {
         testExtensionExemptionData: [testExtExmtDto],
       };
 
-      const paramsDTO = new QACertificationParamsDTO();
-      paramsDTO.facilityId = 1;
-      paramsDTO.testSummaryIds = ['1'];
-      paramsDTO.qaCertificationEventIds = ['1'];
-      paramsDTO.qaTestExtensionExemptionIds = ['1'];
-      paramsDTO.reportedValuesOnly = false;
+      const paramsDTO = createExportParams({
+        testSummaryIds: ['1'],
+        qaCertificationEventIds: ['1'],
+        qaTestExtensionExemptionIds: ['1'],
+      });
 
-      const result = await service.export(
-        paramsDTO,
-        paramsDTO.reportedValuesOnly,
-      );
+      const result = await service.export(paramsDTO, paramsDTO.reportedValuesOnly);
 
-      expect(result.orisCode).toEqual(expected.orisCode);
-      expect(result.testSummaryData).toEqual(expected.testSummaryData);
-      expect(result.certificationEventData).toEqual(expected.certificationEventData);
-      expect(result.testExtensionExemptionData).toEqual(expected.testExtensionExemptionData);
+      assertExportResult(result, expected);
     });
 
     it('successfully calls export() with mixed ID parameters', async () => {
@@ -294,22 +286,15 @@ describe('QA Certification Workspace Service Test', () => {
         testExtensionExemptionData: [],
       };
 
-      const paramsDTO = new QACertificationParamsDTO();
-      paramsDTO.facilityId = 1;
-      paramsDTO.testSummaryIds = ['1'];
-      paramsDTO.qaCertificationEventIds = ['1'];
-      // No qaTestExtensionExemptionIds
-      paramsDTO.reportedValuesOnly = false;
+      const paramsDTO = createExportParams({
+        testSummaryIds: ['1'],
+        qaCertificationEventIds: ['1'],
+        // No qaTestExtensionExemptionIds
+      });
 
-      const result = await service.export(
-        paramsDTO,
-        paramsDTO.reportedValuesOnly,
-      );
+      const result = await service.export(paramsDTO, paramsDTO.reportedValuesOnly);
 
-      expect(result.orisCode).toEqual(expected.orisCode);
-      expect(result.testSummaryData).toEqual(expected.testSummaryData);
-      expect(result.certificationEventData).toEqual(expected.certificationEventData);
-      expect(result.testExtensionExemptionData).toEqual(expected.testExtensionExemptionData);
+      assertExportResult(result, expected);
     });
 
     it('handles undefined QaCertificationSchema', async () => {
@@ -324,23 +309,13 @@ describe('QA Certification Workspace Service Test', () => {
         testExtensionExemptionData: [testExtExmtDto],
       };
 
-      const paramsDTO = new QACertificationParamsDTO();
-      paramsDTO.facilityId = 1;
-      paramsDTO.reportedValuesOnly = false;
-
-      const result = await service.export(
-        paramsDTO,
-        paramsDTO.reportedValuesOnly,
-      );
+      const paramsDTO = createExportParams();
+      const result = await service.export(paramsDTO, paramsDTO.reportedValuesOnly);
 
       // Restore original value
       service['easeyContentService'].QaCertificationSchema = originalSchema;
 
-      // Check that the result has the expected properties
-      expect(result.orisCode).toEqual(expected.orisCode);
-      expect(result.testSummaryData).toEqual(expected.testSummaryData);
-      expect(result.certificationEventData).toEqual(expected.certificationEventData);
-      expect(result.testExtensionExemptionData).toEqual(expected.testExtensionExemptionData);
+      assertExportResult(result, expected);
     });
 
     it('successfully calls export() with rptValuesOnly = false', async () => {
@@ -350,9 +325,7 @@ describe('QA Certification Workspace Service Test', () => {
       expected.testExtensionExemptionData = [testExtExmtDto];
       expected.orisCode = 1;
 
-      const paramsDTO = new QACertificationParamsDTO();
-      paramsDTO.facilityId = 1;
-      paramsDTO.reportedValuesOnly = false;
+      const paramsDTO = createExportParams();
 
       // Mock removeNonReportedValues to verify it's not called
       const removeNonReportedValuesSpy = jest.spyOn(
@@ -360,10 +333,7 @@ describe('QA Certification Workspace Service Test', () => {
         'removeNonReportedValues',
       ).mockImplementation(jest.fn());
 
-      const result = await service.export(
-        paramsDTO,
-        paramsDTO.reportedValuesOnly,
-      );
+      const result = await service.export(paramsDTO, paramsDTO.reportedValuesOnly);
 
       expect(result.orisCode).toEqual(expected.orisCode);
       expect(removeNonReportedValuesSpy).not.toHaveBeenCalled();
@@ -373,20 +343,14 @@ describe('QA Certification Workspace Service Test', () => {
   describe('import', () => {
     it('successfully calls import() service function', async () => {
       const result = await service.import([location], payload, userId, []);
-      expect(result).toEqual({
-        message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${payload.orisCode}]`,
-      });
-      expect(entityManager.transaction).toHaveBeenCalled();
+      assertImportResult(result, payload.orisCode);
     });
 
     it('successfully calls import() service function when qaSuppData found ', async () => {
       const result = await service.import([location], payload, userId, [
         qaSuppData,
       ]);
-      expect(result).toEqual({
-        message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${payload.orisCode}]`,
-      });
-      expect(entityManager.transaction).toHaveBeenCalled();
+      assertImportResult(result, payload.orisCode);
     });
 
     it('handles errors and rolls back transaction', async () => {
@@ -421,10 +385,7 @@ describe('QA Certification Workspace Service Test', () => {
 
       const result = await service.import([location], emptyPayload, userId, []);
 
-      expect(result).toEqual({
-        message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${emptyPayload.orisCode}]`,
-      });
-      expect(entityManager.transaction).toHaveBeenCalled();
+      assertImportResult(result, emptyPayload.orisCode);
     });
 
     it('handles undefined arrays in payload', async () => {
@@ -434,10 +395,7 @@ describe('QA Certification Workspace Service Test', () => {
 
       const result = await service.import([location], undefinedPayload, userId, []);
 
-      expect(result).toEqual({
-        message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${undefinedPayload.orisCode}]`,
-      });
-      expect(entityManager.transaction).toHaveBeenCalled();
+      assertImportResult(result, undefinedPayload.orisCode);
     });
 
     it('handles partial payload with only testSummaryData', async () => {
@@ -452,11 +410,8 @@ describe('QA Certification Workspace Service Test', () => {
 
       const result = await service.import([location], partialPayload, userId, []);
 
-      expect(result).toEqual({
-        message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${partialPayload.orisCode}]`,
-      });
+      assertImportResult(result, partialPayload.orisCode);
       expect(testSummaryServiceSpy).toHaveBeenCalled();
-      expect(entityManager.transaction).toHaveBeenCalled();
     });
 
     it('handles partial payload with only testExtensionExemptionData', async () => {
@@ -471,11 +426,8 @@ describe('QA Certification Workspace Service Test', () => {
 
       const result = await service.import([location], partialPayload, userId, []);
 
-      expect(result).toEqual({
-        message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${partialPayload.orisCode}]`,
-      });
+      assertImportResult(result, partialPayload.orisCode);
       expect(testExtensionExemptionServiceSpy).toHaveBeenCalled();
-      expect(entityManager.transaction).toHaveBeenCalled();
     });
 
     it('handles partial payload with only certificationEventData', async () => {
@@ -490,13 +442,9 @@ describe('QA Certification Workspace Service Test', () => {
 
       const result = await service.import([location], partialPayload, userId, []);
 
-      expect(result).toEqual({
-        message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${partialPayload.orisCode}]`,
-      });
+      assertImportResult(result, partialPayload.orisCode);
       expect(qaCertEventServiceSpy).toHaveBeenCalled();
-      expect(entityManager.transaction).toHaveBeenCalled();
     });
   });
 });
-
 
