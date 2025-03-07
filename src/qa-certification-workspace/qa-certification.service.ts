@@ -201,7 +201,7 @@ export class QACertificationWorkspaceService {
         this.logger.error(
           `Error in QA Certification import transaction for Facility Id/Oris Code [${payload.orisCode}]: ${error.message}`,
         );
-        throw error; // Transaction will automatically roll back
+        throw error; // Transaction will automatically roll back if there any error
       }
     });
   }

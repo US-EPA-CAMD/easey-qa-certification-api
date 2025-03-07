@@ -165,7 +165,7 @@ describe('QA Certification Workspace Service Test', () => {
   });
 
   describe('export', () => {
-    it('successfully calls export() service function', async () => {
+    it('successfully calls export() service function with all data', async () => {
       const expected = qaCertDto;
       expected.testSummaryData = [testSummary];
       expected.certificationEventData = [qaCertEventDto];
@@ -181,6 +181,192 @@ describe('QA Certification Workspace Service Test', () => {
       );
 
       expect(result).toEqual(expected);
+    });
+
+    it('successfully calls export() with only testSummaryIds', async () => {
+      const expected = {
+        version: undefined,
+        orisCode: 1,
+        testSummaryData: [testSummary],
+        certificationEventData: [],
+        testExtensionExemptionData: [],
+      };
+
+      const paramsDTO = new QACertificationParamsDTO();
+      paramsDTO.facilityId = 1;
+      paramsDTO.testSummaryIds = ['1'];
+      paramsDTO.reportedValuesOnly = false;
+
+      const result = await service.export(
+        paramsDTO,
+        paramsDTO.reportedValuesOnly,
+      );
+
+      expect(result.orisCode).toEqual(expected.orisCode);
+      expect(result.testSummaryData).toEqual(expected.testSummaryData);
+      expect(result.certificationEventData).toEqual(expected.certificationEventData);
+      expect(result.testExtensionExemptionData).toEqual(expected.testExtensionExemptionData);
+    });
+
+    it('successfully calls export() with only qaCertificationEventIds', async () => {
+      const expected = {
+        version: undefined,
+        orisCode: 1,
+        testSummaryData: [],
+        certificationEventData: [qaCertEventDto],
+        testExtensionExemptionData: [],
+      };
+
+      const paramsDTO = new QACertificationParamsDTO();
+      paramsDTO.facilityId = 1;
+      paramsDTO.qaCertificationEventIds = ['1'];
+      paramsDTO.reportedValuesOnly = false;
+
+      const result = await service.export(
+        paramsDTO,
+        paramsDTO.reportedValuesOnly,
+      );
+
+      expect(result.orisCode).toEqual(expected.orisCode);
+      expect(result.testSummaryData).toEqual(expected.testSummaryData);
+      expect(result.certificationEventData).toEqual(expected.certificationEventData);
+      expect(result.testExtensionExemptionData).toEqual(expected.testExtensionExemptionData);
+    });
+
+    it('successfully calls export() with only qaTestExtensionExemptionIds', async () => {
+      const expected = {
+        version: undefined,
+        orisCode: 1,
+        testSummaryData: [],
+        certificationEventData: [],
+        testExtensionExemptionData: [testExtExmtDto],
+      };
+
+      const paramsDTO = new QACertificationParamsDTO();
+      paramsDTO.facilityId = 1;
+      paramsDTO.qaTestExtensionExemptionIds = ['1'];
+      paramsDTO.reportedValuesOnly = false;
+
+      const result = await service.export(
+        paramsDTO,
+        paramsDTO.reportedValuesOnly,
+      );
+
+      expect(result.orisCode).toEqual(expected.orisCode);
+      expect(result.testSummaryData).toEqual(expected.testSummaryData);
+      expect(result.certificationEventData).toEqual(expected.certificationEventData);
+      expect(result.testExtensionExemptionData).toEqual(expected.testExtensionExemptionData);
+    });
+
+    it('successfully calls export() with all ID parameters defined', async () => {
+      const expected = {
+        version: undefined,
+        orisCode: 1,
+        testSummaryData: [testSummary],
+        certificationEventData: [qaCertEventDto],
+        testExtensionExemptionData: [testExtExmtDto],
+      };
+
+      const paramsDTO = new QACertificationParamsDTO();
+      paramsDTO.facilityId = 1;
+      paramsDTO.testSummaryIds = ['1'];
+      paramsDTO.qaCertificationEventIds = ['1'];
+      paramsDTO.qaTestExtensionExemptionIds = ['1'];
+      paramsDTO.reportedValuesOnly = false;
+
+      const result = await service.export(
+        paramsDTO,
+        paramsDTO.reportedValuesOnly,
+      );
+
+      expect(result.orisCode).toEqual(expected.orisCode);
+      expect(result.testSummaryData).toEqual(expected.testSummaryData);
+      expect(result.certificationEventData).toEqual(expected.certificationEventData);
+      expect(result.testExtensionExemptionData).toEqual(expected.testExtensionExemptionData);
+    });
+
+    it('successfully calls export() with mixed ID parameters', async () => {
+      const expected = {
+        version: undefined,
+        orisCode: 1,
+        testSummaryData: [testSummary],
+        certificationEventData: [qaCertEventDto],
+        testExtensionExemptionData: [],
+      };
+
+      const paramsDTO = new QACertificationParamsDTO();
+      paramsDTO.facilityId = 1;
+      paramsDTO.testSummaryIds = ['1'];
+      paramsDTO.qaCertificationEventIds = ['1'];
+      // No qaTestExtensionExemptionIds
+      paramsDTO.reportedValuesOnly = false;
+
+      const result = await service.export(
+        paramsDTO,
+        paramsDTO.reportedValuesOnly,
+      );
+
+      expect(result.orisCode).toEqual(expected.orisCode);
+      expect(result.testSummaryData).toEqual(expected.testSummaryData);
+      expect(result.certificationEventData).toEqual(expected.certificationEventData);
+      expect(result.testExtensionExemptionData).toEqual(expected.testExtensionExemptionData);
+    });
+
+    it('handles undefined QaCertificationSchema', async () => {
+      // Temporarily set QaCertificationSchema to undefined
+      const originalSchema = service['easeyContentService'].QaCertificationSchema;
+      service['easeyContentService'].QaCertificationSchema = undefined;
+
+      const expected = {
+        orisCode: 1,
+        testSummaryData: [testSummary],
+        certificationEventData: [qaCertEventDto],
+        testExtensionExemptionData: [testExtExmtDto],
+      };
+
+      const paramsDTO = new QACertificationParamsDTO();
+      paramsDTO.facilityId = 1;
+      paramsDTO.reportedValuesOnly = false;
+
+      const result = await service.export(
+        paramsDTO,
+        paramsDTO.reportedValuesOnly,
+      );
+
+      // Restore original value
+      service['easeyContentService'].QaCertificationSchema = originalSchema;
+
+      // Check that the result has the expected properties
+      expect(result.orisCode).toEqual(expected.orisCode);
+      expect(result.testSummaryData).toEqual(expected.testSummaryData);
+      expect(result.certificationEventData).toEqual(expected.certificationEventData);
+      expect(result.testExtensionExemptionData).toEqual(expected.testExtensionExemptionData);
+    });
+
+    it('successfully calls export() with rptValuesOnly = false', async () => {
+      const expected = qaCertDto;
+      expected.testSummaryData = [testSummary];
+      expected.certificationEventData = [qaCertEventDto];
+      expected.testExtensionExemptionData = [testExtExmtDto];
+      expected.orisCode = 1;
+
+      const paramsDTO = new QACertificationParamsDTO();
+      paramsDTO.facilityId = 1;
+      paramsDTO.reportedValuesOnly = false;
+
+      // Mock removeNonReportedValues to verify it's not called
+      const removeNonReportedValuesSpy = jest.spyOn(
+        require('../utilities/remove-non-reported-values'),
+        'removeNonReportedValues',
+      ).mockImplementation(jest.fn());
+
+      const result = await service.export(
+        paramsDTO,
+        paramsDTO.reportedValuesOnly,
+      );
+
+      expect(result.orisCode).toEqual(expected.orisCode);
+      expect(removeNonReportedValuesSpy).not.toHaveBeenCalled();
     });
   });
 
@@ -225,5 +411,92 @@ describe('QA Certification Workspace Service Test', () => {
       // Verify transaction was called
       expect(entityManager.transaction).toHaveBeenCalled();
     });
+
+    it('handles empty arrays in payload', async () => {
+      const emptyPayload = new QACertificationImportDTO();
+      emptyPayload.orisCode = 1;
+      emptyPayload.testSummaryData = [];
+      emptyPayload.testExtensionExemptionData = [];
+      emptyPayload.certificationEventData = [];
+
+      const result = await service.import([location], emptyPayload, userId, []);
+
+      expect(result).toEqual({
+        message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${emptyPayload.orisCode}]`,
+      });
+      expect(entityManager.transaction).toHaveBeenCalled();
+    });
+
+    it('handles undefined arrays in payload', async () => {
+      const undefinedPayload = new QACertificationImportDTO();
+      undefinedPayload.orisCode = 1;
+      // No arrays defined
+
+      const result = await service.import([location], undefinedPayload, userId, []);
+
+      expect(result).toEqual({
+        message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${undefinedPayload.orisCode}]`,
+      });
+      expect(entityManager.transaction).toHaveBeenCalled();
+    });
+
+    it('handles partial payload with only testSummaryData', async () => {
+      const partialPayload = new QACertificationImportDTO();
+      partialPayload.orisCode = 1;
+      partialPayload.testSummaryData = [new TestSummaryImportDTO()];
+      partialPayload.testSummaryData[0].unitId = '1';
+      partialPayload.testSummaryData[0].stackPipeId = '1';
+      // No other data types
+
+      const testSummaryServiceSpy = jest.spyOn(service['testSummaryService'], 'import');
+
+      const result = await service.import([location], partialPayload, userId, []);
+
+      expect(result).toEqual({
+        message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${partialPayload.orisCode}]`,
+      });
+      expect(testSummaryServiceSpy).toHaveBeenCalled();
+      expect(entityManager.transaction).toHaveBeenCalled();
+    });
+
+    it('handles partial payload with only testExtensionExemptionData', async () => {
+      const partialPayload = new QACertificationImportDTO();
+      partialPayload.orisCode = 1;
+      partialPayload.testExtensionExemptionData = [new TestExtensionExemptionImportDTO()];
+      partialPayload.testExtensionExemptionData[0].unitId = '1';
+      partialPayload.testExtensionExemptionData[0].stackPipeId = '1';
+      // No other data types
+
+      const testExtensionExemptionServiceSpy = jest.spyOn(service['testExtensionExemptionService'], 'import');
+
+      const result = await service.import([location], partialPayload, userId, []);
+
+      expect(result).toEqual({
+        message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${partialPayload.orisCode}]`,
+      });
+      expect(testExtensionExemptionServiceSpy).toHaveBeenCalled();
+      expect(entityManager.transaction).toHaveBeenCalled();
+    });
+
+    it('handles partial payload with only certificationEventData', async () => {
+      const partialPayload = new QACertificationImportDTO();
+      partialPayload.orisCode = 1;
+      partialPayload.certificationEventData = [new QACertificationEventImportDTO()];
+      partialPayload.certificationEventData[0].unitId = '1';
+      partialPayload.certificationEventData[0].stackPipeId = '1';
+      // No other data types
+
+      const qaCertEventServiceSpy = jest.spyOn(service['qaCertEventService'], 'import');
+
+      const result = await service.import([location], partialPayload, userId, []);
+
+      expect(result).toEqual({
+        message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${partialPayload.orisCode}]`,
+      });
+      expect(qaCertEventServiceSpy).toHaveBeenCalled();
+      expect(entityManager.transaction).toHaveBeenCalled();
+    });
   });
 });
+
+
