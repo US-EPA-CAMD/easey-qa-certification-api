@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 import {
   QACertificationDTO,
   QACertificationImportDTO,
@@ -117,8 +118,15 @@ const mockQATestExtensionExemptionService = () => ({
   import: jest.fn().mockResolvedValue(undefined),
 });
 
+const mockEntityManager = () => ({
+  transaction: jest.fn().mockImplementation(async callback => {
+    return await callback();
+  }),
+});
+
 describe('QA Certification Workspace Service Test', () => {
   let service: QACertificationWorkspaceService;
+  let entityManager: EntityManager;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -145,10 +153,15 @@ describe('QA Certification Workspace Service Test', () => {
             }),
           })
         },
+        {
+          provide: EntityManager,
+          useFactory: mockEntityManager,
+        },
       ],
     }).compile();
 
     service = module.get(QACertificationWorkspaceService);
+    entityManager = module.get(EntityManager);
   });
 
   describe('export', () => {
@@ -177,6 +190,7 @@ describe('QA Certification Workspace Service Test', () => {
       expect(result).toEqual({
         message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${payload.orisCode}]`,
       });
+      expect(entityManager.transaction).toHaveBeenCalled();
     });
 
     it('successfully calls import() service function when qaSuppData found ', async () => {
@@ -186,6 +200,30 @@ describe('QA Certification Workspace Service Test', () => {
       expect(result).toEqual({
         message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${payload.orisCode}]`,
       });
+      expect(entityManager.transaction).toHaveBeenCalled();
+    });
+
+    it('handles errors and rolls back transaction', async () => {
+      // Mock the transaction method to simulate error handling
+      jest.spyOn(entityManager, 'transaction').mockImplementation(async (callback: any) => {
+        try {
+          return await callback();
+        } catch (error) {
+          throw error;
+        }
+      });
+
+      // Mock the testSummaryService to throw an error
+      const testSummaryService = jest.spyOn(service['testSummaryService'], 'import');
+      testSummaryService.mockRejectedValueOnce(new Error('Test error'));
+
+      // Expect the import to throw an error
+      await expect(
+        service.import([location], payload, userId, []),
+      ).rejects.toThrow('Test error');
+
+      // Verify transaction was called
+      expect(entityManager.transaction).toHaveBeenCalled();
     });
   });
 });
