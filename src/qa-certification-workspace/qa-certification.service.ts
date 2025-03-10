@@ -90,9 +90,7 @@ export class QACertificationWorkspaceService {
         }
 
         // Get supplemental ID if available
-        const suppId = qaSupprecords && qaSupprecords[idx]
-          ? qaSupprecords[idx].testSumId
-          : null;
+        const suppId = qaSupprecords?.[idx]?.testSumId ?? null;
 
         // Call the import function with transaction entity manager
         return importFn(location.locationId, item, userId, suppId, trx);
