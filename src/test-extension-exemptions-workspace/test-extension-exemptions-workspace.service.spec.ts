@@ -1,6 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import {
@@ -213,6 +214,29 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
 
     });
 
+    it('should call the createTestExtensionExemption with transaction and create test extension', async () => {
+      jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
+
+      // Mock EntityManager
+      const mockEntityManager = {
+        getRepository: jest.fn().mockReturnValue({
+          create: jest.fn().mockReturnValue(entity),
+          save: jest.fn().mockResolvedValue(entity),
+          findOneBy: jest.fn().mockResolvedValue(entity),
+        }),
+      };
+
+      const result = await service.createTestExtensionExemption(
+        locationId,
+        payload,
+        userId,
+        mockEntityManager as any,
+      );
+
+      expect(result).toEqual(dto);
+      expect(mockEntityManager.getRepository).toHaveBeenCalled();
+    });
+
     it('should call the createTestExtensionExemption and create test extension with historicalRecordId', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
 
@@ -296,6 +320,29 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
       expect(result).toEqual(dto);
     });
 
+    it('should call the updateTestExtensionExemption with transaction and update Test Extension Exemption', async () => {
+      jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
+
+      // Mock EntityManager
+      const mockEntityManager = {
+        getRepository: jest.fn().mockReturnValue({
+          findOneBy: jest.fn().mockResolvedValue(entity),
+          save: jest.fn().mockResolvedValue(entity),
+        }),
+      };
+
+      const result = await service.updateTestExtensionExemption(
+        locationId,
+        testExtExpId,
+        payload,
+        userId,
+        mockEntityManager as any,
+      );
+
+      expect(result).toEqual(dto);
+      expect(mockEntityManager.getRepository).toHaveBeenCalled();
+    });
+
     it('should call updateTestExtensionExemption and throw error while Test Extension Exemption not found', async () => {
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
@@ -321,6 +368,20 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
       const result = await service.deleteTestExtensionExemption(testExtExpId);
 
       expect(result).toEqual(undefined);
+    });
+
+    it('should call the deleteTestExtensionExemption with transaction and delete test extension exemption', async () => {
+      // Mock EntityManager
+      const mockEntityManager = {
+        getRepository: jest.fn().mockReturnValue({
+          delete: jest.fn().mockResolvedValue(null),
+        }),
+      };
+
+      const result = await service.deleteTestExtensionExemption(testExtExpId, mockEntityManager as any);
+
+      expect(result).toEqual(undefined);
+      expect(mockEntityManager.getRepository).toHaveBeenCalled();
     });
 
     it('should call the deleteTestExtensionExemption and throw error while deleting test Extension Exemption', async () => {
@@ -401,25 +462,82 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
   });
 
   describe('import', () => {
-    it('Should create QA Test Extension Exemption ', async () => {
+    it('Should create QA Test Extension Exemption', async () => {
+      const importPayload = payload;
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+      const createSpy = jest.spyOn(service, 'createTestExtensionExemption');
+
+      const result = await service.import(locationId, importPayload, userId);
+
+      expect(result).toEqual(null);
+      expect(createSpy).toHaveBeenCalledWith(
+        locationId,
+        importPayload,
+        userId,
+        undefined,
+      );
+    });
+
+    it('Should create QA Test Extension Exemption with transaction', async () => {
       const importPayload = payload;
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
-      const result = await service.import(locationId, importPayload, userId);
+      // Mock EntityManager
+      const mockEntityManager = {} as EntityManager;
+
+      const createSpy = jest.spyOn(service, 'createTestExtensionExemption')
+        .mockResolvedValue(dto);
+
+      const result = await service.import(locationId, importPayload, userId, mockEntityManager);
 
       expect(result).toEqual(null);
+      expect(createSpy).toHaveBeenCalledWith(
+        locationId,
+        importPayload,
+        userId,
+        mockEntityManager,
+      );
     });
 
-    it('Should update QA Test Extension Exemption ', async () => {
+    it('Should update QA Test Extension Exemption', async () => {
       entity.id = '1';
-
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(entity);
+      const updateSpy = jest.spyOn(service, 'updateTestExtensionExemption');
 
       const importPayload = payload;
-
       const result = await service.import(locationId, importPayload, userId);
 
       expect(result).toEqual(null);
+      expect(updateSpy).toHaveBeenCalledWith(
+        locationId,
+        entity.id,
+        importPayload,
+        userId,
+        undefined,
+      );
+    });
+
+    it('Should update QA Test Extension Exemption with transaction', async () => {
+      entity.id = '1';
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(entity);
+
+      // Mock EntityManager
+      const mockEntityManager = {} as EntityManager;
+
+      const updateSpy = jest.spyOn(service, 'updateTestExtensionExemption')
+        .mockResolvedValue(dto);
+
+      const importPayload = payload;
+      const result = await service.import(locationId, importPayload, userId, mockEntityManager);
+
+      expect(result).toEqual(null);
+      expect(updateSpy).toHaveBeenCalledWith(
+        locationId,
+        entity.id,
+        importPayload,
+        userId,
+        mockEntityManager,
+      );
     });
   });
 });

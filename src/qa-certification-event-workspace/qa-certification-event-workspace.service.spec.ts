@@ -1,6 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import {
@@ -150,6 +151,29 @@ describe('QACertificationEventWorkspaceService', () => {
       expect(result).toEqual(qaCertEventDTO);
     });
 
+    it('calls the createQACertEvent with transaction and inserts a QA Certification Event', async () => {
+      jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
+
+      // Mock EntityManager
+      const mockEntityManager = {
+        getRepository: jest.fn().mockReturnValue({
+          create: jest.fn().mockReturnValue(entity),
+          save: jest.fn().mockResolvedValue(entity),
+          findOneBy: jest.fn().mockResolvedValue(entity),
+        }),
+      };
+
+      const result = await service.createQACertEvent(
+        locationId,
+        payload,
+        userId,
+        mockEntityManager as any,
+      );
+
+      expect(result).toEqual(qaCertEventDTO);
+      expect(mockEntityManager.getRepository).toHaveBeenCalled();
+    });
+
     it('should call the createQACertEvent and create QA Certification Event with stackPipeId', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue(lookupValuesResult);
 
@@ -258,6 +282,20 @@ describe('QACertificationEventWorkspaceService', () => {
       expect(result).toEqual(undefined);
     });
 
+    it('should call the deleteQACertEvent with transaction and delete QA Certification Event', async () => {
+      // Mock EntityManager
+      const mockEntityManager = {
+        getRepository: jest.fn().mockReturnValue({
+          delete: jest.fn().mockResolvedValue(null),
+        }),
+      };
+
+      const result = await service.deleteQACertEvent(qaCertEventId, mockEntityManager as any);
+
+      expect(result).toEqual(undefined);
+      expect(mockEntityManager.getRepository).toHaveBeenCalled();
+    });
+
     it('should call the deleteQACertEvent and throw error while deleting QA Certification Event record', async () => {
       jest
         .spyOn(repository, 'delete')
@@ -323,6 +361,27 @@ describe('QACertificationEventWorkspaceService', () => {
       expect(result).toEqual(qaCertEventDTO);
     });
 
+    it('should update a QA Certification Event record with transaction', async () => {
+      // Mock EntityManager
+      const mockEntityManager = {
+        getRepository: jest.fn().mockReturnValue({
+          findOneBy: jest.fn().mockResolvedValue(entity),
+          save: jest.fn().mockResolvedValue(entity),
+        }),
+      };
+
+      const result = await service.updateQACertEvent(
+        locationId,
+        qaCertEventId,
+        payload,
+        userId,
+        mockEntityManager as any,
+      );
+
+      expect(result).toEqual(qaCertEventDTO);
+      expect(mockEntityManager.getRepository).toHaveBeenCalled();
+    });
+
     it('should throw an error while updating a QA Certification Event record', async () => {
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
@@ -360,25 +419,82 @@ describe('QACertificationEventWorkspaceService', () => {
   });
 
   describe('import', () => {
-    it('Should create QA Cert Event ', async () => {
+    it('Should create QA Cert Event', async () => {
+      const importPayload = payload;
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+      const createSpy = jest.spyOn(service, 'createQACertEvent');
+
+      const result = await service.import(locationId, importPayload, userId);
+
+      expect(result).toEqual(null);
+      expect(createSpy).toHaveBeenCalledWith(
+        locationId,
+        importPayload,
+        userId,
+        undefined,
+      );
+    });
+
+    it('Should create QA Cert Event with transaction', async () => {
       const importPayload = payload;
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
 
-      const result = await service.import(locationId, importPayload, userId);
+      // Mock EntityManager
+      const mockEntityManager = {} as EntityManager;
+
+      const createSpy = jest.spyOn(service, 'createQACertEvent')
+        .mockResolvedValue(qaCertEventDTO);
+
+      const result = await service.import(locationId, importPayload, userId, mockEntityManager);
 
       expect(result).toEqual(null);
+      expect(createSpy).toHaveBeenCalledWith(
+        locationId,
+        importPayload,
+        userId,
+        mockEntityManager,
+      );
     });
 
-    it('Should update QA Cert Event ', async () => {
+    it('Should update QA Cert Event', async () => {
       entity.id = '1';
-
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(entity);
+      const updateSpy = jest.spyOn(service, 'updateQACertEvent');
 
       const importPayload = payload;
-
       const result = await service.import(locationId, importPayload, userId);
 
       expect(result).toEqual(null);
+      expect(updateSpy).toHaveBeenCalledWith(
+        locationId,
+        entity.id,
+        importPayload,
+        userId,
+        undefined,
+      );
+    });
+
+    it('Should update QA Cert Event with transaction', async () => {
+      entity.id = '1';
+      jest.spyOn(repository, 'findOneBy').mockResolvedValue(entity);
+
+      // Mock EntityManager
+      const mockEntityManager = {} as EntityManager;
+
+      const updateSpy = jest.spyOn(service, 'updateQACertEvent')
+        .mockResolvedValue(qaCertEventDTO);
+
+      const importPayload = payload;
+      const result = await service.import(locationId, importPayload, userId, mockEntityManager);
+
+      expect(result).toEqual(null);
+      expect(updateSpy).toHaveBeenCalledWith(
+        locationId,
+        entity.id,
+        importPayload,
+        userId,
+        mockEntityManager,
+      );
     });
   });
 });

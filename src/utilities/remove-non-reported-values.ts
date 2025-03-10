@@ -1,5 +1,6 @@
 import { TestSummaryDTO } from '../dto/test-summary.dto';
 import { QACertificationDTO } from '../dto/qa-certification.dto';
+import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { CalibrationInjectionDTO } from '../dto/calibration-injection.dto';
 import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
 import { LinearityInjectionDTO } from '../dto/linearity-injection.dto';
@@ -30,6 +31,117 @@ import { ProtocolGasDTO } from '../dto/protocol-gas.dto';
 import { AirEmissionTestingDTO } from '../dto/air-emission-test.dto';
 import { QACertificationEventDTO } from '../dto/qa-certification-event.dto';
 import { TestExtensionExemptionDTO } from '../dto/test-extension-exemption.dto';
+
+/**
+ * Shared utility function to build QA certification export data
+ * This reduces code duplication between QACertificationService and QACertificationWorkspaceService
+ *
+ * @param params Export parameters
+ * @param services Service objects needed for export
+ * @param schemaVersion Optional schema version
+ * @param rptValuesOnly Whether to include only reported values
+ * @returns QA certification data
+ */
+export async function buildQACertificationExport(
+  params: QACertificationParamsDTO,
+  services: {
+    testSummaryService: any;
+    qaCertEventService: any;
+    testExtensionExemptionService: any;
+  },
+  schemaVersion?: string,
+  rptValuesOnly: boolean = false,
+): Promise<QACertificationDTO> {
+  const promises = [];
+
+  // Index constants for array access
+  const SUMMARIES = 0;
+  const EVENTS = 1;
+  const EXT_EXEMPTIONS = 2;
+
+  // Determine if we should export test summaries
+  const shouldExportTestSummaries =
+    params.testSummaryIds ||
+    (!params.testSummaryIds &&
+      !params.qaCertificationEventIds &&
+      !params.qaTestExtensionExemptionIds);
+
+  // Add test summaries promise
+  promises.push(
+    shouldExportTestSummaries
+      ? services.testSummaryService.export(
+        params.facilityId,
+        params.unitIds,
+        params.stackPipeIds,
+        params.testSummaryIds,
+        params.testTypeCodes,
+        params.beginDate,
+        params.endDate,
+      )
+      : [],
+  );
+
+  // Determine if we should export certification events
+  const shouldExportCertEvents =
+    params.qaCertificationEventIds ||
+    (!params.testSummaryIds &&
+      !params.qaCertificationEventIds &&
+      !params.qaTestExtensionExemptionIds);
+
+  // Add certification events promise
+  promises.push(
+    shouldExportCertEvents
+      ? services.qaCertEventService.export(
+        params.facilityId,
+        params.unitIds,
+        params.stackPipeIds,
+        params.qaCertificationEventIds,
+        params.beginDate,
+        params.endDate,
+      )
+      : [],
+  );
+
+  // Determine if we should export test extension exemptions
+  const shouldExportExtExemptions =
+    params.qaTestExtensionExemptionIds ||
+    (!params.testSummaryIds &&
+      !params.qaCertificationEventIds &&
+      !params.qaTestExtensionExemptionIds);
+
+  // Add test extension exemptions promise
+  promises.push(
+    shouldExportExtExemptions
+      ? services.testExtensionExemptionService.export(
+        params.facilityId,
+        params.unitIds,
+        params.stackPipeIds,
+        params.qaTestExtensionExemptionIds,
+        params.beginDate,
+        params.endDate,
+      )
+      : [],
+  );
+
+  // Wait for all promises to resolve
+  const results = await Promise.all(promises);
+
+  // Build result object
+  const resultObject = {
+    version: schemaVersion,
+    orisCode: Number(params.facilityId),
+    testSummaryData: results[SUMMARIES],
+    certificationEventData: results[EVENTS],
+    testExtensionExemptionData: results[EXT_EXEMPTIONS],
+  };
+
+  // Remove non-reported values if requested
+  if (rptValuesOnly) {
+    await removeNonReportedValues(resultObject);
+  }
+
+  return resultObject;
+}
 
 export async function removeNonReportedValues(dto: QACertificationDTO) {
   const promises = [];

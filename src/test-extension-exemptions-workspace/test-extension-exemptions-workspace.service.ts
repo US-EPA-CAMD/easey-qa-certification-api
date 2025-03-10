@@ -6,7 +6,7 @@ import {
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { IsNull } from 'typeorm';
+import { EntityManager, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
@@ -123,6 +123,7 @@ export class TestExtensionExemptionsWorkspaceService {
     locationId: string,
     payload: TestExtensionExemptionImportDTO,
     userId: string,
+    trx?: EntityManager,
   ) {
     const {
       reportPeriodId,
@@ -146,12 +147,14 @@ export class TestExtensionExemptionsWorkspaceService {
         record.id,
         payload,
         userId,
+        trx,
       );
     } else {
       importedTestExtensionExemption = await this.createTestExtensionExemption(
         locationId,
         payload,
         userId,
+        trx,
       );
     }
 
@@ -166,6 +169,7 @@ export class TestExtensionExemptionsWorkspaceService {
     locationId: string,
     payload: TestExtensionExemptionBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<TestExtensionExemptionRecordDTO> {
     const timestamp = currentDateTime();
     const {
@@ -209,7 +213,9 @@ export class TestExtensionExemptionsWorkspaceService {
       submissionAvailabilityCode: 'REQUIRE',
     });
 
-    await this.repository.save(entity);
+    // Use the transaction entity manager if provided
+    const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+    await repo.save(entity);
 
     const result = await this.repository.getTestExtensionExemptionById(
       entity.id,
@@ -223,6 +229,7 @@ export class TestExtensionExemptionsWorkspaceService {
     id: string,
     payload: TestExtensionExemptionBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<TestExtensionExemptionRecordDTO> {
     const timestamp = currentDateTime();
     const record = await this.repository.findOneBy({ id });
@@ -258,13 +265,17 @@ export class TestExtensionExemptionsWorkspaceService {
     record.pendingStatusCode = 'PENDING';
     record.submissionAvailabilityCode = 'REQUIRE';
 
-    await this.repository.save(record);
+    // Use the transaction entity manager if provided
+    const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+    await repo.save(record);
     return this.getTestExtensionExemptionById(record.id);
   }
 
-  async deleteTestExtensionExemption(id: string): Promise<void> {
+  async deleteTestExtensionExemption(id: string, trx?: EntityManager): Promise<void> {
     try {
-      await this.repository.delete(id);
+      // Use the transaction entity manager if provided
+      const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+      await repo.delete(id);
     } catch (e) {
       throw new InternalServerErrorException(
         `Error deleting Test Extension Exemption record Id [${id}]`,

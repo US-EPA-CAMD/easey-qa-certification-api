@@ -6,7 +6,7 @@ import {
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { IsNull } from 'typeorm';
+import { EntityManager, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
@@ -38,6 +38,7 @@ export class QACertificationEventWorkspaceService {
     locationId: string,
     payload: QACertificationEventBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<QACertificationEventRecordDTO> {
     const timestamp = currentDateTime();
 
@@ -80,7 +81,9 @@ export class QACertificationEventWorkspaceService {
       submissionAvailabilityCode: 'REQUIRE',
     });
 
-    await this.repository.save(entity);
+    // Use the transaction entity manager if provided
+    const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+    await repo.save(entity);
 
     const result = await this.repository.getQACertificationEventById(entity.id);
 
@@ -158,9 +161,11 @@ export class QACertificationEventWorkspaceService {
     };
   }
 
-  async deleteQACertEvent(id: string): Promise<void> {
+  async deleteQACertEvent(id: string, trx?: EntityManager): Promise<void> {
     try {
-      await this.repository.delete(id);
+      // Use the transaction entity manager if provided
+      const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+      await repo.delete(id);
     } catch (e) {
       throw new InternalServerErrorException(
         `Error deleting QA Certification Event record Id [${id}]`,
@@ -194,6 +199,7 @@ export class QACertificationEventWorkspaceService {
     id: string,
     payload: QACertificationEventBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<QACertificationEventDTO> {
     const timestamp = currentDateTime();
 
@@ -231,7 +237,9 @@ export class QACertificationEventWorkspaceService {
     entity.evalStatusCode = 'EVAL';
     entity.submissionAvailabilityCode = 'REQUIRE';
 
-    await this.repository.save(entity);
+    // Use the transaction entity manager if provided
+    const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+    await repo.save(entity);
 
     return this.getQACertEvent(entity.id);
   }
@@ -260,6 +268,7 @@ export class QACertificationEventWorkspaceService {
     locationId: string,
     payload: QACertificationEventImportDTO,
     userId: string,
+    trx?: EntityManager,
   ) {
     const {
       componentRecordId,
@@ -282,12 +291,14 @@ export class QACertificationEventWorkspaceService {
         record.id,
         payload,
         userId,
+        trx,
       );
     } else {
       importedQACertEvent = await this.createQACertEvent(
         locationId,
         payload,
         userId,
+        trx,
       );
     }
 
@@ -298,3 +309,4 @@ export class QACertificationEventWorkspaceService {
     return null;
   }
 }
+

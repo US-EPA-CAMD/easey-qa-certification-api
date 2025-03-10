@@ -8,6 +8,7 @@ import {
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
@@ -136,16 +137,16 @@ export class TestSummaryWorkspaceService {
 
     let testSummaries = await this.map.many(results);
     const testSummaryIds = testSummaries.map(ts => ts.id);
-    const testSummaryReviewAndSubmitRecords = await this.testSummaryReviewAndSubmitService.getTestSummaryRecordsByTestSumIds(testSummaryIds); 
+    const testSummaryReviewAndSubmitRecords = await this.testSummaryReviewAndSubmitService.getTestSummaryRecordsByTestSumIds(testSummaryIds);
 
     testSummaries = testSummaries.map(testSummary => {
       const matchingRecord = testSummaryReviewAndSubmitRecords.find(record => record.testSumId === testSummary.id);
-      
+
       if (matchingRecord) {
         testSummary.evalStatusCode = matchingRecord.evalStatusCode || '';
-        testSummary.evalStatusCodeDescription = matchingRecord.evalStatusCodeDescription || ''; 
-        testSummary.submissionAvailabilityCode = matchingRecord.submissionAvailabilityCode || ''; 
-        testSummary.submissionAvailabilityCodeDescription = matchingRecord.submissionCodeDescription || ''; 
+        testSummary.evalStatusCodeDescription = matchingRecord.evalStatusCodeDescription || '';
+        testSummary.submissionAvailabilityCode = matchingRecord.submissionAvailabilityCode || '';
+        testSummary.submissionAvailabilityCodeDescription = matchingRecord.submissionCodeDescription || '';
       }
 
       return testSummary;
@@ -345,6 +346,7 @@ export class TestSummaryWorkspaceService {
     payload: TestSummaryImportDTO,
     userId: string,
     historicalrecordId?: string,
+    trx?: EntityManager,
   ) {
     const promises = [];
 
@@ -355,7 +357,7 @@ export class TestSummaryWorkspaceService {
     );
 
     if (summary) {
-      await this.deleteTestSummary(summary.id);
+      await this.deleteTestSummary(summary.id, trx);
     }
 
     const createdTestSummary = await this.createTestSummary(
@@ -363,6 +365,7 @@ export class TestSummaryWorkspaceService {
       payload,
       userId,
       historicalrecordId,
+      trx,
     );
 
     this.logger.log(
@@ -661,6 +664,7 @@ export class TestSummaryWorkspaceService {
     payload: TestSummaryBaseDTO,
     userId: string,
     historicalrecordId?: string,
+    trx?: EntityManager,
   ): Promise<TestSummaryRecordDTO> {
     const timestamp = currentDateTime();
     const [
@@ -702,8 +706,14 @@ export class TestSummaryWorkspaceService {
       evalStatusCode: 'EVAL',
     });
 
-    await this.repository.save(entity);
-    const result = await this.repository.getTestSummaryById(entity.id);
+    // Use the transaction entity manager if provided
+    const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+    await repo.save(entity);
+
+    // Use the transaction entity manager if provided
+    const result = await (trx
+      ? trx.getRepository(this.repository.target).findOne({ where: { id: entity.id } })
+      : this.repository.getTestSummaryById(entity.id));
 
     const dto = await this.map.one(result);
 
@@ -779,9 +789,11 @@ export class TestSummaryWorkspaceService {
     return this.getTestSummaryById(entity.id);
   }
 
-  async deleteTestSummary(id: string): Promise<void> {
+  async deleteTestSummary(id: string, trx?: EntityManager): Promise<void> {
     try {
-      await this.repository.delete(id);
+      // Use the transaction entity manager if provided
+      const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+      await repo.delete(id);
     } catch (e) {
       throw new InternalServerErrorException(
         `Error deleting Test Summary record Id [${id}]`,

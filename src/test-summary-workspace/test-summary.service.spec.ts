@@ -1,6 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
@@ -74,7 +75,7 @@ lineSumDto.testSumId = testSumId;
 
 const reviewAndSubmitTestSummaryDTO = new ReviewAndSubmitTestSummaryDTO();
 reviewAndSubmitTestSummaryDTO.testSumId = testSumId;
-reviewAndSubmitTestSummaryDTO.evalStatusCode = 'PENDING'; 
+reviewAndSubmitTestSummaryDTO.evalStatusCode = 'PENDING';
 
 const payload = new TestSummaryImportDTO();
 payload.testTypeCode = 'code';
@@ -385,7 +386,7 @@ describe('TestSummaryWorkspaceService', () => {
   });
 
   describe('createTestSummary', () => {
-    it('should call the createTestSummary and create test summariy', async () => {
+    it('should call the createTestSummary and create test summary', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
 
       jest
@@ -399,6 +400,30 @@ describe('TestSummaryWorkspaceService', () => {
       );
 
       expect(result).toEqual(testSummaryDto);
+    });
+
+    it('should call the createTestSummary with transaction and create test summary', async () => {
+      jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
+
+      // Mock EntityManager
+      const mockEntityManager = {
+        getRepository: jest.fn().mockReturnValue({
+          create: jest.fn().mockReturnValue(testSummary),
+          save: jest.fn().mockResolvedValue(testSummary),
+          findOne: jest.fn().mockResolvedValue(testSummary),
+        }),
+      };
+
+      const result = await service.createTestSummary(
+        locationId,
+        payload,
+        userId,
+        undefined,
+        mockEntityManager as any,
+      );
+
+      expect(result).toEqual(testSummaryDto);
+      expect(mockEntityManager.getRepository).toHaveBeenCalled();
     });
 
     it('should call the createTestSummary and throw error if Unit does not match', async () => {
@@ -427,7 +452,7 @@ describe('TestSummaryWorkspaceService', () => {
   });
 
   describe('updateTestSummary', () => {
-    it('should call the updateTestSummary and update test summariy', async () => {
+    it('should call the updateTestSummary and update test summary', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(testSummary);
 
@@ -441,7 +466,7 @@ describe('TestSummaryWorkspaceService', () => {
       expect(result).toEqual(testSummaryDto);
     });
 
-    it('should call updateTestSummary and throw error while test summariy not found', async () => {
+    it('should call updateTestSummary and throw error while test summary not found', async () => {
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
@@ -457,13 +482,27 @@ describe('TestSummaryWorkspaceService', () => {
   });
 
   describe('deleteTestSummary', () => {
-    it('should call the deleteTestSummary and delete test summariy', async () => {
+    it('should call the deleteTestSummary and delete test summary', async () => {
       const result = await service.deleteTestSummary(testSumId);
 
       expect(result).toEqual(undefined);
     });
 
-    it('should call the deleteTestSummary and throw error while deleting test summariy', async () => {
+    it('should call the deleteTestSummary with transaction and delete test summary', async () => {
+      // Mock EntityManager
+      const mockEntityManager = {
+        getRepository: jest.fn().mockReturnValue({
+          delete: jest.fn().mockResolvedValue(null),
+        }),
+      };
+
+      const result = await service.deleteTestSummary(testSumId, mockEntityManager as any);
+
+      expect(result).toEqual(undefined);
+      expect(mockEntityManager.getRepository).toHaveBeenCalled();
+    });
+
+    it('should call the deleteTestSummary and throw error while deleting test summary', async () => {
       jest
         .spyOn(repository, 'delete')
         .mockRejectedValue(new InternalServerErrorException());
@@ -487,6 +526,14 @@ describe('TestSummaryWorkspaceService', () => {
       expect(result).toEqual(undefined);
       expect(repository.findOneBy).toHaveBeenCalled();
       expect(repository.save).toHaveBeenCalled();
+    });
+
+    it('should not update eval status when isImport is true', async () => {
+      const result = await service.resetToNeedsEvaluation(testSumId, userId, true);
+
+      expect(result).toEqual(undefined);
+      expect(repository.findOneBy).not.toHaveBeenCalled();
+      expect(repository.save).not.toHaveBeenCalled();
     });
   });
 
@@ -523,11 +570,11 @@ describe('TestSummaryWorkspaceService', () => {
   });
 
   describe('import', () => {
-    it('Should create test summary ', async () => {
+    it('Should create test summary', async () => {
       const returnedSummary = testSummaryDto;
       returnedSummary.id = testSumId;
 
-      const creste = jest
+      const createSpy = jest
         .spyOn(service, 'createTestSummary')
         .mockResolvedValue(returnedSummary);
 
@@ -543,9 +590,127 @@ describe('TestSummaryWorkspaceService', () => {
         historicalrecordId,
       );
 
-      expect(creste).toHaveBeenCalled();
+      expect(createSpy).toHaveBeenCalledWith(
+        locationId,
+        importPayload,
+        userId,
+        historicalrecordId,
+        undefined,
+      );
       expect(result).toEqual(null);
-      expect(creste).toHaveBeenCalled();
+    });
+
+    it('Should create test summary with transaction', async () => {
+      const returnedSummary = testSummaryDto;
+      returnedSummary.id = testSumId;
+
+      // Mock EntityManager with proper repository methods
+      const mockEntityManager = {
+        getRepository: jest.fn().mockReturnValue({
+          create: jest.fn().mockReturnValue(testSummary),
+          save: jest.fn().mockResolvedValue(testSummary),
+          findOne: jest.fn().mockResolvedValue(testSummary),
+          delete: jest.fn().mockResolvedValue(null),
+        }),
+      };
+
+      const createSpy = jest
+        .spyOn(service, 'createTestSummary')
+        .mockResolvedValue(returnedSummary);
+
+      // Set testSummary.id to ensure it's not undefined when deleted
+      testSummary.id = testSumId;
+
+      const importPayload = payload;
+      const calInj = new CalibrationInjection();
+
+      importPayload.calibrationInjectionData = [calInj];
+
+      const result = await service.import(
+        locationId,
+        importPayload,
+        userId,
+        historicalrecordId,
+        mockEntityManager as any,
+      );
+
+      expect(createSpy).toHaveBeenCalledWith(
+        locationId,
+        importPayload,
+        userId,
+        historicalrecordId,
+        mockEntityManager,
+      );
+      expect(result).toEqual(null);
+    });
+
+    it('Should delete existing test summary and create new one', async () => {
+      const returnedSummary = testSummaryDto;
+      returnedSummary.id = testSumId;
+
+      jest.spyOn(repository, 'getTestSummaryByLocationId').mockResolvedValue(testSummary);
+
+      const deleteSpy = jest.spyOn(service, 'deleteTestSummary');
+      const createSpy = jest
+        .spyOn(service, 'createTestSummary')
+        .mockResolvedValue(returnedSummary);
+
+      const importPayload = payload;
+
+      const result = await service.import(
+        locationId,
+        importPayload,
+        userId,
+        historicalrecordId,
+      );
+
+      expect(deleteSpy).toHaveBeenCalledWith(testSummary.id, undefined);
+      expect(createSpy).toHaveBeenCalled();
+      expect(result).toEqual(null);
+    });
+
+    it('Should delete existing test summary and create new one with transaction', async () => {
+      const returnedSummary = testSummaryDto;
+      returnedSummary.id = testSumId;
+
+      // Ensure testSummary has an ID
+      testSummary.id = testSumId;
+      jest.spyOn(repository, 'getTestSummaryByLocationId').mockResolvedValue(testSummary);
+
+      // Mock EntityManager with proper repository methods
+      const mockEntityManager = {
+        getRepository: jest.fn().mockReturnValue({
+          create: jest.fn().mockReturnValue(testSummary),
+          save: jest.fn().mockResolvedValue(testSummary),
+          findOne: jest.fn().mockResolvedValue(testSummary),
+          delete: jest.fn().mockResolvedValue(null),
+        }),
+      };
+
+      const deleteSpy = jest.spyOn(service, 'deleteTestSummary');
+      const createSpy = jest
+        .spyOn(service, 'createTestSummary')
+        .mockResolvedValue(returnedSummary);
+
+      const importPayload = payload;
+
+      const result = await service.import(
+        locationId,
+        importPayload,
+        userId,
+        historicalrecordId,
+        mockEntityManager as any,
+      );
+
+      expect(deleteSpy).toHaveBeenCalledWith(testSummary.id, mockEntityManager);
+      expect(createSpy).toHaveBeenCalledWith(
+        locationId,
+        importPayload,
+        userId,
+        historicalrecordId,
+        mockEntityManager,
+      );
+      expect(result).toEqual(null);
     });
   });
 });
