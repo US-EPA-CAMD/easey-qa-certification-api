@@ -89,7 +89,7 @@ describe('UnitDefaultTestRunWorkspaceController', () => {
         testSumId,
         unitDefaultTestSumId,
       );
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items:[dto] });
     });
   });
 

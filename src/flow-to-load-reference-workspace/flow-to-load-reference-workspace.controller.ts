@@ -22,6 +22,7 @@ import {
 } from '../dto/flow-to-load-reference.dto';
 import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -52,8 +53,9 @@ export class FlowToLoadReferenceWorkspaceController {
   async getFlowToLoadReferences(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<FlowToLoadReferenceDTO[]> {
-    return this.service.getFlowToLoadReferences(testSumId);
+  ): Promise<ArrayResponse<FlowToLoadReferenceDTO>> {
+    const flowToLoadReferences = await this.service.getFlowToLoadReferences(testSumId);
+    return { items: flowToLoadReferences };
   }
 
   @Get(':id')

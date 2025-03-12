@@ -25,6 +25,7 @@ import {
 import { QACertificationEventChecksService } from './qa-certification-event-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -57,8 +58,9 @@ export class QACertificationEventWorkspaceController {
   })
   async getQACertEvents(
     @Param('locId') locationId: string,
-  ): Promise<QACertificationEventDTO[]> {
-    return this.service.getQACertEventsByLocationId(locationId);
+  ): Promise<ArrayResponse<QACertificationEventDTO>> {
+    const qaCertificationEvents = await this.service.getQACertEventsByLocationId(locationId);
+    return { items: qaCertificationEvents };
   }
 
   @Get(':id')

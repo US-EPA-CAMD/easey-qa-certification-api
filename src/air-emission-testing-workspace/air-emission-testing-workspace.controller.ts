@@ -23,6 +23,7 @@ import { AirEmissionTestingChecksService } from './air-emission-testing-checks.s
 import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -56,8 +57,12 @@ export class AirEmissionTestingWorkspaceController {
   async getAirEmissionTestings(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<AirEmissionTestingDTO[]> {
-    return this.service.getAirEmissionTestings(testSumId);
+  ): Promise<ArrayResponse<AirEmissionTestingDTO>> {
+    const airEmissionTestingRecordDTOS =  await this.service.getAirEmissionTestings(testSumId);
+
+    return  {
+      items: airEmissionTestingRecordDTOS
+    };
   }
 
   @Get(':id')

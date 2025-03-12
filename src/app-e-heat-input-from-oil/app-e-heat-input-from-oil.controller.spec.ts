@@ -57,7 +57,7 @@ describe('Appendix E Heat Input from Oil Controller', () => {
           corrTestSumId,
           corrTestRunId,
         ),
-      ).toBe(aeHiOilRecords);
+      ).toStrictEqual({ items:aeHiOilRecords });
     });
   });
 

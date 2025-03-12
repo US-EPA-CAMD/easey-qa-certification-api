@@ -23,6 +23,7 @@ import {
 import { CycleTimeInjectionChecksService } from './cycle-time-injection-workspace-checks.service';
 import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -57,8 +58,9 @@ export class CycleTimeInjectionWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('cycleTimeSumId') cycleTimeSumId: string,
-  ): Promise<CycleTimeInjectionRecordDTO[]> {
-    return this.service.getCycleTimeInjectionsByCycleTimeSumId(cycleTimeSumId);
+  ): Promise<ArrayResponse<CycleTimeInjectionRecordDTO>> {
+    const cycleTimeInjections = await this.service.getCycleTimeInjectionsByCycleTimeSumId(cycleTimeSumId);
+    return { items: cycleTimeInjections };
   }
 
   @Get(':id')
