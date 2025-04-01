@@ -34,6 +34,9 @@ export class Plant extends BaseEntity {
   @Column()
   state: string;
 
+  @Column({ name: 'frs_id' })
+  frsId: string;
+
   @OneToMany(
     () => Unit,
     o => o.plant,

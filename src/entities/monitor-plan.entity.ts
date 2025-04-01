@@ -7,10 +7,11 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { ReportingPeriod } from '../reporting-period.entity';
+
+import { ReportingPeriod } from './reporting-period.entity';
 import { MonitorPlanLocation } from './monitor-plan-location.entity';
 
-@Entity({ name: 'camdecmpswks.monitor_plan' })
+@Entity({ name: 'camdecmps.monitor_plan' })
 export class MonitorPlan extends BaseEntity {
   @PrimaryColumn({
     name: 'mon_plan_id',
@@ -48,8 +49,8 @@ export class MonitorPlan extends BaseEntity {
   @Column({ name: 'submission_availability_cd', type: 'varchar' })
   submissionAvailabilityCd: string;
 
-  @Column({ name: 'pending_status_cd', type: 'varchar' })
-  pendingStatusCd: string;
+  @Column({ name: 'last_evaluated_date', type: 'date' })
+  lastEvaluatedDate: Date;
 
   @JoinColumn({ name: 'begin_rpt_period_id' })
   @ManyToOne(
@@ -64,12 +65,6 @@ export class MonitorPlan extends BaseEntity {
     rp => rp.id,
   )
   endRptPeriod: ReportingPeriod;
-
-  @Column({ name: 'last_evaluated_date', type: 'date' })
-  lastEvaluatedDate: Date;
-
-  @Column({ name: 'eval_status_cd', type: 'varchar' })
-  evalStatusCd: string;
 
   @OneToMany(
     () => MonitorPlanLocation,
