@@ -3,3 +3,12 @@ environment: beta
 host: api-easey-beta.app.cloud.gov
 apiHost: api.epa.gov/easey/beta
 matsImportBucket: cg-4e77a460-aab1-4070-a67c-9debdc58a516
+maxConnectionPool: 15
+idleTimeout: 30000
+connectionTimeout: 10000
+acquireConnectionFromPoolTimeout: 15000
+statementTimeout: 300000
+idleInTransactionSessionTimeout: 300000
+maxUsesBeforeRecreatingConnection: 500
+sqlLogging: "error"
+maxQueryExecutionTime: 30000
