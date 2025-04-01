@@ -1,7 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, In, Repository } from 'typeorm';
 
 import { MatsDataSubmission } from '../entities/mats-data-submission.entity';
+
+const relations = {
+  averagingGroup: true,
+  facility: true,
+  location: {
+    stackPipe: true,
+    unit: true,
+  },
+  pollutants: true,
+  reportType: true,
+  status: true,
+  testMethods: true,
+};
 
 @Injectable()
 export class MatsDataSubmissionRepository extends Repository<
@@ -11,25 +24,23 @@ export class MatsDataSubmissionRepository extends Repository<
     super(MatsDataSubmission, entityManager);
   }
 
-  getMatsDataSubmissions(monPlanId: string): Promise<MatsDataSubmission[]> {
+  getMatsDataSubmission(id: number): Promise<MatsDataSubmission> {
+    return this.findOne({
+      where: {
+        id,
+      },
+      relations,
+    });
+  }
+
+  getMatsDataSubmissions(monPlanIds: string[]): Promise<MatsDataSubmission[]> {
     return this.find({
       where: {
         plan: {
-          id: monPlanId,
+          id: In(monPlanIds),
         },
       },
-      relations: {
-        averagingGroup: true,
-        facility: true,
-        location: {
-          stackPipe: true,
-          unit: true,
-        },
-        pollutants: true,
-        reportType: true,
-        status: true,
-        testMethods: true,
-      },
+      relations,
     });
   }
 }
