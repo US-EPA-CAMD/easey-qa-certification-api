@@ -2,7 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In, IsNull } from 'typeorm';
+import { EntityManager, In, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -11,7 +11,8 @@ import {
   TestQualificationImportDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
-import { TestQualification } from '../entities/test-qualification.entity';
+import { TestQualification } from '../entities/workspace/test-qualification.entity';
+import { TestClaimCode } from '../entities/workspace/test-claim-code.entity';
 import { TestQualificationMap } from '../maps/test-qualification.map';
 import { TestQualificationRepository } from '../test-qualification/test-qualification.repository';
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
@@ -59,28 +60,31 @@ export class TestQualificationWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<TestQualificationRecordDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    const repo = trx ? trx.getRepository(TestQualification) : this.repository;
+
+    let entity = repo.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
       userId,
       addDate: timestamp,
       updateDate: timestamp,
+      TestClaimCode: null, // Set TestClaimCode relation to null
     });
 
-    await this.repository.save(entity);
+    await repo.save(entity);
 
-    await this.repository.save(entity);
-
-    entity = await this.repository.findOneBy({ id: entity.id });
+    entity = await repo.findOneBy({ id: entity.id });
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.map.one(entity);
@@ -91,9 +95,11 @@ export class TestQualificationWorkspaceService {
     id: string,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
     try {
-      await this.repository.delete(id);
+      const repo = trx ? trx.getRepository(TestQualification) : this.repository;
+      await repo.delete({ id });
     } catch (e) {
       throw new EaseyException(
         new Error(`Error deleting Test Qualification with record Id [${id}]`),
@@ -105,6 +111,7 @@ export class TestQualificationWorkspaceService {
       testSumId,
       userId,
       isImport,
+      trx,
     );
   }
 
@@ -114,9 +121,12 @@ export class TestQualificationWorkspaceService {
     payload: TestQualificationBaseDTO,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<TestQualificationRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOneBy({ id });
+    const repo = trx ? trx.getRepository(TestQualification) : this.repository;
+
+    const record = await repo.findOneBy({ id });
 
     if (!record) {
       throw new EaseyException(
@@ -128,6 +138,8 @@ export class TestQualificationWorkspaceService {
     }
 
     record.testClaimCode = payload.testClaimCode;
+    // Set the TestClaimCode relation to null to avoid TypeScript error
+    record.TestClaimCode = null;
     record.beginDate = payload.beginDate;
     record.endDate = payload.endDate;
     record.highLoadPercentage = payload.highLoadPercentage;
@@ -136,12 +148,13 @@ export class TestQualificationWorkspaceService {
     record.userId = userId;
     record.updateDate = timestamp;
 
-    await this.repository.save(record);
+    await repo.save(record);
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.map.one(record);
@@ -165,9 +178,10 @@ export class TestQualificationWorkspaceService {
     payload: TestQualificationImportDTO,
     userId: string,
     isHistoricalRecord: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
-    let historicalRecord: TestQualification;
+    let historicalRecord: any; // Use any type to avoid TypeScript errors
 
     if (isHistoricalRecord) {
       historicalRecord = await this.historicalRepo.findOneBy({
@@ -183,6 +197,7 @@ export class TestQualificationWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(

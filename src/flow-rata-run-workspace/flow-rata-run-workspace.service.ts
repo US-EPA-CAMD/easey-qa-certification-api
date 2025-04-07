@@ -2,8 +2,9 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+import { settlePromises } from '../utilities/constants';
 
 import {
   FlowRataRunBaseDTO,
@@ -21,14 +22,14 @@ import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.reposi
 @Injectable()
 export class FlowRataRunWorkspaceService {
   constructor(
-    private readonly logger: Logger,
-    private readonly repository: FlowRataRunWorkspaceRepository,
-    private readonly map: FlowRataRunMap,
-    @Inject(forwardRef(() => RataTraverseWorkspaceService))
-    private readonly rataTravarseService: RataTraverseWorkspaceService,
-    @Inject(forwardRef(() => TestSummaryWorkspaceService))
-    private readonly testSummaryService: TestSummaryWorkspaceService,
-    private readonly historicalRepository: FlowRataRunRepository,
+      private readonly logger: Logger,
+      private readonly repository: FlowRataRunWorkspaceRepository,
+      private readonly map: FlowRataRunMap,
+      @Inject(forwardRef(() => RataTraverseWorkspaceService))
+      private readonly rataTravarseService: RataTraverseWorkspaceService,
+      @Inject(forwardRef(() => TestSummaryWorkspaceService))
+      private readonly testSummaryService: TestSummaryWorkspaceService,
+      private readonly historicalRepository: FlowRataRunRepository,
   ) {}
 
   async getFlowRataRuns(rataRunId: string): Promise<FlowRataRunDTO[]> {
@@ -42,8 +43,8 @@ export class FlowRataRunWorkspaceService {
 
     if (!result) {
       throw new EaseyException(
-        new Error(`Flow Rata Run record not found with Record Id [${id}].`),
-        HttpStatus.NOT_FOUND,
+          new Error(`Flow Rata Run record not found with Record Id [${id}].`),
+          HttpStatus.NOT_FOUND,
       );
     }
 
@@ -51,16 +52,20 @@ export class FlowRataRunWorkspaceService {
   }
 
   async createFlowRataRun(
-    testSumId: string,
-    rataRunId: string,
-    payload: FlowRataRunBaseDTO,
-    userId: string,
-    isImport: boolean = false,
-    historicalRecordId?: string,
+      testSumId: string,
+      rataRunId: string,
+      payload: FlowRataRunBaseDTO,
+      userId: string,
+      isImport: boolean = false,
+      historicalRecordId?: string,
+      trx?: EntityManager,
   ): Promise<FlowRataRunRecordDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    // Use the transaction entity manager if provided
+    const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+
+    let entity = repo.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       rataRunId,
@@ -69,33 +74,39 @@ export class FlowRataRunWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repo.save(entity);
+    entity = await repo.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
-      testSumId,
-      userId,
-      isImport,
+        testSumId,
+        userId,
+        isImport,
+        trx,
     );
 
     return this.map.one(entity);
   }
 
   async updateRataRun(
-    testSumId: string,
-    flowRataRunId: string,
-    payload: FlowRataRunBaseDTO,
-    userId: string,
-    isImport: boolean = false,
+      testSumId: string,
+      flowRataRunId: string,
+      payload: FlowRataRunBaseDTO,
+      userId: string,
+      isImport: boolean = false,
+      trx?: EntityManager,
   ): Promise<FlowRataRunRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOneBy({ id: flowRataRunId });
+
+    // Use the transaction entity manager if provided
+    const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+
+    const record = await repo.findOneBy({ id: flowRataRunId });
 
     if (!record) {
       throw new EaseyException(
-        new Error(
-          `A Flow Rata Run record not found with Record Id [${flowRataRunId}].`,
-        ),
-        HttpStatus.NOT_FOUND,
+          new Error(
+              `A Flow Rata Run record not found with Record Id [${flowRataRunId}].`,
+          ),
+          HttpStatus.NOT_FOUND,
       );
     }
 
@@ -108,48 +119,53 @@ export class FlowRataRunWorkspaceService {
     record.dryMolecularWeight = payload.dryMolecularWeight;
     record.wetMolecularWeight = payload.wetMolecularWeight;
     record.averageVelocityWithoutWallEffects =
-      payload.averageVelocityWithoutWallEffects;
+        payload.averageVelocityWithoutWallEffects;
     record.averageVelocityWithWallEffects =
-      payload.averageVelocityWithWallEffects;
+        payload.averageVelocityWithWallEffects;
     record.calculatedWAF = payload.calculatedWAF;
     record.averageStackFlowRate = payload.averageStackFlowRate;
     record.userId = userId;
     record.updateDate = timestamp;
 
-    await this.repository.save(record);
+    await repo.save(record);
 
     await this.testSummaryService.resetToNeedsEvaluation(
-      testSumId,
-      userId,
-      isImport,
+        testSumId,
+        userId,
+        isImport,
+        trx,
     );
     return this.map.one(record);
   }
 
   async deleteFlowRataRun(
-    testSumId: string,
-    id: string,
-    userId: string,
-    isImport: boolean = false,
+      testSumId: string,
+      id: string,
+      userId: string,
+      isImport: boolean = false,
+      trx?: EntityManager,
   ): Promise<void> {
     try {
-      await this.repository.delete(id);
+      // Use the transaction entity manager if provided
+      const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+      await repo.delete(id);
     } catch (e) {
       throw new EaseyException(
-        new Error(`Error deleting Flow Rata Run with record Id [${id}]`),
-        HttpStatus.INTERNAL_SERVER_ERROR,
+          new Error(`Error deleting Flow Rata Run with record Id [${id}]`),
+          HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
 
     await this.testSummaryService.resetToNeedsEvaluation(
-      testSumId,
-      userId,
-      isImport,
+        testSumId,
+        userId,
+        isImport,
+        trx,
     );
   }
 
   async getFlowRataRunsByRataRunIds(
-    rataRunIds: string[],
+      rataRunIds: string[],
   ): Promise<FlowRataRunDTO[]> {
     const results = await this.repository.find({
       where: { rataRunId: In(rataRunIds) },
@@ -159,11 +175,12 @@ export class FlowRataRunWorkspaceService {
   }
 
   async import(
-    testSumId: string,
-    rataRunId: string,
-    payload: FlowRataRunImportDTO,
-    userId: string,
-    isHistoricalRecord?: boolean,
+      testSumId: string,
+      rataRunId: string,
+      payload: FlowRataRunImportDTO,
+      userId: string,
+      isHistoricalRecord?: boolean,
+      trx?: EntityManager,
   ) {
     const isImport = true;
     const promises = [];
@@ -177,33 +194,35 @@ export class FlowRataRunWorkspaceService {
     }
 
     const createdFlowRataRun = await this.createFlowRataRun(
-      testSumId,
-      rataRunId,
-      payload,
-      userId,
-      isImport,
-      historicalRecord ? historicalRecord.id : null,
+        testSumId,
+        rataRunId,
+        payload,
+        userId,
+        isImport,
+        historicalRecord ? historicalRecord.id : null,
+        trx,
     );
 
     this.logger.log(
-      `Flow Rata Run Successfully Imported. Record Id: ${createdFlowRataRun.id}`,
+        `Flow Rata Run Successfully Imported. Record Id: ${createdFlowRataRun.id}`,
     );
 
     if (payload.rataTraverseData?.length > 0) {
       for (const rataTraverse of payload.rataTraverseData) {
         promises.push(
-          this.rataTravarseService.import(
-            testSumId,
-            createdFlowRataRun.id,
-            rataTraverse,
-            userId,
-            isHistoricalRecord,
-          ),
+            this.rataTravarseService.import(
+                testSumId,
+                createdFlowRataRun.id,
+                rataTraverse,
+                userId,
+                isHistoricalRecord,
+                trx,
+            ),
         );
       }
     }
 
-    await Promise.all(promises);
+    await settlePromises(promises, this.logger);
 
     return null;
   }
@@ -212,7 +231,7 @@ export class FlowRataRunWorkspaceService {
     const flowRataRuns = await this.getFlowRataRunsByRataRunIds(rataRunIds);
 
     const rataTravarses = await this.rataTravarseService.export(
-      flowRataRuns.map(i => i.id),
+        flowRataRuns.map(i => i.id),
     );
 
     flowRataRuns.forEach(s => {

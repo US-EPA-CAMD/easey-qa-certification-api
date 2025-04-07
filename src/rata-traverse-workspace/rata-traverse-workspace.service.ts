@@ -2,7 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -20,16 +20,16 @@ import { RataTraverseWorkspaceRepository } from './rata-traverse-workspace.repos
 @Injectable()
 export class RataTraverseWorkspaceService {
   constructor(
-    private readonly logger: Logger,
-    private readonly repository: RataTraverseWorkspaceRepository,
-    private readonly map: RataTraverseMap,
-    @Inject(forwardRef(() => TestSummaryWorkspaceService))
-    private readonly testSummaryService: TestSummaryWorkspaceService,
-    private readonly historicalRepository: RataTraverseRepository,
+      private readonly logger: Logger,
+      private readonly repository: RataTraverseWorkspaceRepository,
+      private readonly map: RataTraverseMap,
+      @Inject(forwardRef(() => TestSummaryWorkspaceService))
+      private readonly testSummaryService: TestSummaryWorkspaceService,
+      private readonly historicalRepository: RataTraverseRepository,
   ) {}
 
   async getRataTraverses(
-    flowRataRunId: string,
+      flowRataRunId: string,
   ): Promise<RataTraverseRecordDTO[]> {
     const records = await this.repository.find({ where: { flowRataRunId } });
 
@@ -41,8 +41,8 @@ export class RataTraverseWorkspaceService {
 
     if (!result) {
       throw new EaseyException(
-        new Error(`Rata Traverse record not found with Record Id [${id}].`),
-        HttpStatus.NOT_FOUND,
+          new Error(`Rata Traverse record not found with Record Id [${id}].`),
+          HttpStatus.NOT_FOUND,
       );
     }
 
@@ -50,16 +50,20 @@ export class RataTraverseWorkspaceService {
   }
 
   async createRataTraverse(
-    testSumId: string,
-    flowRataRunId: string,
-    payload: RataTraverseBaseDTO,
-    userId: string,
-    isImport: boolean = false,
-    historicalRecordId?: string,
+      testSumId: string,
+      flowRataRunId: string,
+      payload: RataTraverseBaseDTO,
+      userId: string,
+      isImport: boolean = false,
+      historicalRecordId?: string,
+      trx?: EntityManager,
   ): Promise<RataTraverseRecordDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    // Use the transaction entity manager if provided
+    const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+
+    let entity = repo.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       flowRataRunId,
@@ -68,35 +72,41 @@ export class RataTraverseWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
+    await repo.save(entity);
 
-    entity = await this.repository.findOneBy({ id: entity.id });
+    entity = await repo.findOneBy({ id: entity.id });
 
     await this.testSummaryService.resetToNeedsEvaluation(
-      testSumId,
-      userId,
-      isImport,
+        testSumId,
+        userId,
+        isImport,
+        trx,
     );
 
     return this.map.one(entity);
   }
 
   async updateRataTraverse(
-    testSumId: string,
-    rataTraverseId: string,
-    payload: RataTraverseBaseDTO,
-    userId: string,
-    isImport: boolean = false,
+      testSumId: string,
+      rataTraverseId: string,
+      payload: RataTraverseBaseDTO,
+      userId: string,
+      isImport: boolean = false,
+      trx?: EntityManager,
   ): Promise<RataTraverseRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOneBy({ id: rataTraverseId });
+
+    // Use the transaction entity manager if provided
+    const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+
+    const record = await repo.findOneBy({ id: rataTraverseId });
 
     if (!record) {
       throw new EaseyException(
-        new Error(
-          `A Rata Traverse record not found with Record Id [${rataTraverseId}].`,
-        ),
-        HttpStatus.NOT_FOUND,
+          new Error(
+              `A Rata Traverse record not found with Record Id [${rataTraverseId}].`,
+          ),
+          HttpStatus.NOT_FOUND,
       );
     }
 
@@ -105,12 +115,12 @@ export class RataTraverseWorkspaceService {
     record.pressureMeasureCode = payload.pressureMeasureCode;
     record.methodTraversePointId = payload.methodTraversePointId;
     record.velocityCalibrationCoefficient =
-      payload.velocityCalibrationCoefficient;
+        payload.velocityCalibrationCoefficient;
     record.lastProbeDate = payload.lastProbeDate;
     record.averageVelocityDifferencePressure =
-      payload.averageVelocityDifferencePressure;
+        payload.averageVelocityDifferencePressure;
     record.averageSquareVelocityDifferencePressure =
-      payload.averageSquareVelocityDifferencePressure;
+        payload.averageSquareVelocityDifferencePressure;
     record.tStackTemperature = payload.tStackTemperature;
     record.pointUsedIndicator = payload.pointUsedIndicator;
     record.numberWallEffectsPoints = payload.numberWallEffectsPoints;
@@ -121,34 +131,39 @@ export class RataTraverseWorkspaceService {
     record.userId = userId;
     record.updateDate = timestamp;
 
-    await this.repository.save(record);
+    await repo.save(record);
 
     await this.testSummaryService.resetToNeedsEvaluation(
-      testSumId,
-      userId,
-      isImport,
+        testSumId,
+        userId,
+        isImport,
+        trx,
     );
 
     return this.map.one(record);
   }
 
   async deleteRataTraverse(
-    testSumId: string,
-    id: string,
-    userId: string,
-    isImport: boolean = false,
+      testSumId: string,
+      id: string,
+      userId: string,
+      isImport: boolean = false,
+      trx?: EntityManager,
   ): Promise<void> {
-    await this.repository.delete(id);
+    // Use the transaction entity manager if provided
+    const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+    await repo.delete(id);
 
     await this.testSummaryService.resetToNeedsEvaluation(
-      testSumId,
-      userId,
-      isImport,
+        testSumId,
+        userId,
+        isImport,
+        trx,
     );
   }
 
   async getRatatravarsesByFlowRataRunIds(
-    flowRataRunIds: string[],
+      flowRataRunIds: string[],
   ): Promise<RataTraverseDTO[]> {
     const results = await this.repository.find({
       where: { flowRataRunId: In(flowRataRunIds) },
@@ -157,11 +172,12 @@ export class RataTraverseWorkspaceService {
   }
 
   async import(
-    testSumId: string,
-    flowRataRunId: string,
-    payload: RataTraverseImportDTO,
-    userId: string,
-    isHistoricalRecord?: boolean,
+      testSumId: string,
+      flowRataRunId: string,
+      payload: RataTraverseImportDTO,
+      userId: string,
+      isHistoricalRecord?: boolean,
+      trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: RataTraverse;
@@ -174,16 +190,17 @@ export class RataTraverseWorkspaceService {
     }
 
     const createdRataRun = await this.createRataTraverse(
-      testSumId,
-      flowRataRunId,
-      payload,
-      userId,
-      isImport,
-      historicalRecord ? historicalRecord.id : null,
+        testSumId,
+        flowRataRunId,
+        payload,
+        userId,
+        isImport,
+        historicalRecord ? historicalRecord.id : null,
+        trx,
     );
 
     this.logger.log(
-      `Rata Traverse Successfully Imported. Record Id: ${createdRataRun.id}`,
+        `Rata Traverse Successfully Imported. Record Id: ${createdRataRun.id}`,
     );
 
     return null;

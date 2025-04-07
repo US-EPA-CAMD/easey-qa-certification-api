@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import { AirEmissionTestingRepository } from '../air-emission-testing/air-emission-testing.repository';
 import {
@@ -47,10 +48,20 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockEntityManager = () => ({
+  getRepository: jest.fn().mockImplementation(() => ({
+    create: jest.fn().mockResolvedValue(entity),
+    save: jest.fn().mockResolvedValue(entity),
+    findOneBy: jest.fn().mockResolvedValue(entity),
+    delete: jest.fn().mockResolvedValue(null),
+  })),
+});
+
 describe('AirEmissionTestingWorkspaceService', () => {
   let service: AirEmissionTestingWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
   let repository: AirEmissionTestingWorkspaceRepository;
+  let mockTrx: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -86,6 +97,7 @@ describe('AirEmissionTestingWorkspaceService', () => {
     repository = module.get<AirEmissionTestingWorkspaceRepository>(
       AirEmissionTestingWorkspaceRepository,
     );
+    mockTrx = mockEntityManager() as unknown as EntityManager;
   });
 
   describe('getAirEmissionTestings', () => {
@@ -140,6 +152,26 @@ describe('AirEmissionTestingWorkspaceService', () => {
 
       expect(result).toEqual(airEmissionTestingRecord);
     });
+
+    it('Should create and return a new Air Emission Test record with transaction', async () => {
+      const result = await service.createAirEmissionTesting(
+        testSumId,
+        payload,
+        userId,
+        false,
+        null,
+        mockTrx,
+      );
+
+      expect(result).toEqual(airEmissionTestingRecord);
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        mockTrx,
+      );
+    });
   });
 
   describe('updateAirEmissionTesting', () => {
@@ -168,6 +200,25 @@ describe('AirEmissionTestingWorkspaceService', () => {
         errored = true;
       }
       expect(errored).toEqual(true);
+    });
+
+    it('should update a Air Emission Testing record with transaction', async () => {
+      const result = await service.updateAirEmissionTesting(
+        testSumId,
+        airEmissiontestingId,
+        payload,
+        userId,
+        false,
+        mockTrx,
+      );
+      expect(result).toEqual(airEmissionTestingRecord);
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        mockTrx,
+      );
     });
   });
 
@@ -202,6 +253,24 @@ describe('AirEmissionTestingWorkspaceService', () => {
       }
       expect(errored).toEqual(true);
     });
+
+    it('Should delete a Air Emission Testing record with transaction', async () => {
+      const result = await service.deleteAirEmissionTesting(
+        testSumId,
+        airEmissiontestingId,
+        userId,
+        false,
+        mockTrx,
+      );
+      expect(result).toEqual(undefined);
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        mockTrx,
+      );
+    });
   });
 
   describe('Export', () => {
@@ -225,6 +294,35 @@ describe('AirEmissionTestingWorkspaceService', () => {
         new AirEmissionTestingImportDTO(),
         userId,
         true,
+      );
+    });
+
+    it('Should Import Air Emission Testing with transaction', async () => {
+      // Create a spy on createAirEmissionTesting that returns the expected value
+      const createAirEmissionTestingSpy = jest
+        .spyOn(service, 'createAirEmissionTesting')
+        .mockResolvedValue(airEmissionTestingRecord);
+
+      // Mock the historicalRepo.findOneBy to return undefined
+      jest.spyOn(service['historicalRepo'], 'findOneBy').mockResolvedValue(undefined);
+
+      // Call import with transaction
+      await service.import(
+        testSumId,
+        new AirEmissionTestingImportDTO(),
+        userId,
+        true,
+        mockTrx,
+      );
+
+      // Verify createAirEmissionTesting was called with transaction
+      expect(createAirEmissionTestingSpy).toHaveBeenCalledWith(
+        testSumId,
+        expect.any(Object),
+        userId,
+        true,
+        null,
+        mockTrx,
       );
     });
   });

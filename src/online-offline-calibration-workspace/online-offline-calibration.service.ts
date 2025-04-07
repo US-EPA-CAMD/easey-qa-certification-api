@@ -2,7 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -61,10 +61,12 @@ export class OnlineOfflineCalibrationWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<OnlineOfflineCalibrationRecordDTO> {
     const timestamp = currentDateTime();
+    const repository = trx ? trx.getRepository(OnlineOfflineCalibration) : this.repository;
 
-    let entity = this.repository.create({
+    let entity = repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
@@ -73,12 +75,13 @@ export class OnlineOfflineCalibrationWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repository.save(entity);
+    entity = await repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     const dto = await this.map.one(entity);
@@ -90,9 +93,11 @@ export class OnlineOfflineCalibrationWorkspaceService {
     id: string,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
     try {
-      await this.repository.delete({
+      const repository = trx ? trx.getRepository(OnlineOfflineCalibration) : this.repository;
+      await repository.delete({
         id,
         testSumId,
       });
@@ -109,6 +114,7 @@ export class OnlineOfflineCalibrationWorkspaceService {
       testSumId,
       userId,
       isImport,
+      trx,
     );
   }
 
@@ -118,10 +124,12 @@ export class OnlineOfflineCalibrationWorkspaceService {
     payload: OnlineOfflineCalibrationBaseDTO,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<OnlineOfflineCalibrationDTO> {
     const timestamp = currentDateTime();
+    const repository = trx ? trx.getRepository(OnlineOfflineCalibration) : this.repository;
 
-    const entity = await this.repository.findOneBy({ id });
+    const entity = await repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -163,12 +171,13 @@ export class OnlineOfflineCalibrationWorkspaceService {
     entity.userId = userId;
     entity.updateDate = timestamp;
 
-    await this.repository.save(entity);
+    await repository.save(entity);
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.getOnlineOfflineCalibration(id);
@@ -189,6 +198,7 @@ export class OnlineOfflineCalibrationWorkspaceService {
     payload: OnlineOfflineCalibrationImportDTO,
     userId: string,
     isHistoricalRecord: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: OnlineOfflineCalibration;
@@ -205,6 +215,7 @@ export class OnlineOfflineCalibrationWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(

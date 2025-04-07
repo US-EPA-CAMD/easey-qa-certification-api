@@ -1,6 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import {
   FlowToLoadReferenceBaseDTO,
@@ -46,6 +47,7 @@ describe('FlowToLoadReferenceWorkspaceService', () => {
   let service: FlowToLoadReferenceWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
   let repository: FlowToLoadReferenceWorkspaceRepository;
+  let entityManager: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -68,6 +70,17 @@ describe('FlowToLoadReferenceWorkspaceService', () => {
           provide: FlowToLoadReferenceMap,
           useFactory: mockMap,
         },
+        {
+          provide: EntityManager,
+          useFactory: () => ({
+            getRepository: jest.fn().mockReturnValue({
+              create: jest.fn().mockReturnValue(entity),
+              save: jest.fn().mockResolvedValue(entity),
+              findOneBy: jest.fn().mockResolvedValue(entity),
+              delete: jest.fn().mockResolvedValue(null),
+            }),
+          }),
+        },
       ],
     }).compile();
 
@@ -80,6 +93,7 @@ describe('FlowToLoadReferenceWorkspaceService', () => {
     repository = module.get<FlowToLoadReferenceWorkspaceRepository>(
       FlowToLoadReferenceWorkspaceRepository,
     );
+    entityManager = module.get<EntityManager>(EntityManager);
   });
 
   describe('getFlowToLoadReference', () => {
@@ -126,6 +140,25 @@ describe('FlowToLoadReferenceWorkspaceService', () => {
       expect(result).toEqual(flowToLoadReference);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
+
+    it('Calls the service to create a Flow To Load Reference record with transaction', async () => {
+      const result = await service.createFlowToLoadReference(
+        testSumId,
+        payload,
+        userId,
+        false,
+        null,
+        entityManager,
+      );
+      expect(result).toEqual(flowToLoadReference);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        entityManager,
+      );
+    });
   });
 
   describe('editFlowToLoadReference', () => {
@@ -169,6 +202,25 @@ describe('FlowToLoadReferenceWorkspaceService', () => {
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
 
+    it('Should delete a Flow To Load Reference record with transaction', async () => {
+      const result = await service.deleteFlowToLoadReference(
+        testSumId,
+        flowToLoadReferenceId,
+        userId,
+        false,
+        entityManager,
+      );
+
+      expect(result).toEqual(undefined);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        entityManager,
+      );
+    });
+
     it('Should throw error when database throws an error while deleting a Flow To Load Reference record', async () => {
       jest
         .spyOn(repository, 'delete')
@@ -186,6 +238,26 @@ describe('FlowToLoadReferenceWorkspaceService', () => {
       }
 
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('import', () => {
+    it('Should import a Flow To Load Reference record', async () => {
+      await service.import(testSumId, payload, userId, false);
+      expect(repository.create).toHaveBeenCalled();
+      expect(repository.save).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should import a Flow To Load Reference record with transaction', async () => {
+      await service.import(testSumId, payload, userId, false, entityManager);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        expect.any(String),
+        userId,
+        true,
+        entityManager,
+      );
     });
   });
 });

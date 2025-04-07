@@ -2,6 +2,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import { HgInjectionDTO, HgInjectionImportDTO } from '../dto/hg-injection.dto';
 import {
@@ -49,6 +50,15 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockEntityManager = () => ({
+  getRepository: jest.fn().mockImplementation(() => ({
+    create: jest.fn().mockResolvedValue(entity),
+    save: jest.fn().mockResolvedValue(entity),
+    findOneBy: jest.fn().mockResolvedValue(entity),
+    delete: jest.fn().mockResolvedValue(null),
+  })),
+});
+
 const mockHgInjectionWorkspaceService = () => ({
   import: jest.fn(),
   export: jest.fn().mockResolvedValue([hgInjDto]),
@@ -58,6 +68,8 @@ describe('HgSummaryWorkspaceService', () => {
   let service: HgSummaryWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
   let repository: HgSummaryWorkspaceRepository;
+  let hgInjectionService: HgInjectionWorkspaceService;
+  let mockTrx: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -95,6 +107,10 @@ describe('HgSummaryWorkspaceService', () => {
     testSummaryService = module.get<TestSummaryWorkspaceService>(
       TestSummaryWorkspaceService,
     );
+    hgInjectionService = module.get<HgInjectionWorkspaceService>(
+      HgInjectionWorkspaceService,
+    );
+    mockTrx = mockEntityManager() as unknown as EntityManager;
   });
 
   describe('getHgSummaries', () => {
@@ -144,6 +160,26 @@ describe('HgSummaryWorkspaceService', () => {
 
       expect(result).toEqual(dto);
     });
+
+    it('Should create and return a new Hg Summary record with transaction', async () => {
+      const result = await service.createHgSummary(
+        testSumId,
+        payload,
+        userId,
+        false,
+        null,
+        mockTrx,
+      );
+
+      expect(result).toEqual(dto);
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        mockTrx,
+      );
+    });
   });
 
   describe('getHgSummaryByTestSumIds', () => {
@@ -189,6 +225,26 @@ describe('HgSummaryWorkspaceService', () => {
 
       expect(errored).toEqual(true);
     });
+
+    it('Should update and return the Hg Summary record with transaction', async () => {
+      const result = await service.updateHgSummary(
+        testSumId,
+        id,
+        payload,
+        userId,
+        false,
+        mockTrx,
+      );
+
+      expect(result).toEqual(dto);
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        mockTrx,
+      );
+    });
   });
 
   describe('deleteHgSummary', () => {
@@ -212,6 +268,25 @@ describe('HgSummaryWorkspaceService', () => {
 
       expect(errored).toEqual(true);
     });
+
+    it('Should delete a Hg Summary record with transaction', async () => {
+      const result = await service.deleteHgSummary(
+        testSumId,
+        id,
+        userId,
+        false,
+        mockTrx,
+      );
+
+      expect(result).toEqual(undefined);
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        mockTrx,
+      );
+    });
   });
 
   describe('import', () => {
@@ -225,6 +300,32 @@ describe('HgSummaryWorkspaceService', () => {
       jest.spyOn(service, 'createHgSummary').mockResolvedValue(dto);
 
       await service.import(testSumId, new HgSummaryImportDTO(), userId, true);
+    });
+
+    it('Should Import Hg Summary Data with transaction', async () => {
+      importPayload.hgInjectionData = [new HgInjectionImportDTO()];
+      jest.spyOn(service, 'createHgSummary').mockResolvedValue(dto);
+      jest.spyOn(hgInjectionService, 'import').mockResolvedValue(undefined);
+
+      await service.import(testSumId, importPayload, userId, false, mockTrx);
+
+      expect(service.createHgSummary).toHaveBeenCalledWith(
+        testSumId,
+        expect.any(Object),
+        userId,
+        true,
+        undefined,
+        mockTrx,
+      );
+
+      expect(hgInjectionService.import).toHaveBeenCalledWith(
+        testSumId,
+        dto.id,
+        expect.any(Object),
+        userId,
+        false,
+        mockTrx,
+      );
     });
   });
 });

@@ -2,7 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -54,10 +54,13 @@ export class HgInjectionWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<HgInjectionRecordDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    const repo = trx ? trx.getRepository(HgInjection) : this.repository;
+
+    let entity = repo.create({
       ...payload,
       id: historicalRecordId ?? uuid(),
       hgTestSumId,
@@ -66,14 +69,15 @@ export class HgInjectionWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
+    await repo.save(entity);
 
-    entity = await this.repository.findOneBy({ id: entity.id });
+    entity = await repo.findOneBy({ id: entity.id });
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.map.one(entity);
@@ -85,9 +89,12 @@ export class HgInjectionWorkspaceService {
     payload: HgInjectionBaseDTO,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<HgInjectionRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOneBy({ id });
+    const repo = trx ? trx.getRepository(HgInjection) : this.repository;
+
+    const entity = await repo.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -104,12 +111,13 @@ export class HgInjectionWorkspaceService {
     entity.userId = userId;
     entity.updateDate = timestamp;
 
-    await this.repository.save(entity);
+    await repo.save(entity);
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.map.one(entity);
@@ -120,9 +128,11 @@ export class HgInjectionWorkspaceService {
     id: string,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
     try {
-      await this.repository.delete({ id });
+      const repo = trx ? trx.getRepository(HgInjection) : this.repository;
+      await repo.delete({ id });
     } catch (e) {
       throw new EaseyException(
         new Error(`Error deleting HG Injection record Id [${id}]`),
@@ -135,6 +145,7 @@ export class HgInjectionWorkspaceService {
       testSumId,
       userId,
       isImport,
+      trx,
     );
   }
 
@@ -158,6 +169,7 @@ export class HgInjectionWorkspaceService {
     payload: HgInjectionImportDTO,
     userId: string,
     isHistoricalRecord?: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: HgInjection;
@@ -178,6 +190,7 @@ export class HgInjectionWorkspaceService {
       userId,
       isImport,
       historicalRecord?.id,
+      trx,
     );
   }
 }

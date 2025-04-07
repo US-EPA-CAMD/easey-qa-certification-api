@@ -1,6 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
+import { settlePromises } from '../utilities/constants';
 
 import { FlowRataRunDTO, FlowRataRunImportDTO } from '../dto/flow-rata-run.dto';
 import {
@@ -66,11 +68,19 @@ const mockOfficialRepository = () => ({
   findOneBy: jest.fn(),
 });
 
+// Mock settlePromises
+jest.mock('../utilities/constants', () => ({
+  settlePromises: jest.fn().mockImplementation(async (promises) => {
+    return Promise.all(promises);
+  }),
+}));
+
 describe('RataRunWorkspaceService', () => {
   let service: RataRunWorkspaceService;
   let repository: RataRunWorkspaceRepository;
   let testSummaryService: TestSummaryWorkspaceService;
   let officialRepository: RataRunRepository;
+  let flowRataRunService: FlowRataRunWorkspaceService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -109,6 +119,9 @@ describe('RataRunWorkspaceService', () => {
       TestSummaryWorkspaceService,
     );
     officialRepository = module.get<RataRunRepository>(RataRunRepository);
+    flowRataRunService = module.get<FlowRataRunWorkspaceService>(
+      FlowRataRunWorkspaceService,
+    );
   });
 
   describe('getRataRun', () => {
@@ -247,6 +260,197 @@ describe('RataRunWorkspaceService', () => {
         true,
       );
       expect(result).toEqual(null);
+    });
+
+    it('Should import Rata Run with transaction', async () => {
+      // Create a spy on createRataRun that returns the expected value
+      const createRataRunSpy = jest
+        .spyOn(service, 'createRataRun')
+        .mockResolvedValue(rataRunDTO);
+
+      // Mock transaction entity manager
+      const mockTrx = {
+        getRepository: jest.fn().mockReturnValue(repository),
+      } as unknown as EntityManager;
+
+      // Call import with transaction
+      await service.import(
+        testSumId,
+        rataSumId,
+        importPayload,
+        userId,
+        false,
+        mockTrx,
+      );
+
+      // Verify createRataRun was called with transaction
+      expect(createRataRunSpy).toHaveBeenCalledWith(
+        testSumId,
+        rataSumId,
+        expect.any(Object),
+        userId,
+        true, // isImport is always true in the import method
+        null, // historicalRecordId is null when not a historical record
+        mockTrx,
+      );
+    });
+
+    it('Should use settlePromises instead of Promise.all', async () => {
+      // Create payload with flow rata run data
+      const importPayloadWithFlowData = new RataRunImportDTO();
+      importPayloadWithFlowData.flowRataRunData = [new FlowRataRunImportDTO()];
+
+      // Spy on settlePromises
+      const settlePromisesSpy = jest.spyOn(require('../utilities/constants'), 'settlePromises');
+
+      // Call import with flowRataRunData
+      await service.import(testSumId, rataSumId, importPayloadWithFlowData, userId);
+
+      // Verify settlePromises was called
+      expect(settlePromisesSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('Transaction Support', () => {
+    it('Should use transaction entity manager when provided', async () => {
+      // Mock transaction entity manager
+      const mockTrx = {
+        getRepository: jest.fn().mockReturnValue({
+          create: jest.fn().mockReturnValue(rataRun),
+          save: jest.fn().mockResolvedValue(rataRun),
+          findOneBy: jest.fn().mockResolvedValue(rataRun),
+        }),
+      } as unknown as EntityManager;
+
+      // Spy on testSummaryService.resetToNeedsEvaluation
+      const resetSpy = jest.spyOn(testSummaryService, 'resetToNeedsEvaluation');
+
+      // Call createRataRun with transaction
+      await service.createRataRun(
+        testSumId,
+        rataSumId,
+        payload,
+        userId,
+        false,
+        'uuid',
+        mockTrx,
+      );
+
+      // Verify transaction was used
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+
+      // Verify transaction was passed to child services
+      expect(resetSpy).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        expect.any(Boolean),
+        mockTrx,
+      );
+    });
+
+    it('Should pass transaction to child services during import', async () => {
+      // Mock transaction entity manager
+      const mockTrx = {
+        getRepository: jest.fn().mockReturnValue(repository),
+      } as unknown as EntityManager;
+
+      // Create a spy on createRataRun that returns a known value with ID
+      const mockRataRun = new RataRunDTO();
+      mockRataRun.id = 'test-run-id';
+      jest.spyOn(service, 'createRataRun').mockResolvedValue(mockRataRun);
+
+      // Spy on flowRataRunService.import
+      const flowImportSpy = jest.spyOn(flowRataRunService, 'import');
+
+      // Create payload with flow rata run data
+      const importPayloadWithFlowData = new RataRunImportDTO();
+      importPayloadWithFlowData.flowRataRunData = [new FlowRataRunImportDTO()];
+
+      // Call import with transaction
+      await service.import(
+        testSumId,
+        rataSumId,
+        importPayloadWithFlowData,
+        userId,
+        false,
+        mockTrx,
+      );
+
+      // Verify transaction was passed to child service with the correct parameters
+      expect(flowImportSpy).toHaveBeenCalledWith(
+        testSumId,
+        mockRataRun.id,
+        expect.any(Object),
+        userId,
+        false,
+        mockTrx,
+      );
+    });
+
+    it('Should use transaction entity manager for update operations', async () => {
+      // Mock transaction entity manager
+      const mockTrx = {
+        getRepository: jest.fn().mockReturnValue({
+          findOneBy: jest.fn().mockResolvedValue(rataRun),
+          save: jest.fn().mockResolvedValue(rataRun),
+        }),
+      } as unknown as EntityManager;
+
+      // Spy on testSummaryService.resetToNeedsEvaluation
+      const resetSpy = jest.spyOn(testSummaryService, 'resetToNeedsEvaluation');
+
+      // Call updateRataRun with transaction
+      await service.updateRataRun(
+        testSumId,
+        rataRunId,
+        payload,
+        userId,
+        false,
+        mockTrx,
+      );
+
+      // Verify transaction was used
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+
+      // Verify transaction was passed to child services
+      expect(resetSpy).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        expect.any(Boolean),
+        mockTrx,
+      );
+    });
+
+    it('Should use transaction entity manager for delete operations', async () => {
+      // Mock transaction entity manager
+      const mockTrx = {
+        getRepository: jest.fn().mockReturnValue({
+          delete: jest.fn().mockResolvedValue(null),
+        }),
+      } as unknown as EntityManager;
+
+      // Spy on testSummaryService.resetToNeedsEvaluation
+      const resetSpy = jest.spyOn(testSummaryService, 'resetToNeedsEvaluation');
+
+      // Call deleteRataRun with transaction
+      await service.deleteRataRun(
+        testSumId,
+        rataRunId,
+        userId,
+        false,
+        mockTrx,
+      );
+
+      // Verify transaction was used
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+
+      // Verify transaction was passed to child services
+      expect(resetSpy).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        expect.any(Boolean),
+        mockTrx,
+      );
     });
   });
 });

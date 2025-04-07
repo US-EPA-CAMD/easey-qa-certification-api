@@ -2,11 +2,12 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In, IsNull } from 'typeorm';
+import { EntityManager, In, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { CycleTimeInjectionWorkspaceService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace.service';
 import { CycleTimeSummaryRepository } from '../cycle-time-summary/cycle-time-summary.repository';
+import { settlePromises } from '../utilities/constants';
 import {
   CycleTimeSummaryBaseDTO,
   CycleTimeSummaryDTO,
@@ -65,10 +66,12 @@ export class CycleTimeSummaryWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<CycleTimeSummaryDTO> {
     const timestamp = currentDateTime();
+    const repository = trx ? trx.getRepository(CycleTimeSummary) : this.repository;
 
-    let entity = this.repository.create({
+    let entity = repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
@@ -77,12 +80,13 @@ export class CycleTimeSummaryWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repository.save(entity);
+    entity = await repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
     return this.map.one(entity);
   }
@@ -93,8 +97,10 @@ export class CycleTimeSummaryWorkspaceService {
     payload: CycleTimeSummaryBaseDTO,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<CycleTimeSummaryDTO> {
-    const entity = await this.repository.findOneBy({
+    const repository = trx ? trx.getRepository(CycleTimeSummary) : this.repository;
+    const entity = await repository.findOneBy({
       id,
       testSumId,
     });
@@ -114,12 +120,13 @@ export class CycleTimeSummaryWorkspaceService {
     entity.userId = userId;
     entity.updateDate = timestamp;
 
-    await this.repository.save(entity);
+    await repository.save(entity);
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.map.one(entity);
@@ -130,9 +137,11 @@ export class CycleTimeSummaryWorkspaceService {
     id: string,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
     try {
-      await this.repository.delete({
+      const repository = trx ? trx.getRepository(CycleTimeSummary) : this.repository;
+      await repository.delete({
         id,
         testSumId,
       });
@@ -148,6 +157,7 @@ export class CycleTimeSummaryWorkspaceService {
       testSumId,
       userId,
       isImport,
+      trx,
     );
   }
 
@@ -183,9 +193,9 @@ export class CycleTimeSummaryWorkspaceService {
     payload: CycleTimeSummaryImportDTO,
     userId: string,
     isHistoricalRecord?: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
-    const promises = [];
     let historicalRecord: CycleTimeSummary;
 
     if (isHistoricalRecord) {
@@ -201,27 +211,26 @@ export class CycleTimeSummaryWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(
       `Cycle Time Summary Successfully Imported. Record Id: ${createdCycleTimeSummary.id}`,
     );
 
-    if (payload.cycleTimeInjectionData?.length > 0) {
-      for (const cycleTimeInjection of payload.cycleTimeInjectionData) {
-        promises.push(
-          this.cycleTimeInjectionService.import(
-            testSumId,
-            createdCycleTimeSummary.id,
-            cycleTimeInjection,
-            userId,
-            isHistoricalRecord,
-          ),
-        );
-      }
-    }
-
-    await Promise.all(promises);
+    await settlePromises(
+      payload.cycleTimeInjectionData?.map(cycleTimeInjection =>
+        this.cycleTimeInjectionService.import(
+          testSumId,
+          createdCycleTimeSummary.id,
+          cycleTimeInjection,
+          userId,
+          isHistoricalRecord,
+          trx,
+        ),
+      ) || [],
+      this.logger,
+    );
 
     return null;
   }

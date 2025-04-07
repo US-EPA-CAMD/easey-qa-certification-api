@@ -2,6 +2,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import {
   FuelFlowToLoadBaselineBaseDTO,
@@ -49,6 +50,7 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
   let testSummaryService: TestSummaryWorkspaceService;
   let repository: FuelFlowToLoadBaselineWorkspaceRepository;
   let officialRepository: FuelFlowToLoadBaselineRepository;
+  let entityManager: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -72,21 +74,33 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
           provide: FuelFlowToLoadBaselineMap,
           useFactory: mockMap,
         },
+        {
+          provide: EntityManager,
+          useFactory: () => ({
+            getRepository: jest.fn().mockReturnValue({
+              create: jest.fn().mockReturnValue(entity),
+              save: jest.fn().mockResolvedValue(entity),
+              findOneBy: jest.fn().mockResolvedValue(entity),
+              delete: jest.fn().mockResolvedValue(null),
+            }),
+          }),
+        },
       ],
     }).compile();
 
     service = module.get<FuelFlowToLoadBaselineWorkspaceService>(
-      FuelFlowToLoadBaselineWorkspaceService,
+        FuelFlowToLoadBaselineWorkspaceService,
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
-      TestSummaryWorkspaceService,
+        TestSummaryWorkspaceService,
     );
     repository = module.get<FuelFlowToLoadBaselineWorkspaceRepository>(
-      FuelFlowToLoadBaselineWorkspaceRepository,
+        FuelFlowToLoadBaselineWorkspaceRepository,
     );
     officialRepository = module.get<FuelFlowToLoadBaselineRepository>(
-      FuelFlowToLoadBaselineRepository,
+        FuelFlowToLoadBaselineRepository,
     );
+    entityManager = module.get<EntityManager>(EntityManager);
   });
 
   describe('getFuelFlowToLoadBaselines', () => {
@@ -121,27 +135,67 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
   describe('createFuelFlowToLoadBaseline', () => {
     it('Should create and return a new Fuel Flow To Load Baseline record', async () => {
       const result = await service.createFuelFlowToLoadBaseline(
-        testSumId,
-        payload,
-        userId,
+          testSumId,
+          payload,
+          userId,
       );
 
       expect(result).toEqual(dto);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should create and return a new Fuel Flow To Load Baseline record with transaction', async () => {
+      const result = await service.createFuelFlowToLoadBaseline(
+          testSumId,
+          payload,
+          userId,
+          false,
+          null,
+          entityManager,
+      );
+
+      expect(result).toEqual(dto);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          false,
+          entityManager,
+      );
     });
   });
 
   describe('updateFuelFlowToLoadBaseline', () => {
     it('Should update and return the Fuel Flow To Load Baseline record', async () => {
       const result = await service.updateFuelFlowToLoadBaseline(
-        testSumId,
-        id,
-        payload,
-        userId,
+          testSumId,
+          id,
+          payload,
+          userId,
       );
 
       expect(result).toEqual(dto);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should update and return the Fuel Flow To Load Baseline record with transaction', async () => {
+      const result = await service.updateFuelFlowToLoadBaseline(
+          testSumId,
+          id,
+          payload,
+          userId,
+          false,
+          entityManager,
+      );
+
+      expect(result).toEqual(dto);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          false,
+          entityManager,
+      );
     });
 
     it('Should throw error when a Fuel Flow To Load Baseline record not found', async () => {
@@ -150,10 +204,10 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
 
       try {
         await service.updateFuelFlowToLoadBaseline(
-          testSumId,
-          id,
-          payload,
-          userId,
+            testSumId,
+            id,
+            payload,
+            userId,
         );
       } catch (e) {
         errored = true;
@@ -166,19 +220,38 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
   describe('deleteFuelFlowToLoadBaseline', () => {
     it('Should delete a Fuel Flow To Load Baseline record', async () => {
       const result = await service.deleteFuelFlowToLoadBaseline(
-        testSumId,
-        id,
-        userId,
+          testSumId,
+          id,
+          userId,
       );
 
       expect(result).toEqual(undefined);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
 
+    it('Should delete a Fuel Flow To Load Baseline record with transaction', async () => {
+      const result = await service.deleteFuelFlowToLoadBaseline(
+          testSumId,
+          id,
+          userId,
+          false,
+          entityManager,
+      );
+
+      expect(result).toEqual(undefined);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          false,
+          entityManager,
+      );
+    });
+
     it('Should throw error when database throws an error while deleting a Fuel Flow To Load Baseline record', async () => {
       jest
-        .spyOn(repository, 'delete')
-        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+          .spyOn(repository, 'delete')
+          .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
       let errored = false;
 
       try {
@@ -194,14 +267,40 @@ describe('FuelFlowToLoadBaselineWorkspaceService', () => {
   describe('Import', () => {
     it('Should Import Fuel Flow To Load Baseline', async () => {
       jest
+          .spyOn(service, 'createFuelFlowToLoadBaseline')
+          .mockResolvedValue(dto);
+
+      await service.import(
+          testSumId,
+          new FuelFlowToLoadBaselineImportDTO(),
+          userId,
+          true,
+      );
+    });
+
+    it('Should Import Fuel Flow To Load Baseline with transaction', async () => {
+      // Create a spy on createFuelFlowToLoadBaseline that returns the expected value
+      const createFuelFlowToLoadBaselineSpy = jest
         .spyOn(service, 'createFuelFlowToLoadBaseline')
         .mockResolvedValue(dto);
 
+      // Call import with transaction
       await service.import(
+          testSumId,
+          new FuelFlowToLoadBaselineImportDTO(),
+          userId,
+          true,
+          entityManager,
+      );
+
+      // Verify createFuelFlowToLoadBaseline was called with transaction
+      expect(createFuelFlowToLoadBaselineSpy).toHaveBeenCalledWith(
         testSumId,
-        new FuelFlowToLoadBaselineImportDTO(),
+        expect.any(Object),
         userId,
         true,
+        null, // historicalRecordId is null when not found in historical repository
+        entityManager,
       );
     });
   });

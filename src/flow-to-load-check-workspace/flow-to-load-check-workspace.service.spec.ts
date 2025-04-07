@@ -2,6 +2,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import {
   FlowToLoadCheckBaseDTO,
@@ -49,6 +50,7 @@ describe('FlowToLoadCheckWorkspaceService', () => {
   let testSummaryService: TestSummaryWorkspaceService;
   let repository: FlowToLoadCheckWorkspaceRepository;
   let officialRepository: FlowToLoadCheckRepository;
+  let entityManager: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -72,21 +74,33 @@ describe('FlowToLoadCheckWorkspaceService', () => {
           provide: FlowToLoadCheckMap,
           useFactory: mockMap,
         },
+        {
+          provide: EntityManager,
+          useFactory: () => ({
+            getRepository: jest.fn().mockReturnValue({
+              create: jest.fn().mockReturnValue(entity),
+              save: jest.fn().mockResolvedValue(entity),
+              findOneBy: jest.fn().mockResolvedValue(entity),
+              delete: jest.fn().mockResolvedValue(null),
+            }),
+          }),
+        },
       ],
     }).compile();
 
     service = module.get<FlowToLoadCheckWorkspaceService>(
-      FlowToLoadCheckWorkspaceService,
+        FlowToLoadCheckWorkspaceService,
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
-      TestSummaryWorkspaceService,
+        TestSummaryWorkspaceService,
     );
     repository = module.get<FlowToLoadCheckWorkspaceRepository>(
-      FlowToLoadCheckWorkspaceRepository,
+        FlowToLoadCheckWorkspaceRepository,
     );
     officialRepository = module.get<FlowToLoadCheckRepository>(
-      FlowToLoadCheckRepository,
+        FlowToLoadCheckRepository,
     );
+    entityManager = module.get<EntityManager>(EntityManager);
   });
 
   describe('getFlowToLoadCheck', () => {
@@ -122,24 +136,62 @@ describe('FlowToLoadCheckWorkspaceService', () => {
   describe('createFlowToLoadCheck', () => {
     it('Calls the service to create a Flow To Load Check record', async () => {
       const result = await service.createFlowToLoadCheck(
-        testSumId,
-        payload,
-        userId,
+          testSumId,
+          payload,
+          userId,
       );
       expect(result).toEqual(flowToLoadCheck);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Calls the service to create a Flow To Load Check record with transaction', async () => {
+      const result = await service.createFlowToLoadCheck(
+          testSumId,
+          payload,
+          userId,
+          false,
+          null,
+          entityManager,
+      );
+      expect(result).toEqual(flowToLoadCheck);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          false,
+          entityManager,
+      );
     });
   });
 
   describe('editFlowToLoadCheck', () => {
     it('should update an Flow To Load Check record', async () => {
       const result = await service.editFlowToLoadCheck(
-        testSumId,
-        flowToLoadCheckId,
-        payload,
-        userId,
+          testSumId,
+          flowToLoadCheckId,
+          payload,
+          userId,
       );
       expect(result).toEqual(flowToLoadCheck);
+    });
+
+    it('should update an Flow To Load Check record with transaction', async () => {
+      const result = await service.editFlowToLoadCheck(
+          testSumId,
+          flowToLoadCheckId,
+          payload,
+          userId,
+          false,
+          entityManager,
+      );
+      expect(result).toEqual(flowToLoadCheck);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          false,
+          entityManager,
+      );
     });
 
     it('should throw error with invalid Flow To Load Check', async () => {
@@ -148,10 +200,10 @@ describe('FlowToLoadCheckWorkspaceService', () => {
       let errored = false;
       try {
         await service.editFlowToLoadCheck(
-          testSumId,
-          flowToLoadCheckId,
-          payload,
-          userId,
+            testSumId,
+            flowToLoadCheckId,
+            payload,
+            userId,
         );
       } catch (e) {
         errored = true;
@@ -163,26 +215,45 @@ describe('FlowToLoadCheckWorkspaceService', () => {
   describe('deleteFlowToLoadCheck', () => {
     it('Should delete a Flow To Load Check record', async () => {
       const result = await service.deleteFlowToLoadCheck(
-        testSumId,
-        flowToLoadCheckId,
-        userId,
+          testSumId,
+          flowToLoadCheckId,
+          userId,
       );
 
       expect(result).toEqual(undefined);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
 
+    it('Should delete a Flow To Load Check record with transaction', async () => {
+      const result = await service.deleteFlowToLoadCheck(
+          testSumId,
+          flowToLoadCheckId,
+          userId,
+          false,
+          entityManager,
+      );
+
+      expect(result).toEqual(undefined);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          false,
+          entityManager,
+      );
+    });
+
     it('Should throw error when database throws an error while deleting a Flow To Load Check record', async () => {
       jest
-        .spyOn(repository, 'delete')
-        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+          .spyOn(repository, 'delete')
+          .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
       let errored = false;
 
       try {
         await service.deleteFlowToLoadCheck(
-          testSumId,
-          flowToLoadCheckId,
-          userId,
+            testSumId,
+            flowToLoadCheckId,
+            userId,
         );
       } catch (e) {
         errored = true;
@@ -195,8 +266,8 @@ describe('FlowToLoadCheckWorkspaceService', () => {
   describe('Export', () => {
     it('Should Export Flow To Load Check', async () => {
       jest
-        .spyOn(service, 'getFlowToLoadChecksByTestSumIds')
-        .mockResolvedValue([flowToLoadCheck]);
+          .spyOn(service, 'getFlowToLoadChecksByTestSumIds')
+          .mockResolvedValue([flowToLoadCheck]);
       const result = await service.export([testSumId]);
       expect(result).toEqual([flowToLoadCheck]);
     });
@@ -204,14 +275,37 @@ describe('FlowToLoadCheckWorkspaceService', () => {
   describe('Import', () => {
     it('Should Import Flow To Load Check', async () => {
       jest
-        .spyOn(service, 'createFlowToLoadCheck')
-        .mockResolvedValue(flowToLoadCheck);
+          .spyOn(service, 'createFlowToLoadCheck')
+          .mockResolvedValue(flowToLoadCheck);
 
       await service.import(
-        testSumId,
-        new FlowToLoadCheckImportDTO(),
-        userId,
-        true,
+          testSumId,
+          new FlowToLoadCheckImportDTO(),
+          userId,
+          true,
+      );
+    });
+
+    it('Should Import Flow To Load Check with transaction', async () => {
+      jest
+          .spyOn(service, 'createFlowToLoadCheck')
+          .mockResolvedValue(flowToLoadCheck);
+
+      await service.import(
+          testSumId,
+          new FlowToLoadCheckImportDTO(),
+          userId,
+          true,
+          entityManager,
+      );
+
+      expect(service.createFlowToLoadCheck).toHaveBeenCalledWith(
+          testSumId,
+          expect.any(Object),
+          userId,
+          true,
+          null,
+          entityManager,
       );
     });
   });

@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 
 import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
 import { OnlineOfflineCalibration } from '../entities/workspace/online-offline-calibration.entity';
@@ -43,6 +43,8 @@ const mockMap = () => ({
 describe('OnlineOfflineCalibrationWorkspaceService', () => {
   let service: OnlineOfflineCalibrationWorkspaceService;
   let repository: OnlineOfflineCalibrationWorkspaceRepository;
+  let testSummaryService: TestSummaryWorkspaceService;
+  let entityManager: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -70,6 +72,17 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
           provide: OnlineOfflineCalibrationMap,
           useFactory: mockMap,
         },
+        {
+          provide: EntityManager,
+          useFactory: () => ({
+            getRepository: jest.fn().mockReturnValue({
+              create: jest.fn().mockReturnValue(onlineOfflineCalibration),
+              save: jest.fn().mockResolvedValue(onlineOfflineCalibration),
+              findOneBy: jest.fn().mockResolvedValue(onlineOfflineCalibration),
+              delete: jest.fn().mockResolvedValue(null),
+            }),
+          }),
+        },
       ],
     }).compile();
 
@@ -79,6 +92,10 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
     repository = module.get<OnlineOfflineCalibrationWorkspaceRepository>(
       OnlineOfflineCalibrationWorkspaceRepository,
     );
+    testSummaryService = module.get<TestSummaryWorkspaceService>(
+      TestSummaryWorkspaceService,
+    );
+    entityManager = module.get<EntityManager>(EntityManager);
   });
 
   describe('getOnlineOfflineCalibration', () => {
@@ -122,6 +139,25 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
       expect(result).toEqual(onlineOfflineCalibrationDTO);
       expect(repository.create).toHaveBeenCalled();
     });
+
+    it('Calls the repository to insert an Online Offline Calibration record with transaction', async () => {
+      const result = await service.createOnlineOfflineCalibration(
+        testSumId,
+        payload,
+        userId,
+        false,
+        null,
+        entityManager,
+      );
+      expect(result).toEqual(onlineOfflineCalibrationDTO);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        entityManager,
+      );
+    });
   });
 
   describe('deleteOnlineOfflineCalibration', () => {
@@ -132,6 +168,24 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
         userId,
       );
       expect(result).toEqual(undefined);
+    });
+
+    it('should delete a Online Offline Calibration record with transaction', async () => {
+      const result = await service.deleteOnlineOfflineCalibration(
+        testSumId,
+        onlineOfflineCalibrationId,
+        userId,
+        false,
+        entityManager,
+      );
+      expect(result).toEqual(undefined);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        entityManager,
+      );
     });
 
     it('should throw error while deleting a Online Offline Calibration record', async () => {
@@ -168,6 +222,25 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
       expect(result).toEqual(onlineOfflineCalibrationDTO);
       expect(repository.save).toHaveBeenCalled();
     });
+
+    it('Calls the repository to update an existing Online Offline Calibration record with transaction', async () => {
+      const result = await service.updateOnlineOfflineCalibration(
+        testSumId,
+        onlineOfflineCalibrationId,
+        payload,
+        userId,
+        false,
+        entityManager,
+      );
+      expect(result).toEqual(onlineOfflineCalibrationDTO);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        entityManager,
+      );
+    });
   });
 
   describe('Export', () => {
@@ -177,6 +250,33 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
         .mockResolvedValue([onlineOfflineCalibrationDTO]);
       const result = await service.export([testSumId]);
       expect(result).toEqual([onlineOfflineCalibrationDTO]);
+    });
+  });
+
+  describe('Import', () => {
+    it('Should Import Online Offline Calibration', async () => {
+      jest
+        .spyOn(service, 'createOnlineOfflineCalibration')
+        .mockResolvedValue(onlineOfflineCalibrationDTO);
+
+      await service.import(testSumId, payload, userId, false);
+      expect(service.createOnlineOfflineCalibration).toHaveBeenCalled();
+    });
+
+    it('Should Import Online Offline Calibration with transaction', async () => {
+      jest
+        .spyOn(service, 'createOnlineOfflineCalibration')
+        .mockResolvedValue(onlineOfflineCalibrationDTO);
+
+      await service.import(testSumId, payload, userId, false, entityManager);
+      expect(service.createOnlineOfflineCalibration).toHaveBeenCalledWith(
+        testSumId,
+        payload,
+        userId,
+        true,
+        null,
+        entityManager,
+      );
     });
   });
 });

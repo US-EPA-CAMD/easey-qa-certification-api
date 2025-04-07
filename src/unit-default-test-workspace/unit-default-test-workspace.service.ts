@@ -2,7 +2,8 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In, IsNull } from 'typeorm';
+import { EntityManager, In, IsNull } from 'typeorm';
+import { settlePromises } from '../utilities/constants';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -60,10 +61,13 @@ export class UnitDefaultTestWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<UnitDefaultTestRecordDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    const repo = trx ? trx.getRepository(UnitDefaultTest) : this.repository;
+
+    let entity = repo.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
@@ -72,12 +76,13 @@ export class UnitDefaultTestWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repo.save(entity);
+    entity = await repo.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
     return this.map.one(entity);
   }
@@ -88,10 +93,13 @@ export class UnitDefaultTestWorkspaceService {
     payload: UnitDefaultTestBaseDTO,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<UnitDefaultTestRecordDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOneBy({
+    const repo = trx ? trx.getRepository(UnitDefaultTest) : this.repository;
+
+    const entity = await repo.findOneBy({
       id,
     });
 
@@ -111,12 +119,13 @@ export class UnitDefaultTestWorkspaceService {
     entity.userId = userId;
     entity.updateDate = timestamp;
 
-    await this.repository.save(entity);
+    await repo.save(entity);
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.getUnitDefaultTest(id);
@@ -127,9 +136,11 @@ export class UnitDefaultTestWorkspaceService {
     id: string,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
     try {
-      await this.repository.delete(id);
+      const repo = trx ? trx.getRepository(UnitDefaultTest) : this.repository;
+      await repo.delete({ id });
     } catch (e) {
       throw new EaseyException(
         new Error(`Error deleting Unit Default Test with record Id [${id}]`),
@@ -141,6 +152,7 @@ export class UnitDefaultTestWorkspaceService {
       testSumId,
       userId,
       isImport,
+      trx,
     );
   }
 
@@ -176,6 +188,7 @@ export class UnitDefaultTestWorkspaceService {
     payload: UnitDefaultTestImportDTO,
     userId: string,
     isHistoricalRecord?: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: UnitDefaultTest;
@@ -194,6 +207,7 @@ export class UnitDefaultTestWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(
@@ -209,12 +223,13 @@ export class UnitDefaultTestWorkspaceService {
             unitDefaultTestRun,
             userId,
             isHistoricalRecord,
+            trx,
           ),
         );
       }
     }
 
-    await Promise.all(promises);
+    await settlePromises(promises, this.logger);
 
     return null;
   }

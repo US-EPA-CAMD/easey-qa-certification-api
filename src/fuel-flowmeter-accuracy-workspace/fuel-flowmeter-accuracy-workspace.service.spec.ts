@@ -2,6 +2,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Logger, LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import {
   FuelFlowmeterAccuracyBaseDTO,
@@ -47,6 +48,7 @@ describe('FuelFlowmeterWorkspaceService', () => {
   let service: FuelFlowmeterAccuracyWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
   let repository: FuelFlowmeterAccuracyWorkspaceRepository;
+  let entityManager: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -71,24 +73,36 @@ describe('FuelFlowmeterWorkspaceService', () => {
           provide: FuelFlowmeterAccuracyMap,
           useFactory: mockMap,
         },
+        {
+          provide: EntityManager,
+          useFactory: () => ({
+            getRepository: jest.fn().mockReturnValue({
+              create: jest.fn().mockReturnValue(entity),
+              save: jest.fn().mockResolvedValue(entity),
+              findOneBy: jest.fn().mockResolvedValue(entity),
+              delete: jest.fn().mockResolvedValue(null),
+            }),
+          }),
+        },
       ],
     }).compile();
 
     service = module.get<FuelFlowmeterAccuracyWorkspaceService>(
-      FuelFlowmeterAccuracyWorkspaceService,
+        FuelFlowmeterAccuracyWorkspaceService,
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
-      TestSummaryWorkspaceService,
+        TestSummaryWorkspaceService,
     );
     repository = module.get<FuelFlowmeterAccuracyWorkspaceRepository>(
-      FuelFlowmeterAccuracyWorkspaceRepository,
+        FuelFlowmeterAccuracyWorkspaceRepository,
     );
+    entityManager = module.get<EntityManager>(EntityManager);
   });
 
   describe('getFuelFlowmeterAccuracy', () => {
     it('Calls repository.findOneBy({id}) to get a single Fuel Flowmeter Accuracy record', async () => {
       const result = await service.getFuelFlowmeterAccuracy(
-        fuelFlowmeterAccuracyId,
+          fuelFlowmeterAccuracyId,
       );
       expect(result).toEqual(fuelFlowmeterAccuracy);
       expect(repository.findOneBy).toHaveBeenCalled();
@@ -112,7 +126,7 @@ describe('FuelFlowmeterWorkspaceService', () => {
   describe('getFuelFlowmeterAccuracies', () => {
     it('Calls Repository to find all Fuel Flowmeter Accuracy records for a given Test Summary ID', async () => {
       const results = await service.getFuelFlowmeterAccuracies(
-        fuelFlowmeterAccuracyId,
+          fuelFlowmeterAccuracyId,
       );
       expect(results).toEqual([fuelFlowmeterAccuracy]);
       expect(repository.find).toHaveBeenCalled();
@@ -122,9 +136,9 @@ describe('FuelFlowmeterWorkspaceService', () => {
   describe('createFlowToLoadCheck', () => {
     it('Calls the service to create a Fuel Flowmeter Accuracy record', async () => {
       const result = await service.createFuelFlowmeterAccuracy(
-        testSumId,
-        payload,
-        userId,
+          testSumId,
+          payload,
+          userId,
       );
       expect(result).toEqual(fuelFlowmeterAccuracy);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
@@ -132,26 +146,64 @@ describe('FuelFlowmeterWorkspaceService', () => {
 
     it('Should create and return a new Fuel Flowmeter Accuracy record with Historical Record Id', async () => {
       const result = await service.createFuelFlowmeterAccuracy(
-        testSumId,
-        payload,
-        userId,
-        false,
-        'historicalId',
+          testSumId,
+          payload,
+          userId,
+          false,
+          'historicalId',
       );
 
       expect(result).toEqual(fuelFlowmeterAccuracy);
+    });
+
+    it('Should create a Fuel Flowmeter Accuracy record with transaction', async () => {
+      const result = await service.createFuelFlowmeterAccuracy(
+          testSumId,
+          payload,
+          userId,
+          false,
+          null,
+          entityManager,
+      );
+      expect(result).toEqual(fuelFlowmeterAccuracy);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          false,
+          entityManager,
+      );
     });
   });
 
   describe('editFuelFlowmeterAccuracy', () => {
     it('should update an Fuel Flowmeter Accuracy record', async () => {
       const result = await service.editFuelFlowmeterAccuracy(
-        testSumId,
-        fuelFlowmeterAccuracyId,
-        payload,
-        userId,
+          testSumId,
+          fuelFlowmeterAccuracyId,
+          payload,
+          userId,
       );
       expect(result).toEqual(fuelFlowmeterAccuracy);
+    });
+
+    it('should update an Fuel Flowmeter Accuracy record with transaction', async () => {
+      const result = await service.editFuelFlowmeterAccuracy(
+          testSumId,
+          fuelFlowmeterAccuracyId,
+          payload,
+          userId,
+          false,
+          entityManager,
+      );
+      expect(result).toEqual(fuelFlowmeterAccuracy);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          false,
+          entityManager,
+      );
     });
 
     it('should throw error with invalid Fuel Flowmeter Accuracy', async () => {
@@ -160,10 +212,10 @@ describe('FuelFlowmeterWorkspaceService', () => {
       let errored = false;
       try {
         await service.editFuelFlowmeterAccuracy(
-          testSumId,
-          fuelFlowmeterAccuracyId,
-          payload,
-          userId,
+            testSumId,
+            fuelFlowmeterAccuracyId,
+            payload,
+            userId,
         );
       } catch (e) {
         errored = true;
@@ -175,25 +227,44 @@ describe('FuelFlowmeterWorkspaceService', () => {
   describe('deleteFuelFlowmeterAccuracy', () => {
     it('Should delete a Fuel Flowmeter Accuracy record', async () => {
       const result = await service.deleteFuelFlowmeterAccuracy(
-        testSumId,
-        fuelFlowmeterAccuracyId,
-        userId,
+          testSumId,
+          fuelFlowmeterAccuracyId,
+          userId,
       );
 
       expect(result).toEqual(undefined);
     });
 
+    it('Should delete a Fuel Flowmeter Accuracy record with transaction', async () => {
+      const result = await service.deleteFuelFlowmeterAccuracy(
+          testSumId,
+          fuelFlowmeterAccuracyId,
+          userId,
+          false,
+          entityManager,
+      );
+
+      expect(result).toEqual(undefined);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          false,
+          entityManager,
+      );
+    });
+
     it('Should throw error when database throws an error while deleting a Fuel Flowmeter Accuracy record', async () => {
       jest
-        .spyOn(repository, 'delete')
-        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+          .spyOn(repository, 'delete')
+          .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
       let errored = false;
 
       try {
         await service.deleteFuelFlowmeterAccuracy(
-          testSumId,
-          fuelFlowmeterAccuracyId,
-          userId,
+            testSumId,
+            fuelFlowmeterAccuracyId,
+            userId,
         );
       } catch (e) {
         errored = true;
@@ -215,8 +286,8 @@ describe('FuelFlowmeterWorkspaceService', () => {
   describe('Export', () => {
     it('Should Export Fuel Flowmeter Accuracy Record', async () => {
       jest
-        .spyOn(service, 'getFuelFlowmeterAccuraciesByTestSumIds')
-        .mockResolvedValue([]);
+          .spyOn(service, 'getFuelFlowmeterAccuraciesByTestSumIds')
+          .mockResolvedValue([]);
       const result = await service.export([testSumId]);
       expect(result).toEqual([]);
     });
@@ -225,22 +296,45 @@ describe('FuelFlowmeterWorkspaceService', () => {
   describe('Import', () => {
     it('Should Import Fuel Flowmeter Accuracy', async () => {
       jest
-        .spyOn(service, 'createFuelFlowmeterAccuracy')
-        .mockResolvedValue(fuelFlowmeterAccuracy);
+          .spyOn(service, 'createFuelFlowmeterAccuracy')
+          .mockResolvedValue(fuelFlowmeterAccuracy);
 
       await service.import(
-        testSumId,
-        new FuelFlowmeterAccuracyImportDTO(),
-        userId,
-        false,
+          testSumId,
+          new FuelFlowmeterAccuracyImportDTO(),
+          userId,
+          false,
       );
     });
     it('Should Import Fuel Flowmeter Accuracy from Historical Record', async () => {
       jest
-        .spyOn(service, 'createFuelFlowmeterAccuracy')
-        .mockResolvedValue(fuelFlowmeterAccuracy);
+          .spyOn(service, 'createFuelFlowmeterAccuracy')
+          .mockResolvedValue(fuelFlowmeterAccuracy);
 
       await service.import(testSumId, payload, userId, true);
+    });
+
+    it('Should Import Fuel Flowmeter Accuracy with transaction', async () => {
+      jest
+          .spyOn(service, 'createFuelFlowmeterAccuracy')
+          .mockResolvedValue(fuelFlowmeterAccuracy);
+
+      await service.import(
+          testSumId,
+          new FuelFlowmeterAccuracyImportDTO(),
+          userId,
+          false,
+          entityManager,
+      );
+
+      expect(service.createFuelFlowmeterAccuracy).toHaveBeenCalledWith(
+          testSumId,
+          expect.any(Object),
+          userId,
+          true,
+          null,
+          entityManager,
+      );
     });
   });
 });

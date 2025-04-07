@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import {
   UnitDefaultTestRunBaseDTO,
@@ -43,6 +44,15 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockEntityManager = () => ({
+  getRepository: jest.fn().mockImplementation(() => ({
+    create: jest.fn().mockResolvedValue(entity),
+    save: jest.fn().mockResolvedValue(entity),
+    findOneBy: jest.fn().mockResolvedValue(entity),
+    delete: jest.fn().mockResolvedValue(null),
+  })),
+});
+
 const mockOfficialRepository = () => ({
   findOneBy: jest.fn().mockResolvedValue(new UnitDefaultTestRunOfficial()),
 });
@@ -50,6 +60,8 @@ const mockOfficialRepository = () => ({
 describe('UnitDefaultTestRunWorkspaceService', () => {
   let service: UnitDefaultTestRunWorkspaceService;
   let repository: UnitDefaultTestRunWorkspaceRepository;
+  let testSummaryService: TestSummaryWorkspaceService;
+  let mockTrx: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -82,6 +94,10 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
     repository = module.get<UnitDefaultTestRunWorkspaceRepository>(
       UnitDefaultTestRunWorkspaceRepository,
     );
+    testSummaryService = module.get<TestSummaryWorkspaceService>(
+      TestSummaryWorkspaceService,
+    );
+    mockTrx = mockEntityManager() as unknown as EntityManager;
   });
 
   describe('getUnitDefaultTestRuns', () => {
@@ -140,6 +156,27 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
 
       expect(result).toEqual(dto);
     });
+
+    it('Should create and return a new Unit Default Test Run record with transaction', async () => {
+      const result = await service.createUnitDefaultTestRun(
+        testSumId,
+        unitDefaultTestSumId,
+        payload,
+        userId,
+        false,
+        null,
+        mockTrx,
+      );
+
+      expect(result).toEqual(dto);
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        mockTrx,
+      );
+    });
   });
 
   describe('updateUnitDefaultTestRun', () => {
@@ -163,6 +200,25 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
         errored = true;
       }
       expect(errored).toEqual(true);
+    });
+
+    it('should update a Unit Default Test Run record with transaction', async () => {
+      const result = await service.updateUnitDefaultTestRun(
+        testSumId,
+        id,
+        payload,
+        userId,
+        false,
+        mockTrx,
+      );
+      expect(result).toEqual(dto);
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        mockTrx,
+      );
     });
   });
 
@@ -193,6 +249,24 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
       }
       expect(errored).toEqual(true);
     });
+
+    it('Should delete a Unit Default Test Run record with transaction', async () => {
+      const result = await service.deleteUnitDefaultTestRun(
+        testSumId,
+        id,
+        userId,
+        false,
+        mockTrx,
+      );
+      expect(result).toEqual(undefined);
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        mockTrx,
+      );
+    });
   });
 
   describe('getUnitDefaultTestRunByUnitDefaultTestSumIds', () => {
@@ -212,6 +286,38 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
 
       const result = await service.export([unitDefaultTestSumId]);
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('import', () => {
+    it('Should import Unit Default Test Run with transaction', async () => {
+      // Create a spy on createUnitDefaultTestRun that returns the expected value
+      const createUnitDefaultTestRunSpy = jest
+        .spyOn(service, 'createUnitDefaultTestRun')
+        .mockResolvedValue(dto);
+
+      jest.spyOn(service['historicalRepository'], 'findOneBy').mockResolvedValue(undefined);
+
+      // Call import with transaction
+      await service.import(
+        testSumId,
+        unitDefaultTestSumId,
+        payload,
+        userId,
+        false,
+        mockTrx,
+      );
+
+      // Verify createUnitDefaultTestRun was called with transaction
+      expect(createUnitDefaultTestRunSpy).toHaveBeenCalledWith(
+        testSumId,
+        unitDefaultTestSumId,
+        payload,
+        userId,
+        true,
+        null,
+        mockTrx,
+      );
     });
   });
 });

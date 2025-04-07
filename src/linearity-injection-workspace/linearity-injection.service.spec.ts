@@ -1,6 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import {
   LinearityInjectionDTO,
@@ -37,7 +38,9 @@ const mockOfficialRepository = () => ({
   findOneBy: jest.fn().mockResolvedValue(new LinearityInjection()),
 });
 
-const mockTestSummaryService = () => ({});
+const mockTestSummaryService = () => ({
+  resetToNeedsEvaluation: jest.fn(),
+});
 
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(lineInjectionDto),
@@ -47,6 +50,7 @@ const mockMap = () => ({
 describe('LinearityInjectionWorkspaceService', () => {
   let service: LinearityInjectionWorkspaceService;
   let repository: LinearityInjectionWorkspaceRepository;
+  let testSummaryService: TestSummaryWorkspaceService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -69,17 +73,12 @@ describe('LinearityInjectionWorkspaceService', () => {
           provide: LinearityInjectionMap,
           useFactory: mockMap,
         },
-        {
-          provide: TestSummaryWorkspaceService,
-          useFactory: () => ({
-            resetToNeedsEvaluation: jest.fn().mockResolvedValue(null),
-          }),
-        },
       ],
     }).compile();
 
     service = module.get(LinearityInjectionWorkspaceService);
     repository = module.get(LinearityInjectionWorkspaceRepository);
+    testSummaryService = module.get(TestSummaryWorkspaceService);
   });
 
   describe('getInjectionById', () => {
@@ -127,20 +126,45 @@ describe('LinearityInjectionWorkspaceService', () => {
   describe('import', () => {
     it('Should import Linearity Injection', async () => {
       jest
-        .spyOn(service, 'createInjection')
-        .mockResolvedValue(lineInjectionRecordDto);
+          .spyOn(service, 'createInjection')
+          .mockResolvedValue(lineInjectionRecordDto);
       const result = await service.import(testSumId, linSumId, payload, userId);
       expect(result).toEqual(null);
+    });
+
+    it('Should import Linearity Injection with transaction', async () => {
+      // Create a spy on createInjection that returns the expected value
+      const createInjectionSpy = jest
+        .spyOn(service, 'createInjection')
+        .mockResolvedValue(lineInjectionRecordDto);
+
+      // Mock transaction entity manager
+      const mockTrx = {
+        getRepository: jest.fn().mockReturnValue(repository),
+      } as unknown as EntityManager;
+
+      await service.import(testSumId, linSumId, payload, userId, false, mockTrx);
+
+      // Verify createInjection was called with transaction
+      expect(createInjectionSpy).toHaveBeenCalledWith(
+          testSumId,
+          linSumId,
+          expect.any(Object),
+          userId,
+        true, // isImport is always true in the import method
+        null, // historicalRecordId is null when not a historical record
+          mockTrx,
+      );
     });
   });
 
   describe('createInjection', () => {
     it('Should insert a Linearity Injection record', async () => {
       const result = await service.createInjection(
-        testSumId,
-        linSumId,
-        payload,
-        userId,
+          testSumId,
+          linSumId,
+          payload,
+          userId,
       );
       expect(result).toEqual(lineInjectionDto);
     });
@@ -149,10 +173,10 @@ describe('LinearityInjectionWorkspaceService', () => {
   describe('updateInjection', () => {
     it('Should update a Linearity Injection record', async () => {
       const result = await service.updateInjection(
-        testSumId,
-        linInjId,
-        payload,
-        userId,
+          testSumId,
+          linInjId,
+          payload,
+          userId,
       );
       expect(result).toEqual(lineInjectionDto);
     });
@@ -178,7 +202,7 @@ describe('LinearityInjectionWorkspaceService', () => {
 
     it('Should throw error while deleting a Linearity Injection record', async () => {
       const error = new InternalServerErrorException(
-        `Error deleting Linearity Injection record Id [${linInjId}]`,
+          `Error deleting Linearity Injection record Id [${linInjId}]`,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);
 
@@ -189,6 +213,110 @@ describe('LinearityInjectionWorkspaceService', () => {
         errored = true;
       }
       expect(errored).toEqual(true);
+    });
+  });
+
+  describe('Transaction Support', () => {
+    it('Should use transaction entity manager when provided', async () => {
+      // Mock transaction entity manager
+      const mockTrx = {
+        getRepository: jest.fn().mockReturnValue({
+          create: jest.fn().mockReturnValue(lineInjection),
+          save: jest.fn().mockResolvedValue(lineInjection),
+          findOneBy: jest.fn().mockResolvedValue(lineInjection),
+        }),
+      } as unknown as EntityManager;
+
+      // Spy on testSummaryService.resetToNeedsEvaluation
+      const resetSpy = jest.spyOn(testSummaryService, 'resetToNeedsEvaluation');
+
+      // Call createInjection with transaction
+      await service.createInjection(
+          testSumId,
+          linSumId,
+          payload,
+          userId,
+          false,
+          null,
+          mockTrx,
+      );
+
+      // Verify transaction was used
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+
+      // Verify transaction was passed to child services
+      expect(resetSpy).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          expect.any(Boolean),
+          mockTrx,
+      );
+    });
+
+    it('Should use transaction entity manager for update operations', async () => {
+      // Mock transaction entity manager
+      const mockTrx = {
+        getRepository: jest.fn().mockReturnValue({
+          findOneBy: jest.fn().mockResolvedValue(lineInjection),
+          save: jest.fn().mockResolvedValue(lineInjection),
+        }),
+      } as unknown as EntityManager;
+
+      // Spy on testSummaryService.resetToNeedsEvaluation
+      const resetSpy = jest.spyOn(testSummaryService, 'resetToNeedsEvaluation');
+
+      // Call updateInjection with transaction
+      await service.updateInjection(
+          testSumId,
+          linInjId,
+          payload,
+          userId,
+          false,
+          mockTrx,
+      );
+
+      // Verify transaction was used
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+
+      // Verify transaction was passed to child services
+      expect(resetSpy).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          expect.any(Boolean),
+          mockTrx,
+      );
+    });
+
+    it('Should use transaction entity manager for delete operations', async () => {
+      // Mock transaction entity manager
+      const mockTrx = {
+        getRepository: jest.fn().mockReturnValue({
+          delete: jest.fn().mockResolvedValue(null),
+        }),
+      } as unknown as EntityManager;
+
+      // Spy on testSummaryService.resetToNeedsEvaluation
+      const resetSpy = jest.spyOn(testSummaryService, 'resetToNeedsEvaluation');
+
+      // Call deleteInjection with transaction
+      await service.deleteInjection(
+          testSumId,
+          linInjId,
+          userId,
+          false,
+          mockTrx,
+      );
+
+      // Verify transaction was used
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+
+      // Verify transaction was passed to child services
+      expect(resetSpy).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          expect.any(Boolean),
+          mockTrx,
+      );
     });
   });
 });

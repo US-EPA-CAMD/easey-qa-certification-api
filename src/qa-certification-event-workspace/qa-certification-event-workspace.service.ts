@@ -1,26 +1,23 @@
-import {
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { IsNull } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {HttpStatus, Injectable, InternalServerErrorException,} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, IsNull} from 'typeorm';
+import {settlePromises} from '../utilities/constants';
+import {v4 as uuid} from 'uuid';
 
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import {ComponentWorkspaceRepository} from '../component-workspace/component.repository';
 import {
   QACertificationEventBaseDTO,
   QACertificationEventDTO,
   QACertificationEventImportDTO,
   QACertificationEventRecordDTO,
 } from '../dto/qa-certification-event.dto';
-import { QACertificationEventMap } from '../maps/qa-certification-event.map';
-import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
-import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
-import { QACertificationEventRepository } from '../qa-certification-event/qa-certification-event.repository';
+import {QACertificationEventMap} from '../maps/qa-certification-event.map';
+import {MonitorLocationRepository} from '../monitor-location/monitor-location.repository';
+import {MonitorSystemWorkspaceRepository} from '../monitor-system-workspace/monitor-system-workspace.repository';
+import {QACertificationEventWorkspaceRepository} from './qa-certification-event-workspace.repository';
+import {QACertificationEventRepository} from '../qa-certification-event/qa-certification-event.repository';
 
 @Injectable()
 export class QACertificationEventWorkspaceService {
@@ -38,6 +35,7 @@ export class QACertificationEventWorkspaceService {
     locationId: string,
     payload: QACertificationEventBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<QACertificationEventRecordDTO> {
     const timestamp = currentDateTime();
 
@@ -80,7 +78,9 @@ export class QACertificationEventWorkspaceService {
       submissionAvailabilityCode: 'REQUIRE',
     });
 
-    await this.repository.save(entity);
+    // Use the transaction entity manager if provided
+    const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+    await repo.save(entity);
 
     const result = await this.repository.getQACertificationEventById(entity.id);
 
@@ -127,7 +127,7 @@ export class QACertificationEventWorkspaceService {
       return dto;
     });
 
-    return Promise.all(dtoPromises);
+    return settlePromises(dtoPromises, this.logger);
   }
 
   async lookupValues(locationId: string, payload: QACertificationEventBaseDTO) {
@@ -158,9 +158,11 @@ export class QACertificationEventWorkspaceService {
     };
   }
 
-  async deleteQACertEvent(id: string): Promise<void> {
+  async deleteQACertEvent(id: string, trx?: EntityManager): Promise<void> {
     try {
-      await this.repository.delete(id);
+      // Use the transaction entity manager if provided
+      const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+      await repo.delete(id);
     } catch (e) {
       throw new InternalServerErrorException(
         `Error deleting QA Certification Event record Id [${id}]`,
@@ -194,6 +196,7 @@ export class QACertificationEventWorkspaceService {
     id: string,
     payload: QACertificationEventBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<QACertificationEventDTO> {
     const timestamp = currentDateTime();
 
@@ -231,7 +234,9 @@ export class QACertificationEventWorkspaceService {
     entity.evalStatusCode = 'EVAL';
     entity.submissionAvailabilityCode = 'REQUIRE';
 
-    await this.repository.save(entity);
+    // Use the transaction entity manager if provided
+    const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+    await repo.save(entity);
 
     return this.getQACertEvent(entity.id);
   }
@@ -244,22 +249,21 @@ export class QACertificationEventWorkspaceService {
     beginDate?: Date,
     endDate?: Date,
   ): Promise<QACertificationEventDTO[]> {
-    const qaCertEvents = await this.getQACertEvents(
-      facilityId,
-      unitIds,
-      stackPipeIds,
-      qaCertificationEventIds,
-      beginDate,
-      endDate,
+    return await this.getQACertEvents(
+        facilityId,
+        unitIds,
+        stackPipeIds,
+        qaCertificationEventIds,
+        beginDate,
+        endDate,
     );
-
-    return qaCertEvents;
   }
 
   async import(
     locationId: string,
     payload: QACertificationEventImportDTO,
     userId: string,
+    trx?: EntityManager,
   ) {
     const {
       componentRecordId,
@@ -275,19 +279,21 @@ export class QACertificationEventWorkspaceService {
       monitoringSystemRecordId,
     });
 
-    let importedQACertEvent;
+    let importedQACertEvent: QACertificationEventRecordDTO;
     if (record) {
       importedQACertEvent = await this.updateQACertEvent(
         locationId,
         record.id,
         payload,
         userId,
+        trx,
       );
     } else {
       importedQACertEvent = await this.createQACertEvent(
         locationId,
         payload,
         userId,
+        trx,
       );
     }
 

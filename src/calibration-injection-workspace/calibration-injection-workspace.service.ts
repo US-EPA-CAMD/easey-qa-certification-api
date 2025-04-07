@@ -1,20 +1,20 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In, IsNull } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, In, IsNull} from 'typeorm';
+import {v4 as uuid} from 'uuid';
 
-import { CalibrationInjectionRepository } from '../calibration-injection/calibration-injection.repository';
+import {CalibrationInjectionRepository} from '../calibration-injection/calibration-injection.repository';
 import {
   CalibrationInjectionBaseDTO,
   CalibrationInjectionDTO,
   CalibrationInjectionImportDTO,
 } from '../dto/calibration-injection.dto';
-import { CalibrationInjection } from '../entities/calibration-injection.entity';
-import { CalibrationInjectionMap } from '../maps/calibration-injection.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { CalibrationInjectionWorkspaceRepository } from './calibration-injection-workspace.repository';
+import {CalibrationInjection} from '../entities/calibration-injection.entity';
+import {CalibrationInjectionMap} from '../maps/calibration-injection.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {CalibrationInjectionWorkspaceRepository} from './calibration-injection-workspace.repository';
 
 @Injectable()
 export class CalibrationInjectionWorkspaceService {
@@ -62,10 +62,13 @@ export class CalibrationInjectionWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<CalibrationInjectionDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    const repo = trx ? trx.getRepository(CalibrationInjection) : this.repository;
+
+    let entity = repo.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
@@ -74,12 +77,13 @@ export class CalibrationInjectionWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repo.save(entity);
+    entity = await repo.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
     return this.map.one(entity);
   }
@@ -90,8 +94,11 @@ export class CalibrationInjectionWorkspaceService {
     payload: CalibrationInjectionBaseDTO,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<CalibrationInjectionDTO> {
-    const entity = await this.repository.findOneBy({
+    const repo = trx ? trx.getRepository(CalibrationInjection) : this.repository;
+
+    const entity = await repo.findOneBy({
       id,
       testSumId,
     });
@@ -126,12 +133,13 @@ export class CalibrationInjectionWorkspaceService {
     entity.userId = userId;
     entity.updateDate = timestamp;
 
-    await this.repository.save(entity);
+    await repo.save(entity);
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.map.one(entity);
@@ -142,9 +150,11 @@ export class CalibrationInjectionWorkspaceService {
     id: string,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
     try {
-      await this.repository.delete({
+      const repo = trx ? trx.getRepository(CalibrationInjection) : this.repository;
+      await repo.delete({
         id,
         testSumId,
       });
@@ -159,6 +169,7 @@ export class CalibrationInjectionWorkspaceService {
       testSumId,
       userId,
       isImport,
+      trx,
     );
   }
 
@@ -172,8 +183,7 @@ export class CalibrationInjectionWorkspaceService {
   }
 
   async export(testSumIds: string[]): Promise<CalibrationInjectionDTO[]> {
-    const calInjs = await this.getCalibrationInjectionByTestSumIds(testSumIds);
-    return calInjs;
+    return await this.getCalibrationInjectionByTestSumIds(testSumIds);
   }
 
   async import(
@@ -181,6 +191,7 @@ export class CalibrationInjectionWorkspaceService {
     payload: CalibrationInjectionImportDTO,
     userId: string,
     isHistoricalRecord?: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: CalibrationInjection;
@@ -204,6 +215,7 @@ export class CalibrationInjectionWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(

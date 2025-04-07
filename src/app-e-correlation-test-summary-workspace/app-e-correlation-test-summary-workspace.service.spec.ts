@@ -1,6 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -94,38 +95,103 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
     }).compile();
 
     service = module.get<AppECorrelationTestSummaryWorkspaceService>(
-      AppECorrelationTestSummaryWorkspaceService,
+        AppECorrelationTestSummaryWorkspaceService,
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
-      TestSummaryWorkspaceService,
+        TestSummaryWorkspaceService,
     );
     repository = module.get<AppendixETestSummaryWorkspaceRepository>(
-      AppendixETestSummaryWorkspaceRepository,
+        AppendixETestSummaryWorkspaceRepository,
     );
     officialRepository = module.get<AppendixETestSummaryRepository>(
-      AppendixETestSummaryRepository,
+        AppendixETestSummaryRepository,
     );
   });
 
   describe('createAppECorrelation', () => {
     it('Calls the service to create a new Appendix E Correlation Test Summary record', async () => {
       const result = await service.createAppECorrelation(
-        testSumId,
-        payload,
-        userId,
+          testSumId,
+          payload,
+          userId,
       );
 
       expect(result).toEqual(appECorrelationTest);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
 
+    describe('Transaction Support', () => {
+      it('Should use transaction entity manager when provided', async () => {
+        // Mock transaction entity manager
+        const mockTrx = {
+          getRepository: jest.fn().mockReturnValue({
+            create: jest.fn().mockReturnValue(entity),
+            save: jest.fn().mockResolvedValue(entity),
+            findOneBy: jest.fn().mockResolvedValue(entity),
+          }),
+        } as unknown as EntityManager;
+
+        // Spy on child service method
+        const testSummaryServiceSpy = jest.spyOn(testSummaryService, 'resetToNeedsEvaluation');
+
+        // Call method with transaction
+        await service.createAppECorrelation(
+          testSumId,
+          payload,
+          userId,
+          false,
+          null,
+          mockTrx,
+        );
+
+        // Verify transaction was used
+        expect(mockTrx.getRepository).toHaveBeenCalled();
+
+        // Verify transaction was passed to child service
+        expect(testSummaryServiceSpy).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.any(String),
+          expect.any(Boolean),
+          mockTrx,
+        );
+      });
+
+      it('Should handle errors and roll back transaction', async () => {
+        // Mock transaction entity manager
+        const mockTrx = {
+          getRepository: jest.fn().mockReturnValue({
+            create: jest.fn().mockReturnValue(entity),
+            save: jest.fn().mockRejectedValue(new Error('Database constraint violation')),
+          }),
+        } as unknown as EntityManager;
+
+        // Call method with transaction that will fail
+        let errored = false;
+        try {
+          await service.createAppECorrelation(
+            testSumId,
+            payload,
+            userId,
+            false,
+            null,
+            mockTrx,
+          );
+        } catch (e) {
+          errored = true;
+          expect(e.message).toContain('Database constraint violation');
+        }
+
+        expect(errored).toBe(true);
+      });
+    });
+
     describe('editAppECorrelation', () => {
       it('should update an Appendix E Correlation Test Summary record', async () => {
         const result = await service.editAppECorrelation(
-          testSumId,
-          appendixECorrelationTestSummaryId,
-          payload,
-          userId,
+            testSumId,
+            appendixECorrelationTestSummaryId,
+            payload,
+            userId,
         );
         expect(result).toEqual(appECorrelationTest);
       });
@@ -136,10 +202,10 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
         let errored = false;
         try {
           await service.editAppECorrelation(
-            testSumId,
-            appendixECorrelationTestSummaryId,
-            payload,
-            userId,
+              testSumId,
+              appendixECorrelationTestSummaryId,
+              payload,
+              userId,
           );
         } catch (e) {
           errored = true;
@@ -180,8 +246,8 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
   describe('Export', () => {
     it('Should Export Appendix E Correlation Test Summary', async () => {
       jest
-        .spyOn(service, 'getAppECorrelationsByTestSumIds')
-        .mockResolvedValue([appECorrelationTest]);
+          .spyOn(service, 'getAppECorrelationsByTestSumIds')
+          .mockResolvedValue([appECorrelationTest]);
       const result = await service.export([testSumId]);
       expect(result).toEqual([appECorrelationTest]);
     });
@@ -190,28 +256,28 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
   describe('deleteAppECorrelation', () => {
     it('Should delete an Appendix E Correlation Test Summary record', async () => {
       const result = await service.deleteAppECorrelation(
-        testSumId,
-        appendixECorrelationTestSummaryId,
-        userId,
+          testSumId,
+          appendixECorrelationTestSummaryId,
+          userId,
       );
       expect(result).toEqual(undefined);
     });
 
     it('Should throw error while deleting an Appendix E Correlation Test Summary record', async () => {
       const error = new EaseyException(
-        new Error(
-          `Error Appendix E Correlation Test Summary with record Id [${appendixECorrelationTestSummaryId}]`,
-        ),
-        HttpStatus.INTERNAL_SERVER_ERROR,
+          new Error(
+              `Error Appendix E Correlation Test Summary with record Id [${appendixECorrelationTestSummaryId}]`,
+          ),
+          HttpStatus.INTERNAL_SERVER_ERROR,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);
 
       let errored = false;
       try {
         await service.deleteAppECorrelation(
-          testSumId,
-          appendixECorrelationTestSummaryId,
-          userId,
+            testSumId,
+            appendixECorrelationTestSummaryId,
+            userId,
         );
       } catch (e) {
         errored = true;

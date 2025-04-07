@@ -7,8 +7,8 @@ import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { TestSummaryService } from '../test-summary/test-summary.service';
 import { TestExtensionExemptionsService } from '../test-extension-exemptions/test-extension-exemptions.service';
 import { QaCertificationEventService } from '../qa-certification-event/qa-certification-event.service';
-import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 import { EaseyContentService } from '../qa-certification-easey-content/easey-content.service';
+import * as exportUtility from '../utilities/remove-non-reported-values';
 
 @Injectable()
 export class QACertificationService {
@@ -20,6 +20,12 @@ export class QACertificationService {
     private readonly easeyContentService: EaseyContentService,
   ) {}
 
+  /**
+   * Export QA certification data
+   * @param params Export parameters
+   * @param rptValuesOnly Whether to include only reported values
+   * @returns QA certification data
+   */
   async export(
     params: QACertificationParamsDTO,
     rptValuesOnly: boolean = false,
@@ -90,7 +96,7 @@ export class QACertificationService {
     };
 
     if (rptValuesOnly) {
-      await removeNonReportedValues(resultObject);
+      await exportUtility.removeNonReportedValues(resultObject);
     }
 
     return resultObject;

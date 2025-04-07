@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import {
   TestQualificationBaseDTO,
@@ -55,10 +56,20 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockEntityManager = () => ({
+  getRepository: jest.fn().mockImplementation(() => ({
+    create: jest.fn().mockResolvedValue(entity),
+    save: jest.fn().mockResolvedValue(entity),
+    findOneBy: jest.fn().mockResolvedValue(entity),
+    delete: jest.fn().mockResolvedValue(null),
+  })),
+});
+
 describe('TestQualificationWorkspaceService', () => {
   let service: TestQualificationWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
   let repository: TestQualificationWorkspaceRepository;
+  let mockTrx: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -94,6 +105,7 @@ describe('TestQualificationWorkspaceService', () => {
     repository = module.get<TestQualificationWorkspaceRepository>(
       TestQualificationWorkspaceRepository,
     );
+    mockTrx = mockEntityManager() as unknown as EntityManager;
   });
 
   describe('createTestQualification', () => {
@@ -106,6 +118,26 @@ describe('TestQualificationWorkspaceService', () => {
 
       expect(result).toEqual(testQualificationRecord);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    it('Should create and return a new Test Qualification record with transaction', async () => {
+      const result = await service.createTestQualification(
+        testSumId,
+        payload,
+        userId,
+        false,
+        null,
+        mockTrx,
+      );
+
+      expect(result).toEqual(testQualificationRecord);
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        mockTrx,
+      );
     });
   });
 
@@ -170,6 +202,24 @@ describe('TestQualificationWorkspaceService', () => {
       }
       expect(errored).toEqual(true);
     });
+
+    it('Should delete a Test Qualification record with transaction', async () => {
+      const result = await service.deleteTestQualification(
+        testSumId,
+        testQualificationId,
+        userId,
+        false,
+        mockTrx,
+      );
+      expect(result).toEqual(undefined);
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        mockTrx,
+      );
+    });
   });
 
   describe('updateTestQualification', () => {
@@ -199,6 +249,25 @@ describe('TestQualificationWorkspaceService', () => {
       }
       expect(errored).toEqual(true);
     });
+
+    it('should update a test qualification record with transaction', async () => {
+      const result = await service.updateTestQualification(
+        testSumId,
+        'testQualId',
+        payload,
+        userId,
+        false,
+        mockTrx,
+      );
+      expect(result).toEqual(record);
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        mockTrx,
+      );
+    });
   });
 
   describe('Export', () => {
@@ -222,6 +291,35 @@ describe('TestQualificationWorkspaceService', () => {
         new TestQualificationImportDTO(),
         userId,
         true,
+      );
+    });
+
+    it('Should Import Test Qualification with transaction', async () => {
+      // Create a spy on createTestQualification that returns the expected value
+      const createTestQualificationSpy = jest
+        .spyOn(service, 'createTestQualification')
+        .mockResolvedValue(testQualificationRecord);
+
+      // Mock the historicalRepo.findOneBy to return undefined
+      jest.spyOn(service['historicalRepo'], 'findOneBy').mockResolvedValue(undefined);
+
+      // Call import with transaction
+      await service.import(
+        testSumId,
+        new TestQualificationImportDTO(),
+        userId,
+        true,
+        mockTrx,
+      );
+
+      // Verify createTestQualification was called with transaction
+      expect(createTestQualificationSpy).toHaveBeenCalledWith(
+        testSumId,
+        expect.any(Object),
+        userId,
+        true,
+        null,
+        mockTrx,
       );
     });
   });

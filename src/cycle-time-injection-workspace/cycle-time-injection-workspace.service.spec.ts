@@ -1,6 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import { CycleTimeInjectionRepository } from '../cycle-time-injection/cycle-time-injection.repository';
 import {
@@ -46,6 +47,8 @@ const mockHistoricalRepo = () => ({
 describe('CycleTimeInjectionWorkspaceService', () => {
   let service: CycleTimeInjectionWorkspaceService;
   let repository: CycleTimeInjectionWorkspaceRepository;
+  let testSummaryService: TestSummaryWorkspaceService;
+  let entityManager: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -74,6 +77,17 @@ describe('CycleTimeInjectionWorkspaceService', () => {
             resetToNeedsEvaluation: jest.fn().mockResolvedValue(null),
           }),
         },
+        {
+          provide: EntityManager,
+          useFactory: () => ({
+            getRepository: jest.fn().mockReturnValue({
+              create: jest.fn().mockReturnValue(cycleTimeInjection),
+              save: jest.fn().mockResolvedValue(cycleTimeInjection),
+              findOneBy: jest.fn().mockResolvedValue(cycleTimeInjection),
+              delete: jest.fn().mockResolvedValue(null),
+            }),
+          }),
+        },
       ],
     }).compile();
 
@@ -83,6 +97,10 @@ describe('CycleTimeInjectionWorkspaceService', () => {
     repository = module.get<CycleTimeInjectionWorkspaceRepository>(
       CycleTimeInjectionWorkspaceRepository,
     );
+    testSummaryService = module.get<TestSummaryWorkspaceService>(
+      TestSummaryWorkspaceService,
+    );
+    entityManager = module.get<EntityManager>(EntityManager);
   });
 
   describe('getCycleTimeInjections', () => {
@@ -140,6 +158,26 @@ describe('CycleTimeInjectionWorkspaceService', () => {
 
       expect(result).toEqual(cycleTimeInjectionDTO);
     });
+
+    it('Should create a Cycle Time Injection record with transaction', async () => {
+      const result = await service.createCycleTimeInjection(
+        testSumId,
+        cycleTimeSumId,
+        payload,
+        userId,
+        false,
+        null,
+        entityManager,
+      );
+      expect(result).toEqual(cycleTimeInjectionDTO);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        entityManager,
+      );
+    });
   });
 
   describe('getCycleTimeInjectionByCycleTimeSumIds', () => {
@@ -193,6 +231,31 @@ describe('CycleTimeInjectionWorkspaceService', () => {
       );
       expect(result).toEqual(null);
     });
+
+    it('Should Import Cycle Time Injection with transaction', async () => {
+      jest
+        .spyOn(service, 'createCycleTimeInjection')
+        .mockResolvedValue(cycleTimeInjectionDTO);
+
+      const result = await service.import(
+        testSumId,
+        cycleTimeSumId,
+        importPayload,
+        userId,
+        false,
+        entityManager,
+      );
+      expect(result).toEqual(null);
+      expect(service.createCycleTimeInjection).toHaveBeenCalledWith(
+        testSumId,
+        cycleTimeSumId,
+        importPayload,
+        userId,
+        true,
+        null,
+        entityManager,
+      );
+    });
   });
 
   describe('udpateCycleTimeInjection', () => {
@@ -205,6 +268,26 @@ describe('CycleTimeInjectionWorkspaceService', () => {
       );
 
       expect(result).toEqual(cycleTimeInjectionDTO);
+    });
+
+    it('should update a Cycle Time Injection record with transaction', async () => {
+      const result = await service.updateCycleTimeInjection(
+        testSumId,
+        cycleTimeInjId,
+        payload,
+        userId,
+        false,
+        entityManager,
+      );
+
+      expect(result).toEqual(cycleTimeInjectionDTO);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        entityManager,
+      );
     });
 
     it('should throw an error while updating a Cycle Time Injection record', async () => {
@@ -236,6 +319,25 @@ describe('CycleTimeInjectionWorkspaceService', () => {
       );
 
       expect(result).toEqual(undefined);
+    });
+
+    it('should delete Cycle Time Injection record with transaction', async () => {
+      const result = await service.deleteCycleTimeInjection(
+        testSumId,
+        cycleTimeInjId,
+        userId,
+        false,
+        entityManager,
+      );
+
+      expect(result).toEqual(undefined);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        entityManager,
+      );
     });
 
     it('should throw an error while deleting a Cycle Time Injection record', async () => {

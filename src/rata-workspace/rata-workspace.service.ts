@@ -2,7 +2,8 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In, IsNull } from 'typeorm';
+import { EntityManager, In, IsNull } from 'typeorm';
+import { settlePromises } from '../utilities/constants';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -59,10 +60,14 @@ export class RataWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<RataRecordDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    // Use the transaction entity manager if provided
+    const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+
+    let entity = repo.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
@@ -71,12 +76,13 @@ export class RataWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repo.save(entity);
+    entity = await repo.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
     return this.map.one(entity);
   }
@@ -87,9 +93,13 @@ export class RataWorkspaceService {
     payload: RataBaseDTO,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<RataRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOneBy({ id });
+    // Use the transaction entity manager if provided
+    const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+
+    const entity = await repo.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -105,12 +115,13 @@ export class RataWorkspaceService {
     entity.userId = userId;
     entity.updateDate = timestamp;
 
-    await this.repository.save(entity);
+    await repo.save(entity);
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
     return this.map.one(entity);
   }
@@ -120,9 +131,12 @@ export class RataWorkspaceService {
     id: string,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
     try {
-      await this.repository.delete(id);
+      // Use the transaction entity manager if provided
+      const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
+      await repo.delete(id);
     } catch (e) {
       throw new EaseyException(
         new Error(`Error deleting RATA with record Id [${id}]`),
@@ -134,6 +148,7 @@ export class RataWorkspaceService {
       testSumId,
       userId,
       isImport,
+      trx,
     );
   }
 
@@ -149,6 +164,7 @@ export class RataWorkspaceService {
     payload: RataImportDTO,
     userId: string,
     isHistoricalRecord?: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     const promises = [];
@@ -167,6 +183,7 @@ export class RataWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(`Rata Successfully Imported. Record Id: ${createdRata.id}`);
@@ -180,12 +197,13 @@ export class RataWorkspaceService {
             rataSummary,
             userId,
             isHistoricalRecord,
+            trx,
           ),
         );
       }
     }
 
-    await Promise.all(promises);
+    await settlePromises(promises, this.logger);
 
     return null;
   }

@@ -1,6 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import {
   LinearityInjectionDTO,
@@ -68,6 +69,7 @@ const mockMap = () => ({
 describe('LinearitySummaryWorkspaceService', () => {
   let service: LinearitySummaryWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
+  let linearityInjectionService: LinearityInjectionWorkspaceService;
   let repository: LinearitySummaryWorkspaceRepository;
 
   beforeEach(async () => {
@@ -105,13 +107,16 @@ describe('LinearitySummaryWorkspaceService', () => {
     }).compile();
 
     service = module.get<LinearitySummaryWorkspaceService>(
-      LinearitySummaryWorkspaceService,
+        LinearitySummaryWorkspaceService,
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
-      TestSummaryWorkspaceService,
+        TestSummaryWorkspaceService,
+    );
+    linearityInjectionService = module.get<LinearityInjectionWorkspaceService>(
+        LinearityInjectionWorkspaceService,
     );
     repository = module.get<LinearitySummaryWorkspaceRepository>(
-      LinearitySummaryWorkspaceRepository,
+        LinearitySummaryWorkspaceRepository,
     );
   });
 
@@ -151,8 +156,8 @@ describe('LinearitySummaryWorkspaceService', () => {
   describe('export', () => {
     it('Should export Linearity Summaries', async () => {
       jest
-        .spyOn(service, 'getSummariesByTestSumIds')
-        .mockResolvedValue([lineSummaryDto]);
+          .spyOn(service, 'getSummariesByTestSumIds')
+          .mockResolvedValue([lineSummaryDto]);
 
       const result = await service.export([testSumId]);
       expect(result).toEqual([lineSummaryDto]);
@@ -165,31 +170,62 @@ describe('LinearitySummaryWorkspaceService', () => {
 
     it('Should import Linearity Summary', async () => {
       jest
-        .spyOn(service, 'createSummary')
-        .mockResolvedValue(linearitySummaryRecord);
+          .spyOn(service, 'createSummary')
+          .mockResolvedValue(linearitySummaryRecord);
       const result = await service.import(
-        testSumId,
-        new LinearitySummaryImportDTO(),
-        userId,
+          testSumId,
+          new LinearitySummaryImportDTO(),
+          userId,
       );
       expect(result).toEqual(null);
     });
 
     it('Should import Linearity Summary when its a historical recored', async () => {
       jest
-        .spyOn(service, 'createSummary')
-        .mockResolvedValue(lineSummaryRecordDto);
+          .spyOn(service, 'createSummary')
+          .mockResolvedValue(lineSummaryRecordDto);
       importPayload.linearityInjectionData = [
         new LinearityInjectionImportDTO(),
       ];
 
       const result = await service.import(
-        testSumId,
-        importPayload,
-        userId,
-        true,
+          testSumId,
+          importPayload,
+          userId,
+          true,
       );
       expect(result).toEqual(null);
+    });
+
+    it('Should import Linearity Summary with transaction', async () => {
+      // Create a spy on createSummary that returns the expected value
+      const createSummarySpy = jest
+        .spyOn(service, 'createSummary')
+        .mockResolvedValue(linearitySummaryRecord);
+
+      // Mock transaction entity manager
+      const mockTrx = {
+        getRepository: jest.fn().mockReturnValue(repository),
+      } as unknown as EntityManager;
+
+      // Call import with transaction
+      await service.import(
+          testSumId,
+          new LinearitySummaryImportDTO(),
+          userId,
+          false,
+          mockTrx,
+      );
+
+      // Verify createSummary was called with transaction
+      expect(createSummarySpy).toHaveBeenCalledWith(
+        testSumId,
+        expect.any(Object),
+        userId,
+        true,
+        null,
+        mockTrx,
+      );
     });
   });
 
@@ -201,11 +237,11 @@ describe('LinearitySummaryWorkspaceService', () => {
 
     it('Should insert a Linearity Summary record with historical Id', async () => {
       const result = await service.createSummary(
-        testSumId,
-        payload,
-        userId,
-        true,
-        'HISTORICAL-ID',
+          testSumId,
+          payload,
+          userId,
+          true,
+          'HISTORICAL-ID',
       );
       expect(result).toEqual(linearitySummaryRecord);
     });
@@ -214,10 +250,10 @@ describe('LinearitySummaryWorkspaceService', () => {
   describe('updateSummary', () => {
     it('Should update a Linearity Summary record', async () => {
       const result = await service.updateSummary(
-        testSumId,
-        linSumId,
-        payload,
-        userId,
+          testSumId,
+          linSumId,
+          payload,
+          userId,
       );
       expect(result).toEqual(linearitySummaryRecord);
     });
@@ -243,7 +279,7 @@ describe('LinearitySummaryWorkspaceService', () => {
 
     it('Should through error while deleting a Linearity Summary record', async () => {
       const error = new InternalServerErrorException(
-        `Error deleting Linearity Summary record Id [${linSumId}]`,
+          `Error deleting Linearity Summary record Id [${linSumId}]`,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);
 
@@ -283,10 +319,10 @@ describe('LinearitySummaryWorkspaceService', () => {
   describe('editFuelFlowToLoadTest', () => {
     it('Should update and return a new Linearity Summary record', async () => {
       const result = await service.updateSummary(
-        testSumId,
-        id,
-        payload,
-        userId,
+          testSumId,
+          id,
+          payload,
+          userId,
       );
       expect(result).toEqual(linearitySummaryRecord);
     });
@@ -297,6 +333,83 @@ describe('LinearitySummaryWorkspaceService', () => {
       const result = await service.deleteSummary(testSumId, id, userId);
 
       expect(result).toEqual(undefined);
+    });
+  });
+
+  describe('Transaction Support', () => {
+    it('Should use transaction entity manager when provided', async () => {
+      // Mock transaction entity manager
+      const mockTrx = {
+        getRepository: jest.fn().mockReturnValue({
+          create: jest.fn().mockReturnValue(lineSummary),
+          save: jest.fn().mockResolvedValue(lineSummary),
+          findOneBy: jest.fn().mockResolvedValue(lineSummary),
+        }),
+      } as unknown as EntityManager;
+
+      // Spy on testSummaryService.resetToNeedsEvaluation
+      const resetSpy = jest.spyOn(testSummaryService, 'resetToNeedsEvaluation');
+
+      // Call createSummary with transaction
+      await service.createSummary(
+          testSumId,
+          payload,
+          userId,
+          false,
+          'HISTORICAL-ID',
+          mockTrx,
+      );
+
+      // Verify transaction was used
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+
+      // Verify transaction was passed to child services
+      expect(resetSpy).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          expect.any(Boolean),
+          mockTrx,
+      );
+    });
+
+    it('Should pass transaction to child services during import', async () => {
+      // Mock transaction for entity manager
+      const mockTrx = {
+        getRepository: jest.fn().mockReturnValue(repository),
+      } as unknown as EntityManager;
+
+      // Create a spy on createSummary that returns a known value with ID
+      const mockSummary = new LinearitySummaryRecordDTO();
+      mockSummary.id = 'test-summary-id';
+      jest.spyOn(service, 'createSummary').mockResolvedValue(mockSummary);
+
+      // Spy on linearityInjectionService.import
+      const injectionImportSpy = jest.spyOn(linearityInjectionService, 'import');
+
+      // Create payload with injection data only
+      const importPayloadWithInjections = new LinearitySummaryImportDTO();
+      importPayloadWithInjections.linearityInjectionData = [
+        new LinearityInjectionImportDTO(),
+      ];
+
+      // Call import with transaction
+      await service.import(
+          testSumId,
+          importPayloadWithInjections,
+          userId,
+          false,
+          mockTrx,
+      );
+
+      // Verify transaction was passed to child service with the correct parameters per requirement
+      expect(injectionImportSpy).toHaveBeenCalledWith(
+        testSumId,
+        mockSummary.id,
+        expect.any(Object),
+        userId,
+        false,
+        mockTrx,
+      );
     });
   });
 });

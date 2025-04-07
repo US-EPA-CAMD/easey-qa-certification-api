@@ -2,6 +2,7 @@ import { InternalServerErrorException } from '@nestjs/common/exceptions';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import { CalibrationInjectionRepository } from '../calibration-injection/calibration-injection.repository';
 import {
@@ -40,6 +41,15 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockEntityManager = () => ({
+  getRepository: jest.fn().mockImplementation(() => ({
+    create: jest.fn().mockResolvedValue(entity),
+    save: jest.fn().mockResolvedValue(entity),
+    findOneBy: jest.fn().mockResolvedValue(entity),
+    delete: jest.fn().mockResolvedValue(null),
+  })),
+});
+
 const mockHistoricalRepo = () => ({
   findOneBy: jest.fn().mockResolvedValue(new CalibrationInjectionOfficial()),
 });
@@ -48,6 +58,7 @@ describe('CalibrationInjectionWorkspaceService', () => {
   let service: CalibrationInjectionWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
   let repository: CalibrationInjectionWorkspaceRepository;
+  let mockTrx: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -83,6 +94,7 @@ describe('CalibrationInjectionWorkspaceService', () => {
     repository = module.get<CalibrationInjectionWorkspaceRepository>(
       CalibrationInjectionWorkspaceRepository,
     );
+    mockTrx = mockEntityManager() as unknown as EntityManager;
   });
 
   describe('getCalibrationInjections', () => {
@@ -138,6 +150,26 @@ describe('CalibrationInjectionWorkspaceService', () => {
       expect(result).toEqual(dto);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
     });
+
+    it('Should create and return a new Calibration Injection record with transaction', async () => {
+      const result = await service.createCalibrationInjection(
+        testSumId,
+        payload,
+        userId,
+        false,
+        null,
+        mockTrx,
+      );
+
+      expect(result).toEqual(dto);
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        mockTrx,
+      );
+    });
   });
 
   describe('updateCalibrationInjection', () => {
@@ -170,6 +202,26 @@ describe('CalibrationInjectionWorkspaceService', () => {
 
       expect(errored).toEqual(true);
     });
+
+    it('Should update and return the Calibration Injection record with transaction', async () => {
+      const result = await service.updateCalibrationInjection(
+        testSumId,
+        id,
+        payload,
+        userId,
+        false,
+        mockTrx,
+      );
+
+      expect(result).toEqual(dto);
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        mockTrx,
+      );
+    });
   });
 
   describe('deleteCalibrationInjection', () => {
@@ -197,6 +249,25 @@ describe('CalibrationInjectionWorkspaceService', () => {
       }
 
       expect(errored).toEqual(true);
+    });
+
+    it('Should delete a Calibration Injection record with transaction', async () => {
+      const result = await service.deleteCalibrationInjection(
+        testSumId,
+        id,
+        userId,
+        false,
+        mockTrx,
+      );
+
+      expect(result).toEqual(undefined);
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+        testSumId,
+        userId,
+        false,
+        mockTrx,
+      );
     });
   });
 
@@ -231,6 +302,21 @@ describe('CalibrationInjectionWorkspaceService', () => {
       jest.spyOn(service, 'createCalibrationInjection').mockResolvedValue(dto);
 
       await service.import(testSumId, payload, userId, true);
+    });
+
+    it('Should Import Calibration Injection with transaction', async () => {
+      jest.spyOn(service, 'createCalibrationInjection').mockResolvedValue(dto);
+
+      await service.import(testSumId, payload, userId, false, mockTrx);
+
+      expect(service.createCalibrationInjection).toHaveBeenCalledWith(
+        testSumId,
+        payload,
+        userId,
+        true,
+        null,
+        mockTrx,
+      );
     });
   });
 });

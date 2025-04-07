@@ -2,9 +2,11 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import { CycleTimeInjectionWorkspaceService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace.service';
 import { CycleTimeSummaryRepository } from '../cycle-time-summary/cycle-time-summary.repository';
+import { settlePromises } from '../utilities/constants';
 import {
   CycleTimeInjectionDTO,
   CycleTimeInjectionImportDTO,
@@ -59,9 +61,17 @@ const mockHistoricalRepo = () => ({
   findOneBy: jest.fn().mockResolvedValue(new CycleTimeSummaryOfficial()),
 });
 
+// Mock the settlePromises function
+jest.mock('../utilities/constants', () => ({
+  settlePromises: jest.fn().mockImplementation(promises => Promise.all(promises || [])),
+}));
+
 describe('CycleTimeSummaryWorkspaceService', () => {
   let service: CycleTimeSummaryWorkspaceService;
   let repository: CycleTimeSummaryWorkspaceRepository;
+  let testSummaryService: TestSummaryWorkspaceService;
+  let cycleTimeInjectionService: CycleTimeInjectionWorkspaceService;
+  let entityManager: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -89,15 +99,33 @@ describe('CycleTimeSummaryWorkspaceService', () => {
           provide: CycleTimeSummaryRepository,
           useFactory: mockHistoricalRepo,
         },
+        {
+          provide: EntityManager,
+          useFactory: () => ({
+            getRepository: jest.fn().mockReturnValue({
+              create: jest.fn().mockReturnValue(entity),
+              save: jest.fn().mockResolvedValue(entity),
+              findOneBy: jest.fn().mockResolvedValue(entity),
+              delete: jest.fn().mockResolvedValue(null),
+            }),
+          }),
+        },
       ],
     }).compile();
 
     service = module.get<CycleTimeSummaryWorkspaceService>(
-      CycleTimeSummaryWorkspaceService,
+        CycleTimeSummaryWorkspaceService,
     );
     repository = module.get<CycleTimeSummaryWorkspaceRepository>(
-      CycleTimeSummaryWorkspaceRepository,
+        CycleTimeSummaryWorkspaceRepository,
     );
+    testSummaryService = module.get<TestSummaryWorkspaceService>(
+        TestSummaryWorkspaceService,
+    );
+    cycleTimeInjectionService = module.get<CycleTimeInjectionWorkspaceService>(
+        CycleTimeInjectionWorkspaceService,
+    );
+    entityManager = module.get<EntityManager>(EntityManager);
   });
 
   describe('getCycleTimeSummaries', () => {
@@ -132,9 +160,9 @@ describe('CycleTimeSummaryWorkspaceService', () => {
   describe('createCycleTimeSummary', () => {
     it('Should create and return a new Cycle Time Summary record', async () => {
       const result = await service.createCycleTimeSummary(
-        testSumId,
-        payload,
-        userId,
+          testSumId,
+          payload,
+          userId,
       );
 
       expect(result).toEqual(dto);
@@ -142,27 +170,65 @@ describe('CycleTimeSummaryWorkspaceService', () => {
 
     it('Should create and return a new Cycle Time Summary record with Historical Record Id', async () => {
       const result = await service.createCycleTimeSummary(
-        testSumId,
-        payload,
-        userId,
-        false,
-        'historicalId',
+          testSumId,
+          payload,
+          userId,
+          false,
+          'historicalId',
       );
 
       expect(result).toEqual(dto);
+    });
+
+    it('Should create a Cycle Time Summary record with transaction', async () => {
+      const result = await service.createCycleTimeSummary(
+          testSumId,
+          payload,
+          userId,
+          false,
+          null,
+          entityManager,
+      );
+      expect(result).toEqual(dto);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          false,
+          entityManager,
+      );
     });
   });
 
   describe('updateCycleTimeSummary', () => {
     it('Should update and return the Cycle Time Summary record', async () => {
       const result = await service.updateCycleTimeSummary(
-        testSumId,
-        id,
-        payload,
-        userId,
+          testSumId,
+          id,
+          payload,
+          userId,
       );
 
       expect(result).toEqual(dto);
+    });
+
+    it('Should update a Cycle Time Summary record with transaction', async () => {
+      const result = await service.updateCycleTimeSummary(
+          testSumId,
+          id,
+          payload,
+          userId,
+          false,
+          entityManager,
+      );
+      expect(result).toEqual(dto);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          false,
+          entityManager,
+      );
     });
 
     it('Should throw error when a Cycle Time Summary record not found', async () => {
@@ -182,18 +248,36 @@ describe('CycleTimeSummaryWorkspaceService', () => {
   describe('deleteCycleTimeSummary', () => {
     it('Should delete a Cycle Time Summary record', async () => {
       const result = await service.deleteCycleTimeSummary(
-        testSumId,
-        id,
-        userId,
+          testSumId,
+          id,
+          userId,
       );
 
       expect(result).toEqual(undefined);
     });
 
+    it('Should delete a Cycle Time Summary record with transaction', async () => {
+      const result = await service.deleteCycleTimeSummary(
+          testSumId,
+          id,
+          userId,
+          false,
+          entityManager,
+      );
+      expect(result).toEqual(undefined);
+      expect(entityManager.getRepository).toHaveBeenCalled();
+      expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          false,
+          entityManager,
+      );
+    });
+
     it('Should throw error when database throws an error while deleting a Cycle Time Summary record', async () => {
       jest
-        .spyOn(repository, 'delete')
-        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+          .spyOn(repository, 'delete')
+          .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
       let errored = false;
 
       try {
@@ -218,8 +302,8 @@ describe('CycleTimeSummaryWorkspaceService', () => {
       dto.id = 'SOME_ID';
 
       jest
-        .spyOn(service, 'getCycleTimeSummaryByTestSumIds')
-        .mockResolvedValue([dto]);
+          .spyOn(service, 'getCycleTimeSummaryByTestSumIds')
+          .mockResolvedValue([dto]);
 
       const result = await service.export([testSumId]);
       dto.cycleTimeInjectionData = [cycleTimeInjDto];
@@ -241,6 +325,25 @@ describe('CycleTimeSummaryWorkspaceService', () => {
       jest.spyOn(service, 'createCycleTimeSummary').mockResolvedValue(dto);
 
       await service.import(testSumId, importPayload, userId, true);
+    });
+
+    it('Should Import Cycle Time Summary with transaction', async () => {
+      importPayload.cycleTimeInjectionData = [
+        new CycleTimeInjectionImportDTO(),
+      ];
+      jest.spyOn(service, 'createCycleTimeSummary').mockResolvedValue(dto);
+
+      await service.import(testSumId, importPayload, userId, false, entityManager);
+
+      expect(service.createCycleTimeSummary).toHaveBeenCalledWith(
+          testSumId,
+          importPayload,
+          userId,
+          true,
+          null,
+          entityManager,
+      );
+      expect(settlePromises).toHaveBeenCalled();
     });
   });
 });

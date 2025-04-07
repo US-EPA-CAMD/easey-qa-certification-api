@@ -1,4 +1,45 @@
 import { TestTypeCodes } from '../enums/test-type-code.enum';
+import { Logger } from '@us-epa-camd/easey-common/logger';
+
+/**
+ * Utility function to settle all promises and collect errors
+ * Similar to Promise.all but doesn't fail on first error
+ * Instead collects all results (successful and failed)
+ * @param promises Array of promises to settle
+ * @param logger Optional logger to log errors
+ * @returns Array of successful results
+ */
+export async function settlePromises<T>(
+  promises: Promise<T>[],
+  logger?: Logger
+): Promise<T[]> {
+  if (!promises || promises.length === 0) {
+    return [];
+  }
+
+  const results = await Promise.allSettled(promises);
+  const successResults: T[] = [];
+  const errors: Error[] = [];
+
+  results.forEach((result, index) => {
+    if (result.status === 'fulfilled') {
+      successResults.push(result.value);
+    } else {
+      const error = result.reason;
+      if (logger) {
+        logger.error(`Error in promise at index ${index}: ${error.message}`);
+      }
+      errors.push(error);
+    }
+  });
+
+  // If there were errors, log a summary
+  if (errors.length > 0 && logger) {
+    logger.error(`${errors.length} errors occurred while processing promises`);
+  }
+
+  return successResults;
+}
 
 export const MIN_HOUR = 0;
 export const MAX_HOUR = 23;

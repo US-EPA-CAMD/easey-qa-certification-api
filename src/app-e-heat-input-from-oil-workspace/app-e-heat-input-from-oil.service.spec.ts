@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
@@ -168,6 +169,88 @@ describe('AppEHeatInputOilWorkspaceService', () => {
       }
 
       expect(errored).toBe(true);
+    });
+
+    describe('Transaction Support', () => {
+      it('Should use transaction entity manager when provided', async () => {
+        // Mock transaction entity manager
+        const mockTrx = {
+          getRepository: jest.fn().mockReturnValue({
+            create: jest.fn().mockReturnValue(mockAeHiFromOil),
+            save: jest.fn().mockResolvedValue(mockAeHiFromOil),
+            findOneBy: jest.fn().mockResolvedValue(mockAeHiFromOil),
+          }),
+        } as unknown as EntityManager;
+
+        // Mock monitor system repository
+        jest
+          .spyOn(monSysWorkspaceRepository, 'findOneBy')
+          .mockResolvedValue(new MonitorSystem());
+
+        // Spy on test summary service method
+        const testSummaryServiceSpy = jest.spyOn(
+          service['testSummaryService'],
+          'resetToNeedsEvaluation',
+        );
+
+        // Call method with transaction
+        await service.createAppEHeatInputFromOilRecord(
+          locationId,
+          testSumId,
+          appECorrTestRunId,
+          payload,
+          userId,
+          false,
+          null,
+          mockTrx,
+        );
+
+        // Verify transaction was used
+        expect(mockTrx.getRepository).toHaveBeenCalled();
+
+        // Verify transaction was passed to child service
+        expect(testSummaryServiceSpy).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.any(String),
+          expect.any(Boolean),
+          mockTrx,
+        );
+      });
+
+      it('Should handle errors and roll back transaction', async () => {
+        // Mock transaction entity manager
+        const mockTrx = {
+          getRepository: jest.fn().mockReturnValue({
+            create: jest.fn().mockReturnValue(mockAeHiFromOil),
+            save: jest.fn().mockRejectedValue(new Error('Database constraint violation')),
+          }),
+        } as unknown as EntityManager;
+
+        // Mock monitor system repository
+        jest
+          .spyOn(monSysWorkspaceRepository, 'findOneBy')
+          .mockResolvedValue(new MonitorSystem());
+
+        // Call method with transaction that will fail
+        let errored = false;
+        try {
+          await service.createAppEHeatInputFromOilRecord(
+            locationId,
+            testSumId,
+            appECorrTestRunId,
+            payload,
+            userId,
+            false,
+            null,
+            mockTrx,
+          );
+        } catch (e) {
+          errored = true;
+          expect(e.message).toContain('Database constraint violation');
+        }
+
+        expect(errored).toBe(true);
+      });
     });
   });
 

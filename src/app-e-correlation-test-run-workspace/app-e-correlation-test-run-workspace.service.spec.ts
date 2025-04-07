@@ -1,6 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { AppECorrelationTestRunRepository } from '../app-e-correlation-test-run/app-e-correlation-test-run.repository';
@@ -159,6 +160,73 @@ describe('AppECorrelationTestRunWorkspaceService', () => {
 
       expect(result).toEqual(appECorrelationTestRunRecord);
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalled();
+    });
+
+    describe('Transaction Support', () => {
+      it('Should use transaction entity manager when provided', async () => {
+        // Mock transaction entity manager
+        const mockTrx = {
+          getRepository: jest.fn().mockReturnValue({
+            create: jest.fn().mockReturnValue(appECorrelationTestRunEntity),
+            save: jest.fn().mockResolvedValue(appECorrelationTestRunEntity),
+            findOneBy: jest.fn().mockResolvedValue(appECorrelationTestRunEntity),
+          }),
+        } as unknown as EntityManager;
+
+        // Spy on child service method
+        const testSummaryServiceSpy = jest.spyOn(testSummaryService, 'resetToNeedsEvaluation');
+
+        // Call method with transaction
+        await service.createAppECorrelationTestRun(
+          testSumId,
+          appECorrTestSumId,
+          payload,
+          userId,
+          false,
+          null,
+          mockTrx,
+        );
+
+        // Verify transaction was used
+        expect(mockTrx.getRepository).toHaveBeenCalled();
+
+        // Verify transaction was passed to child service
+        expect(testSummaryServiceSpy).toHaveBeenCalledWith(
+          expect.any(String),
+          expect.any(String),
+          expect.any(Boolean),
+          mockTrx,
+        );
+      });
+
+      it('Should handle errors and roll back transaction', async () => {
+        // Mock transaction entity manager
+        const mockTrx = {
+          getRepository: jest.fn().mockReturnValue({
+            create: jest.fn().mockReturnValue(appECorrelationTestRunEntity),
+            save: jest.fn().mockRejectedValue(new Error('Database constraint violation')),
+          }),
+        } as unknown as EntityManager;
+
+        // Call method with transaction that will fail
+        let errored = false;
+        try {
+          await service.createAppECorrelationTestRun(
+            testSumId,
+            appECorrTestSumId,
+            payload,
+            userId,
+            false,
+            null,
+            mockTrx,
+          );
+        } catch (e) {
+          errored = true;
+          expect(e.message).toContain('Database constraint violation');
+        }
+
+        expect(errored).toBe(true);
+      });
     });
   });
 

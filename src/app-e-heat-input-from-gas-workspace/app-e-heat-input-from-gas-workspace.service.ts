@@ -2,6 +2,7 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { AppEHeatInputFromGasRepository } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.repository';
@@ -64,6 +65,7 @@ export class AppEHeatInputFromGasWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<AppEHeatInputFromGasRecordDTO> {
     const timestamp = currentDateTime();
 
@@ -81,26 +83,45 @@ export class AppEHeatInputFromGasWorkspaceService {
       );
     }
 
-    let entity = this.repository.create({
-      id: historicalRecordId ? historicalRecordId : uuid(),
-      appECorrTestRunId,
-      monitoringSystemId: system.id,
-      gasVolume: payload.gasVolume,
-      gasGCV: payload.gasGCV,
-      gasHeatInput: payload.gasHeatInput,
-      userId,
-      addDate: timestamp,
-      updateDate: timestamp,
-    });
+    let entity;
 
-    await this.repository.save(entity);
+    if (trx) {
+      entity = trx.getRepository(AppEHeatInputFromGas).create({
+        id: historicalRecordId ? historicalRecordId : uuid(),
+        appECorrTestRunId,
+        monitoringSystemId: system.id,
+        gasVolume: payload.gasVolume,
+        gasGCV: payload.gasGCV,
+        gasHeatInput: payload.gasHeatInput,
+        userId,
+        addDate: timestamp,
+        updateDate: timestamp,
+      });
 
-    entity = await this.repository.getAppEHeatInputFromGasById(entity.id);
+      await trx.getRepository(AppEHeatInputFromGas).save(entity);
+      entity = await trx.getRepository(AppEHeatInputFromGas).findOneBy({ id: entity.id });
+    } else {
+      entity = this.repository.create({
+        id: historicalRecordId ? historicalRecordId : uuid(),
+        appECorrTestRunId,
+        monitoringSystemId: system.id,
+        gasVolume: payload.gasVolume,
+        gasGCV: payload.gasGCV,
+        gasHeatInput: payload.gasHeatInput,
+        userId,
+        addDate: timestamp,
+        updateDate: timestamp,
+      });
+
+      await this.repository.save(entity);
+      entity = await this.repository.getAppEHeatInputFromGasById(entity.id);
+    }
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.map.one(entity);
@@ -113,6 +134,7 @@ export class AppEHeatInputFromGasWorkspaceService {
     payload: AppEHeatInputFromGasBaseDTO,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<AppEHeatInputFromGasRecordDTO> {
     const timestamp = currentDateTime();
 
@@ -148,12 +170,17 @@ export class AppEHeatInputFromGasWorkspaceService {
     entity.userId = userId;
     entity.updateDate = timestamp;
 
-    await this.repository.save(entity);
+    if (trx) {
+      await trx.getRepository(AppEHeatInputFromGas).save(entity);
+    } else {
+      await this.repository.save(entity);
+    }
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.map.one(entity);
@@ -164,9 +191,14 @@ export class AppEHeatInputFromGasWorkspaceService {
     id: string,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
     try {
-      await this.repository.delete({ id });
+      if (trx) {
+        await trx.getRepository(AppEHeatInputFromGas).delete({ id });
+      } else {
+        await this.repository.delete({ id });
+      }
     } catch (e) {
       throw new EaseyException(
         new Error(
@@ -180,6 +212,7 @@ export class AppEHeatInputFromGasWorkspaceService {
       testSumId,
       userId,
       isImport,
+      trx,
     );
   }
 
@@ -190,6 +223,7 @@ export class AppEHeatInputFromGasWorkspaceService {
     payload: AppEHeatInputFromGasImportDTO,
     userId: string,
     isHistoricalRecord: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: AppEHeatInputFromGas;
@@ -208,7 +242,8 @@ export class AppEHeatInputFromGasWorkspaceService {
       payload,
       userId,
       isImport,
-      isHistoricalRecord ? historicalRecord.id : null,
+      isHistoricalRecord ? historicalRecord?.id : null,
+      trx,
     );
 
     this.logger.log(

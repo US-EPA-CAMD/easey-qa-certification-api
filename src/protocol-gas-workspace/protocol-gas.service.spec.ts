@@ -1,6 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { EntityManager } from 'typeorm';
 
 import {
   ProtocolGasBaseDTO,
@@ -51,6 +52,7 @@ const mockMap = () => ({
 describe('ProtocolGasWorkspaceService', () => {
   let service: ProtocolGasWorkspaceService;
   let repository: ProtocolGasWorkspaceRepository;
+  let testSummaryService: TestSummaryWorkspaceService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -78,10 +80,13 @@ describe('ProtocolGasWorkspaceService', () => {
     }).compile();
 
     service = module.get<ProtocolGasWorkspaceService>(
-      ProtocolGasWorkspaceService,
+        ProtocolGasWorkspaceService,
     );
     repository = module.get<ProtocolGasWorkspaceRepository>(
-      ProtocolGasWorkspaceRepository,
+        ProtocolGasWorkspaceRepository,
+    );
+    testSummaryService = module.get<TestSummaryWorkspaceService>(
+        TestSummaryWorkspaceService,
     );
   });
 
@@ -118,9 +123,9 @@ describe('ProtocolGasWorkspaceService', () => {
   describe('createProtocolGas', () => {
     it('calls the repository.create() and insert a protocol gas record', async () => {
       const result = await service.createProtocolGas(
-        testSumId,
-        payload,
-        userId,
+          testSumId,
+          payload,
+          userId,
       );
       expect(result).toEqual(protocolGasDTO);
       expect(repository.create).toHaveBeenCalled();
@@ -130,8 +135,8 @@ describe('ProtocolGasWorkspaceService', () => {
   describe('Export', () => {
     it('Should Export Protocol Gas', async () => {
       jest
-        .spyOn(service, 'getProtocolGasByTestSumIds')
-        .mockResolvedValue([protocolGasDTO]);
+          .spyOn(service, 'getProtocolGasByTestSumIds')
+          .mockResolvedValue([protocolGasDTO]);
       const result = await service.export([testSumId]);
       expect(result).toEqual([protocolGasDTO]);
     });
@@ -140,10 +145,68 @@ describe('ProtocolGasWorkspaceService', () => {
   describe('Import', () => {
     it('Should Import Protocol Gas', async () => {
       jest
-        .spyOn(service, 'createProtocolGas')
-        .mockResolvedValue(protocolGasDTO);
+          .spyOn(service, 'createProtocolGas')
+          .mockResolvedValue(protocolGasDTO);
 
       await service.import(testSumId, new ProtocolGasImportDTO(), userId);
+    });
+
+    it('Should Import Protocol Gas with transaction', async () => {
+      jest
+          .spyOn(service, 'createProtocolGas')
+          .mockResolvedValue(protocolGasDTO);
+
+      // Mock transaction entity manager
+      const mockTrx = {
+        getRepository: jest.fn().mockReturnValue(repository),
+      } as unknown as EntityManager;
+
+      await service.import(testSumId, new ProtocolGasImportDTO(), userId, mockTrx);
+
+      // Verify createProtocolGas was called with transaction
+      expect(service.createProtocolGas).toHaveBeenCalledWith(
+          testSumId,
+          expect.any(Object),
+          userId,
+          expect.any(Boolean),
+          mockTrx,
+      );
+    });
+  });
+
+  describe('Transaction Support', () => {
+    it('Should use transaction entity manager when provided', async () => {
+      // Mock transaction entity manager
+      const mockTrx = {
+        getRepository: jest.fn().mockReturnValue({
+          create: jest.fn().mockReturnValue(protocolGas),
+          save: jest.fn().mockResolvedValue(protocolGas),
+          findOneBy: jest.fn().mockResolvedValue(protocolGas),
+        }),
+      } as unknown as EntityManager;
+
+      // Spy on testSummaryService.resetToNeedsEvaluation
+      const resetSpy = jest.spyOn(testSummaryService, 'resetToNeedsEvaluation');
+
+      // Call createProtocolGas with transaction
+      await service.createProtocolGas(
+          testSumId,
+          payload,
+          userId,
+          false,
+          mockTrx,
+      );
+
+      // Verify transaction was used
+      expect(mockTrx.getRepository).toHaveBeenCalled();
+
+      // Verify transaction was passed to child service
+      expect(resetSpy).toHaveBeenCalledWith(
+          testSumId,
+          userId,
+          expect.any(Boolean),
+          mockTrx,
+      );
     });
   });
 });
