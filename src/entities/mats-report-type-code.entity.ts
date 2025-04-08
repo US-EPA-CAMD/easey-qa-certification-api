@@ -1,4 +1,13 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  PrimaryColumn,
+} from 'typeorm';
+
+import { MatsPollutantCode } from './mats-pollutant-code.entity';
 
 @Entity({ name: 'camdecmpsmd.mats_report_type_code' })
 export class MatsReportTypeCode extends BaseEntity {
@@ -16,4 +25,21 @@ export class MatsReportTypeCode extends BaseEntity {
 
   @Column({ name: 'requires_test_method' })
   requiresTestMethod: boolean;
+
+  @ManyToMany(
+    () => MatsPollutantCode,
+    o => o.reportTypes,
+  )
+  @JoinTable({
+    name: 'camdecmpsmd.mats_report_type_to_pollutant_crosscheck',
+    joinColumn: {
+      name: 'mats_rpt_type_cd',
+      referencedColumnName: 'code',
+    },
+    inverseJoinColumn: {
+      name: 'mats_pollutant_cd',
+      referencedColumnName: 'code',
+    },
+  })
+  pollutants: MatsPollutantCode[];
 }

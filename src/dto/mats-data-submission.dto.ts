@@ -10,7 +10,6 @@ import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   IsArray,
   IsInt,
-  IsNotEmpty,
   IsNumber,
   IsNumberString,
   IsOptional,
@@ -24,6 +23,8 @@ import { MatsReportTypeCode } from '../entities/mats-report-type-code.entity';
 import { MatsStatusCode } from '../entities/mats-status-code.entity';
 import { MatsTestMethodCode } from '../entities/mats-test-method-code.entity';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
+import { MonitorLocation } from '../entities/monitor-location.entity';
+import { DoesNotContainUnreadableCharacters } from '../pipes/does-not-contain-unreadable-characters.pipe';
 import { IsOptionalIf } from '../pipes/is-optional-if.pipe';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -38,9 +39,9 @@ export class MatsDataSubmissionBaseDTO {
       propertyMetadata.matsDataSubmissionDTO.averagingGroupCode.fieldLabels
         .value,
   })
-  @IsOptionalIf(o => ['ACA', 'SVA', 'EMPM'].includes(o.reportTypeCode))
-  @IsString()
   @IsValidCode(MatsAveragingGroupCode)
+  @IsString()
+  @IsOptionalIf(o => ['ACA', 'SVA', 'EMPM'].includes(o.reportTypeCode))
   averagingGroupCode?: string;
 
   @ApiProperty({
@@ -56,7 +57,7 @@ export class MatsDataSubmissionBaseDTO {
     example: propertyMetadata.matsDataSubmissionDTO.locationId.example,
     name: propertyMetadata.matsDataSubmissionDTO.locationId.fieldLabels.value,
   })
-  @IsNotEmpty()
+  @IsValidCode(MonitorLocation)
   @IsString()
   locationId: string;
 
@@ -80,8 +81,8 @@ export class MatsDataSubmissionBaseDTO {
       propertyMetadata.matsDataSubmissionDTO.originalSubmissionId.fieldLabels
         .value,
   })
-  @IsOptional()
   @IsNumber()
+  @IsOptional()
   originalSubmissionId?: number;
 
   @ApiProperty({
@@ -93,10 +94,10 @@ export class MatsDataSubmissionBaseDTO {
     isArray: true,
     type: String,
   })
-  @IsOptionalIf(o => ['NOTIFY', 'CR'].includes(o.reportTypeCode))
-  @IsArray()
-  @IsString({ each: true })
   @IsValidCode(MatsPollutantCode, { each: true })
+  @IsString({ each: true })
+  @IsArray()
+  @IsOptionalIf(o => ['NOTIFY', 'CR'].includes(o.reportTypeCode))
   pollutantCodes: string[];
 
   @ApiProperty({
@@ -104,6 +105,12 @@ export class MatsDataSubmissionBaseDTO {
     example: propertyMetadata.quarter.example,
     name: propertyMetadata.quarter.fieldLabels.value,
   })
+  @IsInRange(1, 4, {
+    message: (args: ValidationArguments) => {
+      return `Quarter must be a number from 1 to 4. You reported an invalid quarter of [${args.value}] in [${KEY}] for [${args.property}]`;
+    },
+  })
+  @IsInt()
   @IsOptionalIf(o =>
     [
       'LEED',
@@ -118,12 +125,6 @@ export class MatsDataSubmissionBaseDTO {
       'SVA',
     ].includes(o.reportTypeCode),
   )
-  @IsInt()
-  @IsInRange(1, 4, {
-    message: (args: ValidationArguments) => {
-      return `Quarter must be a number from 1 to 4. You reported an invalid quarter of [${args.value}] in [${KEY}] for [${args.property}]`;
-    },
-  })
   quarter?: number;
 
   @ApiProperty({
@@ -133,8 +134,8 @@ export class MatsDataSubmissionBaseDTO {
     name:
       propertyMetadata.matsDataSubmissionDTO.reportTypeCode.fieldLabels.value,
   })
-  @IsString()
   @IsValidCode(MatsReportTypeCode)
+  @IsString()
   reportTypeCode: string;
 
   @ApiProperty({
@@ -142,8 +143,8 @@ export class MatsDataSubmissionBaseDTO {
     example: propertyMetadata.matsDataSubmissionDTO.statusCode.example,
     name: propertyMetadata.matsDataSubmissionDTO.statusCode.fieldLabels.value,
   })
-  @IsString()
   @IsValidCode(MatsStatusCode)
+  @IsString()
   statusCode: string;
 
   @ApiProperty({
@@ -151,14 +152,22 @@ export class MatsDataSubmissionBaseDTO {
     example: propertyMetadata.matsDataSubmissionDTO.testComment.example,
     name: propertyMetadata.matsDataSubmissionDTO.testComment.fieldLabels.value,
   })
-  @IsOptional()
+  @DoesNotContainUnreadableCharacters()
   @IsString()
+  @IsOptional()
   testComment?: string;
 
   @ApiProperty({
     description: propertyMetadata.matsDataSubmissionDTO.testDate.description,
     example: propertyMetadata.matsDataSubmissionDTO.testDate.example,
     name: propertyMetadata.matsDataSubmissionDTO.testDate.fieldLabels.value,
+  })
+  @IsValidDate({
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+      );
+    },
   })
   @IsOptionalIf(o =>
     [
@@ -174,13 +183,6 @@ export class MatsDataSubmissionBaseDTO {
       'EMPM',
     ].includes(o.reportTypeCode),
   )
-  @IsValidDate({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
-      );
-    },
-  })
   testDate?: Date;
 
   @ApiProperty({
@@ -192,12 +194,12 @@ export class MatsDataSubmissionBaseDTO {
     isArray: true,
     type: String,
   })
+  @IsValidCode(MatsTestMethodCode, { each: true })
+  @IsString({ each: true })
+  @IsArray()
   @IsOptionalIf(o =>
     ['NOTIFY', 'CR', 'ACA', 'SVA', 'EMPM'].includes(o.reportTypeCode),
   )
-  @IsArray()
-  @IsString({ each: true })
-  @IsValidCode(MatsTestMethodCode, { each: true })
   testMethodCodes: string[];
 
   @ApiProperty({
@@ -205,8 +207,8 @@ export class MatsDataSubmissionBaseDTO {
     example: propertyMetadata.matsDataSubmissionDTO.testNumber.example,
     name: propertyMetadata.matsDataSubmissionDTO.testNumber.fieldLabels.value,
   })
-  @IsOptionalIf(o => ['NOTIFY', 'CR', 'EMPM'].includes(o.reportTypeCode))
   @IsNumberString()
+  @IsOptionalIf(o => ['NOTIFY', 'CR', 'EMPM'].includes(o.reportTypeCode))
   testNumber?: string;
 
   @ApiProperty({
@@ -214,6 +216,14 @@ export class MatsDataSubmissionBaseDTO {
     example: propertyMetadata.year.example,
     name: propertyMetadata.year.fieldLabels.value,
   })
+  @IsInRange(1993, currentDateTime().getFullYear(), {
+    message: (args: ValidationArguments) => {
+      return `Year must be greater than or equal to 1993 and less than or equal to ${currentDateTime().getFullYear()}. You reported an invalid year of [${
+        args.value
+      }] in [${KEY}] for [${args.property}]`;
+    },
+  })
+  @IsInt()
   @IsOptionalIf(o =>
     [
       'LEED',
@@ -228,14 +238,6 @@ export class MatsDataSubmissionBaseDTO {
       'SVA',
     ].includes(o.reportTypeCode),
   )
-  @IsInRange(1993, currentDateTime().getFullYear(), {
-    message: (args: ValidationArguments) => {
-      return `Year must be greater than or equal to 1993 and less than or equal to ${currentDateTime().getFullYear()}. You reported an invalid year of [${
-        args.value
-      }] in [${KEY}] for [${args.property}]`;
-    },
-  })
-  @IsInt()
   year?: number;
 }
 

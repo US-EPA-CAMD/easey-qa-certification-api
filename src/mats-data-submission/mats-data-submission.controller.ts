@@ -142,7 +142,6 @@ export class MatsDataSubmissionController {
       supportingFiles?: Express.Multer.File[];
     },
     @User() user: CurrentUser,
-    @Query('draft') draft: boolean,
   ) {
     const metadata: MatsDataSubmissionBaseDTO = plainToClass(
       MatsDataSubmissionBaseDTO,
@@ -158,9 +157,6 @@ export class MatsDataSubmissionController {
     console.log('supportingFiles', supportingFiles?.length);
 
     const warnings = await this.checksService.runChecks(metadata, files);
-    if (draft) {
-      return { warnings, id: null };
-    }
     const submissionId = await this.service.createMatsDataSubmission(
       metadata,
       files,
@@ -171,4 +167,6 @@ export class MatsDataSubmissionController {
       id: submissionId,
     };
   }
+
+  // TODO: Delete MATS Data Submission record.
 }
