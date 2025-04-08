@@ -4,9 +4,10 @@ import { EntityManager } from 'typeorm';
 import { MatsDataSubmissionMap } from '../maps/mats-data-submission.map';
 import { MatsDataSubmissionRepository } from './mats-data-submission.repository';
 import { MatsDataSubmissionService } from './mats-data-submission.service';
+import { MatsDataSubmissionChecksService } from './mats-data-submission-checks.service';
 
-describe('MatsDataSubmissionService', () => {
-  let service: MatsDataSubmissionService;
+describe('MatsDataSubmissionChecksService', () => {
+  let service: MatsDataSubmissionChecksService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -15,13 +16,15 @@ describe('MatsDataSubmissionService', () => {
         MatsDataSubmissionMap,
         MatsDataSubmissionRepository,
         MatsDataSubmissionService,
+        MatsDataSubmissionChecksService,
       ],
     }).compile();
 
-    service = module.get<MatsDataSubmissionService>(MatsDataSubmissionService);
+    service = module.get<MatsDataSubmissionChecksService>(MatsDataSubmissionChecksService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 });
+

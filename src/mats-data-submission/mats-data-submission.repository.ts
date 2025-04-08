@@ -10,6 +10,7 @@ const relations = {
     stackPipe: true,
     unit: true,
   },
+  plan: false,
   pollutants: true,
   reportType: true,
   status: true,
