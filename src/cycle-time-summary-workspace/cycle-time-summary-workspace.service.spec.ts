@@ -1,12 +1,14 @@
-import { InternalServerErrorException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
+import {InternalServerErrorException} from '@nestjs/common';
+import {ConfigService} from '@nestjs/config';
+import {Test, TestingModule} from '@nestjs/testing';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {EntityManager} from 'typeorm';
 
-import { CycleTimeInjectionWorkspaceService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace.service';
-import { CycleTimeSummaryRepository } from '../cycle-time-summary/cycle-time-summary.repository';
-import { settlePromises } from '../utilities/constants';
+import {
+  CycleTimeInjectionWorkspaceService
+} from '../cycle-time-injection-workspace/cycle-time-injection-workspace.service';
+import {CycleTimeSummaryRepository} from '../cycle-time-summary/cycle-time-summary.repository';
+import {settlePromises} from '../utilities/constants';
 import {
   CycleTimeInjectionDTO,
   CycleTimeInjectionImportDTO,
@@ -16,12 +18,12 @@ import {
   CycleTimeSummaryDTO,
   CycleTimeSummaryImportDTO,
 } from '../dto/cycle-time-summary.dto';
-import { CycleTimeSummary as CycleTimeSummaryOfficial } from '../entities/cycle-time-summary.entity';
-import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
-import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { CycleTimeSummaryWorkspaceRepository } from './cycle-time-summary-workspace.repository';
-import { CycleTimeSummaryWorkspaceService } from './cycle-time-summary-workspace.service';
+import {CycleTimeSummary as CycleTimeSummaryOfficial} from '../entities/cycle-time-summary.entity';
+import {CycleTimeSummary} from '../entities/workspace/cycle-time-summary.entity';
+import {CycleTimeSummaryMap} from '../maps/cycle-time-summary.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {CycleTimeSummaryWorkspaceRepository} from './cycle-time-summary-workspace.repository';
+import {CycleTimeSummaryWorkspaceService} from './cycle-time-summary-workspace.service';
 
 const id = '';
 const testSumId = '';
@@ -114,16 +116,16 @@ describe('CycleTimeSummaryWorkspaceService', () => {
     }).compile();
 
     service = module.get<CycleTimeSummaryWorkspaceService>(
-        CycleTimeSummaryWorkspaceService,
+      CycleTimeSummaryWorkspaceService,
     );
     repository = module.get<CycleTimeSummaryWorkspaceRepository>(
-        CycleTimeSummaryWorkspaceRepository,
+      CycleTimeSummaryWorkspaceRepository,
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
-        TestSummaryWorkspaceService,
+      TestSummaryWorkspaceService,
     );
     cycleTimeInjectionService = module.get<CycleTimeInjectionWorkspaceService>(
-        CycleTimeInjectionWorkspaceService,
+      CycleTimeInjectionWorkspaceService,
     );
     entityManager = module.get<EntityManager>(EntityManager);
   });
@@ -160,9 +162,9 @@ describe('CycleTimeSummaryWorkspaceService', () => {
   describe('createCycleTimeSummary', () => {
     it('Should create and return a new Cycle Time Summary record', async () => {
       const result = await service.createCycleTimeSummary(
-          testSumId,
-          payload,
-          userId,
+        testSumId,
+        payload,
+        userId,
       );
 
       expect(result).toEqual(dto);
@@ -170,11 +172,11 @@ describe('CycleTimeSummaryWorkspaceService', () => {
 
     it('Should create and return a new Cycle Time Summary record with Historical Record Id', async () => {
       const result = await service.createCycleTimeSummary(
-          testSumId,
-          payload,
-          userId,
-          false,
-          'historicalId',
+        testSumId,
+        payload,
+        userId,
+        false,
+        'historicalId',
       );
 
       expect(result).toEqual(dto);
@@ -182,20 +184,20 @@ describe('CycleTimeSummaryWorkspaceService', () => {
 
     it('Should create a Cycle Time Summary record with transaction', async () => {
       const result = await service.createCycleTimeSummary(
-          testSumId,
-          payload,
-          userId,
-          false,
-          null,
-          entityManager,
+        testSumId,
+        payload,
+        userId,
+        false,
+        null,
+        entityManager,
       );
       expect(result).toEqual(dto);
       expect(entityManager.getRepository).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          false,
-          entityManager,
+        testSumId,
+        userId,
+        false,
+        entityManager,
       );
     });
   });
@@ -203,10 +205,10 @@ describe('CycleTimeSummaryWorkspaceService', () => {
   describe('updateCycleTimeSummary', () => {
     it('Should update and return the Cycle Time Summary record', async () => {
       const result = await service.updateCycleTimeSummary(
-          testSumId,
-          id,
-          payload,
-          userId,
+        testSumId,
+        id,
+        payload,
+        userId,
       );
 
       expect(result).toEqual(dto);
@@ -214,20 +216,20 @@ describe('CycleTimeSummaryWorkspaceService', () => {
 
     it('Should update a Cycle Time Summary record with transaction', async () => {
       const result = await service.updateCycleTimeSummary(
-          testSumId,
-          id,
-          payload,
-          userId,
-          false,
-          entityManager,
+        testSumId,
+        id,
+        payload,
+        userId,
+        false,
+        entityManager,
       );
       expect(result).toEqual(dto);
       expect(entityManager.getRepository).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          false,
-          entityManager,
+        testSumId,
+        userId,
+        false,
+        entityManager,
       );
     });
 
@@ -248,9 +250,9 @@ describe('CycleTimeSummaryWorkspaceService', () => {
   describe('deleteCycleTimeSummary', () => {
     it('Should delete a Cycle Time Summary record', async () => {
       const result = await service.deleteCycleTimeSummary(
-          testSumId,
-          id,
-          userId,
+        testSumId,
+        id,
+        userId,
       );
 
       expect(result).toEqual(undefined);
@@ -258,26 +260,26 @@ describe('CycleTimeSummaryWorkspaceService', () => {
 
     it('Should delete a Cycle Time Summary record with transaction', async () => {
       const result = await service.deleteCycleTimeSummary(
-          testSumId,
-          id,
-          userId,
-          false,
-          entityManager,
+        testSumId,
+        id,
+        userId,
+        false,
+        entityManager,
       );
       expect(result).toEqual(undefined);
       expect(entityManager.getRepository).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          false,
-          entityManager,
+        testSumId,
+        userId,
+        false,
+        entityManager,
       );
     });
 
     it('Should throw error when database throws an error while deleting a Cycle Time Summary record', async () => {
       jest
-          .spyOn(repository, 'delete')
-          .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
       let errored = false;
 
       try {
@@ -302,8 +304,8 @@ describe('CycleTimeSummaryWorkspaceService', () => {
       dto.id = 'SOME_ID';
 
       jest
-          .spyOn(service, 'getCycleTimeSummaryByTestSumIds')
-          .mockResolvedValue([dto]);
+        .spyOn(service, 'getCycleTimeSummaryByTestSumIds')
+        .mockResolvedValue([dto]);
 
       const result = await service.export([testSumId]);
       dto.cycleTimeInjectionData = [cycleTimeInjDto];
@@ -336,12 +338,12 @@ describe('CycleTimeSummaryWorkspaceService', () => {
       await service.import(testSumId, importPayload, userId, false, entityManager);
 
       expect(service.createCycleTimeSummary).toHaveBeenCalledWith(
-          testSumId,
-          importPayload,
-          userId,
-          true,
-          null,
-          entityManager,
+        testSumId,
+        importPayload,
+        userId,
+        true,
+        null,
+        entityManager,
       );
       expect(settlePromises).toHaveBeenCalled();
     });

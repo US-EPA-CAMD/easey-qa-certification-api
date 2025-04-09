@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { EntityManager } from 'typeorm';
+import {Test, TestingModule} from '@nestjs/testing';
+import {EntityManager} from 'typeorm';
 
-import { QASuppData } from '../entities/qa-supp-data.entity';
-import { QASuppDataWorkspaceRepository } from './qa-supp-data.repository';
-import { QASuppDataWorkspaceService } from './qa-supp-data.service';
+import {QASuppData} from '../entities/qa-supp-data.entity';
+import {QASuppDataWorkspaceRepository} from './qa-supp-data.repository';
+import {QASuppDataWorkspaceService} from './qa-supp-data.service';
 
 const testSumId = 'test-sum-id';
 const qaSuppData = new QASuppData();

@@ -1,9 +1,9 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In, IsNull } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, In, IsNull} from 'typeorm';
+import {v4 as uuid} from 'uuid';
 
 import {
   FlowToLoadCheckBaseDTO,
@@ -11,11 +11,11 @@ import {
   FlowToLoadCheckImportDTO,
   FlowToLoadCheckRecordDTO,
 } from '../dto/flow-to-load-check.dto';
-import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
-import { FlowToLoadCheckRepository } from '../flow-to-load-check/flow-to-load-check.repository';
-import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { FlowToLoadCheckWorkspaceRepository } from './flow-to-load-check-workspace.repository';
+import {FlowToLoadCheck} from '../entities/flow-to-load-check.entity';
+import {FlowToLoadCheckRepository} from '../flow-to-load-check/flow-to-load-check.repository';
+import {FlowToLoadCheckMap} from '../maps/flow-to-load-check.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {FlowToLoadCheckWorkspaceRepository} from './flow-to-load-check-workspace.repository';
 
 @Injectable()
 export class FlowToLoadCheckWorkspaceService {
@@ -26,18 +26,19 @@ export class FlowToLoadCheckWorkspaceService {
     private readonly repository: FlowToLoadCheckWorkspaceRepository,
     private readonly historicalRepo: FlowToLoadCheckRepository,
     private readonly logger: Logger,
-  ) {}
+  ) {
+  }
 
   async getFlowToLoadChecks(
     testSumId: string,
   ): Promise<FlowToLoadCheckRecordDTO[]> {
-    const records = await this.repository.find({ where: { testSumId } });
+    const records = await this.repository.find({where: {testSumId}});
 
     return this.map.many(records);
   }
 
   async getFlowToLoadCheck(id: string): Promise<FlowToLoadCheckRecordDTO> {
-    const result = await this.repository.findOneBy({ id });
+    const result = await this.repository.findOneBy({id});
 
     if (!result) {
       throw new EaseyException(
@@ -72,7 +73,7 @@ export class FlowToLoadCheckWorkspaceService {
     });
 
     await repository.save(entity);
-    entity = await repository.findOneBy({ id: entity.id });
+    entity = await repository.findOneBy({id: entity.id});
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -94,7 +95,7 @@ export class FlowToLoadCheckWorkspaceService {
     const timestamp = currentDateTime();
     const repository = trx ? trx.getRepository(FlowToLoadCheck) : this.repository;
 
-    const entity = await repository.findOneBy({ id });
+    const entity = await repository.findOneBy({id});
 
     if (!entity) {
       throw new EaseyException(
@@ -164,7 +165,7 @@ export class FlowToLoadCheckWorkspaceService {
     testSumIds: string[],
   ): Promise<FlowToLoadCheckDTO[]> {
     const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
+      where: {testSumId: In(testSumIds)},
     });
     return this.map.many(results);
   }

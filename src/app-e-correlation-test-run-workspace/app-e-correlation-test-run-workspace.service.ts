@@ -1,24 +1,28 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, In} from 'typeorm';
+import {v4 as uuid} from 'uuid';
 
-import { AppECorrelationTestRunRepository } from '../app-e-correlation-test-run/app-e-correlation-test-run.repository';
-import { AppEHeatInputFromGasWorkspaceService } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.service';
-import { AppEHeatInputFromOilWorkspaceService } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.service';
-import { settlePromises } from '../utilities/constants';
+import {AppECorrelationTestRunRepository} from '../app-e-correlation-test-run/app-e-correlation-test-run.repository';
+import {
+  AppEHeatInputFromGasWorkspaceService
+} from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.service';
+import {
+  AppEHeatInputFromOilWorkspaceService
+} from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.service';
+import {settlePromises} from '../utilities/constants';
 import {
   AppECorrelationTestRunBaseDTO,
   AppECorrelationTestRunDTO,
   AppECorrelationTestRunImportDTO,
   AppECorrelationTestRunRecordDTO,
 } from '../dto/app-e-correlation-test-run.dto';
-import { AppECorrelationTestRun } from '../entities/app-e-correlation-test-run.entity';
-import { AppECorrelationTestRunMap } from '../maps/app-e-correlation-test-run.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AppECorrelationTestRunWorkspaceRepository } from './app-e-correlation-test-run-workspace.repository';
+import {AppECorrelationTestRun} from '../entities/app-e-correlation-test-run.entity';
+import {AppECorrelationTestRunMap} from '../maps/app-e-correlation-test-run.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {AppECorrelationTestRunWorkspaceRepository} from './app-e-correlation-test-run-workspace.repository';
 
 @Injectable()
 export class AppECorrelationTestRunWorkspaceService {
@@ -33,13 +37,14 @@ export class AppECorrelationTestRunWorkspaceService {
     private readonly appEHeatInputFromOilService: AppEHeatInputFromOilWorkspaceService,
     private readonly repository: AppECorrelationTestRunWorkspaceRepository,
     private readonly historicalRepo: AppECorrelationTestRunRepository,
-  ) {}
+  ) {
+  }
 
   async getAppECorrelationTestRuns(
     appECorrTestSumId: string,
   ): Promise<AppECorrelationTestRunBaseDTO[]> {
     const records = await this.repository.find({
-      where: { appECorrTestSumId },
+      where: {appECorrTestSumId},
     });
 
     return this.map.many(records);
@@ -48,7 +53,7 @@ export class AppECorrelationTestRunWorkspaceService {
   async getAppECorrelationTestRun(
     id: string,
   ): Promise<AppECorrelationTestRunBaseDTO> {
-    const result = await this.repository.findOneBy({ id });
+    const result = await this.repository.findOneBy({id});
 
     if (!result) {
       throw new EaseyException(
@@ -84,7 +89,7 @@ export class AppECorrelationTestRunWorkspaceService {
     });
 
     await repository.save(entity);
-    entity = await repository.findOneBy({ id: entity.id });
+    entity = await repository.findOneBy({id: entity.id});
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -156,7 +161,7 @@ export class AppECorrelationTestRunWorkspaceService {
   ): Promise<void> {
     try {
       const repository = trx ? trx.getRepository(AppECorrelationTestRun) : this.repository;
-      await repository.delete({ id, appECorrTestSumId });
+      await repository.delete({id, appECorrTestSumId});
     } catch (e) {
       throw new EaseyException(
         new Error(
@@ -249,7 +254,7 @@ export class AppECorrelationTestRunWorkspaceService {
     appECorrTestSumIds: string[],
   ): Promise<AppECorrelationTestRunDTO[]> {
     const results = await this.repository.find({
-      where: { appECorrTestSumId: In(appECorrTestSumIds) },
+      where: {appECorrTestSumId: In(appECorrTestSumIds)},
     });
     return this.map.many(results);
   }

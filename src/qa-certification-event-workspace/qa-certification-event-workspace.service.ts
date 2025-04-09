@@ -29,7 +29,8 @@ export class QACertificationEventWorkspaceService {
     private readonly monitorLocationRepository: MonitorLocationRepository,
     private readonly componentRepository: ComponentWorkspaceRepository,
     private readonly monitoringSystemRepository: MonitorSystemWorkspaceRepository,
-  ) {}
+  ) {
+  }
 
   async createQACertEvent(
     locationId: string,
@@ -200,7 +201,7 @@ export class QACertificationEventWorkspaceService {
   ): Promise<QACertificationEventDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOneBy({ id });
+    const entity = await this.repository.findOneBy({id});
 
     if (!entity) {
       throw new EaseyException(
@@ -250,12 +251,12 @@ export class QACertificationEventWorkspaceService {
     endDate?: Date,
   ): Promise<QACertificationEventDTO[]> {
     return await this.getQACertEvents(
-        facilityId,
-        unitIds,
-        stackPipeIds,
-        qaCertificationEventIds,
-        beginDate,
-        endDate,
+      facilityId,
+      unitIds,
+      stackPipeIds,
+      qaCertificationEventIds,
+      beginDate,
+      endDate,
     );
   }
 

@@ -31,7 +31,8 @@ export class TestExtensionExemptionsWorkspaceService {
     private readonly componentRepository: ComponentWorkspaceRepository,
     private readonly monSysRepository: MonitorSystemWorkspaceRepository,
     private readonly reportingPeriodRepository: ReportingPeriodRepository,
-  ) {}
+  ) {
+  }
 
   async getTestExtensionExemptionById(
     id: string,
@@ -106,12 +107,12 @@ export class TestExtensionExemptionsWorkspaceService {
     endDate?: Date,
   ): Promise<TestExtensionExemptionDTO[]> {
     return await this.getTestExtensions(
-        facilityId,
-        unitIds,
-        stackPipeIds,
-        qaTestExtensionExemptionIds,
-        beginDate,
-        endDate,
+      facilityId,
+      unitIds,
+      stackPipeIds,
+      qaTestExtensionExemptionIds,
+      beginDate,
+      endDate,
     );
   }
 
@@ -228,7 +229,7 @@ export class TestExtensionExemptionsWorkspaceService {
     trx?: EntityManager,
   ): Promise<TestExtensionExemptionRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOneBy({ id });
+    const record = await this.repository.findOneBy({id});
 
     if (!record) {
       throw new EaseyException(
@@ -315,6 +316,6 @@ export class TestExtensionExemptionsWorkspaceService {
       monitoringSystemRecordId = monitorSystem ? monitorSystem.id : null;
     }
 
-    return { reportPeriodId, componentRecordId, monitoringSystemRecordId };
+    return {reportPeriodId, componentRecordId, monitoringSystemRecordId};
   }
 }

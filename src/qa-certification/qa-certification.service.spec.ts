@@ -1,15 +1,15 @@
-import { Test } from '@nestjs/testing';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { TestSummaryService } from '../test-summary/test-summary.service';
-import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
-import { QACertificationService } from './qa-certification.service';
-import { QaCertificationEventService } from '../qa-certification-event/qa-certification-event.service';
-import { QACertificationDTO } from '../dto/qa-certification.dto';
-import { TestSummaryDTO } from '../dto/test-summary.dto';
-import { TestExtensionExemptionDTO } from '../dto/test-extension-exemption.dto';
-import { QACertificationEventDTO } from '../dto/qa-certification-event.dto';
-import { TestExtensionExemptionsService } from '../test-extension-exemptions/test-extension-exemptions.service';
-import { EaseyContentService } from '../qa-certification-easey-content/easey-content.service';
+import {Test} from '@nestjs/testing';
+import {LoggerModule} from '@us-epa-camd/easey-common/logger';
+import {TestSummaryService} from '../test-summary/test-summary.service';
+import {QACertificationParamsDTO} from '../dto/qa-certification-params.dto';
+import {QACertificationService} from './qa-certification.service';
+import {QaCertificationEventService} from '../qa-certification-event/qa-certification-event.service';
+import {QACertificationDTO} from '../dto/qa-certification.dto';
+import {TestSummaryDTO} from '../dto/test-summary.dto';
+import {TestExtensionExemptionDTO} from '../dto/test-extension-exemption.dto';
+import {QACertificationEventDTO} from '../dto/qa-certification-event.dto';
+import {TestExtensionExemptionsService} from '../test-extension-exemptions/test-extension-exemptions.service';
+import {EaseyContentService} from '../qa-certification-easey-content/easey-content.service';
 import * as exportUtility from '../utilities/remove-non-reported-values';
 
 const mockTestSummaryService = () => ({
@@ -48,9 +48,9 @@ describe('QA Certification Service', () => {
         },
         {
           provide: EaseyContentService,
-          useFactory:  () => ({
+          useFactory: () => ({
             QaCertificationSchema: jest.fn().mockResolvedValue({
-              version : '1.0.0'
+              version: '1.0.0'
             }),
           })
         }

@@ -1,22 +1,22 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager} from 'typeorm';
+import {v4 as uuid} from 'uuid';
 
-import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
+import {AppEHeatInputFromOilRepository} from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
 import {
   AppEHeatInputFromOilBaseDTO,
   AppEHeatInputFromOilDTO,
   AppEHeatInputFromOilImportDTO,
   AppEHeatInputFromOilRecordDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
-import { AppEHeatInputFromOil } from '../entities/app-e-heat-input-from-oil.entity';
-import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
+import {AppEHeatInputFromOil} from '../entities/app-e-heat-input-from-oil.entity';
+import {AppEHeatInputFromOilMap} from '../maps/app-e-heat-input-from-oil.map';
+import {MonitorSystemWorkspaceRepository} from '../monitor-system-workspace/monitor-system-workspace.repository';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {AppEHeatInputFromOilWorkspaceRepository} from './app-e-heat-input-from-oil.repository';
 
 @Injectable()
 export class AppEHeatInputFromOilWorkspaceService {
@@ -28,7 +28,8 @@ export class AppEHeatInputFromOilWorkspaceService {
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     private readonly monSysWorkspaceRepository: MonitorSystemWorkspaceRepository,
-  ) {}
+  ) {
+  }
 
   async getAppEHeatInputFromOilRecords(
     appECorrTestRunId: string,
@@ -104,7 +105,7 @@ export class AppEHeatInputFromOilWorkspaceService {
       });
 
       await trx.getRepository(AppEHeatInputFromOil).save(entity);
-      entity = await trx.getRepository(AppEHeatInputFromOil).findOneBy({ id: entity.id });
+      entity = await trx.getRepository(AppEHeatInputFromOil).findOneBy({id: entity.id});
     } else {
       entity = this.repository.create({
         id: historicalRecordId ? historicalRecordId : uuid(),
@@ -210,9 +211,9 @@ export class AppEHeatInputFromOilWorkspaceService {
   ): Promise<void> {
     try {
       if (trx) {
-        await trx.getRepository(AppEHeatInputFromOil).delete({ id });
+        await trx.getRepository(AppEHeatInputFromOil).delete({id});
       } else {
-        await this.repository.delete({ id });
+        await this.repository.delete({id});
       }
     } catch (e) {
       throw new EaseyException(

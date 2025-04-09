@@ -1,22 +1,22 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager} from 'typeorm';
+import {v4 as uuid} from 'uuid';
 
-import { AppEHeatInputFromGasRepository } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.repository';
+import {AppEHeatInputFromGasRepository} from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.repository';
 import {
   AppEHeatInputFromGasBaseDTO,
   AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasImportDTO,
   AppEHeatInputFromGasRecordDTO,
 } from '../dto/app-e-heat-input-from-gas.dto';
-import { AppEHeatInputFromGas } from '../entities/app-e-heat-input-from-gas.entity';
-import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
+import {AppEHeatInputFromGas} from '../entities/app-e-heat-input-from-gas.entity';
+import {AppEHeatInputFromGasMap} from '../maps/app-e-heat-input-from-gas.map';
+import {MonitorSystemWorkspaceRepository} from '../monitor-system-workspace/monitor-system-workspace.repository';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {AppEHeatInputFromGasWorkspaceRepository} from './app-e-heat-input-from-gas-workspace.repository';
 
 @Injectable()
 export class AppEHeatInputFromGasWorkspaceService {
@@ -28,7 +28,8 @@ export class AppEHeatInputFromGasWorkspaceService {
     private readonly repository: AppEHeatInputFromGasWorkspaceRepository,
     private readonly historicalRepo: AppEHeatInputFromGasRepository,
     private readonly monSysWorkspaceRepository: MonitorSystemWorkspaceRepository,
-  ) {}
+  ) {
+  }
 
   async getAppEHeatInputFromGases(
     appECorrTestRunId: string,
@@ -99,7 +100,7 @@ export class AppEHeatInputFromGasWorkspaceService {
       });
 
       await trx.getRepository(AppEHeatInputFromGas).save(entity);
-      entity = await trx.getRepository(AppEHeatInputFromGas).findOneBy({ id: entity.id });
+      entity = await trx.getRepository(AppEHeatInputFromGas).findOneBy({id: entity.id});
     } else {
       entity = this.repository.create({
         id: historicalRecordId ? historicalRecordId : uuid(),
@@ -195,9 +196,9 @@ export class AppEHeatInputFromGasWorkspaceService {
   ): Promise<void> {
     try {
       if (trx) {
-        await trx.getRepository(AppEHeatInputFromGas).delete({ id });
+        await trx.getRepository(AppEHeatInputFromGas).delete({id});
       } else {
-        await this.repository.delete({ id });
+        await this.repository.delete({id});
       }
     } catch (e) {
       throw new EaseyException(

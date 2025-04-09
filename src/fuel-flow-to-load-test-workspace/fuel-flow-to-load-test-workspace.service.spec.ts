@@ -1,20 +1,20 @@
-import { InternalServerErrorException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
+import {InternalServerErrorException} from '@nestjs/common';
+import {ConfigService} from '@nestjs/config';
+import {Test, TestingModule} from '@nestjs/testing';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {EntityManager} from 'typeorm';
 
 import {
   FuelFlowToLoadTestBaseDTO,
   FuelFlowToLoadTestDTO,
   FuelFlowToLoadTestImportDTO,
 } from '../dto/fuel-flow-to-load-test.dto';
-import { FuelFlowToLoadTest } from '../entities/fuel-flow-to-load-test.entity';
-import { FuelFlowToLoadTestRepository } from '../fuel-flow-to-load-test/fuel-flow-to-load-test.repository';
-import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { FuelFlowToLoadTestWorkspaceRepository } from './fuel-flow-to-load-test-workspace.repository';
-import { FuelFlowToLoadTestWorkspaceService } from './fuel-flow-to-load-test-workspace.service';
+import {FuelFlowToLoadTest} from '../entities/fuel-flow-to-load-test.entity';
+import {FuelFlowToLoadTestRepository} from '../fuel-flow-to-load-test/fuel-flow-to-load-test.repository';
+import {FuelFlowToLoadTestMap} from '../maps/fuel-flow-to-load-test.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {FuelFlowToLoadTestWorkspaceRepository} from './fuel-flow-to-load-test-workspace.repository';
+import {FuelFlowToLoadTestWorkspaceService} from './fuel-flow-to-load-test-workspace.service';
 
 const id = '';
 const testSumId = '';
@@ -88,16 +88,16 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
     }).compile();
 
     service = module.get<FuelFlowToLoadTestWorkspaceService>(
-        FuelFlowToLoadTestWorkspaceService,
+      FuelFlowToLoadTestWorkspaceService,
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
-        TestSummaryWorkspaceService,
+      TestSummaryWorkspaceService,
     );
     repository = module.get<FuelFlowToLoadTestWorkspaceRepository>(
-        FuelFlowToLoadTestWorkspaceRepository,
+      FuelFlowToLoadTestWorkspaceRepository,
     );
     officialRepository = module.get<FuelFlowToLoadTestRepository>(
-        FuelFlowToLoadTestRepository,
+      FuelFlowToLoadTestRepository,
     );
     mockTrx = mockEntityManager() as unknown as EntityManager;
   });
@@ -105,37 +105,37 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
   describe('Import', () => {
     it('Should Import Fuel Flow To Load Test', async () => {
       jest
-          .spyOn(service, 'createFuelFlowToLoadTest')
-          .mockResolvedValue(fuelFlowToLoadTestRecord);
+        .spyOn(service, 'createFuelFlowToLoadTest')
+        .mockResolvedValue(fuelFlowToLoadTestRecord);
 
       await service.import(
-          testSumId,
-          new FuelFlowToLoadTestImportDTO(),
-          userId,
-          true,
+        testSumId,
+        new FuelFlowToLoadTestImportDTO(),
+        userId,
+        true,
       );
     });
 
     it('Should Import Fuel Flow To Load Test with transaction', async () => {
       jest
-          .spyOn(service, 'createFuelFlowToLoadTest')
-          .mockResolvedValue(fuelFlowToLoadTestRecord);
+        .spyOn(service, 'createFuelFlowToLoadTest')
+        .mockResolvedValue(fuelFlowToLoadTestRecord);
 
       await service.import(
-          testSumId,
-          new FuelFlowToLoadTestImportDTO(),
-          userId,
-          true,
-          mockTrx,
+        testSumId,
+        new FuelFlowToLoadTestImportDTO(),
+        userId,
+        true,
+        mockTrx,
       );
 
       expect(service.createFuelFlowToLoadTest).toHaveBeenCalledWith(
-          testSumId,
-          expect.any(Object),
-          userId,
-          true,
-          null,
-          mockTrx,
+        testSumId,
+        expect.any(Object),
+        userId,
+        true,
+        null,
+        mockTrx,
       );
     });
   });
@@ -172,9 +172,9 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
   describe('createFuelFlowToLoadTest', () => {
     it('Should create and return a new Fuel Flow To Load Test record', async () => {
       const result = await service.createFuelFlowToLoadTest(
-          testSumId,
-          payload,
-          userId,
+        testSumId,
+        payload,
+        userId,
       );
 
       expect(result).toEqual(fuelFlowToLoadTestRecord);
@@ -183,21 +183,21 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
 
     it('Should create and return a new Fuel Flow To Load Test record with transaction', async () => {
       const result = await service.createFuelFlowToLoadTest(
-          testSumId,
-          payload,
-          userId,
-          false,
-          null,
-          mockTrx,
+        testSumId,
+        payload,
+        userId,
+        false,
+        null,
+        mockTrx,
       );
 
       expect(result).toEqual(fuelFlowToLoadTestRecord);
       expect(mockTrx.getRepository).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        userId,
+        false,
+        mockTrx,
       );
     });
   });
@@ -205,10 +205,10 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
   describe('updateFuelFlowToLoadTest', () => {
     it('Should update and return a new Fuel Flow To Load Test record', async () => {
       const result = await service.editFuelFlowToLoadTest(
-          testSumId,
-          id,
-          payload,
-          userId,
+        testSumId,
+        id,
+        payload,
+        userId,
       );
 
       expect(result).toEqual(fuelFlowToLoadTestRecord);
@@ -230,21 +230,21 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
 
     it('Should update and return a new Fuel Flow To Load Test record with transaction', async () => {
       const result = await service.editFuelFlowToLoadTest(
-          testSumId,
-          id,
-          payload,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        id,
+        payload,
+        userId,
+        false,
+        mockTrx,
       );
 
       expect(result).toEqual(fuelFlowToLoadTestRecord);
       expect(mockTrx.getRepository).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        userId,
+        false,
+        mockTrx,
       );
     });
   });
@@ -252,9 +252,9 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
   describe('deleteFuelFlowToLoadTest', () => {
     it('Should delete a Fuel Flow To Load Test record', async () => {
       const result = await service.deleteFuelFlowToLoadTest(
-          testSumId,
-          id,
-          userId,
+        testSumId,
+        id,
+        userId,
       );
 
       expect(result).toEqual(undefined);
@@ -263,8 +263,8 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
 
     it('Should throw error when database throws an error while deleting a Fuel Flow To Load Test record', async () => {
       jest
-          .spyOn(repository, 'delete')
-          .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
       let errored = false;
 
       try {
@@ -278,20 +278,20 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
 
     it('Should delete a Fuel Flow To Load Test record with transaction', async () => {
       const result = await service.deleteFuelFlowToLoadTest(
-          testSumId,
-          id,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        id,
+        userId,
+        false,
+        mockTrx,
       );
 
       expect(result).toEqual(undefined);
       expect(mockTrx.getRepository).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        userId,
+        false,
+        mockTrx,
       );
     });
   });

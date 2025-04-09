@@ -1,9 +1,9 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In, IsNull } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, In, IsNull} from 'typeorm';
+import {v4 as uuid} from 'uuid';
 
 import {
   TestQualificationBaseDTO,
@@ -11,12 +11,12 @@ import {
   TestQualificationImportDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
-import { TestQualification } from '../entities/workspace/test-qualification.entity';
-import { TestClaimCode } from '../entities/workspace/test-claim-code.entity';
-import { TestQualificationMap } from '../maps/test-qualification.map';
-import { TestQualificationRepository } from '../test-qualification/test-qualification.repository';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
+import {TestQualification} from '../entities/workspace/test-qualification.entity';
+import {TestClaimCode} from '../entities/workspace/test-claim-code.entity';
+import {TestQualificationMap} from '../maps/test-qualification.map';
+import {TestQualificationRepository} from '../test-qualification/test-qualification.repository';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {TestQualificationWorkspaceRepository} from './test-qualification-workspace.repository';
 
 @Injectable()
 export class TestQualificationWorkspaceService {
@@ -27,20 +27,21 @@ export class TestQualificationWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     private readonly repository: TestQualificationWorkspaceRepository,
     private readonly historicalRepo: TestQualificationRepository,
-  ) {}
+  ) {
+  }
 
   async getTestQualifications(
     testSumId: string,
   ): Promise<TestQualificationDTO[]> {
     const records = await this.repository.find({
-      where: { testSumId },
+      where: {testSumId},
     });
 
     return this.map.many(records);
   }
 
   async getTestQualification(id: string): Promise<TestQualificationDTO> {
-    const result = await this.repository.findOneBy({ id });
+    const result = await this.repository.findOneBy({id});
 
     if (!result) {
       throw new EaseyException(
@@ -78,7 +79,7 @@ export class TestQualificationWorkspaceService {
 
     await repo.save(entity);
 
-    entity = await repo.findOneBy({ id: entity.id });
+    entity = await repo.findOneBy({id: entity.id});
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
@@ -99,7 +100,7 @@ export class TestQualificationWorkspaceService {
   ): Promise<void> {
     try {
       const repo = trx ? trx.getRepository(TestQualification) : this.repository;
-      await repo.delete({ id });
+      await repo.delete({id});
     } catch (e) {
       throw new EaseyException(
         new Error(`Error deleting Test Qualification with record Id [${id}]`),
@@ -126,7 +127,7 @@ export class TestQualificationWorkspaceService {
     const timestamp = currentDateTime();
     const repo = trx ? trx.getRepository(TestQualification) : this.repository;
 
-    const record = await repo.findOneBy({ id });
+    const record = await repo.findOneBy({id});
 
     if (!record) {
       throw new EaseyException(
@@ -164,7 +165,7 @@ export class TestQualificationWorkspaceService {
     testSumIds: string[],
   ): Promise<TestQualificationDTO[]> {
     const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
+      where: {testSumId: In(testSumIds)},
     });
     return this.map.many(results);
   }

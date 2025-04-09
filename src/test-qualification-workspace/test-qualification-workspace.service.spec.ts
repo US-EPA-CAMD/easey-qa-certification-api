@@ -1,9 +1,9 @@
-import { HttpStatus } from '@nestjs/common/enums';
-import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
+import {HttpStatus} from '@nestjs/common/enums';
+import {ConfigService} from '@nestjs/config';
+import {Test, TestingModule} from '@nestjs/testing';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {EntityManager} from 'typeorm';
 
 import {
   TestQualificationBaseDTO,
@@ -11,12 +11,12 @@ import {
   TestQualificationImportDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
-import { TestQualification } from '../entities/workspace/test-qualification.entity';
-import { TestQualificationMap } from '../maps/test-qualification.map';
-import { TestQualificationRepository } from '../test-qualification/test-qualification.repository';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
-import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
+import {TestQualification} from '../entities/workspace/test-qualification.entity';
+import {TestQualificationMap} from '../maps/test-qualification.map';
+import {TestQualificationRepository} from '../test-qualification/test-qualification.repository';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {TestQualificationWorkspaceRepository} from './test-qualification-workspace.repository';
+import {TestQualificationWorkspaceService} from './test-qualification-workspace.service';
 
 const testSumId = '';
 const testQualificationId = 'a1b2c3';

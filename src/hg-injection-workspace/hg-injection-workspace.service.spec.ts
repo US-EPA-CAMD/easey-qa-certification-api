@@ -1,20 +1,20 @@
-import { InternalServerErrorException } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
+import {InternalServerErrorException} from '@nestjs/common';
+import {Test, TestingModule} from '@nestjs/testing';
+import {LoggerModule} from '@us-epa-camd/easey-common/logger';
+import {EntityManager} from 'typeorm';
 
 import {
   HgInjectionBaseDTO,
   HgInjectionDTO,
   HgInjectionImportDTO,
 } from '../dto/hg-injection.dto';
-import { HgInjection as HgInjectionOfficial } from '../entities/hg-injection.entity';
-import { HgInjection } from '../entities/workspace/hg-injection.entity';
-import { HgInjectionRepository } from '../hg-injection/hg-injection.repository';
-import { HgInjectionMap } from '../maps/hg-injection.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { HgInjectionWorkspaceRepository } from './hg-injection-workspace.repository';
-import { HgInjectionWorkspaceService } from './hg-injection-workspace.service';
+import {HgInjection as HgInjectionOfficial} from '../entities/hg-injection.entity';
+import {HgInjection} from '../entities/workspace/hg-injection.entity';
+import {HgInjectionRepository} from '../hg-injection/hg-injection.repository';
+import {HgInjectionMap} from '../maps/hg-injection.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {HgInjectionWorkspaceRepository} from './hg-injection-workspace.repository';
+import {HgInjectionWorkspaceService} from './hg-injection-workspace.service';
 
 const id = '';
 const hgTestSumId = '';
@@ -87,13 +87,13 @@ describe('HgInjectionWorkspaceService', () => {
     }).compile();
 
     service = module.get<HgInjectionWorkspaceService>(
-        HgInjectionWorkspaceService,
+      HgInjectionWorkspaceService,
     );
     repository = module.get<HgInjectionWorkspaceRepository>(
-        HgInjectionWorkspaceRepository,
+      HgInjectionWorkspaceRepository,
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
-        TestSummaryWorkspaceService,
+      TestSummaryWorkspaceService,
     );
     mockTrx = mockEntityManager() as unknown as EntityManager;
   });
@@ -130,10 +130,10 @@ describe('HgInjectionWorkspaceService', () => {
   describe('createHgInjection', () => {
     it('Should create and return a new Hg Injection record', async () => {
       const result = await service.createHgInjection(
-          testSumId,
-          hgTestSumId,
-          payload,
-          userId,
+        testSumId,
+        hgTestSumId,
+        payload,
+        userId,
       );
 
       expect(result).toEqual(dto);
@@ -141,12 +141,12 @@ describe('HgInjectionWorkspaceService', () => {
 
     it('Should create and return a new Hg Injection record with Historical Record Id', async () => {
       const result = await service.createHgInjection(
-          testSumId,
-          hgTestSumId,
-          payload,
-          userId,
-          false,
-          'historicalId',
+        testSumId,
+        hgTestSumId,
+        payload,
+        userId,
+        false,
+        'historicalId',
       );
 
       expect(result).toEqual(dto);
@@ -154,22 +154,22 @@ describe('HgInjectionWorkspaceService', () => {
 
     it('Should create and return a new Hg Injection record with transaction', async () => {
       const result = await service.createHgInjection(
-          testSumId,
-          hgTestSumId,
-          payload,
-          userId,
-          false,
-          null,
-          mockTrx,
+        testSumId,
+        hgTestSumId,
+        payload,
+        userId,
+        false,
+        null,
+        mockTrx,
       );
 
       expect(result).toEqual(dto);
       expect(mockTrx.getRepository).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        userId,
+        false,
+        mockTrx,
       );
     });
   });
@@ -177,10 +177,10 @@ describe('HgInjectionWorkspaceService', () => {
   describe('updateHgSummary', () => {
     it('Should update and return the Hg Injection record', async () => {
       const result = await service.updateHgInjection(
-          testSumId,
-          hgTestInjId,
-          payload,
-          userId,
+        testSumId,
+        hgTestInjId,
+        payload,
+        userId,
       );
 
       expect(result).toEqual(dto);
@@ -201,21 +201,21 @@ describe('HgInjectionWorkspaceService', () => {
 
     it('Should update and return the Hg Injection record with transaction', async () => {
       const result = await service.updateHgInjection(
-          testSumId,
-          hgTestInjId,
-          payload,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        hgTestInjId,
+        payload,
+        userId,
+        false,
+        mockTrx,
       );
 
       expect(result).toEqual(dto);
       expect(mockTrx.getRepository).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        userId,
+        false,
+        mockTrx,
       );
     });
   });
@@ -223,9 +223,9 @@ describe('HgInjectionWorkspaceService', () => {
   describe('deleteHgInjection', () => {
     it('should delete an H Injection record', async () => {
       const result = await service.deleteHgInjection(
-          testSumId,
-          hgTestInjId,
-          userId,
+        testSumId,
+        hgTestInjId,
+        userId,
       );
 
       expect(result).toEqual(undefined);
@@ -233,7 +233,7 @@ describe('HgInjectionWorkspaceService', () => {
 
     it('should throw an error while deleting a Hg Injection record', async () => {
       const error = new InternalServerErrorException(
-          `Error deleting Hg Injection record Id [${hgTestInjId}]`,
+        `Error deleting Hg Injection record Id [${hgTestInjId}]`,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);
 
@@ -250,20 +250,20 @@ describe('HgInjectionWorkspaceService', () => {
 
     it('should delete an H Injection record with transaction', async () => {
       const result = await service.deleteHgInjection(
-          testSumId,
-          hgTestInjId,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        hgTestInjId,
+        userId,
+        false,
+        mockTrx,
       );
 
       expect(result).toEqual(undefined);
       expect(mockTrx.getRepository).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        userId,
+        false,
+        mockTrx,
       );
     });
   });
@@ -290,11 +290,11 @@ describe('HgInjectionWorkspaceService', () => {
       jest.spyOn(service, 'createHgInjection').mockResolvedValue(dto);
 
       const result = await service.import(
-          testSumId,
-          hgTestSumId,
-          importPayload,
-          userId,
-          false,
+        testSumId,
+        hgTestSumId,
+        importPayload,
+        userId,
+        false,
       );
       expect(result).toEqual(undefined);
     });
@@ -303,11 +303,11 @@ describe('HgInjectionWorkspaceService', () => {
       jest.spyOn(service, 'createHgInjection').mockResolvedValue(dto);
 
       const result = await service.import(
-          testSumId,
-          hgTestSumId,
-          importPayload,
-          userId,
-          true,
+        testSumId,
+        hgTestSumId,
+        importPayload,
+        userId,
+        true,
       );
       expect(result).toEqual(undefined);
     });
@@ -316,23 +316,23 @@ describe('HgInjectionWorkspaceService', () => {
       jest.spyOn(service, 'createHgInjection').mockResolvedValue(dto);
 
       const result = await service.import(
-          testSumId,
-          hgTestSumId,
-          importPayload,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        hgTestSumId,
+        importPayload,
+        userId,
+        false,
+        mockTrx,
       );
 
       expect(result).toEqual(undefined);
       expect(service.createHgInjection).toHaveBeenCalledWith(
-          testSumId,
-          hgTestSumId,
-          importPayload,
-          userId,
-          true,
-          undefined,
-          mockTrx,
+        testSumId,
+        hgTestSumId,
+        importPayload,
+        userId,
+        true,
+        undefined,
+        mockTrx,
       );
     });
   });

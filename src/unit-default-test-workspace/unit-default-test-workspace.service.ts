@@ -1,10 +1,10 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In, IsNull } from 'typeorm';
-import { settlePromises } from '../utilities/constants';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, In, IsNull} from 'typeorm';
+import {settlePromises} from '../utilities/constants';
+import {v4 as uuid} from 'uuid';
 
 import {
   UnitDefaultTestBaseDTO,
@@ -12,12 +12,12 @@ import {
   UnitDefaultTestImportDTO,
   UnitDefaultTestRecordDTO,
 } from '../dto/unit-default-test.dto';
-import { UnitDefaultTest } from '../entities/unit-default-test.entity';
-import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { UnitDefaultTestRunWorkspaceService } from '../unit-default-test-run-workspace/unit-default-test-run.service';
-import { UnitDefaultTestRepository } from '../unit-default-test/unit-default-test.repository';
-import { UnitDefaultTestWorkspaceRepository } from './unit-default-test-workspace.repository';
+import {UnitDefaultTest} from '../entities/unit-default-test.entity';
+import {UnitDefaultTestMap} from '../maps/unit-default-test.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {UnitDefaultTestRunWorkspaceService} from '../unit-default-test-run-workspace/unit-default-test-run.service';
+import {UnitDefaultTestRepository} from '../unit-default-test/unit-default-test.repository';
+import {UnitDefaultTestWorkspaceRepository} from './unit-default-test-workspace.repository';
 
 @Injectable()
 export class UnitDefaultTestWorkspaceService {
@@ -30,12 +30,13 @@ export class UnitDefaultTestWorkspaceService {
     private readonly logger: Logger,
     @Inject(forwardRef(() => UnitDefaultTestRunWorkspaceService))
     private readonly unitDefaultTestRunService: UnitDefaultTestRunWorkspaceService,
-  ) {}
+  ) {
+  }
 
   async getUnitDefaultTests(
     testSumId: string,
   ): Promise<UnitDefaultTestRecordDTO[]> {
-    const records = await this.repository.find({ where: { testSumId } });
+    const records = await this.repository.find({where: {testSumId}});
 
     return this.map.many(records);
   }
@@ -77,7 +78,7 @@ export class UnitDefaultTestWorkspaceService {
     });
 
     await repo.save(entity);
-    entity = await repo.findOneBy({ id: entity.id });
+    entity = await repo.findOneBy({id: entity.id});
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -140,7 +141,7 @@ export class UnitDefaultTestWorkspaceService {
   ): Promise<void> {
     try {
       const repo = trx ? trx.getRepository(UnitDefaultTest) : this.repository;
-      await repo.delete({ id });
+      await repo.delete({id});
     } catch (e) {
       throw new EaseyException(
         new Error(`Error deleting Unit Default Test with record Id [${id}]`),
@@ -160,7 +161,7 @@ export class UnitDefaultTestWorkspaceService {
     testSumIds: string[],
   ): Promise<UnitDefaultTestDTO[]> {
     const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
+      where: {testSumId: In(testSumIds)},
     });
 
     return this.map.many(results);

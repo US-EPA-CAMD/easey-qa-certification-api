@@ -1,12 +1,16 @@
-import { InternalServerErrorException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { EntityManager } from 'typeorm';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import {InternalServerErrorException} from '@nestjs/common';
+import {ConfigService} from '@nestjs/config';
+import {Test, TestingModule} from '@nestjs/testing';
+import {EntityManager} from 'typeorm';
+import {Logger} from '@us-epa-camd/easey-common/logger';
 
-import { AppECorrelationTestRunRepository } from '../app-e-correlation-test-run/app-e-correlation-test-run.repository';
-import { AppEHeatInputFromGasWorkspaceService } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.service';
-import { AppEHeatInputFromOilWorkspaceService } from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.service';
+import {AppECorrelationTestRunRepository} from '../app-e-correlation-test-run/app-e-correlation-test-run.repository';
+import {
+  AppEHeatInputFromGasWorkspaceService
+} from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.service';
+import {
+  AppEHeatInputFromOilWorkspaceService
+} from '../app-e-heat-input-from-oil-workspace/app-e-heat-input-from-oil.service';
 import {
   AppECorrelationTestRunBaseDTO,
   AppECorrelationTestRunDTO,
@@ -21,11 +25,11 @@ import {
   AppEHeatInputFromOilDTO,
   AppEHeatInputFromOilImportDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
-import { AppECorrelationTestRun } from '../entities/app-e-correlation-test-run.entity';
-import { AppECorrelationTestRunMap } from '../maps/app-e-correlation-test-run.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AppECorrelationTestRunWorkspaceRepository } from './app-e-correlation-test-run-workspace.repository';
-import { AppECorrelationTestRunWorkspaceService } from './app-e-correlation-test-run-workspace.service';
+import {AppECorrelationTestRun} from '../entities/app-e-correlation-test-run.entity';
+import {AppECorrelationTestRunMap} from '../maps/app-e-correlation-test-run.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {AppECorrelationTestRunWorkspaceRepository} from './app-e-correlation-test-run-workspace.repository';
+import {AppECorrelationTestRunWorkspaceService} from './app-e-correlation-test-run-workspace.service';
 
 const userId = 'testUser';
 const locationId = '5';

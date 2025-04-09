@@ -1,9 +1,9 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In, IsNull } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, In, IsNull} from 'typeorm';
+import {v4 as uuid} from 'uuid';
 
 import {
   LinearityInjectionBaseDTO,
@@ -11,32 +11,33 @@ import {
   LinearityInjectionImportDTO,
   LinearityInjectionRecordDTO,
 } from '../dto/linearity-injection.dto';
-import { LinearityInjection } from '../entities/linearity-injection.entity';
-import { LinearityInjectionRepository } from '../linearity-injection/linearity-injection.repository';
-import { LinearityInjectionMap } from '../maps/linearity-injection.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
+import {LinearityInjection} from '../entities/linearity-injection.entity';
+import {LinearityInjectionRepository} from '../linearity-injection/linearity-injection.repository';
+import {LinearityInjectionMap} from '../maps/linearity-injection.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {LinearityInjectionWorkspaceRepository} from './linearity-injection.repository';
 
 @Injectable()
 export class LinearityInjectionWorkspaceService {
   constructor(
-      private readonly logger: Logger,
-      private readonly map: LinearityInjectionMap,
-      @Inject(forwardRef(() => TestSummaryWorkspaceService))
-      private readonly testSummaryService: TestSummaryWorkspaceService,
-      private readonly repository: LinearityInjectionWorkspaceRepository,
-      private readonly historicalRepository: LinearityInjectionRepository,
-  ) {}
+    private readonly logger: Logger,
+    private readonly map: LinearityInjectionMap,
+    @Inject(forwardRef(() => TestSummaryWorkspaceService))
+    private readonly testSummaryService: TestSummaryWorkspaceService,
+    private readonly repository: LinearityInjectionWorkspaceRepository,
+    private readonly historicalRepository: LinearityInjectionRepository,
+  ) {
+  }
 
   async getInjectionById(id: string): Promise<LinearityInjectionDTO> {
-    const result = await this.repository.findOneBy({ id });
+    const result = await this.repository.findOneBy({id});
 
     if (!result) {
       throw new EaseyException(
-          new Error(
-              `A linearity injection record not found with Record Id [${id}].`,
-          ),
-          HttpStatus.NOT_FOUND,
+        new Error(
+          `A linearity injection record not found with Record Id [${id}].`,
+        ),
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -44,7 +45,7 @@ export class LinearityInjectionWorkspaceService {
   }
 
   async getInjectionsByLinSumId(
-      linSumId: string,
+    linSumId: string,
   ): Promise<LinearityInjectionDTO[]> {
     const results = await this.repository.findBy({
       linSumId: linSumId,
@@ -53,7 +54,7 @@ export class LinearityInjectionWorkspaceService {
   }
 
   async getInjectionsByLinSumIds(
-      linSumIds: string[],
+    linSumIds: string[],
   ): Promise<LinearityInjectionDTO[]> {
     const results = await this.repository.findBy({
       linSumId: In(linSumIds),
@@ -66,12 +67,12 @@ export class LinearityInjectionWorkspaceService {
   }
 
   async import(
-      testSumId: string,
-      linSumId: string,
-      payload: LinearityInjectionImportDTO,
-      userId: string,
-      isHistoricalRecord?: boolean,
-      trx?: EntityManager,
+    testSumId: string,
+    linSumId: string,
+    payload: LinearityInjectionImportDTO,
+    userId: string,
+    isHistoricalRecord?: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: LinearityInjection;
@@ -86,29 +87,29 @@ export class LinearityInjectionWorkspaceService {
     }
 
     const result = await this.createInjection(
-        testSumId,
-        linSumId,
-        payload,
-        userId,
-        isImport,
-        historicalRecord ? historicalRecord.id : null,
-        trx,
+      testSumId,
+      linSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(
-        `Linearity Injection Successfully Imported. Record Id: ${result.id}`,
+      `Linearity Injection Successfully Imported. Record Id: ${result.id}`,
     );
     return null;
   }
 
   async createInjection(
-      testSumId: string,
-      linSumId: string,
-      payload: LinearityInjectionBaseDTO | LinearityInjectionImportDTO,
-      userId: string,
-      isImport: boolean = false,
-      historicalRecordId?: string,
-      trx?: EntityManager,
+    testSumId: string,
+    linSumId: string,
+    payload: LinearityInjectionBaseDTO | LinearityInjectionImportDTO,
+    userId: string,
+    isImport: boolean = false,
+    historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<LinearityInjectionRecordDTO> {
     const timestamp = currentDateTime();
 
@@ -125,36 +126,36 @@ export class LinearityInjectionWorkspaceService {
     });
 
     await repo.save(entity);
-    entity = await repo.findOneBy({ id: entity.id });
+    entity = await repo.findOneBy({id: entity.id});
     await this.testSummaryService.resetToNeedsEvaluation(
-        testSumId,
-        userId,
-        isImport,
-        trx,
+      testSumId,
+      userId,
+      isImport,
+      trx,
     );
     return this.map.one(entity);
   }
 
   async updateInjection(
-      testSumId: string,
-      id: string,
-      payload: LinearityInjectionBaseDTO,
-      userId: string,
-      isImport: boolean = false,
-      trx?: EntityManager,
+    testSumId: string,
+    id: string,
+    payload: LinearityInjectionBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<LinearityInjectionRecordDTO> {
     const timestamp = currentDateTime();
     // Use the transaction entity manager if provided
     const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
 
-    const entity = await repo.findOneBy({ id });
+    const entity = await repo.findOneBy({id});
 
     if (!entity) {
       throw new EaseyException(
-          new Error(
-              `A linearity injection record not found with Record Id [${id}].`,
-          ),
-          HttpStatus.NOT_FOUND,
+        new Error(
+          `A linearity injection record not found with Record Id [${id}].`,
+        ),
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -168,20 +169,20 @@ export class LinearityInjectionWorkspaceService {
 
     await repo.save(entity);
     await this.testSummaryService.resetToNeedsEvaluation(
-        testSumId,
-        userId,
-        isImport,
-        trx,
+      testSumId,
+      userId,
+      isImport,
+      trx,
     );
     return this.map.one(entity);
   }
 
   async deleteInjection(
-      testSumId: string,
-      id: string,
-      userId: string,
-      isImport: boolean = false,
-      trx?: EntityManager,
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
     try {
       // Use the transaction entity manager if provided
@@ -189,16 +190,16 @@ export class LinearityInjectionWorkspaceService {
       await repo.delete(id);
     } catch (e) {
       throw new EaseyException(
-          new Error(`Error deleting Linearity Injection record Id [${id}]`),
-          HttpStatus.INTERNAL_SERVER_ERROR,
+        new Error(`Error deleting Linearity Injection record Id [${id}]`),
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
 
     await this.testSummaryService.resetToNeedsEvaluation(
-        testSumId,
-        userId,
-        isImport,
-        trx,
+      testSumId,
+      userId,
+      isImport,
+      trx,
     );
   }
 }

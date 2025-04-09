@@ -1,19 +1,19 @@
-import { InternalServerErrorException } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
+import {InternalServerErrorException} from '@nestjs/common';
+import {Test, TestingModule} from '@nestjs/testing';
+import {LoggerModule} from '@us-epa-camd/easey-common/logger';
+import {EntityManager} from 'typeorm';
 
 import {
   FlowToLoadReferenceBaseDTO,
   FlowToLoadReferenceDTO,
 } from '../dto/flow-to-load-reference.dto';
-import { FlowToLoadReference as FlowToLoadReferenceOfficial } from '../entities/flow-to-load-reference.entity';
-import { FlowToLoadReference } from '../entities/workspace/flow-to-load-reference.entity';
-import { FlowToLoadReferenceRepository } from '../flow-to-load-reference/flow-to-load-reference.repository';
-import { FlowToLoadReferenceMap } from '../maps/flow-to-load-reference.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { FlowToLoadReferenceWorkspaceRepository } from './flow-to-load-reference-workspace.repository';
-import { FlowToLoadReferenceWorkspaceService } from './flow-to-load-reference-workspace.service';
+import {FlowToLoadReference as FlowToLoadReferenceOfficial} from '../entities/flow-to-load-reference.entity';
+import {FlowToLoadReference} from '../entities/workspace/flow-to-load-reference.entity';
+import {FlowToLoadReferenceRepository} from '../flow-to-load-reference/flow-to-load-reference.repository';
+import {FlowToLoadReferenceMap} from '../maps/flow-to-load-reference.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {FlowToLoadReferenceWorkspaceRepository} from './flow-to-load-reference-workspace.repository';
+import {FlowToLoadReferenceWorkspaceService} from './flow-to-load-reference-workspace.service';
 
 const testSumId = '';
 const userId = 'user';

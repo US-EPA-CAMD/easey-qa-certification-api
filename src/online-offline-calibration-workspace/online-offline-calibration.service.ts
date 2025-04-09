@@ -1,9 +1,9 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, In} from 'typeorm';
+import {v4 as uuid} from 'uuid';
 
 import {
   OnlineOfflineCalibrationBaseDTO,
@@ -11,11 +11,11 @@ import {
   OnlineOfflineCalibrationImportDTO,
   OnlineOfflineCalibrationRecordDTO,
 } from '../dto/online-offline-calibration.dto';
-import { OnlineOfflineCalibration } from '../entities/online-offline-calibration.entity';
-import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.map';
-import { OnlineOfflineCalibrationRepository } from '../online-offline-calibration/online-offline-calibration.repository';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { OnlineOfflineCalibrationWorkspaceRepository } from './online-offline-calibration.repository';
+import {OnlineOfflineCalibration} from '../entities/online-offline-calibration.entity';
+import {OnlineOfflineCalibrationMap} from '../maps/online-offline-calibration.map';
+import {OnlineOfflineCalibrationRepository} from '../online-offline-calibration/online-offline-calibration.repository';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {OnlineOfflineCalibrationWorkspaceRepository} from './online-offline-calibration.repository';
 
 @Injectable()
 export class OnlineOfflineCalibrationWorkspaceService {
@@ -26,13 +26,14 @@ export class OnlineOfflineCalibrationWorkspaceService {
     @Inject(forwardRef(() => TestSummaryWorkspaceService))
     private readonly testSummaryService: TestSummaryWorkspaceService,
     private readonly historicalRepo: OnlineOfflineCalibrationRepository,
-  ) {}
+  ) {
+  }
 
   async getOnlineOfflineCalibrations(
     testSumId: string,
   ): Promise<OnlineOfflineCalibrationDTO[]> {
     const records = await this.repository.find({
-      where: { testSumId },
+      where: {testSumId},
     });
 
     return this.map.many(records);
@@ -41,7 +42,7 @@ export class OnlineOfflineCalibrationWorkspaceService {
   async getOnlineOfflineCalibration(
     id: string,
   ): Promise<OnlineOfflineCalibrationDTO> {
-    const result = await this.repository.findOneBy({ id });
+    const result = await this.repository.findOneBy({id});
 
     if (!result) {
       throw new EaseyException(
@@ -76,7 +77,7 @@ export class OnlineOfflineCalibrationWorkspaceService {
     });
 
     await repository.save(entity);
-    entity = await repository.findOneBy({ id: entity.id });
+    entity = await repository.findOneBy({id: entity.id});
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -129,7 +130,7 @@ export class OnlineOfflineCalibrationWorkspaceService {
     const timestamp = currentDateTime();
     const repository = trx ? trx.getRepository(OnlineOfflineCalibration) : this.repository;
 
-    const entity = await repository.findOneBy({ id });
+    const entity = await repository.findOneBy({id});
 
     if (!entity) {
       throw new EaseyException(
@@ -187,7 +188,7 @@ export class OnlineOfflineCalibrationWorkspaceService {
     testSumIds: string[],
   ): Promise<OnlineOfflineCalibrationDTO[]> {
     const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
+      where: {testSumId: In(testSumIds)},
     });
 
     return this.map.many(results);

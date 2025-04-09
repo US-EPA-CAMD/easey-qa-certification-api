@@ -1,25 +1,25 @@
-import { InternalServerErrorException } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
+import {InternalServerErrorException} from '@nestjs/common';
+import {Test, TestingModule} from '@nestjs/testing';
+import {LoggerModule} from '@us-epa-camd/easey-common/logger';
+import {EntityManager} from 'typeorm';
 
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
+import {ComponentWorkspaceRepository} from '../component-workspace/component.repository';
 import {
   QACertificationEventBaseDTO,
   QACertificationEventDTO,
 } from '../dto/qa-certification-event.dto';
-import { Component } from '../entities/workspace/component.entity';
-import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
-import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { QACertificationEvent } from '../entities/workspace/qa-certification-event.entity';
-import { StackPipe } from '../entities/workspace/stack-pipe.entity';
-import { Unit } from '../entities/workspace/unit.entity';
-import { QACertificationEventMap } from '../maps/qa-certification-event.map';
-import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
-import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
-import { QACertificationEventWorkspaceService } from './qa-certification-event-workspace.service';
-import { QACertificationEventRepository } from '../qa-certification-event/qa-certification-event.repository';
+import {Component} from '../entities/workspace/component.entity';
+import {MonitorLocation} from '../entities/workspace/monitor-location.entity';
+import {MonitorSystem} from '../entities/workspace/monitor-system.entity';
+import {QACertificationEvent} from '../entities/workspace/qa-certification-event.entity';
+import {StackPipe} from '../entities/workspace/stack-pipe.entity';
+import {Unit} from '../entities/workspace/unit.entity';
+import {QACertificationEventMap} from '../maps/qa-certification-event.map';
+import {MonitorLocationRepository} from '../monitor-location/monitor-location.repository';
+import {MonitorSystemWorkspaceRepository} from '../monitor-system-workspace/monitor-system-workspace.repository';
+import {QACertificationEventWorkspaceRepository} from './qa-certification-event-workspace.repository';
+import {QACertificationEventWorkspaceService} from './qa-certification-event-workspace.service';
+import {QACertificationEventRepository} from '../qa-certification-event/qa-certification-event.repository';
 
 const locationId = '';
 const qaCertEventId = '';

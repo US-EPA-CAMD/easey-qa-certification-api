@@ -1,9 +1,9 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In, IsNull } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, In, IsNull} from 'typeorm';
+import {v4 as uuid} from 'uuid';
 
 import {
   TransmitterTransducerAccuracyBaseDTO,
@@ -11,34 +11,37 @@ import {
   TransmitterTransducerAccuracyImportDTO,
   TransmitterTransducerAccuracyRecordDTO,
 } from '../dto/transmitter-transducer-accuracy.dto';
-import { TransmitterTransducerAccuracy } from '../entities/transmitter-transducer-accuracy.entity';
-import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { TransmitterTransducerAccuracyRepository } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.repository';
-import { TransmitterTransducerAccuracyWorkspaceRepository } from './transmitter-transducer-accuracy.repository';
+import {TransmitterTransducerAccuracy} from '../entities/transmitter-transducer-accuracy.entity';
+import {TransmitterTransducerAccuracyMap} from '../maps/transmitter-transducer-accuracy.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {
+  TransmitterTransducerAccuracyRepository
+} from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.repository';
+import {TransmitterTransducerAccuracyWorkspaceRepository} from './transmitter-transducer-accuracy.repository';
 
 @Injectable()
 export class TransmitterTransducerAccuracyWorkspaceService {
   constructor(
-      private readonly logger: Logger,
-      private readonly repository: TransmitterTransducerAccuracyWorkspaceRepository,
-      private readonly map: TransmitterTransducerAccuracyMap,
-      @Inject(forwardRef(() => TestSummaryWorkspaceService))
-      private readonly testSummaryService: TestSummaryWorkspaceService,
-      private readonly historicalRepository: TransmitterTransducerAccuracyRepository,
-  ) {}
+    private readonly logger: Logger,
+    private readonly repository: TransmitterTransducerAccuracyWorkspaceRepository,
+    private readonly map: TransmitterTransducerAccuracyMap,
+    @Inject(forwardRef(() => TestSummaryWorkspaceService))
+    private readonly testSummaryService: TestSummaryWorkspaceService,
+    private readonly historicalRepository: TransmitterTransducerAccuracyRepository,
+  ) {
+  }
 
   async getTransmitterTransducerAccuracy(
-      id: string,
+    id: string,
   ): Promise<TransmitterTransducerAccuracyDTO> {
-    const entity = await this.repository.findOneBy({ id });
+    const entity = await this.repository.findOneBy({id});
 
     if (!entity) {
       throw new EaseyException(
-          new Error(
-              `A Transmitter Transducer Accuracy record not found with Record Id [${id}].`,
-          ),
-          HttpStatus.NOT_FOUND,
+        new Error(
+          `A Transmitter Transducer Accuracy record not found with Record Id [${id}].`,
+        ),
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -46,17 +49,17 @@ export class TransmitterTransducerAccuracyWorkspaceService {
   }
 
   async getTransmitterTransducerAccuracies(
-      testSumId: string,
+    testSumId: string,
   ): Promise<TransmitterTransducerAccuracyDTO[]> {
     const records = await this.repository.find({
-      where: { testSumId },
+      where: {testSumId},
     });
 
     return this.map.many(records);
   }
 
   async getTransmitterTransducerAccuraciesByTestSumIds(
-      testSumIds: string[],
+    testSumIds: string[],
   ): Promise<TransmitterTransducerAccuracyDTO[]> {
     const results = await this.repository.find({
       where: {
@@ -68,12 +71,12 @@ export class TransmitterTransducerAccuracyWorkspaceService {
   }
 
   async createTransmitterTransducerAccuracy(
-      testSumId: string,
-      payload: TransmitterTransducerAccuracyBaseDTO,
-      userId: string,
-      isImport: boolean = false,
-      historicalRecordId?: string,
-      trx?: EntityManager,
+    testSumId: string,
+    payload: TransmitterTransducerAccuracyBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+    historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<TransmitterTransducerAccuracyRecordDTO> {
     const timestamp = currentDateTime().toISOString();
     const repository = trx ? trx.getRepository(TransmitterTransducerAccuracy) : this.repository;
@@ -88,34 +91,34 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     });
 
     await repository.save(entity);
-    entity = await repository.findOneBy({ id: entity.id });
+    entity = await repository.findOneBy({id: entity.id});
     await this.testSummaryService.resetToNeedsEvaluation(
-        testSumId,
-        userId,
-        isImport,
-        trx,
+      testSumId,
+      userId,
+      isImport,
+      trx,
     );
 
     return this.map.one(entity);
   }
 
   async updateTransmitterTransducerAccuracy(
-      testSumId: string,
-      id: string,
-      payload: TransmitterTransducerAccuracyBaseDTO,
-      userId: string,
-      isImport: boolean = false,
-      trx?: EntityManager,
+    testSumId: string,
+    id: string,
+    payload: TransmitterTransducerAccuracyBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<TransmitterTransducerAccuracyDTO> {
     const repository = trx ? trx.getRepository(TransmitterTransducerAccuracy) : this.repository;
-    const entity = await repository.findOneBy({ id, testSumId });
+    const entity = await repository.findOneBy({id, testSumId});
 
     if (!entity) {
       throw new EaseyException(
-          new Error(
-              `Transmitter Transducer Accuracy record not found with Record Id [${id}].`,
-          ),
-          HttpStatus.NOT_FOUND,
+        new Error(
+          `Transmitter Transducer Accuracy record not found with Record Id [${id}].`,
+        ),
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -133,21 +136,21 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     await repository.save(entity);
 
     await this.testSummaryService.resetToNeedsEvaluation(
-        testSumId,
-        userId,
-        isImport,
-        trx,
+      testSumId,
+      userId,
+      isImport,
+      trx,
     );
 
     return this.map.one(entity);
   }
 
   async deleteTransmitterTransducerAccuracy(
-      testSumId: string,
-      id: string,
-      userId: string,
-      isImport: boolean = false,
-      trx?: EntityManager,
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
     try {
       const repository = trx ? trx.getRepository(TransmitterTransducerAccuracy) : this.repository;
@@ -157,28 +160,28 @@ export class TransmitterTransducerAccuracyWorkspaceService {
       });
     } catch (e) {
       throw new EaseyException(
-          new Error(
-              `Error deleting Transmitter Transducer Accuracy record [${id}].`,
-          ),
-          HttpStatus.INTERNAL_SERVER_ERROR,
-          e,
+        new Error(
+          `Error deleting Transmitter Transducer Accuracy record [${id}].`,
+        ),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
       );
     }
 
     await this.testSummaryService.resetToNeedsEvaluation(
-        testSumId,
-        userId,
-        isImport,
-        trx,
+      testSumId,
+      userId,
+      isImport,
+      trx,
     );
   }
 
   async import(
-      testSumId: string,
-      payload: TransmitterTransducerAccuracyImportDTO,
-      userId: string,
-      isHistoricalRecord?: boolean,
-      trx?: EntityManager,
+    testSumId: string,
+    payload: TransmitterTransducerAccuracyImportDTO,
+    userId: string,
+    isHistoricalRecord?: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: TransmitterTransducerAccuracy;
@@ -192,28 +195,28 @@ export class TransmitterTransducerAccuracyWorkspaceService {
         midLevelAccuracySpecCode: payload.midLevelAccuracySpecCode ?? IsNull(),
         highLevelAccuracy: payload.highLevelAccuracy ?? IsNull(),
         highLevelAccuracySpecCode:
-            payload.highLevelAccuracySpecCode ?? IsNull(),
+          payload.highLevelAccuracySpecCode ?? IsNull(),
       });
     }
 
     const createdTransmitterTransducerAccuracy = await this.createTransmitterTransducerAccuracy(
-        testSumId,
-        payload,
-        userId,
-        isImport,
-        historicalRecord ? historicalRecord.id : null,
-        trx,
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(
-        `Transmitter Transducer Accuracy successfully imported. Record Id: ${createdTransmitterTransducerAccuracy.id}`,
+      `Transmitter Transducer Accuracy successfully imported. Record Id: ${createdTransmitterTransducerAccuracy.id}`,
     );
 
     return null;
   }
 
   async export(
-      testSumIds: string[],
+    testSumIds: string[],
   ): Promise<TransmitterTransducerAccuracyDTO[]> {
     return this.getTransmitterTransducerAccuraciesByTestSumIds(testSumIds);
   }

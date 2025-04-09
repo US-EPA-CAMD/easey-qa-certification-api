@@ -1,8 +1,8 @@
-import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
-import { settlePromises } from '../utilities/constants';
+import {ConfigService} from '@nestjs/config';
+import {Test, TestingModule} from '@nestjs/testing';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {EntityManager} from 'typeorm';
+import {settlePromises} from '../utilities/constants';
 
 import {
   FlowRataRunBaseDTO,
@@ -13,14 +13,14 @@ import {
   RataTraverseDTO,
   RataTraverseImportDTO,
 } from '../dto/rata-traverse.dto';
-import { FlowRataRun as FlowRataRunOfficial } from '../entities/flow-rata-run.entity';
-import { FlowRataRun } from '../entities/workspace/flow-rata-run.entity';
-import { FlowRataRunRepository } from '../flow-rata-run/flow-rata-run.repository';
-import { FlowRataRunMap } from '../maps/flow-rata-run.map';
-import { RataTraverseWorkspaceService } from '../rata-traverse-workspace/rata-traverse-workspace.service';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { FlowRataRunWorkspaceRepository } from './flow-rata-run-workspace.repository';
-import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
+import {FlowRataRun as FlowRataRunOfficial} from '../entities/flow-rata-run.entity';
+import {FlowRataRun} from '../entities/workspace/flow-rata-run.entity';
+import {FlowRataRunRepository} from '../flow-rata-run/flow-rata-run.repository';
+import {FlowRataRunMap} from '../maps/flow-rata-run.map';
+import {RataTraverseWorkspaceService} from '../rata-traverse-workspace/rata-traverse-workspace.service';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {FlowRataRunWorkspaceRepository} from './flow-rata-run-workspace.repository';
+import {FlowRataRunWorkspaceService} from './flow-rata-run-workspace.service';
 
 const flowRataRunId = 'a1b2c3';
 const testSumId = 'd4e5f6';

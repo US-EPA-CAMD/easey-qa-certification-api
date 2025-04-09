@@ -1,19 +1,19 @@
-import { InternalServerErrorException } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
+import {InternalServerErrorException} from '@nestjs/common';
+import {Test, TestingModule} from '@nestjs/testing';
+import {LoggerModule} from '@us-epa-camd/easey-common/logger';
+import {EntityManager} from 'typeorm';
 
 import {
   LinearityInjectionDTO,
   LinearityInjectionImportDTO,
   LinearityInjectionRecordDTO,
 } from '../dto/linearity-injection.dto';
-import { LinearityInjection } from '../entities/workspace/linearity-injection.entity';
-import { LinearityInjectionRepository } from '../linearity-injection/linearity-injection.repository';
-import { LinearityInjectionMap } from '../maps/linearity-injection.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { LinearityInjectionWorkspaceRepository } from './linearity-injection.repository';
-import { LinearityInjectionWorkspaceService } from './linearity-injection.service';
+import {LinearityInjection} from '../entities/workspace/linearity-injection.entity';
+import {LinearityInjectionRepository} from '../linearity-injection/linearity-injection.repository';
+import {LinearityInjectionMap} from '../maps/linearity-injection.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {LinearityInjectionWorkspaceRepository} from './linearity-injection.repository';
+import {LinearityInjectionWorkspaceService} from './linearity-injection.service';
 
 const testSumId = '1';
 const linSumId = '1';
@@ -126,8 +126,8 @@ describe('LinearityInjectionWorkspaceService', () => {
   describe('import', () => {
     it('Should import Linearity Injection', async () => {
       jest
-          .spyOn(service, 'createInjection')
-          .mockResolvedValue(lineInjectionRecordDto);
+        .spyOn(service, 'createInjection')
+        .mockResolvedValue(lineInjectionRecordDto);
       const result = await service.import(testSumId, linSumId, payload, userId);
       expect(result).toEqual(null);
     });
@@ -147,13 +147,13 @@ describe('LinearityInjectionWorkspaceService', () => {
 
       // Verify createInjection was called with transaction
       expect(createInjectionSpy).toHaveBeenCalledWith(
-          testSumId,
-          linSumId,
-          expect.any(Object),
-          userId,
+        testSumId,
+        linSumId,
+        expect.any(Object),
+        userId,
         true, // isImport is always true in the import method
         null, // historicalRecordId is null when not a historical record
-          mockTrx,
+        mockTrx,
       );
     });
   });
@@ -161,10 +161,10 @@ describe('LinearityInjectionWorkspaceService', () => {
   describe('createInjection', () => {
     it('Should insert a Linearity Injection record', async () => {
       const result = await service.createInjection(
-          testSumId,
-          linSumId,
-          payload,
-          userId,
+        testSumId,
+        linSumId,
+        payload,
+        userId,
       );
       expect(result).toEqual(lineInjectionDto);
     });
@@ -173,10 +173,10 @@ describe('LinearityInjectionWorkspaceService', () => {
   describe('updateInjection', () => {
     it('Should update a Linearity Injection record', async () => {
       const result = await service.updateInjection(
-          testSumId,
-          linInjId,
-          payload,
-          userId,
+        testSumId,
+        linInjId,
+        payload,
+        userId,
       );
       expect(result).toEqual(lineInjectionDto);
     });
@@ -202,7 +202,7 @@ describe('LinearityInjectionWorkspaceService', () => {
 
     it('Should throw error while deleting a Linearity Injection record', async () => {
       const error = new InternalServerErrorException(
-          `Error deleting Linearity Injection record Id [${linInjId}]`,
+        `Error deleting Linearity Injection record Id [${linInjId}]`,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);
 
@@ -232,13 +232,13 @@ describe('LinearityInjectionWorkspaceService', () => {
 
       // Call createInjection with transaction
       await service.createInjection(
-          testSumId,
-          linSumId,
-          payload,
-          userId,
-          false,
-          null,
-          mockTrx,
+        testSumId,
+        linSumId,
+        payload,
+        userId,
+        false,
+        null,
+        mockTrx,
       );
 
       // Verify transaction was used
@@ -246,10 +246,10 @@ describe('LinearityInjectionWorkspaceService', () => {
 
       // Verify transaction was passed to child services
       expect(resetSpy).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          expect.any(Boolean),
-          mockTrx,
+        testSumId,
+        userId,
+        expect.any(Boolean),
+        mockTrx,
       );
     });
 
@@ -267,12 +267,12 @@ describe('LinearityInjectionWorkspaceService', () => {
 
       // Call updateInjection with transaction
       await service.updateInjection(
-          testSumId,
-          linInjId,
-          payload,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        linInjId,
+        payload,
+        userId,
+        false,
+        mockTrx,
       );
 
       // Verify transaction was used
@@ -280,10 +280,10 @@ describe('LinearityInjectionWorkspaceService', () => {
 
       // Verify transaction was passed to child services
       expect(resetSpy).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          expect.any(Boolean),
-          mockTrx,
+        testSumId,
+        userId,
+        expect.any(Boolean),
+        mockTrx,
       );
     });
 
@@ -300,11 +300,11 @@ describe('LinearityInjectionWorkspaceService', () => {
 
       // Call deleteInjection with transaction
       await service.deleteInjection(
-          testSumId,
-          linInjId,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        linInjId,
+        userId,
+        false,
+        mockTrx,
       );
 
       // Verify transaction was used
@@ -312,10 +312,10 @@ describe('LinearityInjectionWorkspaceService', () => {
 
       // Verify transaction was passed to child services
       expect(resetSpy).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          expect.any(Boolean),
-          mockTrx,
+        testSumId,
+        userId,
+        expect.any(Boolean),
+        mockTrx,
       );
     });
   });

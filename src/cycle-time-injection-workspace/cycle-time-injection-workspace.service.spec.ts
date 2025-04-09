@@ -1,19 +1,19 @@
-import { InternalServerErrorException } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
+import {InternalServerErrorException} from '@nestjs/common';
+import {Test, TestingModule} from '@nestjs/testing';
+import {LoggerModule} from '@us-epa-camd/easey-common/logger';
+import {EntityManager} from 'typeorm';
 
-import { CycleTimeInjectionRepository } from '../cycle-time-injection/cycle-time-injection.repository';
+import {CycleTimeInjectionRepository} from '../cycle-time-injection/cycle-time-injection.repository';
 import {
   CycleTimeInjectionDTO,
   CycleTimeInjectionImportDTO,
 } from '../dto/cycle-time-injection.dto';
-import { CycleTimeInjection as CycleTimeInjectionOfficial } from '../entities/cycle-time-injection.entity';
-import { CycleTimeInjection } from '../entities/workspace/cycle-time-injection.entity';
-import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { CycleTimeInjectionWorkspaceRepository } from './cycle-time-injection-workspace.repository';
-import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-workspace.service';
+import {CycleTimeInjection as CycleTimeInjectionOfficial} from '../entities/cycle-time-injection.entity';
+import {CycleTimeInjection} from '../entities/workspace/cycle-time-injection.entity';
+import {CycleTimeInjectionMap} from '../maps/cycle-time-injection.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {CycleTimeInjectionWorkspaceRepository} from './cycle-time-injection-workspace.repository';
+import {CycleTimeInjectionWorkspaceService} from './cycle-time-injection-workspace.service';
 
 const testSumId = '1';
 const cycleTimeSumId = '1';

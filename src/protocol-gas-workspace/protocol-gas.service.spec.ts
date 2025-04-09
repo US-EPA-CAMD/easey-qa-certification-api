@@ -1,19 +1,19 @@
-import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
+import {ConfigService} from '@nestjs/config';
+import {Test, TestingModule} from '@nestjs/testing';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {EntityManager} from 'typeorm';
 
 import {
   ProtocolGasBaseDTO,
   ProtocolGasDTO,
   ProtocolGasImportDTO,
 } from '../dto/protocol-gas.dto';
-import { ProtocolGas } from '../entities/workspace/protocol-gas.entity';
-import { ProtocolGasMap } from '../maps/protocol-gas.map';
-import { ProtocolGasRepository } from '../protocol-gas/protocol-gas.repository';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
-import { ProtocolGasWorkspaceService } from './protocol-gas.service';
+import {ProtocolGas} from '../entities/workspace/protocol-gas.entity';
+import {ProtocolGasMap} from '../maps/protocol-gas.map';
+import {ProtocolGasRepository} from '../protocol-gas/protocol-gas.repository';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {ProtocolGasWorkspaceRepository} from './protocol-gas.repository';
+import {ProtocolGasWorkspaceService} from './protocol-gas.service';
 
 const protocolGasId = 'a1b2c3';
 const testSumId = '1';
@@ -80,13 +80,13 @@ describe('ProtocolGasWorkspaceService', () => {
     }).compile();
 
     service = module.get<ProtocolGasWorkspaceService>(
-        ProtocolGasWorkspaceService,
+      ProtocolGasWorkspaceService,
     );
     repository = module.get<ProtocolGasWorkspaceRepository>(
-        ProtocolGasWorkspaceRepository,
+      ProtocolGasWorkspaceRepository,
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
-        TestSummaryWorkspaceService,
+      TestSummaryWorkspaceService,
     );
   });
 
@@ -123,9 +123,9 @@ describe('ProtocolGasWorkspaceService', () => {
   describe('createProtocolGas', () => {
     it('calls the repository.create() and insert a protocol gas record', async () => {
       const result = await service.createProtocolGas(
-          testSumId,
-          payload,
-          userId,
+        testSumId,
+        payload,
+        userId,
       );
       expect(result).toEqual(protocolGasDTO);
       expect(repository.create).toHaveBeenCalled();
@@ -135,8 +135,8 @@ describe('ProtocolGasWorkspaceService', () => {
   describe('Export', () => {
     it('Should Export Protocol Gas', async () => {
       jest
-          .spyOn(service, 'getProtocolGasByTestSumIds')
-          .mockResolvedValue([protocolGasDTO]);
+        .spyOn(service, 'getProtocolGasByTestSumIds')
+        .mockResolvedValue([protocolGasDTO]);
       const result = await service.export([testSumId]);
       expect(result).toEqual([protocolGasDTO]);
     });
@@ -145,16 +145,16 @@ describe('ProtocolGasWorkspaceService', () => {
   describe('Import', () => {
     it('Should Import Protocol Gas', async () => {
       jest
-          .spyOn(service, 'createProtocolGas')
-          .mockResolvedValue(protocolGasDTO);
+        .spyOn(service, 'createProtocolGas')
+        .mockResolvedValue(protocolGasDTO);
 
       await service.import(testSumId, new ProtocolGasImportDTO(), userId);
     });
 
     it('Should Import Protocol Gas with transaction', async () => {
       jest
-          .spyOn(service, 'createProtocolGas')
-          .mockResolvedValue(protocolGasDTO);
+        .spyOn(service, 'createProtocolGas')
+        .mockResolvedValue(protocolGasDTO);
 
       // Mock transaction entity manager
       const mockTrx = {
@@ -165,11 +165,11 @@ describe('ProtocolGasWorkspaceService', () => {
 
       // Verify createProtocolGas was called with transaction
       expect(service.createProtocolGas).toHaveBeenCalledWith(
-          testSumId,
-          expect.any(Object),
-          userId,
-          expect.any(Boolean),
-          mockTrx,
+        testSumId,
+        expect.any(Object),
+        userId,
+        expect.any(Boolean),
+        mockTrx,
       );
     });
   });
@@ -190,11 +190,11 @@ describe('ProtocolGasWorkspaceService', () => {
 
       // Call createProtocolGas with transaction
       await service.createProtocolGas(
-          testSumId,
-          payload,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        payload,
+        userId,
+        false,
+        mockTrx,
       );
 
       // Verify transaction was used
@@ -202,10 +202,10 @@ describe('ProtocolGasWorkspaceService', () => {
 
       // Verify transaction was passed to child service
       expect(resetSpy).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          expect.any(Boolean),
-          mockTrx,
+        testSumId,
+        userId,
+        expect.any(Boolean),
+        mockTrx,
       );
     });
   });

@@ -1,64 +1,82 @@
-import { InternalServerErrorException } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
+import {InternalServerErrorException} from '@nestjs/common';
+import {Test, TestingModule} from '@nestjs/testing';
+import {LoggerModule} from '@us-epa-camd/easey-common/logger';
+import {EntityManager} from 'typeorm';
 
-import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
-import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
-import { CalibrationInjectionWorkspaceService } from '../calibration-injection-workspace/calibration-injection-workspace.service';
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
-import { FlowToLoadCheckDTO } from '../dto/flow-to-load-check.dto';
-import { FlowToLoadReferenceDTO } from '../dto/flow-to-load-reference.dto';
-import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
-import { FuelFlowmeterAccuracyDTO } from '../dto/fuel-flowmeter-accuracy.dto';
+import {
+  AirEmissionTestingWorkspaceService
+} from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
+import {
+  AppECorrelationTestSummaryWorkspaceService
+} from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
+import {
+  CalibrationInjectionWorkspaceService
+} from '../calibration-injection-workspace/calibration-injection-workspace.service';
+import {ComponentWorkspaceRepository} from '../component-workspace/component.repository';
+import {CycleTimeSummaryWorkspaceService} from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
+import {FlowToLoadCheckDTO} from '../dto/flow-to-load-check.dto';
+import {FlowToLoadReferenceDTO} from '../dto/flow-to-load-reference.dto';
+import {FuelFlowToLoadBaselineDTO} from '../dto/fuel-flow-to-load-baseline.dto';
+import {FuelFlowmeterAccuracyDTO} from '../dto/fuel-flowmeter-accuracy.dto';
 import {
   LinearitySummaryDTO,
   LinearitySummaryImportDTO,
 } from '../dto/linearity-summary.dto';
-import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
-import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
-import { TransmitterTransducerAccuracyDTO } from '../dto/transmitter-transducer-accuracy.dto';
-import { ReportingPeriod } from '../entities/reporting-period.entity';
-import { UnitDefaultTest } from '../entities/unit-default-test.entity';
-import { AirEmissionTesting } from '../entities/workspace/air-emission-test.entity';
-import { AppECorrelationTestSummary } from '../entities/workspace/app-e-correlation-test-summary.entity';
-import { CalibrationInjection } from '../entities/workspace/calibration-injection.entity';
-import { Component } from '../entities/workspace/component.entity';
-import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entity';
-import { FuelFlowToLoadTest } from '../entities/workspace/fuel-flow-to-load-test.entity';
-import { HgSummary } from '../entities/workspace/hg-summary.entity';
-import { MonitorLocation } from '../entities/workspace/monitor-location.entity';
-import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { ProtocolGas } from '../entities/workspace/protocol-gas.entity';
-import { Rata } from '../entities/workspace/rata.entity';
-import { StackPipe } from '../entities/workspace/stack-pipe.entity';
-import { TestQualification } from '../entities/workspace/test-qualification.entity';
-import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { Unit } from '../entities/workspace/unit.entity';
-import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
-import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
-import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
-import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
-import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
-import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-workspace.service';
-import { LinearitySummaryWorkspaceService } from '../linearity-summary-workspace/linearity-summary.service';
-import { TestSummaryMap } from '../maps/test-summary.map';
-import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
-import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
-import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
-import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
-import { QASuppDataWorkspaceService } from '../qa-supp-data-workspace/qa-supp-data.service';
-import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
-import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
-import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
-import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
-import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
-import { TestSummaryWorkspaceRepository } from './test-summary.repository';
-import { TestSummaryWorkspaceService } from './test-summary.service';
-import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
-import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
+import {OnlineOfflineCalibrationDTO} from '../dto/online-offline-calibration.dto';
+import {TestSummaryDTO, TestSummaryImportDTO} from '../dto/test-summary.dto';
+import {TransmitterTransducerAccuracyDTO} from '../dto/transmitter-transducer-accuracy.dto';
+import {ReportingPeriod} from '../entities/reporting-period.entity';
+import {UnitDefaultTest} from '../entities/unit-default-test.entity';
+import {AirEmissionTesting} from '../entities/workspace/air-emission-test.entity';
+import {AppECorrelationTestSummary} from '../entities/workspace/app-e-correlation-test-summary.entity';
+import {CalibrationInjection} from '../entities/workspace/calibration-injection.entity';
+import {Component} from '../entities/workspace/component.entity';
+import {CycleTimeSummary} from '../entities/workspace/cycle-time-summary.entity';
+import {FuelFlowToLoadTest} from '../entities/workspace/fuel-flow-to-load-test.entity';
+import {HgSummary} from '../entities/workspace/hg-summary.entity';
+import {MonitorLocation} from '../entities/workspace/monitor-location.entity';
+import {MonitorSystem} from '../entities/workspace/monitor-system.entity';
+import {ProtocolGas} from '../entities/workspace/protocol-gas.entity';
+import {Rata} from '../entities/workspace/rata.entity';
+import {StackPipe} from '../entities/workspace/stack-pipe.entity';
+import {TestQualification} from '../entities/workspace/test-qualification.entity';
+import {TestSummary} from '../entities/workspace/test-summary.entity';
+import {Unit} from '../entities/workspace/unit.entity';
+import {FlowToLoadCheckWorkspaceService} from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
+import {
+  FlowToLoadReferenceWorkspaceService
+} from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
+import {
+  FuelFlowToLoadBaselineWorkspaceService
+} from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
+import {
+  FuelFlowToLoadTestWorkspaceService
+} from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
+import {
+  FuelFlowmeterAccuracyWorkspaceService
+} from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
+import {HgSummaryWorkspaceService} from '../hg-summary-workspace/hg-summary-workspace.service';
+import {LinearitySummaryWorkspaceService} from '../linearity-summary-workspace/linearity-summary.service';
+import {TestSummaryMap} from '../maps/test-summary.map';
+import {MonitorLocationRepository} from '../monitor-location/monitor-location.repository';
+import {MonitorSystemWorkspaceRepository} from '../monitor-system-workspace/monitor-system-workspace.repository';
+import {MonitorSystemRepository} from '../monitor-system/monitor-system.repository';
+import {
+  OnlineOfflineCalibrationWorkspaceService
+} from '../online-offline-calibration-workspace/online-offline-calibration.service';
+import {ProtocolGasWorkspaceService} from '../protocol-gas-workspace/protocol-gas.service';
+import {QASuppDataWorkspaceService} from '../qa-supp-data-workspace/qa-supp-data.service';
+import {RataWorkspaceService} from '../rata-workspace/rata-workspace.service';
+import {ReportingPeriodRepository} from '../reporting-period/reporting-period.repository';
+import {TestQualificationWorkspaceService} from '../test-qualification-workspace/test-qualification-workspace.service';
+import {
+  TransmitterTransducerAccuracyWorkspaceService
+} from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
+import {UnitDefaultTestWorkspaceService} from '../unit-default-test-workspace/unit-default-test-workspace.service';
+import {TestSummaryWorkspaceRepository} from './test-summary.repository';
+import {TestSummaryWorkspaceService} from './test-summary.service';
+import {ReviewAndSubmitTestSummaryDTO} from '../dto/review-and-submit-test-summary.dto';
+import {TestSummaryReviewAndSubmitService} from '../qa-certification-workspace/test-summary-review-and-submit.service';
 
 const locationId = '121';
 const facilityId = 1;
@@ -269,8 +287,8 @@ describe('TestSummaryWorkspaceService', () => {
           provide: MonitorLocationRepository,
           useFactory: () => ({
             getLocationByIdUnitIdStackPipeId: jest
-                .fn()
-                .mockResolvedValue(monLocation),
+              .fn()
+              .mockResolvedValue(monLocation),
           }),
         },
         {
@@ -340,7 +358,7 @@ describe('TestSummaryWorkspaceService', () => {
     repository = module.get(TestSummaryWorkspaceRepository);
     locationRepository = module.get(MonitorLocationRepository);
     monitorSystemWorkspaceRepository = module.get(
-        MonitorSystemWorkspaceRepository,
+      MonitorSystemWorkspaceRepository,
     );
   });
 
@@ -375,8 +393,8 @@ describe('TestSummaryWorkspaceService', () => {
       returnedSummary.id = testSumId;
 
       const spySummaries = jest
-          .spyOn(service, 'getTestSummaries')
-          .mockResolvedValue([returnedSummary]);
+        .spyOn(service, 'getTestSummaries')
+        .mockResolvedValue([returnedSummary]);
 
       const result = await service.export(facilityId, [unitId]);
 
@@ -390,13 +408,13 @@ describe('TestSummaryWorkspaceService', () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
 
       jest
-          .spyOn(repository, 'getTestSummaryById')
-          .mockResolvedValue(testSummary);
+        .spyOn(repository, 'getTestSummaryById')
+        .mockResolvedValue(testSummary);
 
       const result = await service.createTestSummary(
-          locationId,
-          payload,
-          userId,
+        locationId,
+        payload,
+        userId,
       );
 
       expect(result).toEqual(testSummaryDto);
@@ -415,11 +433,11 @@ describe('TestSummaryWorkspaceService', () => {
       };
 
       const result = await service.createTestSummary(
-          locationId,
-          payload,
-          userId,
-          undefined,
-          mockEntityManager as any,
+        locationId,
+        payload,
+        userId,
+        undefined,
+        mockEntityManager as any,
       );
 
       expect(result).toEqual(testSummaryDto);
@@ -436,8 +454,8 @@ describe('TestSummaryWorkspaceService', () => {
       loc.unit.name = '101';
 
       jest
-          .spyOn(locationRepository, 'getLocationByIdUnitIdStackPipeId')
-          .mockResolvedValue(null);
+        .spyOn(locationRepository, 'getLocationByIdUnitIdStackPipeId')
+        .mockResolvedValue(null);
 
       let errored = false;
 
@@ -457,10 +475,10 @@ describe('TestSummaryWorkspaceService', () => {
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(testSummary);
 
       const result = await service.updateTestSummary(
-          locationId,
-          testSumId,
-          payload,
-          userId,
+        locationId,
+        testSumId,
+        payload,
+        userId,
       );
 
       expect(result).toEqual(testSummaryDto);
@@ -504,8 +522,8 @@ describe('TestSummaryWorkspaceService', () => {
 
     it('should call the deleteTestSummary and throw error while deleting test summary', async () => {
       jest
-          .spyOn(repository, 'delete')
-          .mockRejectedValue(new InternalServerErrorException());
+        .spyOn(repository, 'delete')
+        .mockRejectedValue(new InternalServerErrorException());
 
       let errored = false;
 
@@ -559,8 +577,8 @@ describe('TestSummaryWorkspaceService', () => {
       monSysData.id = '1';
 
       const monSysWksFindOne = jest
-          .spyOn(monitorSystemWorkspaceRepository, 'findOneBy')
-          .mockResolvedValue(monSysData);
+        .spyOn(monitorSystemWorkspaceRepository, 'findOneBy')
+        .mockResolvedValue(monSysData);
 
       const result = await service.lookupValues(locationId, payload);
 
@@ -575,8 +593,8 @@ describe('TestSummaryWorkspaceService', () => {
       returnedSummary.id = testSumId;
 
       const createSpy = jest
-          .spyOn(service, 'createTestSummary')
-          .mockResolvedValue(returnedSummary);
+        .spyOn(service, 'createTestSummary')
+        .mockResolvedValue(returnedSummary);
 
       const importPayload = payload;
       const calInj = new CalibrationInjection();
@@ -584,18 +602,18 @@ describe('TestSummaryWorkspaceService', () => {
       importPayload.calibrationInjectionData = [calInj];
 
       const result = await service.import(
-          locationId,
-          importPayload,
-          userId,
-          historicalrecordId,
+        locationId,
+        importPayload,
+        userId,
+        historicalrecordId,
       );
 
       expect(createSpy).toHaveBeenCalledWith(
-          locationId,
-          importPayload,
-          userId,
-          historicalrecordId,
-          undefined,
+        locationId,
+        importPayload,
+        userId,
+        historicalrecordId,
+        undefined,
       );
       expect(result).toEqual(null);
     });
@@ -615,8 +633,8 @@ describe('TestSummaryWorkspaceService', () => {
       };
 
       const createSpy = jest
-          .spyOn(service, 'createTestSummary')
-          .mockResolvedValue(returnedSummary);
+        .spyOn(service, 'createTestSummary')
+        .mockResolvedValue(returnedSummary);
 
       // Set testSummary.id to ensure it's not undefined when deleted
       testSummary.id = testSumId;
@@ -627,19 +645,19 @@ describe('TestSummaryWorkspaceService', () => {
       importPayload.calibrationInjectionData = [calInj];
 
       const result = await service.import(
-          locationId,
-          importPayload,
-          userId,
-          historicalrecordId,
-          mockEntityManager as any,
+        locationId,
+        importPayload,
+        userId,
+        historicalrecordId,
+        mockEntityManager as any,
       );
 
       expect(createSpy).toHaveBeenCalledWith(
-          locationId,
-          importPayload,
-          userId,
-          historicalrecordId,
-          mockEntityManager,
+        locationId,
+        importPayload,
+        userId,
+        historicalrecordId,
+        mockEntityManager,
       );
       expect(result).toEqual(null);
     });
@@ -652,16 +670,16 @@ describe('TestSummaryWorkspaceService', () => {
 
       const deleteSpy = jest.spyOn(service, 'deleteTestSummary');
       const createSpy = jest
-          .spyOn(service, 'createTestSummary')
-          .mockResolvedValue(returnedSummary);
+        .spyOn(service, 'createTestSummary')
+        .mockResolvedValue(returnedSummary);
 
       const importPayload = payload;
 
       const result = await service.import(
-          locationId,
-          importPayload,
-          userId,
-          historicalrecordId,
+        locationId,
+        importPayload,
+        userId,
+        historicalrecordId,
       );
 
       expect(deleteSpy).toHaveBeenCalledWith(testSummary.id, undefined);
@@ -689,26 +707,26 @@ describe('TestSummaryWorkspaceService', () => {
 
       const deleteSpy = jest.spyOn(service, 'deleteTestSummary');
       const createSpy = jest
-          .spyOn(service, 'createTestSummary')
-          .mockResolvedValue(returnedSummary);
+        .spyOn(service, 'createTestSummary')
+        .mockResolvedValue(returnedSummary);
 
       const importPayload = payload;
 
       const result = await service.import(
-          locationId,
-          importPayload,
-          userId,
-          historicalrecordId,
-          mockEntityManager as any,
+        locationId,
+        importPayload,
+        userId,
+        historicalrecordId,
+        mockEntityManager as any,
       );
 
       expect(deleteSpy).toHaveBeenCalledWith(testSummary.id, mockEntityManager);
       expect(createSpy).toHaveBeenCalledWith(
-          locationId,
-          importPayload,
-          userId,
-          historicalrecordId,
-          mockEntityManager,
+        locationId,
+        importPayload,
+        userId,
+        historicalrecordId,
+        mockEntityManager,
       );
       expect(result).toEqual(null);
     });

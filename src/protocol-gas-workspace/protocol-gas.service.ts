@@ -1,9 +1,9 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, In} from 'typeorm';
+import {v4 as uuid} from 'uuid';
 
 import {
   ProtocolGasBaseDTO,
@@ -11,29 +11,30 @@ import {
   ProtocolGasImportDTO,
   ProtocolGasRecordDTO,
 } from '../dto/protocol-gas.dto';
-import { ProtocolGasMap } from '../maps/protocol-gas.map';
-import { ProtocolGasRepository } from '../protocol-gas/protocol-gas.repository';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { ProtocolGasWorkspaceRepository } from './protocol-gas.repository';
+import {ProtocolGasMap} from '../maps/protocol-gas.map';
+import {ProtocolGasRepository} from '../protocol-gas/protocol-gas.repository';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {ProtocolGasWorkspaceRepository} from './protocol-gas.repository';
 
 @Injectable()
 export class ProtocolGasWorkspaceService {
   constructor(
-      private readonly logger: Logger,
-      private readonly repository: ProtocolGasWorkspaceRepository,
-      private readonly map: ProtocolGasMap,
-      @Inject(forwardRef(() => TestSummaryWorkspaceService))
-      private readonly testSummaryService: TestSummaryWorkspaceService,
-      private readonly historicalRepo: ProtocolGasRepository,
-  ) {}
+    private readonly logger: Logger,
+    private readonly repository: ProtocolGasWorkspaceRepository,
+    private readonly map: ProtocolGasMap,
+    @Inject(forwardRef(() => TestSummaryWorkspaceService))
+    private readonly testSummaryService: TestSummaryWorkspaceService,
+    private readonly historicalRepo: ProtocolGasRepository,
+  ) {
+  }
 
   async getProtocolGas(id: string): Promise<ProtocolGasDTO> {
-    const entity = await this.repository.findOneBy({ id });
+    const entity = await this.repository.findOneBy({id});
 
     if (!entity) {
       throw new EaseyException(
-          new Error(`A protocol gas record not found with Record Id [${id}].`),
-          HttpStatus.NOT_FOUND,
+        new Error(`A protocol gas record not found with Record Id [${id}].`),
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -42,18 +43,18 @@ export class ProtocolGasWorkspaceService {
 
   async getProtocolGases(testSumId: string): Promise<ProtocolGasDTO[]> {
     const records = await this.repository.find({
-      where: { testSumId },
+      where: {testSumId},
     });
 
     return this.map.many(records);
   }
 
   async createProtocolGas(
-      testSumId: string,
-      payload: ProtocolGasBaseDTO,
-      userId: string,
-      isImport: boolean = false,
-      trx?: EntityManager,
+    testSumId: string,
+    payload: ProtocolGasBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<ProtocolGasRecordDTO> {
     const timestamp = currentDateTime().toISOString();
 
@@ -70,35 +71,35 @@ export class ProtocolGasWorkspaceService {
     });
 
     await repo.save(entity);
-    entity = await repo.findOneBy({ id: entity.id });
+    entity = await repo.findOneBy({id: entity.id});
     await this.testSummaryService.resetToNeedsEvaluation(
-        testSumId,
-        userId,
-        isImport,
-        trx,
+      testSumId,
+      userId,
+      isImport,
+      trx,
     );
     return this.map.one(entity);
   }
 
   async updateProtocolGas(
-      testSumId: string,
-      id: string,
-      payload: ProtocolGasBaseDTO,
-      userId: string,
-      isImport: boolean = false,
-      trx?: EntityManager,
+    testSumId: string,
+    id: string,
+    payload: ProtocolGasBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<ProtocolGasDTO> {
     const timestamp = currentDateTime();
 
     // Use the transaction entity manager if provided
     const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
 
-    const entity = await repo.findOneBy({ id });
+    const entity = await repo.findOneBy({id});
 
     if (!entity) {
       throw new EaseyException(
-          new Error(`A protocol gas record not found with Record Id [${id}].`),
-          HttpStatus.NOT_FOUND,
+        new Error(`A protocol gas record not found with Record Id [${id}].`),
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -113,39 +114,39 @@ export class ProtocolGasWorkspaceService {
     await repo.save(entity);
 
     await this.testSummaryService.resetToNeedsEvaluation(
-        testSumId,
-        userId,
-        isImport,
-        trx,
+      testSumId,
+      userId,
+      isImport,
+      trx,
     );
 
     return this.getProtocolGas(id);
   }
 
   async deleteProtocolGas(
-      testSumId: string,
-      id: string,
-      userId: string,
-      isImport: boolean = false,
-      trx?: EntityManager,
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
     // Use the transaction entity manager if provided
     const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
     await repo.delete(id);
 
     await this.testSummaryService.resetToNeedsEvaluation(
-        testSumId,
-        userId,
-        isImport,
-        trx,
+      testSumId,
+      userId,
+      isImport,
+      trx,
     );
   }
 
   async getProtocolGasByTestSumIds(
-      testSumIds: string[],
+    testSumIds: string[],
   ): Promise<ProtocolGasDTO[]> {
     const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
+      where: {testSumId: In(testSumIds)},
     });
     return this.map.many(results);
   }
@@ -155,23 +156,23 @@ export class ProtocolGasWorkspaceService {
   }
 
   async import(
-      testSumId: string,
-      payload: ProtocolGasImportDTO,
-      userId: string,
-      trx?: EntityManager,
+    testSumId: string,
+    payload: ProtocolGasImportDTO,
+    userId: string,
+    trx?: EntityManager,
   ) {
     const isImport = true;
 
     const createdProtocolGas = await this.createProtocolGas(
-        testSumId,
-        payload,
-        userId,
-        isImport,
-        trx,
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      trx,
     );
 
     this.logger.log(
-        `Protocol Gas Successfully Imported.  Record Id: ${createdProtocolGas.id}`,
+      `Protocol Gas Successfully Imported.  Record Id: ${createdProtocolGas.id}`,
     );
   }
 }

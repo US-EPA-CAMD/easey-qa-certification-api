@@ -5,95 +5,114 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager } from 'typeorm';
-import { v4 as uuid } from 'uuid';
-import { settlePromises } from '../utilities/constants';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager} from 'typeorm';
+import {v4 as uuid} from 'uuid';
+import {settlePromises} from '../utilities/constants';
 
-import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
-import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
-import { CalibrationInjectionWorkspaceService } from '../calibration-injection-workspace/calibration-injection-workspace.service';
-import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
-import { CycleTimeSummaryWorkspaceService } from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
+import {
+  AirEmissionTestingWorkspaceService
+} from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
+import {
+  AppECorrelationTestSummaryWorkspaceService
+} from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
+import {
+  CalibrationInjectionWorkspaceService
+} from '../calibration-injection-workspace/calibration-injection-workspace.service';
+import {ComponentWorkspaceRepository} from '../component-workspace/component.repository';
+import {CycleTimeSummaryWorkspaceService} from '../cycle-time-summary-workspace/cycle-time-summary-workspace.service';
 import {
   TestSummaryBaseDTO,
   TestSummaryDTO,
   TestSummaryImportDTO,
   TestSummaryRecordDTO,
 } from '../dto/test-summary.dto';
-import { TestTypeCodes } from '../enums/test-type-code.enum';
-import { FlowToLoadCheckWorkspaceService } from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
-import { FlowToLoadReferenceWorkspaceService } from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
-import { FuelFlowToLoadBaselineWorkspaceService } from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
-import { FuelFlowToLoadTestWorkspaceService } from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
-import { FuelFlowmeterAccuracyWorkspaceService } from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
-import { HgSummaryWorkspaceService } from '../hg-summary-workspace/hg-summary-workspace.service';
-import { LinearitySummaryWorkspaceService } from '../linearity-summary-workspace/linearity-summary.service';
-import { TestSummaryMap } from '../maps/test-summary.map';
-import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
-import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
-import { ProtocolGasWorkspaceService } from '../protocol-gas-workspace/protocol-gas.service';
-import { QASuppDataWorkspaceService } from '../qa-supp-data-workspace/qa-supp-data.service';
-import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
-import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
-import { TestQualificationWorkspaceService } from '../test-qualification-workspace/test-qualification-workspace.service';
-import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
-import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
-import { TestSummaryWorkspaceRepository } from './test-summary.repository';
-import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
+import {TestTypeCodes} from '../enums/test-type-code.enum';
+import {FlowToLoadCheckWorkspaceService} from '../flow-to-load-check-workspace/flow-to-load-check-workspace.service';
+import {
+  FlowToLoadReferenceWorkspaceService
+} from '../flow-to-load-reference-workspace/flow-to-load-reference-workspace.service';
+import {
+  FuelFlowToLoadBaselineWorkspaceService
+} from '../fuel-flow-to-load-baseline-workspace/fuel-flow-to-load-baseline-workspace.service';
+import {
+  FuelFlowToLoadTestWorkspaceService
+} from '../fuel-flow-to-load-test-workspace/fuel-flow-to-load-test-workspace.service';
+import {
+  FuelFlowmeterAccuracyWorkspaceService
+} from '../fuel-flowmeter-accuracy-workspace/fuel-flowmeter-accuracy-workspace.service';
+import {HgSummaryWorkspaceService} from '../hg-summary-workspace/hg-summary-workspace.service';
+import {LinearitySummaryWorkspaceService} from '../linearity-summary-workspace/linearity-summary.service';
+import {TestSummaryMap} from '../maps/test-summary.map';
+import {MonitorLocationRepository} from '../monitor-location/monitor-location.repository';
+import {MonitorSystemWorkspaceRepository} from '../monitor-system-workspace/monitor-system-workspace.repository';
+import {
+  OnlineOfflineCalibrationWorkspaceService
+} from '../online-offline-calibration-workspace/online-offline-calibration.service';
+import {ProtocolGasWorkspaceService} from '../protocol-gas-workspace/protocol-gas.service';
+import {QASuppDataWorkspaceService} from '../qa-supp-data-workspace/qa-supp-data.service';
+import {RataWorkspaceService} from '../rata-workspace/rata-workspace.service';
+import {ReportingPeriodRepository} from '../reporting-period/reporting-period.repository';
+import {TestQualificationWorkspaceService} from '../test-qualification-workspace/test-qualification-workspace.service';
+import {
+  TransmitterTransducerAccuracyWorkspaceService
+} from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
+import {UnitDefaultTestWorkspaceService} from '../unit-default-test-workspace/unit-default-test-workspace.service';
+import {TestSummaryWorkspaceRepository} from './test-summary.repository';
+import {TestSummaryReviewAndSubmitService} from '../qa-certification-workspace/test-summary-review-and-submit.service';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
   constructor(
-      private readonly logger: Logger,
-      private readonly map: TestSummaryMap,
-      @Inject(forwardRef(() => TestSummaryReviewAndSubmitService))
-      private readonly testSummaryReviewAndSubmitService: TestSummaryReviewAndSubmitService,
-      @Inject(forwardRef(() => LinearitySummaryWorkspaceService))
-      private readonly linearityService: LinearitySummaryWorkspaceService,
-      private readonly repository: TestSummaryWorkspaceRepository,
-      @Inject(forwardRef(() => RataWorkspaceService))
-      private readonly rataService: RataWorkspaceService,
-      @Inject(forwardRef(() => ProtocolGasWorkspaceService))
-      private readonly protocolGasService: ProtocolGasWorkspaceService,
-      @Inject(forwardRef(() => FuelFlowToLoadTestWorkspaceService))
-      private readonly fuelFlowToLoadTestWorkspaceService: FuelFlowToLoadTestWorkspaceService,
-      @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
-      private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
-      @Inject(forwardRef(() => CalibrationInjectionWorkspaceService))
-      private readonly calInjWorkspaceService: CalibrationInjectionWorkspaceService,
-      private readonly monitorLocationRepository: MonitorLocationRepository,
-      private readonly componentRepository: ComponentWorkspaceRepository,
-      private readonly monSysWorkspaceRepository: MonitorSystemWorkspaceRepository,
-      private readonly reportingPeriodRepository: ReportingPeriodRepository,
-      @Inject(forwardRef(() => FuelFlowToLoadBaselineWorkspaceService))
-      private readonly fuelFlowToLoadBaselineWorkspaceService: FuelFlowToLoadBaselineWorkspaceService,
-      @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
-      private readonly flowToLoadCheckWorkspaceService: FlowToLoadCheckWorkspaceService,
-      @Inject(forwardRef(() => FuelFlowmeterAccuracyWorkspaceService))
-      private readonly fuelFlowmeterAccuracyWorkspaceService: FuelFlowmeterAccuracyWorkspaceService,
-      @Inject(forwardRef(() => FlowToLoadReferenceWorkspaceService))
-      private readonly flowToLoadReferenceWorkspaceService: FlowToLoadReferenceWorkspaceService,
-      @Inject(forwardRef(() => OnlineOfflineCalibrationWorkspaceService))
-      private readonly onlineOfflineCalibrationWorkspaceService: OnlineOfflineCalibrationWorkspaceService,
-      @Inject(forwardRef(() => CycleTimeSummaryWorkspaceService))
-      private readonly cycleTimeSummaryWorkspaceService: CycleTimeSummaryWorkspaceService,
-      @Inject(forwardRef(() => TransmitterTransducerAccuracyWorkspaceService))
-      private readonly transmitterTransducerAccuracyWorkspaceService: TransmitterTransducerAccuracyWorkspaceService,
-      @Inject(forwardRef(() => UnitDefaultTestWorkspaceService))
-      private readonly unitDefaultTestWorkspaceService: UnitDefaultTestWorkspaceService,
-      @Inject(forwardRef(() => HgSummaryWorkspaceService))
-      private readonly hgSummaryWorkspaceService: HgSummaryWorkspaceService,
-      @Inject(forwardRef(() => AirEmissionTestingWorkspaceService))
-      private readonly airEmissionTestingWorkspaceService: AirEmissionTestingWorkspaceService,
-      @Inject(forwardRef(() => TestQualificationWorkspaceService))
-      private readonly testQualificationWorkspaceService: TestQualificationWorkspaceService,
-      @Inject(forwardRef(() => QASuppDataWorkspaceService))
-      private readonly qaSuppDataService: QASuppDataWorkspaceService,
-  ) {}
+    private readonly logger: Logger,
+    private readonly map: TestSummaryMap,
+    @Inject(forwardRef(() => TestSummaryReviewAndSubmitService))
+    private readonly testSummaryReviewAndSubmitService: TestSummaryReviewAndSubmitService,
+    @Inject(forwardRef(() => LinearitySummaryWorkspaceService))
+    private readonly linearityService: LinearitySummaryWorkspaceService,
+    private readonly repository: TestSummaryWorkspaceRepository,
+    @Inject(forwardRef(() => RataWorkspaceService))
+    private readonly rataService: RataWorkspaceService,
+    @Inject(forwardRef(() => ProtocolGasWorkspaceService))
+    private readonly protocolGasService: ProtocolGasWorkspaceService,
+    @Inject(forwardRef(() => FuelFlowToLoadTestWorkspaceService))
+    private readonly fuelFlowToLoadTestWorkspaceService: FuelFlowToLoadTestWorkspaceService,
+    @Inject(forwardRef(() => AppECorrelationTestSummaryWorkspaceService))
+    private readonly appECorrelationTestSummaryWorkspaceService: AppECorrelationTestSummaryWorkspaceService,
+    @Inject(forwardRef(() => CalibrationInjectionWorkspaceService))
+    private readonly calInjWorkspaceService: CalibrationInjectionWorkspaceService,
+    private readonly monitorLocationRepository: MonitorLocationRepository,
+    private readonly componentRepository: ComponentWorkspaceRepository,
+    private readonly monSysWorkspaceRepository: MonitorSystemWorkspaceRepository,
+    private readonly reportingPeriodRepository: ReportingPeriodRepository,
+    @Inject(forwardRef(() => FuelFlowToLoadBaselineWorkspaceService))
+    private readonly fuelFlowToLoadBaselineWorkspaceService: FuelFlowToLoadBaselineWorkspaceService,
+    @Inject(forwardRef(() => FlowToLoadCheckWorkspaceService))
+    private readonly flowToLoadCheckWorkspaceService: FlowToLoadCheckWorkspaceService,
+    @Inject(forwardRef(() => FuelFlowmeterAccuracyWorkspaceService))
+    private readonly fuelFlowmeterAccuracyWorkspaceService: FuelFlowmeterAccuracyWorkspaceService,
+    @Inject(forwardRef(() => FlowToLoadReferenceWorkspaceService))
+    private readonly flowToLoadReferenceWorkspaceService: FlowToLoadReferenceWorkspaceService,
+    @Inject(forwardRef(() => OnlineOfflineCalibrationWorkspaceService))
+    private readonly onlineOfflineCalibrationWorkspaceService: OnlineOfflineCalibrationWorkspaceService,
+    @Inject(forwardRef(() => CycleTimeSummaryWorkspaceService))
+    private readonly cycleTimeSummaryWorkspaceService: CycleTimeSummaryWorkspaceService,
+    @Inject(forwardRef(() => TransmitterTransducerAccuracyWorkspaceService))
+    private readonly transmitterTransducerAccuracyWorkspaceService: TransmitterTransducerAccuracyWorkspaceService,
+    @Inject(forwardRef(() => UnitDefaultTestWorkspaceService))
+    private readonly unitDefaultTestWorkspaceService: UnitDefaultTestWorkspaceService,
+    @Inject(forwardRef(() => HgSummaryWorkspaceService))
+    private readonly hgSummaryWorkspaceService: HgSummaryWorkspaceService,
+    @Inject(forwardRef(() => AirEmissionTestingWorkspaceService))
+    private readonly airEmissionTestingWorkspaceService: AirEmissionTestingWorkspaceService,
+    @Inject(forwardRef(() => TestQualificationWorkspaceService))
+    private readonly testQualificationWorkspaceService: TestQualificationWorkspaceService,
+    @Inject(forwardRef(() => QASuppDataWorkspaceService))
+    private readonly qaSuppDataService: QASuppDataWorkspaceService,
+  ) {
+  }
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
     const result = await this.repository.getTestSummaryById(testSumId);
@@ -122,18 +141,18 @@ export class TestSummaryWorkspaceService {
   }
 
   async getTestSummariesByLocationId(
-      locationId: string,
-      testTypeCode?: string[],
-      systemTypeCode?: string[],
-      beginDate?: Date,
-      endDate?: Date,
+    locationId: string,
+    testTypeCode?: string[],
+    systemTypeCode?: string[],
+    beginDate?: Date,
+    endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
     const results = await this.repository.getTestSummariesByLocationId(
-        locationId,
-        testTypeCode,
-        systemTypeCode,
-        beginDate,
-        endDate,
+      locationId,
+      testTypeCode,
+      systemTypeCode,
+      beginDate,
+      endDate,
     );
 
     let testSummaries = await this.map.many(results);
@@ -157,22 +176,22 @@ export class TestSummaryWorkspaceService {
   }
 
   async getTestSummaries(
-      facilityId: number,
-      unitIds?: string[],
-      stackPipeIds?: string[],
-      testSummaryIds?: string[],
-      testTypeCodes?: string[],
-      beginDate?: Date,
-      endDate?: Date,
+    facilityId: number,
+    unitIds?: string[],
+    stackPipeIds?: string[],
+    testSummaryIds?: string[],
+    testTypeCodes?: string[],
+    beginDate?: Date,
+    endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
     const results = await this.repository.getTestSummariesByUnitStack(
-        facilityId,
-        unitIds,
-        stackPipeIds,
-        testSummaryIds,
-        testTypeCodes,
-        beginDate,
-        endDate,
+      facilityId,
+      unitIds,
+      stackPipeIds,
+      testSummaryIds,
+      testTypeCodes,
+      beginDate,
+      endDate,
     );
 
     return this.map.many(results);
@@ -180,28 +199,28 @@ export class TestSummaryWorkspaceService {
 
   private async getAllChildrenData(testTypeCodes, testSummaries) {
     let linearitySummaryData,
-        rataData,
-        protocolGasData,
-        fuelFlowToLoadTestData,
-        fuelFlowToLoadBaselineData,
-        fuelFlowmeterAccuracyData,
-        calibrationInjectionData,
-        cycleTimeSummaryData,
-        flowToLoadCheckData,
-        flowToLoadReferenceData,
-        appECorrelationTestSummaryData,
-        onlineOfflineCalibrationData,
-        unitDefaultTestData,
-        transmitterTransducerAccuracyData,
-        hgSummaryData,
-        testQualificationData,
-        airEmissionTestingData;
+      rataData,
+      protocolGasData,
+      fuelFlowToLoadTestData,
+      fuelFlowToLoadBaselineData,
+      fuelFlowmeterAccuracyData,
+      calibrationInjectionData,
+      cycleTimeSummaryData,
+      flowToLoadCheckData,
+      flowToLoadReferenceData,
+      appECorrelationTestSummaryData,
+      onlineOfflineCalibrationData,
+      unitDefaultTestData,
+      transmitterTransducerAccuracyData,
+      hgSummaryData,
+      testQualificationData,
+      airEmissionTestingData;
 
     let testSumIds;
 
     if (testTypeCodes?.length > 0) {
       testSumIds = testSummaries.filter(i =>
-          testTypeCodes.includes(i.testTypeCode),
+        testTypeCodes.includes(i.testTypeCode),
       );
     }
 
@@ -215,103 +234,103 @@ export class TestSummaryWorkspaceService {
       protocolGasData = await this.protocolGasService.export(testSumIds);
 
       appECorrelationTestSummaryData = await this.appECorrelationTestSummaryWorkspaceService.export(
-          testSumIds,
+        testSumIds,
       );
 
       fuelFlowToLoadTestData = await this.fuelFlowToLoadTestWorkspaceService.export(
-          testSumIds,
+        testSumIds,
       );
 
       fuelFlowToLoadBaselineData = await this.fuelFlowToLoadBaselineWorkspaceService.export(
-          testSumIds,
+        testSumIds,
       );
 
       fuelFlowmeterAccuracyData = await this.fuelFlowmeterAccuracyWorkspaceService.export(
-          testSumIds,
+        testSumIds,
       );
 
       calibrationInjectionData = await this.calInjWorkspaceService.export(
-          testSumIds,
+        testSumIds,
       );
 
       flowToLoadCheckData = await this.flowToLoadCheckWorkspaceService.export(
-          testSumIds,
+        testSumIds,
       );
 
       flowToLoadReferenceData = await this.flowToLoadReferenceWorkspaceService.export(
-          testSumIds,
+        testSumIds,
       );
 
       onlineOfflineCalibrationData = await this.onlineOfflineCalibrationWorkspaceService.export(
-          testSumIds,
+        testSumIds,
       );
 
       cycleTimeSummaryData = await this.cycleTimeSummaryWorkspaceService.export(
-          testSumIds,
+        testSumIds,
       );
 
       unitDefaultTestData = await this.unitDefaultTestWorkspaceService.export(
-          testSumIds,
+        testSumIds,
       );
 
       transmitterTransducerAccuracyData = await this.transmitterTransducerAccuracyWorkspaceService.export(
-          testSumIds,
+        testSumIds,
       );
 
       testQualificationData = await this.testQualificationWorkspaceService.export(
-          testSumIds,
+        testSumIds,
       );
 
       airEmissionTestingData = await this.airEmissionTestingWorkspaceService.export(
-          testSumIds,
+        testSumIds,
       );
 
       hgSummaryData = await this.hgSummaryWorkspaceService.export(testSumIds);
 
       testSummaries.forEach(s => {
         s.linearitySummaryData = linearitySummaryData.filter(
-            i => i.testSumId === s.id,
+          i => i.testSumId === s.id,
         );
         s.rataData = rataData.filter(i => i.testSumId === s.id);
         s.protocolGasData = protocolGasData.filter(i => i.testSumId === s.id);
         s.appendixECorrelationTestSummaryData = appECorrelationTestSummaryData.filter(
-            i => i.testSumId === s.id,
+          i => i.testSumId === s.id,
         );
         s.fuelFlowToLoadTestData = fuelFlowToLoadTestData.filter(
-            i => i.testSumId === s.id,
+          i => i.testSumId === s.id,
         );
         s.fuelFlowToLoadBaselineData = fuelFlowToLoadBaselineData.filter(
-            i => i.testSumId === s.id,
+          i => i.testSumId === s.id,
         );
         s.calibrationInjectionData = calibrationInjectionData.filter(
-            i => i.testSumId === s.id,
+          i => i.testSumId === s.id,
         );
         s.flowToLoadCheckData = flowToLoadCheckData.filter(
-            i => i.testSumId === s.id,
+          i => i.testSumId === s.id,
         );
         s.flowToLoadReferenceData = flowToLoadReferenceData.filter(
-            i => i.testSumId === s.id,
+          i => i.testSumId === s.id,
         );
         s.fuelFlowmeterAccuracyData = fuelFlowmeterAccuracyData.filter(
-            i => i.testSumId === s.id,
+          i => i.testSumId === s.id,
         );
         s.onlineOfflineCalibrationData = onlineOfflineCalibrationData.filter(
-            i => i.testSumId === s.id,
+          i => i.testSumId === s.id,
         );
         s.cycleTimeSummaryData = cycleTimeSummaryData.filter(
-            i => i.testSumId === s.id,
+          i => i.testSumId === s.id,
         );
         s.unitDefaultTestData = unitDefaultTestData.filter(
-            i => i.testSumId === s.id,
+          i => i.testSumId === s.id,
         );
         s.transmitterTransducerData = transmitterTransducerAccuracyData.filter(
-            i => i.testSumId === s.id,
+          i => i.testSumId === s.id,
         );
         s.testQualificationData = testQualificationData.filter(
-            i => i.testSumId === s.id,
+          i => i.testSumId === s.id,
         );
         s.airEmissionTestingData = airEmissionTestingData.filter(
-            i => i.testSumId === s.id,
+          i => i.testSumId === s.id,
         );
         s.hgSummaryData = hgSummaryData.filter(i => i.testSumId === s.id);
       });
@@ -321,40 +340,40 @@ export class TestSummaryWorkspaceService {
   }
 
   async export(
-      facilityId: number,
-      unitIds?: string[],
-      stackPipeIds?: string[],
-      testSummaryIds?: string[],
-      testTypeCodes?: string[],
-      beginDate?: Date,
-      endDate?: Date,
+    facilityId: number,
+    unitIds?: string[],
+    stackPipeIds?: string[],
+    testSummaryIds?: string[],
+    testTypeCodes?: string[],
+    beginDate?: Date,
+    endDate?: Date,
   ): Promise<TestSummaryDTO[]> {
     const testSummaries = await this.getTestSummaries(
-        facilityId,
-        unitIds,
-        stackPipeIds,
-        testSummaryIds,
-        testTypeCodes,
-        beginDate,
-        endDate,
+      facilityId,
+      unitIds,
+      stackPipeIds,
+      testSummaryIds,
+      testTypeCodes,
+      beginDate,
+      endDate,
     );
 
     return this.getAllChildrenData(testTypeCodes, testSummaries);
   }
 
   async import(
-      locationId: string,
-      payload: TestSummaryImportDTO,
-      userId: string,
-      historicalrecordId?: string,
-      trx?: EntityManager,
+    locationId: string,
+    payload: TestSummaryImportDTO,
+    userId: string,
+    historicalrecordId?: string,
+    trx?: EntityManager,
   ) {
     const promises = [];
 
     const summary = await this.repository.getTestSummaryByLocationId(
-        locationId,
-        payload.testTypeCode,
-        payload.testNumber,
+      locationId,
+      payload.testTypeCode,
+      payload.testNumber,
     );
 
     if (summary) {
@@ -362,312 +381,312 @@ export class TestSummaryWorkspaceService {
     }
 
     const createdTestSummary = await this.createTestSummary(
-        locationId,
-        payload,
-        userId,
-        historicalrecordId,
-        trx,
+      locationId,
+      payload,
+      userId,
+      historicalrecordId,
+      trx,
     );
 
     this.logger.log(
-        `Test Summary Successfully Imported. Record Id: ${createdTestSummary.id}`,
+      `Test Summary Successfully Imported. Record Id: ${createdTestSummary.id}`,
     );
 
     if (
-        payload.linearitySummaryData?.length > 0 &&
-        payload.testTypeCode === TestTypeCodes.LINE
+      payload.linearitySummaryData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.LINE
     ) {
       for (const linearitySummary of payload.linearitySummaryData) {
         promises.push(
-            this.linearityService.import(
-                createdTestSummary.id,
-                linearitySummary,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.linearityService.import(
+            createdTestSummary.id,
+            linearitySummary,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        payload.rataData?.length > 0 &&
-        payload.testTypeCode === TestTypeCodes.RATA
+      payload.rataData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.RATA
     ) {
       for (const rata of payload.rataData) {
         promises.push(
-            this.rataService.import(
-                createdTestSummary.id,
-                rata,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.rataService.import(
+            createdTestSummary.id,
+            rata,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        payload.protocolGasData?.length > 0 &&
-        [
-          TestTypeCodes.RATA.toString(),
-          TestTypeCodes.LINE.toString(),
-          TestTypeCodes.APPE.toString(),
-          TestTypeCodes.UNITDEF.toString(),
-        ].includes(payload.testTypeCode)
+      payload.protocolGasData?.length > 0 &&
+      [
+        TestTypeCodes.RATA.toString(),
+        TestTypeCodes.LINE.toString(),
+        TestTypeCodes.APPE.toString(),
+        TestTypeCodes.UNITDEF.toString(),
+      ].includes(payload.testTypeCode)
     ) {
       for (const protocolGas of payload.protocolGasData) {
         promises.push(
-            this.protocolGasService.import(
-                createdTestSummary.id,
-                protocolGas,
-                userId,
-                trx,
-            ),
+          this.protocolGasService.import(
+            createdTestSummary.id,
+            protocolGas,
+            userId,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        payload.fuelFlowToLoadTestData?.length > 0 &&
-        payload.testTypeCode === TestTypeCodes.FF2LTST
+      payload.fuelFlowToLoadTestData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.FF2LTST
     ) {
       for (const fuelFlowToLoadTest of payload.fuelFlowToLoadTestData) {
         promises.push(
-            this.fuelFlowToLoadTestWorkspaceService.import(
-                createdTestSummary.id,
-                fuelFlowToLoadTest,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.fuelFlowToLoadTestWorkspaceService.import(
+            createdTestSummary.id,
+            fuelFlowToLoadTest,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        payload.flowToLoadCheckData?.length > 0 &&
-        payload.testTypeCode === TestTypeCodes.F2LCHK
+      payload.flowToLoadCheckData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.F2LCHK
     ) {
       for (const flowToLoadCheck of payload.flowToLoadCheckData) {
         promises.push(
-            this.flowToLoadCheckWorkspaceService.import(
-                createdTestSummary.id,
-                flowToLoadCheck,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.flowToLoadCheckWorkspaceService.import(
+            createdTestSummary.id,
+            flowToLoadCheck,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        payload.fuelFlowToLoadBaselineData?.length > 0 &&
-        payload.testTypeCode === TestTypeCodes.FF2LBAS
+      payload.fuelFlowToLoadBaselineData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.FF2LBAS
     ) {
       for (const fuelFlowToLoadBaseline of payload.fuelFlowToLoadBaselineData) {
         promises.push(
-            this.fuelFlowToLoadBaselineWorkspaceService.import(
-                createdTestSummary.id,
-                fuelFlowToLoadBaseline,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.fuelFlowToLoadBaselineWorkspaceService.import(
+            createdTestSummary.id,
+            fuelFlowToLoadBaseline,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        payload.fuelFlowmeterAccuracyData?.length > 0 &&
-        payload.testTypeCode === TestTypeCodes.FFACC
+      payload.fuelFlowmeterAccuracyData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.FFACC
     ) {
       for (const fuelFlowmeterAccuracy of payload.fuelFlowmeterAccuracyData) {
         promises.push(
-            this.fuelFlowmeterAccuracyWorkspaceService.import(
-                createdTestSummary.id,
-                fuelFlowmeterAccuracy,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.fuelFlowmeterAccuracyWorkspaceService.import(
+            createdTestSummary.id,
+            fuelFlowmeterAccuracy,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        payload.flowToLoadReferenceData?.length > 0 &&
-        payload.testTypeCode === TestTypeCodes.F2LREF
+      payload.flowToLoadReferenceData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.F2LREF
     ) {
       for (const flowToLoadReference of payload.flowToLoadReferenceData) {
         promises.push(
-            this.flowToLoadReferenceWorkspaceService.import(
-                createdTestSummary.id,
-                flowToLoadReference,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.flowToLoadReferenceWorkspaceService.import(
+            createdTestSummary.id,
+            flowToLoadReference,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        payload.appendixECorrelationTestSummaryData?.length > 0 &&
-        payload.testTypeCode === TestTypeCodes.APPE
+      payload.appendixECorrelationTestSummaryData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.APPE
     ) {
       for (const appECorrelationTestSummary of payload.appendixECorrelationTestSummaryData) {
         promises.push(
-            this.appECorrelationTestSummaryWorkspaceService.import(
-                locationId,
-                createdTestSummary.id,
-                appECorrelationTestSummary,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.appECorrelationTestSummaryWorkspaceService.import(
+            locationId,
+            createdTestSummary.id,
+            appECorrelationTestSummary,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        payload.calibrationInjectionData?.length > 0 &&
-        payload.testTypeCode === TestTypeCodes.SEVENDAY
+      payload.calibrationInjectionData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.SEVENDAY
     ) {
       for (const calibrationInjection of payload.calibrationInjectionData) {
         promises.push(
-            this.calInjWorkspaceService.import(
-                createdTestSummary.id,
-                calibrationInjection,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.calInjWorkspaceService.import(
+            createdTestSummary.id,
+            calibrationInjection,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        payload.cycleTimeSummaryData?.length > 0 &&
-        payload.testTypeCode === TestTypeCodes.CYCLE
+      payload.cycleTimeSummaryData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.CYCLE
     ) {
       for (const cycleTimeSummary of payload.cycleTimeSummaryData) {
         promises.push(
-            this.cycleTimeSummaryWorkspaceService.import(
-                createdTestSummary.id,
-                cycleTimeSummary,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.cycleTimeSummaryWorkspaceService.import(
+            createdTestSummary.id,
+            cycleTimeSummary,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        payload.onlineOfflineCalibrationData?.length > 0 &&
-        payload.testTypeCode === TestTypeCodes.ONOFF
+      payload.onlineOfflineCalibrationData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.ONOFF
     ) {
       for (const onlineOfflineCalibration of payload.onlineOfflineCalibrationData) {
         promises.push(
-            this.onlineOfflineCalibrationWorkspaceService.import(
-                createdTestSummary.id,
-                onlineOfflineCalibration,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.onlineOfflineCalibrationWorkspaceService.import(
+            createdTestSummary.id,
+            onlineOfflineCalibration,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        payload.transmitterTransducerData?.length > 0 &&
-        payload.testTypeCode === TestTypeCodes.FFACCTT
+      payload.transmitterTransducerData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.FFACCTT
     ) {
       for (const transmitterTransducerAccuracy of payload.transmitterTransducerData) {
         promises.push(
-            this.transmitterTransducerAccuracyWorkspaceService.import(
-                createdTestSummary.id,
-                transmitterTransducerAccuracy,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.transmitterTransducerAccuracyWorkspaceService.import(
+            createdTestSummary.id,
+            transmitterTransducerAccuracy,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        payload.unitDefaultTestData?.length > 0 &&
-        payload.testTypeCode === TestTypeCodes.UNITDEF
+      payload.unitDefaultTestData?.length > 0 &&
+      payload.testTypeCode === TestTypeCodes.UNITDEF
     ) {
       for (const unitDefaultTest of payload.unitDefaultTestData) {
         promises.push(
-            this.unitDefaultTestWorkspaceService.import(
-                createdTestSummary.id,
-                unitDefaultTest,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.unitDefaultTestWorkspaceService.import(
+            createdTestSummary.id,
+            unitDefaultTest,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        (payload.hgSummaryData?.length > 0 &&
-            payload.testTypeCode === TestTypeCodes.HGLINE) ||
-        payload.testTypeCode === TestTypeCodes.HGSI3
+      (payload.hgSummaryData?.length > 0 &&
+        payload.testTypeCode === TestTypeCodes.HGLINE) ||
+      payload.testTypeCode === TestTypeCodes.HGSI3
     ) {
       for (const hgSummary of payload.hgSummaryData) {
         promises.push(
-            this.hgSummaryWorkspaceService.import(
-                createdTestSummary.id,
-                hgSummary,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.hgSummaryWorkspaceService.import(
+            createdTestSummary.id,
+            hgSummary,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        payload.testQualificationData?.length > 0 &&
-        [TestTypeCodes.RATA.toString()].includes(payload.testTypeCode)
+      payload.testQualificationData?.length > 0 &&
+      [TestTypeCodes.RATA.toString()].includes(payload.testTypeCode)
     ) {
       for (const testQualification of payload.testQualificationData) {
         promises.push(
-            this.testQualificationWorkspaceService.import(
-                createdTestSummary.id,
-                testQualification,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.testQualificationWorkspaceService.import(
+            createdTestSummary.id,
+            testQualification,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
 
     if (
-        payload.airEmissionTestingData?.length > 0 &&
-        [
-          TestTypeCodes.RATA.toString(),
-          TestTypeCodes.UNITDEF.toString(),
-          TestTypeCodes.APPE.toString(),
-        ].includes(payload.testTypeCode)
+      payload.airEmissionTestingData?.length > 0 &&
+      [
+        TestTypeCodes.RATA.toString(),
+        TestTypeCodes.UNITDEF.toString(),
+        TestTypeCodes.APPE.toString(),
+      ].includes(payload.testTypeCode)
     ) {
       for (const airEmissionTesting of payload.airEmissionTestingData) {
         promises.push(
-            this.airEmissionTestingWorkspaceService.import(
-                createdTestSummary.id,
-                airEmissionTesting,
-                userId,
-                historicalrecordId !== null ? true : false,
-                trx,
-            ),
+          this.airEmissionTestingWorkspaceService.import(
+            createdTestSummary.id,
+            airEmissionTesting,
+            userId,
+            historicalrecordId !== null ? true : false,
+            trx,
+          ),
         );
       }
     }
@@ -679,11 +698,11 @@ export class TestSummaryWorkspaceService {
   }
 
   async createTestSummary(
-      locationId: string,
-      payload: TestSummaryBaseDTO,
-      userId: string,
-      historicalrecordId?: string,
-      trx?: EntityManager,
+    locationId: string,
+    payload: TestSummaryBaseDTO,
+    userId: string,
+    historicalrecordId?: string,
+    trx?: EntityManager,
   ): Promise<TestSummaryRecordDTO> {
     const timestamp = currentDateTime();
     const [
@@ -693,19 +712,19 @@ export class TestSummaryWorkspaceService {
     ] = await this.lookupValues(locationId, payload);
 
     const location = await this.monitorLocationRepository.getLocationByIdUnitIdStackPipeId(
-        locationId,
-        payload.unitId,
-        payload.stackPipeId,
+      locationId,
+      payload.unitId,
+      payload.stackPipeId,
     );
 
     if (!location) {
       throw new EaseyException(
-          new Error(
-              `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${
-                  payload.unitId ? payload.unitId : payload.stackPipeId
-              }]`,
-          ),
-          HttpStatus.BAD_REQUEST,
+        new Error(
+          `The provided Location Id [${locationId}] does not match the provided Unit/Stack [${
+            payload.unitId ? payload.unitId : payload.stackPipeId
+          }]`,
+        ),
+        HttpStatus.BAD_REQUEST,
       );
     }
 
@@ -731,8 +750,8 @@ export class TestSummaryWorkspaceService {
 
     // Use the transaction entity manager if provided
     const result = await (trx
-        ? trx.getRepository(this.repository.target).findOne({ where: { id: entity.id } })
-        : this.repository.getTestSummaryById(entity.id));
+      ? trx.getRepository(this.repository.target).findOne({where: {id: entity.id}})
+      : this.repository.getTestSummaryById(entity.id));
 
     const dto = await this.map.one(result);
 
@@ -758,18 +777,18 @@ export class TestSummaryWorkspaceService {
   }
 
   async updateTestSummary(
-      locationId: string,
-      id: string,
-      payload: TestSummaryBaseDTO,
-      userId: string,
+    locationId: string,
+    id: string,
+    payload: TestSummaryBaseDTO,
+    userId: string,
   ): Promise<TestSummaryRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOneBy({ id });
+    const entity = await this.repository.findOneBy({id});
 
     if (!entity) {
       throw new EaseyException(
-          new Error(`A test summary record not found with Record Id [${id}].`),
-          HttpStatus.NOT_FOUND,
+        new Error(`A test summary record not found with Record Id [${id}].`),
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -815,24 +834,24 @@ export class TestSummaryWorkspaceService {
       await repo.delete(id);
     } catch (e) {
       throw new InternalServerErrorException(
-          `Error deleting Test Summary record Id [${id}]`,
-          e.message,
+        `Error deleting Test Summary record Id [${id}]`,
+        e.message,
       );
     }
   }
 
   async resetToNeedsEvaluation(
-      testSumId: string,
-      userId: string,
-      isImport: boolean = false,
-      trx?: EntityManager,
+    testSumId: string,
+    userId: string,
+    isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
     if (!isImport) {
       const timestamp = currentDateTime();
 
       // Use the transaction entity manager if provided
       const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
-      const entity = await repo.findOneBy({ id: testSumId });
+      const entity = await repo.findOneBy({id: testSumId});
 
       if (entity) {
         entity.userId = userId;

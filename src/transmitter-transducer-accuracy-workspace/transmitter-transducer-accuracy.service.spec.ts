@@ -1,20 +1,24 @@
-import { InternalServerErrorException } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
+import {InternalServerErrorException} from '@nestjs/common';
+import {ConfigService} from '@nestjs/config';
+import {Test, TestingModule} from '@nestjs/testing';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {EntityManager} from 'typeorm';
 
 import {
   TransmitterTransducerAccuracyBaseDTO,
   TransmitterTransducerAccuracyRecordDTO,
 } from '../dto/transmitter-transducer-accuracy.dto';
-import { TransmitterTransducerAccuracy as TransmitterTransducerAccuracyOfficial } from '../entities/transmitter-transducer-accuracy.entity';
-import { TransmitterTransducerAccuracy } from '../entities/workspace/transmitter-transducer-accuracy.entity';
-import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { TransmitterTransducerAccuracyRepository } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.repository';
-import { TransmitterTransducerAccuracyWorkspaceRepository } from './transmitter-transducer-accuracy.repository';
-import { TransmitterTransducerAccuracyWorkspaceService } from './transmitter-transducer-accuracy.service';
+import {
+  TransmitterTransducerAccuracy as TransmitterTransducerAccuracyOfficial
+} from '../entities/transmitter-transducer-accuracy.entity';
+import {TransmitterTransducerAccuracy} from '../entities/workspace/transmitter-transducer-accuracy.entity';
+import {TransmitterTransducerAccuracyMap} from '../maps/transmitter-transducer-accuracy.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {
+  TransmitterTransducerAccuracyRepository
+} from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.repository';
+import {TransmitterTransducerAccuracyWorkspaceRepository} from './transmitter-transducer-accuracy.repository';
+import {TransmitterTransducerAccuracyWorkspaceService} from './transmitter-transducer-accuracy.service';
 
 const testSumID = 'TEST-SUM-ID';
 const userID = 'USER-ID';
@@ -41,8 +45,8 @@ const mockTestSummaryService = () => ({
 
 const mockHistoricalRepo = () => ({
   findOneBy: jest
-      .fn()
-      .mockResolvedValue(new TransmitterTransducerAccuracyOfficial()),
+    .fn()
+    .mockResolvedValue(new TransmitterTransducerAccuracyOfficial()),
 });
 
 describe('TransmitterTransducerAccuracyWorkspaceService', () => {
@@ -88,13 +92,13 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
     }).compile();
 
     service = module.get<TransmitterTransducerAccuracyWorkspaceService>(
-        TransmitterTransducerAccuracyWorkspaceService,
+      TransmitterTransducerAccuracyWorkspaceService,
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
-        TestSummaryWorkspaceService,
+      TestSummaryWorkspaceService,
     );
     repo = module.get<TransmitterTransducerAccuracyWorkspaceRepository>(
-        TransmitterTransducerAccuracyWorkspaceRepository,
+      TransmitterTransducerAccuracyWorkspaceRepository,
     );
     entityManager = module.get<EntityManager>(EntityManager);
   });
@@ -102,31 +106,31 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
   describe('createTransmitterTransducerAccuracy', () => {
     it('Should call repository to save a new record and return a DTO', async () => {
       const result = await service.createTransmitterTransducerAccuracy(
-          testSumID,
-          baseDTO,
-          userID,
-          false,
-          null,
+        testSumID,
+        baseDTO,
+        userID,
+        false,
+        null,
       );
       expect(result).toEqual(recordDTO);
     });
 
     it('Should call repository to save a new record with transaction and return a DTO', async () => {
       const result = await service.createTransmitterTransducerAccuracy(
-          testSumID,
-          baseDTO,
-          userID,
-          false,
-          null,
-          entityManager,
+        testSumID,
+        baseDTO,
+        userID,
+        false,
+        null,
+        entityManager,
       );
       expect(result).toEqual(recordDTO);
       expect(entityManager.getRepository).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
-          testSumID,
-          userID,
-          false,
-          entityManager,
+        testSumID,
+        userID,
+        false,
+        entityManager,
       );
     });
   });
@@ -134,10 +138,10 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
   describe('updateCalibrationInjection', () => {
     it('Should update and return the Transmitter Transducer Accuracy record', async () => {
       const result = await service.updateTransmitterTransducerAccuracy(
-          testSumID,
-          entity.id,
-          baseDTO,
-          userID,
+        testSumID,
+        entity.id,
+        baseDTO,
+        userID,
       );
 
       expect(result).toEqual(recordDTO);
@@ -146,21 +150,21 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
 
     it('Should update and return the Transmitter Transducer Accuracy record with transaction', async () => {
       const result = await service.updateTransmitterTransducerAccuracy(
-          testSumID,
-          entity.id,
-          baseDTO,
-          userID,
-          false,
-          entityManager,
+        testSumID,
+        entity.id,
+        baseDTO,
+        userID,
+        false,
+        entityManager,
       );
 
       expect(result).toEqual(recordDTO);
       expect(entityManager.getRepository).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
-          testSumID,
-          userID,
-          false,
-          entityManager,
+        testSumID,
+        userID,
+        false,
+        entityManager,
       );
     });
 
@@ -170,10 +174,10 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
 
       try {
         await service.updateTransmitterTransducerAccuracy(
-            testSumID,
-            entity.id,
-            baseDTO,
-            userID,
+          testSumID,
+          entity.id,
+          baseDTO,
+          userID,
         );
       } catch (e) {
         errored = true;
@@ -186,9 +190,9 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
   describe('deleteTransmitterTransducerAccuracy', () => {
     it('Should delete a Transmitter Transducer Accuracy record', async () => {
       const result = await service.deleteTransmitterTransducerAccuracy(
-          testSumID,
-          entity.id,
-          userID,
+        testSumID,
+        entity.id,
+        userID,
       );
 
       expect(result).toEqual(undefined);
@@ -197,34 +201,34 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
 
     it('Should delete a Transmitter Transducer Accuracy record with transaction', async () => {
       const result = await service.deleteTransmitterTransducerAccuracy(
-          testSumID,
-          entity.id,
-          userID,
-          false,
-          entityManager,
+        testSumID,
+        entity.id,
+        userID,
+        false,
+        entityManager,
       );
 
       expect(result).toEqual(undefined);
       expect(entityManager.getRepository).toHaveBeenCalled();
       expect(testSummaryService.resetToNeedsEvaluation).toHaveBeenCalledWith(
-          testSumID,
-          userID,
-          false,
-          entityManager,
+        testSumID,
+        userID,
+        false,
+        entityManager,
       );
     });
 
     it('Should throw error when database throws an error while deleting a Transmitter Transducer Accuracy record', async () => {
       jest
-          .spyOn(repo, 'delete')
-          .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
+        .spyOn(repo, 'delete')
+        .mockRejectedValue(new InternalServerErrorException('Unknown Error'));
       let errored = false;
 
       try {
         await service.deleteTransmitterTransducerAccuracy(
-            testSumID,
-            entity.id,
-            userID,
+          testSumID,
+          entity.id,
+          userID,
         );
       } catch (e) {
         errored = true;
@@ -237,34 +241,34 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
   describe('import', () => {
     it('Should Import Transmitter Transducer Accuracy', async () => {
       jest
-          .spyOn(service, 'createTransmitterTransducerAccuracy')
-          .mockResolvedValue(recordDTO);
+        .spyOn(service, 'createTransmitterTransducerAccuracy')
+        .mockResolvedValue(recordDTO);
 
       await service.import(testSumID, baseDTO, userID, false);
     });
 
     it('Should Import Calibration Injection from Historical Record', async () => {
       jest
-          .spyOn(service, 'createTransmitterTransducerAccuracy')
-          .mockResolvedValue(recordDTO);
+        .spyOn(service, 'createTransmitterTransducerAccuracy')
+        .mockResolvedValue(recordDTO);
 
       await service.import(testSumID, baseDTO, userID, true);
     });
 
     it('Should Import Transmitter Transducer Accuracy with transaction', async () => {
       jest
-          .spyOn(service, 'createTransmitterTransducerAccuracy')
-          .mockResolvedValue(recordDTO);
+        .spyOn(service, 'createTransmitterTransducerAccuracy')
+        .mockResolvedValue(recordDTO);
 
       await service.import(testSumID, baseDTO, userID, false, entityManager);
 
       expect(service.createTransmitterTransducerAccuracy).toHaveBeenCalledWith(
-          testSumID,
-          baseDTO,
-          userID,
-          true,
-          null,
-          entityManager,
+        testSumID,
+        baseDTO,
+        userID,
+        true,
+        null,
+        entityManager,
       );
     });
   });
@@ -272,7 +276,7 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
   describe('getTransmitterTransducerAccuraciesByTestSumIds', () => {
     it('Should get UTransmitter Transducer Accuracy records by Test Summary Ids', async () => {
       const result = await service.getTransmitterTransducerAccuraciesByTestSumIds(
-          [testSumID],
+        [testSumID],
       );
       expect(result).toEqual([recordDTO]);
     });
@@ -281,8 +285,8 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
   describe('export', () => {
     it('Should export Unit Default Test Record', async () => {
       jest
-          .spyOn(service, 'getTransmitterTransducerAccuraciesByTestSumIds')
-          .mockResolvedValue([]);
+        .spyOn(service, 'getTransmitterTransducerAccuraciesByTestSumIds')
+        .mockResolvedValue([]);
 
       const result = await service.export([testSumID]);
       expect(result).toEqual([]);

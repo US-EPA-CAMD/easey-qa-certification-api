@@ -1,23 +1,27 @@
-import { HttpStatus } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { EntityManager } from 'typeorm';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import {HttpStatus} from '@nestjs/common';
+import {ConfigService} from '@nestjs/config';
+import {Test, TestingModule} from '@nestjs/testing';
+import {EntityManager} from 'typeorm';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
 
-import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
-import { AppendixETestSummaryRepository } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.repository';
-import { AppECorrelationTestRunDTO } from '../dto/app-e-correlation-test-run.dto';
+import {
+  AppECorrelationTestRunWorkspaceService
+} from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
+import {
+  AppendixETestSummaryRepository
+} from '../app-e-correlation-test-summary/app-e-correlation-test-summary.repository';
+import {AppECorrelationTestRunDTO} from '../dto/app-e-correlation-test-run.dto';
 import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryDTO,
   AppECorrelationTestSummaryRecordDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
-import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
-import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
-import { AppECorrelationTestSummaryWorkspaceService } from './app-e-correlation-test-summary-workspace.service';
+import {AppECorrelationTestSummary} from '../entities/app-e-correlation-test-summary.entity';
+import {AppECorrelationTestSummaryMap} from '../maps/app-e-correlation-summary.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {AppendixETestSummaryWorkspaceRepository} from './app-e-correlation-test-summary-workspace.repository';
+import {AppECorrelationTestSummaryWorkspaceService} from './app-e-correlation-test-summary-workspace.service';
 
 const locationId = '5';
 const testSumId = '';
@@ -95,25 +99,25 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
     }).compile();
 
     service = module.get<AppECorrelationTestSummaryWorkspaceService>(
-        AppECorrelationTestSummaryWorkspaceService,
+      AppECorrelationTestSummaryWorkspaceService,
     );
     testSummaryService = module.get<TestSummaryWorkspaceService>(
-        TestSummaryWorkspaceService,
+      TestSummaryWorkspaceService,
     );
     repository = module.get<AppendixETestSummaryWorkspaceRepository>(
-        AppendixETestSummaryWorkspaceRepository,
+      AppendixETestSummaryWorkspaceRepository,
     );
     officialRepository = module.get<AppendixETestSummaryRepository>(
-        AppendixETestSummaryRepository,
+      AppendixETestSummaryRepository,
     );
   });
 
   describe('createAppECorrelation', () => {
     it('Calls the service to create a new Appendix E Correlation Test Summary record', async () => {
       const result = await service.createAppECorrelation(
-          testSumId,
-          payload,
-          userId,
+        testSumId,
+        payload,
+        userId,
       );
 
       expect(result).toEqual(appECorrelationTest);
@@ -188,10 +192,10 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
     describe('editAppECorrelation', () => {
       it('should update an Appendix E Correlation Test Summary record', async () => {
         const result = await service.editAppECorrelation(
-            testSumId,
-            appendixECorrelationTestSummaryId,
-            payload,
-            userId,
+          testSumId,
+          appendixECorrelationTestSummaryId,
+          payload,
+          userId,
         );
         expect(result).toEqual(appECorrelationTest);
       });
@@ -202,10 +206,10 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
         let errored = false;
         try {
           await service.editAppECorrelation(
-              testSumId,
-              appendixECorrelationTestSummaryId,
-              payload,
-              userId,
+            testSumId,
+            appendixECorrelationTestSummaryId,
+            payload,
+            userId,
           );
         } catch (e) {
           errored = true;
@@ -246,8 +250,8 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
   describe('Export', () => {
     it('Should Export Appendix E Correlation Test Summary', async () => {
       jest
-          .spyOn(service, 'getAppECorrelationsByTestSumIds')
-          .mockResolvedValue([appECorrelationTest]);
+        .spyOn(service, 'getAppECorrelationsByTestSumIds')
+        .mockResolvedValue([appECorrelationTest]);
       const result = await service.export([testSumId]);
       expect(result).toEqual([appECorrelationTest]);
     });
@@ -256,28 +260,28 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
   describe('deleteAppECorrelation', () => {
     it('Should delete an Appendix E Correlation Test Summary record', async () => {
       const result = await service.deleteAppECorrelation(
-          testSumId,
-          appendixECorrelationTestSummaryId,
-          userId,
+        testSumId,
+        appendixECorrelationTestSummaryId,
+        userId,
       );
       expect(result).toEqual(undefined);
     });
 
     it('Should throw error while deleting an Appendix E Correlation Test Summary record', async () => {
       const error = new EaseyException(
-          new Error(
-              `Error Appendix E Correlation Test Summary with record Id [${appendixECorrelationTestSummaryId}]`,
-          ),
-          HttpStatus.INTERNAL_SERVER_ERROR,
+        new Error(
+          `Error Appendix E Correlation Test Summary with record Id [${appendixECorrelationTestSummaryId}]`,
+        ),
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);
 
       let errored = false;
       try {
         await service.deleteAppECorrelation(
-            testSumId,
-            appendixECorrelationTestSummaryId,
-            userId,
+          testSumId,
+          appendixECorrelationTestSummaryId,
+          userId,
         );
       } catch (e) {
         errored = true;

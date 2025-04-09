@@ -1,21 +1,21 @@
-import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { EntityManager } from 'typeorm';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import {ConfigService} from '@nestjs/config';
+import {Test, TestingModule} from '@nestjs/testing';
+import {EntityManager} from 'typeorm';
+import {Logger} from '@us-epa-camd/easey-common/logger';
 
-import { AppEHeatInputFromGasRepository } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.repository';
+import {AppEHeatInputFromGasRepository} from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.repository';
 import {
   AppEHeatInputFromGasDTO,
   AppEHeatInputFromGasImportDTO,
   AppEHeatInputFromGasRecordDTO,
 } from '../dto/app-e-heat-input-from-gas.dto';
-import { AppEHeatInputFromGas } from '../entities/workspace/app-e-heat-input-from-gas.entity';
-import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { AppEHeatInputFromGasMap } from '../maps/app-e-heat-input-from-gas.map';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
-import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-gas-workspace.service';
+import {AppEHeatInputFromGas} from '../entities/workspace/app-e-heat-input-from-gas.entity';
+import {MonitorSystem} from '../entities/workspace/monitor-system.entity';
+import {AppEHeatInputFromGasMap} from '../maps/app-e-heat-input-from-gas.map';
+import {MonitorSystemWorkspaceRepository} from '../monitor-system-workspace/monitor-system-workspace.repository';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {AppEHeatInputFromGasWorkspaceRepository} from './app-e-heat-input-from-gas-workspace.repository';
+import {AppEHeatInputFromGasWorkspaceService} from './app-e-heat-input-from-gas-workspace.service';
 
 const locationId = 'LOCATION-ID';
 const testSumId = 'TEST-SUM-ID';

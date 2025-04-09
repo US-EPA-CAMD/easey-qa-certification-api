@@ -1,26 +1,26 @@
-import { HttpStatus } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
-import { settlePromises } from '../utilities/constants';
+import {HttpStatus} from '@nestjs/common';
+import {ConfigService} from '@nestjs/config';
+import {Test, TestingModule} from '@nestjs/testing';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {EntityManager} from 'typeorm';
+import {settlePromises} from '../utilities/constants';
 
-import { RataSummaryDTO, RataSummaryImportDTO } from '../dto/rata-summary.dto';
+import {RataSummaryDTO, RataSummaryImportDTO} from '../dto/rata-summary.dto';
 import {
   RataBaseDTO,
   RataDTO,
   RataImportDTO,
   RataRecordDTO,
 } from '../dto/rata.dto';
-import { Rata as RataOfficial } from '../entities/rata.entity';
-import { Rata } from '../entities/workspace/rata.entity';
-import { RataMap } from '../maps/rata.map';
-import { RataSummaryWorkspaceService } from '../rata-summary-workspace/rata-summary-workspace.service';
-import { RataRepository } from '../rata/rata.repository';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { RataWorkspaceRepository } from './rata-workspace.repository';
-import { RataWorkspaceService } from './rata-workspace.service';
+import {Rata as RataOfficial} from '../entities/rata.entity';
+import {Rata} from '../entities/workspace/rata.entity';
+import {RataMap} from '../maps/rata.map';
+import {RataSummaryWorkspaceService} from '../rata-summary-workspace/rata-summary-workspace.service';
+import {RataRepository} from '../rata/rata.repository';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {RataWorkspaceRepository} from './rata-workspace.repository';
+import {RataWorkspaceService} from './rata-workspace.service';
 
 const rataDto = new RataDTO();
 
@@ -115,10 +115,10 @@ describe('RataWorkspaceService', () => {
     repository = module.get<RataWorkspaceRepository>(RataWorkspaceRepository);
     officialRepository = module.get<RataRepository>(RataRepository);
     testSummaryService = module.get<TestSummaryWorkspaceService>(
-        TestSummaryWorkspaceService,
+      TestSummaryWorkspaceService,
     );
     rataSummaryService = module.get<RataSummaryWorkspaceService>(
-        RataSummaryWorkspaceService,
+      RataSummaryWorkspaceService,
     );
   });
 
@@ -158,11 +158,11 @@ describe('RataWorkspaceService', () => {
     });
     it('calls the repository.create() and insert a rata record with historical record id', async () => {
       const result = await service.createRata(
-          testSumId,
-          payload,
-          userId,
-          true,
-          'uuid',
+        testSumId,
+        payload,
+        userId,
+        true,
+        'uuid',
       );
       expect(result).toEqual(rataRecord);
       expect(repository.create).toHaveBeenCalled();
@@ -172,10 +172,10 @@ describe('RataWorkspaceService', () => {
   describe('updateRata', () => {
     it('should update a rata record', async () => {
       const result = await service.updateRata(
-          testSumId,
-          rataId,
-          payload,
-          userId,
+        testSumId,
+        rataId,
+        payload,
+        userId,
       );
       expect(result).toEqual(rataRecord);
     });
@@ -201,8 +201,8 @@ describe('RataWorkspaceService', () => {
 
     it('Should through error while deleting a Rata record', async () => {
       const error = new EaseyException(
-          new Error(`Error deleting RATA with record Id [${rataId}]`),
-          HttpStatus.INTERNAL_SERVER_ERROR,
+        new Error(`Error deleting RATA with record Id [${rataId}]`),
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
       jest.spyOn(repository, 'delete').mockRejectedValue(error);
 
@@ -247,13 +247,13 @@ describe('RataWorkspaceService', () => {
 
       jest.spyOn(service, 'createRata').mockResolvedValue(rataDto);
       jest
-          .spyOn(officialRepository, 'findOneBy')
-          .mockResolvedValue(officialRecord);
+        .spyOn(officialRepository, 'findOneBy')
+        .mockResolvedValue(officialRecord);
       const result = await service.import(
-          testSumId,
-          importPayload,
-          userId,
-          true,
+        testSumId,
+        importPayload,
+        userId,
+        true,
       );
       expect(result).toEqual(null);
     });
@@ -271,12 +271,12 @@ describe('RataWorkspaceService', () => {
       // Verify createRata was called with transaction
       // Update the expectation to match the actual parameter order and types
       expect(service.createRata).toHaveBeenCalledWith(
-          testSumId,
-          expect.any(Object),
-          userId,
-          expect.any(Boolean),
+        testSumId,
+        expect.any(Object),
+        userId,
+        expect.any(Boolean),
         null, // Use null instead of expect.any(String) for historicalRecordId
-          mockTrx,
+        mockTrx,
       );
     });
 
@@ -312,12 +312,12 @@ describe('RataWorkspaceService', () => {
 
       // Call createRata with transaction
       await service.createRata(
-          testSumId,
-          payload,
-          userId,
-          false,
-          'uuid',
-          mockTrx,
+        testSumId,
+        payload,
+        userId,
+        false,
+        'uuid',
+        mockTrx,
       );
 
       // Verify transaction was used
@@ -325,10 +325,10 @@ describe('RataWorkspaceService', () => {
 
       // Verify transaction was passed to child services
       expect(resetSpy).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          expect.any(Boolean),
-          mockTrx,
+        testSumId,
+        userId,
+        expect.any(Boolean),
+        mockTrx,
       );
     });
 
@@ -347,21 +347,21 @@ describe('RataWorkspaceService', () => {
 
       // Call import with transaction
       await service.import(
-          testSumId,
-          importPayloadWithSummaries,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        importPayloadWithSummaries,
+        userId,
+        false,
+        mockTrx,
       );
 
       // Verify transaction was passed to child service
       expect(summaryImportSpy).toHaveBeenCalledWith(
-          expect.any(String),
+        expect.any(String),
         undefined,
-          expect.any(Object),
-          expect.any(String),
-          expect.any(Boolean),
-          mockTrx,
+        expect.any(Object),
+        expect.any(String),
+        expect.any(Boolean),
+        mockTrx,
       );
     });
 
@@ -379,12 +379,12 @@ describe('RataWorkspaceService', () => {
 
       // Call updateRata with transaction
       await service.updateRata(
-          testSumId,
-          rataId,
-          payload,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        rataId,
+        payload,
+        userId,
+        false,
+        mockTrx,
       );
 
       // Verify transaction was used
@@ -392,10 +392,10 @@ describe('RataWorkspaceService', () => {
 
       // Verify transaction was passed to child services
       expect(resetSpy).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          expect.any(Boolean),
-          mockTrx,
+        testSumId,
+        userId,
+        expect.any(Boolean),
+        mockTrx,
       );
     });
 
@@ -412,11 +412,11 @@ describe('RataWorkspaceService', () => {
 
       // Call deleteRata with transaction
       await service.deleteRata(
-          testSumId,
-          rataId,
-          userId,
-          false,
-          mockTrx,
+        testSumId,
+        rataId,
+        userId,
+        false,
+        mockTrx,
       );
 
       // Verify transaction was used
@@ -424,10 +424,10 @@ describe('RataWorkspaceService', () => {
 
       // Verify transaction was passed to child services
       expect(resetSpy).toHaveBeenCalledWith(
-          testSumId,
-          userId,
-          expect.any(Boolean),
-          mockTrx,
+        testSumId,
+        userId,
+        expect.any(Boolean),
+        mockTrx,
       );
     });
   });

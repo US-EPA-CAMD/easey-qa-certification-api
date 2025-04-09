@@ -1,9 +1,9 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, In} from 'typeorm';
+import {v4 as uuid} from 'uuid';
 
 import {
   UnitDefaultTestRunBaseDTO,
@@ -11,11 +11,11 @@ import {
   UnitDefaultTestRunImportDTO,
   UnitDefaultTestRunRecordDTO,
 } from '../dto/unit-default-test-run.dto';
-import { UnitDefaultTestRun } from '../entities/unit-default-test-run.entity';
-import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { UnitDefaultTestRunRepository } from '../unit-default-test-run/unit-default-test-run.repository';
-import { UnitDefaultTestRunWorkspaceRepository } from './unit-default-test-run.repository';
+import {UnitDefaultTestRun} from '../entities/unit-default-test-run.entity';
+import {UnitDefaultTestRunMap} from '../maps/unit-default-test-run.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {UnitDefaultTestRunRepository} from '../unit-default-test-run/unit-default-test-run.repository';
+import {UnitDefaultTestRunWorkspaceRepository} from './unit-default-test-run.repository';
 
 @Injectable()
 export class UnitDefaultTestRunWorkspaceService {
@@ -26,13 +26,14 @@ export class UnitDefaultTestRunWorkspaceService {
     private readonly repository: UnitDefaultTestRunWorkspaceRepository,
     private readonly historicalRepository: UnitDefaultTestRunRepository,
     private readonly logger: Logger,
-  ) {}
+  ) {
+  }
 
   async getUnitDefaultTestRuns(
     unitDefaultTestSumId: string,
   ): Promise<UnitDefaultTestRunRecordDTO[]> {
     const records = await this.repository.find({
-      where: { unitDefaultTestSumId },
+      where: {unitDefaultTestSumId},
     });
 
     return this.map.many(records);
@@ -82,7 +83,7 @@ export class UnitDefaultTestRunWorkspaceService {
     });
 
     await repo.save(entity);
-    entity = await repo.findOneBy({ id: entity.id });
+    entity = await repo.findOneBy({id: entity.id});
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
@@ -104,7 +105,7 @@ export class UnitDefaultTestRunWorkspaceService {
     const timestamp = currentDateTime();
     const repo = trx ? trx.getRepository(UnitDefaultTestRun) : this.repository;
 
-    const entity = await repo.findOneBy({ id });
+    const entity = await repo.findOneBy({id});
 
     if (!entity) {
       throw new EaseyException(
@@ -150,7 +151,7 @@ export class UnitDefaultTestRunWorkspaceService {
   ): Promise<void> {
     try {
       const repo = trx ? trx.getRepository(UnitDefaultTestRun) : this.repository;
-      await repo.delete({ id });
+      await repo.delete({id});
     } catch (e) {
       throw new EaseyException(
         new Error(
@@ -172,7 +173,7 @@ export class UnitDefaultTestRunWorkspaceService {
     unitDefaultTestSumIds: string[],
   ): Promise<UnitDefaultTestRunDTO[]> {
     const results = await this.repository.find({
-      where: { unitDefaultTestSumId: In(unitDefaultTestSumIds) },
+      where: {unitDefaultTestSumId: In(unitDefaultTestSumIds)},
     });
     return this.map.many(results);
   }

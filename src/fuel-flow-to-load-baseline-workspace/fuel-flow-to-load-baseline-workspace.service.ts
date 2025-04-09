@@ -1,9 +1,9 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In, IsNull } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, In, IsNull} from 'typeorm';
+import {v4 as uuid} from 'uuid';
 
 import {
   FuelFlowToLoadBaselineBaseDTO,
@@ -11,11 +11,11 @@ import {
   FuelFlowToLoadBaselineImportDTO,
   FuelFlowToLoadBaselineRecordDTO,
 } from '../dto/fuel-flow-to-load-baseline.dto';
-import { FuelFlowToLoadBaseline } from '../entities/fuel-flow-to-load-baseline.entity';
-import { FuelFlowToLoadBaselineRepository } from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.repository';
-import { FuelFlowToLoadBaselineMap } from '../maps/fuel-flow-to-load-baseline.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { FuelFlowToLoadBaselineWorkspaceRepository } from './fuel-flow-to-load-baseline-workspace.repository';
+import {FuelFlowToLoadBaseline} from '../entities/fuel-flow-to-load-baseline.entity';
+import {FuelFlowToLoadBaselineRepository} from '../fuel-flow-to-load-baseline/fuel-flow-to-load-baseline.repository';
+import {FuelFlowToLoadBaselineMap} from '../maps/fuel-flow-to-load-baseline.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {FuelFlowToLoadBaselineWorkspaceRepository} from './fuel-flow-to-load-baseline-workspace.repository';
 
 @Injectable()
 export class FuelFlowToLoadBaselineWorkspaceService {
@@ -26,12 +26,13 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     private readonly repository: FuelFlowToLoadBaselineWorkspaceRepository,
     private readonly historicalRepo: FuelFlowToLoadBaselineRepository,
     private readonly logger: Logger,
-  ) {}
+  ) {
+  }
 
   async getFuelFlowToLoadBaselines(
     testSumId: string,
   ): Promise<FuelFlowToLoadBaselineDTO[]> {
-    const records = await this.repository.find({ where: { testSumId } });
+    const records = await this.repository.find({where: {testSumId}});
 
     return this.map.many(records);
   }
@@ -78,7 +79,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     });
 
     await repository.save(entity);
-    entity = await repository.findOneBy({ id: entity.id });
+    entity = await repository.findOneBy({id: entity.id});
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -208,7 +209,7 @@ export class FuelFlowToLoadBaselineWorkspaceService {
     testSumIds: string[],
   ): Promise<FuelFlowToLoadBaselineDTO[]> {
     const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
+      where: {testSumId: In(testSumIds)},
     });
 
     return this.map.many(results);

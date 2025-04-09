@@ -1,21 +1,21 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, In} from 'typeorm';
+import {v4 as uuid} from 'uuid';
 
-import { AirEmissionTestingRepository } from '../air-emission-testing/air-emission-testing.repository';
+import {AirEmissionTestingRepository} from '../air-emission-testing/air-emission-testing.repository';
 import {
   AirEmissionTestingBaseDTO,
   AirEmissionTestingDTO,
   AirEmissionTestingImportDTO,
   AirEmissionTestingRecordDTO,
 } from '../dto/air-emission-test.dto';
-import { AirEmissionTesting } from '../entities/air-emission-test.entity';
-import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AirEmissionTestingWorkspaceRepository } from './air-emission-testing-workspace.repository';
+import {AirEmissionTesting} from '../entities/air-emission-test.entity';
+import {AirEmissionTestingMap} from '../maps/air-emission-testing.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {AirEmissionTestingWorkspaceRepository} from './air-emission-testing-workspace.repository';
 
 @Injectable()
 export class AirEmissionTestingWorkspaceService {
@@ -26,12 +26,13 @@ export class AirEmissionTestingWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     private readonly repository: AirEmissionTestingWorkspaceRepository,
     private readonly historicalRepo: AirEmissionTestingRepository,
-  ) {}
+  ) {
+  }
 
   async getAirEmissionTestings(
     testSumId: string,
   ): Promise<AirEmissionTestingRecordDTO[]> {
-    const records = await this.repository.find({ where: { testSumId } });
+    const records = await this.repository.find({where: {testSumId}});
 
     return this.map.many(records);
   }
@@ -39,7 +40,7 @@ export class AirEmissionTestingWorkspaceService {
   async getAirEmissionTesting(
     id: string,
   ): Promise<AirEmissionTestingRecordDTO> {
-    const entity = await this.repository.findOneBy({ id });
+    const entity = await this.repository.findOneBy({id});
 
     if (!entity) {
       throw new EaseyException(
@@ -75,7 +76,7 @@ export class AirEmissionTestingWorkspaceService {
     });
 
     await repository.save(entity);
-    entity = await repository.findOneBy({ id: entity.id });
+    entity = await repository.findOneBy({id: entity.id});
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -97,7 +98,7 @@ export class AirEmissionTestingWorkspaceService {
 
     const repository = trx ? trx.getRepository(AirEmissionTesting) : this.repository;
 
-    const entity = await repository.findOneBy({ id });
+    const entity = await repository.findOneBy({id});
 
     if (!entity) {
       throw new EaseyException(
@@ -165,7 +166,7 @@ export class AirEmissionTestingWorkspaceService {
     testSumIds: string[],
   ): Promise<AirEmissionTestingDTO[]> {
     const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
+      where: {testSumId: In(testSumIds)},
     });
     return this.map.many(results);
   }

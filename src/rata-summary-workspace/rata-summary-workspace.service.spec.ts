@@ -1,29 +1,29 @@
-import { HttpStatus } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
-import { settlePromises } from '../utilities/constants';
+import {HttpStatus} from '@nestjs/common';
+import {ConfigService} from '@nestjs/config';
+import {Test, TestingModule} from '@nestjs/testing';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {EntityManager} from 'typeorm';
+import {settlePromises} from '../utilities/constants';
 
-import { RataRunDTO, RataRunImportDTO } from '../dto/rata-run.dto';
+import {RataRunDTO, RataRunImportDTO} from '../dto/rata-run.dto';
 import {
   RataSummaryBaseDTO,
   RataSummaryDTO,
   RataSummaryImportDTO,
   RataSummaryRecordDTO,
 } from '../dto/rata-summary.dto';
-import { RataSummary as RataSummaryOfficial } from '../entities/rata-summary.entity';
-import { RataSummary } from '../entities/workspace/rata-summary.entity';
-import { Rata } from '../entities/workspace/rata.entity';
-import { TestSummary } from '../entities/workspace/test-summary.entity';
-import { RataSummaryMap } from '../maps/rata-summary.map';
-import { RataRunWorkspaceService } from '../rata-run-workspace/rata-run-workspace.service';
-import { RataSummaryRepository } from '../rata-summary/rata-summary.repository';
-import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
-import { RataSummaryWorkspaceService } from './rata-summary-workspace.service';
+import {RataSummary as RataSummaryOfficial} from '../entities/rata-summary.entity';
+import {RataSummary} from '../entities/workspace/rata-summary.entity';
+import {Rata} from '../entities/workspace/rata.entity';
+import {TestSummary} from '../entities/workspace/test-summary.entity';
+import {RataSummaryMap} from '../maps/rata-summary.map';
+import {RataRunWorkspaceService} from '../rata-run-workspace/rata-run-workspace.service';
+import {RataSummaryRepository} from '../rata-summary/rata-summary.repository';
+import {RataWorkspaceService} from '../rata-workspace/rata-workspace.service';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {RataSummaryWorkspaceRepository} from './rata-summary-workspace.repository';
+import {RataSummaryWorkspaceService} from './rata-summary-workspace.service';
 
 const dto = new RataSummaryDTO();
 

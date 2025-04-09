@@ -1,97 +1,102 @@
-import { Injectable } from '@nestjs/common';
-import { InjectEntityManager } from '@nestjs/typeorm';
-import { EntityManager } from 'typeorm';
+import {Injectable} from '@nestjs/common';
+import {InjectEntityManager} from '@nestjs/typeorm';
+import {EntityManager} from 'typeorm';
 
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import {Logger} from '@us-epa-camd/easey-common/logger';
 
 import {
-    QACertificationDTO,
-    QACertificationImportDTO,
+  QACertificationDTO,
+  QACertificationImportDTO,
 } from '../dto/qa-certification.dto';
 
-import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
-import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
-import { TestExtensionExemptionsWorkspaceService } from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.service';
-import { QACertificationEventWorkspaceService } from '../qa-certification-event-workspace/qa-certification-event-workspace.service';
-import { EaseyContentService } from '../qa-certification-easey-content/easey-content.service';
+import {LocationIdentifiers} from '../interfaces/location-identifiers.interface';
+import {QACertificationParamsDTO} from '../dto/qa-certification-params.dto';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {QASuppData} from '../entities/workspace/qa-supp-data.entity';
+import {
+  TestExtensionExemptionsWorkspaceService
+} from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.service';
+import {
+  QACertificationEventWorkspaceService
+} from '../qa-certification-event-workspace/qa-certification-event-workspace.service';
+import {EaseyContentService} from '../qa-certification-easey-content/easey-content.service';
 import * as exportUtility from '../utilities/remove-non-reported-values';
-import { settlePromises } from '../utilities/constants';
+import {settlePromises} from '../utilities/constants';
 
 @Injectable()
 export class QACertificationWorkspaceService {
-    constructor(
-        @InjectEntityManager()
-        private readonly entityManager: EntityManager,
-        private readonly logger: Logger,
-        private readonly testSummaryService: TestSummaryWorkspaceService,
-        private readonly testExtensionExemptionService: TestExtensionExemptionsWorkspaceService,
-        private readonly qaCertEventService: QACertificationEventWorkspaceService,
-        private readonly easeyContentService: EaseyContentService,
-    ) {}
+  constructor(
+    @InjectEntityManager()
+    private readonly entityManager: EntityManager,
+    private readonly logger: Logger,
+    private readonly testSummaryService: TestSummaryWorkspaceService,
+    private readonly testExtensionExemptionService: TestExtensionExemptionsWorkspaceService,
+    private readonly qaCertEventService: QACertificationEventWorkspaceService,
+    private readonly easeyContentService: EaseyContentService,
+  ) {
+  }
 
-    /**
-     * Export QA certification data
-     * @param params Export parameters
-     * @param rptValuesOnly Whether to include only reported values
-     * @returns QA certification data
-     */
-    async export(
-        params: QACertificationParamsDTO,
-        rptValuesOnly: boolean = false,
-    ): Promise<QACertificationDTO> {
+  /**
+   * Export QA certification data
+   * @param params Export parameters
+   * @param rptValuesOnly Whether to include only reported values
+   * @returns QA certification data
+   */
+  async export(
+    params: QACertificationParamsDTO,
+    rptValuesOnly: boolean = false,
+  ): Promise<QACertificationDTO> {
     const promises = [];
 
     const SUMMARIES = 0;
     promises.push(
       params.testSummaryIds ||
-        (!params.testSummaryIds &&
-          !params.qaCertificationEventIds &&
-          !params.qaTestExtensionExemptionIds)
+      (!params.testSummaryIds &&
+        !params.qaCertificationEventIds &&
+        !params.qaTestExtensionExemptionIds)
         ? this.testSummaryService.export(
-            params.facilityId,
-            params.unitIds,
-            params.stackPipeIds,
-            params.testSummaryIds,
-            params.testTypeCodes,
-            params.beginDate,
-            params.endDate,
-          )
+          params.facilityId,
+          params.unitIds,
+          params.stackPipeIds,
+          params.testSummaryIds,
+          params.testTypeCodes,
+          params.beginDate,
+          params.endDate,
+        )
         : [],
     );
 
     const EVENTS = SUMMARIES + 1;
     promises.push(
       params.qaCertificationEventIds ||
-        (!params.testSummaryIds &&
-          !params.qaCertificationEventIds &&
-          !params.qaTestExtensionExemptionIds)
+      (!params.testSummaryIds &&
+        !params.qaCertificationEventIds &&
+        !params.qaTestExtensionExemptionIds)
         ? this.qaCertEventService.export(
-            params.facilityId,
-            params.unitIds,
-            params.stackPipeIds,
-            params.qaCertificationEventIds,
-            params.beginDate,
-            params.endDate,
-          )
+          params.facilityId,
+          params.unitIds,
+          params.stackPipeIds,
+          params.qaCertificationEventIds,
+          params.beginDate,
+          params.endDate,
+        )
         : [],
     );
 
     const EXT_EXEMPTIONS = EVENTS + 1;
     promises.push(
       params.qaTestExtensionExemptionIds ||
-        (!params.testSummaryIds &&
-          !params.qaCertificationEventIds &&
-          !params.qaTestExtensionExemptionIds)
+      (!params.testSummaryIds &&
+        !params.qaCertificationEventIds &&
+        !params.qaTestExtensionExemptionIds)
         ? this.testExtensionExemptionService.export(
-            params.facilityId,
-            params.unitIds,
-            params.stackPipeIds,
-            params.qaTestExtensionExemptionIds,
-            params.beginDate,
-            params.endDate,
-          )
+          params.facilityId,
+          params.unitIds,
+          params.stackPipeIds,
+          params.qaTestExtensionExemptionIds,
+          params.beginDate,
+          params.endDate,
+        )
         : [],
     );
 

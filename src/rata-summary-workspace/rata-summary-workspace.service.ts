@@ -1,10 +1,10 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In } from 'typeorm';
-import { v4 as uuid } from 'uuid';
-import { settlePromises } from '../utilities/constants';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, In} from 'typeorm';
+import {v4 as uuid} from 'uuid';
+import {settlePromises} from '../utilities/constants';
 
 import {
   RataSummaryBaseDTO,
@@ -12,13 +12,13 @@ import {
   RataSummaryImportDTO,
   RataSummaryRecordDTO,
 } from '../dto/rata-summary.dto';
-import { RataSummary } from '../entities/rata-summary.entity';
-import { RataSummaryMap } from '../maps/rata-summary.map';
-import { RataRunWorkspaceService } from '../rata-run-workspace/rata-run-workspace.service';
-import { RataSummaryRepository } from '../rata-summary/rata-summary.repository';
-import { RataWorkspaceService } from '../rata-workspace/rata-workspace.service';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { RataSummaryWorkspaceRepository } from './rata-summary-workspace.repository';
+import {RataSummary} from '../entities/rata-summary.entity';
+import {RataSummaryMap} from '../maps/rata-summary.map';
+import {RataRunWorkspaceService} from '../rata-run-workspace/rata-run-workspace.service';
+import {RataSummaryRepository} from '../rata-summary/rata-summary.repository';
+import {RataWorkspaceService} from '../rata-workspace/rata-workspace.service';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {RataSummaryWorkspaceRepository} from './rata-summary-workspace.repository';
 
 @Injectable()
 export class RataSummaryWorkspaceService {
@@ -33,7 +33,8 @@ export class RataSummaryWorkspaceService {
     private readonly historicalRepository: RataSummaryRepository,
     @Inject(forwardRef(() => RataRunWorkspaceService))
     private readonly rataRunService: RataRunWorkspaceService,
-  ) {}
+  ) {
+  }
 
   async getRataSummaries(rataId: string): Promise<RataSummaryDTO[]> {
     const records = await this.repository.findBy({
@@ -44,7 +45,7 @@ export class RataSummaryWorkspaceService {
   }
 
   async getRataSummary(id: string): Promise<RataSummaryDTO> {
-    const result = await this.repository.findOneBy({ id });
+    const result = await this.repository.findOneBy({id});
 
     if (!result) {
       throw new EaseyException(
@@ -87,7 +88,7 @@ export class RataSummaryWorkspaceService {
     });
 
     await repo.save(entity);
-    entity = await repo.findOneBy({ id: entity.id });
+    entity = await repo.findOneBy({id: entity.id});
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -110,7 +111,7 @@ export class RataSummaryWorkspaceService {
     // Use the transaction entity manager if provided
     const repo = trx ? trx.getRepository(this.repository.target) : this.repository;
 
-    const record = await repo.findOneBy({ id: rataSumId });
+    const record = await repo.findOneBy({id: rataSumId});
 
     if (!record) {
       throw new EaseyException(
@@ -184,7 +185,7 @@ export class RataSummaryWorkspaceService {
     rataIds: string[],
   ): Promise<RataSummaryDTO[]> {
     const results = await this.repository.find({
-      where: { rataId: In(rataIds) },
+      where: {rataId: In(rataIds)},
     });
     return this.map.many(results);
   }

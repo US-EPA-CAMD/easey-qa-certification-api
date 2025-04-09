@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
-import { EntityManager } from 'typeorm';
+import {Injectable} from '@nestjs/common';
+import {EntityManager} from 'typeorm';
 
-import { QASuppData } from '../entities/qa-supp-data.entity';
-import { QASuppDataWorkspaceRepository } from './qa-supp-data.repository';
+import {QASuppData} from '../entities/qa-supp-data.entity';
+import {QASuppDataWorkspaceRepository} from './qa-supp-data.repository';
 
 @Injectable()
 export class QASuppDataWorkspaceService {
-  constructor(private readonly repository: QASuppDataWorkspaceRepository) {}
+  constructor(private readonly repository: QASuppDataWorkspaceRepository) {
+  }
 
   async setSubmissionAvailCodeToRequire(
     testSumId: string,

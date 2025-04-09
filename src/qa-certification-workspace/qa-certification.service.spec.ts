@@ -1,43 +1,47 @@
-import { Test } from '@nestjs/testing';
-import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
+import {Test} from '@nestjs/testing';
+import {LoggerModule} from '@us-epa-camd/easey-common/logger';
+import {EntityManager} from 'typeorm';
 import {
   QACertificationDTO,
   QACertificationImportDTO,
 } from '../dto/qa-certification.dto';
-import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { QACertificationWorkspaceService } from './qa-certification.service';
-import { TestSummaryDTO, TestSummaryImportDTO } from '../dto/test-summary.dto';
-import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
-import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import {QACertificationParamsDTO} from '../dto/qa-certification-params.dto';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {QACertificationWorkspaceService} from './qa-certification.service';
+import {TestSummaryDTO, TestSummaryImportDTO} from '../dto/test-summary.dto';
+import {LocationIdentifiers} from '../interfaces/location-identifiers.interface';
+import {QASuppData} from '../entities/workspace/qa-supp-data.entity';
 import {
   TestExtensionExemptionDTO,
   TestExtensionExemptionImportDTO,
 } from '../dto/test-extension-exemption.dto';
-import { TestExtensionExemptionsWorkspaceService } from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.service';
-import { QACertificationEventWorkspaceService } from '../qa-certification-event-workspace/qa-certification-event-workspace.service';
+import {
+  TestExtensionExemptionsWorkspaceService
+} from '../test-extension-exemptions-workspace/test-extension-exemptions-workspace.service';
+import {
+  QACertificationEventWorkspaceService
+} from '../qa-certification-event-workspace/qa-certification-event-workspace.service';
 import {
   QACertificationEventDTO,
   QACertificationEventImportDTO,
 } from '../dto/qa-certification-event.dto';
-import { CalibrationInjectionDTO } from '../dto/calibration-injection.dto';
-import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
-import { RataDTO } from '../dto/rata.dto';
-import { FlowToLoadReferenceDTO } from '../dto/flow-to-load-reference.dto';
-import { FlowToLoadCheckDTO } from '../dto/flow-to-load-check.dto';
-import { CycleTimeSummaryDTO } from '../dto/cycle-time-summary.dto';
-import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
-import { FuelFlowmeterAccuracyDTO } from '../dto/fuel-flowmeter-accuracy.dto';
-import { TransmitterTransducerAccuracyDTO } from '../dto/transmitter-transducer-accuracy.dto';
-import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
-import { AppECorrelationTestSummaryDTO } from '../dto/app-e-correlation-test-summary.dto';
-import { UnitDefaultTestDTO } from '../dto/unit-default-test.dto';
-import { HgSummaryDTO } from '../dto/hg-summary.dto';
-import { TestQualificationDTO } from '../dto/test-qualification.dto';
-import { ProtocolGasDTO } from '../dto/protocol-gas.dto';
-import { AirEmissionTestingDTO } from '../dto/air-emission-test.dto';
-import { EaseyContentService } from '../qa-certification-easey-content/easey-content.service';
+import {CalibrationInjectionDTO} from '../dto/calibration-injection.dto';
+import {LinearitySummaryDTO} from '../dto/linearity-summary.dto';
+import {RataDTO} from '../dto/rata.dto';
+import {FlowToLoadReferenceDTO} from '../dto/flow-to-load-reference.dto';
+import {FlowToLoadCheckDTO} from '../dto/flow-to-load-check.dto';
+import {CycleTimeSummaryDTO} from '../dto/cycle-time-summary.dto';
+import {OnlineOfflineCalibrationDTO} from '../dto/online-offline-calibration.dto';
+import {FuelFlowmeterAccuracyDTO} from '../dto/fuel-flowmeter-accuracy.dto';
+import {TransmitterTransducerAccuracyDTO} from '../dto/transmitter-transducer-accuracy.dto';
+import {FuelFlowToLoadBaselineDTO} from '../dto/fuel-flow-to-load-baseline.dto';
+import {AppECorrelationTestSummaryDTO} from '../dto/app-e-correlation-test-summary.dto';
+import {UnitDefaultTestDTO} from '../dto/unit-default-test.dto';
+import {HgSummaryDTO} from '../dto/hg-summary.dto';
+import {TestQualificationDTO} from '../dto/test-qualification.dto';
+import {ProtocolGasDTO} from '../dto/protocol-gas.dto';
+import {AirEmissionTestingDTO} from '../dto/air-emission-test.dto';
+import {EaseyContentService} from '../qa-certification-easey-content/easey-content.service';
 import * as exportUtility from '../utilities/remove-non-reported-values';
 
 const testSummary = new TestSummaryDTO();
@@ -191,9 +195,9 @@ describe('QA Certification Workspace Service Test', () => {
         },
         {
           provide: EaseyContentService,
-          useFactory:  () => ({
+          useFactory: () => ({
             QaCertificationSchema: jest.fn().mockResolvedValue({
-              version : '1.0.0'
+              version: '1.0.0'
             }),
           })
         },
@@ -211,7 +215,7 @@ describe('QA Certification Workspace Service Test', () => {
   describe('export', () => {
     it('successfully exports QA certification data', async () => {
       // Create test data
-      const paramsDTO = createExportParams({ reportedValuesOnly: true });
+      const paramsDTO = createExportParams({reportedValuesOnly: true});
 
       // Set up mock responses for service dependencies
       const testSummaryService = service['testSummaryService'];
@@ -277,7 +281,7 @@ describe('QA Certification Workspace Service Test', () => {
 
     it('handles undefined QaCertificationSchema', async () => {
       // Create test data
-      const paramsDTO = createExportParams({ reportedValuesOnly: false });
+      const paramsDTO = createExportParams({reportedValuesOnly: false});
 
       // Temporarily set QaCertificationSchema to undefined
       const originalSchema = service['easeyContentService'].QaCertificationSchema;
@@ -295,7 +299,7 @@ describe('QA Certification Workspace Service Test', () => {
 
     it('does not call removeNonReportedValues when reportedValuesOnly is false', async () => {
       // Create test data
-      const paramsDTO = createExportParams({ reportedValuesOnly: false });
+      const paramsDTO = createExportParams({reportedValuesOnly: false});
 
       // Spy on removeNonReportedValues
       const removeNonReportedValuesSpy = jest.spyOn(exportUtility, 'removeNonReportedValues')
@@ -323,23 +327,23 @@ describe('QA Certification Workspace Service Test', () => {
 
       // Verify helper methods were called with transaction parameter
       expect(processTestSummaryDataSpy).toHaveBeenCalledWith(
-          [location],
-          payload.testSummaryData,
-          userId,
-          [],
-          expect.anything() // Transaction parameter
+        [location],
+        payload.testSummaryData,
+        userId,
+        [],
+        expect.anything() // Transaction parameter
       );
       expect(processTestExtensionDataSpy).toHaveBeenCalledWith(
-          [location],
-          payload.testExtensionExemptionData,
-          userId,
-          expect.anything() // Transaction parameter
+        [location],
+        payload.testExtensionExemptionData,
+        userId,
+        expect.anything() // Transaction parameter
       );
       expect(processCertificationEventDataSpy).toHaveBeenCalledWith(
-          [location],
-          payload.certificationEventData,
-          userId,
-          expect.anything() // Transaction parameter
+        [location],
+        payload.certificationEventData,
+        userId,
+        expect.anything() // Transaction parameter
       );
 
       assertImportResult(result, payload.orisCode);
@@ -355,11 +359,11 @@ describe('QA Certification Workspace Service Test', () => {
 
       // Verify helper method was called with qaSuppData and transaction parameter
       expect(processTestSummaryDataSpy).toHaveBeenCalledWith(
-          [location],
-          payload.testSummaryData,
-          userId,
-          [qaSuppData],
-          expect.anything() // Transaction parameter
+        [location],
+        payload.testSummaryData,
+        userId,
+        [qaSuppData],
+        expect.anything() // Transaction parameter
       );
 
       assertImportResult(result, payload.orisCode);
@@ -419,8 +423,8 @@ describe('QA Certification Workspace Service Test', () => {
       const testSummaryService = service['testSummaryService'];
       jest.spyOn(testSummaryService, 'import').mockImplementation(async (locationId, data, userId, qaSuppData, trx) => {
         // Simulate some successful database operations
-        await trx.getRepository(null).save({ id: '1', data: 'test' });
-        await trx.getRepository(null).save({ id: '2', data: 'test' });
+        await trx.getRepository(null).save({id: '1', data: 'test'});
+        await trx.getRepository(null).save({id: '2', data: 'test'});
 
         // Then throw an error to trigger rollback
         throw new Error('Database constraint violation');
@@ -428,7 +432,7 @@ describe('QA Certification Workspace Service Test', () => {
 
       // Attempt to import data, which should fail
       await expect(
-          service.import([location], payload, userId, []),
+        service.import([location], payload, userId, []),
       ).rejects.toThrow('Database constraint violation');
 
       // Verify transaction was called
@@ -455,12 +459,12 @@ describe('QA Certification Workspace Service Test', () => {
 
       // Verify processImportData returns empty arrays for empty data
       expect(processImportDataSpy).toHaveBeenCalledWith(
-          expect.anything(),
-          [],
-          expect.anything(),
-          expect.anything(),
-          expect.anything(),
-          expect.anything() // Transaction parameter
+        expect.anything(),
+        [],
+        expect.anything(),
+        expect.anything(),
+        expect.anything(),
+        expect.anything() // Transaction parameter
       );
 
       assertImportResult(result, emptyPayload.orisCode);
@@ -480,23 +484,23 @@ describe('QA Certification Workspace Service Test', () => {
 
       // Verify helper methods handle undefined data with transaction parameter
       expect(processTestSummaryDataSpy).toHaveBeenCalledWith(
-          [location],
-          undefined,
-          userId,
-          [],
-          expect.anything() // Transaction parameter
+        [location],
+        undefined,
+        userId,
+        [],
+        expect.anything() // Transaction parameter
       );
       expect(processTestExtensionDataSpy).toHaveBeenCalledWith(
-          [location],
-          undefined,
-          userId,
-          expect.anything() // Transaction parameter
+        [location],
+        undefined,
+        userId,
+        expect.anything() // Transaction parameter
       );
       expect(processCertificationEventDataSpy).toHaveBeenCalledWith(
-          [location],
-          undefined,
-          userId,
-          expect.anything() // Transaction parameter
+        [location],
+        undefined,
+        userId,
+        expect.anything() // Transaction parameter
       );
 
       assertImportResult(result, undefinedPayload.orisCode);
@@ -532,23 +536,23 @@ describe('QA Certification Workspace Service Test', () => {
 
       // Verify only testSummaryData was processed with actual data and transaction parameter
       expect(processTestSummaryDataSpy).toHaveBeenCalledWith(
-          [location],
-          partialPayload.testSummaryData,
-          userId,
-          [],
-          expect.anything() // Transaction parameter
+        [location],
+        partialPayload.testSummaryData,
+        userId,
+        [],
+        expect.anything() // Transaction parameter
       );
       expect(processTestExtensionDataSpy).toHaveBeenCalledWith(
-          [location],
-          undefined,
-          userId,
-          expect.anything() // Transaction parameter
+        [location],
+        undefined,
+        userId,
+        expect.anything() // Transaction parameter
       );
       expect(processCertificationEventDataSpy).toHaveBeenCalledWith(
-          [location],
-          undefined,
-          userId,
-          expect.anything() // Transaction parameter
+        [location],
+        undefined,
+        userId,
+        expect.anything() // Transaction parameter
       );
 
       assertImportResult(result, partialPayload.orisCode);

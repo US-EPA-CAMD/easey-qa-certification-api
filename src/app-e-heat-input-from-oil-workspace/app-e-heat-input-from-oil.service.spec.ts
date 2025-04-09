@@ -1,22 +1,22 @@
-import { ConfigService } from '@nestjs/config';
-import { Test, TestingModule } from '@nestjs/testing';
-import { EntityManager } from 'typeorm';
-import { Logger } from '@us-epa-camd/easey-common/logger';
+import {ConfigService} from '@nestjs/config';
+import {Test, TestingModule} from '@nestjs/testing';
+import {EntityManager} from 'typeorm';
+import {Logger} from '@us-epa-camd/easey-common/logger';
 
-import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
-import { AppEHeatInputFromGasRecordDTO } from '../dto/app-e-heat-input-from-gas.dto';
+import {AppEHeatInputFromOilRepository} from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
+import {AppEHeatInputFromGasRecordDTO} from '../dto/app-e-heat-input-from-gas.dto';
 import {
   AppEHeatInputFromOilDTO,
   AppEHeatInputFromOilImportDTO,
   AppEHeatInputFromOilRecordDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
-import { AppEHeatInputFromOil } from '../entities/workspace/app-e-heat-input-from-oil.entity';
-import { MonitorSystem } from '../entities/workspace/monitor-system.entity';
-import { AppEHeatInputFromOilMap } from '../maps/app-e-heat-input-from-oil.map';
-import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
-import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oil.service';
+import {AppEHeatInputFromOil} from '../entities/workspace/app-e-heat-input-from-oil.entity';
+import {MonitorSystem} from '../entities/workspace/monitor-system.entity';
+import {AppEHeatInputFromOilMap} from '../maps/app-e-heat-input-from-oil.map';
+import {MonitorSystemWorkspaceRepository} from '../monitor-system-workspace/monitor-system-workspace.repository';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {AppEHeatInputFromOilWorkspaceRepository} from './app-e-heat-input-from-oil.repository';
+import {AppEHeatInputFromOilWorkspaceService} from './app-e-heat-input-from-oil.service';
 
 const locationId = '5';
 const aeHiOilId = 'a1b2c3';

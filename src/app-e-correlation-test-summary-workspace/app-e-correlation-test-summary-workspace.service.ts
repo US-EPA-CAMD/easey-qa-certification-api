@@ -1,58 +1,63 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, In} from 'typeorm';
+import {v4 as uuid} from 'uuid';
 
-import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
-import { AppendixETestSummaryRepository } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.repository';
-import { settlePromises } from '../utilities/constants';
+import {
+  AppECorrelationTestRunWorkspaceService
+} from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
+import {
+  AppendixETestSummaryRepository
+} from '../app-e-correlation-test-summary/app-e-correlation-test-summary.repository';
+import {settlePromises} from '../utilities/constants';
 import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryDTO,
   AppECorrelationTestSummaryImportDTO,
   AppECorrelationTestSummaryRecordDTO,
 } from '../dto/app-e-correlation-test-summary.dto';
-import { AppECorrelationTestSummary } from '../entities/app-e-correlation-test-summary.entity';
-import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { AppendixETestSummaryWorkspaceRepository } from './app-e-correlation-test-summary-workspace.repository';
+import {AppECorrelationTestSummary} from '../entities/app-e-correlation-test-summary.entity';
+import {AppECorrelationTestSummaryMap} from '../maps/app-e-correlation-summary.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {AppendixETestSummaryWorkspaceRepository} from './app-e-correlation-test-summary-workspace.repository';
 
 @Injectable()
 export class AppECorrelationTestSummaryWorkspaceService {
   constructor(
-      @Inject(forwardRef(() => TestSummaryWorkspaceService))
-      private readonly testSummaryService: TestSummaryWorkspaceService,
-      private readonly repository: AppendixETestSummaryWorkspaceRepository,
-      private readonly map: AppECorrelationTestSummaryMap,
-      @Inject(forwardRef(() => AppECorrelationTestRunWorkspaceService))
-      private readonly appECorrelationTestRunService: AppECorrelationTestRunWorkspaceService,
-      private readonly historicalRepo: AppendixETestSummaryRepository,
-      @Inject(forwardRef(() => AppECorrelationTestRunWorkspaceService))
-      private readonly appECorrTestRunService: AppECorrelationTestRunWorkspaceService,
-      private readonly logger: Logger,
-  ) {}
+    @Inject(forwardRef(() => TestSummaryWorkspaceService))
+    private readonly testSummaryService: TestSummaryWorkspaceService,
+    private readonly repository: AppendixETestSummaryWorkspaceRepository,
+    private readonly map: AppECorrelationTestSummaryMap,
+    @Inject(forwardRef(() => AppECorrelationTestRunWorkspaceService))
+    private readonly appECorrelationTestRunService: AppECorrelationTestRunWorkspaceService,
+    private readonly historicalRepo: AppendixETestSummaryRepository,
+    @Inject(forwardRef(() => AppECorrelationTestRunWorkspaceService))
+    private readonly appECorrTestRunService: AppECorrelationTestRunWorkspaceService,
+    private readonly logger: Logger,
+  ) {
+  }
 
   async getAppECorrelations(
-      testSumId: string,
+    testSumId: string,
   ): Promise<AppECorrelationTestSummaryRecordDTO[]> {
-    const records = await this.repository.find({ where: { testSumId } });
+    const records = await this.repository.find({where: {testSumId}});
 
     return this.map.many(records);
   }
 
   async getAppECorrelation(
-      id: string,
+    id: string,
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
-    const result = await this.repository.findOneBy({ id });
+    const result = await this.repository.findOneBy({id});
 
     if (!result) {
       throw new EaseyException(
-          new Error(
-              `Appendix E Correlation Test Summary Workspace record not found with Record Id [${id}].`,
-          ),
-          HttpStatus.NOT_FOUND,
+        new Error(
+          `Appendix E Correlation Test Summary Workspace record not found with Record Id [${id}].`,
+        ),
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -60,12 +65,12 @@ export class AppECorrelationTestSummaryWorkspaceService {
   }
 
   async createAppECorrelation(
-      testSumId: string,
-      payload: AppECorrelationTestSummaryBaseDTO,
-      userId: string,
-      isImport: boolean = false,
-      historicalRecordId?: string,
-      trx?: EntityManager,
+    testSumId: string,
+    payload: AppECorrelationTestSummaryBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+    historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
     const timestamp = currentDateTime();
     const repository = trx ? trx.getRepository(AppECorrelationTestSummary) : this.repository;
@@ -80,12 +85,12 @@ export class AppECorrelationTestSummaryWorkspaceService {
     });
 
     await repository.save(entity);
-    entity = await repository.findOneBy({ id: entity.id });
+    entity = await repository.findOneBy({id: entity.id});
     await this.testSummaryService.resetToNeedsEvaluation(
-        testSumId,
-        userId,
-        isImport,
-        trx,
+      testSumId,
+      userId,
+      isImport,
+      trx,
     );
     const dto = await this.map.one(entity);
     delete dto.appendixECorrelationTestRunData;
@@ -93,24 +98,24 @@ export class AppECorrelationTestSummaryWorkspaceService {
   }
 
   async editAppECorrelation(
-      testSumId: string,
-      id: string,
-      payload: AppECorrelationTestSummaryBaseDTO,
-      userId: string,
-      isImport: boolean = false,
-      trx?: EntityManager,
+    testSumId: string,
+    id: string,
+    payload: AppECorrelationTestSummaryBaseDTO,
+    userId: string,
+    isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
     const timestamp = currentDateTime();
     const repository = trx ? trx.getRepository(AppECorrelationTestSummary) : this.repository;
 
-    const entity = await repository.findOneBy({ id });
+    const entity = await repository.findOneBy({id});
 
     if (!entity) {
       throw new EaseyException(
-          new Error(
-              `Appendix E Correlation Test Summary Workspace record not found with Record Id [${id}].`,
-          ),
-          HttpStatus.NOT_FOUND,
+        new Error(
+          `Appendix E Correlation Test Summary Workspace record not found with Record Id [${id}].`,
+        ),
+        HttpStatus.NOT_FOUND,
       );
     }
 
@@ -124,22 +129,22 @@ export class AppECorrelationTestSummaryWorkspaceService {
     await repository.save(entity);
 
     await this.testSummaryService.resetToNeedsEvaluation(
-        testSumId,
-        userId,
-        isImport,
-        trx,
+      testSumId,
+      userId,
+      isImport,
+      trx,
     );
 
     return this.getAppECorrelation(id);
   }
 
   async import(
-      locationId: string,
-      testSumId: string,
-      payload: AppECorrelationTestSummaryImportDTO,
-      userId: string,
-      isHistoricalRecord: boolean,
-      trx?: EntityManager,
+    locationId: string,
+    testSumId: string,
+    payload: AppECorrelationTestSummaryImportDTO,
+    userId: string,
+    isHistoricalRecord: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     const promises = [];
@@ -153,30 +158,30 @@ export class AppECorrelationTestSummaryWorkspaceService {
     }
 
     const createdAppECorrelation = await this.createAppECorrelation(
-        testSumId,
-        payload,
-        userId,
-        isImport,
-        historicalRecord ? historicalRecord.id : null,
-        trx,
+      testSumId,
+      payload,
+      userId,
+      isImport,
+      historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(
-        `Appendix E Correlation Test Summary Successfully Imported.  Record Id: ${createdAppECorrelation.id}`,
+      `Appendix E Correlation Test Summary Successfully Imported.  Record Id: ${createdAppECorrelation.id}`,
     );
 
     if (payload.appendixECorrelationTestRunData?.length > 0) {
       for (const testRun of payload.appendixECorrelationTestRunData) {
         promises.push(
-            this.appECorrTestRunService.import(
-                locationId,
-                testSumId,
-                createdAppECorrelation.id,
-                testRun,
-                userId,
-                isHistoricalRecord,
-                trx,
-            ),
+          this.appECorrTestRunService.import(
+            locationId,
+            testSumId,
+            createdAppECorrelation.id,
+            testRun,
+            userId,
+            isHistoricalRecord,
+            trx,
+          ),
         );
       }
     }
@@ -185,11 +190,11 @@ export class AppECorrelationTestSummaryWorkspaceService {
   }
 
   async deleteAppECorrelation(
-      testSumId: string,
-      id: string,
-      userId: string,
-      isImport: boolean = false,
-      trx?: EntityManager,
+    testSumId: string,
+    id: string,
+    userId: string,
+    isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
     try {
       const repository = trx ? trx.getRepository(AppECorrelationTestSummary) : this.repository;
@@ -199,42 +204,42 @@ export class AppECorrelationTestSummaryWorkspaceService {
       });
     } catch (e) {
       throw new EaseyException(
-          new Error(
-              `Error deleting Appendix E Correlation Test Summary with record Id [${id}]`,
-          ),
-          HttpStatus.INTERNAL_SERVER_ERROR,
+        new Error(
+          `Error deleting Appendix E Correlation Test Summary with record Id [${id}]`,
+        ),
+        HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
 
     await this.testSummaryService.resetToNeedsEvaluation(
-        testSumId,
-        userId,
-        isImport,
-        trx,
+      testSumId,
+      userId,
+      isImport,
+      trx,
     );
   }
 
   async getAppECorrelationsByTestSumIds(
-      testSumIds: string[],
+    testSumIds: string[],
   ): Promise<AppECorrelationTestSummaryDTO[]> {
     const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
+      where: {testSumId: In(testSumIds)},
     });
     return this.map.many(results);
   }
 
   async export(testSumIds: string[]): Promise<AppECorrelationTestSummaryDTO[]> {
     const appECorrelationTests = await this.getAppECorrelationsByTestSumIds(
-        testSumIds,
+      testSumIds,
     );
 
     const testRuns = await this.appECorrelationTestRunService.export(
-        appECorrelationTests.map(i => i.id),
+      appECorrelationTests.map(i => i.id),
     );
 
     appECorrelationTests.forEach(s => {
       s.appendixECorrelationTestRunData = testRuns.filter(
-          i => i.appECorrTestSumId === s.id,
+        i => i.appECorrTestSumId === s.id,
       );
     });
     return appECorrelationTests;

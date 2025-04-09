@@ -25,12 +25,13 @@ export class CalibrationInjectionWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     private readonly repository: CalibrationInjectionWorkspaceRepository,
     private readonly historicalRepository: CalibrationInjectionRepository,
-  ) {}
+  ) {
+  }
 
   async getCalibrationInjections(
     testSumId: string,
   ): Promise<CalibrationInjectionDTO[]> {
-    const records = await this.repository.find({ where: { testSumId } });
+    const records = await this.repository.find({where: {testSumId}});
 
     return this.map.many(records);
   }
@@ -78,7 +79,7 @@ export class CalibrationInjectionWorkspaceService {
     });
 
     await repo.save(entity);
-    entity = await repo.findOneBy({ id: entity.id });
+    entity = await repo.findOneBy({id: entity.id});
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -177,7 +178,7 @@ export class CalibrationInjectionWorkspaceService {
     testSumIds: string[],
   ): Promise<CalibrationInjectionDTO[]> {
     const results = await this.repository.find({
-      where: { testSumId: In(testSumIds) },
+      where: {testSumId: In(testSumIds)},
     });
     return this.map.many(results);
   }

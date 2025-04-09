@@ -1,21 +1,21 @@
-import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
-import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In } from 'typeorm';
-import { v4 as uuid } from 'uuid';
+import {forwardRef, HttpStatus, Inject, Injectable} from '@nestjs/common';
+import {EaseyException} from '@us-epa-camd/easey-common/exceptions';
+import {Logger} from '@us-epa-camd/easey-common/logger';
+import {currentDateTime} from '@us-epa-camd/easey-common/utilities/functions';
+import {EntityManager, In} from 'typeorm';
+import {v4 as uuid} from 'uuid';
 
-import { CycleTimeInjectionRepository } from '../cycle-time-injection/cycle-time-injection.repository';
+import {CycleTimeInjectionRepository} from '../cycle-time-injection/cycle-time-injection.repository';
 import {
   CycleTimeInjectionBaseDTO,
   CycleTimeInjectionDTO,
   CycleTimeInjectionImportDTO,
   CycleTimeInjectionRecordDTO,
 } from '../dto/cycle-time-injection.dto';
-import { CycleTimeInjection } from '../entities/cycle-time-injection.entity';
-import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
-import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
-import { CycleTimeInjectionWorkspaceRepository } from './cycle-time-injection-workspace.repository';
+import {CycleTimeInjection} from '../entities/cycle-time-injection.entity';
+import {CycleTimeInjectionMap} from '../maps/cycle-time-injection.map';
+import {TestSummaryWorkspaceService} from '../test-summary-workspace/test-summary.service';
+import {CycleTimeInjectionWorkspaceRepository} from './cycle-time-injection-workspace.repository';
 
 @Injectable()
 export class CycleTimeInjectionWorkspaceService {
@@ -26,7 +26,8 @@ export class CycleTimeInjectionWorkspaceService {
     private readonly testSummaryService: TestSummaryWorkspaceService,
     private readonly repository: CycleTimeInjectionWorkspaceRepository,
     private readonly historicalRepository: CycleTimeInjectionRepository,
-  ) {}
+  ) {
+  }
 
   async getCycleTimeInjectionsByCycleTimeSumId(cycleTimeSumId: string) {
     const results = await this.repository.find({
@@ -39,7 +40,7 @@ export class CycleTimeInjectionWorkspaceService {
   }
 
   async getCycleTimeInjection(id: string) {
-    const result = await this.repository.findOneBy({ id });
+    const result = await this.repository.findOneBy({id});
 
     if (!result) {
       throw new EaseyException(
@@ -76,7 +77,7 @@ export class CycleTimeInjectionWorkspaceService {
 
     await repository.save(entity);
 
-    entity = await repository.findOneBy({ id: entity.id });
+    entity = await repository.findOneBy({id: entity.id});
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
@@ -92,7 +93,7 @@ export class CycleTimeInjectionWorkspaceService {
     cycleTimeSumIds: string[],
   ): Promise<CycleTimeInjectionDTO[]> {
     const results = await this.repository.find({
-      where: { cycleTimeSumId: In(cycleTimeSumIds) },
+      where: {cycleTimeSumId: In(cycleTimeSumIds)},
     });
     return this.map.many(results);
   }
@@ -147,7 +148,7 @@ export class CycleTimeInjectionWorkspaceService {
     const timestamp = currentDateTime();
     const repository = trx ? trx.getRepository(CycleTimeInjection) : this.repository;
 
-    const entity = await repository.findOneBy({ id });
+    const entity = await repository.findOneBy({id});
 
     if (!entity) {
       throw new EaseyException(
@@ -194,7 +195,7 @@ export class CycleTimeInjectionWorkspaceService {
   ): Promise<void> {
     try {
       const repository = trx ? trx.getRepository(CycleTimeInjection) : this.repository;
-      await repository.delete({ id });
+      await repository.delete({id});
     } catch (e) {
       throw new EaseyException(
         new Error(`Error deleting Cycle Time Injection record Id [${id}]`),
