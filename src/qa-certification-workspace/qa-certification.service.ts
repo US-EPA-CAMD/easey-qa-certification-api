@@ -85,7 +85,7 @@ export class QACertificationWorkspaceService {
     );
 
     const version = this.easeyContentService.QaCertificationSchema?.version;
-    const results = {version, ...await Promise.all(promises)};
+    const results = {version, ...(await Promise.all(promises))};
 
     const resultObject = {
       version,
