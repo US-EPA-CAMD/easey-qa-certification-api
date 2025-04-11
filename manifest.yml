@@ -40,3 +40,4 @@ applications:
     services:
       - camd-pg-db
       - log-drain
+      - mats-bulk-files-import

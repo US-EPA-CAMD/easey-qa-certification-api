@@ -97,7 +97,7 @@ export class MatsDataSubmissionBaseDTO {
   @IsValidCode(MatsPollutantCode, { each: true })
   @IsString({ each: true })
   @IsArray()
-  @IsOptionalIf(o => ['NOTIFY', 'CR'].includes(o.reportTypeCode)) // TODO: This might be optional
+  @IsOptionalIf(o => ['NOTIFY', 'CR'].includes(o.reportTypeCode))
   pollutantCodes: string[];
 
   @ApiProperty({
@@ -197,8 +197,8 @@ export class MatsDataSubmissionBaseDTO {
   @IsValidCode(MatsTestMethodCode, { each: true })
   @IsString({ each: true })
   @IsArray()
-  @IsOptionalIf(
-    o => ['NOTIFY', 'CR', 'ACA', 'SVA', 'EMPM'].includes(o.reportTypeCode), // TODO: This might be optional
+  @IsOptionalIf(o =>
+    ['NOTIFY', 'CR', 'ACA', 'SVA', 'EMPM'].includes(o.reportTypeCode),
   )
   testMethodCodes: string[];
 

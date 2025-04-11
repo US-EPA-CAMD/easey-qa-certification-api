@@ -78,11 +78,10 @@ export class MatsDataSubmissionController {
     },
     LookupType.Location,
   )
-  // TODO: Uncomment this when done debugging.
-  //@AuditLog({
-  //  label: 'Created MATS Data Submission record',
-  //  requestBodyOutFields: ['locationId', 'facilityId', 'monitorPlanId'],
-  //})
+  @AuditLog({
+    label: 'Created MATS Data Submission record',
+    requestBodyOutFields: ['locationId', 'facilityId', 'monitorPlanId'],
+  })
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'ertFile', maxCount: 1 },
@@ -90,7 +89,7 @@ export class MatsDataSubmissionController {
       { name: 'supportingFiles' },
     ]),
   )
-  async createMatsDataSubmission(
+  async initializeMatsDataSubmission(
     @Body('metadata') rawMetadata: string,
     @UploadedFiles()
     files: {
@@ -114,8 +113,7 @@ export class MatsDataSubmissionController {
       metadata,
       relevantFiles,
     );
-    console.log(warnings); // TODO: Remove this line
-    const submissionId = await this.service.createMatsDataSubmission(
+    const submissionId = await this.service.initializeMatsDataSubmission(
       metadata,
       relevantFiles,
       user.userId,
