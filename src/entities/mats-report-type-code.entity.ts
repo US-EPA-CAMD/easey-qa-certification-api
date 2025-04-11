@@ -26,6 +26,9 @@ export class MatsReportTypeCode extends BaseEntity {
   @Column({ name: 'requires_test_method' })
   requiresTestMethod: boolean;
 
+  @Column({ name: 'enforce_attachment_rules' })
+  enforceAttachmentRules: boolean;
+
   @ManyToMany(
     () => MatsPollutantCode,
     o => o.reportTypes,

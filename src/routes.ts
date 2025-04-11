@@ -237,6 +237,10 @@ const routes = [
     module: LocationWorkspaceModule,
     children: [
       {
+        path: '/:locId/mats-data-submission',
+        module: MatsDataSubmissionModule,
+      },
+      {
         path: ':locId/qa-certification-events',
         module: QaCertificationEventWorkspaceModule,
       },
@@ -383,10 +387,6 @@ const routes = [
         module: TestExtensionExemptionsWorkspaceModule,
       },
     ],
-  },
-  {
-    path: '/workspace/mats-data-submission',
-    module: MatsDataSubmissionModule,
   },
 ];
 

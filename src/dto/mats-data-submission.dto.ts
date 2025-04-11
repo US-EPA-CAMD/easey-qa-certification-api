@@ -97,7 +97,7 @@ export class MatsDataSubmissionBaseDTO {
   @IsValidCode(MatsPollutantCode, { each: true })
   @IsString({ each: true })
   @IsArray()
-  @IsOptionalIf(o => ['NOTIFY', 'CR'].includes(o.reportTypeCode))
+  @IsOptionalIf(o => ['NOTIFY', 'CR'].includes(o.reportTypeCode)) // TODO: This might be optional
   pollutantCodes: string[];
 
   @ApiProperty({
@@ -107,7 +107,7 @@ export class MatsDataSubmissionBaseDTO {
   })
   @IsInRange(1, 4, {
     message: (args: ValidationArguments) => {
-      return `Quarter must be a number from 1 to 4. You reported an invalid quarter of [${args.value}] in [${KEY}] for [${args.property}]`;
+      return `Quarter must be a number from 1 to 4. You reported an invalid quarter of [${args.value}] in [${KEY}] for [${args.property}].`;
     },
   })
   @IsInt()
@@ -165,7 +165,7 @@ export class MatsDataSubmissionBaseDTO {
   @IsValidDate({
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}]`,
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}].`,
       );
     },
   })
@@ -197,8 +197,8 @@ export class MatsDataSubmissionBaseDTO {
   @IsValidCode(MatsTestMethodCode, { each: true })
   @IsString({ each: true })
   @IsArray()
-  @IsOptionalIf(o =>
-    ['NOTIFY', 'CR', 'ACA', 'SVA', 'EMPM'].includes(o.reportTypeCode),
+  @IsOptionalIf(
+    o => ['NOTIFY', 'CR', 'ACA', 'SVA', 'EMPM'].includes(o.reportTypeCode), // TODO: This might be optional
   )
   testMethodCodes: string[];
 
@@ -220,7 +220,7 @@ export class MatsDataSubmissionBaseDTO {
     message: (args: ValidationArguments) => {
       return `Year must be greater than or equal to 1993 and less than or equal to ${currentDateTime().getFullYear()}. You reported an invalid year of [${
         args.value
-      }] in [${KEY}] for [${args.property}]`;
+      }] in [${KEY}] for [${args.property}].`;
     },
   })
   @IsInt()

@@ -1,9 +1,7 @@
 import {
   Body,
   Controller,
-  Get,
   Post,
-  Query,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
@@ -12,7 +10,6 @@ import {
   ApiBody,
   ApiConsumes,
   ApiOkResponse,
-  ApiQuery,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
@@ -23,15 +20,10 @@ import {
 } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
-import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 import { plainToClass } from 'class-transformer';
 
-import {
-  MatsDataSubmissionDTO,
-  MatsDataSubmissionBaseDTO,
-} from '../dto/mats-data-submission.dto';
 import { MatsDataSubmissionCreateResponseDTO } from '../dto/mats-data-submission-create-response.dto';
-import { SplitQueryPipe } from '../pipes/split-query.pipe';
+import { MatsDataSubmissionBaseDTO } from '../dto/mats-data-submission.dto';
 import { MatsDataSubmissionChecksService } from './mats-data-submission-checks.service';
 import { MatsDataSubmissionService } from './mats-data-submission.service';
 
@@ -43,41 +35,6 @@ export class MatsDataSubmissionController {
     private readonly checksService: MatsDataSubmissionChecksService,
     private readonly service: MatsDataSubmissionService,
   ) {}
-
-  @Get()
-  @ApiOkResponse({
-    isArray: true,
-    type: MatsDataSubmissionDTO,
-    description:
-      'Retrieves MATS Data Submission records for a given Monitoring Plan ID',
-  })
-  @ApiQuery({
-    style: 'pipeDelimited',
-    name: 'monPlanIds',
-    required: true,
-    explode: false,
-  })
-  @RoleGuard(
-    {
-      queryParam: 'monPlanIds',
-      isPipeDelimitted: true,
-      enforceEvalSubmitCheck: false,
-    },
-    LookupType.MonitorPlan,
-  )
-  @AuditLog({
-    label: 'Retrieved MATS Data Submission records',
-    requestQueryOutFields: ['monPlanIds'],
-  })
-  async getMatsDataSubmissions(
-    @Query('monPlanIds', SplitQueryPipe) monPlanIds: string[],
-  ): Promise<ArrayResponse<MatsDataSubmissionDTO>> {
-    const submissions = await this.service.getMatsDataSubmissions(monPlanIds);
-
-    return {
-      items: submissions,
-    };
-  }
 
   @Post()
   @ApiConsumes('multipart/form-data')
@@ -113,19 +70,19 @@ export class MatsDataSubmissionController {
       },
     },
   })
-  // FIXME: Properly parse metadata before validation.
-  /*@RoleGuard(
+  @RoleGuard(
     {
-      bodyParam: 'metadata.monitorPlanId',
+      pathParam: 'locId',
       requiredRoles: ['Submitter', 'Sponsor', 'Initial Authorizer'],
       permissionsForFacility: ['DSQA'],
     },
-    LookupType.MonitorPlan,
-  )*/
-  @AuditLog({
-    label: 'Created MATS Data Submission record',
-    requestBodyOutFields: ['locationId', 'facilityId', 'monitorPlanId'],
-  })
+    LookupType.Location,
+  )
+  // TODO: Uncomment this when done debugging.
+  //@AuditLog({
+  //  label: 'Created MATS Data Submission record',
+  //  requestBodyOutFields: ['locationId', 'facilityId', 'monitorPlanId'],
+  //})
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'ertFile', maxCount: 1 },
@@ -147,19 +104,20 @@ export class MatsDataSubmissionController {
       MatsDataSubmissionBaseDTO,
       JSON.parse(rawMetadata),
     );
-    const ertFile = files.ertFile?.[0];
-    const payloadFile = files.payloadFile?.[0];
-    const supportingFiles = files.supportingFiles;
-
-    console.log('metadata', metadata);
-    console.log('ertFile', ertFile?.size);
-    console.log('payloadFile', payloadFile?.size);
-    console.log('supportingFiles', supportingFiles?.length);
-
-    const warnings = await this.checksService.runChecks(metadata, files);
+    // Only accept one file for ertFile and payloadFile, but allow multiple for supportingFiles.
+    const relevantFiles = {
+      ertFile: files.ertFile?.[0],
+      payloadFile: files.payloadFile?.[0],
+      supportingFiles: files.supportingFiles,
+    };
+    const warnings = await this.checksService.runChecks(
+      metadata,
+      relevantFiles,
+    );
+    console.log(warnings); // TODO: Remove this line
     const submissionId = await this.service.createMatsDataSubmission(
       metadata,
-      files,
+      relevantFiles,
       user.userId,
     );
     return {

@@ -8,7 +8,11 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 
-import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import {
+  AuditLog,
+  RoleGuard,
+  User,
+} from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -16,6 +20,7 @@ import {
   QACertificationDTO,
 } from '../dto/qa-certification.dto';
 
+import { MatsDataSubmissionDTO } from '../dto/mats-data-submission.dto';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { QACertificationWorkspaceService } from './qa-certification.service';
 import { QACertificationChecksService } from './qa-certification-checks.service';
@@ -32,7 +37,9 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
 import { ReviewAndSubmitMultipleParamsMatsDTO } from '../dto/review-and-submit-multiple-params-mats.dto';
 import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
+import { MatsDataSubmissionReviewAndSubmitService } from './mats-data-submission-review-and-submit.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { SplitQueryPipe } from '../pipes/split-query.pipe';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
@@ -46,6 +53,7 @@ export class QACertificationWorkspaceController {
     private readonly reviewSubmitServiceTestSum: TestSummaryReviewAndSubmitService,
     private readonly reviewSubmitServiceTee: TeeReviewAndSubmitService,
     private readonly reviewSubmitServiceMats: MatsBulkFilesReviewAndSubmitService,
+    private readonly reviewSubmitServiceMatsDataSubmission: MatsDataSubmissionReviewAndSubmitService,
     private readonly checksService: QACertificationChecksService,
   ) {}
 
@@ -91,7 +99,7 @@ export class QACertificationWorkspaceController {
   )
   @AuditLog({
     label: 'Exported workspace QA Certification records',
-    requestQueryOutFields: '*'
+    requestQueryOutFields: '*',
   })
   async export(
     @Query() params: QACertificationParamsDTO,
@@ -120,7 +128,7 @@ export class QACertificationWorkspaceController {
   })
   @AuditLog({
     label: 'Imported workspace QA Certification records',
-    requestBodyOutFields: ['orisCode', 'testSummaryData.testNumber']
+    requestBodyOutFields: ['orisCode', 'testSummaryData.testNumber'],
   })
   async import(
     @Body() payload: QACertificationImportDTO,
@@ -169,7 +177,7 @@ export class QACertificationWorkspaceController {
   )
   @AuditLog({
     label: 'Retrieved workspace certification event records',
-    requestQueryOutFields: ['orisCodes', 'monPlanIds', 'quarters']
+    requestQueryOutFields: ['orisCodes', 'monPlanIds', 'quarters'],
   })
   async getFilteredCerts(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
@@ -177,7 +185,7 @@ export class QACertificationWorkspaceController {
     const certEventRecords = await this.reviewSubmitServiceCert.getCertEventRecords(
       dto.orisCodes,
       dto.monPlanIds,
-      dto.quarters
+      dto.quarters,
     );
     return { items: certEventRecords };
   }
@@ -218,7 +226,7 @@ export class QACertificationWorkspaceController {
   )
   @AuditLog({
     label: 'Retrieved workspace test summary records',
-    requestQueryOutFields: ['orisCodes', 'monPlanIds', 'quarters']
+    requestQueryOutFields: ['orisCodes', 'monPlanIds', 'quarters'],
   })
   async getFilteredTestSums(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
@@ -226,7 +234,7 @@ export class QACertificationWorkspaceController {
     const testSummaryRecords = await this.reviewSubmitServiceTestSum.getTestSummaryRecords(
       dto.orisCodes,
       dto.monPlanIds,
-      dto.quarters
+      dto.quarters,
     );
     return { items: testSummaryRecords };
   }
@@ -267,7 +275,7 @@ export class QACertificationWorkspaceController {
   )
   @AuditLog({
     label: 'Retrieved test extension exemption records',
-    requestQueryOutFields: ['orisCodes', 'monPlanIds', 'quarters']
+    requestQueryOutFields: ['orisCodes', 'monPlanIds', 'quarters'],
   })
   async getFilteredTee(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
@@ -275,7 +283,7 @@ export class QACertificationWorkspaceController {
     const teeRecords = await this.reviewSubmitServiceTee.getTeeRecords(
       dto.orisCodes,
       dto.monPlanIds,
-      dto.quarters
+      dto.quarters,
     );
     return { items: teeRecords };
   }
@@ -310,15 +318,52 @@ export class QACertificationWorkspaceController {
   )
   @AuditLog({
     label: 'Retrieved MATS bulk file records',
-    requestQueryOutFields: ['orisCodes', 'monPlanIds']
+    requestQueryOutFields: ['orisCodes', 'monPlanIds'],
   })
   async getFilteredMatsBulkFile(
     @Query() dto: ReviewAndSubmitMultipleParamsMatsDTO,
   ): Promise<ArrayResponse<MatsBulkFileDTO>> {
     const matsBulkFileRecords = await this.reviewSubmitServiceMats.getMatsBulkFileRecords(
       dto.orisCodes,
-      dto.monPlanIds
+      dto.monPlanIds,
     );
     return { items: matsBulkFileRecords };
+  }
+
+  @Get('mats-data-submission')
+  @ApiOkResponse({
+    isArray: true,
+    type: MatsDataSubmissionDTO,
+    description:
+      'Retrieves MATS Data Submission records for a given Monitoring Plan ID',
+  })
+  @ApiQuery({
+    style: 'pipeDelimited',
+    name: 'monPlanIds',
+    required: true,
+    explode: false,
+  })
+  @RoleGuard(
+    {
+      queryParam: 'monPlanIds',
+      isPipeDelimitted: true,
+      enforceEvalSubmitCheck: false,
+    },
+    LookupType.MonitorPlan,
+  )
+  @AuditLog({
+    label: 'Retrieved MATS Data Submission records',
+    requestQueryOutFields: ['monPlanIds'],
+  })
+  async getMatsDataSubmissions(
+    @Query('monPlanIds', SplitQueryPipe) monPlanIds: string[],
+  ): Promise<ArrayResponse<MatsDataSubmissionDTO>> {
+    const submissions = await this.reviewSubmitServiceMatsDataSubmission.getMatsDataSubmissions(
+      monPlanIds,
+    );
+
+    return {
+      items: submissions,
+    };
   }
 }
