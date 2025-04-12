@@ -16,6 +16,7 @@ import {
 import { EntityManager } from 'typeorm';
 
 import { MatsDataSubmissionBaseDTO } from '../dto/mats-data-submission.dto';
+import { MatsDataSubmission } from '../entities/mats-data-submission.entity';
 import { MatsDataSubmissionPayloadFile } from '../entities/mats-data-submission-payload-file.entity';
 import { MatsDataSubmissionPollutant } from '../entities/mats-data-submission-pollutant.entity';
 import { MatsDataSubmissionTestMethod } from '../entities/mats-data-submission-test-method.entity';
@@ -229,6 +230,34 @@ export class MatsDataSubmissionService {
     await repository.save(records);
 
     return records.map(record => record.id);
+  }
+
+  async deleteMatsDataSubmission(submissionId: number) {
+    try {
+      await this.entityManager.transaction(async (trx: EntityManager) => {
+        await trx
+          .getRepository(MatsDataSubmissionPayloadFile)
+          .delete({ submissionId });
+        await trx
+          .getRepository(MatsDataSubmissionTestMethod)
+          .delete({ submissionId });
+        await trx
+          .getRepository(MatsDataSubmissionPollutant)
+          .delete({ submissionId });
+        await trx
+          .getRepository(MatsDataSubmission)
+          .delete({ id: submissionId });
+        await this.deleteSubmissionFiles(submissionId);
+      });
+    } catch (e) {
+      throw new EaseyException(
+        new Error(
+          `Error deleting MATS Data Submission record [${submissionId}]`,
+        ),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        e,
+      );
+    }
   }
 
   private async deleteSubmissionFiles(submissionId: number) {

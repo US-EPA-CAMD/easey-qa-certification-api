@@ -1,6 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
+  Param,
+  ParseIntPipe,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -124,5 +127,24 @@ export class MatsDataSubmissionController {
     };
   }
 
-  // TODO: Delete MATS Data Submission record.
+  @Delete(':id')
+  @RoleGuard(
+    {
+      pathParam: 'locId',
+      requiredRoles: ['Submitter', 'Sponsor', 'Initial Authorizer'],
+      permissionsForFacility: ['DSQA'],
+    },
+    LookupType.Location,
+  )
+  @ApiOkResponse({
+    description:
+      'Deletes a MATS Data Submission record and all associated files.',
+  })
+  @AuditLog({
+    label: 'Deleted MATS Data Submission record',
+    requestParamsOutFields: ['id', 'locId'],
+  })
+  async deleteMatsDataSubmission(@Param('id', ParseIntPipe) id: number) {
+    this.service.deleteMatsDataSubmission(id);
+  }
 }
