@@ -20,7 +20,7 @@ export class MatsDataSubmissionTestMethod extends BaseEntity {
   id: number;
 
   @Column({
-    name: 'mats_data_submission_id',
+    name: 'mats_data_sub_id',
     transformer: new NumericColumnTransformer(),
   })
   submissionId: number;

@@ -13,6 +13,7 @@ import {
   settlePromises,
   withTransaction,
 } from '@us-epa-camd/easey-common/utilities/functions';
+import { XMLBuilder } from 'fast-xml-parser';
 import { EntityManager } from 'typeorm';
 
 import { MatsDataSubmissionBaseDTO } from '../dto/mats-data-submission.dto';
@@ -36,88 +37,6 @@ export class MatsDataSubmissionService {
 
   private createFilePath(fileName: string, submissionId: number) {
     return `${submissionId}/${fileName}`;
-  }
-
-  private getS3Bucket() {
-    const bucket = this.configService.get('app.matsImportBucket');
-
-    if (!bucket) {
-      throw new EaseyException(
-        new Error('Missing S3 bucket name'),
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    return bucket;
-  }
-
-  private getS3Client() {
-    const accessKeyId = this.configService.get('app.matsImportBucketAccessKey');
-    const secretAccessKey = this.configService.get(
-      'app.matsImportBucketSecretAccessKey',
-    );
-    const region = this.configService.get('app.awsRegion');
-
-    if (!accessKeyId || !secretAccessKey || !region) {
-      throw new EaseyException(
-        new Error('Missing S3 credentials or region'),
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    return new S3Client({
-      credentials: {
-        accessKeyId,
-        secretAccessKey,
-      },
-      region,
-    });
-  }
-
-  async initializeMatsDataSubmission(
-    metadata: MatsDataSubmissionBaseDTO,
-    files: MatsDataSubmissionFiles,
-    userId: string,
-  ): Promise<number> {
-    let submissionId: number | null = null;
-
-    try {
-      await this.entityManager.transaction(async (trx: EntityManager) => {
-        // Create the MATS Data Submission record.
-        submissionId = await this.createMatsDataSubmission(
-          metadata,
-          userId,
-          trx,
-        );
-
-        // Create child MATS_DATA_SUBMISSION_POLLUTANT & MATS_DATA_SUBMISSION_TEST_METHOD records.
-        await this.createMatsDataSubmissionPollutants(
-          metadata.pollutantCodes,
-          submissionId,
-          trx,
-        );
-        await this.createMatsDataSubmissionTestMethods(
-          metadata.testMethodCodes,
-          submissionId,
-          trx,
-        );
-
-        // Generate the Metadata XML file.
-        const metadataXml = await this.generateMetadataXml(submissionId, trx);
-
-        // Upload the files to S3 & create MATS_DATA_SUBMISSION_PAYLOAD_FILE records.
-        await this.uploadFilesAndCreateRecords(
-          { ...files, metadataXml },
-          submissionId,
-          trx,
-        );
-      });
-    } catch (err) {
-      if (submissionId) await this.deleteSubmissionFiles(submissionId);
-      throw new EaseyException(new Error(err.message), HttpStatus.BAD_REQUEST);
-    }
-
-    return submissionId;
   }
 
   private async createMatsDataSubmission(
@@ -295,7 +214,7 @@ export class MatsDataSubmissionService {
     }
   }
 
-  private async generateMetadataXml(
+  async generateMetadataXml(
     submissionId: number,
     trx?: EntityManager,
   ): Promise<MetadataXmlFile> {
@@ -321,31 +240,34 @@ export class MatsDataSubmissionService {
     }
 
     const xmlData = {
-      SubmissionInfo: {
-        SubmissionId: record.id.toString(),
-        SubmissionDate: record.addTime.toISOString(),
-        IsResubmission: record.originalSubmissionId ? 'true' : 'false',
-        OriginalSubmissionId: record.originalSubmissionId.toString(),
+      MatsTransitionMetadata: {
+        SubmissionInfo: {
+          SubmissionId: record.id.toString(),
+          SubmissionDate: record.addTime.toISOString(),
+          IsResubmission: record.originalSubmissionId ? 'true' : 'false',
+          OriginalSubmissionId: record.originalSubmissionId?.toString(),
+        },
+        CdxUser: record.userId,
+        ReportTypeCode: record.reportTypeCode,
+        OrisCode: record.facility.orisCode,
+        FrsId: record.facility.frsId ?? '',
+        LocationName:
+          record.location.stackPipe?.name ?? record.location.unit?.name,
+        AveragingGroupCode: record.averagingGroupCode,
+        PollutantList: {
+          PollutantCode: record.pollutants.map(p => p.metadataPollutantCode),
+        },
+        TestMethodList: {
+          TestMethodCode: record.testMethods.map(tm => tm.code),
+        },
+        TestNumber: record.testNumber,
+        TestDate: record.testDate.toISOString().substring(0, 10),
+        TestComment: record.testComment,
       },
-      CdxUser: record.userId,
-      ReportTypeCode: record.reportTypeCode,
-      OrisCode: record.facility.orisCode,
-      FrsId: record.facility.frsId,
-      LocationName:
-        record.location.stackPipe?.name ?? record.location.unit?.name,
-      AveragingGroupCode: record.averagingGroupCode,
-      PollutantList: {
-        PollutantCode: record.pollutants.map(p => p.metadataPollutantCode),
-      },
-      TestMethodList: {
-        TestMethodCode: record.testMethods.map(tm => tm.code),
-      },
-      TestNumber: record.testNumber,
-      TestDate: record.testDate.toISOString().substring(0, 10),
-      TestComment: record.testComment,
     };
 
-    const xmlString = this.generateXmlString(xmlData, 'MatsTransitionMetadata');
+    const xmlString = this.generateXmlString(xmlData);
+    console.log('XML String:', xmlString);
 
     return {
       buffer: Buffer.from(xmlString),
@@ -354,33 +276,96 @@ export class MatsDataSubmissionService {
     };
   }
 
-  private generateXmlString(
-    data: Record<string, unknown>,
-    rootElementName: string,
-  ) {
-    const doc = document.implementation.createDocument('', '', null);
-    const root = doc.createElement(rootElementName);
-    doc.appendChild(root);
+  private generateXmlString(data: Record<string, unknown>) {
+    const builder = new XMLBuilder({
+      format: true,
+      ignoreAttributes: false,
+      suppressEmptyNode: false,
+    });
 
-    function createXmlElement(
-      data: unknown | Record<string, unknown>,
-      parentElement: HTMLElement,
-    ) {
-      for (const key in data as Record<string, unknown>) {
-        const element = doc.createElement(key);
-        if (typeof data[key] === 'object' && data[key] !== null) {
-          createXmlElement(data[key], element);
-        } else {
-          element.textContent = data[key];
-        }
-        parentElement.appendChild(element);
-      }
+    return builder.build(data);
+  }
+
+  private getS3Bucket() {
+    const bucket = this.configService.get('app.matsImportBucket');
+
+    if (!bucket) {
+      throw new EaseyException(
+        new Error('Missing S3 bucket name'),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
 
-    createXmlElement(data, root);
+    return bucket;
+  }
 
-    const serializer = new XMLSerializer();
-    return serializer.serializeToString(doc);
+  private getS3Client() {
+    const accessKeyId = this.configService.get('app.matsImportBucketAccessKey');
+    const secretAccessKey = this.configService.get(
+      'app.matsImportBucketSecretAccessKey',
+    );
+    const region = this.configService.get('app.awsRegion');
+
+    if (!accessKeyId || !secretAccessKey || !region) {
+      throw new EaseyException(
+        new Error('Missing S3 credentials or region'),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+
+    return new S3Client({
+      credentials: {
+        accessKeyId,
+        secretAccessKey,
+      },
+      region,
+    });
+  }
+
+  async initializeMatsDataSubmission(
+    metadata: MatsDataSubmissionBaseDTO,
+    files: MatsDataSubmissionFiles,
+    userId: string,
+  ): Promise<number> {
+    let submissionId: number | null = null;
+
+    try {
+      await this.entityManager.transaction(async (trx: EntityManager) => {
+        // Create the MATS Data Submission record.
+        submissionId = await this.createMatsDataSubmission(
+          metadata,
+          userId,
+          trx,
+        );
+
+        // Create child MATS_DATA_SUBMISSION_POLLUTANT & MATS_DATA_SUBMISSION_TEST_METHOD records.
+        await this.createMatsDataSubmissionPollutants(
+          metadata.pollutantCodes,
+          submissionId,
+          trx,
+        );
+        await this.createMatsDataSubmissionTestMethods(
+          metadata.testMethodCodes,
+          submissionId,
+          trx,
+        );
+
+        // Generate the Metadata XML file.
+        const metadataXml = await this.generateMetadataXml(submissionId, trx);
+
+        // Upload the files to S3 & create MATS_DATA_SUBMISSION_PAYLOAD_FILE records.
+        await this.uploadFilesAndCreateRecords(
+          { ...files, metadataXml },
+          submissionId,
+          trx,
+        );
+      });
+    } catch (err) {
+      if (submissionId) await this.deleteSubmissionFiles(submissionId);
+      throw new EaseyException(new Error(err.message), HttpStatus.BAD_REQUEST);
+    }
+
+    return submissionId;
   }
 
   private async uploadFile(

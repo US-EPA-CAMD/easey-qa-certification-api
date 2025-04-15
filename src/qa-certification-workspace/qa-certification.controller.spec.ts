@@ -9,6 +9,7 @@ import { EntityManager } from 'typeorm';
 
 import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
 import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
+import { MatsDataSubmissionDTO } from '../dto/mats-data-submission.dto';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import {
   QACertificationDTO,
@@ -21,6 +22,8 @@ import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { CertEventReviewAndSubmitMap } from '../maps/cert-event-review-and-submit.map';
 import { MatsBulkFileMap } from '../maps/mats-bulk-file.map';
+import { MatsDataSubmissionMap } from '../maps/mats-data-submission.map';
+import { MatsDataSubmissionRepository } from '../mats-data-submission/mats-data-submission.repository';
 import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
 import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
 import { CertEventReviewAndSubmitGlobalRepository } from './cert-event-review-and-submit-global.repository';
@@ -28,6 +31,7 @@ import { CertEventReviewAndSubmitRepository } from './cert-event-review-and-subm
 import { CertEventReviewAndSubmitService } from './cert-event-review-and-submit.service';
 import { MatsBulkFilesReviewAndSubmitRepository } from './mats-bulk-files-review-and-submit.repository';
 import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
+import { MatsDataSubmissionReviewAndSubmitService } from './mats-data-submission-review-and-submit.service';
 import { QACertificationChecksService } from './qa-certification-checks.service';
 import { QACertificationWorkspaceController } from './qa-certification.controller';
 import { QACertificationWorkspaceService } from './qa-certification.service';
@@ -77,6 +81,7 @@ describe('QA Certification Workspace Controller Test', () => {
   let reviewSubmitServiceTestSum: TestSummaryReviewAndSubmitService;
   let reviewSubmitServiceTee: TeeReviewAndSubmitService;
   let reviewSubmitMats: MatsBulkFilesReviewAndSubmitService;
+  let reviewSubmitServiceMatsData: MatsDataSubmissionReviewAndSubmitService;
   let checkService: QACertificationChecksService;
 
   beforeAll(async () => {
@@ -115,6 +120,9 @@ describe('QA Certification Workspace Controller Test', () => {
         MatsBulkFilesReviewAndSubmitRepository,
         MatsBulkFilesReviewAndSubmitService,
         MatsBulkFileMap,
+        MatsDataSubmissionMap,
+        MatsDataSubmissionRepository,
+        MatsDataSubmissionReviewAndSubmitService,
       ],
     }).compile();
 
@@ -125,6 +133,9 @@ describe('QA Certification Workspace Controller Test', () => {
     reviewSubmitServiceTee = module.get(TeeReviewAndSubmitService);
     reviewSubmitMats = module.get(MatsBulkFilesReviewAndSubmitService);
     checkService = module.get(QACertificationChecksService);
+    reviewSubmitServiceMatsData = module.get(
+      MatsDataSubmissionReviewAndSubmitService,
+    );
   });
 
   describe('export', () => {
@@ -155,7 +166,7 @@ describe('QA Certification Workspace Controller Test', () => {
         new ReviewAndSubmitMultipleParamsDTO(),
       );
 
-      expect(result).toEqual({ items:[dto]});
+      expect(result).toEqual({ items: [dto] });
     });
   });
 
@@ -170,7 +181,7 @@ describe('QA Certification Workspace Controller Test', () => {
         new ReviewAndSubmitMultipleParamsDTO(),
       );
 
-      expect(result).toEqual({ items:[dto]});
+      expect(result).toEqual({ items: [dto] });
     });
   });
 
@@ -183,7 +194,7 @@ describe('QA Certification Workspace Controller Test', () => {
         new ReviewAndSubmitMultipleParamsDTO(),
       );
 
-      expect(result).toEqual({ items:[dto]});
+      expect(result).toEqual({ items: [dto] });
     });
   });
 
@@ -198,7 +209,19 @@ describe('QA Certification Workspace Controller Test', () => {
         new ReviewAndSubmitMultipleParamsMatsDTO(),
       );
 
-      expect(result).toEqual({ items:[dto]});
+      expect(result).toEqual({ items: [dto] });
+    });
+  });
+
+  describe('getMatsDataSubmissions', () => {
+    it('should call the review and submit mats data submission controller function and return a list of dtos', async () => {
+      const dto = new MatsDataSubmissionDTO();
+      reviewSubmitServiceMatsData.getMatsDataSubmissions = jest
+        .fn()
+        .mockResolvedValue([dto]);
+
+      const result = await controller.getMatsDataSubmissions(['1']);
+      expect(result).toEqual({ items: [dto] });
     });
   });
 });
