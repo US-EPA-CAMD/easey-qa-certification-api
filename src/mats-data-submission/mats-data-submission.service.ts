@@ -65,6 +65,11 @@ export class MatsDataSubmissionService {
     });
     await repository.save(record);
 
+    this.logger.debug(
+      'Created MATS Data Submission record',
+      JSON.stringify(record),
+    );
+
     return record.id;
   }
 
@@ -267,7 +272,7 @@ export class MatsDataSubmissionService {
     };
 
     const xmlString = this.generateXmlString(xmlData);
-    console.log('XML String:', xmlString);
+    this.logger.debug('Generated Metadata XML', xmlString);
 
     return {
       buffer: Buffer.from(xmlString),
@@ -378,6 +383,7 @@ export class MatsDataSubmissionService {
       new PutObjectCommand({
         Body: contents,
         Bucket: bucket,
+        ContentLength: contents.length,
         Key: path,
       }),
     );
@@ -399,27 +405,48 @@ export class MatsDataSubmissionService {
     }
 
     await settlePromises(
-      Object.entries(files).map(
-        async ([key, file]: [
-          string,
-          Express.Multer.File | MetadataXmlFile,
-        ]) => {
-          // Upload the file to the S3 bucket.
-          await this.uploadFile(
-            this.createFilePath(file.originalname, submissionId),
-            file.buffer,
-            client,
-            bucket,
-          );
-          // Add the MATS payload file record.
-          await this.createMatsDataSubmissionPayloadFile(
-            file,
-            submissionId,
-            trx,
-            key === 'ertFile',
-          );
-        },
-      ),
+      Object.entries(files)
+        // Map the array of entries to a single array of tuples.
+        .reduce(
+          (
+            acc,
+            [key, file]: [
+              string,
+              Express.Multer.File | Express.Multer.File[] | MetadataXmlFile,
+            ],
+          ) => {
+            if (Array.isArray(file)) {
+              acc.push(...file.map(f => [key, f]));
+            } else {
+              acc.push([key, file]);
+            }
+            return acc;
+          },
+          [],
+        )
+        .map(
+          async ([key, file]: [
+            string,
+            Express.Multer.File | MetadataXmlFile,
+          ]) => {
+            if (!file) return;
+
+            // Upload the file to the S3 bucket.
+            await this.uploadFile(
+              this.createFilePath(file.originalname, submissionId),
+              file.buffer,
+              client,
+              bucket,
+            );
+            // Add the MATS payload file record.
+            await this.createMatsDataSubmissionPayloadFile(
+              file,
+              submissionId,
+              trx,
+              key === 'ertFile',
+            );
+          },
+        ),
     );
   }
 }

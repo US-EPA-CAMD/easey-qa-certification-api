@@ -5,7 +5,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { MatsDataSubmission } from './mats-data-submission.entity';
@@ -13,9 +13,8 @@ import { MatsTestMethodCode } from './mats-test-method-code.entity';
 
 @Entity({ name: 'camdecmpsaux.mats_data_submission_test_method' })
 export class MatsDataSubmissionTestMethod extends BaseEntity {
-  @PrimaryColumn({
+  @PrimaryGeneratedColumn('increment', {
     name: 'mats_data_sub_test_method_id',
-    transformer: new NumericColumnTransformer(),
   })
   id: number;
 

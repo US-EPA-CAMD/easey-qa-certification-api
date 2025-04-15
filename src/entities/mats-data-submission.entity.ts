@@ -9,7 +9,7 @@ import {
   ManyToOne,
   OneToMany,
   OneToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { MatsAveragingGroupCode } from './mats-averaging-group-code.entity';
@@ -26,10 +26,7 @@ import { Plant } from './plant.entity';
 export class MatsDataSubmission extends BaseEntity {
   /* COLUMNS */
 
-  @PrimaryColumn({
-    name: 'mats_data_sub_id',
-    transformer: new NumericColumnTransformer(),
-  })
+  @PrimaryGeneratedColumn('increment', { name: 'mats_data_sub_id' })
   id: number;
 
   @Column({ name: 'test_number' })

@@ -81,10 +81,11 @@ export class MatsDataSubmissionController {
     },
     LookupType.Location,
   )
-  @AuditLog({
-    label: 'Created MATS Data Submission record',
-    requestBodyOutFields: ['locationId', 'facilityId', 'monitorPlanId'],
-  })
+  // TODO: Uncomment when done debugging.
+  //@AuditLog({
+  //  label: 'Created MATS Data Submission record',
+  //  requestBodyOutFields: ['locationId', 'facilityId', 'monitorPlanId'],
+  //})
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'ertFile', maxCount: 1 },

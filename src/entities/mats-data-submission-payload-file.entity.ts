@@ -5,7 +5,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { MatsDataSubmission } from './mats-data-submission.entity';
@@ -15,9 +15,8 @@ import { MatsFileTypeCode } from './mats-file-type-code.entity';
 export class MatsDataSubmissionPayloadFile extends BaseEntity {
   /* COLUMNS */
 
-  @PrimaryColumn({
+  @PrimaryGeneratedColumn('increment', {
     name: 'mats_data_sub_payload_file_id',
-    transformer: new NumericColumnTransformer(),
   })
   id: number;
 
