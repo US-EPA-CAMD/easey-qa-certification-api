@@ -12,7 +12,7 @@ export class MatsDataSubmissionReviewAndSubmitService {
     private readonly repository: MatsDataSubmissionRepository,
   ) {}
 
-  async getMatsDataSubmission(id: number): Promise<MatsDataSubmissionDTO> {
+  async getMatsDataSubmission(id: string): Promise<MatsDataSubmissionDTO> {
     const result = await this.repository.getMatsDataSubmission(id);
 
     return this.map.one(result);

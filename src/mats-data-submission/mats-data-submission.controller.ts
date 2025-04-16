@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Param,
-  ParseIntPipe,
   Post,
   UploadedFiles,
   UseInterceptors,
@@ -81,11 +80,10 @@ export class MatsDataSubmissionController {
     },
     LookupType.Location,
   )
-  // TODO: Uncomment when done debugging.
-  //@AuditLog({
-  //  label: 'Created MATS Data Submission record',
-  //  requestBodyOutFields: ['locationId', 'facilityId', 'monitorPlanId'],
-  //})
+  @AuditLog({
+    label: 'Created MATS Data Submission record',
+    requestBodyOutFields: ['locationId', 'facilityId', 'monitorPlanId'],
+  })
   @UseInterceptors(
     FileFieldsInterceptor([
       { name: 'ertFile', maxCount: 1 },
@@ -145,7 +143,7 @@ export class MatsDataSubmissionController {
     label: 'Deleted MATS Data Submission record',
     requestParamsOutFields: ['id', 'locId'],
   })
-  async deleteMatsDataSubmission(@Param('id', ParseIntPipe) id: number) {
+  async deleteMatsDataSubmission(@Param('id') id: string) {
     this.service.deleteMatsDataSubmission(id);
   }
 }

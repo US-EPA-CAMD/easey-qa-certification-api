@@ -1,4 +1,3 @@
-import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
 import {
   BaseEntity,
   Column,
@@ -17,14 +16,12 @@ export class MatsDataSubmissionPayloadFile extends BaseEntity {
 
   @PrimaryGeneratedColumn('increment', {
     name: 'mats_data_sub_payload_file_id',
+    type: 'bigint',
   })
-  id: number;
+  id: string; // TypeORM returns BIGINT as string because its value can exceed Number.MAX_SAFE_INTEGER
 
-  @Column({
-    name: 'mats_data_sub_id',
-    transformer: new NumericColumnTransformer(),
-  })
-  submissionId: number;
+  @Column({ name: 'mats_data_sub_id' })
+  submissionId: string;
 
   @Column({ name: 'mats_data_file_type_cd' })
   fileTypeCode: string;

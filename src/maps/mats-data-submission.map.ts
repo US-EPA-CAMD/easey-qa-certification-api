@@ -16,6 +16,7 @@ export class MatsDataSubmissionMap extends BaseMap<
       facilityId: entity.facility?.id ?? null,
       locationId: entity.location?.id ?? null,
       monitorPlanId: entity.plan?.id ?? null,
+      originalSubmissionId: entity.originalSubmissionId,
       pollutantCodes: entity.pollutants?.map(p => p.code) ?? [],
       quarter: entity.quarter,
       reportTypeCode: entity.reportType?.code ?? null,

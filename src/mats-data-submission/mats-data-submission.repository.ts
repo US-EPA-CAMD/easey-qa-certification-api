@@ -25,7 +25,7 @@ export class MatsDataSubmissionRepository extends Repository<
     super(MatsDataSubmission, entityManager);
   }
 
-  getMatsDataSubmission(id: number): Promise<MatsDataSubmission> {
+  getMatsDataSubmission(id: string): Promise<MatsDataSubmission> {
     return this.findOne({
       where: {
         id,

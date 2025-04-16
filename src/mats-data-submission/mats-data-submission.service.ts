@@ -35,7 +35,7 @@ export class MatsDataSubmissionService {
     this.logger.setContext(MatsDataSubmissionService.name);
   }
 
-  private createFilePath(fileName: string, submissionId: number) {
+  private createFilePath(fileName: string, submissionId: string) {
     return `${submissionId}/${fileName}`;
   }
 
@@ -43,7 +43,7 @@ export class MatsDataSubmissionService {
     payload: MatsDataSubmissionBaseDTO,
     userId: string,
     trx?: EntityManager,
-  ): Promise<number> {
+  ): Promise<string> {
     const repository = withTransaction(this.repository, trx);
 
     const record = repository.create({
@@ -75,7 +75,7 @@ export class MatsDataSubmissionService {
 
   private async createMatsDataSubmissionPayloadFile(
     file: Express.Multer.File | MetadataXmlFile,
-    submissionId: number,
+    submissionId: string,
     trx?: EntityManager,
     isErtFile: boolean = false,
   ) {
@@ -118,9 +118,9 @@ export class MatsDataSubmissionService {
 
   private async createMatsDataSubmissionPollutants(
     pollutantCodes: string[] = [],
-    submissionId: number,
+    submissionId: string,
     trx?: EntityManager,
-  ): Promise<number[]> {
+  ): Promise<string[]> {
     const repository = (trx ?? this.entityManager).getRepository(
       MatsDataSubmissionPollutant,
     );
@@ -138,9 +138,9 @@ export class MatsDataSubmissionService {
 
   private async createMatsDataSubmissionTestMethods(
     testMethodCodes: string[] = [],
-    submissionId: number,
+    submissionId: string,
     trx?: EntityManager,
-  ): Promise<number[]> {
+  ): Promise<string[]> {
     const repository = (trx ?? this.entityManager).getRepository(
       MatsDataSubmissionTestMethod,
     );
@@ -156,7 +156,7 @@ export class MatsDataSubmissionService {
     return records.map(record => record.id);
   }
 
-  async deleteMatsDataSubmission(submissionId: number) {
+  async deleteMatsDataSubmission(submissionId: string) {
     try {
       await this.entityManager.transaction(async (trx: EntityManager) => {
         await trx
@@ -184,7 +184,7 @@ export class MatsDataSubmissionService {
     }
   }
 
-  private async deleteSubmissionFiles(submissionId: number) {
+  private async deleteSubmissionFiles(submissionId: string) {
     const client = this.getS3Client();
     const bucket = this.getS3Bucket();
 
@@ -220,7 +220,7 @@ export class MatsDataSubmissionService {
   }
 
   async generateMetadataXml(
-    submissionId: number,
+    submissionId: string,
     trx?: EntityManager,
   ): Promise<MetadataXmlFile> {
     const record = await withTransaction(this.repository, trx).findOne({
@@ -247,10 +247,10 @@ export class MatsDataSubmissionService {
     const xmlData = {
       MatsTransitionMetadata: {
         SubmissionInfo: {
-          SubmissionId: record.id.toString(),
+          SubmissionId: record.id,
           SubmissionDate: record.addTime.toISOString(),
           IsResubmission: record.originalSubmissionId ? 'true' : 'false',
-          OriginalSubmissionId: record.originalSubmissionId?.toString(),
+          OriginalSubmissionId: record.originalSubmissionId,
         },
         CdxUser: record.userId,
         ReportTypeCode: record.reportTypeCode,
@@ -331,8 +331,8 @@ export class MatsDataSubmissionService {
     metadata: MatsDataSubmissionBaseDTO,
     files: MatsDataSubmissionFiles,
     userId: string,
-  ): Promise<number> {
-    let submissionId: number | null = null;
+  ): Promise<string> {
+    let submissionId: string | null = null;
 
     try {
       await this.entityManager.transaction(async (trx: EntityManager) => {
@@ -391,7 +391,7 @@ export class MatsDataSubmissionService {
 
   private async uploadFilesAndCreateRecords(
     files: { metadataXml: MetadataXmlFile } & MatsDataSubmissionFiles,
-    submissionId: number,
+    submissionId: string,
     trx?: EntityManager,
   ) {
     const client = this.getS3Client();

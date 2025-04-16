@@ -10,7 +10,6 @@ import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   IsArray,
   IsInt,
-  IsNumber,
   IsNumberString,
   IsOptional,
   IsString,
@@ -81,9 +80,9 @@ export class MatsDataSubmissionBaseDTO {
       propertyMetadata.matsDataSubmissionDTO.originalSubmissionId.fieldLabels
         .value,
   })
-  @IsNumber()
+  @IsNumberString()
   @IsOptional()
-  originalSubmissionId?: number;
+  originalSubmissionId?: string;
 
   @ApiProperty({
     description:
@@ -207,7 +206,7 @@ export class MatsDataSubmissionBaseDTO {
     example: propertyMetadata.matsDataSubmissionDTO.testNumber.example,
     name: propertyMetadata.matsDataSubmissionDTO.testNumber.fieldLabels.value,
   })
-  @IsNumberString()
+  @IsString()
   @IsOptionalIf(o => ['NOTIFY', 'CR', 'EMPM'].includes(o.reportTypeCode))
   testNumber?: string;
 
@@ -247,7 +246,7 @@ export class MatsDataSubmissionDTO extends MatsDataSubmissionBaseDTO {
     example: propertyMetadata.matsDataSubmissionDTO.id.example,
     name: propertyMetadata.matsDataSubmissionDTO.id.fieldLabels.value,
   })
-  id: number;
+  id: string;
 
   @ApiProperty({
     description: propertyMetadata.matsDataSubmissionDTO.addDate.description,

@@ -26,8 +26,11 @@ import { Plant } from './plant.entity';
 export class MatsDataSubmission extends BaseEntity {
   /* COLUMNS */
 
-  @PrimaryGeneratedColumn('increment', { name: 'mats_data_sub_id' })
-  id: number;
+  @PrimaryGeneratedColumn('increment', {
+    name: 'mats_data_sub_id',
+    type: 'bigint',
+  })
+  id: string; // TypeORM returns BIGINT as string because its value can exceed Number.MAX_SAFE_INTEGER
 
   @Column({ name: 'test_number' })
   testNumber: string;
@@ -51,7 +54,7 @@ export class MatsDataSubmission extends BaseEntity {
   averagingGroupCode: string;
 
   @Column({ name: 'original_sub_id' })
-  originalSubmissionId: number;
+  originalSubmissionId: string;
 
   @Column({ name: 'fac_id', transformer: new NumericColumnTransformer() })
   facilityId: number;
