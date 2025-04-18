@@ -384,13 +384,6 @@ export class MatsDataSubmissionService {
     const client = this.getS3Client();
     const bucket = this.getS3Bucket();
 
-    if (!bucket) {
-      throw new EaseyException(
-        new Error('Missing S3 bucket name'),
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-
     await settlePromises(
       Object.entries(files)
         // Map the array of entries to a single array of tuples.
