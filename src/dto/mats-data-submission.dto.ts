@@ -8,6 +8,9 @@ import {
 } from '@us-epa-camd/easey-common/pipes';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  Equals,
   IsArray,
   IsInt,
   IsNumberString,
@@ -24,7 +27,7 @@ import { MatsTestMethodCode } from '../entities/mats-test-method-code.entity';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
 import { MonitorLocation } from '../entities/monitor-location.entity';
 import { DoesNotContainUnreadableCharacters } from '../pipes/does-not-contain-unreadable-characters.pipe';
-import { IsOptionalIf } from '../pipes/is-optional-if.pipe';
+import { IsNullish } from '../pipes/is-nullish.pipe';
 
 const DATE_FORMAT = 'YYYY-MM-DD';
 const KEY = 'MATS Data Submission';
@@ -38,9 +41,33 @@ export class MatsDataSubmissionBaseDTO {
       propertyMetadata.matsDataSubmissionDTO.averagingGroupCode.fieldLabels
         .value,
   })
-  @IsValidCode(MatsAveragingGroupCode)
-  @IsString()
-  @IsOptionalIf(o => ['ACA', 'SVA', 'EMPM'].includes(o.reportTypeCode))
+  @IsValidCode(MatsAveragingGroupCode, {
+    groups: [
+      'LEED',
+      'LEEQ',
+      'PST',
+      'PS11',
+      'RATA',
+      'RCA',
+      'RRA',
+      'NOTIFY',
+      'CR',
+    ],
+  })
+  @IsString({
+    groups: [
+      'LEED',
+      'LEEQ',
+      'PST',
+      'PS11',
+      'RATA',
+      'RCA',
+      'RRA',
+      'NOTIFY',
+      'CR',
+    ],
+  })
+  @IsNullish({ groups: ['ACA', 'SVA', 'EMPM'] })
   averagingGroupCode?: string;
 
   @ApiProperty({
@@ -94,9 +121,12 @@ export class MatsDataSubmissionBaseDTO {
     type: String,
   })
   @IsValidCode(MatsPollutantCode, { each: true })
+  @Equals('FPM', { each: true, groups: ['ACA', 'SVA', 'EMPM'] })
+  @ArrayMaxSize(1, { groups: ['ACA', 'SVA', 'EMPM'] })
+  @ArrayMinSize(1, { groups: ['ACA', 'SVA', 'EMPM'] })
   @IsString({ each: true })
   @IsArray()
-  @IsOptionalIf(o => ['NOTIFY', 'CR'].includes(o.reportTypeCode))
+  @IsOptional({ groups: ['NOTIFY', 'CR'] })
   pollutantCodes: string[];
 
   @ApiProperty({
@@ -105,13 +135,14 @@ export class MatsDataSubmissionBaseDTO {
     name: propertyMetadata.quarter.fieldLabels.value,
   })
   @IsInRange(1, 4, {
+    groups: ['CR', 'EMPM'],
     message: (args: ValidationArguments) => {
       return `Quarter must be a number from 1 to 4. You reported an invalid quarter of [${args.value}] in [${KEY}] for [${args.property}].`;
     },
   })
-  @IsInt()
-  @IsOptionalIf(o =>
-    [
+  @IsInt({ groups: ['CR', 'EMPM'] })
+  @IsNullish({
+    groups: [
       'LEED',
       'LEEQ',
       'PST',
@@ -122,8 +153,8 @@ export class MatsDataSubmissionBaseDTO {
       'NOTIFY',
       'ACA',
       'SVA',
-    ].includes(o.reportTypeCode),
-  )
+    ],
+  })
   quarter?: number;
 
   @ApiProperty({
@@ -151,25 +182,8 @@ export class MatsDataSubmissionBaseDTO {
     example: propertyMetadata.matsDataSubmissionDTO.testComment.example,
     name: propertyMetadata.matsDataSubmissionDTO.testComment.fieldLabels.value,
   })
-  @DoesNotContainUnreadableCharacters()
-  @IsString()
-  @IsOptional()
-  testComment?: string;
-
-  @ApiProperty({
-    description: propertyMetadata.matsDataSubmissionDTO.testDate.description,
-    example: propertyMetadata.matsDataSubmissionDTO.testDate.example,
-    name: propertyMetadata.matsDataSubmissionDTO.testDate.fieldLabels.value,
-  })
-  @IsValidDate({
-    message: (args: ValidationArguments) => {
-      return CheckCatalogService.formatMessage(
-        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}].`,
-      );
-    },
-  })
-  @IsOptionalIf(o =>
-    [
+  @DoesNotContainUnreadableCharacters({
+    groups: [
       'LEED',
       'LEEQ',
       'PST',
@@ -179,9 +193,76 @@ export class MatsDataSubmissionBaseDTO {
       'RRA',
       'NOTIFY',
       'CR',
-      'EMPM',
-    ].includes(o.reportTypeCode),
-  )
+    ],
+  })
+  @IsString({
+    groups: [
+      'LEED',
+      'LEEQ',
+      'PST',
+      'PS11',
+      'RATA',
+      'RCA',
+      'RRA',
+      'NOTIFY',
+      'CR',
+    ],
+  })
+  @IsOptional({
+    groups: [
+      'LEED',
+      'LEEQ',
+      'PST',
+      'PS11',
+      'RATA',
+      'RCA',
+      'RRA',
+      'NOTIFY',
+      'CR',
+    ],
+  })
+  @IsNullish({ groups: ['ACA', 'SVA', 'EMPM'] })
+  testComment?: string;
+
+  @ApiProperty({
+    description: propertyMetadata.matsDataSubmissionDTO.testDate.description,
+    example: propertyMetadata.matsDataSubmissionDTO.testDate.example,
+    name: propertyMetadata.matsDataSubmissionDTO.testDate.fieldLabels.value,
+  })
+  @IsValidDate({
+    groups: [
+      'LEED',
+      'LEEQ',
+      'PST',
+      'PS11',
+      'RATA',
+      'RCA',
+      'RRA',
+      'NOTIFY',
+      'CR',
+      'ACA',
+      'SVA',
+    ],
+    message: (args: ValidationArguments) => {
+      return CheckCatalogService.formatMessage(
+        `[${args.property}] must be a valid date in the format of ${DATE_FORMAT}. You reported an invalid date of [${args.value}].`,
+      );
+    },
+  })
+  @IsOptional({
+    groups: [
+      'LEED',
+      'LEEQ',
+      'PST',
+      'PS11',
+      'RATA',
+      'RCA',
+      'RRA',
+      'NOTIFY',
+      'CR',
+    ],
+  })
+  @IsNullish({ groups: ['EMPM'] })
   testDate?: Date;
 
   @ApiProperty({
@@ -193,12 +274,55 @@ export class MatsDataSubmissionBaseDTO {
     isArray: true,
     type: String,
   })
-  @IsValidCode(MatsTestMethodCode, { each: true })
-  @IsString({ each: true })
-  @IsArray()
-  @IsOptionalIf(o =>
-    ['NOTIFY', 'CR', 'ACA', 'SVA', 'EMPM'].includes(o.reportTypeCode),
-  )
+  @IsValidCode(MatsTestMethodCode, {
+    each: true,
+    groups: [
+      'LEED',
+      'LEEQ',
+      'PST',
+      'PS11',
+      'RATA',
+      'RCA',
+      'RRA',
+      'NOTIFY',
+      'CR',
+      'ACA',
+      'SVA',
+    ],
+  })
+  @IsString({
+    each: true,
+    groups: [
+      'LEED',
+      'LEEQ',
+      'PST',
+      'PS11',
+      'RATA',
+      'RCA',
+      'RRA',
+      'NOTIFY',
+      'CR',
+      'ACA',
+      'SVA',
+    ],
+  })
+  @IsArray({
+    groups: [
+      'LEED',
+      'LEEQ',
+      'PST',
+      'PS11',
+      'RATA',
+      'RCA',
+      'RRA',
+      'NOTIFY',
+      'CR',
+      'ACA',
+      'SVA',
+    ],
+  })
+  @IsOptional({ groups: ['NOTIFY', 'CR', 'ACA', 'SVA'] })
+  @IsNullish({ groups: ['EMPM'] })
   testMethodCodes: string[];
 
   @ApiProperty({
@@ -206,8 +330,21 @@ export class MatsDataSubmissionBaseDTO {
     example: propertyMetadata.matsDataSubmissionDTO.testNumber.example,
     name: propertyMetadata.matsDataSubmissionDTO.testNumber.fieldLabels.value,
   })
-  @IsString()
-  @IsOptionalIf(o => ['NOTIFY', 'CR', 'EMPM'].includes(o.reportTypeCode))
+  @IsString({
+    groups: [
+      'LEED',
+      'LEEQ',
+      'PST',
+      'PS11',
+      'RATA',
+      'RCA',
+      'RRA',
+      'NOTIFY',
+      'CR',
+    ],
+  })
+  @IsOptional({ groups: ['NOTIFY', 'CR'] })
+  @IsNullish({ groups: ['EMPM'] })
   testNumber?: string;
 
   @ApiProperty({
@@ -216,15 +353,16 @@ export class MatsDataSubmissionBaseDTO {
     name: propertyMetadata.year.fieldLabels.value,
   })
   @IsInRange(1993, currentDateTime().getFullYear(), {
+    groups: ['CR', 'EMPM'],
     message: (args: ValidationArguments) => {
       return `Year must be greater than or equal to 1993 and less than or equal to ${currentDateTime().getFullYear()}. You reported an invalid year of [${
         args.value
       }] in [${KEY}] for [${args.property}].`;
     },
   })
-  @IsInt()
-  @IsOptionalIf(o =>
-    [
+  @IsInt({ groups: ['CR', 'EMPM'] })
+  @IsNullish({
+    groups: [
       'LEED',
       'LEEQ',
       'PST',
@@ -235,8 +373,8 @@ export class MatsDataSubmissionBaseDTO {
       'NOTIFY',
       'ACA',
       'SVA',
-    ].includes(o.reportTypeCode),
-  )
+    ],
+  })
   year?: number;
 }
 

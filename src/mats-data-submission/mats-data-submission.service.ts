@@ -158,21 +158,8 @@ export class MatsDataSubmissionService {
 
   async deleteMatsDataSubmission(submissionId: string) {
     try {
-      await this.entityManager.transaction(async (trx: EntityManager) => {
-        await trx
-          .getRepository(MatsDataSubmissionPayloadFile)
-          .delete({ submissionId });
-        await trx
-          .getRepository(MatsDataSubmissionTestMethod)
-          .delete({ submissionId });
-        await trx
-          .getRepository(MatsDataSubmissionPollutant)
-          .delete({ submissionId });
-        await trx
-          .getRepository(MatsDataSubmission)
-          .delete({ id: submissionId });
-        await this.deleteSubmissionFiles(submissionId);
-      });
+      await this.repository.delete(submissionId);
+      await this.deleteSubmissionFiles(submissionId);
     } catch (e) {
       throw new EaseyException(
         new Error(
@@ -257,7 +244,7 @@ export class MatsDataSubmissionService {
         OrisCode: record.facility.orisCode,
         FrsId: record.facility.frsId ?? '',
         LocationName:
-          record.location.stackPipe?.name ?? record.location.unit?.name,
+          record.location.stackPipe?.name ?? record.location.unit?.name ?? null,
         AveragingGroupCode: record.averagingGroupCode,
         PollutantList: {
           PollutantCode: record.pollutants.map(p => p.metadataPollutantCode),
@@ -266,7 +253,7 @@ export class MatsDataSubmissionService {
           TestMethodCode: record.testMethods.map(tm => tm.code),
         },
         TestNumber: record.testNumber,
-        TestDate: record.testDate.toISOString().substring(0, 10),
+        TestDate: record.testDate?.toISOString().substring(0, 10) ?? null,
         TestComment: record.testComment,
       },
     };

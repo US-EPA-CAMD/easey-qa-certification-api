@@ -92,8 +92,10 @@ export class MatsDataSubmissionChecksService {
     const errors: string[] = [];
 
     // Validate the DTO.
-    const dtoErrors = await validate(metadata);
-    errors.push(...dtoErrors.map(e => e.toString()));
+    const dtoErrors = await validate(metadata, {
+      groups: [metadata.reportTypeCode],
+    });
+    errors.push(...dtoErrors.map(e => Object.values(e.constraints)).flat());
 
     // Throw immediately if initial validation fails.
     throwIfErrors(errors, { asArray: true });
@@ -291,10 +293,25 @@ export class MatsDataSubmissionChecksService {
       ertFileCheck();
       supportingFilesCheck();
     }
-    if (reportType.code === 'NOTIFY' && !supportingFiles?.length) {
-      // A supporting PDF file OR (ERT file & at least one supporting file) are required.
-      ertFileCheck();
-      supportingFilesCheck();
+    if (reportType.code === 'NOTIFY') {
+      // A payload PDF file OR (ERT file & at least one supporting file) are required.
+      let hasRequiredFiles = true;
+      if (payloadFile) {
+        if (payloadFile.mimetype !== 'application/pdf') {
+          hasRequiredFiles = false;
+        }
+      } else if (!ertFile || !supportingFiles?.length) {
+        hasRequiredFiles = false;
+      }
+      if (!hasRequiredFiles) {
+        errors.push(
+          `Report Type [${
+            reportType.description
+          }] requires one [${fileTypes.find(ft => ft.code === 'PDF')
+            ?.description ??
+            'PDF'}] file or an ERT file and at least one supporting file.`,
+        );
+      }
     }
     if (['ACA', 'EMPM', 'SVA'].includes(reportType.code)) {
       // A payload file is required.

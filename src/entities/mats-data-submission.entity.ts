@@ -8,7 +8,6 @@ import {
   ManyToMany,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -99,7 +98,7 @@ export class MatsDataSubmission extends BaseEntity {
   @JoinColumn({ name: 'mats_status_cd' })
   status: MatsStatusCode;
 
-  @OneToOne(() => MatsDataSubmission)
+  @ManyToOne(() => MatsDataSubmission)
   @JoinColumn({ name: 'original_sub_id' })
   originalSubmission: MatsDataSubmission;
 

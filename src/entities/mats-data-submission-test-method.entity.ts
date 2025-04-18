@@ -25,7 +25,7 @@ export class MatsDataSubmissionTestMethod extends BaseEntity {
   testMethodCode: string;
 
   @ManyToOne(() => MatsDataSubmission)
-  @JoinColumn({ name: 'mats_data_submission_id' })
+  @JoinColumn({ name: 'mats_data_sub_id' })
   submission: MatsDataSubmission;
 
   @ManyToOne(() => MatsTestMethodCode)
