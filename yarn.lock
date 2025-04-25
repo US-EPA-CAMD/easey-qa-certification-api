@@ -1417,7 +1417,7 @@
     webpack "5.99.6"
     webpack-node-externals "3.0.0"
 
-"@nestjs/common@^11.0.14", "@nestjs/common@^11.0.16":
+"@nestjs/common@^11.0.16":
   version "11.1.0"
   resolved "https://registry.yarnpkg.com/@nestjs/common/-/common-11.1.0.tgz#505baa190adc3a2efbf91ff9e5a41f34da21bd7d"
   integrity sha512-8MrajltjtIN6eW9cTpv+1IZogqz2Zsrc8YDt0LwQPUq8cSq0j50DETdQpPsNMeib+p9avkV41+NrzGk1z2o5Wg==
@@ -2450,14 +2450,14 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.3.0.tgz#d06bbb384ebcf6c505fde1c3d0ed4ddffe0aaff8"
   integrity sha512-WmoN8qaIAo7WTYWbAZuG8PYEhn5fkz7dZrqTBZ7dtt//lL2Gwms1IcnQ5yHqjDfX8Ft5j4YzDM23f87zBfDe9g==
 
-"@us-epa-camd/easey-common@21.0.0":
-  version "21.0.0"
-  resolved "https://npm.pkg.github.com/download/@US-EPA-CAMD/easey-common/21.0.0/98afc8e0820f6694fad1f98bedb9aafb6c303c23#98afc8e0820f6694fad1f98bedb9aafb6c303c23"
-  integrity sha512-BQKvt9kwabb3BlvLfg10YtjLXmtgmil8A4MMctp44IEfIwGDkbBQC3M5irdYOiyXbPH3IFllDJwKbCe2vaFxvg==
+"@us-epa-camd/easey-common@21.1.0":
+  version "21.1.0"
+  resolved "https://npm.pkg.github.com/download/@US-EPA-CAMD/easey-common/21.1.0/03da6a7b9becf2f980a7b3e59b775cb6f7bb9cba#03da6a7b9becf2f980a7b3e59b775cb6f7bb9cba"
+  integrity sha512-+xEiXIKIsWltw4My4kAuRCLNgA2mg8FQwqtjUCLyYzgbhyuYxuPGcLirxE2P7S05WGXMqk2iMwWeKKCnapAL3w==
   dependencies:
     "@golevelup/ts-jest" "^0.3.4"
     "@nestjs/axios" "4.0.0"
-    "@nestjs/common" "^11.0.14"
+    "@nestjs/common" "^11.0.16"
     "@nestjs/config" "^4.0.2"
     "@nestjs/core" "^11.0.14"
     "@nestjs/swagger" "^11.1.1"
