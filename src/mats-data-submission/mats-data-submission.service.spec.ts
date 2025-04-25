@@ -24,12 +24,12 @@ function createMockSubmission() {
   entity.averagingGroupCode = 'AGC';
   entity.facility = new Plant();
   entity.facilityId = 10;
-  entity.id = 2;
+  entity.id = '2';
   entity.location = new MonitorLocation();
   entity.locationId = '12345';
   entity.monitorPlanId = '12345';
   entity.statusCode = 'NEW';
-  entity.originalSubmissionId = 1;
+  entity.originalSubmissionId = '1';
   entity.pollutants = [pollutant];
   entity.quarter = 1;
   entity.reportTypeCode = 'RPT';
@@ -46,7 +46,7 @@ function createMockSubmission() {
 const mockEntity = createMockSubmission();
 const mockEntityManager = {
   transaction: jest.fn(
-    async passedFunction => await passedFunction(mockEntityManager),
+    async (passedFunction) => await passedFunction(mockEntityManager),
   ),
 };
 const mockRepository = () => ({

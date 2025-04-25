@@ -4,7 +4,6 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { EntityManager } from 'typeorm';
 
 import { MatsDataSubmissionBaseDTO } from '../dto/mats-data-submission.dto';
-import { MatsPollutantCode } from '../entities/mats-pollutant-code.entity';
 import { MatsReportTypeCode } from '../entities/mats-report-type-code.entity';
 import { MatsDataSubmissionFiles } from '../interfaces/mats-data-submission-files';
 import { MatsDataSubmissionMap } from '../maps/mats-data-submission.map';
@@ -27,7 +26,7 @@ const mockPayload: MatsDataSubmissionBaseDTO = {
   testMethodCodes: ['2A'],
   year: 2025,
   quarter: 1,
-  originalSubmissionId: 2,
+  originalSubmissionId: '2',
   facilityId: 8470,
   monitorPlanId: 'SDM4661-9D60966839D048AD989BDD49DB09CC80',
   statusCode: 'NEW',

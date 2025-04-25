@@ -60,17 +60,17 @@ describe('MatsDataSubmissionController', () => {
   describe('deleteMatsDataSubmission', () => {
     it('should call the service to delete a submission', async () => {
       service.deleteMatsDataSubmission = jest.fn().mockResolvedValue(undefined);
-      await controller.deleteMatsDataSubmission(1);
-      expect(service.deleteMatsDataSubmission).toHaveBeenCalledWith(1);
+      await controller.deleteMatsDataSubmission('1');
+      expect(service.deleteMatsDataSubmission).toHaveBeenCalledWith('1');
     });
   });
 
   describe('initializeMatsDataSubmission', () => {
     it('should call the service to create a new submission', async () => {
       checksService.runChecks = jest.fn().mockResolvedValue([]);
-      service.initializeMatsDataSubmission = jest.fn().mockResolvedValue(1);
+      service.initializeMatsDataSubmission = jest.fn().mockResolvedValue('1');
       const res = await controller.initializeMatsDataSubmission('{}', {}, user);
-      expect(res).toEqual({ warnings: [], id: 1 });
+      expect(res).toEqual({ warnings: [], id: '1' });
     });
   });
 });
