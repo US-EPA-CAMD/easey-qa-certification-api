@@ -17,7 +17,6 @@ import { XMLBuilder } from 'fast-xml-parser';
 import { EntityManager } from 'typeorm';
 
 import { MatsDataSubmissionBaseDTO } from '../dto/mats-data-submission.dto';
-import { MatsDataSubmission } from '../entities/mats-data-submission.entity';
 import { MatsDataSubmissionPayloadFile } from '../entities/mats-data-submission-payload-file.entity';
 import { MatsDataSubmissionPollutant } from '../entities/mats-data-submission-pollutant.entity';
 import { MatsDataSubmissionTestMethod } from '../entities/mats-data-submission-test-method.entity';
@@ -117,7 +116,7 @@ export class MatsDataSubmissionService {
   }
 
   private async createMatsDataSubmissionPollutants(
-    pollutantCodes: string[] = [],
+    pollutantCodes: string[],
     submissionId: string,
     trx?: EntityManager,
   ): Promise<string[]> {
@@ -137,7 +136,7 @@ export class MatsDataSubmissionService {
   }
 
   private async createMatsDataSubmissionTestMethods(
-    testMethodCodes: string[] = [],
+    testMethodCodes: string[],
     submissionId: string,
     trx?: EntityManager,
   ): Promise<string[]> {
@@ -332,12 +331,12 @@ export class MatsDataSubmissionService {
 
         // Create child MATS_DATA_SUBMISSION_POLLUTANT & MATS_DATA_SUBMISSION_TEST_METHOD records.
         await this.createMatsDataSubmissionPollutants(
-          metadata.pollutantCodes,
+          metadata.pollutantCodes ?? [],
           submissionId,
           trx,
         );
         await this.createMatsDataSubmissionTestMethods(
-          metadata.testMethodCodes,
+          metadata.testMethodCodes ?? [],
           submissionId,
           trx,
         );

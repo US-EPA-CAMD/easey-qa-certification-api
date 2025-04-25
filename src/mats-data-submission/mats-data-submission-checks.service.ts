@@ -39,18 +39,18 @@ export class MatsDataSubmissionChecksService {
         HAVING BOOL_OR(mats_test_meth_cd = ANY($2)) = false;
     `,
         [
-          selectedPollutants.map(p => p.code),
-          selectedTestMethods.map(tm => tm.code),
+          selectedPollutants.map((p) => p.code),
+          selectedTestMethods.map((tm) => tm.code),
         ],
       )
     ).map(({ code }) => code);
 
     return invalidPollutantCodes.map((code: string) => {
-      const pollutant = selectedPollutants.find(p => p.code === code);
+      const pollutant = selectedPollutants.find((p) => p.code === code);
       return `Pollutant [${pollutant.description}] requires ${
         pollutant.testMethods.length > 1 ? 'at least one' : 'a'
       } [${pollutant.testMethods
-        .map(tm => tm.description)
+        .map((tm) => tm.description)
         .join(' OR ')}] Test Method.`;
     });
   }
@@ -75,7 +75,7 @@ export class MatsDataSubmissionChecksService {
 
     // Verify each selected pollutant code is valid for the selected report type.
     return selectedPollutants.reduce((acc, sp) => {
-      if (!acceptedPollutants.some(ap => ap.code === sp.code)) {
+      if (!acceptedPollutants.some((ap) => ap.code === sp.code)) {
         return [
           ...acc,
           `Pollutant [${sp.description}] is not appropriate for Report Type [${reportType.description}].`,
@@ -95,7 +95,7 @@ export class MatsDataSubmissionChecksService {
     const dtoErrors = await validate(metadata, {
       groups: [metadata.reportTypeCode],
     });
-    errors.push(...dtoErrors.map(e => Object.values(e.constraints)).flat());
+    errors.push(...dtoErrors.map((e) => Object.values(e.constraints)).flat());
 
     // Throw immediately if initial validation fails.
     throwIfErrors(errors, { asArray: true });
@@ -112,40 +112,37 @@ export class MatsDataSubmissionChecksService {
     }
 
     // Get the report type and selected pollutant/test method records.
-    const [
-      reportType,
-      selectedPollutants,
-      selectedTestMethods,
-    ] = await Promise.all([
-      this.entityManager.findOne(MatsReportTypeCode, {
-        where: {
-          code: metadata.reportTypeCode,
-        },
-        relations: {
-          pollutants: true,
-        },
-      }),
-      metadata.pollutantCodes?.length
-        ? this.entityManager.find(MatsPollutantCode, {
-            where: {
-              code: In(metadata.pollutantCodes),
-            },
-            relations: {
-              testMethods: true,
-            },
-          })
-        : ([] as MatsPollutantCode[]),
-      metadata.testMethodCodes?.length
-        ? this.entityManager.find(MatsTestMethodCode, {
-            where: {
-              code: In(metadata.testMethodCodes),
-            },
-            relations: {
-              pollutants: true,
-            },
-          })
-        : [],
-    ]);
+    const [reportType, selectedPollutants, selectedTestMethods] =
+      await Promise.all([
+        this.entityManager.findOne(MatsReportTypeCode, {
+          where: {
+            code: metadata.reportTypeCode,
+          },
+          relations: {
+            pollutants: true,
+          },
+        }),
+        metadata.pollutantCodes?.length
+          ? this.entityManager.find(MatsPollutantCode, {
+              where: {
+                code: In(metadata.pollutantCodes),
+              },
+              relations: {
+                testMethods: true,
+              },
+            })
+          : ([] as MatsPollutantCode[]),
+        metadata.testMethodCodes?.length
+          ? this.entityManager.find(MatsTestMethodCode, {
+              where: {
+                code: In(metadata.testMethodCodes),
+              },
+              relations: {
+                pollutants: true,
+              },
+            })
+          : [],
+      ]);
 
     // Verify at least one pollutant is selected if the report type requires it.
     if (reportType.requiresPollutant && !selectedPollutants.length) {
@@ -193,7 +190,7 @@ export class MatsDataSubmissionChecksService {
 
     // Verify each selected test method code is matched to a valid pollutant code.
     await Promise.all(
-      selectedTestMethods.map(async tm => {
+      selectedTestMethods.map(async (tm) => {
         const validMatch = (
           await this.entityManager.query(
             `
@@ -203,7 +200,7 @@ export class MatsDataSubmissionChecksService {
               AND (mats_pollutant_cd IS NULL OR mats_pollutant_cd = ANY($2))
             LIMIT 1
           `,
-            [tm.code, selectedPollutants.map(p => p.code)],
+            [tm.code, selectedPollutants.map((p) => p.code)],
           )
         ).pop();
         if (!validMatch) {
@@ -224,9 +221,97 @@ export class MatsDataSubmissionChecksService {
     const errors: string[] = [];
     const warnings: string[] = [];
 
+    errors.push(...this.validateFileMimetypes(files));
+
+    const attachmentErrors = await this.validateFileAttachments(
+      files,
+      reportType,
+    );
+
+    if (reportType.enforceAttachmentRules) {
+      errors.push(...attachmentErrors);
+    } else {
+      warnings.push(...attachmentErrors);
+    }
+
+    throwIfErrors(errors, { asArray: true });
+
+    return warnings;
+  }
+
+  private async validateFileAttachments(
+    files: MatsDataSubmissionFiles,
+    reportType: MatsReportTypeCode,
+  ) {
+    const errors: string[] = [];
+
     const { ertFile, payloadFile, supportingFiles } = files;
 
-    /* MIMETYPES */
+    const fileTypes = await this.entityManager.find(MatsFileTypeCode);
+    const ertFileCheck = () => {
+      if (!ertFile) {
+        errors.push(
+          `Report Type [${reportType.description}] requires one [${
+            fileTypes.find((ft) => ft.code === 'ERT')?.description ?? 'ERT'
+          }] file.`,
+        );
+      }
+    };
+    const supportingFilesCheck = () => {
+      if (!supportingFiles?.length) {
+        errors.push(
+          `Report Type [${reportType.description}] requires one or more [${
+            fileTypes.find((ft) => ft.code === 'PDF')?.description ?? 'PDF'
+          }] file(s).`,
+        );
+      }
+    };
+    if (
+      ['CR', 'LEED', 'LEEQ', 'PS11', 'PST', 'RATA', 'RRA', 'RCA'].includes(
+        reportType.code,
+      )
+    ) {
+      // An ERT file & at least one supporting file are required.
+      ertFileCheck();
+      supportingFilesCheck();
+    }
+    if (reportType.code === 'NOTIFY') {
+      // A payload PDF file OR (ERT file & at least one supporting file) are required.
+      let hasRequiredFiles = true;
+      if (payloadFile) {
+        if (payloadFile.mimetype !== 'application/pdf') {
+          hasRequiredFiles = false;
+        }
+      } else if (!ertFile || !supportingFiles?.length) {
+        hasRequiredFiles = false;
+      }
+      if (!hasRequiredFiles) {
+        errors.push(
+          `Report Type [${reportType.description}] requires one [${
+            fileTypes.find((ft) => ft.code === 'PDF')?.description ?? 'PDF'
+          }] file or an ERT file and at least one supporting file.`,
+        );
+      }
+    }
+    if (['ACA', 'EMPM', 'SVA'].includes(reportType.code)) {
+      // A payload file is required.
+      if (!payloadFile) {
+        errors.push(
+          `Report Type [${reportType.description}] requires one [${fileTypes
+            .filter((ft) => ['PDF', 'XML', 'JSON'].includes(ft.code))
+            .map((ft) => ft.description)
+            .join(' OR ')}] file.`,
+        );
+      }
+    }
+
+    return errors;
+  }
+
+  private validateFileMimetypes(files: MatsDataSubmissionFiles) {
+    const errors: string[] = [];
+
+    const { ertFile, payloadFile, supportingFiles } = files;
 
     // ERT file must be XML.
     if (ertFile && ertFile?.mimetype !== 'text/xml') {
@@ -252,85 +337,15 @@ export class MatsDataSubmissionChecksService {
     // Supporting files must be PDF.
     if (
       supportingFiles &&
-      !supportingFiles.every(file => file.mimetype === 'application/pdf')
+      !supportingFiles.every((file) => file.mimetype === 'application/pdf')
     ) {
       errors.push(
         `Expected Supporting files to be of type PDF, but got ${supportingFiles
-          .map(file => file.mimetype)
+          .map((file) => file.mimetype)
           .join(', ')}`,
       );
     }
 
-    /* ATTACHMENT RULES */
-
-    const fileTypes = await this.entityManager.find(MatsFileTypeCode);
-    const ertFileCheck = () => {
-      if (!ertFile) {
-        errors.push(
-          `Report Type [${
-            reportType.description
-          }] requires one [${fileTypes.find(ft => ft.code === 'ERT')
-            ?.description ?? 'ERT'}] file.`,
-        );
-      }
-    };
-    const supportingFilesCheck = () => {
-      if (!supportingFiles?.length) {
-        errors.push(
-          `Report Type [${
-            reportType.description
-          }] requires one or more [${fileTypes.find(ft => ft.code === 'PDF')
-            ?.description ?? 'PDF'}] file(s).`,
-        );
-      }
-    };
-    if (
-      ['CR', 'LEED', 'LEEQ', 'PS11', 'PST', 'RATA', 'RRA', 'RCA'].includes(
-        reportType.code,
-      )
-    ) {
-      // An ERT file & at least one supporting file are required.
-      ertFileCheck();
-      supportingFilesCheck();
-    }
-    if (reportType.code === 'NOTIFY') {
-      // A payload PDF file OR (ERT file & at least one supporting file) are required.
-      let hasRequiredFiles = true;
-      if (payloadFile) {
-        if (payloadFile.mimetype !== 'application/pdf') {
-          hasRequiredFiles = false;
-        }
-      } else if (!ertFile || !supportingFiles?.length) {
-        hasRequiredFiles = false;
-      }
-      if (!hasRequiredFiles) {
-        errors.push(
-          `Report Type [${
-            reportType.description
-          }] requires one [${fileTypes.find(ft => ft.code === 'PDF')
-            ?.description ??
-            'PDF'}] file or an ERT file and at least one supporting file.`,
-        );
-      }
-    }
-    if (['ACA', 'EMPM', 'SVA'].includes(reportType.code)) {
-      // A payload file is required.
-      if (!payloadFile) {
-        errors.push(
-          `Report Type [${reportType.description}] requires one [${fileTypes
-            .filter(ft => ['PDF', 'XML', 'JSON'].includes(ft.code))
-            .map(ft => ft.description)
-            .join(' OR ')}] file.`,
-        );
-      }
-    }
-
-    if (reportType.enforceAttachmentRules) {
-      errors.push(...warnings);
-    }
-
-    throwIfErrors(errors, { asArray: true });
-
-    return warnings;
+    return errors;
   }
 }
