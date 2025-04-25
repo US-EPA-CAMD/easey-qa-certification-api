@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { DataSource, EntityManager } from 'typeorm';
 
 import {
@@ -56,7 +57,7 @@ describe('Linearity Injection Controller', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [LinearityInjectionWorkspaceController],
       providers: [
         ConfigService,
@@ -86,7 +87,7 @@ describe('Linearity Injection Controller', () => {
   describe('getInjections', () => {
     it('should get Linearity injection records by Linearity Summary Id', async () => {
       const result = await controller.getInjections(locId, testSumId, linSumId);
-      expect(result).toEqual([linInjDto]);
+      expect(result).toEqual({ items:[linInjDto]});
     });
   });
 

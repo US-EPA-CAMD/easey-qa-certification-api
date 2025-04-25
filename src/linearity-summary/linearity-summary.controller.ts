@@ -4,6 +4,7 @@ import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { LinearitySummaryRecordDTO } from '../dto/linearity-summary.dto';
 import { LinearitySummaryService } from './linearity-summary.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -21,8 +22,12 @@ export class LinearitySummaryController {
   async getLinearitySummaries(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<LinearitySummaryRecordDTO[]> {
-    return this.service.getSummariesByTestSumId(testSumId);
+  ): Promise<ArrayResponse<LinearitySummaryRecordDTO>> {
+    const summaryDTOS =  await this.service.getSummariesByTestSumId(testSumId);
+
+    return  {
+      items: summaryDTOS
+    };
   }
 
   @Get(':id')

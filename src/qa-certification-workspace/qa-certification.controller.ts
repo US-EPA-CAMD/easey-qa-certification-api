@@ -8,7 +8,7 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -32,10 +32,13 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
 import { ReviewAndSubmitMultipleParamsMatsDTO } from '../dto/review-and-submit-multiple-params-mats.dto';
 import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('QA Certification')
+@ApiExcludeControllerByEnv()
 export class QACertificationWorkspaceController {
   constructor(
     private readonly service: QACertificationWorkspaceService,
@@ -86,6 +89,10 @@ export class QACertificationWorkspaceController {
     },
     LookupType.Facility,
   )
+  @AuditLog({
+    label: 'Exported workspace QA Certification records',
+    requestQueryOutFields: '*'
+  })
   async export(
     @Query() params: QACertificationParamsDTO,
   ): Promise<QACertificationDTO> {
@@ -110,6 +117,10 @@ export class QACertificationWorkspaceController {
     type: QACertificationDTO,
     description:
       'Imports QA Certification data from JSON file into the workspace',
+  })
+  @AuditLog({
+    label: 'Imported workspace QA Certification records',
+    requestBodyOutFields: ['orisCode', 'testSummaryData.testNumber']
   })
   async import(
     @Body() payload: QACertificationImportDTO,
@@ -156,14 +167,19 @@ export class QACertificationWorkspaceController {
     },
     LookupType.Facility,
   )
+  @AuditLog({
+    label: 'Retrieved workspace certification event records',
+    requestQueryOutFields: ['orisCodes', 'monPlanIds', 'quarters']
+  })
   async getFilteredCerts(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
-  ): Promise<CertEventReviewAndSubmitDTO[]> {
-    return this.reviewSubmitServiceCert.getCertEventRecords(
+  ): Promise<ArrayResponse<CertEventReviewAndSubmitDTO>> {
+    const certEventRecords = await this.reviewSubmitServiceCert.getCertEventRecords(
       dto.orisCodes,
       dto.monPlanIds,
-      dto.quarters,
+      dto.quarters
     );
+    return { items: certEventRecords };
   }
 
   @Get('test-summary')
@@ -200,14 +216,19 @@ export class QACertificationWorkspaceController {
     },
     LookupType.Facility,
   )
+  @AuditLog({
+    label: 'Retrieved workspace test summary records',
+    requestQueryOutFields: ['orisCodes', 'monPlanIds', 'quarters']
+  })
   async getFilteredTestSums(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
-  ): Promise<ReviewAndSubmitTestSummaryDTO[]> {
-    return this.reviewSubmitServiceTestSum.getTestSummaryRecords(
+  ): Promise<ArrayResponse<ReviewAndSubmitTestSummaryDTO>> {
+    const testSummaryRecords = await this.reviewSubmitServiceTestSum.getTestSummaryRecords(
       dto.orisCodes,
       dto.monPlanIds,
-      dto.quarters,
+      dto.quarters
     );
+    return { items: testSummaryRecords };
   }
 
   @Get('test-extension-exemption')
@@ -244,14 +265,19 @@ export class QACertificationWorkspaceController {
     },
     LookupType.Facility,
   )
+  @AuditLog({
+    label: 'Retrieved test extension exemption records',
+    requestQueryOutFields: ['orisCodes', 'monPlanIds', 'quarters']
+  })
   async getFilteredTee(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
-  ): Promise<TeeReviewAndSubmitDTO[]> {
-    return this.reviewSubmitServiceTee.getTeeRecords(
+  ): Promise<ArrayResponse<TeeReviewAndSubmitDTO>> {
+    const teeRecords = await this.reviewSubmitServiceTee.getTeeRecords(
       dto.orisCodes,
       dto.monPlanIds,
-      dto.quarters,
+      dto.quarters
     );
+    return { items: teeRecords };
   }
 
   @Get('mats-bulk-file')
@@ -282,12 +308,17 @@ export class QACertificationWorkspaceController {
     },
     LookupType.Facility,
   )
+  @AuditLog({
+    label: 'Retrieved MATS bulk file records',
+    requestQueryOutFields: ['orisCodes', 'monPlanIds']
+  })
   async getFilteredMatsBulkFile(
     @Query() dto: ReviewAndSubmitMultipleParamsMatsDTO,
-  ): Promise<MatsBulkFileDTO[]> {
-    return this.reviewSubmitServiceMats.getMatsBulkFileRecords(
+  ): Promise<ArrayResponse<MatsBulkFileDTO>> {
+    const matsBulkFileRecords = await this.reviewSubmitServiceMats.getMatsBulkFileRecords(
       dto.orisCodes,
-      dto.monPlanIds,
+      dto.monPlanIds
     );
+    return { items: matsBulkFileRecords };
   }
 }

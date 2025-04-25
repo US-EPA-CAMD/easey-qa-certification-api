@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { DataSource } from 'typeorm';
 
 import {
@@ -41,7 +42,7 @@ describe('FuelFlowToLoadTestWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [FuelFlowToLoadTestWorkspaceController],
       providers: [
         ConfigService,
@@ -65,7 +66,7 @@ describe('FuelFlowToLoadTestWorkspaceController', () => {
   describe('getFuelFlowToLoadTests', () => {
     it('Calls the repository to get all Fuel Flow To Load Test records by Test Summary Id', async () => {
       const result = await controller.getFuelFlowToLoadTests(locId, testSumId);
-      expect(result).toEqual(fuelFlowToLoadTests);
+      expect(result).toEqual( { items: fuelFlowToLoadTests });
     });
   });
 

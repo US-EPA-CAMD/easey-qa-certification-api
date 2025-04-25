@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { EntityManager } from 'typeorm';
 import { DataSource } from 'typeorm';
 
@@ -57,7 +58,7 @@ describe('Test Summary Controller', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [TestSummaryWorkspaceController],
       providers: [
         ConfigService,
@@ -103,7 +104,7 @@ describe('Test Summary Controller', () => {
     it('should call the TestSummaryWorkspaceService.getTestSummariesByLocationId', async () => {
       const spyService = jest.spyOn(service, 'getTestSummariesByLocationId');
       const result = await controller.getTestSummaries('1', {});
-      expect(result).toEqual([testSummaryDto]);
+      expect(result).toEqual({ items: [testSummaryDto]} );
       expect(spyService).toHaveBeenCalled();
     });
   });

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { DataSource } from 'typeorm';
 
 import {
@@ -40,7 +41,7 @@ describe('FuelFlowToLoadBaselineWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [FuelFlowToLoadBaselineWorkspaceController],
       providers: [
         ConfigService,
@@ -78,7 +79,7 @@ describe('FuelFlowToLoadBaselineWorkspaceController', () => {
         locId,
         testSumId,
       );
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items:[dto]});
     });
   });
 

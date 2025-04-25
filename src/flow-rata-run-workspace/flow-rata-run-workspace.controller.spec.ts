@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { DataSource } from 'typeorm';
 
 import { FlowRataRunBaseDTO, FlowRataRunDTO } from '../dto/flow-rata-run.dto';
@@ -60,7 +61,7 @@ describe('FlowRataRunWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [FlowRataRunWorkspaceController],
       providers: [
         ConfigService,
@@ -112,7 +113,7 @@ describe('FlowRataRunWorkspaceController', () => {
         rataSumId,
         rataRunId,
       );
-      expect(result).toEqual(flowRataRuns);
+      expect(result).toEqual({ items: flowRataRuns} );
       expect(service.getFlowRataRuns).toHaveBeenCalled();
     });
   });

@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { CycleTimeInjectionRecordDTO } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjectionService } from './cycle-time-injection.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -20,8 +21,12 @@ export class CycleTimeInjectionController {
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('cycleTimeSumId') cycleTimeSumId: string,
-  ): Promise<CycleTimeInjectionRecordDTO[]> {
-    return this.service.getCycleTimeInjectionsByCycleTimeSumId(cycleTimeSumId);
+  ): Promise<ArrayResponse<CycleTimeInjectionRecordDTO>> {
+    const cycleTimeInjectionDTOS =  await this.service.getCycleTimeInjectionsByCycleTimeSumId(cycleTimeSumId);
+
+    return  {
+      items: cycleTimeInjectionDTOS
+    };
   }
 
   @Get(':id')

@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { DataSource } from 'typeorm';
 
 import {
@@ -40,7 +41,7 @@ describe('UnitDefaultTestWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [UnitDefaultTestWorkspaceController],
       providers: [
         ConfigService,
@@ -71,7 +72,7 @@ describe('UnitDefaultTestWorkspaceController', () => {
   describe('getUnitDefaultTests', () => {
     it('Calls the service to many Unit Default Test records', async () => {
       const result = await controller.getUnitDefaultTests(locId, testSumId);
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items:[dto] });
     });
   });
 

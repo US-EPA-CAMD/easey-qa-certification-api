@@ -8,12 +8,11 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -22,15 +21,18 @@ import {
 } from '../dto/rata-traverse.dto';
 import { RataTraverseChecksService } from './rata-traverse-checks.service';
 import { RataTraverseWorkspaceService } from './rata-traverse-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Rata Traverse')
+@ApiExcludeControllerByEnv()
 export class RataTraverseWorkspaceController {
   constructor(
     private readonly service: RataTraverseWorkspaceService,
     private readonly checksService: RataTraverseChecksService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -47,6 +49,10 @@ export class RataTraverseWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved RATA traverse records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'rataId', 'rataSumId', 'rataRunId', 'flowRataRunId']
+  })
   async getRataTraverses(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -54,8 +60,12 @@ export class RataTraverseWorkspaceController {
     @Param('rataSumId') _rataSumId: string,
     @Param('rataRunId') _rataRunId: string,
     @Param('flowRataRunId') flowRataRunId: string,
-  ): Promise<RataTraverseRecordDTO[]> {
-    return this.service.getRataTraverses(flowRataRunId);
+  ): Promise<ArrayResponse<RataTraverseRecordDTO>> {
+    const rataTraverseRecordDTOS =  await  this.service.getRataTraverses(flowRataRunId);
+
+    return  {
+      items: rataTraverseRecordDTOS
+    };
   }
 
   @Get(':id')
@@ -72,6 +82,10 @@ export class RataTraverseWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved RATA traverse record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'rataId', 'rataSumId', 'rataRunId', 'flowRataRunId', 'id']
+  })
   async getRataTraverse(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -96,6 +110,11 @@ export class RataTraverseWorkspaceController {
   @ApiCreatedResponse({
     type: RataTraverseRecordDTO,
     description: 'Creates a workspace RATA Traverse record.',
+  })
+  @AuditLog({
+    label: 'Created RATA traverse record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'rataId', 'rataSumId', 'rataRunId', 'flowRataRunId'],
+    responseBodyOutFields: '*'
   })
   async createRataTraverse(
     @Param('locId') _locationId: string,
@@ -139,6 +158,11 @@ export class RataTraverseWorkspaceController {
     type: RataTraverseRecordDTO,
     description: 'Updates a RATA Traverse record in the workspace',
   })
+  @AuditLog({
+    label: 'Updated RATA traverse record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'rataId', 'rataSumId', 'rataRunId', 'flowRataRunId' ,'id'],
+    responseBodyOutFields: '*'
+  })
   async updateRataRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -175,6 +199,10 @@ export class RataTraverseWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a RATA Traverse record from the workspace',
+  })
+  @AuditLog({
+    label: 'Deleted RATA traverse record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'rataId', 'rataSumId', 'rataRunId', 'flowRataRunId' ,'id']
   })
   deleteRataRun(
     @Param('locId') _locationId: string,

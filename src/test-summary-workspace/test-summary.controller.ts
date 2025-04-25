@@ -17,7 +17,7 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -29,10 +29,13 @@ import { TestSummaryParamsDTO } from '../dto/test-summary-params.dto';
 import { TestSummaryWorkspaceService } from './test-summary.service';
 import { TestSummaryChecksService } from './test-summary-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Test Summary')
+@ApiExcludeControllerByEnv()
 export class TestSummaryWorkspaceController {
   constructor(
     private readonly service: TestSummaryWorkspaceService,
@@ -59,17 +62,25 @@ export class TestSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved test summary records for location',
+    requestParamsOutFields: ['locId']
+  })
   async getTestSummaries(
     @Param('locId') locationId: string,
     @Query() params: TestSummaryParamsDTO,
-  ): Promise<TestSummaryRecordDTO[]> {
-    return this.service.getTestSummariesByLocationId(
+  ): Promise<ArrayResponse<TestSummaryRecordDTO>> {
+    const testSummaryDTOS =  await this.service.getTestSummariesByLocationId(
       locationId,
       params.testTypeCodes,
       params.systemTypeCodes,
       params.beginDate,
       params.endDate,
     );
+
+    return  {
+      items: testSummaryDTOS
+    };
   }
 
   @Get(':id')
@@ -85,6 +96,10 @@ export class TestSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved test summary record by ID for location',
+    requestParamsOutFields: ['locId', 'id']
+  })
   async getTestSummary(
     @Param('locId') _locationId: string,
     @Param('id') id: string,
@@ -104,6 +119,10 @@ export class TestSummaryWorkspaceController {
   @ApiCreatedResponse({
     type: TestSummaryRecordDTO,
     description: 'Creates a Test Summary record in the workspace',
+  })
+  @AuditLog({
+    label: 'Created test summary record for location',
+    requestParamsOutFields: ['locId']
   })
   async createTestSummary(
     @Param('locId') locationId: string,
@@ -127,6 +146,10 @@ export class TestSummaryWorkspaceController {
     type: TestSummaryRecordDTO,
     description: 'Updates a Test Summary record in the workspace',
   })
+  @AuditLog({
+    label: 'Updated test summary record by ID for location',
+    requestParamsOutFields: ['locId', 'id']
+  })
   async updateTestSummary(
     @Param('locId') locationId: string,
     @Param('id') id: string,
@@ -148,6 +171,10 @@ export class TestSummaryWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a Test Summary record from the workspace',
+  })
+  @AuditLog({
+    label: 'Deleted test summary record by ID for location',
+    requestParamsOutFields: ['locId', 'id']
   })
   async deleteTestSummary(
     @Param('locId') _locationId: string,

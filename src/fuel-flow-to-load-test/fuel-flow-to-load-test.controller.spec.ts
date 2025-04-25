@@ -43,7 +43,7 @@ describe('FuelFlowToLoadTestController', () => {
   describe('getFuelFlowToLoadTests', () => {
     it('Calls the repository to get all Fuel Flow To Load Test records by Test Summary Id', async () => {
       const result = await controller.getFuelFlowToLoadTests(locId, testSumId);
-      expect(result).toEqual([fuelFlowLoadToTestDTO]);
+      expect(result).toEqual({ items: [fuelFlowLoadToTestDTO]});
     });
   });
 

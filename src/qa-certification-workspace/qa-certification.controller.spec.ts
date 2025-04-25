@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { DataSource } from 'typeorm';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { EntityManager } from 'typeorm';
 
 import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
@@ -80,7 +81,7 @@ describe('QA Certification Workspace Controller Test', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [QACertificationWorkspaceController],
       providers: [
         EaseyContentService,
@@ -154,7 +155,7 @@ describe('QA Certification Workspace Controller Test', () => {
         new ReviewAndSubmitMultipleParamsDTO(),
       );
 
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items:[dto]});
     });
   });
 
@@ -169,7 +170,7 @@ describe('QA Certification Workspace Controller Test', () => {
         new ReviewAndSubmitMultipleParamsDTO(),
       );
 
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items:[dto]});
     });
   });
 
@@ -182,7 +183,7 @@ describe('QA Certification Workspace Controller Test', () => {
         new ReviewAndSubmitMultipleParamsDTO(),
       );
 
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items:[dto]});
     });
   });
 
@@ -197,7 +198,7 @@ describe('QA Certification Workspace Controller Test', () => {
         new ReviewAndSubmitMultipleParamsMatsDTO(),
       );
 
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items:[dto]});
     });
   });
 });

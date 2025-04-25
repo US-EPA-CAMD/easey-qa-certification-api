@@ -2,6 +2,7 @@ import { Controller, Param, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { FlowToLoadCheckService } from './flow-to-load-check.service';
 import { FlowToLoadCheckRecordDTO } from '../dto/flow-to-load-check.dto';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -18,8 +19,12 @@ export class FlowToLoadCheckController {
   async getFlowToLoadChecks(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<FlowToLoadCheckRecordDTO[]> {
-    return this.service.getFlowToLoadChecks(testSumId);
+  ): Promise<ArrayResponse<FlowToLoadCheckRecordDTO>> {
+    const flowToLoadCheckRecordDTOS =  await this.service.getFlowToLoadChecks(testSumId);
+
+    return  {
+      items: flowToLoadCheckRecordDTOS
+    };
   }
 
   @Get(':id')

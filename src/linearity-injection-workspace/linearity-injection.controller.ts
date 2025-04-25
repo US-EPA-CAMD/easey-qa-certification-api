@@ -15,7 +15,7 @@ import {
   ApiSecurity,
 } from '@nestjs/swagger';
 
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -26,15 +26,18 @@ import {
 import { LinearityInjectionChecksService } from './linearity-injection-checks.service';
 
 import { LinearityInjectionWorkspaceService } from './linearity-injection.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Linearity Injection')
+@ApiExcludeControllerByEnv()
 export class LinearityInjectionWorkspaceController {
   constructor(
     private readonly service: LinearityInjectionWorkspaceService,
     private readonly checksService: LinearityInjectionChecksService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -51,12 +54,20 @@ export class LinearityInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved injection records for linearity summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'linSumId']
+  })
   async getInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('linSumId') linSumId: string,
-  ): Promise<LinearityInjectionRecordDTO[]> {
-    return this.service.getInjectionsByLinSumId(linSumId);
+  ): Promise<ArrayResponse<LinearityInjectionRecordDTO>> {
+    const linearityInjectionDTOS =  await this.service.getInjectionsByLinSumId(linSumId);
+
+    return  {
+      items: linearityInjectionDTOS
+    };
   }
 
   @Get(':id')
@@ -72,6 +83,10 @@ export class LinearityInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved injection record by ID for linearity summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'linSumId', 'id']
+  })
   async getLinearityInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -93,6 +108,11 @@ export class LinearityInjectionWorkspaceController {
   @ApiCreatedResponse({
     type: LinearityInjectionRecordDTO,
     description: 'Creates a Linearity Injection record in the workspace',
+  })
+  @AuditLog({
+    label: 'Created injection record for linearity summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'linSumId'],
+    responseBodyOutFields: '*'
   })
   async createLinearityInjection(
     @Param('locId') _locationId: string,
@@ -123,6 +143,11 @@ export class LinearityInjectionWorkspaceController {
     type: LinearityInjectionRecordDTO,
     description: 'Updates a Linearity Injection record in the workspace',
   })
+  @AuditLog({
+    label: 'Updated injection record by ID for linearity summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'linSumId', 'id'],
+    responseBodyOutFields: '*'
+  })
   async updateLinearityInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -152,6 +177,10 @@ export class LinearityInjectionWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a Linearity Injection record from the workspace',
+  })
+  @AuditLog({
+    label: 'Deleted injection record by ID for linearity summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'linSumId', 'id']
   })
   async deleteLinearityInjection(
     @Param('locId') _locationId: string,

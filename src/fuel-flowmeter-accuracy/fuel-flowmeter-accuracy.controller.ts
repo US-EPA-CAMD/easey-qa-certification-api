@@ -2,6 +2,7 @@ import { Controller, Param, Get } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { FuelFlowmeterAccuracyRecordDTO } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracyService } from './fuel-flowmeter-accuracy.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -18,8 +19,12 @@ export class FuelFlowmeterAccuracyController {
   async getFuelFlowmeterAccuracies(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<FuelFlowmeterAccuracyRecordDTO[]> {
-    return this.service.getFuelFlowmeterAccuracies(testSumId);
+  ): Promise<ArrayResponse<FuelFlowmeterAccuracyRecordDTO>> {
+    const fuelFlowmeterAccuracyRecordDTOS =  await this.service.getFuelFlowmeterAccuracies(testSumId);
+
+    return  {
+      items: fuelFlowmeterAccuracyRecordDTOS
+    };
   }
 
   @Get(':id')

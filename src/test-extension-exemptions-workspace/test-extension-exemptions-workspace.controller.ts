@@ -8,12 +8,11 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -22,10 +21,13 @@ import {
 } from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionsChecksService } from './test-extension-exemptions-checks.service';
 import { TestExtensionExemptionsWorkspaceService } from './test-extension-exemptions-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Test Extension Exemption')
+@ApiExcludeControllerByEnv()
 export class TestExtensionExemptionsWorkspaceController {
   constructor(
     private readonly service: TestExtensionExemptionsWorkspaceService,
@@ -47,10 +49,15 @@ export class TestExtensionExemptionsWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved test extension exemption records for location',
+    requestParamsOutFields: ['locId']
+  })
   async getTestExtensionExemptions(
     @Param('locId') locationId: string,
-  ): Promise<TestExtensionExemptionRecordDTO[]> {
-    return this.service.getTestExtensionExemptionsByLocationId(locationId);
+  ): Promise<ArrayResponse<TestExtensionExemptionRecordDTO>> {
+    const exemptionRecords = await this.service.getTestExtensionExemptionsByLocationId(locationId);
+    return { items: exemptionRecords };
   }
 
   @Get(':id')
@@ -67,6 +74,10 @@ export class TestExtensionExemptionsWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved test extension exemption record by ID for location',
+    requestParamsOutFields: ['locId', 'id']
+  })
   async getTestExtensionExemption(
     @Param('locId') _locationId: string,
     @Param('id') id: string,
@@ -86,6 +97,11 @@ export class TestExtensionExemptionsWorkspaceController {
   @ApiCreatedResponse({
     type: TestExtensionExemptionRecordDTO,
     description: 'Creates a Test Extension Exemption record in the workspace',
+  })
+  @AuditLog({
+    label: 'Created test extension exemption record for location',
+    requestParamsOutFields: ['locId'],
+    responseBodyOutFields: '*'
   })
   async createTestExtensionExemption(
     @Param('locId') locationId: string,
@@ -113,6 +129,11 @@ export class TestExtensionExemptionsWorkspaceController {
     type: TestExtensionExemptionRecordDTO,
     description: 'Updates a Test Extension Exemption record in the workspace',
   })
+  @AuditLog({
+    label: 'Updated test extension exemption record by ID for location',
+    requestParamsOutFields: ['locId', 'id'],
+    responseBodyOutFields: '*'
+  })
   async updateTestExtensionExemption(
     @Param('locId') locationId: string,
     @Param('id') id: string,
@@ -139,6 +160,10 @@ export class TestExtensionExemptionsWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a Test Extension Exemption from the workspace',
+  })
+  @AuditLog({
+    label: 'Deleted test extension exemption record by ID for location',
+    requestParamsOutFields: ['locId', 'id']
   })
   async deleteTestExtensionExemption(
     @Param('locId') _locationId: string,

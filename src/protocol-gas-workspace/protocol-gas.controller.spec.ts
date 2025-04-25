@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { DataSource } from 'typeorm';
 
 import {
@@ -54,7 +55,7 @@ describe('Protocol Gas Workspace Controller', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [ProtocolGasWorkspaceController],
       providers: [
         ConfigService,
@@ -86,8 +87,8 @@ describe('Protocol Gas Workspace Controller', () => {
   describe('getProtocolGases', () => {
     it('should call the ProtocolGasWorkspaceService.getProtocolGases', async () => {
       jest.spyOn(service, 'getProtocolGases').mockResolvedValue(protocolGases);
-      expect(await controller.getProtocolGases(locId, testSumId)).toBe(
-        protocolGases,
+      expect(await controller.getProtocolGases(locId, testSumId)).toStrictEqual(
+        { items: protocolGases},
       );
     });
   });

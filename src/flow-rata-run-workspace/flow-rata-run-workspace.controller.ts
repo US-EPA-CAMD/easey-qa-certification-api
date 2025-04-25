@@ -8,12 +8,11 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -23,15 +22,18 @@ import {
 } from '../dto/flow-rata-run.dto';
 import { FlowRataRunChecksService } from './flow-rata-run-checks.service';
 import { FlowRataRunWorkspaceService } from './flow-rata-run-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Flow Rata Run')
+@ApiExcludeControllerByEnv()
 export class FlowRataRunWorkspaceController {
   constructor(
     private readonly service: FlowRataRunWorkspaceService,
     private readonly checksService: FlowRataRunChecksService,
-  ) {}
+  ) { }
   @Get()
   @ApiOkResponse({
     isArray: true,
@@ -47,14 +49,22 @@ export class FlowRataRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved flow RATA run records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'rataId', 'rataSumId', 'rataRunId']
+  })
   async getFlowRataRuns(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('rataId') _rataId: string,
     @Param('rataSumId') _rataSumId: string,
     @Param('rataRunId') rataRunId: string,
-  ): Promise<FlowRataRunDTO[]> {
-    return this.service.getFlowRataRuns(rataRunId);
+  ): Promise<ArrayResponse<FlowRataRunDTO>> {
+    const flowRataRuns =  await this.service.getFlowRataRuns(rataRunId);
+
+    return  {
+      items: flowRataRuns
+    };
   }
 
   @Get(':id')
@@ -71,6 +81,10 @@ export class FlowRataRunWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved flow RATA run record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'rataId', 'rataSumId', 'rataRunId', 'id']
+  })
   async getFlowRataRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -95,6 +109,11 @@ export class FlowRataRunWorkspaceController {
     isArray: false,
     type: FlowRataRunRecordDTO,
     description: 'Creates a Flow Rata Run record in the workspace',
+  })
+  @AuditLog({
+    label: 'Created flow RATA run record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'rataId', 'rataSumId', 'rataRunId'],
+    responseBodyOutFields: '*'
   })
   async createFlowRataRun(
     @Param('locId') _locationId: string,
@@ -137,6 +156,11 @@ export class FlowRataRunWorkspaceController {
     type: FlowRataRunRecordDTO,
     description: 'Updates a Flow Rata Run record in the workspace',
   })
+  @AuditLog({
+    label: 'Updated flow RATA run record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'rataId', 'rataSumId', 'rataRunId', 'id'],
+    responseBodyOutFields: '*'
+  })
   async updateRataRun(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -177,6 +201,10 @@ export class FlowRataRunWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a Flow Rata Run record from the workspace',
+  })
+  @AuditLog({
+    label: 'Deleted flow RATA run record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'rataId', 'rataSumId', 'rataRunId', 'id']
   })
   async deleteFlowRataRun(
     @Param('locId') _locationId: string,

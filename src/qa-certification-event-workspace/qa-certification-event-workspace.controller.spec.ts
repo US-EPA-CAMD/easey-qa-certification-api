@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { DataSource } from 'typeorm';
 
 import {
@@ -43,7 +44,7 @@ describe('QACertificationEventWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [QACertificationEventWorkspaceController],
       providers: [
         ConfigService,
@@ -73,7 +74,7 @@ describe('QACertificationEventWorkspaceController', () => {
     it('should call the QACertificationEventWorkspaceService.getQACertEvents', async () => {
       const spyService = jest.spyOn(service, 'getQACertEventsByLocationId');
       const result = await controller.getQACertEvents('1');
-      expect(result).toEqual([qaCertEvent]);
+      expect(result).toEqual({ items:[qaCertEvent] });
       expect(spyService).toHaveBeenCalled();
     });
   });

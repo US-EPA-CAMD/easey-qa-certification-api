@@ -4,6 +4,7 @@ import { ApiTags, ApiOkResponse, ApiSecurity } from '@nestjs/swagger';
 
 import { LinearityInjectionRecordDTO } from '../dto/linearity-injection.dto';
 import { LinearityInjectionService } from './linearity-injection.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -22,8 +23,12 @@ export class LinearityInjectionController {
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('linSumId') linSumId: string,
-  ): Promise<LinearityInjectionRecordDTO[]> {
-    return this.service.getInjectionsByLinSumId(linSumId);
+  ): Promise<ArrayResponse<LinearityInjectionRecordDTO>> {
+    const injectionDTOS =  await this.service.getInjectionsByLinSumId(linSumId);
+
+    return  {
+      items: injectionDTOS
+    };
   }
 
   @Get(':id')

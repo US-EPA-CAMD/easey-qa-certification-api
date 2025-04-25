@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { DataSource } from 'typeorm';
 import { LinearitySummaryChecksService } from './linearity-summary-checks.service';
 
@@ -43,7 +44,7 @@ describe('Linearity Summary Controller', () => {
 
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [LinearitySummaryWorkspaceController],
       providers: [
         ConfigService,
@@ -71,7 +72,7 @@ describe('Linearity Summary Controller', () => {
   describe('getSummariesByTestSumId', () => {
     it('Calls the repository to get all Linearity Summary records by Test Summary Id', async () => {
       const result = await controller.getSummariesByTestSumId(locId, testSumId);
-      expect(result).toEqual(linearitySummaryRecords);
+      expect(result).toEqual({ items:linearitySummaryRecords});
     });
   });
 

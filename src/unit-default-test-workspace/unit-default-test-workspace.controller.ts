@@ -8,13 +8,12 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
 
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
 import {
@@ -23,12 +22,15 @@ import {
 } from '../dto/unit-default-test.dto';
 import { UnitDefaultTestWorkspaceService } from './unit-default-test-workspace.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Default Test')
+@ApiExcludeControllerByEnv()
 export class UnitDefaultTestWorkspaceController {
-  constructor(private readonly service: UnitDefaultTestWorkspaceService) {}
+  constructor(private readonly service: UnitDefaultTestWorkspaceService) { }
 
   @Get()
   @ApiOkResponse({
@@ -45,11 +47,19 @@ export class UnitDefaultTestWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved unit default test records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   async getUnitDefaultTests(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<UnitDefaultTestRecordDTO[]> {
-    return this.service.getUnitDefaultTests(testSumId);
+  ): Promise<ArrayResponse<UnitDefaultTestRecordDTO>> {
+    const testRecordDTOS =  await this.service.getUnitDefaultTests(testSumId);
+
+    return  {
+      items: testRecordDTOS
+    };
   }
 
   @Get(':id')
@@ -66,6 +76,10 @@ export class UnitDefaultTestWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved unit default test record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   async getUnitDefaultTest(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -86,6 +100,11 @@ export class UnitDefaultTestWorkspaceController {
   @ApiCreatedResponse({
     type: UnitDefaultTestRecordDTO,
     description: 'Creates a workspace Unit Default Test record.',
+  })
+  @AuditLog({
+    label: 'Created unit default test record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   createUnitDefaultTest(
     @Param('locId') _locationId: string,
@@ -109,6 +128,11 @@ export class UnitDefaultTestWorkspaceController {
     isArray: true,
     type: UnitDefaultTestRecordDTO,
     description: 'Updates workspace Unit Default Test record',
+  })
+  @AuditLog({
+    label: 'Updated unit default test record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
   })
   updateUnitDefaultTest(
     @Param('locId') _locationId: string,
@@ -136,6 +160,10 @@ export class UnitDefaultTestWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a unit default test record from the workspace',
+  })
+  @AuditLog({
+    label: 'Deleted unit default test record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   async deleteUnitDefaultTest(
     @Param('locId') _locationId: string,

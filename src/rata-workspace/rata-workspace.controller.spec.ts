@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { DataSource } from 'typeorm';
 
 import { RataBaseDTO, RataRecordDTO } from '../dto/rata.dto';
@@ -44,7 +45,7 @@ describe('RataWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [RataWorkspaceController],
       providers: [
         ConfigService,
@@ -81,7 +82,7 @@ describe('RataWorkspaceController', () => {
 
   describe('getRatas', () => {
     it('should call the RataService.getRatasByTestSumId and get many rata record', async () => {
-      expect(await controller.getRatas(locId, testSumId)).toEqual([rataRecord]);
+      expect(await controller.getRatas(locId, testSumId)).toEqual({ items: [rataRecord] });
       expect(service.getRatasByTestSumId).toHaveBeenCalled();
     });
   });

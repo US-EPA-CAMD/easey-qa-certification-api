@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { DataSource } from 'typeorm';
 
 import { FlowToLoadCheckBaseDTO } from '../dto/flow-to-load-check.dto';
@@ -38,7 +39,7 @@ describe('FlowToLoadCheckWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [FlowToLoadCheckWorkspaceController],
       providers: [
         ConfigService,
@@ -62,7 +63,7 @@ describe('FlowToLoadCheckWorkspaceController', () => {
   describe('getflowToLoadChecks', () => {
     it('Calls the repository to get all Flow To Load Check records by Test Summary Id', async () => {
       const result = await controller.getFlowToLoadChecks(locId, testSumId);
-      expect(result).toEqual(flowToLoadChecks);
+      expect(result).toEqual({ items : flowToLoadChecks });
     });
   });
 

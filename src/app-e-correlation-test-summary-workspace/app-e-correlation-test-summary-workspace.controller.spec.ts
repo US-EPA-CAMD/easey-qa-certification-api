@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { DataSource } from 'typeorm';
 
 import { AppECorrelationTestSummaryBaseDTO } from '../dto/app-e-correlation-test-summary.dto';
@@ -42,7 +43,7 @@ describe('AppendixETestSummaryWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [AppendixETestSummaryWorkspaceController],
       providers: [
         ConfigService,
@@ -70,7 +71,7 @@ describe('AppendixETestSummaryWorkspaceController', () => {
   describe('getAppECorrelations', () => {
     it('Calls the repository to get all Appendix E Correlation Test Summary records by Test Summary Id', async () => {
       const result = await controller.getAppECorrelations(locId, testSumId);
-      expect(result).toEqual(appECorrelationTests);
+      expect(result).toEqual({ items:appECorrelationTests });
     });
   });
 

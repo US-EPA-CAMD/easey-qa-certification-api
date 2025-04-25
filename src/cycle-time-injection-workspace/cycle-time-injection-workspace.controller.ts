@@ -8,12 +8,11 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 
@@ -23,15 +22,18 @@ import {
 } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjectionChecksService } from './cycle-time-injection-workspace-checks.service';
 import { CycleTimeInjectionWorkspaceService } from './cycle-time-injection-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Cycle Time Injection')
+@ApiExcludeControllerByEnv()
 export class CycleTimeInjectionWorkspaceController {
   constructor(
     private readonly service: CycleTimeInjectionWorkspaceService,
     private readonly checksService: CycleTimeInjectionChecksService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -48,12 +50,17 @@ export class CycleTimeInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved cycle time injection records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'cycleTimeSumId']
+  })
   async getCycleTimeInjections(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('cycleTimeSumId') cycleTimeSumId: string,
-  ): Promise<CycleTimeInjectionRecordDTO[]> {
-    return this.service.getCycleTimeInjectionsByCycleTimeSumId(cycleTimeSumId);
+  ): Promise<ArrayResponse<CycleTimeInjectionRecordDTO>> {
+    const cycleTimeInjections = await this.service.getCycleTimeInjectionsByCycleTimeSumId(cycleTimeSumId);
+    return { items: cycleTimeInjections };
   }
 
   @Get(':id')
@@ -69,6 +76,10 @@ export class CycleTimeInjectionWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved cycle time injection record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'cycleTimeSumId', 'id']
+  })
   async getCycleTimeInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -90,6 +101,11 @@ export class CycleTimeInjectionWorkspaceController {
   @ApiCreatedResponse({
     type: CycleTimeInjectionRecordDTO,
     description: 'Creates a Cycle Time Injection record in the workspace',
+  })
+  @AuditLog({
+    label: 'Created cycle time injection record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'cycleTimeSumId'],
+    responseBodyOutFields: '*'
   })
   async createCycleTimeInjection(
     @Param('locId') _locationId: string,
@@ -126,6 +142,11 @@ export class CycleTimeInjectionWorkspaceController {
     type: CycleTimeInjectionRecordDTO,
     description: ' Updates a Cycle Time Injection record in the workspace',
   })
+  @AuditLog({
+    label: 'Updated cycle time injection record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'cycleTimeSumId', 'id'],
+    responseBodyOutFields: '*'
+  })
   async updateCycleTimeInjection(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -160,6 +181,10 @@ export class CycleTimeInjectionWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a workspace Cycle Time Injection record',
+  })
+  @AuditLog({
+    label: 'Deleted cycle time injection record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'cycleTimeSumId', 'id']
   })
   async deleteCycleTimeInjection(
     @Param('locId') _locationId: string,

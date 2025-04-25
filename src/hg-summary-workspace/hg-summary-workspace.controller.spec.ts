@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { DataSource } from 'typeorm';
 
 import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
@@ -37,7 +38,7 @@ describe('HgSummaryWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [HgSummaryWorkspaceController],
       providers: [
         ConfigService,
@@ -68,7 +69,7 @@ describe('HgSummaryWorkspaceController', () => {
   describe('getHgSummaries', () => {
     it('Calls the service to many Cycle Time Summary records', async () => {
       const result = await controller.getHgSummaries(locId, testSumId);
-      expect(result).toEqual([dto]);
+      expect(result).toEqual({ items: [dto]});
     });
   });
 

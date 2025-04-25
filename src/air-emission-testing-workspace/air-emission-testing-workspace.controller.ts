@@ -8,12 +8,11 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
   AirEmissionTestingBaseDTO,
@@ -23,15 +22,18 @@ import {
 import { AirEmissionTestingChecksService } from './air-emission-testing-checks.service';
 import { AirEmissionTestingWorkspaceService } from './air-emission-testing-workspace.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Air Emission Testing')
+@ApiExcludeControllerByEnv()
 export class AirEmissionTestingWorkspaceController {
   constructor(
     private readonly service: AirEmissionTestingWorkspaceService,
     private readonly checksService: AirEmissionTestingChecksService,
-  ) {}
+  ) { }
 
   @Get()
   @ApiOkResponse({
@@ -48,11 +50,19 @@ export class AirEmissionTestingWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved air emission testing records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   async getAirEmissionTestings(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<AirEmissionTestingDTO[]> {
-    return this.service.getAirEmissionTestings(testSumId);
+  ): Promise<ArrayResponse<AirEmissionTestingDTO>> {
+    const airEmissionTestingRecordDTOS =  await this.service.getAirEmissionTestings(testSumId);
+
+    return  {
+      items: airEmissionTestingRecordDTOS
+    };
   }
 
   @Get(':id')
@@ -69,6 +79,10 @@ export class AirEmissionTestingWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved air emission testing record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   async getAirEmissionsTesting(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
@@ -89,6 +103,11 @@ export class AirEmissionTestingWorkspaceController {
   @ApiCreatedResponse({
     type: AirEmissionTestingRecordDTO,
     description: 'Creates a workspace Air Emission Testing record.',
+  })
+  @AuditLog({
+    label: 'Created air emission testing record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   async createAirEmissionTesting(
     @Param('locId') _locationId: string,
@@ -117,6 +136,11 @@ export class AirEmissionTestingWorkspaceController {
     type: AirEmissionTestingRecordDTO,
     description: 'Updates a workspace Air Emission Testing record',
   })
+  @AuditLog({
+    label: 'Updated air emission testing record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
+  })
   async updateAirEmissionTesting(
     @Param('locid') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -144,6 +168,10 @@ export class AirEmissionTestingWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a workspace Air Emission Testing record',
+  })
+  @AuditLog({
+    label: 'Deleted air emission testing record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   async deleteAirEmissionTesting(
     @Param('locId') _locationId: string,

@@ -8,12 +8,11 @@ import {
   Put,
 } from '@nestjs/common';
 import {
-  ApiCreatedResponse,
-  ApiOkResponse,
+  ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger';
-import { RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
+import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -21,12 +20,15 @@ import {
   CycleTimeSummaryDTO,
 } from '../dto/cycle-time-summary.dto';
 import { CycleTimeSummaryWorkspaceService } from './cycle-time-summary-workspace.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Cycle Time Summary')
+@ApiExcludeControllerByEnv()
 export class CycleTimeSummaryWorkspaceController {
-  constructor(private readonly service: CycleTimeSummaryWorkspaceService) {}
+  constructor(private readonly service: CycleTimeSummaryWorkspaceService) { }
 
   @Get()
   @ApiOkResponse({
@@ -43,11 +45,16 @@ export class CycleTimeSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved cycle time summary records for test summary',
+    requestParamsOutFields: ['locId', 'testSumId']
+  })
   async getCycleTimeSummaries(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ): Promise<CycleTimeSummaryDTO[]> {
-    return this.service.getCycleTimeSummaries(testSumId);
+  ): Promise<ArrayResponse<CycleTimeSummaryDTO>> {
+    const cycleTimeSummaries = await this.service.getCycleTimeSummaries(testSumId);
+    return { items: cycleTimeSummaries };
   }
 
   @Get(':id')
@@ -64,6 +71,10 @@ export class CycleTimeSummaryWorkspaceController {
     },
     LookupType.Location,
   )
+  @AuditLog({
+    label: 'Retrieved cycle time summary record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
+  })
   async getCycleTimeSummary(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
@@ -84,6 +95,11 @@ export class CycleTimeSummaryWorkspaceController {
   @ApiCreatedResponse({
     type: CycleTimeSummaryDTO,
     description: 'Creates a workspace Cycle Time Summary record.',
+  })
+  @AuditLog({
+    label: 'Created cycle time summary record for test summary',
+    requestParamsOutFields: ['locId', 'testSumId'],
+    responseBodyOutFields: '*'
   })
   createCycleTimeSummary(
     @Param('locId') _locationId: string,
@@ -106,6 +122,11 @@ export class CycleTimeSummaryWorkspaceController {
   @ApiOkResponse({
     type: CycleTimeSummaryDTO,
     description: 'Updates a workspace Cycle Time Summary record.',
+  })
+  @AuditLog({
+    label: 'Updated cycle time summary record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id'],
+    responseBodyOutFields: '*'
   })
   updateCycleTimeSummary(
     @Param('locId') _locationId: string,
@@ -133,6 +154,10 @@ export class CycleTimeSummaryWorkspaceController {
   )
   @ApiOkResponse({
     description: 'Deletes a workspace Cycle Time Summary record.',
+  })
+  @AuditLog({
+    label: 'Deleted cycle time summary record by ID for test summary',
+    requestParamsOutFields: ['locId', 'testSumId', 'id']
   })
   async deleteCycleTimeSummary(
     @Param('locId') _locationId: string,

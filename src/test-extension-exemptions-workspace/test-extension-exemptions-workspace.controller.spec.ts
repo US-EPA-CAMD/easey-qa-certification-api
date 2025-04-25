@@ -8,6 +8,8 @@ import { HttpModule } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@us-epa-camd/easey-common/guards';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+
 import {
   TestExtensionExemptionBaseDTO,
   TestExtensionExemptionRecordDTO,
@@ -47,7 +49,7 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [HttpModule],
+      imports: [LoggerModule, HttpModule],
       controllers: [TestExtensionExemptionsWorkspaceController],
       providers: [
         ConfigService,
@@ -89,7 +91,7 @@ describe('TestExtensionExemptionsWorkspaceController', () => {
         'getTestExtensionExemptionsByLocationId',
       );
       const result = await controller.getTestExtensionExemptions('1');
-      expect(result).toEqual([testExtExp]);
+      expect(result).toEqual({ items:[testExtExp]});
       expect(spyService).toHaveBeenCalled();
     });
   });
