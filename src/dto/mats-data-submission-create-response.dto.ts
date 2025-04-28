@@ -1,4 +1,4 @@
 export class MatsDataSubmissionCreateResponseDTO {
-  submissionId: number;
+  submissionId: string;
   warnings: string[];
 }

@@ -20,7 +20,6 @@ import {
   QACertificationDTO,
 } from '../dto/qa-certification.dto';
 
-import { MatsDataSubmissionDTO } from '../dto/mats-data-submission.dto';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { QACertificationWorkspaceService } from './qa-certification.service';
 import { QACertificationChecksService } from './qa-certification-checks.service';
@@ -37,9 +36,7 @@ import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
 import { ReviewAndSubmitMultipleParamsMatsDTO } from '../dto/review-and-submit-multiple-params-mats.dto';
 import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
-import { MatsDataSubmissionReviewAndSubmitService } from './mats-data-submission-review-and-submit.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
-import { SplitQueryPipe } from '../pipes/split-query.pipe';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
@@ -53,7 +50,6 @@ export class QACertificationWorkspaceController {
     private readonly reviewSubmitServiceTestSum: TestSummaryReviewAndSubmitService,
     private readonly reviewSubmitServiceTee: TeeReviewAndSubmitService,
     private readonly reviewSubmitServiceMats: MatsBulkFilesReviewAndSubmitService,
-    private readonly reviewSubmitServiceMatsDataSubmission: MatsDataSubmissionReviewAndSubmitService,
     private readonly checksService: QACertificationChecksService,
   ) {}
 
@@ -328,42 +324,5 @@ export class QACertificationWorkspaceController {
       dto.monPlanIds,
     );
     return { items: matsBulkFileRecords };
-  }
-
-  @Get('mats-data-submission')
-  @ApiOkResponse({
-    isArray: true,
-    type: MatsDataSubmissionDTO,
-    description:
-      'Retrieves MATS Data Submission records for a given Monitoring Plan ID',
-  })
-  @ApiQuery({
-    style: 'pipeDelimited',
-    name: 'monPlanIds',
-    required: true,
-    explode: false,
-  })
-  @RoleGuard(
-    {
-      queryParam: 'monPlanIds',
-      isPipeDelimitted: true,
-      enforceEvalSubmitCheck: false,
-    },
-    LookupType.MonitorPlan,
-  )
-  @AuditLog({
-    label: 'Retrieved MATS Data Submission records',
-    requestQueryOutFields: ['monPlanIds'],
-  })
-  async getMatsDataSubmissions(
-    @Query('monPlanIds', SplitQueryPipe) monPlanIds: string[],
-  ): Promise<ArrayResponse<MatsDataSubmissionDTO>> {
-    const submissions = await this.reviewSubmitServiceMatsDataSubmission.getMatsDataSubmissions(
-      monPlanIds,
-    );
-
-    return {
-      items: submissions,
-    };
   }
 }

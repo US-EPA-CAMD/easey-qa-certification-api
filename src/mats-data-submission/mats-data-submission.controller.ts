@@ -101,6 +101,7 @@ export class MatsDataSubmissionController {
     },
     @User() user: CurrentUser,
   ) {
+    console.log("TEST");
     const metadata: MatsDataSubmissionBaseDTO = plainToClass(
       MatsDataSubmissionBaseDTO,
       JSON.parse(rawMetadata),

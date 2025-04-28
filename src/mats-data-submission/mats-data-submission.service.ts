@@ -16,11 +16,15 @@ import {
 import { XMLBuilder } from 'fast-xml-parser';
 import { EntityManager } from 'typeorm';
 
-import { MatsDataSubmissionBaseDTO } from '../dto/mats-data-submission.dto';
+import {
+  MatsDataSubmissionBaseDTO,
+  MatsDataSubmissionDTO,
+} from '../dto/mats-data-submission.dto';
 import { MatsDataSubmissionPayloadFile } from '../entities/mats-data-submission-payload-file.entity';
 import { MatsDataSubmissionPollutant } from '../entities/mats-data-submission-pollutant.entity';
 import { MatsDataSubmissionTestMethod } from '../entities/mats-data-submission-test-method.entity';
 import { MatsDataSubmissionFiles } from '../interfaces/mats-data-submission-files';
+import { MatsDataSubmissionMap } from '../maps/mats-data-submission.map';
 import { MatsDataSubmissionRepository } from './mats-data-submission.repository';
 
 @Injectable()
@@ -29,6 +33,7 @@ export class MatsDataSubmissionService {
     private readonly configService: ConfigService,
     private readonly entityManager: EntityManager,
     private readonly logger: Logger,
+    private readonly map: MatsDataSubmissionMap,
     private readonly repository: MatsDataSubmissionRepository,
   ) {
     this.logger.setContext(MatsDataSubmissionService.name);
@@ -76,7 +81,7 @@ export class MatsDataSubmissionService {
     file: Express.Multer.File | MetadataXmlFile,
     submissionId: string,
     trx?: EntityManager,
-    isErtFile: boolean = false,
+    isErtFile = false,
   ) {
     const repository = (trx ?? this.entityManager).getRepository(
       MatsDataSubmissionPayloadFile,
@@ -124,7 +129,7 @@ export class MatsDataSubmissionService {
       MatsDataSubmissionPollutant,
     );
 
-    const records = pollutantCodes.map(code => {
+    const records = pollutantCodes.map((code) => {
       return repository.create({
         pollutantCode: code,
         submissionId,
@@ -132,7 +137,7 @@ export class MatsDataSubmissionService {
     });
     await repository.save(records);
 
-    return records.map(record => record.id);
+    return records.map((record) => record.id);
   }
 
   private async createMatsDataSubmissionTestMethods(
@@ -144,7 +149,7 @@ export class MatsDataSubmissionService {
       MatsDataSubmissionTestMethod,
     );
 
-    const records = testMethodCodes.map(code => {
+    const records = testMethodCodes.map((code) => {
       return repository.create({
         testMethodCode: code,
         submissionId,
@@ -152,7 +157,7 @@ export class MatsDataSubmissionService {
     });
     await repository.save(records);
 
-    return records.map(record => record.id);
+    return records.map((record) => record.id);
   }
 
   async deleteMatsDataSubmission(submissionId: string) {
@@ -191,12 +196,12 @@ export class MatsDataSubmissionService {
         const deleteCommand = new DeleteObjectsCommand({
           Bucket: bucket,
           Delete: {
-            Objects: objects.map(obj => ({ Key: obj.Key })),
+            Objects: objects.map((obj) => ({ Key: obj.Key })),
           },
         });
         const deleteResponse = await client.send(deleteCommand);
         this.logger.debug(
-          `Deleted: ${deleteResponse.Deleted?.map(obj => obj.Key)}`,
+          `Deleted: ${deleteResponse.Deleted?.map((obj) => obj.Key)}`,
         );
       }
 
@@ -246,10 +251,10 @@ export class MatsDataSubmissionService {
           record.location.stackPipe?.name ?? record.location.unit?.name ?? null,
         AveragingGroupCode: record.averagingGroupCode,
         PollutantList: {
-          PollutantCode: record.pollutants.map(p => p.metadataPollutantCode),
+          PollutantCode: record.pollutants.map((p) => p.metadataPollutantCode),
         },
         TestMethodList: {
-          TestMethodCode: record.testMethods.map(tm => tm.code),
+          TestMethodCode: record.testMethods.map((tm) => tm.code),
         },
         TestNumber: record.testNumber,
         TestDate: record.testDate?.toISOString().substring(0, 10) ?? null,
@@ -275,6 +280,26 @@ export class MatsDataSubmissionService {
     });
 
     return builder.build(data);
+  }
+
+  async getMatsDataSubmission(id: string): Promise<MatsDataSubmissionDTO> {
+    const result = await this.repository.getMatsDataSubmission(id);
+
+    return this.map.one(result);
+  }
+
+  async getMatsDataSubmissions(
+    monPlanIds: string[],
+  ): Promise<MatsDataSubmissionDTO[]> {
+    if (!monPlanIds || monPlanIds.length === 0) {
+      throw new EaseyException(
+        new Error('At least one Monitor Plan ID must be provided'),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    const result = await this.repository.getMatsDataSubmissions(monPlanIds);
+
+    return this.map.many(result);
   }
 
   private getS3Bucket() {
@@ -352,7 +377,12 @@ export class MatsDataSubmissionService {
         );
       });
     } catch (err) {
-      if (submissionId) await this.deleteSubmissionFiles(submissionId);
+      if (submissionId)
+        await this.deleteSubmissionFiles(submissionId).catch((err) => {
+          this.logger.error(
+            `Error deleting files for submission ID ${submissionId}: ${err.message}`,
+          );
+        });
       throw new EaseyException(new Error(err.message), HttpStatus.BAD_REQUEST);
     }
 
@@ -395,7 +425,7 @@ export class MatsDataSubmissionService {
             ],
           ) => {
             if (Array.isArray(file)) {
-              acc.push(...file.map(f => [key, f]));
+              acc.push(...file.map((f) => [key, f]));
             } else {
               acc.push([key, file]);
             }

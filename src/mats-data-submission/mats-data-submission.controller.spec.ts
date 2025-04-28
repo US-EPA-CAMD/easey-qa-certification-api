@@ -6,9 +6,10 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { EntityManager } from 'typeorm';
 import { DataSource } from 'typeorm';
 
+import { MatsDataSubmissionDTO } from '../dto/mats-data-submission.dto';
+import { MatsDataSubmissionMap } from '../maps/mats-data-submission.map';
 import { MatsDataSubmissionChecksService } from './mats-data-submission-checks.service';
 import { MatsDataSubmissionController } from './mats-data-submission.controller';
-import { MatsDataSubmissionMap } from '../maps/mats-data-submission.map';
 import { MatsDataSubmissionRepository } from './mats-data-submission.repository';
 import { MatsDataSubmissionService } from './mats-data-submission.service';
 

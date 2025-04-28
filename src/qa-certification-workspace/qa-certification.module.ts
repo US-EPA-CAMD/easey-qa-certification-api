@@ -43,7 +43,7 @@ import { TeeReviewAndSubmitGlobalRepository } from './tee-review-and-submit-glob
 import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
 import { EaseyContentModule } from '../qa-certification-easey-content/easey-content.module';
 import { MatsDataSubmissionModule } from '../mats-data-submission/mats-data-submission.module';
-import { MatsDataSubmissionReviewAndSubmitService } from './mats-data-submission-review-and-submit.service';
+import { MatsDataSubmissionRootController } from '../mats-data-submission/mats-data-submission-root.controller';
 
 @Module({
   imports: [
@@ -80,7 +80,10 @@ import { MatsDataSubmissionReviewAndSubmitService } from './mats-data-submission
     ProtocolGasWorkspaceModule,
     MatsDataSubmissionModule,
   ],
-  controllers: [QACertificationWorkspaceController],
+  controllers: [
+    MatsDataSubmissionRootController,
+    QACertificationWorkspaceController,
+  ],
   providers: [
     CertEventReviewAndSubmitRepository,
     CertEventReviewAndSubmitGlobalRepository,
@@ -99,7 +102,6 @@ import { MatsDataSubmissionReviewAndSubmitService } from './mats-data-submission
     TeeReviewAndSubmitMap,
     MatsBulkFilesReviewAndSubmitService,
     MatsBulkFileMap,
-    MatsDataSubmissionReviewAndSubmitService,
   ],
   exports: [
     CertEventReviewAndSubmitRepository,
