@@ -18,8 +18,8 @@ import {
 } from '@us-epa-camd/easey-common/utilities/functions';
 import { XMLBuilder } from 'fast-xml-parser';
 import { EntityManager } from 'typeorm';
-import { v4 as uuid } from 'uuid';
 
+import { MatsDataSubmissionFileNamesDTO } from '../dto/mats-data-submission-create-payload.dto';
 import {
   MatsDataSubmissionBaseDTO,
   MatsDataSubmissionDTO,
@@ -30,10 +30,11 @@ import { MatsDataSubmissionTestMethod } from '../entities/mats-data-submission-t
 import { MatsDataSubmissionMap } from '../maps/mats-data-submission.map';
 import { MatsDataSubmissionRepository } from './mats-data-submission.repository';
 
+export const METADATA_XML_FILE_NAME = 'Metadata.xml';
+
 @Injectable()
 export class MatsDataSubmissionService {
-  private readonly s3Bucket: string;
-  private readonly s3Client: S3Client;
+  private s3Client: S3Client;
 
   constructor(
     private readonly configService: ConfigService,
@@ -43,12 +44,14 @@ export class MatsDataSubmissionService {
     private readonly repository: MatsDataSubmissionRepository,
   ) {
     this.logger.setContext(MatsDataSubmissionService.name);
-    this.s3Bucket = this.getS3Bucket();
-    this.s3Client = this.getS3Client();
   }
 
-  private createFilePath(fileName: string, submissionId?: string) {
-    return `${submissionId ?? uuid()}/${fileName}`;
+  createStagingFilePath(locationId: string, fileName: string) {
+    return `tmp/${locationId}/${fileName}`;
+  }
+
+  private createSubmissionFilePath(directory: string, fileName: string) {
+    return `${directory}/${fileName}`;
   }
 
   private async createMatsDataSubmission(
@@ -86,7 +89,7 @@ export class MatsDataSubmissionService {
   }
 
   private async createMatsDataSubmissionPayloadFile(
-    file: Express.Multer.File | MetadataXmlFile,
+    fileName: string,
     submissionId: string,
     trx?: EntityManager,
     isErtFile = false,
@@ -95,10 +98,12 @@ export class MatsDataSubmissionService {
       MatsDataSubmissionPayloadFile,
     );
 
+    const filePath = this.createSubmissionFilePath(submissionId, fileName);
+    const mimetype = await this.getRemoteFileMimeType(filePath);
     const fileTypeCode = (() => {
       if (isErtFile) return 'ERT';
 
-      switch (file.mimetype) {
+      switch (mimetype) {
         case 'text/xml':
           return 'XML';
         case 'application/pdf':
@@ -107,20 +112,17 @@ export class MatsDataSubmissionService {
           return 'JSON';
         default:
           throw new EaseyException(
-            new Error(`Unsupported file type: ${file.mimetype}`),
+            new Error(`Unsupported file type: ${mimetype}`),
             HttpStatus.BAD_REQUEST,
           );
       }
     })();
 
     const record = repository.create({
-      fileName: file.originalname,
+      fileName,
       fileTypeCode,
       submissionId,
-      tempS3BucketFilePath: this.createFilePath(
-        file.originalname,
-        submissionId,
-      ),
+      tempS3BucketFilePath: filePath,
       tempS3BucketFileTime: currentDateTime(),
     });
     await repository.save(record);
@@ -168,6 +170,28 @@ export class MatsDataSubmissionService {
     return records.map((record) => record.id);
   }
 
+  async deleteFile(filePath: string) {
+    await this.getS3Client().send(
+      new DeleteObjectCommand({
+        Bucket: this.getS3Bucket(),
+        Key: filePath,
+      }),
+    );
+  }
+
+  async deleteTempFile(fileName: string, locationId: string) {
+    try {
+      const filePath = this.createStagingFilePath(locationId, fileName);
+      await this.deleteFile(filePath);
+    } catch (err) {
+      this.logger.error(`Error deleting file: ${err.message}`);
+      throw new EaseyException(
+        new Error('An error occurred while deleting the file'),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async deleteMatsDataSubmission(submissionId: string) {
     try {
       await this.repository.delete(submissionId);
@@ -189,22 +213,22 @@ export class MatsDataSubmissionService {
 
     while (isTruncated) {
       const listCommand = new ListObjectsV2Command({
-        Bucket: this.s3Bucket,
+        Bucket: this.getS3Bucket(),
         Prefix: `${submissionId}/`,
         ContinuationToken: continuationToken,
       });
 
-      const listResponse = await this.s3Client.send(listCommand);
+      const listResponse = await this.getS3Client().send(listCommand);
       const objects = listResponse.Contents ?? [];
 
       if (objects.length > 0) {
         const deleteCommand = new DeleteObjectsCommand({
-          Bucket: this.s3Bucket,
+          Bucket: this.getS3Bucket(),
           Delete: {
             Objects: objects.map((obj) => ({ Key: obj.Key })),
           },
         });
-        const deleteResponse = await this.s3Client.send(deleteCommand);
+        const deleteResponse = await this.getS3Client().send(deleteCommand);
         this.logger.debug(
           `Deleted: ${deleteResponse.Deleted?.map((obj) => obj.Key)}`,
         );
@@ -215,10 +239,10 @@ export class MatsDataSubmissionService {
     }
   }
 
-  async generateMetadataXml(
+  private async generateMetadataXml(
     submissionId: string,
     trx?: EntityManager,
-  ): Promise<MetadataXmlFile> {
+  ): Promise<string> {
     const record = await withTransaction(this.repository, trx).findOne({
       where: {
         id: submissionId,
@@ -270,11 +294,7 @@ export class MatsDataSubmissionService {
     const xmlString = this.generateXmlString(xmlData);
     this.logger.debug('Generated Metadata XML', xmlString);
 
-    return {
-      buffer: Buffer.from(xmlString),
-      mimetype: 'text/xml',
-      originalname: 'Metadata.xml',
-    };
+    return xmlString;
   }
 
   private generateXmlString(data: Record<string, unknown>) {
@@ -309,12 +329,12 @@ export class MatsDataSubmissionService {
 
   async getRemoteFileMimeType(filePath: string): Promise<string> {
     const command = new HeadObjectCommand({
-      Bucket: this.s3Bucket,
+      Bucket: this.getS3Bucket(),
       Key: filePath,
     });
 
     try {
-      const res = await this.s3Client.send(command);
+      const res = await this.getS3Client().send(command);
       return res.ContentType ?? null;
     } catch (err) {
       this.logger.error('Error getting MIME type', err);
@@ -336,6 +356,8 @@ export class MatsDataSubmissionService {
   }
 
   private getS3Client() {
+    if (this.s3Client) return this.s3Client;
+
     const accessKeyId = this.configService.get('app.matsImportBucketAccessKey');
     const secretAccessKey = this.configService.get(
       'app.matsImportBucketSecretAccessKey',
@@ -349,25 +371,22 @@ export class MatsDataSubmissionService {
       );
     }
 
-    return new S3Client({
+    this.s3Client = new S3Client({
       credentials: {
         accessKeyId,
         secretAccessKey,
       },
       region,
     });
-  }
 
-  async importFile(file: Express.Multer.File): Promise<string> {
-    const filePath = this.createFilePath(file.originalname);
-    await this.uploadFile(filePath, file.buffer);
-    return filePath;
+    return this.s3Client;
   }
 
   async initializeMatsDataSubmission(
     metadata: MatsDataSubmissionBaseDTO,
-    files: MatsDataSubmissionFiles,
+    fileNames: MatsDataSubmissionFileNamesDTO,
     userId: string,
+    locationId: string,
   ): Promise<string> {
     let submissionId: string | null = null;
 
@@ -393,12 +412,13 @@ export class MatsDataSubmissionService {
         );
 
         // Generate the Metadata XML file.
-        const metadataXml = await this.generateMetadataXml(submissionId, trx);
+        await this.uploadMetadataXmlAndCreateRecord(submissionId, trx);
 
-        // Upload the files to S3 & create MATS_DATA_SUBMISSION_PAYLOAD_FILE records.
-        await this.uploadFilesAndCreateRecords(
-          { ...files, metadataXml },
+        // Move the submission files from the staging directory to the `submissionId` directory in S3 & create MATS_DATA_SUBMISSION_PAYLOAD_FILE records.
+        await this.moveFilesAndCreateRecords(
+          fileNames,
           submissionId,
+          locationId,
           trx,
         );
       });
@@ -416,84 +436,101 @@ export class MatsDataSubmissionService {
   }
 
   private async moveFile(sourcePath: string, destinationPath: string) {
-    await this.s3Client.send(
+    await this.getS3Client().send(
       new CopyObjectCommand({
-        Bucket: this.s3Bucket,
-        CopySource: `${this.s3Bucket}/${sourcePath}`,
+        Bucket: this.getS3Bucket(),
+        CopySource: `${this.getS3Bucket()}/${sourcePath}`,
         Key: destinationPath,
       }),
     );
-    await this.s3Client.send(
+    await this.getS3Client().send(
       new DeleteObjectCommand({
-        Bucket: this.s3Bucket,
+        Bucket: this.getS3Bucket(),
         Key: sourcePath,
       }),
     );
   }
 
+  private async moveFilesAndCreateRecords(
+    fileNames: MatsDataSubmissionFileNamesDTO,
+    submissionId: string,
+    locationId: string,
+    trx?: EntityManager,
+  ) {
+    await settlePromises(
+      Object.entries(fileNames)
+        // Map the array of entries to a single array of tuples.
+        .reduce((acc, [key, fileName]: [string, string | string[]]) => {
+          if (Array.isArray(fileName)) {
+            acc.push(...fileName.map((f) => [key, f]));
+          } else {
+            acc.push([key, fileName]);
+          }
+          return acc;
+        }, [])
+        .map(async ([key, fileName]: [string, string]) => {
+          if (!fileName) return;
+
+          // Move the file from the staging directory to the `submissionId` directory in S3.
+          await this.moveFile(
+            this.createStagingFilePath(locationId, fileName),
+            this.createSubmissionFilePath(submissionId, fileName),
+          );
+          // Add the MATS payload file record.
+          await this.createMatsDataSubmissionPayloadFile(
+            fileName,
+            submissionId,
+            trx,
+            key === 'ertFile',
+          );
+        }),
+    );
+  }
+
   private async uploadFile(path: string, contents: Buffer) {
-    return this.s3Client.send(
+    return this.getS3Client().send(
       new PutObjectCommand({
         Body: contents,
-        Bucket: this.s3Bucket,
+        Bucket: this.getS3Bucket(),
         ContentLength: contents.length,
         Key: path,
       }),
     );
   }
 
-  private async uploadFilesAndCreateRecords(
-    files: { metadataXml: MetadataXmlFile } & MatsDataSubmissionFiles,
+  private async uploadMetadataXmlAndCreateRecord(
     submissionId: string,
-    trx?: EntityManager,
+    trx: EntityManager,
   ) {
-    await settlePromises(
-      Object.entries(files)
-        // Map the array of entries to a single array of tuples.
-        .reduce(
-          (
-            acc,
-            [key, file]: [
-              string,
-              Express.Multer.File | Express.Multer.File[] | MetadataXmlFile,
-            ],
-          ) => {
-            if (Array.isArray(file)) {
-              acc.push(...file.map((f) => [key, f]));
-            } else {
-              acc.push([key, file]);
-            }
-            return acc;
-          },
-          [],
-        )
-        .map(
-          async ([key, file]: [
-            string,
-            Express.Multer.File | MetadataXmlFile,
-          ]) => {
-            if (!file) return;
-
-            // Upload the file to the S3 bucket.
-            await this.uploadFile(
-              this.createFilePath(file.originalname, submissionId),
-              file.buffer,
-            );
-            // Add the MATS payload file record.
-            await this.createMatsDataSubmissionPayloadFile(
-              file,
-              submissionId,
-              trx,
-              key === 'ertFile',
-            );
-          },
-        ),
+    const metadataXml = await this.generateMetadataXml(submissionId, trx);
+    await this.uploadFile(
+      this.createSubmissionFilePath(submissionId, METADATA_XML_FILE_NAME),
+      Buffer.from(metadataXml),
+    );
+    await this.createMatsDataSubmissionPayloadFile(
+      METADATA_XML_FILE_NAME,
+      submissionId,
+      trx,
     );
   }
-}
 
-type MetadataXmlFile = {
-  buffer: Buffer;
-  mimetype: string;
-  originalname: string;
-};
+  async uploadTempFile(
+    file: Express.Multer.File,
+    locationId: string,
+  ): Promise<string> {
+    try {
+      const filePath = this.createStagingFilePath(
+        locationId,
+        file.originalname,
+      );
+      await this.uploadFile(filePath, file.buffer);
+      return filePath;
+    } catch (err) {
+      this.logger.error(`Error uploading file to S3: ${err.message}`);
+      throw new EaseyException(
+        new Error('An error occurred while uploading the file'),
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+}

@@ -3,7 +3,7 @@ import { IsArray, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 import { MatsDataSubmissionBaseDTO } from '../dto/mats-data-submission.dto';
 
-export class MatsDataSubmissionFilePathsDTO {
+export class MatsDataSubmissionFileNamesDTO {
   @IsString()
   @IsOptional()
   ertFile?: string;
@@ -20,8 +20,8 @@ export class MatsDataSubmissionFilePathsDTO {
 
 export class MatsDataSubmissionCreatePayloadDTO {
   @ValidateNested()
-  @Type(() => MatsDataSubmissionFilePathsDTO)
-  filePaths: MatsDataSubmissionFilePathsDTO;
+  @Type(() => MatsDataSubmissionFileNamesDTO)
+  fileNames: MatsDataSubmissionFileNamesDTO;
 
   @ValidateNested()
   @Type(() => MatsDataSubmissionBaseDTO)

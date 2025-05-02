@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { validate } from 'class-validator';
 import { EntityManager, In } from 'typeorm';
 
-import { throwIfErrors } from '../utilities/functions';
+import { MatsDataSubmissionFileNamesDTO } from '../dto/mats-data-submission-create-payload.dto';
 import { MatsDataSubmissionBaseDTO } from '../dto/mats-data-submission.dto';
 import { MatsFileTypeCode } from '../entities/mats-file-type-code.entity';
 import { MatsPollutantCode } from '../entities/mats-pollutant-code.entity';
 import { MatsReportTypeCode } from '../entities/mats-report-type-code.entity';
 import { MatsTestMethodCode } from '../entities/mats-test-method-code.entity';
-import { MatsDataSubmissionService } from './mats-data-submission.service';
+import { throwIfErrors } from '../utilities/functions';
+import {
+  MatsDataSubmissionService,
+  METADATA_XML_FILE_NAME,
+} from './mats-data-submission.service';
 
 @Injectable()
 export class MatsDataSubmissionChecksService {
@@ -20,6 +23,14 @@ export class MatsDataSubmissionChecksService {
   ) {
     this.logger.setContext(MatsDataSubmissionChecksService.name);
   }
+
+  private getMimeType = async (fileName: string, locationId: string) => {
+    const filePath = this.matsDataSubmissionService.createStagingFilePath(
+      locationId,
+      fileName,
+    );
+    return this.matsDataSubmissionService.getRemoteFileMimeType(filePath);
+  };
 
   private async pollutantToTestMethodCrosscheck(
     selectedPollutants: MatsPollutantCode[] = [],
@@ -88,23 +99,15 @@ export class MatsDataSubmissionChecksService {
 
   async runChecks(
     metadata: MatsDataSubmissionBaseDTO,
-    files: MatsDataSubmissionFiles,
+    fileNames: MatsDataSubmissionFileNamesDTO,
+    locationId: string,
   ): Promise<Array<string>> {
     const errors: string[] = [];
-
-    // Validate the DTO.
-    const dtoErrors = await validate(metadata, {
-      groups: [metadata.reportTypeCode],
-    });
-    errors.push(...dtoErrors.map((e) => Object.values(e.constraints)).flat());
-
-    // Throw immediately if initial validation fails.
-    throwIfErrors(errors, { asArray: true });
 
     // Conditional validation of `testNumber`.
     if (
       metadata.reportTypeCode === 'NOTIFY' &&
-      files.ertFile &&
+      fileNames.ertFile &&
       !metadata.testNumber
     ) {
       errors.push(
@@ -157,7 +160,11 @@ export class MatsDataSubmissionChecksService {
     throwIfErrors(errors, { asArray: true });
 
     // Validate the provided files.
-    const warnings = await this.validateFiles(reportType, files);
+    const warnings = await this.validateFiles(
+      reportType,
+      fileNames,
+      locationId,
+    );
 
     /* CROSSCHECK VALIDATION */
 
@@ -217,22 +224,34 @@ export class MatsDataSubmissionChecksService {
 
   private async validateFiles(
     reportType: MatsReportTypeCode,
-    files: MatsDataSubmissionFiles,
+    fileNames: MatsDataSubmissionFileNamesDTO,
+    locationId: string,
   ): Promise<string[]> {
     const errors: string[] = [];
     const warnings: string[] = [];
 
-    errors.push(...this.validateFileMimetypes(files));
+    const fileNameErrors = this.validateFileNames(fileNames);
+    if (fileNameErrors.length) {
+      errors.push(...fileNameErrors);
+    }
+
+    const mimetypeErrors = await this.validateFileMimetypes(
+      fileNames,
+      locationId,
+    );
+    if (mimetypeErrors.length) errors.push(...mimetypeErrors);
 
     const attachmentErrors = await this.validateFileAttachments(
-      files,
+      fileNames,
       reportType,
+      locationId,
     );
-
-    if (reportType.enforceAttachmentRules) {
-      errors.push(...attachmentErrors);
-    } else {
-      warnings.push(...attachmentErrors);
+    if (attachmentErrors.length) {
+      if (reportType.enforceAttachmentRules) {
+        errors.push(...attachmentErrors);
+      } else {
+        warnings.push(...attachmentErrors);
+      }
     }
 
     throwIfErrors(errors, { asArray: true });
@@ -241,12 +260,13 @@ export class MatsDataSubmissionChecksService {
   }
 
   private async validateFileAttachments(
-    files: MatsDataSubmissionFiles,
+    fileNames: MatsDataSubmissionFileNamesDTO,
     reportType: MatsReportTypeCode,
+    locationId: string,
   ) {
     const errors: string[] = [];
 
-    const { ertFile, payloadFile, supportingFiles } = files;
+    const { ertFile, payloadFile, supportingFiles } = fileNames;
 
     const fileTypes = await this.entityManager.find(MatsFileTypeCode);
     const ertFileCheck = () => {
@@ -280,7 +300,8 @@ export class MatsDataSubmissionChecksService {
       // A payload PDF file OR (ERT file & at least one supporting file) are required.
       let hasRequiredFiles = true;
       if (payloadFile) {
-        if (payloadFile.mimetype !== 'application/pdf') {
+        const mimetype = await this.getMimeType(payloadFile, locationId);
+        if (mimetype !== 'application/pdf') {
           hasRequiredFiles = false;
         }
       } else if (!ertFile || !supportingFiles?.length) {
@@ -309,42 +330,67 @@ export class MatsDataSubmissionChecksService {
     return errors;
   }
 
-  private validateFileMimetypes(files: MatsDataSubmissionFiles) {
+  private async validateFileMimetypes(
+    fileNames: MatsDataSubmissionFileNamesDTO,
+    locationId: string,
+  ) {
     const errors: string[] = [];
 
-    const { ertFile, payloadFile, supportingFiles } = files;
+    const { ertFile, payloadFile, supportingFiles } = fileNames;
 
     // ERT file must be XML.
-    if (ertFile && ertFile?.mimetype !== 'text/xml') {
-      errors.push(
-        `Expected ERT file to be of type XML, but got ${ertFile.mimetype}`,
-      );
+    if (ertFile) {
+      const mimetype = await this.getMimeType(ertFile, locationId);
+      if (!['application/xml', 'text/xml'].includes(mimetype)) {
+        errors.push(`Expected ERT file to be of type XML, but got ${mimetype}`);
+      }
     }
 
     // Payload file must be PDF, JSON, or XML.
     const validPayloadFileTypes = [
-      'application/pdf',
       'application/json',
+      'application/pdf',
+      'application/xml',
+      'text/json',
       'text/xml',
     ];
-    if (payloadFile && !validPayloadFileTypes.includes(payloadFile.mimetype)) {
-      errors.push(
-        `Expected Payload file to be of type ${validPayloadFileTypes.join(
-          ', ',
-        )} but got ${payloadFile.mimetype}`,
-      );
+    if (payloadFile) {
+      const mimetype = await this.getMimeType(payloadFile, locationId);
+      if (!validPayloadFileTypes.includes(mimetype)) {
+        errors.push(
+          `Expected Payload file to be of type ${validPayloadFileTypes.join(
+            ', ',
+          )} but got ${mimetype}`,
+        );
+      }
     }
 
     // Supporting files must be PDF.
-    if (
-      supportingFiles &&
-      !supportingFiles.every((file) => file.mimetype === 'application/pdf')
-    ) {
-      errors.push(
-        `Expected Supporting files to be of type PDF, but got ${supportingFiles
-          .map((file) => file.mimetype)
-          .join(', ')}`,
+    if (supportingFiles) {
+      const mimetypes = await Promise.all(
+        supportingFiles.map((file) => this.getMimeType(file, locationId)),
       );
+      if (!mimetypes.every((mimetype) => mimetype === 'application/pdf')) {
+        errors.push(
+          `Expected Supporting files to be of type PDF, but got ${mimetypes.join(', ')}`,
+        );
+      }
+    }
+
+    return errors;
+  }
+
+  private validateFileNames(fileNames: MatsDataSubmissionFileNamesDTO) {
+    const errors = [];
+
+    const fileNamesFlat = Object.values(fileNames).flat();
+
+    if (fileNamesFlat.length !== new Set(fileNamesFlat).size) {
+      errors.push('File names must be unique.');
+    }
+
+    if (fileNamesFlat.some((name) => name === METADATA_XML_FILE_NAME)) {
+      errors.push(`File name [${METADATA_XML_FILE_NAME}] is reserved.`);
     }
 
     return errors;

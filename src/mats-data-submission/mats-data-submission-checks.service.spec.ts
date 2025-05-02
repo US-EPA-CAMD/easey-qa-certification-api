@@ -5,7 +5,7 @@ import { EntityManager } from 'typeorm';
 
 import { MatsDataSubmissionBaseDTO } from '../dto/mats-data-submission.dto';
 import { MatsReportTypeCode } from '../entities/mats-report-type-code.entity';
-import { MatsDataSubmissionFiles } from '../interfaces/mats-data-submission-files';
+import { MatsDataSubmissionFileNamesDTO } from '../dto/mats-data-submission-create-payload.dto';
 import { MatsDataSubmissionMap } from '../maps/mats-data-submission.map';
 import { MatsDataSubmissionRepository } from './mats-data-submission.repository';
 import { MatsDataSubmissionService } from './mats-data-submission.service';
@@ -86,7 +86,8 @@ describe('MatsDataSubmissionChecksService', () => {
 
       const result = await service.runChecks(
         mockPayload,
-        {} as MatsDataSubmissionFiles,
+        {} as MatsDataSubmissionFileNamesDTO,
+        'locationId',
       );
       expect(result).toEqual([]);
     });

@@ -6,7 +6,7 @@ import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import { EntityManager } from 'typeorm';
 import { DataSource } from 'typeorm';
 
-import { MatsDataSubmissionDTO } from '../dto/mats-data-submission.dto';
+import { MatsDataSubmissionCreatePayloadDTO } from '../dto/mats-data-submission-create-payload.dto';
 import { MatsDataSubmissionMap } from '../maps/mats-data-submission.map';
 import { MatsDataSubmissionChecksService } from './mats-data-submission-checks.service';
 import { MatsDataSubmissionController } from './mats-data-submission.controller';
@@ -21,6 +21,8 @@ const user: CurrentUser = {
   facilities: [],
   roles: [],
 };
+
+const payload = new MatsDataSubmissionCreatePayloadDTO();
 
 describe('MatsDataSubmissionController', () => {
   let controller: MatsDataSubmissionController;
@@ -70,7 +72,11 @@ describe('MatsDataSubmissionController', () => {
     it('should call the service to create a new submission', async () => {
       checksService.runChecks = jest.fn().mockResolvedValue([]);
       service.initializeMatsDataSubmission = jest.fn().mockResolvedValue('1');
-      const res = await controller.initializeMatsDataSubmission('{}', {}, user);
+      const res = await controller.initializeMatsDataSubmission(
+        payload,
+        user,
+        'locationId',
+      );
       expect(res).toEqual({ warnings: [], id: '1' });
     });
   });

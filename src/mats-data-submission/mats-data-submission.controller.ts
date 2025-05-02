@@ -1,4 +1,5 @@
 import {
+  applyDecorators,
   Body,
   Controller,
   Delete,
@@ -37,6 +38,19 @@ const MAX_UPLOAD_SIZE_MB = getConfigValueNumber(
   50,
 );
 
+const CommonRoleGuard = () =>
+  applyDecorators(
+    RoleGuard(
+      {
+        enforceCheckout: true,
+        pathParam: 'locId',
+        requiredRoles: ['Submitter', 'Sponsor', 'Initial Authorizer'],
+        permissionsForFacility: ['DSQA'],
+      },
+      LookupType.Location,
+    ),
+  );
+
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('MATS Data Submission')
@@ -51,14 +65,7 @@ export class MatsDataSubmissionController {
     type: MatsDataSubmissionCreateResponseDTO,
     description: 'Creates a MATS Data Submission record',
   })
-  @RoleGuard(
-    {
-      pathParam: 'locId',
-      requiredRoles: ['Submitter', 'Sponsor', 'Initial Authorizer'],
-      permissionsForFacility: ['DSQA'],
-    },
-    LookupType.Location,
-  )
+  @CommonRoleGuard()
   @AuditLog({
     label: 'Created MATS Data Submission record',
     requestBodyOutFields: ['locationId', 'facilityId', 'monitorPlanId'],
@@ -66,18 +73,51 @@ export class MatsDataSubmissionController {
   async initializeMatsDataSubmission(
     @Body() payload: MatsDataSubmissionCreatePayloadDTO,
     @User() user: CurrentUser,
+    @Param('locId') locationId: string,
   ) {
-    const { metadata, filePaths } = payload;
-    const warnings = await this.checksService.runChecks(metadata, filePaths);
+    const { metadata, fileNames } = payload;
+    const warnings = await this.checksService.runChecks(
+      metadata,
+      fileNames,
+      locationId,
+    );
     const submissionId = await this.service.initializeMatsDataSubmission(
       metadata,
-      filePaths,
+      fileNames,
       user.userId,
+      locationId,
     );
     return {
       warnings,
       id: submissionId,
     };
+  }
+
+  @Delete(':id')
+  @CommonRoleGuard()
+  @ApiOkResponse({
+    description:
+      'Deletes a MATS Data Submission record and all associated files.',
+  })
+  @AuditLog({
+    label: 'Deleted MATS Data Submission record',
+    requestParamsOutFields: ['id', 'locId'],
+  })
+  async deleteMatsDataSubmission(@Param('id') id: string) {
+    this.service.deleteMatsDataSubmission(id);
+  }
+
+  @Delete('file/:fileName')
+  @ApiOkResponse({
+    description:
+      'Deletes a file from the MATS Data Submission record staging area',
+  })
+  @CommonRoleGuard()
+  async deleteTempFile(
+    @Param('fileName') fileName: string,
+    @Param('locId') locationId: string,
+  ) {
+    this.service.deleteTempFile(fileName, locationId);
   }
 
   @Post('file')
@@ -93,8 +133,13 @@ export class MatsDataSubmissionController {
       },
     },
   })
+  @ApiOkResponse({
+    description:
+      'Uploads a file to the MATS Data Submission record staging area',
+  })
+  @CommonRoleGuard()
   @UseInterceptors(FileInterceptor('file'))
-  async importFile(
+  async uploadTempFile(
     @UploadedFile(
       new ParseFilePipe({
         validators: [
@@ -110,29 +155,8 @@ export class MatsDataSubmissionController {
       }),
     )
     file: Express.Multer.File,
-  ): Promise<{ filePath: string }> {
-    const filePath = await this.service.importFile(file);
-    return { filePath };
-  }
-
-  @Delete(':id')
-  @RoleGuard(
-    {
-      pathParam: 'locId',
-      requiredRoles: ['Submitter', 'Sponsor', 'Initial Authorizer'],
-      permissionsForFacility: ['DSQA'],
-    },
-    LookupType.Location,
-  )
-  @ApiOkResponse({
-    description:
-      'Deletes a MATS Data Submission record and all associated files.',
-  })
-  @AuditLog({
-    label: 'Deleted MATS Data Submission record',
-    requestParamsOutFields: ['id', 'locId'],
-  })
-  async deleteMatsDataSubmission(@Param('id') id: string) {
-    this.service.deleteMatsDataSubmission(id);
+    @Param('locId') locId: string,
+  ) {
+    this.service.uploadTempFile(file, locId);
   }
 }

@@ -52,6 +52,30 @@ const mockEntityManager = {
 const mockRepository = () => ({
   findOne: jest.fn().mockResolvedValue(mockEntity),
 });
+const mockSubmissionXml = `
+  <MatsTransitionMetadata>
+    <SubmissionInfo>
+      <SubmissionId>2</SubmissionId>
+      <SubmissionDate>2025-05-02T19:33:45.903Z</SubmissionDate>
+      <IsResubmission>true</IsResubmission>
+      <OriginalSubmissionId>1</OriginalSubmissionId>
+    </SubmissionInfo>
+    <CdxUser>TESTID</CdxUser>
+    <ReportTypeCode>RPT</ReportTypeCode>
+    <FrsId></FrsId>
+    <LocationName/>
+    <AveragingGroupCode>AGC</AveragingGroupCode>
+    <PollutantList>
+      <PollutantCode>ANY</PollutantCode>
+    </PollutantList>
+    <TestMethodList>
+      <TestMethodCode>MTH</TestMethodCode>
+    </TestMethodList>
+    <TestNumber>123456</TestNumber>
+    <TestDate>2025-05-02</TestDate>
+    <TestComment>Test Comment</TestComment>
+  </MatsTransitionMetadata>
+`;
 
 describe('MatsDataSubmissionService', () => {
   let service: MatsDataSubmissionService;
@@ -82,11 +106,9 @@ describe('MatsDataSubmissionService', () => {
   });
 
   describe('generateMetadataXml', () => {
-    it('should return an object with an XMl buffer', async () => {
-      const res = await service.generateMetadataXml(mockEntity.id);
-      expect(res.mimetype).toEqual('text/xml');
-      expect(res.originalname).toEqual('Metadata.xml');
-      expect(res.buffer).toBeDefined();
+    it('should return an XML string', async () => {
+      const res = await (service as any).generateMetadataXml(mockEntity.id);
+      expect(res).toEqual(mockSubmissionXml);
     });
   });
 
@@ -122,7 +144,10 @@ describe('MatsDataSubmissionService', () => {
         .spyOn(service as any, 'createMatsDataSubmissionTestMethods')
         .mockResolvedValue([1]);
       jest
-        .spyOn(service as any, 'uploadFilesAndCreateRecords')
+        .spyOn(service as any, 'uploadMetadataXmlAndCreateRecord')
+        .mockImplementation(jest.fn());
+      jest
+        .spyOn(service as any, 'moveFilesAndCreateRecords')
         .mockImplementation(jest.fn());
 
       const payload = new MatsDataSubmissionBaseDTO();
@@ -131,6 +156,7 @@ describe('MatsDataSubmissionService', () => {
         payload,
         files,
         'TESTID',
+        'LOCATIONID',
       );
 
       expect((service as any).createMatsDataSubmission).toHaveBeenCalled();
@@ -140,7 +166,10 @@ describe('MatsDataSubmissionService', () => {
       expect(
         (service as any).createMatsDataSubmissionTestMethods,
       ).toHaveBeenCalled();
-      expect((service as any).uploadFilesAndCreateRecords).toHaveBeenCalled();
+      expect(
+        (service as any).uploadMetadataXmlAndCreateRecord,
+      ).toHaveBeenCalled();
+      expect((service as any).moveFilesAndCreateRecords).toHaveBeenCalled();
       expect(res).toEqual(submissionId);
     });
   });
