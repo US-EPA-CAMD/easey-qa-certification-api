@@ -13,6 +13,7 @@ import { MatsDataSubmissionMap } from '../maps/mats-data-submission.map';
 import { MatsDataSubmissionRepository } from './mats-data-submission.repository';
 import { MatsDataSubmissionService } from './mats-data-submission.service';
 
+const mockDate = new Date();
 function createMockSubmission() {
   const entity = new MatsDataSubmission();
   const pollutant = new MatsPollutantCode();
@@ -20,7 +21,7 @@ function createMockSubmission() {
   const testMethod = new MatsTestMethodCode();
   testMethod.code = 'MTH';
 
-  entity.addTime = new Date();
+  entity.addTime = mockDate;
   entity.averagingGroupCode = 'AGC';
   entity.facility = new Plant();
   entity.facilityId = 10;
@@ -34,10 +35,10 @@ function createMockSubmission() {
   entity.quarter = 1;
   entity.reportTypeCode = 'RPT';
   entity.testComment = 'Test Comment';
-  entity.testDate = new Date();
+  entity.testDate = mockDate;
   entity.testMethods = [testMethod];
   entity.testNumber = '123456';
-  entity.updateTime = new Date();
+  entity.updateTime = mockDate;
   entity.userId = 'TESTID';
   entity.year = 2023;
   return entity;
@@ -56,7 +57,7 @@ const mockSubmissionXml = `
   <MatsTransitionMetadata>
     <SubmissionInfo>
       <SubmissionId>2</SubmissionId>
-      <SubmissionDate>2025-05-02T19:33:45.903Z</SubmissionDate>
+      <SubmissionDate>${mockDate.toISOString()}</SubmissionDate>
       <IsResubmission>true</IsResubmission>
       <OriginalSubmissionId>1</OriginalSubmissionId>
     </SubmissionInfo>
@@ -72,7 +73,7 @@ const mockSubmissionXml = `
       <TestMethodCode>MTH</TestMethodCode>
     </TestMethodList>
     <TestNumber>123456</TestNumber>
-    <TestDate>2025-05-02</TestDate>
+    <TestDate>${mockDate.toISOString().substring(0, 10)}</TestDate>
     <TestComment>Test Comment</TestComment>
   </MatsTransitionMetadata>
 `;
@@ -108,7 +109,9 @@ describe('MatsDataSubmissionService', () => {
   describe('generateMetadataXml', () => {
     it('should return an XML string', async () => {
       const res = await (service as any).generateMetadataXml(mockEntity.id);
-      expect(res).toEqual(mockSubmissionXml);
+      const cleanXml = (xmlString: string) =>
+        xmlString.replace(/>\s+</g, '><').trim();
+      expect(cleanXml(res)).toEqual(cleanXml(mockSubmissionXml));
     });
   });
 
