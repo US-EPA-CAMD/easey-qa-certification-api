@@ -24,13 +24,13 @@ export class MatsDataSubmissionChecksService {
     this.logger.setContext(MatsDataSubmissionChecksService.name);
   }
 
-  private getMimeType = async (fileName: string, locationId: string) => {
+  private async getMimeType(fileName: string, locationId: string) {
     const filePath = this.matsDataSubmissionService.createStagingFilePath(
       locationId,
       fileName,
     );
     return this.matsDataSubmissionService.getRemoteFileMimeType(filePath);
-  };
+  }
 
   private async pollutantToTestMethodCrosscheck(
     selectedPollutants: MatsPollutantCode[] = [],
