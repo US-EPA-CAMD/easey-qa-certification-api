@@ -1,5 +1,6 @@
 import {
   DeleteObjectsCommand,
+  HeadObjectCommand,
   ListObjectsV2Command,
   PutObjectCommand,
   S3Client,
@@ -15,6 +16,7 @@ import {
 } from '@us-epa-camd/easey-common/utilities/functions';
 import { XMLBuilder } from 'fast-xml-parser';
 import { EntityManager } from 'typeorm';
+import { v4 as uuid } from 'uuid';
 
 import {
   MatsDataSubmissionBaseDTO,
@@ -39,8 +41,8 @@ export class MatsDataSubmissionService {
     this.logger.setContext(MatsDataSubmissionService.name);
   }
 
-  private createFilePath(fileName: string, submissionId: string) {
-    return `${submissionId}/${fileName}`;
+  private createFilePath(fileName: string, submissionId?: string) {
+    return `${submissionId ?? uuid()}/${fileName}`;
   }
 
   private async createMatsDataSubmission(
@@ -302,7 +304,24 @@ export class MatsDataSubmissionService {
     return this.map.many(result);
   }
 
-  private getS3Bucket() {
+  async getRemoteFileMimeType(filePath: string): Promise<string> {
+    const bucket = this.getS3Bucket();
+    const client = this.getS3Client();
+    const command = new HeadObjectCommand({
+      Bucket: bucket,
+      Key: filePath,
+    });
+
+    try {
+      const res = await client.send(command);
+      return res.ContentType ?? null;
+    } catch (err) {
+      this.logger.error('Error getting MIME type', err);
+      return null;
+    }
+  }
+
+  private getS3Bucket(): string {
     const bucket = this.configService.get('app.matsImportBucket');
 
     if (!bucket) {
@@ -336,6 +355,17 @@ export class MatsDataSubmissionService {
       },
       region,
     });
+  }
+
+  async importFile(file: Express.Multer.File): Promise<string> {
+    const filePath = this.createFilePath(file.originalname);
+    await this.uploadFile(
+      filePath,
+      file.buffer,
+      this.getS3Client(),
+      this.getS3Bucket(),
+    );
+    return filePath;
   }
 
   async initializeMatsDataSubmission(

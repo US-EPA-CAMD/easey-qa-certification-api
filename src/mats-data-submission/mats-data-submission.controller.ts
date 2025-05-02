@@ -2,12 +2,19 @@ import {
   Body,
   Controller,
   Delete,
+  FileTypeValidator,
+  MaxFileSizeValidator,
   Param,
+  ParseFilePipe,
   Post,
+  UploadedFile,
   UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import {
+  FileInterceptor,
+  FileFieldsInterceptor,
+} from '@nestjs/platform-express';
 import {
   ApiBody,
   ApiConsumes,
@@ -22,12 +29,18 @@ import {
 } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
+import { getConfigValueNumber } from '@us-epa-camd/easey-common/utilities';
 import { plainToClass } from 'class-transformer';
 
 import { MatsDataSubmissionCreateResponseDTO } from '../dto/mats-data-submission-create-response.dto';
 import { MatsDataSubmissionBaseDTO } from '../dto/mats-data-submission.dto';
 import { MatsDataSubmissionChecksService } from './mats-data-submission-checks.service';
 import { MatsDataSubmissionService } from './mats-data-submission.service';
+
+const MAX_UPLOAD_SIZE_MB = getConfigValueNumber(
+  'EASEY_QA_CERTIFICATION_API_MAX_MATS_UPLOAD_SIZE_MB',
+  50,
+);
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -101,7 +114,6 @@ export class MatsDataSubmissionController {
     },
     @User() user: CurrentUser,
   ) {
-    console.log("TEST");
     const metadata: MatsDataSubmissionBaseDTO = plainToClass(
       MatsDataSubmissionBaseDTO,
       JSON.parse(rawMetadata),
@@ -125,6 +137,41 @@ export class MatsDataSubmissionController {
       warnings,
       id: submissionId,
     };
+  }
+
+  @Post('file')
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
+        },
+      },
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  async importFile(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: MAX_UPLOAD_SIZE_MB * 1024 * 1024,
+          }),
+          new FileTypeValidator({
+            fileType: new RegExp(
+              /^(application\/pdf|application\/xml|text\/xml|application\/json|text\/json)$/,
+            ),
+          }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ): Promise<{ filePath: string }> {
+    const filePath = await this.service.importFile(file);
+    return { filePath };
   }
 
   @Delete(':id')
