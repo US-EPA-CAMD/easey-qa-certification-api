@@ -1,4 +1,6 @@
 import {
+  CopyObjectCommand,
+  DeleteObjectCommand,
   DeleteObjectsCommand,
   HeadObjectCommand,
   ListObjectsV2Command,
@@ -25,12 +27,14 @@ import {
 import { MatsDataSubmissionPayloadFile } from '../entities/mats-data-submission-payload-file.entity';
 import { MatsDataSubmissionPollutant } from '../entities/mats-data-submission-pollutant.entity';
 import { MatsDataSubmissionTestMethod } from '../entities/mats-data-submission-test-method.entity';
-import { MatsDataSubmissionFiles } from '../interfaces/mats-data-submission-files';
 import { MatsDataSubmissionMap } from '../maps/mats-data-submission.map';
 import { MatsDataSubmissionRepository } from './mats-data-submission.repository';
 
 @Injectable()
 export class MatsDataSubmissionService {
+  private readonly s3Bucket: string;
+  private readonly s3Client: S3Client;
+
   constructor(
     private readonly configService: ConfigService,
     private readonly entityManager: EntityManager,
@@ -39,6 +43,8 @@ export class MatsDataSubmissionService {
     private readonly repository: MatsDataSubmissionRepository,
   ) {
     this.logger.setContext(MatsDataSubmissionService.name);
+    this.s3Bucket = this.getS3Bucket();
+    this.s3Client = this.getS3Client();
   }
 
   private createFilePath(fileName: string, submissionId?: string) {
@@ -178,30 +184,27 @@ export class MatsDataSubmissionService {
   }
 
   private async deleteSubmissionFiles(submissionId: string) {
-    const client = this.getS3Client();
-    const bucket = this.getS3Bucket();
-
     let isTruncated = true;
     let continuationToken: string;
 
     while (isTruncated) {
       const listCommand = new ListObjectsV2Command({
-        Bucket: bucket,
+        Bucket: this.s3Bucket,
         Prefix: `${submissionId}/`,
         ContinuationToken: continuationToken,
       });
 
-      const listResponse = await client.send(listCommand);
+      const listResponse = await this.s3Client.send(listCommand);
       const objects = listResponse.Contents ?? [];
 
       if (objects.length > 0) {
         const deleteCommand = new DeleteObjectsCommand({
-          Bucket: bucket,
+          Bucket: this.s3Bucket,
           Delete: {
             Objects: objects.map((obj) => ({ Key: obj.Key })),
           },
         });
-        const deleteResponse = await client.send(deleteCommand);
+        const deleteResponse = await this.s3Client.send(deleteCommand);
         this.logger.debug(
           `Deleted: ${deleteResponse.Deleted?.map((obj) => obj.Key)}`,
         );
@@ -305,15 +308,13 @@ export class MatsDataSubmissionService {
   }
 
   async getRemoteFileMimeType(filePath: string): Promise<string> {
-    const bucket = this.getS3Bucket();
-    const client = this.getS3Client();
     const command = new HeadObjectCommand({
-      Bucket: bucket,
+      Bucket: this.s3Bucket,
       Key: filePath,
     });
 
     try {
-      const res = await client.send(command);
+      const res = await this.s3Client.send(command);
       return res.ContentType ?? null;
     } catch (err) {
       this.logger.error('Error getting MIME type', err);
@@ -359,12 +360,7 @@ export class MatsDataSubmissionService {
 
   async importFile(file: Express.Multer.File): Promise<string> {
     const filePath = this.createFilePath(file.originalname);
-    await this.uploadFile(
-      filePath,
-      file.buffer,
-      this.getS3Client(),
-      this.getS3Bucket(),
-    );
+    await this.uploadFile(filePath, file.buffer);
     return filePath;
   }
 
@@ -419,16 +415,27 @@ export class MatsDataSubmissionService {
     return submissionId;
   }
 
-  private async uploadFile(
-    path: string,
-    contents: Buffer,
-    client: S3Client,
-    bucket: string,
-  ) {
-    return client.send(
+  private async moveFile(sourcePath: string, destinationPath: string) {
+    await this.s3Client.send(
+      new CopyObjectCommand({
+        Bucket: this.s3Bucket,
+        CopySource: `${this.s3Bucket}/${sourcePath}`,
+        Key: destinationPath,
+      }),
+    );
+    await this.s3Client.send(
+      new DeleteObjectCommand({
+        Bucket: this.s3Bucket,
+        Key: sourcePath,
+      }),
+    );
+  }
+
+  private async uploadFile(path: string, contents: Buffer) {
+    return this.s3Client.send(
       new PutObjectCommand({
         Body: contents,
-        Bucket: bucket,
+        Bucket: this.s3Bucket,
         ContentLength: contents.length,
         Key: path,
       }),
@@ -440,9 +447,6 @@ export class MatsDataSubmissionService {
     submissionId: string,
     trx?: EntityManager,
   ) {
-    const client = this.getS3Client();
-    const bucket = this.getS3Bucket();
-
     await settlePromises(
       Object.entries(files)
         // Map the array of entries to a single array of tuples.
@@ -474,8 +478,6 @@ export class MatsDataSubmissionService {
             await this.uploadFile(
               this.createFilePath(file.originalname, submissionId),
               file.buffer,
-              client,
-              bucket,
             );
             // Add the MATS payload file record.
             await this.createMatsDataSubmissionPayloadFile(

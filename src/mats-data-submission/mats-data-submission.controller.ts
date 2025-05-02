@@ -8,13 +8,9 @@ import {
   ParseFilePipe,
   Post,
   UploadedFile,
-  UploadedFiles,
   UseInterceptors,
 } from '@nestjs/common';
-import {
-  FileInterceptor,
-  FileFieldsInterceptor,
-} from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBody,
   ApiConsumes,
@@ -30,10 +26,9 @@ import {
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { getConfigValueNumber } from '@us-epa-camd/easey-common/utilities';
-import { plainToClass } from 'class-transformer';
 
+import { MatsDataSubmissionCreatePayloadDTO } from '../dto/mats-data-submission-create-payload.dto';
 import { MatsDataSubmissionCreateResponseDTO } from '../dto/mats-data-submission-create-response.dto';
-import { MatsDataSubmissionBaseDTO } from '../dto/mats-data-submission.dto';
 import { MatsDataSubmissionChecksService } from './mats-data-submission-checks.service';
 import { MatsDataSubmissionService } from './mats-data-submission.service';
 
@@ -52,38 +47,9 @@ export class MatsDataSubmissionController {
   ) {}
 
   @Post()
-  @ApiConsumes('multipart/form-data')
   @ApiOkResponse({
     type: MatsDataSubmissionCreateResponseDTO,
     description: 'Creates a MATS Data Submission record',
-  })
-  @ApiBody({
-    description: 'Multiple files and submission metadata to upload',
-    type: 'multipart/form-data',
-    schema: {
-      type: 'object',
-      properties: {
-        metadata: {
-          type: 'string',
-          description: 'JSON string of a MatsDataSubmissionBaseDTO object',
-        },
-        ertFile: {
-          type: 'string',
-          format: 'binary',
-        },
-        payloadFile: {
-          type: 'string',
-          format: 'binary',
-        },
-        supportingFiles: {
-          type: 'array',
-          items: {
-            type: 'string',
-            format: 'binary',
-          },
-        },
-      },
-    },
   })
   @RoleGuard(
     {
@@ -97,40 +63,15 @@ export class MatsDataSubmissionController {
     label: 'Created MATS Data Submission record',
     requestBodyOutFields: ['locationId', 'facilityId', 'monitorPlanId'],
   })
-  @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: 'ertFile', maxCount: 1 },
-      { name: 'payloadFile', maxCount: 1 },
-      { name: 'supportingFiles' },
-    ]),
-  )
   async initializeMatsDataSubmission(
-    @Body('metadata') rawMetadata: string,
-    @UploadedFiles()
-    files: {
-      ertFile?: Express.Multer.File[];
-      payloadFile?: Express.Multer.File[];
-      supportingFiles?: Express.Multer.File[];
-    },
+    @Body() payload: MatsDataSubmissionCreatePayloadDTO,
     @User() user: CurrentUser,
   ) {
-    const metadata: MatsDataSubmissionBaseDTO = plainToClass(
-      MatsDataSubmissionBaseDTO,
-      JSON.parse(rawMetadata),
-    );
-    // Only accept one file for ertFile and payloadFile, but allow multiple for supportingFiles.
-    const relevantFiles = {
-      ertFile: files.ertFile?.[0],
-      payloadFile: files.payloadFile?.[0],
-      supportingFiles: files.supportingFiles,
-    };
-    const warnings = await this.checksService.runChecks(
-      metadata,
-      relevantFiles,
-    );
+    const { metadata, filePaths } = payload;
+    const warnings = await this.checksService.runChecks(metadata, filePaths);
     const submissionId = await this.service.initializeMatsDataSubmission(
       metadata,
-      relevantFiles,
+      filePaths,
       user.userId,
     );
     return {

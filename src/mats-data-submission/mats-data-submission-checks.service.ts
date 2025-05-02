@@ -9,13 +9,14 @@ import { MatsFileTypeCode } from '../entities/mats-file-type-code.entity';
 import { MatsPollutantCode } from '../entities/mats-pollutant-code.entity';
 import { MatsReportTypeCode } from '../entities/mats-report-type-code.entity';
 import { MatsTestMethodCode } from '../entities/mats-test-method-code.entity';
-import { MatsDataSubmissionFiles } from '../interfaces/mats-data-submission-files';
+import { MatsDataSubmissionService } from './mats-data-submission.service';
 
 @Injectable()
 export class MatsDataSubmissionChecksService {
   constructor(
     private readonly entityManager: EntityManager,
     private readonly logger: Logger,
+    private readonly matsDataSubmissionService: MatsDataSubmissionService,
   ) {
     this.logger.setContext(MatsDataSubmissionChecksService.name);
   }
