@@ -29,7 +29,6 @@ const mockPayload: MatsDataSubmissionBaseDTO = {
   originalSubmissionId: '2',
   facilityId: 8470,
   monitorPlanId: 'SDM4661-9D60966839D048AD989BDD49DB09CC80',
-  statusCode: 'NEW',
 };
 const mockReportTypeCode = (() => {
   const entity = new MatsReportTypeCode();

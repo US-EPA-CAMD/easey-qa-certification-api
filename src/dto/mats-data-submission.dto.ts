@@ -22,7 +22,6 @@ import {
 import { MatsAveragingGroupCode } from '../entities/mats-averaging-group-code.entity';
 import { MatsPollutantCode } from '../entities/mats-pollutant-code.entity';
 import { MatsReportTypeCode } from '../entities/mats-report-type-code.entity';
-import { MatsStatusCode } from '../entities/mats-status-code.entity';
 import { MatsTestMethodCode } from '../entities/mats-test-method-code.entity';
 import { MonitorPlan } from '../entities/monitor-plan.entity';
 import { MonitorLocation } from '../entities/monitor-location.entity';
@@ -37,9 +36,8 @@ export class MatsDataSubmissionBaseDTO {
     description:
       propertyMetadata.matsDataSubmissionDTO.averagingGroupCode.description,
     example: propertyMetadata.matsDataSubmissionDTO.averagingGroupCode.example,
-    name:
-      propertyMetadata.matsDataSubmissionDTO.averagingGroupCode.fieldLabels
-        .value,
+    name: propertyMetadata.matsDataSubmissionDTO.averagingGroupCode.fieldLabels
+      .value,
   })
   @IsValidCode(MatsAveragingGroupCode, {
     groups: [
@@ -91,8 +89,8 @@ export class MatsDataSubmissionBaseDTO {
     description:
       propertyMetadata.matsDataSubmissionDTO.monitorPlanId.description,
     example: propertyMetadata.matsDataSubmissionDTO.monitorPlanId.example,
-    name:
-      propertyMetadata.matsDataSubmissionDTO.monitorPlanId.fieldLabels.value,
+    name: propertyMetadata.matsDataSubmissionDTO.monitorPlanId.fieldLabels
+      .value,
   })
   @IsValidCode(MonitorPlan)
   @IsString()
@@ -103,9 +101,8 @@ export class MatsDataSubmissionBaseDTO {
       propertyMetadata.matsDataSubmissionDTO.originalSubmissionId.description,
     example:
       propertyMetadata.matsDataSubmissionDTO.originalSubmissionId.example,
-    name:
-      propertyMetadata.matsDataSubmissionDTO.originalSubmissionId.fieldLabels
-        .value,
+    name: propertyMetadata.matsDataSubmissionDTO.originalSubmissionId
+      .fieldLabels.value,
   })
   @IsNumberString()
   @IsOptional()
@@ -115,8 +112,8 @@ export class MatsDataSubmissionBaseDTO {
     description:
       propertyMetadata.matsDataSubmissionDTO.pollutantCodes.description,
     example: propertyMetadata.matsDataSubmissionDTO.pollutantCodes.example,
-    name:
-      propertyMetadata.matsDataSubmissionDTO.pollutantCodes.fieldLabels.value,
+    name: propertyMetadata.matsDataSubmissionDTO.pollutantCodes.fieldLabels
+      .value,
     isArray: true,
     type: String,
   })
@@ -161,21 +158,12 @@ export class MatsDataSubmissionBaseDTO {
     description:
       propertyMetadata.matsDataSubmissionDTO.reportTypeCode.description,
     example: propertyMetadata.matsDataSubmissionDTO.reportTypeCode.example,
-    name:
-      propertyMetadata.matsDataSubmissionDTO.reportTypeCode.fieldLabels.value,
+    name: propertyMetadata.matsDataSubmissionDTO.reportTypeCode.fieldLabels
+      .value,
   })
   @IsValidCode(MatsReportTypeCode)
   @IsString()
   reportTypeCode: string;
-
-  @ApiProperty({
-    description: propertyMetadata.matsDataSubmissionDTO.statusCode.description,
-    example: propertyMetadata.matsDataSubmissionDTO.statusCode.example,
-    name: propertyMetadata.matsDataSubmissionDTO.statusCode.fieldLabels.value,
-  })
-  @IsValidCode(MatsStatusCode)
-  @IsString()
-  statusCode: string;
 
   @ApiProperty({
     description: propertyMetadata.matsDataSubmissionDTO.testComment.description,
@@ -269,8 +257,8 @@ export class MatsDataSubmissionBaseDTO {
     description:
       propertyMetadata.matsDataSubmissionDTO.testMethodCodes.description,
     example: propertyMetadata.matsDataSubmissionDTO.testMethodCodes.example,
-    name:
-      propertyMetadata.matsDataSubmissionDTO.testMethodCodes.fieldLabels.value,
+    name: propertyMetadata.matsDataSubmissionDTO.testMethodCodes.fieldLabels
+      .value,
     isArray: true,
     type: String,
   })
@@ -392,6 +380,13 @@ export class MatsDataSubmissionDTO extends MatsDataSubmissionBaseDTO {
     name: propertyMetadata.matsDataSubmissionDTO.addDate.fieldLabels.value,
   })
   addDate: string;
+
+  @ApiProperty({
+    description: propertyMetadata.matsDataSubmissionDTO.statusCode.description,
+    example: propertyMetadata.matsDataSubmissionDTO.statusCode.example,
+    name: propertyMetadata.matsDataSubmissionDTO.statusCode.fieldLabels.value,
+  })
+  statusCode: string;
 
   @ApiProperty({
     description: propertyMetadata.matsDataSubmissionDTO.updateDate.description,

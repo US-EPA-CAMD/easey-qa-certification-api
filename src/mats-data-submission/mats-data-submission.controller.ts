@@ -66,10 +66,10 @@ export class MatsDataSubmissionController {
     description: 'Creates a MATS Data Submission record',
   })
   @CommonRoleGuard()
-  @AuditLog({
-    label: 'Created MATS Data Submission record',
-    requestBodyOutFields: ['locationId', 'facilityId', 'monitorPlanId'],
-  })
+  //@AuditLog({
+  //  label: 'Created MATS Data Submission record',
+  //  requestBodyOutFields: ['locationId', 'facilityId', 'monitorPlanId'],
+  //})
   async initializeMatsDataSubmission(
     @Body() payload: MatsDataSubmissionCreatePayloadDTO,
     @User() user: CurrentUser,

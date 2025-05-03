@@ -17,6 +17,7 @@ import {
   withTransaction,
 } from '@us-epa-camd/easey-common/utilities/functions';
 import { XMLBuilder } from 'fast-xml-parser';
+import { lookup } from 'mime-types';
 import { EntityManager } from 'typeorm';
 
 import { MatsDataSubmissionFileNamesDTO } from '../dto/mats-data-submission-create-payload.dto';
@@ -69,7 +70,6 @@ export class MatsDataSubmissionService {
       monitorPlanId: payload.monitorPlanId,
       originalSubmissionId: payload.originalSubmissionId,
       reportTypeCode: payload.reportTypeCode,
-      statusCode: payload.statusCode,
       testComment: payload.testComment,
       testDate: payload.testDate,
       testNumber: payload.testNumber,
@@ -104,11 +104,13 @@ export class MatsDataSubmissionService {
       if (isErtFile) return 'ERT';
 
       switch (mimetype) {
+        case 'application/xml':
         case 'text/xml':
           return 'XML';
         case 'application/pdf':
           return 'PDF';
         case 'application/json':
+        case 'text/json':
           return 'JSON';
         default:
           throw new EaseyException(
@@ -414,8 +416,8 @@ export class MatsDataSubmissionService {
         // Generate the Metadata XML file.
         await this.uploadMetadataXmlAndCreateRecord(submissionId, trx);
 
-        // Move the submission files from the staging directory to the `submissionId` directory in S3 & create MATS_DATA_SUBMISSION_PAYLOAD_FILE records.
-        await this.moveFilesAndCreateRecords(
+        // Copy the submission files from the staging directory to the `submissionId` directory in S3 & create MATS_DATA_SUBMISSION_PAYLOAD_FILE records.
+        await this.copyFilesAndCreateRecords(
           fileNames,
           submissionId,
           locationId,
@@ -435,7 +437,7 @@ export class MatsDataSubmissionService {
     return submissionId;
   }
 
-  private async moveFile(sourcePath: string, destinationPath: string) {
+  private async copyFile(sourcePath: string, destinationPath: string) {
     await this.getS3Client().send(
       new CopyObjectCommand({
         Bucket: this.getS3Bucket(),
@@ -443,15 +445,9 @@ export class MatsDataSubmissionService {
         Key: destinationPath,
       }),
     );
-    await this.getS3Client().send(
-      new DeleteObjectCommand({
-        Bucket: this.getS3Bucket(),
-        Key: sourcePath,
-      }),
-    );
   }
 
-  private async moveFilesAndCreateRecords(
+  private async copyFilesAndCreateRecords(
     fileNames: MatsDataSubmissionFileNamesDTO,
     submissionId: string,
     locationId: string,
@@ -471,8 +467,8 @@ export class MatsDataSubmissionService {
         .map(async ([key, fileName]: [string, string]) => {
           if (!fileName) return;
 
-          // Move the file from the staging directory to the `submissionId` directory in S3.
-          await this.moveFile(
+          // Copy the file from the staging directory to the `submissionId` directory in S3.
+          await this.copyFile(
             this.createStagingFilePath(locationId, fileName),
             this.createSubmissionFilePath(submissionId, fileName),
           );
@@ -488,11 +484,13 @@ export class MatsDataSubmissionService {
   }
 
   private async uploadFile(path: string, contents: Buffer) {
+    const contentType = lookup(path) || 'application/octet-stream';
     return this.getS3Client().send(
       new PutObjectCommand({
         Body: contents,
         Bucket: this.getS3Bucket(),
         ContentLength: contents.length,
+        ContentType: contentType,
         Key: path,
       }),
     );

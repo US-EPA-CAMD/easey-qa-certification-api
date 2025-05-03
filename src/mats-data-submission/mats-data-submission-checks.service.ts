@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
+import { plainToInstance } from 'class-transformer';
+import { validate } from 'class-validator';
 import { EntityManager, In } from 'typeorm';
 
 import { MatsDataSubmissionFileNamesDTO } from '../dto/mats-data-submission-create-payload.dto';
@@ -103,6 +105,20 @@ export class MatsDataSubmissionChecksService {
     locationId: string,
   ): Promise<Array<string>> {
     const errors: string[] = [];
+
+    // Validate the DTO.
+    const dtoErrors = await validate(
+      plainToInstance(MatsDataSubmissionBaseDTO, metadata),
+      {
+        groups: [metadata.reportTypeCode],
+      },
+    );
+    if (dtoErrors.length) {
+      errors.push(...dtoErrors.map((e) => Object.values(e.constraints)).flat());
+    }
+
+    // Throw immediately if initial validation fails.
+    throwIfErrors(errors, { asArray: true });
 
     // Conditional validation of `testNumber`.
     if (

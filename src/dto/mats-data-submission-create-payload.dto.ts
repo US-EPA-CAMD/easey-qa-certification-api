@@ -23,7 +23,6 @@ export class MatsDataSubmissionCreatePayloadDTO {
   @Type(() => MatsDataSubmissionFileNamesDTO)
   fileNames: MatsDataSubmissionFileNamesDTO;
 
-  @ValidateNested()
-  @Type(() => MatsDataSubmissionBaseDTO)
+  // Do not validate this here, it will be validated in `MatsDataSubmissionChecksService`.
   metadata: MatsDataSubmissionBaseDTO;
 }
