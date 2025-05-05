@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { EntityManager, In } from 'typeorm';
 
