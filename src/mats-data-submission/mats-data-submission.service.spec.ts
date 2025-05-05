@@ -150,7 +150,7 @@ describe('MatsDataSubmissionService', () => {
         .spyOn(service as any, 'uploadMetadataXmlAndCreateRecord')
         .mockImplementation(jest.fn());
       jest
-        .spyOn(service as any, 'moveFilesAndCreateRecords')
+        .spyOn(service as any, 'copyFilesAndCreateRecords')
         .mockImplementation(jest.fn());
 
       const payload = new MatsDataSubmissionBaseDTO();
@@ -172,7 +172,7 @@ describe('MatsDataSubmissionService', () => {
       expect(
         (service as any).uploadMetadataXmlAndCreateRecord,
       ).toHaveBeenCalled();
-      expect((service as any).moveFilesAndCreateRecords).toHaveBeenCalled();
+      expect((service as any).copyFilesAndCreateRecords).toHaveBeenCalled();
       expect(res).toEqual(submissionId);
     });
   });

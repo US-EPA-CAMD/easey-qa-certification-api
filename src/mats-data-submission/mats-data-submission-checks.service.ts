@@ -107,12 +107,9 @@ export class MatsDataSubmissionChecksService {
     const errors: string[] = [];
 
     // Validate the DTO.
-    const dtoErrors = await validate(
-      plainToInstance(MatsDataSubmissionBaseDTO, metadata),
-      {
-        groups: [metadata.reportTypeCode],
-      },
-    );
+    const dtoErrors = await validate(metadata, {
+      groups: [metadata.reportTypeCode],
+    });
     if (dtoErrors.length) {
       errors.push(...dtoErrors.map((e) => Object.values(e.constraints)).flat());
     }
@@ -407,7 +404,7 @@ export class MatsDataSubmissionChecksService {
   private validateFileNames(fileNames: MatsDataSubmissionFileNamesDTO) {
     const errors = [];
 
-    const fileNamesFlat = Object.values(fileNames).flat();
+    const fileNamesFlat = Object.values(fileNames).flat().filter(Boolean);
 
     if (fileNamesFlat.length !== new Set(fileNamesFlat).size) {
       errors.push('File names must be unique.');

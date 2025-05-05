@@ -27,7 +27,9 @@ import {
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { getConfigValueNumber } from '@us-epa-camd/easey-common/utilities';
+import { plainToInstance } from 'class-transformer';
 
+import { MatsDataSubmissionBaseDTO } from '../dto/mats-data-submission.dto';
 import { MatsDataSubmissionCreatePayloadDTO } from '../dto/mats-data-submission-create-payload.dto';
 import { MatsDataSubmissionCreateResponseDTO } from '../dto/mats-data-submission-create-response.dto';
 import { MatsDataSubmissionChecksService } from './mats-data-submission-checks.service';
@@ -66,16 +68,20 @@ export class MatsDataSubmissionController {
     description: 'Creates a MATS Data Submission record',
   })
   @CommonRoleGuard()
-  //@AuditLog({
-  //  label: 'Created MATS Data Submission record',
-  //  requestBodyOutFields: ['locationId', 'facilityId', 'monitorPlanId'],
-  //})
+  @AuditLog({
+    label: 'Created MATS Data Submission record',
+    requestBodyOutFields: ['locationId', 'facilityId', 'monitorPlanId'],
+  })
   async initializeMatsDataSubmission(
     @Body() payload: MatsDataSubmissionCreatePayloadDTO,
     @User() user: CurrentUser,
     @Param('locId') locationId: string,
   ) {
-    const { metadata, fileNames } = payload;
+    const fileNames = payload.fileNames;
+    const metadata = plainToInstance(
+      MatsDataSubmissionBaseDTO,
+      payload.metadata,
+    );
     const warnings = await this.checksService.runChecks(
       metadata,
       fileNames,
