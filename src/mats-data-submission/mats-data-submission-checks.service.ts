@@ -357,7 +357,8 @@ export class MatsDataSubmissionChecksService {
     // ERT file must be XML.
     if (ertFile) {
       const mimetype = await this.getMimeType(ertFile, locationId);
-      if (!['application/xml', 'text/xml'].includes(mimetype)) {
+      if (!mimetype) errors.push(`ERT file not found.`);
+      else if (!['application/xml', 'text/xml'].includes(mimetype)) {
         errors.push(`Expected ERT file to be of type XML, but got ${mimetype}`);
       }
     }
@@ -372,6 +373,7 @@ export class MatsDataSubmissionChecksService {
     ];
     if (payloadFile) {
       const mimetype = await this.getMimeType(payloadFile, locationId);
+      if (!mimetype) errors.push(`Payload file not found.`);
       if (!validPayloadFileTypes.includes(mimetype)) {
         errors.push(
           `Expected Payload file to be of type ${validPayloadFileTypes.join(
@@ -386,9 +388,15 @@ export class MatsDataSubmissionChecksService {
       const mimetypes = await Promise.all(
         supportingFiles.map((file) => this.getMimeType(file, locationId)),
       );
-      if (!mimetypes.every((mimetype) => mimetype === 'application/pdf')) {
+      if (mimetypes.some((mimetype) => !mimetype)) {
+        errors.push(`Supporting file not found.`);
+      }
+      const filteredMimetypes = mimetypes.filter(Boolean);
+      if (
+        !filteredMimetypes.every((mimetype) => mimetype === 'application/pdf')
+      ) {
         errors.push(
-          `Expected Supporting files to be of type PDF, but got ${mimetypes.join(', ')}`,
+          `Expected Supporting files to be of type PDF, but got ${filteredMimetypes.join(', ')}`,
         );
       }
     }

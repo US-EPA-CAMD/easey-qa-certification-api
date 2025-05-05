@@ -17,7 +17,6 @@ import {
   withTransaction,
 } from '@us-epa-camd/easey-common/utilities/functions';
 import { XMLBuilder } from 'fast-xml-parser';
-import { lookup } from 'mime-types';
 import { EntityManager } from 'typeorm';
 
 import { MatsDataSubmissionFileNamesDTO } from '../dto/mats-data-submission-create-payload.dto';
@@ -483,8 +482,11 @@ export class MatsDataSubmissionService {
     );
   }
 
-  private async uploadFile(path: string, contents: Buffer) {
-    const contentType = lookup(path) || 'application/octet-stream';
+  private async uploadFile(
+    path: string,
+    contents: Buffer,
+    contentType: string,
+  ) {
     return this.getS3Client().send(
       new PutObjectCommand({
         Body: contents,
@@ -504,6 +506,7 @@ export class MatsDataSubmissionService {
     await this.uploadFile(
       this.createSubmissionFilePath(submissionId, METADATA_XML_FILE_NAME),
       Buffer.from(metadataXml),
+      'application/xml',
     );
     await this.createMatsDataSubmissionPayloadFile(
       METADATA_XML_FILE_NAME,
@@ -521,7 +524,7 @@ export class MatsDataSubmissionService {
         locationId,
         file.originalname,
       );
-      await this.uploadFile(filePath, file.buffer);
+      await this.uploadFile(filePath, file.buffer, file.mimetype);
       return filePath;
     } catch (err) {
       this.logger.error(`Error uploading file to S3: ${err.message}`);
