@@ -310,15 +310,24 @@ export class MatsDataSubmissionChecksService {
     }
     if (reportType.code === 'NOTIFY') {
       // A payload PDF file OR (ERT file & at least one supporting file) are required.
-      let hasRequiredFiles = true;
+      let hasRequiredFiles = false;
+
       if (payloadFile) {
         const mimetype = await this.getMimeType(payloadFile, locationId);
-        if (mimetype !== 'application/pdf') {
-          hasRequiredFiles = false;
+
+        // Must be PDF and must be the *only* file type provided.
+        if (
+          mimetype === 'application/pdf' &&
+          !ertFile &&
+          !supportingFiles?.length
+        ) {
+          hasRequiredFiles = true;
         }
-      } else if (!ertFile || !supportingFiles?.length) {
-        hasRequiredFiles = false;
+      } else if (ertFile && supportingFiles?.length) {
+        // No payloadFile allowed if ERT + supporting files are present.
+        hasRequiredFiles = true;
       }
+
       if (!hasRequiredFiles) {
         errors.push(
           `Report Type [${reportType.description}] requires one [${
