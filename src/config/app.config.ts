@@ -110,6 +110,7 @@ export default registerAs('app', () => ({
   matsImportBucketSecretAccessKey: getConfigValue(
     'EASEY_MATS_BULK_FILES_IMPORT_AWS_SECRET_ACCESS_KEY',
   ),
+  maxMatsUploadSizeMb: getConfigValueNumber('EASEY_QA_CERTIFICATION_API_MAX_MATS_UPLOAD_SIZE_MB', 50),
 
   maxConnectionPool: getConfigValueNumber('EASEY_DB_MAX_CONNECTION_POOL',15),
   idleTimeout: getConfigValueNumber( 'EASEY_DB_IDLE_TIMEOUT', 30000, ),

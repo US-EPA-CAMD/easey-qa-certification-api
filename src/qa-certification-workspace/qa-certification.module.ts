@@ -35,13 +35,12 @@ import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oi
 import { AppEHeatInputFromGasWorkspaceModule } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
 import { UnitDefaultTestRunWorkspaceModule } from '../unit-default-test-run-workspace/unit-default-test-run.module';
 import { ProtocolGasWorkspaceModule } from '../protocol-gas-workspace/protocol-gas.module';
-import { MatsBulkFilesReviewAndSubmitRepository } from './mats-bulk-files-review-and-submit.repository';
-import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
-import { MatsBulkFileMap } from '../maps/mats-bulk-file.map';
 import { CertEventReviewAndSubmitGlobalRepository } from './cert-event-review-and-submit-global.repository';
 import { TeeReviewAndSubmitGlobalRepository } from './tee-review-and-submit-global.repository';
 import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
 import { EaseyContentModule } from '../qa-certification-easey-content/easey-content.module';
+import { MatsDataSubmissionModule } from '../mats-data-submission/mats-data-submission.module';
+import { MatsDataSubmissionRootController } from '../mats-data-submission/mats-data-submission-root.controller';
 
 @Module({
   imports: [
@@ -49,7 +48,6 @@ import { EaseyContentModule } from '../qa-certification-easey-content/easey-cont
       CertEventReviewAndSubmitRepository,
       TestSummaryReviewAndSubmitRepository,
       TeeReviewAndSubmitRepository,
-      MatsBulkFilesReviewAndSubmitRepository,
       CertEventReviewAndSubmitGlobalRepository,
       TeeReviewAndSubmitGlobalRepository,
       TestSummaryReviewAndSubmitGlobalRepository,
@@ -76,8 +74,12 @@ import { EaseyContentModule } from '../qa-certification-easey-content/easey-cont
     AppEHeatInputFromGasWorkspaceModule,
     UnitDefaultTestRunWorkspaceModule,
     ProtocolGasWorkspaceModule,
+    MatsDataSubmissionModule,
   ],
-  controllers: [QACertificationWorkspaceController],
+  controllers: [
+    MatsDataSubmissionRootController,
+    QACertificationWorkspaceController,
+  ],
   providers: [
     CertEventReviewAndSubmitRepository,
     CertEventReviewAndSubmitGlobalRepository,
@@ -85,7 +87,6 @@ import { EaseyContentModule } from '../qa-certification-easey-content/easey-cont
     TestSummaryReviewAndSubmitGlobalRepository,
     TeeReviewAndSubmitRepository,
     TeeReviewAndSubmitGlobalRepository,
-    MatsBulkFilesReviewAndSubmitRepository,
     QACertificationChecksService,
     QACertificationWorkspaceService,
     CertEventReviewAndSubmitService,
@@ -94,14 +95,11 @@ import { EaseyContentModule } from '../qa-certification-easey-content/easey-cont
     ReviewAndSubmitTestSummaryMap,
     TeeReviewAndSubmitService,
     TeeReviewAndSubmitMap,
-    MatsBulkFilesReviewAndSubmitService,
-    MatsBulkFileMap,
   ],
   exports: [
     CertEventReviewAndSubmitRepository,
     TestSummaryReviewAndSubmitRepository,
     TeeReviewAndSubmitRepository,
-    MatsBulkFilesReviewAndSubmitRepository,
     CertEventReviewAndSubmitGlobalRepository,
     TeeReviewAndSubmitGlobalRepository,
     TestSummaryReviewAndSubmitGlobalRepository,
