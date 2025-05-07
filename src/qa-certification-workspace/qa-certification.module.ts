@@ -35,9 +35,6 @@ import { AppEHeatInputFromOilWorkspaceModule } from '../app-e-heat-input-from-oi
 import { AppEHeatInputFromGasWorkspaceModule } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.module';
 import { UnitDefaultTestRunWorkspaceModule } from '../unit-default-test-run-workspace/unit-default-test-run.module';
 import { ProtocolGasWorkspaceModule } from '../protocol-gas-workspace/protocol-gas.module';
-import { MatsBulkFilesReviewAndSubmitRepository } from './mats-bulk-files-review-and-submit.repository';
-import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
-import { MatsBulkFileMap } from '../maps/mats-bulk-file.map';
 import { CertEventReviewAndSubmitGlobalRepository } from './cert-event-review-and-submit-global.repository';
 import { TeeReviewAndSubmitGlobalRepository } from './tee-review-and-submit-global.repository';
 import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
@@ -51,7 +48,6 @@ import { MatsDataSubmissionRootController } from '../mats-data-submission/mats-d
       CertEventReviewAndSubmitRepository,
       TestSummaryReviewAndSubmitRepository,
       TeeReviewAndSubmitRepository,
-      MatsBulkFilesReviewAndSubmitRepository,
       CertEventReviewAndSubmitGlobalRepository,
       TeeReviewAndSubmitGlobalRepository,
       TestSummaryReviewAndSubmitGlobalRepository,
@@ -91,7 +87,6 @@ import { MatsDataSubmissionRootController } from '../mats-data-submission/mats-d
     TestSummaryReviewAndSubmitGlobalRepository,
     TeeReviewAndSubmitRepository,
     TeeReviewAndSubmitGlobalRepository,
-    MatsBulkFilesReviewAndSubmitRepository,
     QACertificationChecksService,
     QACertificationWorkspaceService,
     CertEventReviewAndSubmitService,
@@ -100,14 +95,11 @@ import { MatsDataSubmissionRootController } from '../mats-data-submission/mats-d
     ReviewAndSubmitTestSummaryMap,
     TeeReviewAndSubmitService,
     TeeReviewAndSubmitMap,
-    MatsBulkFilesReviewAndSubmitService,
-    MatsBulkFileMap,
   ],
   exports: [
     CertEventReviewAndSubmitRepository,
     TestSummaryReviewAndSubmitRepository,
     TeeReviewAndSubmitRepository,
-    MatsBulkFilesReviewAndSubmitRepository,
     CertEventReviewAndSubmitGlobalRepository,
     TeeReviewAndSubmitGlobalRepository,
     TestSummaryReviewAndSubmitGlobalRepository,

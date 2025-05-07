@@ -33,9 +33,6 @@ import { TestSummaryReviewAndSubmitService } from './test-summary-review-and-sub
 import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
 import { TeeReviewAndSubmitService } from './tee-review-and-submit.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
-import { MatsBulkFileDTO } from '../dto/mats-bulk-file.dto';
-import { ReviewAndSubmitMultipleParamsMatsDTO } from '../dto/review-and-submit-multiple-params-mats.dto';
-import { MatsBulkFilesReviewAndSubmitService } from './mats-bulk-files-review-and-submit.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
@@ -49,7 +46,6 @@ export class QACertificationWorkspaceController {
     private readonly reviewSubmitServiceCert: CertEventReviewAndSubmitService,
     private readonly reviewSubmitServiceTestSum: TestSummaryReviewAndSubmitService,
     private readonly reviewSubmitServiceTee: TeeReviewAndSubmitService,
-    private readonly reviewSubmitServiceMats: MatsBulkFilesReviewAndSubmitService,
     private readonly checksService: QACertificationChecksService,
   ) {}
 
@@ -178,11 +174,12 @@ export class QACertificationWorkspaceController {
   async getFilteredCerts(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
   ): Promise<ArrayResponse<CertEventReviewAndSubmitDTO>> {
-    const certEventRecords = await this.reviewSubmitServiceCert.getCertEventRecords(
-      dto.orisCodes,
-      dto.monPlanIds,
-      dto.quarters,
-    );
+    const certEventRecords =
+      await this.reviewSubmitServiceCert.getCertEventRecords(
+        dto.orisCodes,
+        dto.monPlanIds,
+        dto.quarters,
+      );
     return { items: certEventRecords };
   }
 
@@ -227,11 +224,12 @@ export class QACertificationWorkspaceController {
   async getFilteredTestSums(
     @Query() dto: ReviewAndSubmitMultipleParamsDTO,
   ): Promise<ArrayResponse<ReviewAndSubmitTestSummaryDTO>> {
-    const testSummaryRecords = await this.reviewSubmitServiceTestSum.getTestSummaryRecords(
-      dto.orisCodes,
-      dto.monPlanIds,
-      dto.quarters,
-    );
+    const testSummaryRecords =
+      await this.reviewSubmitServiceTestSum.getTestSummaryRecords(
+        dto.orisCodes,
+        dto.monPlanIds,
+        dto.quarters,
+      );
     return { items: testSummaryRecords };
   }
 
@@ -282,47 +280,5 @@ export class QACertificationWorkspaceController {
       dto.quarters,
     );
     return { items: teeRecords };
-  }
-
-  @Get('mats-bulk-file')
-  @ApiOkResponse({
-    isArray: true,
-    type: MatsBulkFileDTO,
-    description:
-      'Retrieves workspace mats-bulk-files records given a list of oris codes and or mon plan ids',
-  })
-  @ApiQuery({
-    style: 'pipeDelimited',
-    name: 'orisCodes',
-    required: true,
-    explode: false,
-  })
-  @ApiQuery({
-    style: 'pipeDelimited',
-    name: 'monPlanIds',
-    required: false,
-    explode: false,
-  })
-  @RoleGuard(
-    {
-      enforceCheckout: false,
-      queryParam: 'orisCodes',
-      isPipeDelimitted: true,
-      enforceEvalSubmitCheck: false,
-    },
-    LookupType.Facility,
-  )
-  @AuditLog({
-    label: 'Retrieved MATS bulk file records',
-    requestQueryOutFields: ['orisCodes', 'monPlanIds'],
-  })
-  async getFilteredMatsBulkFile(
-    @Query() dto: ReviewAndSubmitMultipleParamsMatsDTO,
-  ): Promise<ArrayResponse<MatsBulkFileDTO>> {
-    const matsBulkFileRecords = await this.reviewSubmitServiceMats.getMatsBulkFileRecords(
-      dto.orisCodes,
-      dto.monPlanIds,
-    );
-    return { items: matsBulkFileRecords };
   }
 }
