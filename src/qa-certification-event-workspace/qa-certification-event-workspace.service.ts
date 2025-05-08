@@ -251,7 +251,7 @@ export class QACertificationEventWorkspaceService {
 
     //1. Update affected EM Records
     const emResult = await this.repository.query(
-      'SELECT * FROM camdecmpswks.delete_calculated_em_data_for_qce_updates($1)',
+      'SELECT * FROM camdecmpswks.update_collateral_em_data_for_qce_updates($1)',
       [qceId],
     );
 
