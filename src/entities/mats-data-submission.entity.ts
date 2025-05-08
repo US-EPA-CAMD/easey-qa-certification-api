@@ -7,8 +7,8 @@ import {
   JoinTable,
   ManyToMany,
   ManyToOne,
-  OneToOne,
-  PrimaryColumn,
+  OneToMany,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { MatsAveragingGroupCode } from './mats-averaging-group-code.entity';
@@ -16,17 +16,20 @@ import { MatsReportTypeCode } from './mats-report-type-code.entity';
 import { MatsStatusCode } from './mats-status-code.entity';
 import { MatsTestMethodCode } from './mats-test-method-code.entity';
 import { MatsPollutantCode } from './mats-pollutant-code.entity';
+import { MatsDataSubmissionPayloadFile } from './mats-data-submission-payload-file.entity';
 import { MonitorLocation } from './monitor-location.entity';
 import { MonitorPlan } from './monitor-plan.entity';
 import { Plant } from './plant.entity';
 
 @Entity({ name: 'camdecmpsaux.mats_data_submission' })
 export class MatsDataSubmission extends BaseEntity {
-  @PrimaryColumn({
+  /* COLUMNS */
+
+  @PrimaryGeneratedColumn('increment', {
     name: 'mats_data_sub_id',
-    transformer: new NumericColumnTransformer(),
+    type: 'bigint',
   })
-  id: number;
+  id: string; // TypeORM returns BIGINT as string because its value can exceed Number.MAX_SAFE_INTEGER
 
   @Column({ name: 'test_number' })
   testNumber: string;
@@ -36,6 +39,27 @@ export class MatsDataSubmission extends BaseEntity {
 
   @Column({ name: 'test_comment' })
   testComment: string;
+
+  @Column({ name: 'mon_loc_id' })
+  locationId: string;
+
+  @Column({ name: 'mon_plan_id' })
+  monitorPlanId: string;
+
+  @Column({ name: 'mats_rpt_type_cd' })
+  reportTypeCode: string;
+
+  @Column({ name: 'mats_avg_group_cd' })
+  averagingGroupCode: string;
+
+  @Column({ name: 'original_sub_id' })
+  originalSubmissionId: string;
+
+  @Column({ name: 'fac_id', transformer: new NumericColumnTransformer() })
+  facilityId: number;
+
+  @Column({ name: 'mats_status_cd' })
+  statusCode: string;
 
   @Column({ name: 'year', transformer: new NumericColumnTransformer() })
   year: number;
@@ -51,6 +75,8 @@ export class MatsDataSubmission extends BaseEntity {
 
   @Column({ name: 'update_time' })
   updateTime: Date;
+
+  /* RELATIONS */
 
   @ManyToOne(() => MonitorPlan)
   @JoinColumn({ name: 'mon_plan_id' })
@@ -72,7 +98,7 @@ export class MatsDataSubmission extends BaseEntity {
   @JoinColumn({ name: 'mats_status_cd' })
   status: MatsStatusCode;
 
-  @OneToOne(() => MatsDataSubmission)
+  @ManyToOne(() => MatsDataSubmission)
   @JoinColumn({ name: 'original_sub_id' })
   originalSubmission: MatsDataSubmission;
 
@@ -95,4 +121,10 @@ export class MatsDataSubmission extends BaseEntity {
     inverseJoinColumn: { name: 'mats_test_meth_cd' },
   })
   testMethods: MatsTestMethodCode[];
+
+  @OneToMany(
+    () => MatsDataSubmissionPayloadFile,
+    file => file.submission,
+  )
+  payloadFiles: MatsDataSubmissionPayloadFile[];
 }

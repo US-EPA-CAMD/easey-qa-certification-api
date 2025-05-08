@@ -1,4 +1,7 @@
-import { BaseEntity, Column, Entity, PrimaryColumn } from 'typeorm';
+import { BaseEntity, Column, Entity, ManyToMany, PrimaryColumn } from 'typeorm';
+
+import { MatsReportTypeCode } from './mats-report-type-code.entity';
+import { MatsTestMethodCode } from './mats-test-method-code.entity';
 
 @Entity({ name: 'camdecmpsmd.mats_pollutant_code' })
 export class MatsPollutantCode extends BaseEntity {
@@ -10,4 +13,16 @@ export class MatsPollutantCode extends BaseEntity {
 
   @Column({ name: 'metadata_pollutant_cd' })
   metadataPollutantCode: string;
+
+  @ManyToMany(
+    () => MatsReportTypeCode,
+    reportType => reportType.pollutants,
+  )
+  reportTypes: MatsReportTypeCode[];
+
+  @ManyToMany(
+    () => MatsTestMethodCode,
+    testMethod => testMethod.pollutants,
+  )
+  testMethods: MatsTestMethodCode[];
 }
