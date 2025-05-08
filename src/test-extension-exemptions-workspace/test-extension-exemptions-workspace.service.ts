@@ -212,7 +212,7 @@ export class TestExtensionExemptionsWorkspaceService {
     await this.repository.save(entity);
 
     //Finally, perform the updates (reset needs eval flag, etc) for those records
-    // that may have been collaterally affected by the change in the monitoring plan.
+    // that may have been collaterally affected by this change.
     await this.updateCollaterallyAffectedRecords(entity.id);
 
     const result = await this.repository.getTestExtensionExemptionById(
@@ -264,7 +264,7 @@ export class TestExtensionExemptionsWorkspaceService {
     await this.repository.save(record);
 
     //Finally, perform the updates (reset needs eval flag, etc) for those records
-    // that may have been collaterally affected by the change in the monitoring plan.
+    // that may have been collaterally affected by this change.
     await this.updateCollaterallyAffectedRecords(record.id);
 
     return this.getTestExtensionExemptionById(record.id);
@@ -275,7 +275,7 @@ export class TestExtensionExemptionsWorkspaceService {
       await this.repository.delete(id);
 
       //Finally, perform the updates (reset needs eval flag, etc) for those records
-      // that may have been collaterally affected by the change in the monitoring plan.
+      // that may have been collaterally affected by this change.
       await this.updateCollaterallyAffectedRecords(id);
     } catch (e) {
       throw new InternalServerErrorException(

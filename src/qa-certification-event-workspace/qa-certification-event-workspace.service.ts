@@ -83,7 +83,7 @@ export class QACertificationEventWorkspaceService {
     await this.repository.save(entity);
 
     //Finally, perform the updates (reset needs eval flag, etc) for those records
-    // that may have been collaterally affected by the change in the monitoring plan.
+    // that may have been collaterally affected by this change.
     await this.updateCollaterallyAffectedRecords(entity.id);
 
     const result = await this.repository.getQACertificationEventById(entity.id);
@@ -166,7 +166,7 @@ export class QACertificationEventWorkspaceService {
       await this.repository.delete(id);
 
       //Finally, perform the updates (reset needs eval flag, etc) for those records
-      // that may have been collaterally affected by the change in the monitoring plan.
+      // that may have been collaterally affected by this change.
       await this.updateCollaterallyAffectedRecords(id);
     } catch (e) {
       throw new InternalServerErrorException(
@@ -241,7 +241,7 @@ export class QACertificationEventWorkspaceService {
     await this.repository.save(entity);
 
     //Finally, perform the updates (reset needs eval flag, etc) for those records
-    // that may have been collaterally affected by the change in the monitoring plan.
+    // that may have been collaterally affected by this change.
     await this.updateCollaterallyAffectedRecords(entity.id);
 
     return this.getQACertEvent(entity.id);
