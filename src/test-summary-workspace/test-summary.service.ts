@@ -806,6 +806,31 @@ export class TestSummaryWorkspaceService {
       entity.evalStatusCode = 'EVAL';
 
       await this.repository.save(entity);
+
+      //Finally, perform the updates (reset needs eval flag, etc) for those records
+      // that may have been collaterally affected by the change in the monitoring plan.
+      await this.updateCollaterallyAffectedRecords(testSumId);
+    }
+  }
+
+  async updateCollaterallyAffectedRecords(testSumId: string): Promise<void> {
+    //1. Update affected QAT Records
+    const qaResult = await this.repository.query(
+      'SELECT * FROM camdecmpswks.update_collateral_qat_data_for_qat_updates($1)',
+      [testSumId],
+    );
+    if (qaResult[0].result === 'F') {
+      throw new Error(`QA Deletion Failed: ${qaResult[0].error_msg}`);
+    }
+
+    //2. Update affected EM Records
+    const emResult = await this.repository.query(
+      'SELECT * FROM camdecmpswks.delete_calculated_em_data_for_qa_updates($1)',
+      [testSumId],
+    );
+
+    if (emResult[0].result === 'F') {
+      throw new Error(`EM Deletion Failed: ${emResult[0].error_msg}`);
     }
   }
 
