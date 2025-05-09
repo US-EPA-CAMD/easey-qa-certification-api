@@ -829,7 +829,7 @@ export class TestSummaryWorkspaceService {
   async updateCollaterallyAffectedRecords(testSumId: string): Promise<void> {
     //1. Update affected QAT Records
     const qaResult = await this.repository.query(
-      'SELECT * FROM camdecmpswks.update_collateral_qat_data_for_qat_updates($1)',
+      'SELECT * FROM camdecmpswks.update_collateral_qat_data_for_qat_changes($1)',
       [testSumId],
     );
     if (qaResult[0].result === 'F') {
@@ -838,7 +838,7 @@ export class TestSummaryWorkspaceService {
 
     //2. Update affected EM Records
     const emResult = await this.repository.query(
-      'SELECT * FROM camdecmpswks.update_collateral_em_data_for_qat_updates($1)',
+      'SELECT * FROM camdecmpswks.update_collateral_em_data_for_qat_changes($1)',
       [testSumId],
     );
 
