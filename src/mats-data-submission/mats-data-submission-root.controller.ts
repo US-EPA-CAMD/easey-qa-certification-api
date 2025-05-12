@@ -32,7 +32,9 @@ export class MatsDataSubmissionRootController {
   @RoleGuard(
     {
       queryParam: 'monPlanIds',
+      requiredRoles: ['Preparer', 'Submitter', 'Sponsor', 'Initial Authorizer'],
       isPipeDelimitted: true,
+      enforceCheckout: false,
       enforceEvalSubmitCheck: false,
     },
     LookupType.MonitorPlan,
