@@ -24,6 +24,7 @@ applications:
       EASEY_QA_CERTIFICATION_API_ENABLE_GLOBAL_VALIDATION_PIPE: true
       EASEY_QA_CERTIFICATION_API_ENABLE_ROLE_GUARD: true
       EASEY_QA_CERTIFICATION_API_ENABLE_ROLE_GUARD_CHECKOUT: true
+      EASEY_QA_CERTIFICATION_API_MAX_MATS_UPLOAD_SIZE_MB: ((maxMatsUploadSizeMb))
       EASEY_AWS_S3_REGION: ((awsRegion))
       EASEY_MATS_BULK_FILES_IMPORT_BUCKET: ((matsImportBucket))
       EASEY_API_GATEWAY_HOST: ((apiHost))
@@ -37,8 +38,10 @@ applications:
       EASEY_DB_MAX_USES_BEFORE_CONN_RECREATE: ((maxUsesBeforeRecreatingConnection))
       EASEY_DB_SQL_LOGGING: ((sqlLogging))
       EASEY_DB_MAX_QUERY_EXECUTION_TIMEOUT: ((maxQueryExecutionTime))
+      EASEY_QA_CERTIFICATION_API_ENABLE_AUDIT_LOG: ((enableAuditLog))
     routes:
       - route: ((host))/((path))
     services:
       - camd-pg-db
       - log-drain
+      - mats-bulk-files-import

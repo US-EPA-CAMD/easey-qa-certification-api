@@ -11,3 +11,5 @@ idleInTransactionSessionTimeout: 300000
 maxUsesBeforeRecreatingConnection: 500
 sqlLogging: "error"
 maxQueryExecutionTime: 30000
+maxMatsUploadSizeMb: 50
+enableAuditLog: true
