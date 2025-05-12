@@ -22,6 +22,7 @@ import { AppECorrelationTestRunWorkspaceService } from './app-e-correlation-test
 import { AppECorrelationTestRunChecksService } from './app-e-correlation-test-run-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -56,8 +57,10 @@ export class AppECorrelationTestRunWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('appECorrTestSumId') appECorrTestSumId: string,
-  ) {
-    return this.service.getAppECorrelationTestRuns(appECorrTestSumId);
+  ) : Promise<ArrayResponse<AppECorrelationTestRunBaseDTO>> {
+    const appECorrelationTestRunBaseDTOS = await this.service.getAppECorrelationTestRuns(appECorrTestSumId);
+
+    return { items: appECorrelationTestRunBaseDTOS };
   }
 
   @Get(':id')
