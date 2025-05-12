@@ -10,6 +10,7 @@ import {
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { AppEHeatInputFromGasRecordDTO } from '../dto/app-e-heat-input-from-gas.dto';
 import { AppEHeatInputFromGasService } from './app-e-heat-input-from-gas.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -29,8 +30,10 @@ export class AppEHeatInputFromGasController {
     @Param('testSumId') _testSumId: string,
     @Param('appECorrTestSumId') _appECorrTestSumId: string,
     @Param('appECorrTestRunId') appECorrTestRunId: string,
-  ) {
-    return this.service.getAppEHeatInputFromGases(appECorrTestRunId);
+  ) : Promise<ArrayResponse<AppEHeatInputFromGasRecordDTO>> {
+    const appEHeatInputFromGasRecordDTOS = await this.service.getAppEHeatInputFromGases(appECorrTestRunId);
+
+    return { items: appEHeatInputFromGasRecordDTOS };
   }
 
   @Get(':id')

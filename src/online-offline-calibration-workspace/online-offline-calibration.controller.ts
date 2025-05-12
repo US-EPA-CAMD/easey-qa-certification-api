@@ -17,11 +17,12 @@ import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators'
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
 import {
-  OnlineOfflineCalibrationBaseDTO,
+  OnlineOfflineCalibrationBaseDTO, OnlineOfflineCalibrationDTO,
   OnlineOfflineCalibrationRecordDTO,
 } from '../dto/online-offline-calibration.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -51,11 +52,13 @@ export class OnlineOfflineCalibrationWorkspaceController {
     label: 'Retrieved online offline calibration records for test summary',
     requestParamsOutFields: ['locId', 'testSumId']
   })
-  getOnlineOfflineCalibrations(
+  async getOnlineOfflineCalibrations(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ) {
-    return this.service.getOnlineOfflineCalibrations(testSumId);
+  ) : Promise<ArrayResponse<OnlineOfflineCalibrationDTO>>  {
+    const onlineOfflineCalibrationDTOS = await  this.service.getOnlineOfflineCalibrations(testSumId);
+
+    return { items: onlineOfflineCalibrationDTOS };
   }
 
   @Get(':id')

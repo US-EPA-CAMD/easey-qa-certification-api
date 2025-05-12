@@ -57,7 +57,7 @@ describe('AppEHeatInputFromGasController', () => {
           appECorrTestSumId,
           appECorrTestRunId,
         ),
-      ).toBe(appEHIGasRecords);
+      ).toStrictEqual( { items: appEHIGasRecords } );
     });
   });
 
