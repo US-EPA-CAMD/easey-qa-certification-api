@@ -2,7 +2,8 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 
 import { OnlineOfflineCalibrationService } from './online-offline-calibration.service';
-import { OnlineOfflineCalibrationRecordDTO } from '../dto/online-offline-calibration.dto';
+import { OnlineOfflineCalibrationDTO, OnlineOfflineCalibrationRecordDTO } from '../dto/online-offline-calibration.dto';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -17,11 +18,13 @@ export class OnlineOfflineCalibrationController {
     description:
       'Retrieves official Online Offline Calibration records by Test Summary Id',
   })
-  getOnlineOfflineCalibrations(
+  async getOnlineOfflineCalibrations(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ) {
-    return this.service.getOnlineOfflineCalibrations(testSumId);
+  ) : Promise<ArrayResponse<OnlineOfflineCalibrationDTO>>  {
+    const onlineOfflineCalibrationDTOS = await this.service.getOnlineOfflineCalibrations(testSumId);
+
+    return { items: onlineOfflineCalibrationDTOS };
   }
 
   @Get(':id')
