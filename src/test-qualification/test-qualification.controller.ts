@@ -1,7 +1,8 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { TestQualificationService } from './test-qualification.service';
-import { TestQualificationRecordDTO } from '../dto/test-qualification.dto';
+import { TestQualificationDTO, TestQualificationRecordDTO } from '../dto/test-qualification.dto';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -19,8 +20,9 @@ export class TestQualificationController {
   async getTestQualifications(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ) {
-    return this.service.getTestQualifications(testSumId);
+  ) : Promise<ArrayResponse<TestQualificationDTO>>  {
+    const testQualificationDTOS = await this.service.getTestQualifications(testSumId);
+    return  { items: testQualificationDTOS };
   }
 
   @Get(':id')
