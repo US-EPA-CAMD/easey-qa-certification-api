@@ -85,7 +85,7 @@ describe('Transmitter Transducer Workspace Controller', () => {
         testSumId,
       );
 
-      expect(result).toEqual([recordDTO]);
+      expect(result).toEqual({ items: [recordDTO] });
     });
   });
 

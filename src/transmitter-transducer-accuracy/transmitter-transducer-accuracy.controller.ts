@@ -12,6 +12,7 @@ import {
   TransmitterTransducerAccuracyDTO,
   TransmitterTransducerAccuracyRecordDTO,
 } from '../dto/transmitter-transducer-accuracy.dto';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -26,11 +27,13 @@ export class TransmitterTransducerAccuracyController {
     description:
       'Retrieves official Transmitter Transducer Accuracy records by Test Summary Id',
   })
-  getTransmitterTransducerAccuracies(
+  async getTransmitterTransducerAccuracies(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ) {
-    return this.service.getTransmitterTransducerAccuracies(testSumId);
+  ) : Promise<ArrayResponse<TransmitterTransducerAccuracyDTO>>  {
+    const transducerAccuracyDTOS = await this.service.getTransmitterTransducerAccuracies(testSumId);
+
+    return  { items: transducerAccuracyDTOS };
   }
 
   @Get(':id')
