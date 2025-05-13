@@ -16,12 +16,13 @@ import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators'
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
-  TestQualificationBaseDTO,
+  TestQualificationBaseDTO, TestQualificationDTO,
   TestQualificationRecordDTO,
 } from '../dto/test-qualification.dto';
 import { TestQualificationChecksService } from './test-qualification-checks.service';
 import { TestQualificationWorkspaceService } from './test-qualification-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -55,8 +56,10 @@ export class TestQualificationWorkspaceController {
   async getTestQualifications(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ) {
-    return this.service.getTestQualifications(testSumId);
+  ) : Promise<ArrayResponse<TestQualificationDTO>> {
+    const testQualificationDTOS = await this.service.getTestQualifications(testSumId);
+
+    return  { items: testQualificationDTOS };
   }
 
   @Get(':id')
