@@ -253,21 +253,6 @@ export class MatsDataSubmissionBaseDTO {
       'SVA',
     ],
   })
-  @IsString({
-    groups: [
-      'LEED',
-      'LEEQ',
-      'PST',
-      'PS11',
-      'RATA',
-      'RCA',
-      'RRA',
-      'NOTIFY',
-      'CR',
-      'ACA',
-      'SVA',
-    ],
-  })
   @IsOptional({
     groups: [
       'LEED',
