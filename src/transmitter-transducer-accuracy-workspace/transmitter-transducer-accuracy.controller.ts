@@ -24,6 +24,7 @@ import {
 import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-transducer-accuracy-workspace/transmitter-transducer-accuracy.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -53,11 +54,13 @@ export class TransmitterTransducerAccuracyWorkspaceController {
     label: 'Retrieved transmitter transducer accuracy records for test summary',
     requestParamsOutFields: ['locId', 'testSumId']
   })
-  getTransmitterTransducerAccuracies(
+  async getTransmitterTransducerAccuracies(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ) {
-    return this.service.getTransmitterTransducerAccuracies(testSumId);
+  ) : Promise<ArrayResponse<TransmitterTransducerAccuracyDTO>> {
+    const transducerAccuracyDTOS = await this.service.getTransmitterTransducerAccuracies(testSumId);
+
+    return  { items: transducerAccuracyDTOS };
   }
 
   @Get(':id')
