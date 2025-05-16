@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { CalibrationInjectionDTO } from '../dto/calibration-injection.dto';
 import { CalibrationInjectionService } from './calibration-injection.service';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
@@ -7,15 +7,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Calibration Injection')
+@ApiExtraModels(CalibrationInjectionDTO)
 export class CalibrationInjectionController {
   constructor(private readonly service: CalibrationInjectionService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: CalibrationInjectionDTO,
     description:
       'Retrieves workspace Calibration Injection records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(CalibrationInjectionDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getCalibrationInjections(
     @Param('locId') _locationId: string,

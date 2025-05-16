@@ -1,21 +1,33 @@
 import { UnitDefaultTestService } from './unit-default-test.service';
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { UnitDefaultTestRecordDTO } from '../dto/unit-default-test.dto';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Unit Default Test')
+@ApiExtraModels(UnitDefaultTestRecordDTO)
 export class UnitDefaultTestController {
   constructor(private readonly service: UnitDefaultTestService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: UnitDefaultTestRecordDTO,
     description:
       'Retrieves official Unit Default Test records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(UnitDefaultTestRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getUnitDefaultTests(
     @Param('locId') _locationId: string,

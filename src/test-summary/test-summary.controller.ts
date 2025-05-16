@@ -1,5 +1,5 @@
 import { Get, Query, Controller, Param } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 
 import { TestSummaryRecordDTO } from '../dto/test-summary.dto';
 import { TestSummaryParamsDTO } from '../dto/test-summary-params.dto';
@@ -9,14 +9,26 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Test Summary')
+@ApiExtraModels(TestSummaryRecordDTO)
 export class TestSummaryController {
   constructor(private readonly service: TestSummaryService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: TestSummaryRecordDTO,
     description: 'Retrieves official Test Summary records per filter criteria',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(TestSummaryRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @ApiQuery({
     style: 'pipeDelimited',

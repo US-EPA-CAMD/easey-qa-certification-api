@@ -10,8 +10,7 @@ import {
 import {
   ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -28,6 +27,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Rata Traverse')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(RataTraverseRecordDTO)
 export class RataTraverseWorkspaceController {
   constructor(
     private readonly service: RataTraverseWorkspaceService,
@@ -36,10 +36,21 @@ export class RataTraverseWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: RataTraverseRecordDTO,
     description:
       'Retrieves a workspace Rata Traverse records by Flow Rata Run ID',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(RataTraverseRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {

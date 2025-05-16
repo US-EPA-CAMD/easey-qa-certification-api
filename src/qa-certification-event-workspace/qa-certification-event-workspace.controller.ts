@@ -11,8 +11,7 @@ import { QACertificationEventWorkspaceService } from './qa-certification-event-w
 import {
   ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -31,6 +30,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('QA Certification Event')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(QACertificationEventDTO)
 export class QACertificationEventWorkspaceController {
   constructor(
     private readonly service: QACertificationEventWorkspaceService,
@@ -39,10 +39,21 @@ export class QACertificationEventWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: QACertificationEventDTO,
     description:
       'Retrieves workspace QA Certification Event records by Location Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(QACertificationEventDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {

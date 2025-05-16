@@ -1,5 +1,5 @@
 import { Get, Query, Controller } from '@nestjs/common';
-import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery } from '@nestjs/swagger';
+import { ApiTags, ApiOkResponse, ApiSecurity, ApiQuery, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
@@ -13,15 +13,27 @@ import { MatsDataSubmissionService } from './mats-data-submission.service';
 @ApiSecurity('APIKey')
 @ApiTags('QA Certification')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(MatsDataSubmissionDTO)
 export class MatsDataSubmissionRootController {
   constructor(private readonly service: MatsDataSubmissionService) {}
 
   @Get('mats-data-submission')
   @ApiOkResponse({
-    isArray: true,
-    type: MatsDataSubmissionDTO,
     description:
       'Retrieves MATS Data Submission records for a given Monitoring Plan ID',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(MatsDataSubmissionDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @ApiQuery({
     style: 'pipeDelimited',

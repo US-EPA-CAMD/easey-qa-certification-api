@@ -10,8 +10,7 @@ import {
 import {
   ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { HgSummaryBaseDTO, HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgSummaryWorkspaceService } from './hg-summary-workspace.service';
@@ -24,14 +23,26 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Hg Summary')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(HgSummaryDTO)
 export class HgSummaryWorkspaceController {
   constructor(private readonly service: HgSummaryWorkspaceService) { }
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: HgSummaryDTO,
     description: 'Retrieves workspace Hg Summary records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(HgSummaryDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {
