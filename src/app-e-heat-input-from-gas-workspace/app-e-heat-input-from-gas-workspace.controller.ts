@@ -23,6 +23,7 @@ import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-ga
 import { AppEHeatInputFromGasChecksService } from './app-e-heat-input-from-gas-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -58,8 +59,10 @@ export class AppEHeatInputFromGasWorkspaceController {
     @Param('testSumId') _testSumId: string,
     @Param('appECorrTestSumId') _appECorrTestSumId: string,
     @Param('appECorrTestRunId') appECorrTestRunId: string,
-  ) {
-    return this.service.getAppEHeatInputFromGases(appECorrTestRunId);
+  ) : Promise<ArrayResponse<AppEHeatInputFromGasRecordDTO>> {
+    const appEHeatInputFromGasRecordDTOS = await this.service.getAppEHeatInputFromGases(appECorrTestRunId);
+
+    return { items: appEHeatInputFromGasRecordDTOS };
   }
 
   @Get(':id')

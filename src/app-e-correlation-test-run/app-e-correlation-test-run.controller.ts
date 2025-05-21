@@ -1,7 +1,9 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
-import { AppECorrelationTestRunRecordDTO } from '../dto/app-e-correlation-test-run.dto';
+import { AppECorrelationTestRunBaseDTO, AppECorrelationTestRunRecordDTO } from '../dto/app-e-correlation-test-run.dto';
 import { AppECorrelationTestRunService } from './app-e-correlation-test-run.service';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
+import { TestExtensionExemptionRecordDTO } from '../dto/test-extension-exemption.dto';
 
 @Controller()
 @ApiSecurity('APIKey')
@@ -20,8 +22,10 @@ export class AppECorrelationTestRunController {
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('appECorrTestSumId') appECorrTestSumId: string,
-  ) {
-    return this.service.getAppECorrelationTestRuns(appECorrTestSumId);
+  ) : Promise<ArrayResponse<AppECorrelationTestRunBaseDTO>> {
+    const appECorrelationTestRunBaseDTOS = await this.service.getAppECorrelationTestRuns(appECorrTestSumId);
+
+    return { items: appECorrelationTestRunBaseDTOS };
   }
 
   @Get(':id')
