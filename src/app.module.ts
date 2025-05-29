@@ -94,6 +94,7 @@ import { UnitDefaultTestRunModule } from './unit-default-test-run/unit-default-t
 import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/unit-default-test-workspace.module';
 import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.module';
 import { WhatHasDataModule } from './what-has-data/what-has-data.module';
+import { HealthModule } from '@us-epa-camd/easey-common/health/health.module';
 
 @Module({
   imports: [
@@ -109,6 +110,7 @@ import { WhatHasDataModule } from './what-has-data/what-has-data.module';
       'camdecmpsmd.vw_qa_certification_api_check_catalog_results',
     ),
     HttpModule,
+    HealthModule,
     LoggerModule,
     CorsOptionsModule,
     QACertificationModule,
