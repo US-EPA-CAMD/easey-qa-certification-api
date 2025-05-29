@@ -6,9 +6,10 @@ matsImportBucket: cg-313e2894-003b-4eda-88ca-ce57b954a57d
 maxConnectionPool: 15
 idleTimeout: 30000
 connectionTimeout: 10000
-acquireConnectionFromPoolTimeout: 15000
 statementTimeout: 300000
 idleInTransactionSessionTimeout: 300000
 maxUsesBeforeRecreatingConnection: 500
 sqlLogging: "error"
 maxQueryExecutionTime: 30000
+maxMatsUploadSizeMb: 50
+enableAuditLog: true

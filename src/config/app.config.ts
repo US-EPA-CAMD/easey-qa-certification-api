@@ -110,14 +110,15 @@ export default registerAs('app', () => ({
   matsImportBucketSecretAccessKey: getConfigValue(
     'EASEY_MATS_BULK_FILES_IMPORT_AWS_SECRET_ACCESS_KEY',
   ),
+  maxMatsUploadSizeMb: getConfigValueNumber('EASEY_QA_CERTIFICATION_API_MAX_MATS_UPLOAD_SIZE_MB', 50),
 
   maxConnectionPool: getConfigValueNumber('EASEY_DB_MAX_CONNECTION_POOL',15),
   idleTimeout: getConfigValueNumber( 'EASEY_DB_IDLE_TIMEOUT', 30000, ),
   connectionTimeout: getConfigValueNumber('EASEY_DB_CONNECTION_TIMEOUT',10000),
-  acquireConnectionFromPoolTimeout: getConfigValueNumber('EASEY_DB_IDLE_CONNECTION_TIMEOUT',15000),
   statementTimeout: getConfigValueNumber('EASEY_DB_STATEMENT_TIMEOUT',300000),
   idleInTransactionSessionTimeout: getConfigValueNumber('EASEY_DB_IDLE_TRANS_SESSION_TIMEOUT',300000),
   sqlLogging: getConfigValue('EASEY_DB_SQL_LOGGING', "error"),
   maxQueryExecutionTime: getConfigValueNumber('EASEY_DB_MAX_QUERY_EXECUTION_TIMEOUT',30000),
   maxUsesBeforeRecreatingConnection: getConfigValueNumber('EASEY_DB_MAX_USES_BEFORE_CONN_RECREATE',500),
+  enableAuditLog: getConfigValueBoolean('EASEY_QA_CERTIFICATION_API_ENABLE_AUDIT_LOG', true)
 }));

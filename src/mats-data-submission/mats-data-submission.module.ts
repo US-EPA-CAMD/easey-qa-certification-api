@@ -1,17 +1,21 @@
+import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { MatsCodeMap } from '../maps/mats-code.map';
-import { MatsDataSubmissionController } from './mats-data-submission.controller';
 import { MatsDataSubmissionMap } from '../maps/mats-data-submission.map';
+import { MatsDataSubmissionChecksService } from './mats-data-submission-checks.service';
+import { MatsDataSubmissionController } from './mats-data-submission.controller';
 import { MatsDataSubmissionRepository } from './mats-data-submission.repository';
 import { MatsDataSubmissionService } from './mats-data-submission.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MatsDataSubmissionRepository])],
+  imports: [
+    TypeOrmModule.forFeature([MatsDataSubmissionRepository]),
+    HttpModule,
+  ],
   controllers: [MatsDataSubmissionController],
   providers: [
-    MatsCodeMap,
+    MatsDataSubmissionChecksService,
     MatsDataSubmissionRepository,
     MatsDataSubmissionMap,
     MatsDataSubmissionService,
