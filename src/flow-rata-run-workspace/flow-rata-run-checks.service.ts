@@ -187,8 +187,6 @@ export class FlowRataRunChecksService {
       !rataSummaryRecord.referenceMethodCode.match('(2F|2G|M2H).*')
     ) {
       error = this.getMessage('RATA-124-A');
-    } else if (rataRunRecord.runStatusCode === 'NOTUSED') {
-      error = this.getMessage('RATA-124-B');
     }
 
     return error;
