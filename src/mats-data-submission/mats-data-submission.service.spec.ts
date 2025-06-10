@@ -160,6 +160,7 @@ describe('MatsDataSubmissionService', () => {
         files,
         'TESTID',
         'LOCATIONID',
+        'unknown@example.com'
       );
 
       expect((service as any).createMatsDataSubmission).toHaveBeenCalled();

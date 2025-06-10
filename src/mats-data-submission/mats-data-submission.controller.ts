@@ -92,6 +92,7 @@ export class MatsDataSubmissionController {
       fileNames,
       user.userId,
       locationId,
+      payload.userEmail
     );
     return {
       warnings,
