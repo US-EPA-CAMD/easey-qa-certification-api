@@ -70,6 +70,9 @@ export class MatsDataSubmission extends BaseEntity {
   @Column({ name: 'user_id' })
   userId: string;
 
+  @Column({ name: 'user_email' })
+  userEmail: string;
+
   @Column({ name: 'add_time' })
   addTime: Date;
 
