@@ -54,10 +54,10 @@ export class TeeReviewAndSubmitService {
 
       for (const d of data) {
             const severity = await this.entityManager.query(
-             `select sc.severity_cd_description from camdecmpswks.test_summary t
+             `select sc.severity_cd_description from camdecmpswks.test_extension_exemption t
               JOIN camdecmpswks.check_session cs on cs.chk_session_id = t.chk_session_id
               JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
-              where t.test_sum_id = $1;`,
+              where t.test_extension_exemption_id = $1;`,
               [d.testExtensionExemptionIdentifier],
             );
 
