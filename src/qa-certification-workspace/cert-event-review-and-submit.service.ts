@@ -85,6 +85,16 @@ export class CertEventReviewAndSubmitService {
         } else {
           newResults.push(d);
         }
+
+        const severity = await this.entityManager.query(
+             `select sc.severity_cd_description from camdecmpswks.qa_cert_event qce
+              JOIN camdecmpswks.check_session cs on cs.chk_session_id = qce.chk_session_id
+              JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
+              where qce.qa_cert_event_id = $1;`,
+              [d.qaCertEventIdentifier],
+        );
+
+        d.severityDescription = severity?.[0]?.severity_cd_description;
       }
 
       return newResults;

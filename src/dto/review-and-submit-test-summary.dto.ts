@@ -29,6 +29,8 @@ export class ReviewAndSubmitTestSummaryDTO {
 
   evalStatusCodeDescription: string;
 
+  severityDescription: string;
+
   submissionCodeDescription: string;
 
   periodAbbreviation: string;
