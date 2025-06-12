@@ -7,7 +7,6 @@ import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
 import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
 import { TestSummaryReviewAndSubmitRepository } from './test-summary-review-and-submit.repository';
-import { Logger } from '@us-epa-camd/easey-common';
 
 const moment = require('moment');
 
@@ -19,7 +18,6 @@ export class TestSummaryReviewAndSubmitService {
     private readonly globalRepository: TestSummaryReviewAndSubmitGlobalRepository,
 
     private readonly map: ReviewAndSubmitTestSummaryMap,
-    private readonly logger: Logger
   ) {}
 
   returnManager(): any {

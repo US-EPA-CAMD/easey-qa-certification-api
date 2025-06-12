@@ -32,7 +32,6 @@ const mockMap = () => ({
 describe('TeeReviewAndSubmitService', () => {
   let manager: jest.Mock;
   let service: TeeReviewAndSubmitService;
-
   manager = jest.fn().mockResolvedValue([{}]);
 
   beforeEach(async () => {
