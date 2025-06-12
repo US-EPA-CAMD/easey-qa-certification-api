@@ -30,14 +30,22 @@ const mockMap = () => ({
 });
 
 describe('TeeReviewAndSubmitService', () => {
+  let manager: jest.Mock;
   let service: TeeReviewAndSubmitService;
+
+  manager = jest.fn().mockResolvedValue([{}]);
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [],
       controllers: [],
       providers: [
-        EntityManager,
+         {
+          provide: EntityManager,
+          useValue: {
+            query: manager,
+          },
+        },
         TeeReviewAndSubmitService,
         { provide: TeeReviewAndSubmitMap, useFactory: mockMap },
         { provide: TeeReviewAndSubmitRepository, useFactory: mockRepo },
