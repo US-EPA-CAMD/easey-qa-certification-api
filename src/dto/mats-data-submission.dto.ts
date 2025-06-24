@@ -13,6 +13,7 @@ import {
   Equals,
   IsArray,
   IsInt,
+  IsNotEmpty,
   IsNumberString,
   IsOptional,
   IsString,
@@ -124,7 +125,7 @@ export class MatsDataSubmissionBaseDTO {
   @IsString({ each: true })
   @IsArray()
   @IsOptional({ groups: ['NOTIFY', 'CR'] })
-  pollutantCodes: string[];
+  pollutantCodes?: string[];
 
   @ApiProperty({
     description: propertyMetadata.quarter.description,
@@ -237,6 +238,21 @@ export class MatsDataSubmissionBaseDTO {
       );
     },
   })
+  @IsNotEmpty({
+    groups: [
+      'LEED',
+      'LEEQ',
+      'PST',
+      'PS11',
+      'RATA',
+      'RCA',
+      'RRA',
+      'NOTIFY',
+      'CR',
+      'ACA',
+      'SVA',
+    ],
+  })
   @IsOptional({
     groups: [
       'LEED',
@@ -262,56 +278,14 @@ export class MatsDataSubmissionBaseDTO {
     isArray: true,
     type: String,
   })
-  @IsValidCode(MatsTestMethodCode, {
-    each: true,
-    groups: [
-      'LEED',
-      'LEEQ',
-      'PST',
-      'PS11',
-      'RATA',
-      'RCA',
-      'RRA',
-      'NOTIFY',
-      'CR',
-      'ACA',
-      'SVA',
-    ],
+  @IsValidCode(MatsTestMethodCode, { each: true })
+  @IsString({ each: true })
+  @ArrayMaxSize(0, {
+    groups: ['EMPM'], // For EMPM, if the property is included it must be an empty array
   })
-  @IsString({
-    each: true,
-    groups: [
-      'LEED',
-      'LEEQ',
-      'PST',
-      'PS11',
-      'RATA',
-      'RCA',
-      'RRA',
-      'NOTIFY',
-      'CR',
-      'ACA',
-      'SVA',
-    ],
-  })
-  @IsArray({
-    groups: [
-      'LEED',
-      'LEEQ',
-      'PST',
-      'PS11',
-      'RATA',
-      'RCA',
-      'RRA',
-      'NOTIFY',
-      'CR',
-      'ACA',
-      'SVA',
-    ],
-  })
-  @IsOptional({ groups: ['NOTIFY', 'CR', 'ACA', 'SVA'] })
-  @IsNullish({ groups: ['EMPM'] })
-  testMethodCodes: string[];
+  @IsArray()
+  @IsOptional({ groups: ['NOTIFY', 'CR', 'ACA', 'SVA', 'EMPM'] })
+  testMethodCodes?: string[];
 
   @ApiProperty({
     description: propertyMetadata.matsDataSubmissionDTO.testNumber.description,
@@ -329,10 +303,12 @@ export class MatsDataSubmissionBaseDTO {
       'RRA',
       'NOTIFY',
       'CR',
+      'ACA',
+      'SVA',
     ],
   })
-  @IsOptional({ groups: ['NOTIFY', 'CR'] })
   @IsNullish({ groups: ['EMPM'] })
+  @IsOptional({ groups: ['NOTIFY', 'CR'] })
   testNumber?: string;
 
   @ApiProperty({

@@ -27,6 +27,7 @@ export class MatsDataSubmissionMap extends BaseMap<
       testNumber: entity.testNumber,
       year: entity.year,
       userId: entity.userId,
+      userEmail: entity.userEmail,
       addDate: entity.addTime?.toISOString() ?? null,
       updateDate: entity.updateTime?.toISOString() ?? null,
     };
