@@ -33,6 +33,7 @@ export class MatsDataSubmissionRootController {
     {
       queryParam: 'monPlanIds',
       isPipeDelimitted: true,
+      enforceCheckout: false,
       enforceEvalSubmitCheck: false,
     },
     LookupType.MonitorPlan,
