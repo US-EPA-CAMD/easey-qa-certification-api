@@ -66,8 +66,13 @@ import { UnitDefaultTestRunModule } from './unit-default-test-run/unit-default-t
 import { UnitDefaultTestWorkspaceModule } from './unit-default-test-workspace/unit-default-test-workspace.module';
 import { UnitDefaultTestModule } from './unit-default-test/unit-default-test.module';
 import { WhatHasDataModule } from './what-has-data/what-has-data.module';
+import { HealthModule } from '@us-epa-camd/easey-common/health/health.module';
 
 const routes = [
+  {
+    path: '/health',
+    module: HealthModule,
+  },
   {
     path: '/what-has-data',
     module: WhatHasDataModule,

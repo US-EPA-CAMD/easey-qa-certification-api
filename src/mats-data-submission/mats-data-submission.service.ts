@@ -57,6 +57,7 @@ export class MatsDataSubmissionService {
   private async createMatsDataSubmission(
     payload: MatsDataSubmissionBaseDTO,
     userId: string,
+    userEmail: string,
     trx?: EntityManager,
   ): Promise<string> {
     const repository = withTransaction(this.repository, trx);
@@ -75,6 +76,7 @@ export class MatsDataSubmissionService {
       quarter: payload.quarter,
       year: payload.year,
       updateTime: currentDateTime(),
+      userEmail: userEmail,
       userId,
     });
     await repository.save(record);
@@ -388,6 +390,7 @@ export class MatsDataSubmissionService {
     fileNames: MatsDataSubmissionFileNamesDTO,
     userId: string,
     locationId: string,
+    userEmail:string
   ): Promise<string> {
     let submissionId: string | null = null;
 
@@ -397,6 +400,7 @@ export class MatsDataSubmissionService {
         submissionId = await this.createMatsDataSubmission(
           metadata,
           userId,
+          userEmail,
           trx,
         );
 

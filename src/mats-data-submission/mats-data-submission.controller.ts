@@ -94,6 +94,7 @@ export class MatsDataSubmissionController {
       fileNames,
       user.userId,
       locationId,
+      payload.userEmail
     );
     return {
       warnings,
@@ -158,6 +159,7 @@ export class MatsDataSubmissionController {
             fileType: new RegExp(
               /^(application\/pdf|application\/xml|text\/xml|application\/json|text\/json)$/,
             ),
+            fallbackToMimetype: true,
           }),
         ],
       }),
