@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { FuelFlowToLoadTestDTO } from '../dto/fuel-flow-to-load-test.dto';
 import { FuelFlowToLoadTestService } from './fuel-flow-to-load-test.service';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
@@ -7,15 +7,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Fuel Flow To Load Test')
+@ApiExtraModels(FuelFlowToLoadTestDTO)
 export class FuelFlowToLoadTestController {
   constructor(private readonly service: FuelFlowToLoadTestService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: FuelFlowToLoadTestDTO,
     description:
       'Retrieves official Fuel Flow To Load Test records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(FuelFlowToLoadTestDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getFuelFlowToLoadTests(
     @Param('locId') _locationId: string,

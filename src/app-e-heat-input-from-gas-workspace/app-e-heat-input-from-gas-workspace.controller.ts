@@ -11,8 +11,7 @@ import {
   ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -29,6 +28,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Heat Input From Gas')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(AppEHeatInputFromGasRecordDTO)
 export class AppEHeatInputFromGasWorkspaceController {
   constructor(
     private readonly service: AppEHeatInputFromGasWorkspaceService,
@@ -37,10 +37,21 @@ export class AppEHeatInputFromGasWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: AppEHeatInputFromGasRecordDTO,
     description:
       'Retrieves a workspace Appendix E Heat Input From Gas records by Appendix E Correlation Test Run Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(AppEHeatInputFromGasRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {

@@ -10,8 +10,7 @@ import {
 import {
   ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { FlowToLoadCheckWorkspaceService } from './flow-to-load-check-workspace.service';
@@ -28,15 +27,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Flow To Load Check')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(FlowToLoadCheckRecordDTO)
 export class FlowToLoadCheckWorkspaceController {
   constructor(private readonly service: FlowToLoadCheckWorkspaceService) { }
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: FlowToLoadCheckRecordDTO,
     description:
       'Retrieves workspace Flow To Load Check records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(FlowToLoadCheckRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {

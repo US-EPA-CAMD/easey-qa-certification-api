@@ -1,5 +1,5 @@
 import { Controller, Param, Get } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { FuelFlowmeterAccuracyRecordDTO } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracyService } from './fuel-flowmeter-accuracy.service';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
@@ -7,14 +7,26 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Fuel Flowmeter Accuracy')
+@ApiExtraModels(FuelFlowmeterAccuracyRecordDTO)
 export class FuelFlowmeterAccuracyController {
   constructor(private readonly service: FuelFlowmeterAccuracyService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: FuelFlowmeterAccuracyRecordDTO,
     description: 'Retrieves Fuel Flowmeter Accuracy records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(FuelFlowmeterAccuracyRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getFuelFlowmeterAccuracies(
     @Param('locId') _locationId: string,

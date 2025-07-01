@@ -10,8 +10,7 @@ import {
 import {
   ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -29,6 +28,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Cycle Time Injection')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(CycleTimeInjectionRecordDTO)
 export class CycleTimeInjectionWorkspaceController {
   constructor(
     private readonly service: CycleTimeInjectionWorkspaceService,
@@ -37,10 +37,21 @@ export class CycleTimeInjectionWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: CycleTimeInjectionRecordDTO,
     description:
       'Retreives workspace Cycle Time Injection records by Cycle Time Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(CycleTimeInjectionRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {
