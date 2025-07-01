@@ -10,8 +10,7 @@ import {
 import {
   ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import {
   AppECorrelationTestSummaryBaseDTO,
   AppECorrelationTestSummaryRecordDTO,
@@ -28,6 +27,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Correlation Test Summary')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(AppECorrelationTestSummaryRecordDTO)
 export class AppendixETestSummaryWorkspaceController {
   constructor(
     private readonly service: AppECorrelationTestSummaryWorkspaceService,
@@ -36,10 +36,21 @@ export class AppendixETestSummaryWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: AppECorrelationTestSummaryRecordDTO,
     description:
       'Retrieves workspace Appendix E Correlation Test Summary records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(AppECorrelationTestSummaryRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {

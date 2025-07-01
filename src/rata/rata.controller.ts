@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { RataRecordDTO } from '../dto/rata.dto';
 import { RataService } from './rata.service';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
@@ -7,14 +7,26 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Rata')
+@ApiExtraModels(RataRecordDTO)
 export class RataController {
   constructor(private readonly service: RataService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: RataRecordDTO,
     description: 'Retrieves workspace RATA records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(RataRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getRatas(
     @Param('locId') _locationId: string,

@@ -4,8 +4,7 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { TransmitterTransducerAccuracyService } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.service';
 import { ProtocolGasRecordDTO } from '../dto/protocol-gas.dto';
 import {
@@ -17,15 +16,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Transmitter Transducer Accuracy')
+@ApiExtraModels(TransmitterTransducerAccuracyDTO)
 export class TransmitterTransducerAccuracyController {
   constructor(private readonly service: TransmitterTransducerAccuracyService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: TransmitterTransducerAccuracyRecordDTO,
     description:
       'Retrieves official Transmitter Transducer Accuracy records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(TransmitterTransducerAccuracyDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getTransmitterTransducerAccuracies(
     @Param('locId') _locationId: string,

@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { TestExtensionExemptionRecordDTO } from '../dto/test-extension-exemption.dto';
 import { TestExtensionExemptionsService } from './test-extension-exemptions.service';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
@@ -7,15 +7,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Test Extension Exemption')
+@ApiExtraModels(TestExtensionExemptionRecordDTO)
 export class TestExtensionExemptionsController {
   constructor(private readonly service: TestExtensionExemptionsService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: TestExtensionExemptionRecordDTO,
     description:
       'Retrieves workspace Test Extension Exemption records per filter criteria',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(TestExtensionExemptionRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getTestExtensionExemptions(
     @Param('locId') locationId: string,
