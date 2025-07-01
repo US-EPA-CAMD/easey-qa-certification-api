@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { HgInjectionRecordDTO } from '../dto/hg-injection.dto';
 import { HgInjectionService } from './hg-injection.service';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
@@ -7,14 +7,26 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Hg Injection')
+@ApiExtraModels(HgInjectionRecordDTO)
 export class HgInjectionController {
   constructor(private readonly service: HgInjectionService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: HgInjectionRecordDTO,
     description: 'Retrieves Hg Injection records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(HgInjectionRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getHgInjections(
     @Param('locId') _locationId: string,

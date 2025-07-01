@@ -10,8 +10,7 @@ import {
 import {
   ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -30,6 +29,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Transmitter Transducer Accuracy')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(TransmitterTransducerAccuracyDTO)
 export class TransmitterTransducerAccuracyWorkspaceController {
   constructor(
     private readonly service: TransmitterTransducerAccuracyWorkspaceService,
@@ -37,10 +37,21 @@ export class TransmitterTransducerAccuracyWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: TransmitterTransducerAccuracyRecordDTO,
     description:
       'Retrieves workspace Transmitter Transducer Accuracy records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(TransmitterTransducerAccuracyDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {

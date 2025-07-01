@@ -10,8 +10,7 @@ import {
 import {
   ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -28,6 +27,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Test Extension Exemption')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(TestExtensionExemptionRecordDTO)
 export class TestExtensionExemptionsWorkspaceController {
   constructor(
     private readonly service: TestExtensionExemptionsWorkspaceService,
@@ -36,10 +36,21 @@ export class TestExtensionExemptionsWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: TestExtensionExemptionRecordDTO,
     description:
       'Retrieves workspace QA Test Extension Exemption records by Location Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(TestExtensionExemptionRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {
