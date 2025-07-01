@@ -10,8 +10,7 @@ import {
 import {
   ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -29,6 +28,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Air Emission Testing')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(AirEmissionTestingDTO)
 export class AirEmissionTestingWorkspaceController {
   constructor(
     private readonly service: AirEmissionTestingWorkspaceService,
@@ -37,10 +37,21 @@ export class AirEmissionTestingWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: AirEmissionTestingRecordDTO,
     description:
       'Retrieves official Air Emission Testing records by Rata Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(AirEmissionTestingDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {

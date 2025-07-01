@@ -3,8 +3,7 @@ import { Delete } from '@nestjs/common/decorators';
 import {
   ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
@@ -21,15 +20,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Hg Injection')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(HgInjectionRecordDTO)
 export class HgInjectionWorkspaceController {
   constructor(private readonly service: HgInjectionWorkspaceService) { }
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: HgInjectionRecordDTO,
     description:
       'Retrieves workspace Hg Injection records by HG Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(HgInjectionRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {

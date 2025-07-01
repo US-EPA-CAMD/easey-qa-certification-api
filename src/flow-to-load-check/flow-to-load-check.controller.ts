@@ -1,5 +1,5 @@
 import { Controller, Param, Get } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { FlowToLoadCheckService } from './flow-to-load-check.service';
 import { FlowToLoadCheckRecordDTO } from '../dto/flow-to-load-check.dto';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
@@ -7,14 +7,26 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Flow To Load Check')
+@ApiExtraModels(FlowToLoadCheckRecordDTO)
 export class FlowToLoadCheckController {
   constructor(private readonly service: FlowToLoadCheckService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: FlowToLoadCheckRecordDTO,
     description: 'Retrieves Flow To Load Check records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(FlowToLoadCheckRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getFlowToLoadChecks(
     @Param('locId') _locationId: string,
