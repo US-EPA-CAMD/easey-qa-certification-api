@@ -1,5 +1,5 @@
 import { Controller, Param, Get } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AppECorrelationTestSummaryRecordDTO } from '../dto/app-e-correlation-test-summary.dto';
 import { AppECorrelationTestSummaryService } from './app-e-correlation-test-summary.service';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
@@ -7,15 +7,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Correlation Test Summary')
+@ApiExtraModels(AppECorrelationTestSummaryRecordDTO)
 export class AppendixETestSummaryController {
   constructor(private readonly service: AppECorrelationTestSummaryService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: AppECorrelationTestSummaryRecordDTO,
     description:
       'Retrieves Appendix E Correlation Test Summary records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(AppECorrelationTestSummaryRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getAppECorrelations(
     @Param('locId') _locationId: string,

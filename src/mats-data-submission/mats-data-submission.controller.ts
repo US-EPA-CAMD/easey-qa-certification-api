@@ -34,6 +34,7 @@ import { MatsDataSubmissionCreatePayloadDTO } from '../dto/mats-data-submission-
 import { MatsDataSubmissionCreateResponseDTO } from '../dto/mats-data-submission-create-response.dto';
 import { MatsDataSubmissionChecksService } from './mats-data-submission-checks.service';
 import { MatsDataSubmissionService } from './mats-data-submission.service';
+import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
 
 const MAX_UPLOAD_SIZE_MB = getConfigValueNumber(
   'EASEY_QA_CERTIFICATION_API_MAX_MATS_UPLOAD_SIZE_MB',
@@ -56,6 +57,7 @@ const CommonRoleGuard = () =>
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('MATS Data Submission')
+@ApiExcludeControllerByEnv()
 export class MatsDataSubmissionController {
   constructor(
     private readonly checksService: MatsDataSubmissionChecksService,
