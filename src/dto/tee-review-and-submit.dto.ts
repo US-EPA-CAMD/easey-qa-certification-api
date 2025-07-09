@@ -25,6 +25,8 @@ export class TeeReviewAndSubmitDTO {
 
   evalStatusCodeDescription: string;
 
+  severityCode:string;
+
   severityDescription: string;
 
   submissionAvailabilityCode: string;

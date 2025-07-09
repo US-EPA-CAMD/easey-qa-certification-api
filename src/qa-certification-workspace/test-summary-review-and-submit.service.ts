@@ -66,19 +66,21 @@ export class TestSummaryReviewAndSubmitService {
         const testSumIds = data.map(d => d.testSumId);
 
         const severities = await this.entityManager.query(
-             `select t.test_sum_id, sc.severity_cd_description from camdecmpswks.test_summary t
+             `select t.test_sum_id, sc.severity_cd_description, sc.severity_cd from camdecmpswks.test_summary t
               JOIN camdecmpswks.check_session cs on cs.chk_session_id = t.chk_session_id
               JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
               where t.test_sum_id = ANY($1);`,
         [testSumIds],
         );
         
-        const severityMap = new Map(
-          severities.map((s: any) => [s.test_sum_id, s.severity_cd_description])
+        const severityMap:Map<string, {description:string,severityCode:string}> = new Map(
+          severities.map((s: any) => [s.qa_cert_event_id, { description: s.severity_cd_description, severityCode: s.severity_cd }])
         );
 
         for (const d of data) {
-          d.severityDescription = (severityMap.get(d.testSumId) as string) || null;
+          let {description, severityCode} = severityMap.get(d.testSumId) ?? {};
+          d.severityDescription = description
+          d.severityCode = severityCode
         }
       }
 
@@ -101,15 +103,6 @@ export class TestSummaryReviewAndSubmitService {
           }
         }
 
-              const severity = await this.entityManager.query(
-             `select sc.severity_cd_description from camdecmpswks.test_summary t
-              JOIN camdecmpswks.check_session cs on cs.chk_session_id = t.chk_session_id
-              JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
-              where t.test_sum_id = $1;`,
-              [d.testSumId],
-            );
-
-        d.severityDescription = severity?.[0]?.severity_cd_description;
         if (quarters && quarters.length > 0) {
           if (found) {
             newResults.push(d);

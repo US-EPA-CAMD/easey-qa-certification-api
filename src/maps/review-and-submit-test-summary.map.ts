@@ -14,6 +14,8 @@ export class ReviewAndSubmitTestSummaryMap extends BaseMap<
     entity: TestSummaryReviewAndSubmit | TestSummaryReviewAndSubmitGlobal,
   ): Promise<ReviewAndSubmitTestSummaryDTO> {
     let severityDescription = null;
+    let severityCode = null;
+
     return {
       orisCode: entity.orisCode,
 
@@ -41,6 +43,8 @@ export class ReviewAndSubmitTestSummaryMap extends BaseMap<
 
       evalStatusCodeDescription: entity.evalStatusCodeDescription,
 
+      severityCode,
+      
       severityDescription,
 
       submissionAvailabilityCode: entity.submissionCode,

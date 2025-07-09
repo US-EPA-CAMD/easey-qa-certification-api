@@ -13,6 +13,7 @@ export class CertEventReviewAndSubmitMap extends BaseMap<
     entity: CertEventReviewAndSubmit | CertEventReviewAndSubmitGlobal,
   ): Promise<CertEventReviewAndSubmitDTO> {
     let severityDescription = null;
+    let severityCode = null;
 
     return {
       orisCode: entity.orisCode,
@@ -31,6 +32,7 @@ export class CertEventReviewAndSubmitMap extends BaseMap<
       updateDate: entity.updateDate.toISOString(),
       evalStatusCode: entity.evalStatusCode,
       evalStatusCodeDescription: entity.evalStatusCodeDescription,
+      severityCode,
       severityDescription,
       submissionAvailabilityCode: entity.submissionAvailabilityCode,
       submissionAvailabilityDescription:
