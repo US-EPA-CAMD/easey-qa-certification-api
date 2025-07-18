@@ -5,8 +5,7 @@ import {
   ApiOkResponse,
   ApiSecurity,
   ApiQuery,
-  ApiOperation,
-} from '@nestjs/swagger';
+  ApiOperation, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 
 import { QACertificationDTO } from '../dto/qa-certification.dto';
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
@@ -23,6 +22,9 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('QA Certification')
+@ApiExtraModels(CertEventReviewAndSubmitDTO)
+@ApiExtraModels(ReviewAndSubmitTestSummaryDTO)
+@ApiExtraModels(TeeReviewAndSubmitDTO)
 export class QACertificationController {
   constructor(
     private readonly service: QACertificationService,
@@ -71,10 +73,21 @@ export class QACertificationController {
 
   @Get('cert-events')
   @ApiOkResponse({
-    isArray: true,
-    type: CertEventReviewAndSubmitDTO,
     description:
       'Retrieves workspace test summary records given a list of oris codes and or mon plan ids',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(CertEventReviewAndSubmitDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @ApiQuery({
     style: 'pipeDelimited',
@@ -111,10 +124,21 @@ export class QACertificationController {
 
   @Get('test-summary')
   @ApiOkResponse({
-    isArray: true,
-    type: ReviewAndSubmitTestSummaryDTO,
     description:
       'Retrieves workspace test summary records given a list of oris codes and or mon plan ids',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(ReviewAndSubmitTestSummaryDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @ApiQuery({
     style: 'pipeDelimited',
@@ -151,10 +175,21 @@ export class QACertificationController {
 
   @Get('test-extension-exemption')
   @ApiOkResponse({
-    isArray: true,
-    type: TeeReviewAndSubmitDTO,
     description:
       'Retrieves workspace tee records given a list of oris codes and or mon plan ids',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(TeeReviewAndSubmitDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @ApiQuery({
     style: 'pipeDelimited',

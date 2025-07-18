@@ -10,8 +10,7 @@ import {
 import {
   ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
@@ -29,6 +28,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Flow Rata Run')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(FlowRataRunDTO)
 export class FlowRataRunWorkspaceController {
   constructor(
     private readonly service: FlowRataRunWorkspaceService,
@@ -36,10 +36,21 @@ export class FlowRataRunWorkspaceController {
   ) { }
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: FlowRataRunDTO,
     description:
       'Retrieves official Flow Rata Run records by Flow Rata Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(FlowRataRunDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {

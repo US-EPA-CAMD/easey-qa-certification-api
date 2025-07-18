@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { QaCertificationEventService } from './qa-certification-event.service';
 import { QACertificationEventDTO } from '../dto/qa-certification-event.dto';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
@@ -7,15 +7,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('QA Certification Event')
+@ApiExtraModels(QACertificationEventDTO)
 export class QaCertificationEventController {
   constructor(private readonly service: QaCertificationEventService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: QACertificationEventDTO,
     description:
       'Retrieves official QA Certification Event records by Location Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(QACertificationEventDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getQACertEvents(
     @Param('locId') locationId: string,
