@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 
 import { OnlineOfflineCalibrationService } from './online-offline-calibration.service';
 import { OnlineOfflineCalibrationDTO, OnlineOfflineCalibrationRecordDTO } from '../dto/online-offline-calibration.dto';
@@ -8,15 +8,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Online Offline Calibration')
+@ApiExtraModels(OnlineOfflineCalibrationDTO)
 export class OnlineOfflineCalibrationController {
   constructor(private readonly service: OnlineOfflineCalibrationService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: OnlineOfflineCalibrationRecordDTO,
     description:
       'Retrieves official Online Offline Calibration records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(OnlineOfflineCalibrationDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getOnlineOfflineCalibrations(
     @Param('locId') _locationId: string,

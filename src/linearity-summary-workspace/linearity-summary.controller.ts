@@ -12,8 +12,7 @@ import {
   ApiTags,
   ApiOkResponse,
   ApiCreatedResponse,
-  ApiSecurity,
-} from '@nestjs/swagger';
+  ApiSecurity, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
@@ -32,6 +31,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Linearity Summary')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(LinearitySummaryRecordDTO)
 export class LinearitySummaryWorkspaceController {
   constructor(
     private readonly service: LinearitySummaryWorkspaceService,
@@ -40,10 +40,21 @@ export class LinearitySummaryWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: LinearitySummaryRecordDTO,
     description:
       'Retrieves workspace Linearity Summary records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(LinearitySummaryRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {

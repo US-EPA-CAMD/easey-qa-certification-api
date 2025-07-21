@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AirEmissionTestingDTO } from '../dto/air-emission-test.dto';
 import { AirEmissionTestingService } from './air-emission-testing.service';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
@@ -7,15 +7,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Air Emission Testing')
+@ApiExtraModels(AirEmissionTestingDTO)
 export class AirEmissionTestingController {
   constructor(private readonly service: AirEmissionTestingService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: AirEmissionTestingDTO,
     description:
       'Retrieves official Air Emission Testing records by Rata Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(AirEmissionTestingDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getAirEmissionsTestings(
     @Param('locId') _locationId: string,

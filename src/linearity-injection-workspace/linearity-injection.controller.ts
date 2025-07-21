@@ -12,8 +12,7 @@ import {
   ApiTags,
   ApiOkResponse,
   ApiCreatedResponse,
-  ApiSecurity,
-} from '@nestjs/swagger';
+  ApiSecurity, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
@@ -33,6 +32,7 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @ApiSecurity('APIKey')
 @ApiTags('Linearity Injection')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(LinearityInjectionRecordDTO)
 export class LinearityInjectionWorkspaceController {
   constructor(
     private readonly service: LinearityInjectionWorkspaceService,
@@ -41,10 +41,21 @@ export class LinearityInjectionWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: LinearityInjectionRecordDTO,
     description:
       'Retrieves workspace Linearity Injection records by Linearity Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(LinearityInjectionRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {
