@@ -2,8 +2,10 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In, IsNull } from 'typeorm';
+import { EntityManager, In, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { withTransaction } from '../utilities/utils';
 
 import {
   FlowToLoadCheckBaseDTO,
@@ -57,10 +59,12 @@ export class FlowToLoadCheckWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<FlowToLoadCheckRecordDTO> {
     const timestamp = currentDateTime();
+    const repository = withTransaction(this.repository, trx);
 
-    let entity = this.repository.create({
+    let entity = repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
@@ -69,8 +73,8 @@ export class FlowToLoadCheckWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repository.save(entity);
+    entity = await repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -169,12 +173,14 @@ export class FlowToLoadCheckWorkspaceService {
     payload: FlowToLoadCheckImportDTO,
     userId: string,
     isHistoricalRecord: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: FlowToLoadCheck;
+    const historicalRepo = withTransaction(this.historicalRepo, trx);
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOneBy({
+      historicalRecord = await historicalRepo.findOneBy({
         testSumId: testSumId,
         testBasisCode: payload.testBasisCode ?? IsNull(),
       });
@@ -186,6 +192,7 @@ export class FlowToLoadCheckWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(

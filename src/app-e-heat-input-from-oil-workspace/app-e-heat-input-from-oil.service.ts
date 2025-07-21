@@ -2,7 +2,10 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { withTransaction } from '../utilities/utils';
 
 import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
 import {
@@ -64,6 +67,7 @@ export class AppEHeatInputFromOilWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<AppEHeatInputFromOilRecordDTO> {
     const timestamp = currentDateTime().toISOString();
 
@@ -81,7 +85,9 @@ export class AppEHeatInputFromOilWorkspaceService {
       );
     }
 
-    let entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    let entity = repository.create({
       id: historicalRecordId ? historicalRecordId : uuid(),
       monitoringSystemId: system.id,
       oilMass: payload.oilMass,
@@ -98,8 +104,8 @@ export class AppEHeatInputFromOilWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.getAppEHeatInputFromOilById(entity.id);
+    await repository.save(entity);
+    entity = await repository.getAppEHeatInputFromOilById(entity.id);
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -198,12 +204,14 @@ export class AppEHeatInputFromOilWorkspaceService {
     payload: AppEHeatInputFromOilImportDTO,
     userId: string,
     isHistoricalRecord: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: AppEHeatInputFromOil;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.getAppEHeatInputFromOilByTestRunIdAndMonSysID(
+      const historicalRepo = withTransaction(this.historicalRepo, trx);
+      historicalRecord = await historicalRepo.getAppEHeatInputFromOilByTestRunIdAndMonSysID(
         appECorrTestRunId,
         payload.monitoringSystemId,
       );
@@ -216,7 +224,8 @@ export class AppEHeatInputFromOilWorkspaceService {
       payload,
       userId,
       isImport,
-      isHistoricalRecord ? historicalRecord.id : null,
+      historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(

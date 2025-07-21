@@ -6,8 +6,10 @@ import {
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { IsNull } from 'typeorm';
+import { EntityManager, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { withTransaction } from '../utilities/utils';
 
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import {
@@ -123,14 +125,17 @@ export class TestExtensionExemptionsWorkspaceService {
     locationId: string,
     payload: TestExtensionExemptionImportDTO,
     userId: string,
+    trx?: EntityManager,
   ) {
+    const repository = withTransaction(this.repository, trx);
+    
     const {
       reportPeriodId,
       monitoringSystemRecordId,
       componentRecordId,
-    } = await this.lookupValues(locationId, payload);
+    } = await this.lookupValues(locationId, payload, trx);
 
-    const record = await this.repository.findOneBy({
+    const record = await repository.findOneBy({
       locationId,
       fuelCode: payload.fuelCode ?? IsNull(),
       extensionOrExemptionCode: payload.extensionOrExemptionCode,
@@ -146,12 +151,14 @@ export class TestExtensionExemptionsWorkspaceService {
         record.id,
         payload,
         userId,
+        trx,
       );
     } else {
       importedTestExtensionExemption = await this.createTestExtensionExemption(
         locationId,
         payload,
         userId,
+        trx,
       );
     }
 
@@ -166,15 +173,19 @@ export class TestExtensionExemptionsWorkspaceService {
     locationId: string,
     payload: TestExtensionExemptionBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<TestExtensionExemptionRecordDTO> {
     const timestamp = currentDateTime();
+    const repository = withTransaction(this.repository, trx);
+    const monitorLocationRepository = withTransaction(this.monitorLocationRepository, trx);
+    
     const {
       reportPeriodId,
       componentRecordId,
       monitoringSystemRecordId,
-    } = await this.lookupValues(locationId, payload);
+    } = await this.lookupValues(locationId, payload, trx);
 
-    const location = await this.monitorLocationRepository.getLocationByIdUnitIdStackPipeId(
+    const location = await monitorLocationRepository.getLocationByIdUnitIdStackPipeId(
       locationId,
       payload.unitId,
       payload.stackPipeId,
@@ -191,7 +202,7 @@ export class TestExtensionExemptionsWorkspaceService {
       );
     }
 
-    const entity = this.repository.create({
+    const entity = repository.create({
       ...payload,
       id: uuid(),
       locationId,
@@ -209,9 +220,9 @@ export class TestExtensionExemptionsWorkspaceService {
       submissionAvailabilityCode: 'REQUIRE',
     });
 
-    await this.repository.save(entity);
+    await repository.save(entity);
 
-    const result = await this.repository.getTestExtensionExemptionById(
+    const result = await repository.getTestExtensionExemptionById(
       entity.id,
     );
 
@@ -223,9 +234,11 @@ export class TestExtensionExemptionsWorkspaceService {
     id: string,
     payload: TestExtensionExemptionBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<TestExtensionExemptionRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOneBy({ id });
+    const repository = withTransaction(this.repository, trx);
+    const record = await repository.findOneBy({ id });
 
     if (!record) {
       throw new EaseyException(
@@ -240,7 +253,7 @@ export class TestExtensionExemptionsWorkspaceService {
       reportPeriodId,
       componentRecordId,
       monitoringSystemRecordId,
-    } = await this.lookupValues(locationId, payload);
+    } = await this.lookupValues(locationId, payload, trx);
 
     record.userId = userId;
     record.lastUpdated = timestamp;
@@ -258,7 +271,7 @@ export class TestExtensionExemptionsWorkspaceService {
     record.pendingStatusCode = 'PENDING';
     record.submissionAvailabilityCode = 'REQUIRE';
 
-    await this.repository.save(record);
+    await repository.save(record);
     return this.getTestExtensionExemptionById(record.id);
   }
 
@@ -276,13 +289,18 @@ export class TestExtensionExemptionsWorkspaceService {
   async lookupValues(
     locationId: string,
     payload: TestExtensionExemptionBaseDTO,
+    trx?: EntityManager,
   ) {
     let reportPeriodId = null;
     let componentRecordId = null;
     let monitoringSystemRecordId = null;
+    
+    const reportingPeriodRepository = withTransaction(this.reportingPeriodRepository, trx);
+    const componentRepository = withTransaction(this.componentRepository, trx);
+    const monSysRepository = withTransaction(this.monSysRepository, trx);
 
     if (payload.year && payload.quarter) {
-      const rptPeriod = await this.reportingPeriodRepository.findOneBy({
+      const rptPeriod = await reportingPeriodRepository.findOneBy({
         year: payload.year,
         quarter: payload.quarter,
       });
@@ -291,7 +309,7 @@ export class TestExtensionExemptionsWorkspaceService {
     }
 
     if (payload.componentId) {
-      const component = await this.componentRepository.findOneBy({
+      const component = await componentRepository.findOneBy({
         locationId: locationId,
         componentID: payload.componentId,
       });
@@ -300,7 +318,7 @@ export class TestExtensionExemptionsWorkspaceService {
     }
 
     if (payload.monitoringSystemId) {
-      const monitorSystem = await this.monSysRepository.findOneBy({
+      const monitorSystem = await monSysRepository.findOneBy({
         locationId: locationId,
         monitoringSystemID: payload.monitoringSystemId,
       });

@@ -6,8 +6,10 @@ import {
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { IsNull } from 'typeorm';
+import { EntityManager, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { withTransaction } from '../utilities/utils';
 
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import {
@@ -38,15 +40,18 @@ export class QACertificationEventWorkspaceService {
     locationId: string,
     payload: QACertificationEventBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<QACertificationEventRecordDTO> {
     const timestamp = currentDateTime();
+    const repository = withTransaction(this.repository, trx);
+    const monitorLocationRepository = withTransaction(this.monitorLocationRepository, trx);
 
     const {
       componentRecordId,
       monitoringSystemRecordId,
-    } = await this.lookupValues(locationId, payload);
+    } = await this.lookupValues(locationId, payload, trx);
 
-    const location = await this.monitorLocationRepository.getLocationByIdUnitIdStackPipeId(
+    const location = await monitorLocationRepository.getLocationByIdUnitIdStackPipeId(
       locationId,
       payload.unitId,
       payload.stackPipeId,
@@ -63,7 +68,7 @@ export class QACertificationEventWorkspaceService {
       );
     }
 
-    const entity = this.repository.create({
+    const entity = repository.create({
       ...payload,
       componentRecordId,
       monitoringSystemRecordId,
@@ -80,9 +85,9 @@ export class QACertificationEventWorkspaceService {
       submissionAvailabilityCode: 'REQUIRE',
     });
 
-    await this.repository.save(entity);
+    await repository.save(entity);
 
-    const result = await this.repository.getQACertificationEventById(entity.id);
+    const result = await repository.getQACertificationEventById(entity.id);
 
     return this.map.one(result);
   }
@@ -130,12 +135,15 @@ export class QACertificationEventWorkspaceService {
     return Promise.all(dtoPromises);
   }
 
-  async lookupValues(locationId: string, payload: QACertificationEventBaseDTO) {
+  async lookupValues(locationId: string, payload: QACertificationEventBaseDTO, trx?: EntityManager) {
     let componentRecordId = null;
     let monitoringSystemRecordId = null;
+    
+    const componentRepository = withTransaction(this.componentRepository, trx);
+    const monitoringSystemRepository = withTransaction(this.monitoringSystemRepository, trx);
 
     if (payload.componentId) {
-      const component = await this.componentRepository.findOneBy({
+      const component = await componentRepository.findOneBy({
         locationId: locationId,
         componentID: payload.componentId,
       });
@@ -144,7 +152,7 @@ export class QACertificationEventWorkspaceService {
     }
 
     if (payload.monitoringSystemId) {
-      const monitorSystem = await this.monitoringSystemRepository.findOneBy({
+      const monitorSystem = await monitoringSystemRepository.findOneBy({
         locationId,
         monitoringSystemID: payload.monitoringSystemId,
       });
@@ -194,10 +202,12 @@ export class QACertificationEventWorkspaceService {
     id: string,
     payload: QACertificationEventBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<QACertificationEventDTO> {
     const timestamp = currentDateTime();
+    const repository = withTransaction(this.repository, trx);
 
-    const entity = await this.repository.findOneBy({ id });
+    const entity = await repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -211,7 +221,7 @@ export class QACertificationEventWorkspaceService {
     const {
       componentRecordId,
       monitoringSystemRecordId,
-    } = await this.lookupValues(locationId, payload);
+    } = await this.lookupValues(locationId, payload, trx);
 
     entity.componentRecordId = componentRecordId;
     entity.monitoringSystemRecordId = monitoringSystemRecordId;
@@ -231,7 +241,7 @@ export class QACertificationEventWorkspaceService {
     entity.evalStatusCode = 'EVAL';
     entity.submissionAvailabilityCode = 'REQUIRE';
 
-    await this.repository.save(entity);
+    await repository.save(entity);
 
     return this.getQACertEvent(entity.id);
   }
@@ -260,13 +270,16 @@ export class QACertificationEventWorkspaceService {
     locationId: string,
     payload: QACertificationEventImportDTO,
     userId: string,
+    trx?: EntityManager,
   ) {
+    const repository = withTransaction(this.repository, trx);
+    
     const {
       componentRecordId,
       monitoringSystemRecordId,
-    } = await this.lookupValues(locationId, payload);
+    } = await this.lookupValues(locationId, payload, trx);
 
-    const record = await this.repository.findOneBy({
+    const record = await repository.findOneBy({
       locationId,
       certificationEventHour: payload.certificationEventHour ?? IsNull(),
       certificationEventDate: payload.certificationEventDate,
@@ -282,12 +295,14 @@ export class QACertificationEventWorkspaceService {
         record.id,
         payload,
         userId,
+        trx,
       );
     } else {
       importedQACertEvent = await this.createQACertEvent(
         locationId,
         payload,
         userId,
+        trx,
       );
     }
 

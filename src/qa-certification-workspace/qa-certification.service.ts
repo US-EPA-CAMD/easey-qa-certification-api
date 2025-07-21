@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpStatus } from '@nestjs/common';
+import { EntityManager } from 'typeorm';
+import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -20,6 +22,7 @@ import { EaseyContentService } from '../qa-certification-easey-content/easey-con
 export class QACertificationWorkspaceService {
   constructor(
     private readonly logger: Logger,
+    private readonly entityManager: EntityManager,
     private readonly testSummaryService: TestSummaryWorkspaceService,
     private readonly testExtensionExemptionService: TestExtensionExemptionsWorkspaceService,
     private readonly qaCertEventService: QACertificationEventWorkspaceService,
@@ -112,75 +115,92 @@ export class QACertificationWorkspaceService {
       `Importing QA Certification data for Facility Id/Oris Code [${payload.orisCode}]`,
     );
 
-    const promises = [];
-    payload.testSummaryData?.forEach((summary, idx) => {
-      promises.push(
-        new Promise((resolve, _reject) => {
-          const locationId = locations.find(i => {
-            return (
-              i.unitId === summary.unitId &&
-              i.stackPipeId === summary.stackPipeId
-            );
-          }).locationId;
+    const queryRunner = this.entityManager.connection.createQueryRunner();
+    await queryRunner.startTransaction();
 
-          const results = this.testSummaryService.import(
-            locationId,
-            summary,
-            userId,
-            qaSupprecords[idx] ? qaSupprecords[idx].testSumId : null,
-          );
+    try {
+      const trx = queryRunner.manager;
 
-          resolve(results);
-        }),
-      );
-    });
-
-    payload.testExtensionExemptionData?.forEach(
-      (qaTestExtensionExemptionId, idx) => {
+      const promises = [];
+      payload.testSummaryData?.forEach((summary, idx) => {
         promises.push(
           new Promise((resolve, _reject) => {
             const locationId = locations.find(i => {
               return (
-                i.unitId === qaTestExtensionExemptionId.unitId &&
-                i.stackPipeId === qaTestExtensionExemptionId.stackPipeId
+                i.unitId === summary.unitId &&
+                i.stackPipeId === summary.stackPipeId
               );
             }).locationId;
 
-            const results = this.testExtensionExemptionService.import(
+            const results = this.testSummaryService.import(
               locationId,
-              qaTestExtensionExemptionId,
+              summary,
               userId,
+              qaSupprecords[idx] ? qaSupprecords[idx].testSumId : null,
+              trx,
             );
+
             resolve(results);
           }),
         );
-      },
-    );
-    payload.certificationEventData?.forEach((qaCertEvent, idx) => {
-      promises.push(
-        new Promise((resolve, _reject) => {
-          const locationId = locations.find(i => {
-            return (
-              i.unitId === qaCertEvent.unitId &&
-              i.stackPipeId === qaCertEvent.stackPipeId
-            );
-          }).locationId;
+      });
 
-          const results = this.qaCertEventService.import(
-            locationId,
-            qaCertEvent,
-            userId,
+      payload.testExtensionExemptionData?.forEach(
+        (qaTestExtensionExemptionId, idx) => {
+          promises.push(
+            new Promise((resolve, _reject) => {
+              const locationId = locations.find(i => {
+                return (
+                  i.unitId === qaTestExtensionExemptionId.unitId &&
+                  i.stackPipeId === qaTestExtensionExemptionId.stackPipeId
+                );
+              }).locationId;
+
+              const results = this.testExtensionExemptionService.import(
+                locationId,
+                qaTestExtensionExemptionId,
+                userId,
+                trx,
+              );
+              resolve(results);
+            }),
           );
-
-          resolve(results);
-        }),
+        },
       );
-    });
+      payload.certificationEventData?.forEach((qaCertEvent, idx) => {
+        promises.push(
+          new Promise((resolve, _reject) => {
+            const locationId = locations.find(i => {
+              return (
+                i.unitId === qaCertEvent.unitId &&
+                i.stackPipeId === qaCertEvent.stackPipeId
+              );
+            }).locationId;
 
-    await Promise.all(promises);
+            const results = this.qaCertEventService.import(
+              locationId,
+              qaCertEvent,
+              userId,
+              trx,
+            );
 
-    return {
-      message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${payload.orisCode}]`,
-    };
+            resolve(results);
+          }),
+        );
+      });
+
+      await Promise.all(promises);
+
+      await queryRunner.commitTransaction();
+
+      return {
+        message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${payload.orisCode}]`,
+      };
+    } catch (err) {
+      await queryRunner.rollbackTransaction();
+      throw new EaseyException(err, HttpStatus.INTERNAL_SERVER_ERROR);
+    } finally {
+      await queryRunner.release();
+    }
   }
 }

@@ -2,8 +2,10 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In, IsNull } from 'typeorm';
+import { EntityManager, In, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { withTransaction } from '../utilities/utils';
 
 import {
   TestQualificationBaseDTO,
@@ -59,10 +61,13 @@ export class TestQualificationWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<TestQualificationRecordDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    let entity = repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
@@ -71,11 +76,8 @@ export class TestQualificationWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-
-    await this.repository.save(entity);
-
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repository.save(entity);
+    entity = await repository.findOneBy({ id: entity.id });
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
@@ -165,12 +167,14 @@ export class TestQualificationWorkspaceService {
     payload: TestQualificationImportDTO,
     userId: string,
     isHistoricalRecord: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: TestQualification;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOneBy({
+      const historicalRepo = withTransaction(this.historicalRepo, trx);
+      historicalRecord = await historicalRepo.findOneBy({
         testSumId: testSumId,
         testClaimCode: payload.testClaimCode,
         highLoadPercentage: payload.highLoadPercentage ?? IsNull(),
@@ -183,6 +187,7 @@ export class TestQualificationWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(

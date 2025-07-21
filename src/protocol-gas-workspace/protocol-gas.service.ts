@@ -2,8 +2,10 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { withTransaction } from '../utilities/utils';
 
 import {
   ProtocolGasBaseDTO,
@@ -53,10 +55,12 @@ export class ProtocolGasWorkspaceService {
     payload: ProtocolGasBaseDTO,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<ProtocolGasRecordDTO> {
     const timestamp = currentDateTime().toISOString();
+    const repository = withTransaction(this.repository, trx);
 
-    let entity = this.repository.create({
+    let entity = repository.create({
       ...payload,
       id: uuid(),
       testSumId,
@@ -65,8 +69,8 @@ export class ProtocolGasWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repository.save(entity);
+    entity = await repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -144,6 +148,7 @@ export class ProtocolGasWorkspaceService {
     testSumId: string,
     payload: ProtocolGasImportDTO,
     userId: string,
+    trx?: EntityManager,
   ) {
     const isImport = true;
 
@@ -152,6 +157,7 @@ export class ProtocolGasWorkspaceService {
       payload,
       userId,
       isImport,
+      trx,
     );
 
     this.logger.log(

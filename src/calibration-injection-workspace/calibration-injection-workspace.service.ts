@@ -2,8 +2,10 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In, IsNull } from 'typeorm';
+import { EntityManager, In, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { withTransaction } from '../utilities/utils';
 
 import { CalibrationInjectionRepository } from '../calibration-injection/calibration-injection.repository';
 import {
@@ -62,10 +64,13 @@ export class CalibrationInjectionWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<CalibrationInjectionDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    let entity = repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
@@ -74,8 +79,8 @@ export class CalibrationInjectionWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repository.save(entity);
+    entity = await repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -181,12 +186,14 @@ export class CalibrationInjectionWorkspaceService {
     payload: CalibrationInjectionImportDTO,
     userId: string,
     isHistoricalRecord?: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: CalibrationInjection;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOneBy({
+      const historicalRepository = withTransaction(this.historicalRepository, trx);
+      historicalRecord = await historicalRepository.findOneBy({
         testSumId: testSumId,
         upscaleGasLevelCode: payload.upscaleGasLevelCode ?? IsNull(),
         zeroInjectionDate: payload.zeroInjectionDate ?? IsNull(),
@@ -204,6 +211,7 @@ export class CalibrationInjectionWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(

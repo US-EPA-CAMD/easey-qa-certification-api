@@ -2,7 +2,10 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { withTransaction } from '../utilities/utils';
 
 import { AppEHeatInputFromGasRepository } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.repository';
 import {
@@ -64,6 +67,7 @@ export class AppEHeatInputFromGasWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<AppEHeatInputFromGasRecordDTO> {
     const timestamp = currentDateTime();
 
@@ -81,7 +85,9 @@ export class AppEHeatInputFromGasWorkspaceService {
       );
     }
 
-    let entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    let entity = repository.create({
       id: historicalRecordId ? historicalRecordId : uuid(),
       appECorrTestRunId,
       monitoringSystemId: system.id,
@@ -93,7 +99,7 @@ export class AppEHeatInputFromGasWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
+    await repository.save(entity);
 
     entity = await this.repository.getAppEHeatInputFromGasById(entity.id);
 
@@ -190,12 +196,14 @@ export class AppEHeatInputFromGasWorkspaceService {
     payload: AppEHeatInputFromGasImportDTO,
     userId: string,
     isHistoricalRecord: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: AppEHeatInputFromGas;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.getAppEHeatInputFromGasByTestRunIdAndMonSysID(
+      const historicalRepo = withTransaction(this.historicalRepo, trx);
+      historicalRecord = await historicalRepo.getAppEHeatInputFromGasByTestRunIdAndMonSysID(
         appECorrTestRunId,
         payload.monitoringSystemId,
       );
@@ -208,7 +216,8 @@ export class AppEHeatInputFromGasWorkspaceService {
       payload,
       userId,
       isImport,
-      isHistoricalRecord ? historicalRecord.id : null,
+      historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(

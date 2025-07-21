@@ -2,8 +2,10 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In, IsNull } from 'typeorm';
+import { EntityManager, In, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { withTransaction } from '../utilities/utils';
 
 import { CycleTimeInjectionWorkspaceService } from '../cycle-time-injection-workspace/cycle-time-injection-workspace.service';
 import { CycleTimeSummaryRepository } from '../cycle-time-summary/cycle-time-summary.repository';
@@ -65,10 +67,13 @@ export class CycleTimeSummaryWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<CycleTimeSummaryDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    let entity = repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
@@ -77,8 +82,8 @@ export class CycleTimeSummaryWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repository.save(entity);
+    entity = await repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -183,13 +188,15 @@ export class CycleTimeSummaryWorkspaceService {
     payload: CycleTimeSummaryImportDTO,
     userId: string,
     isHistoricalRecord?: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     const promises = [];
     let historicalRecord: CycleTimeSummary;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOneBy({
+      const historicalRepository = withTransaction(this.historicalRepository, trx);
+      historicalRecord = await historicalRepository.findOneBy({
         testSumId: testSumId,
         totalTime: payload.totalTime ?? IsNull(),
       });
@@ -201,6 +208,7 @@ export class CycleTimeSummaryWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(
@@ -216,6 +224,7 @@ export class CycleTimeSummaryWorkspaceService {
             cycleTimeInjection,
             userId,
             isHistoricalRecord,
+            trx,
           ),
         );
       }

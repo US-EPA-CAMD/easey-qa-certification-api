@@ -5,6 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { EntityManager } from 'typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
@@ -42,6 +43,7 @@ import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-tr
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
+import { withTransaction } from '../utilities/utils';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -345,17 +347,19 @@ export class TestSummaryWorkspaceService {
     payload: TestSummaryImportDTO,
     userId: string,
     historicalrecordId?: string,
+    trx?: EntityManager,
   ) {
     const promises = [];
+    const repository = withTransaction(this.repository, trx);
 
-    const summary = await this.repository.getTestSummaryByLocationId(
+    const summary = await repository.getTestSummaryByLocationId(
       locationId,
       payload.testTypeCode,
       payload.testNumber,
     );
 
     if (summary) {
-      await this.deleteTestSummary(summary.id);
+      await this.deleteTestSummary(summary.id, trx);
     }
 
     const createdTestSummary = await this.createTestSummary(
@@ -363,6 +367,7 @@ export class TestSummaryWorkspaceService {
       payload,
       userId,
       historicalrecordId,
+      trx,
     );
 
     this.logger.log(
@@ -380,6 +385,7 @@ export class TestSummaryWorkspaceService {
             linearitySummary,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -396,6 +402,7 @@ export class TestSummaryWorkspaceService {
             rata,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -416,6 +423,7 @@ export class TestSummaryWorkspaceService {
             createdTestSummary.id,
             protocolGas,
             userId,
+            trx,
           ),
         );
       }
@@ -432,6 +440,7 @@ export class TestSummaryWorkspaceService {
             fuelFlowToLoadTest,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -448,6 +457,7 @@ export class TestSummaryWorkspaceService {
             flowToLoadCheck,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -464,6 +474,7 @@ export class TestSummaryWorkspaceService {
             fuelFlowToLoadBaseline,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -480,6 +491,7 @@ export class TestSummaryWorkspaceService {
             fuelFlowmeterAccuracy,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -496,6 +508,7 @@ export class TestSummaryWorkspaceService {
             flowToLoadReference,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -513,6 +526,7 @@ export class TestSummaryWorkspaceService {
             appECorrelationTestSummary,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -529,6 +543,7 @@ export class TestSummaryWorkspaceService {
             calibrationInjection,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -545,6 +560,7 @@ export class TestSummaryWorkspaceService {
             cycleTimeSummary,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -561,6 +577,7 @@ export class TestSummaryWorkspaceService {
             onlineOfflineCalibration,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -577,6 +594,7 @@ export class TestSummaryWorkspaceService {
             transmitterTransducerAccuracy,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -593,6 +611,7 @@ export class TestSummaryWorkspaceService {
             unitDefaultTest,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -610,6 +629,7 @@ export class TestSummaryWorkspaceService {
             hgSummary,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -626,6 +646,7 @@ export class TestSummaryWorkspaceService {
             testQualification,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -646,6 +667,7 @@ export class TestSummaryWorkspaceService {
             airEmissionTesting,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -661,15 +683,19 @@ export class TestSummaryWorkspaceService {
     payload: TestSummaryBaseDTO,
     userId: string,
     historicalrecordId?: string,
+    trx?: EntityManager,
   ): Promise<TestSummaryRecordDTO> {
     const timestamp = currentDateTime();
+    const repository = withTransaction(this.repository, trx);
+    const monitorLocationRepository = withTransaction(this.monitorLocationRepository, trx);
+    
     const [
       reportPeriodId,
       componentRecordId,
       monitoringSystemRecordId,
-    ] = await this.lookupValues(locationId, payload);
+    ] = await this.lookupValues(locationId, payload, trx);
 
-    const location = await this.monitorLocationRepository.getLocationByIdUnitIdStackPipeId(
+    const location = await monitorLocationRepository.getLocationByIdUnitIdStackPipeId(
       locationId,
       payload.unitId,
       payload.stackPipeId,
@@ -686,7 +712,7 @@ export class TestSummaryWorkspaceService {
       );
     }
 
-    const entity = this.repository.create({
+    const entity = repository.create({
       ...payload,
       id: historicalrecordId ? historicalrecordId : uuid(),
       locationId,
@@ -702,8 +728,8 @@ export class TestSummaryWorkspaceService {
       evalStatusCode: 'EVAL',
     });
 
-    await this.repository.save(entity);
-    const result = await this.repository.getTestSummaryById(entity.id);
+    await repository.save(entity);
+    const result = await repository.getTestSummaryById(entity.id);
 
     const dto = await this.map.one(result);
 
@@ -779,9 +805,10 @@ export class TestSummaryWorkspaceService {
     return this.getTestSummaryById(entity.id);
   }
 
-  async deleteTestSummary(id: string): Promise<void> {
+  async deleteTestSummary(id: string, trx?: EntityManager): Promise<void> {
     try {
-      await this.repository.delete(id);
+      const repository = withTransaction(this.repository, trx);
+      await repository.delete(id);
     } catch (e) {
       throw new InternalServerErrorException(
         `Error deleting Test Summary record Id [${id}]`,
@@ -809,13 +836,17 @@ export class TestSummaryWorkspaceService {
     }
   }
 
-  async lookupValues(locationId: string, payload: TestSummaryBaseDTO) {
+  async lookupValues(locationId: string, payload: TestSummaryBaseDTO, trx?: EntityManager) {
     let reportPeriodId = null;
     let componentRecordId = null;
     let monitoringSystemRecordId = null;
+    
+    const reportingPeriodRepository = withTransaction(this.reportingPeriodRepository, trx);
+    const componentRepository = withTransaction(this.componentRepository, trx);
+    const monSysWorkspaceRepository = withTransaction(this.monSysWorkspaceRepository, trx);
 
     if (payload.year && payload.quarter) {
-      const rptPeriod = await this.reportingPeriodRepository.findOneBy({
+      const rptPeriod = await reportingPeriodRepository.findOneBy({
         year: payload.year,
         quarter: payload.quarter,
       });
@@ -824,7 +855,7 @@ export class TestSummaryWorkspaceService {
     }
 
     if (payload.componentId) {
-      const component = await this.componentRepository.findOneBy({
+      const component = await componentRepository.findOneBy({
         locationId: locationId,
         componentID: payload.componentId,
       });
@@ -833,7 +864,7 @@ export class TestSummaryWorkspaceService {
     }
 
     if (payload.monitoringSystemId) {
-      const monitorSystem = await this.monSysWorkspaceRepository.findOneBy({
+      const monitorSystem = await monSysWorkspaceRepository.findOneBy({
         locationId: locationId,
         monitoringSystemID: payload.monitoringSystemId,
       });

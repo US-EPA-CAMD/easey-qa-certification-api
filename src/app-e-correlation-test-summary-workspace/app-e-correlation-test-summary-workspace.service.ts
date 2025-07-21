@@ -2,8 +2,10 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In } from 'typeorm';
+import { EntityManager, In, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { withTransaction } from '../utilities/utils';
 
 import { AppECorrelationTestRunWorkspaceService } from '../app-e-correlation-test-run-workspace/app-e-correlation-test-run-workspace.service';
 import { AppendixETestSummaryRepository } from '../app-e-correlation-test-summary/app-e-correlation-test-summary.repository';
@@ -64,10 +66,13 @@ export class AppECorrelationTestSummaryWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<AppECorrelationTestSummaryRecordDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    let entity = repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
@@ -76,8 +81,8 @@ export class AppECorrelationTestSummaryWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repository.save(entity);
+    entity = await repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -132,13 +137,15 @@ export class AppECorrelationTestSummaryWorkspaceService {
     payload: AppECorrelationTestSummaryImportDTO,
     userId: string,
     isHistoricalRecord: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     const promises = [];
     let historicalRecord: AppECorrelationTestSummary;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOneBy({
+      const historicalRepo = withTransaction(this.historicalRepo, trx);
+      historicalRecord = await historicalRepo.findOneBy({
         testSumId: testSumId,
         operatingLevelForRun: payload.operatingLevelForRun,
       });
@@ -150,6 +157,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(
@@ -166,6 +174,7 @@ export class AppECorrelationTestSummaryWorkspaceService {
             testRun,
             userId,
             isHistoricalRecord,
+            trx,
           ),
         );
       }

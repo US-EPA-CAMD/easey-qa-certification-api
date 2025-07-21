@@ -2,8 +2,10 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { withTransaction } from '../utilities/utils';
 
 import {
   LinearitySummaryBaseDTO,
@@ -81,13 +83,15 @@ export class LinearitySummaryWorkspaceService {
     payload: LinearitySummaryImportDTO,
     userId: string,
     isHistoricalRecord?: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     const promises = [];
     let historicalRecord: LinearitySummary;
+    const historicalRepository = withTransaction(this.historicalRepository, trx);
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOneBy({
+      historicalRecord = await historicalRepository.findOneBy({
         testSumId: testSumId,
         gasLevelCode: payload.gasLevelCode,
       });
@@ -99,6 +103,7 @@ export class LinearitySummaryWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(
@@ -114,6 +119,7 @@ export class LinearitySummaryWorkspaceService {
             injection,
             userId,
             isHistoricalRecord,
+            trx,
           ),
         );
       }
@@ -130,10 +136,12 @@ export class LinearitySummaryWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<LinearitySummaryRecordDTO> {
     const timestamp = currentDateTime();
+    const repository = withTransaction(this.repository, trx);
 
-    let entity = this.repository.create({
+    let entity = repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
@@ -142,8 +150,8 @@ export class LinearitySummaryWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repository.save(entity);
+    entity = await repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,

@@ -2,8 +2,10 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { withTransaction } from '../utilities/utils';
 
 import { AppECorrelationTestRunRepository } from '../app-e-correlation-test-run/app-e-correlation-test-run.repository';
 import { AppEHeatInputFromGasWorkspaceService } from '../app-e-heat-input-from-gas-workspace/app-e-heat-input-from-gas-workspace.service';
@@ -68,10 +70,13 @@ export class AppECorrelationTestRunWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalId?: string,
+    trx?: EntityManager,
   ): Promise<AppECorrelationTestRunRecordDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    let entity = repository.create({
       ...payload,
       id: historicalId ? historicalId : uuid(),
       appECorrTestSumId,
@@ -80,8 +85,8 @@ export class AppECorrelationTestRunWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repository.save(entity);
+    entity = await repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
@@ -171,13 +176,15 @@ export class AppECorrelationTestRunWorkspaceService {
     payload: AppECorrelationTestRunImportDTO,
     userId: string,
     isHistoricalRecord?: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     const promises = [];
     let historicalRecord: AppECorrelationTestRun;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepo.findOneBy({
+      const historicalRepo = withTransaction(this.historicalRepo, trx);
+      historicalRecord = await historicalRepo.findOneBy({
         appECorrTestSumId: appECorrTestSumId,
         runNumber: payload.runNumber,
       });
@@ -190,6 +197,7 @@ export class AppECorrelationTestRunWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(
@@ -206,6 +214,7 @@ export class AppECorrelationTestRunWorkspaceService {
             appEHeatInputFromGas,
             userId,
             isHistoricalRecord,
+            trx,
           ),
         );
       }
@@ -221,6 +230,7 @@ export class AppECorrelationTestRunWorkspaceService {
             appEHeatInputFromOil,
             userId,
             isHistoricalRecord,
+            trx,
           ),
         );
       }

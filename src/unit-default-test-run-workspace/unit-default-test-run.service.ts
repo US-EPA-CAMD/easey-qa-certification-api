@@ -2,8 +2,10 @@ import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In } from 'typeorm';
+import { EntityManager, In, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
+
+import { withTransaction } from '../utilities/utils';
 
 import {
   UnitDefaultTestRunBaseDTO,
@@ -66,10 +68,13 @@ export class UnitDefaultTestRunWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<UnitDefaultTestRunRecordDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    let entity = repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       unitDefaultTestSumId,
@@ -78,8 +83,8 @@ export class UnitDefaultTestRunWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repository.save(entity);
+    entity = await repository.findOneBy({ id: entity.id });
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
@@ -180,12 +185,14 @@ export class UnitDefaultTestRunWorkspaceService {
     payload: UnitDefaultTestRunImportDTO,
     userId: string,
     isHistoricalRecord?: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: UnitDefaultTestRun;
 
     if (isHistoricalRecord) {
-      historicalRecord = await this.historicalRepository.findOneBy({
+      const historicalRepository = withTransaction(this.historicalRepository, trx);
+      historicalRecord = await historicalRepository.findOneBy({
         unitDefaultTestSumId,
         operatingLevelForRun: payload.operatingLevelForRun,
         runNumber: payload.runNumber,
@@ -199,6 +206,7 @@ export class UnitDefaultTestRunWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(
