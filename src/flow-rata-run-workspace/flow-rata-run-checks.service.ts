@@ -86,7 +86,7 @@ export class FlowRataRunChecksService {
         errorList.push(error);
       }
 
-      error = this.rata124Check(rataSummaryRecord, rataRunRecord);
+      error = this.rata124Check(rataSummaryRecord);
       if (error) {
         errorList.push(error);
       }
@@ -178,7 +178,6 @@ export class FlowRataRunChecksService {
 
   private rata124Check(
     rataSummaryRecord: RataSummary,
-    rataRunRecord: RataRun,
   ): string {
     let error: string = null;
 
@@ -187,8 +186,6 @@ export class FlowRataRunChecksService {
       !rataSummaryRecord.referenceMethodCode.match('(2F|2G|M2H).*')
     ) {
       error = this.getMessage('RATA-124-A');
-    } else if (rataRunRecord.runStatusCode === 'NOTUSED') {
-      error = this.getMessage('RATA-124-B');
     }
 
     return error;
