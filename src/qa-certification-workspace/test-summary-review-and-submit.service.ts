@@ -62,6 +62,28 @@ export class TestSummaryReviewAndSubmitService {
 
       const newResults = [];
 
+        if (data.length > 0) {
+        const testSumIds = data.map(d => d.testSumId);
+
+        const severities = await this.entityManager.query(
+             `select t.test_sum_id, sc.severity_cd_description, sc.severity_cd from camdecmpswks.test_summary t
+              JOIN camdecmpswks.check_session cs on cs.chk_session_id = t.chk_session_id
+              JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
+              where t.test_sum_id = ANY($1);`,
+        [testSumIds],
+        );
+        
+        const severityMap:Map<string, {description:string,severityCode:string}> = new Map(
+          severities.map((s: any) => [s.qa_cert_event_id, { description: s.severity_cd_description, severityCode: s.severity_cd }])
+        );
+
+        for (const d of data) {
+          let {description, severityCode} = severityMap.get(d.testSumId) ?? {};
+          d.severityDescription = description
+          d.severityCode = severityCode
+        }
+      }
+
       for (const d of data) {
         let found = false;
 

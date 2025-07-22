@@ -52,6 +52,28 @@ export class TeeReviewAndSubmitService {
         data = data.filter(f => quarters.includes(f.periodAbbreviation));
       }
 
+      if (data.length > 0) {
+        const testExtensionExemptionIdentifiers = data.map(d => d.testExtensionExemptionIdentifier);
+
+        const severities = await this.entityManager.query(
+             `select t.test_extension_exemption_id, sc.severity_cd_description, sc.severity_cd from camdecmpswks.test_extension_exemption t
+              JOIN camdecmpswks.check_session cs on cs.chk_session_id = t.chk_session_id
+              JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
+              where t.test_extension_exemption_id =  ANY($1);`,
+        [testExtensionExemptionIdentifiers],
+        );
+        
+        const severityMap:Map<string, {description:string,severityCode:string}> = new Map(
+          severities.map((s: any) => [s.qa_cert_event_id, { description: s.severity_cd_description, severityCode: s.severity_cd }])
+        );
+
+        for (const d of data) {
+          let {description, severityCode} = severityMap.get(d.testExtensionExemptionIdentifier) ?? {};
+          d.severityDescription = description
+          d.severityCode = severityCode
+        }
+      }
+
       return data;
     } catch (e) {
       throw new EaseyException(e, HttpStatus.INTERNAL_SERVER_ERROR);
