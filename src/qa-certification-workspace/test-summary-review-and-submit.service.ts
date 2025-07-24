@@ -74,7 +74,7 @@ export class TestSummaryReviewAndSubmitService {
         );
         
         const severityMap:Map<string, {description:string,severityCode:string}> = new Map(
-          severities.map((s: any) => [s.qa_cert_event_id, { description: s.severity_cd_description, severityCode: s.severity_cd }])
+          severities.map((s: any) => [s.test_sum_id, { description: s.severity_cd_description, severityCode: s.severity_cd }])
         );
 
         for (const d of data) {
