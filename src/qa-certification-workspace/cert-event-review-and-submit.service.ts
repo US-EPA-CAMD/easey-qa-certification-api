@@ -60,7 +60,7 @@ export class CertEventReviewAndSubmitService {
 
       const newResults = [];
 
-        if (data.length > 0) {
+        if (data.length > 0 && isWorkspace) {
         const qaCertEventIdentifiers = data.map(d => d.qaCertEventIdentifier);
 
         const severities = await this.entityManager.query(

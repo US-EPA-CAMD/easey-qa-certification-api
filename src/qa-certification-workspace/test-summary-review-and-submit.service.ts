@@ -62,7 +62,7 @@ export class TestSummaryReviewAndSubmitService {
 
       const newResults = [];
 
-        if (data.length > 0) {
+        if (data.length > 0 && isWorkspace) {
         const testSumIds = data.map(d => d.testSumId);
 
         const severities = await this.entityManager.query(

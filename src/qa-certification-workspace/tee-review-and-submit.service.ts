@@ -52,7 +52,7 @@ export class TeeReviewAndSubmitService {
         data = data.filter(f => quarters.includes(f.periodAbbreviation));
       }
 
-      if (data.length > 0) {
+      if (data.length > 0 && isWorkspace) {
         const testExtensionExemptionIdentifiers = data.map(d => d.testExtensionExemptionIdentifier);
 
         const severities = await this.entityManager.query(
