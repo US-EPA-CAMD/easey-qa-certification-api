@@ -52,7 +52,7 @@ export class TeeReviewAndSubmitService {
         data = data.filter(f => quarters.includes(f.periodAbbreviation));
       }
 
-      if (data.length > 0) {
+      if (data.length > 0 && isWorkspace) {
         const testExtensionExemptionIdentifiers = data.map(d => d.testExtensionExemptionIdentifier);
 
         const severities = await this.entityManager.query(
@@ -64,7 +64,7 @@ export class TeeReviewAndSubmitService {
         );
         
         const severityMap:Map<string, {description:string,severityCode:string}> = new Map(
-          severities.map((s: any) => [s.qa_cert_event_id, { description: s.severity_cd_description, severityCode: s.severity_cd }])
+          severities.map((s: any) => [s.test_extension_exemption_id, { description: s.severity_cd_description, severityCode: s.severity_cd }])
         );
 
         for (const d of data) {
