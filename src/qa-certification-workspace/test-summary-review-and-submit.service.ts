@@ -62,7 +62,7 @@ export class TestSummaryReviewAndSubmitService {
 
       const newResults = [];
 
-        if (data.length > 0) {
+        if (data.length > 0 && isWorkspace) {
         const testSumIds = data.map(d => d.testSumId);
 
         const severities = await this.entityManager.query(
@@ -74,7 +74,7 @@ export class TestSummaryReviewAndSubmitService {
         );
         
         const severityMap:Map<string, {description:string,severityCode:string}> = new Map(
-          severities.map((s: any) => [s.qa_cert_event_id, { description: s.severity_cd_description, severityCode: s.severity_cd }])
+          severities.map((s: any) => [s.test_sum_id, { description: s.severity_cd_description, severityCode: s.severity_cd }])
         );
 
         for (const d of data) {
