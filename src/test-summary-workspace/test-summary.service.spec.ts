@@ -58,6 +58,7 @@ import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryWorkspaceService } from './test-summary.service';
 import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
 import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
+import { EntityManager } from 'typeorm';
 
 const locationId = '121';
 const facilityId = 1;
@@ -210,6 +211,7 @@ describe('TestSummaryWorkspaceService', () => {
   let locationRepository: MonitorLocationRepository;
   let monitorSystemRepository: MonitorSystemRepository;
   let monitorSystemWorkspaceRepository: MonitorSystemWorkspaceRepository;
+  let manager: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -332,6 +334,10 @@ describe('TestSummaryWorkspaceService', () => {
           provide: QASuppDataWorkspaceService,
           useFactory: mockQASuppDataWorkspaceService,
         },
+        {
+          provide: EntityManager,
+          useValue: { transaction: jest.fn() },
+        },
       ],
     }).compile();
 
@@ -341,6 +347,7 @@ describe('TestSummaryWorkspaceService', () => {
     monitorSystemWorkspaceRepository = module.get(
       MonitorSystemWorkspaceRepository,
     );
+    manager = module.get(EntityManager);
   });
 
   describe('getTestSummaryById', () => {
@@ -457,13 +464,54 @@ describe('TestSummaryWorkspaceService', () => {
   });
 
   describe('deleteTestSummary', () => {
-    it('should call the deleteTestSummary and delete test summariy', async () => {
+    it('deletes a record and reverts QA supp data when an official record exists', async () => {
+      const transactionalEntityManager = { query: jest.fn() };
+      
+      (manager.transaction as jest.Mock).mockImplementation(async (callback) => {
+        await callback(transactionalEntityManager);
+      });
+
+      (transactionalEntityManager.query as jest.Mock).mockResolvedValue([ { '1': 1 } ]);
+
       const result = await service.deleteTestSummary(testSumId);
 
-      expect(result).toEqual(undefined);
+      expect(result).toBeUndefined();
+      expect(repository.delete).toHaveBeenCalledWith(testSumId);
+      
+      // Verify the correct sequence of queries inside the transaction
+      const queryCalls = transactionalEntityManager.query.mock.calls;
+      expect(queryCalls.length).toBe(4);
+      expect(queryCalls[0][0]).toContain('DELETE FROM camdecmpswks.qa_supp_data');
+      expect(queryCalls[1][0]).toContain('SELECT 1 FROM camdecmps.qa_supp_data');
+      expect(queryCalls[2][0]).toContain('INSERT INTO camdecmpswks.qa_supp_data');
+      expect(queryCalls[3][0]).toContain('INSERT INTO camdecmpswks.qa_supp_attribute');
     });
 
-    it('should call the deleteTestSummary and throw error while deleting test summariy', async () => {
+    it('deletes a record and its QA supp data when no official record exists', async () => {
+      const transactionalEntityManager = { query: jest.fn() };
+      
+      (manager.transaction as jest.Mock).mockImplementation(async (callback) => {
+        await callback(transactionalEntityManager);
+      });
+
+      (transactionalEntityManager.query as jest.Mock).mockResolvedValue([]);
+
+      const result = await service.deleteTestSummary(testSumId);
+
+      expect(result).toBeUndefined();
+      expect(repository.delete).toHaveBeenCalledWith(testSumId);
+
+      // Verify the correct sequence of queries inside the transaction
+      const queryCalls = transactionalEntityManager.query.mock.calls;
+      expect(queryCalls.length).toBe(2);
+      expect(queryCalls[0][0]).toContain('DELETE FROM camdecmpswks.qa_supp_data');
+      expect(queryCalls[1][0]).toContain('SELECT 1 FROM camdecmps.qa_supp_data');
+      expect(transactionalEntityManager.query).not.toHaveBeenCalledWith(
+        expect.stringContaining('INSERT INTO'),
+      );
+    });
+
+    it('should throw an error while deleting test summary', async () => {
       jest
         .spyOn(repository, 'delete')
         .mockRejectedValue(new InternalServerErrorException());
