@@ -112,7 +112,10 @@ export class MatsDataSubmissionController {
     label: 'Deleted MATS Data Submission record',
     requestParamsOutFields: ['id', 'locId'],
   })
-  async deleteMatsDataSubmission(@Param('id') id: string) {
+  async deleteMatsDataSubmission(
+    @Param('locId') _locationId: string,
+    @Param('id') id: string,
+  ) {
     this.service.deleteMatsDataSubmission(id);
   }
 

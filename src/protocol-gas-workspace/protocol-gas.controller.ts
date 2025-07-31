@@ -155,7 +155,7 @@ export class ProtocolGasWorkspaceController {
     responseBodyOutFields: '*'
   })
   async editProtolGas(
-    @Param('locid') locationId: string,
+    @Param('locId') locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
     @Body() payload: ProtocolGasBaseDTO,

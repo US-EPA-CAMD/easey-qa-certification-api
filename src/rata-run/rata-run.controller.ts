@@ -51,7 +51,7 @@ export class RataRunController {
     @Param('testSumId') _testSumId: string,
     @Param('rataId') _rataId: string,
     @Param('rataSumId') _rataSumId: string,
-    @Param('rataRunId') rataRunId: string,
+    @Param('id') rataRunId: string,
   ): Promise<RataRunDTO> {
     return this.service.getRataRun(rataRunId);
   }
