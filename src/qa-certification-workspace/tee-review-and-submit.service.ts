@@ -48,6 +48,9 @@ export class TeeReviewAndSubmitService {
         );
       }
 
+      // Deduplicate records based on business keys
+      data = this.deduplicateTeeRecords(data);
+
       if (quarters && quarters.length > 0) {
         data = data.filter(f => quarters.includes(f.periodAbbreviation));
       }
@@ -79,4 +82,30 @@ export class TeeReviewAndSubmitService {
       throw new EaseyException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  private deduplicateTeeRecords(data: TeeReviewAndSubmitDTO[]):
+    TeeReviewAndSubmitDTO[] {
+    const uniqueRecords = new Map<string, TeeReviewAndSubmitDTO>();
+
+    for (const record of data) {
+      // Business key: oris_code + location_info + system_component_id +calendar_year + quarter
+      const businessKey = `${record.orisCode}_${record.locationInfo}_${record.systemComponentIdentifier}_${record.periodAbbreviation}`;
+
+      if (!uniqueRecords.has(businessKey)) {
+        uniqueRecords.set(businessKey, record);
+      } else {
+        // If duplicate found, keep the record with the most recent monPlanId (highest value)
+        const existing = uniqueRecords.get(businessKey);
+        if (record.monPlanId > existing.monPlanId) {
+          uniqueRecords.set(businessKey, record);
+        }
+      }
+    }
+
+    // Sort by period_abbreviation DESC (year/qtr DESC)
+    return Array.from(uniqueRecords.values()).sort((a, b) => {
+      return b.periodAbbreviation.localeCompare(a.periodAbbreviation);
+    });
+  }
 }
+

@@ -49,6 +49,9 @@ export class CertEventReviewAndSubmitService {
         );
       }
 
+      // Deduplicate records based on business keys
+      data = this.deduplicateCertEventRecords(data);
+
       let quarterList: ReportingPeriod[];
       if (quarters && quarters.length > 0) {
         quarterList = await this.returnManager().find(ReportingPeriod, {
@@ -60,23 +63,27 @@ export class CertEventReviewAndSubmitService {
 
       const newResults = [];
 
-        if (data.length > 0 && isWorkspace) {
+      if (data.length > 0 && isWorkspace) {
         const qaCertEventIdentifiers = data.map(d => d.qaCertEventIdentifier);
 
         const severities = await this.entityManager.query(
-             `select qce.qa_cert_event_id , sc.severity_cd_description, sc.severity_cd from camdecmpswks.qa_cert_event qce
-              JOIN camdecmpswks.check_session cs on cs.chk_session_id = qce.chk_session_id
-              JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
-              where qce.qa_cert_event_id = ANY($1);`,
-        [qaCertEventIdentifiers],
+          `select qce.qa_cert_event_id, sc.severity_cd_description, sc.severity_cd
+           from camdecmpswks.qa_cert_event qce
+                    JOIN camdecmpswks.check_session cs on cs.chk_session_id = qce.chk_session_id
+                    JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
+           where qce.qa_cert_event_id = ANY ($1);`,
+          [qaCertEventIdentifiers],
         );
-        
-        const severityMap:Map<string, {description:string,severityCode:string}> = new Map(
-          severities.map((s: any) => [s.qa_cert_event_id, { description: s.severity_cd_description, severityCode: s.severity_cd }])
+
+        const severityMap: Map<string, { description: string, severityCode: string }> = new Map(
+          severities.map((s: any) => [s.qa_cert_event_id, {
+            description: s.severity_cd_description,
+            severityCode: s.severity_cd
+          }])
         );
 
         for (const d of data) {
-          let {description, severityCode} = severityMap.get(d.qaCertEventIdentifier) ?? {};
+          let { description, severityCode } = severityMap.get(d.qaCertEventIdentifier) ?? {};
           d.severityDescription = description
           d.severityCode = severityCode
         }
@@ -115,4 +122,29 @@ export class CertEventReviewAndSubmitService {
       throw new EaseyException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
-}
+    private deduplicateCertEventRecords(data: CertEventReviewAndSubmitDTO[]): CertEventReviewAndSubmitDTO[] {
+      const uniqueRecords = new Map<string,
+  CertEventReviewAndSubmitDTO>();
+
+      for (const record of data) {
+        // Business key: oris_code + location_info + system_component_id + event_code + event_date
+        const businessKey =
+  `${record.orisCode}_${record.locationInfo}_${record.systemComponentIdentifier}_${record.qaCertEventCode}_${record.eventDate}`;
+
+        if (!uniqueRecords.has(businessKey)) {
+          uniqueRecords.set(businessKey, record);
+        } else {
+          // If duplicate found, keep the record with the most recent monPlanId (highest value)
+          const existing = uniqueRecords.get(businessKey);
+          if (record.monPlanId > existing.monPlanId) {
+            uniqueRecords.set(businessKey, record);
+          }
+        }
+      }
+
+      // Sort by event_date DESC
+      return Array.from(uniqueRecords.values()).sort((a, b) => {
+        return new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime();});
+    }
+  }
+
