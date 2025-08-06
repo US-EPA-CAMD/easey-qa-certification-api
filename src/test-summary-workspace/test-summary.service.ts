@@ -42,14 +42,12 @@ import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-tr
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
-import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
   constructor(
     private readonly logger: Logger,
     private readonly map: TestSummaryMap,
-    private readonly manager: EntityManager,
     @Inject(forwardRef(() => TestSummaryReviewAndSubmitService))
     private readonly testSummaryReviewAndSubmitService: TestSummaryReviewAndSubmitService,
     @Inject(forwardRef(() => LinearitySummaryWorkspaceService))
@@ -783,50 +781,7 @@ export class TestSummaryWorkspaceService {
 
   async deleteTestSummary(id: string): Promise<void> {
     try {
-      // Delete camdecmpswks.test_summary record
       await this.repository.delete(id);
-
-      await this.manager.transaction(async (transactionalEntityManager) => {
-
-        // Delete the related record in camdecmpswks.qa_supp_data and the dependent table camdecmpswks.qa_supp_attribute
-        await transactionalEntityManager.query(
-          `DELETE FROM camdecmpswks.qa_supp_data WHERE test_sum_id = $1`,
-          [id],
-        );
-
-        // Check if the official record exist
-        const submittedRecord = await transactionalEntityManager.query(
-          `SELECT 1 FROM camdecmps.qa_supp_data WHERE test_sum_id = $1`,
-          [id],
-        );
-
-        if (submittedRecord.length > 0) {
-
-          // Revert the qa_supp_data record in the workspace table with the info from the official table 
-          await transactionalEntityManager.query(
-            `INSERT INTO camdecmpswks.qa_supp_data(
-		          qa_supp_data_id, mon_loc_id, mon_sys_id, component_id, test_type_cd, test_sum_id, test_reason_cd, test_num, span_scale, begin_date, begin_hour, begin_min, end_date, end_hour, end_min, rpt_period_id, test_result_cd, gp_ind, reinstallation_date, reinstallation_hour, test_expire_date, test_expire_hour, userid, add_date, update_date, op_level_cd, submission_id, submission_availability_cd, operating_condition_cd, fuel_cd
-	          )
-	          SELECT
-		          qa_supp_data_id, mon_loc_id, mon_sys_id, component_id, test_type_cd, test_sum_id, test_reason_cd, test_num, span_scale, begin_date, begin_hour, begin_min, end_date, end_hour, end_min, rpt_period_id, test_result_cd, gp_ind, reinstallation_date, reinstallation_hour, test_expire_date, test_expire_hour, userid, add_date, update_date, op_level_cd, submission_id, submission_availability_cd, operating_condition_cd, fuel_cd
-	          FROM camdecmps.qa_supp_data 
-            WHERE test_sum_id = $1`,
-            [id],
-          );
-          
-          // Revert the qa_supp_attribute record in the workspace table with the info from the official table 
-          await transactionalEntityManager.query(
-            `INSERT INTO camdecmpswks.qa_supp_attribute
-             SELECT * FROM camdecmps.qa_supp_attribute 
-             WHERE qa_supp_data_id IN (
-               SELECT qa_supp_data_id 
-               FROM camdecmps.qa_supp_data 
-               WHERE test_sum_id = $1
-             )`,
-            [id],
-          );
-        }
-      });
     } catch (e) {
       throw new InternalServerErrorException(
         `Error deleting Test Summary record Id [${id}]`,
