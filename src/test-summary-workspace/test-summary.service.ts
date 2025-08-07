@@ -53,7 +53,6 @@ export class TestSummaryWorkspaceService {
   constructor(
     private readonly logger: Logger,
     private readonly map: TestSummaryMap,
-    private readonly manager: EntityManager,
     @Inject(forwardRef(() => TestSummaryReviewAndSubmitService))
     private readonly testSummaryReviewAndSubmitService: TestSummaryReviewAndSubmitService,
     @Inject(forwardRef(() => LinearitySummaryWorkspaceService))

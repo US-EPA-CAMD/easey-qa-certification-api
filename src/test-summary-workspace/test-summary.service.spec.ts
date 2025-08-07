@@ -222,7 +222,6 @@ describe('TestSummaryWorkspaceService', () => {
   let locationRepository: MonitorLocationRepository;
   let monitorSystemRepository: MonitorSystemRepository;
   let monitorSystemWorkspaceRepository: MonitorSystemWorkspaceRepository;
-  let manager: EntityManager;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -374,7 +373,6 @@ describe('TestSummaryWorkspaceService', () => {
     monitorSystemWorkspaceRepository = module.get(
       MonitorSystemWorkspaceRepository,
     );
-    manager = module.get(EntityManager);
   });
 
   describe('getTestSummaryById', () => {
