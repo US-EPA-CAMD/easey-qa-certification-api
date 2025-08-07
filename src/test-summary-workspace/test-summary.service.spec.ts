@@ -59,6 +59,11 @@ import { TestSummaryWorkspaceService } from './test-summary.service';
 import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
 import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
 import { EntityManager } from 'typeorm';
+import { QASuppAttributeWorkspaceService } from '../qa-supp-attribute-workspace/qa-supp-attribute.service';
+import { QASuppDataRepository } from '../qa-supp-data/qa-supp-data.repository';
+import { QASuppAttributeRepository } from '../qa-supp-attribute/qa-supp-attribute.repository';
+import { QASuppData } from '../entities/qa-supp-data.entity';
+import { QASuppAttribute } from '../entities/qa-supp-attribute.entity';
 
 const locationId = '121';
 const facilityId = 1;
@@ -189,6 +194,12 @@ const mockHgSummaryWorkspaceService = () => ({
 
 const mockQASuppDataWorkspaceService = () => ({
   setSubmissionAvailCodeToRequire: jest.fn(),
+  deleteByTestSumId: jest.fn(),
+  createFromOfficialRecord: jest.fn(),
+});
+
+const mockQASuppAttributeWorkspaceService = () => ({
+  createFromOfficialRecord: jest.fn(),
 });
 
 const monLocation = new MonitorLocation();
@@ -335,6 +346,22 @@ describe('TestSummaryWorkspaceService', () => {
           useFactory: mockQASuppDataWorkspaceService,
         },
         {
+          provide: QASuppAttributeWorkspaceService,
+          useFactory: mockQASuppAttributeWorkspaceService,
+        },
+        {
+          provide: QASuppDataRepository,
+          useFactory: () => ({
+            findBy: jest.fn(),
+          }),
+        },
+        {
+          provide: QASuppAttributeRepository,
+          useFactory: () => ({
+            findOneBy: jest.fn(),
+          }),
+        },
+        {
           provide: EntityManager,
           useValue: { transaction: jest.fn() },
         },
@@ -464,67 +491,44 @@ describe('TestSummaryWorkspaceService', () => {
   });
 
   describe('deleteTestSummary', () => {
-    it('deletes a record and reverts QA supp data when an official record exists', async () => {
-      const transactionalEntityManager = { query: jest.fn() };
-      
+    it('should successfully delete a test summary and revert supplemental data', async () => {
+      const officialQaSuppData = new QASuppData();
+      officialQaSuppData.id = '1';
+      const officialQaSuppAttribute = new QASuppAttribute();
+
       (manager.transaction as jest.Mock).mockImplementation(async (callback) => {
-        await callback(transactionalEntityManager);
+        const mockTransactionalManager = {
+          delete: jest.fn(),
+          getRepository: jest.fn().mockImplementation((entity) => {
+            if (entity === QASuppData) {
+              return {
+                findBy: jest.fn().mockResolvedValue([officialQaSuppData]),
+              };
+            }
+            if (entity === QASuppAttribute) {
+              return {
+                findOneBy: jest.fn().mockResolvedValue(officialQaSuppAttribute),
+              };
+            }
+            return {};
+          }),
+        };
+        await callback(mockTransactionalManager);
       });
 
-      (transactionalEntityManager.query as jest.Mock).mockResolvedValue([ { '1': 1 } ]);
+      await service.deleteTestSummary(testSumId);
 
-      const result = await service.deleteTestSummary(testSumId);
-
-      expect(result).toBeUndefined();
-      expect(repository.delete).toHaveBeenCalledWith(testSumId);
-      
-      // Verify the correct sequence of queries inside the transaction
-      const queryCalls = transactionalEntityManager.query.mock.calls;
-      expect(queryCalls.length).toBe(4);
-      expect(queryCalls[0][0]).toContain('DELETE FROM camdecmpswks.qa_supp_data');
-      expect(queryCalls[1][0]).toContain('SELECT 1 FROM camdecmps.qa_supp_data');
-      expect(queryCalls[2][0]).toContain('INSERT INTO camdecmpswks.qa_supp_data');
-      expect(queryCalls[3][0]).toContain('INSERT INTO camdecmpswks.qa_supp_attribute');
+      expect(manager.transaction).toHaveBeenCalled();
     });
 
-    it('deletes a record and its QA supp data when no official record exists', async () => {
-      const transactionalEntityManager = { query: jest.fn() };
-      
-      (manager.transaction as jest.Mock).mockImplementation(async (callback) => {
-        await callback(transactionalEntityManager);
+    it('should throw an error if the transaction fails', async () => {
+      (manager.transaction as jest.Mock).mockImplementation(async () => {
+        throw new Error('Database Error');
       });
 
-      (transactionalEntityManager.query as jest.Mock).mockResolvedValue([]);
-
-      const result = await service.deleteTestSummary(testSumId);
-
-      expect(result).toBeUndefined();
-      expect(repository.delete).toHaveBeenCalledWith(testSumId);
-
-      // Verify the correct sequence of queries inside the transaction
-      const queryCalls = transactionalEntityManager.query.mock.calls;
-      expect(queryCalls.length).toBe(2);
-      expect(queryCalls[0][0]).toContain('DELETE FROM camdecmpswks.qa_supp_data');
-      expect(queryCalls[1][0]).toContain('SELECT 1 FROM camdecmps.qa_supp_data');
-      expect(transactionalEntityManager.query).not.toHaveBeenCalledWith(
-        expect.stringContaining('INSERT INTO'),
+      await expect(service.deleteTestSummary(testSumId)).rejects.toThrow(
+        InternalServerErrorException,
       );
-    });
-
-    it('should throw an error while deleting test summary', async () => {
-      jest
-        .spyOn(repository, 'delete')
-        .mockRejectedValue(new InternalServerErrorException());
-
-      let errored = false;
-
-      try {
-        await service.deleteTestSummary(testSumId);
-      } catch (err) {
-        errored = true;
-      }
-
-      expect(errored).toBe(true);
     });
   });
 

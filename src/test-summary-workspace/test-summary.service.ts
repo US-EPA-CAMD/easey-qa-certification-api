@@ -43,6 +43,10 @@ import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
 import { EntityManager } from 'typeorm';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { QASuppAttributeWorkspaceService } from '../qa-supp-attribute-workspace/qa-supp-attribute.service';
+import { QASuppData } from '../entities/qa-supp-data.entity';
+import { QASuppAttribute } from '../entities/qa-supp-attribute.entity';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
@@ -92,7 +96,9 @@ export class TestSummaryWorkspaceService {
     @Inject(forwardRef(() => TestQualificationWorkspaceService))
     private readonly testQualificationWorkspaceService: TestQualificationWorkspaceService,
     @Inject(forwardRef(() => QASuppDataWorkspaceService))
-    private readonly qaSuppDataService: QASuppDataWorkspaceService,
+    private readonly qaSuppDataWorkspaceService: QASuppDataWorkspaceService,
+    @Inject(forwardRef(() => QASuppAttributeWorkspaceService))
+    private readonly qaSuppAttributeWorkspaceService: QASuppAttributeWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -781,55 +787,48 @@ export class TestSummaryWorkspaceService {
     return this.getTestSummaryById(entity.id);
   }
 
-  async deleteTestSummary(id: string): Promise<void> {
+  async deleteTestSummary(testSumId: string): Promise<void> {
     try {
-      // Delete camdecmpswks.test_summary record
-      await this.repository.delete(id);
 
       await this.manager.transaction(async (transactionalEntityManager) => {
 
-        // Delete the related record in camdecmpswks.qa_supp_data and the dependent table camdecmpswks.qa_supp_attribute
-        await transactionalEntityManager.query(
-          `DELETE FROM camdecmpswks.qa_supp_data WHERE test_sum_id = $1`,
-          [id],
-        );
+      // Delete corresponding camdecmpswks.test_summary record
+      await transactionalEntityManager.delete(TestSummary, { id: testSumId });
 
-        // Check if the official record exist
-        const submittedRecord = await transactionalEntityManager.query(
-          `SELECT 1 FROM camdecmps.qa_supp_data WHERE test_sum_id = $1`,
-          [id],
-        );
+      // Delete corresponding camdecmpswks.qa_supp_data record
+      await this.qaSuppDataWorkspaceService.deleteByTestSumId(
+        testSumId,
+        transactionalEntityManager,
+      );
 
-        if (submittedRecord.length > 0) {
+      // Revert corresponding camdecmpswks.qa_supp_data and camdecmpswks.qa_supp_attribute records
+      const qaSuppDataRepoTransactional = transactionalEntityManager.getRepository(QASuppData);
+      const officialQaSuppData = await qaSuppDataRepoTransactional.findBy({ testSumId });
+      if (officialQaSuppData.length > 0) {
+        const qaSuppAttributeRepoTransactional = transactionalEntityManager.getRepository(QASuppAttribute);
 
-          // Revert the qa_supp_data record in the workspace table with the info from the official table 
-          await transactionalEntityManager.query(
-            `INSERT INTO camdecmpswks.qa_supp_data(
-		          qa_supp_data_id, mon_loc_id, mon_sys_id, component_id, test_type_cd, test_sum_id, test_reason_cd, test_num, span_scale, begin_date, begin_hour, begin_min, end_date, end_hour, end_min, rpt_period_id, test_result_cd, gp_ind, reinstallation_date, reinstallation_hour, test_expire_date, test_expire_hour, userid, add_date, update_date, op_level_cd, submission_id, submission_availability_cd, operating_condition_cd, fuel_cd
-	          )
-	          SELECT
-		          qa_supp_data_id, mon_loc_id, mon_sys_id, component_id, test_type_cd, test_sum_id, test_reason_cd, test_num, span_scale, begin_date, begin_hour, begin_min, end_date, end_hour, end_min, rpt_period_id, test_result_cd, gp_ind, reinstallation_date, reinstallation_hour, test_expire_date, test_expire_hour, userid, add_date, update_date, op_level_cd, submission_id, submission_availability_cd, operating_condition_cd, fuel_cd
-	          FROM camdecmps.qa_supp_data 
-            WHERE test_sum_id = $1`,
-            [id],
+        for (const officialRecord of officialQaSuppData) {
+          // Revert camdecmpswks.qa_supp_data record with camdecmsp.qa_supp_data
+          await this.qaSuppDataWorkspaceService.createFromOfficialRecord(
+            officialRecord,
+            transactionalEntityManager,
           );
-          
-          // Revert the qa_supp_attribute record in the workspace table with the info from the official table 
-          await transactionalEntityManager.query(
-            `INSERT INTO camdecmpswks.qa_supp_attribute
-             SELECT * FROM camdecmps.qa_supp_attribute 
-             WHERE qa_supp_data_id IN (
-               SELECT qa_supp_data_id 
-               FROM camdecmps.qa_supp_data 
-               WHERE test_sum_id = $1
-             )`,
-            [id],
-          );
+
+          // Revert camdecmpswks.qa_supp_attribute record with camdecmps.qa_supp_attribute
+          const qaSuppDataId = officialRecord.id;
+          const officialQaSuppAttribute = await qaSuppAttributeRepoTransactional.findOneBy({ qaSuppDataId });
+          if(officialQaSuppAttribute){
+            await this.qaSuppAttributeWorkspaceService.createFromOfficialRecord(
+              officialQaSuppAttribute,
+              transactionalEntityManager,
+            );
+          }
         }
+      }
       });
     } catch (e) {
       throw new InternalServerErrorException(
-        `Error deleting Test Summary record Id [${id}]`,
+        `Error deleting Test Summary record Id [${testSumId}]`,
         e.message,
       );
     }

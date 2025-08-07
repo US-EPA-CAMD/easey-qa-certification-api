@@ -3,7 +3,6 @@ import {
   Entity,
   Column,
   PrimaryColumn,
-  OneToMany,
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
@@ -139,6 +138,23 @@ export class QASuppData extends BaseEntity {
   })
   testExpireHour: number;
 
+  @Column({
+    name: 'userid',
+  })
+  userId: string;
+
+  @Column({
+    type: 'timestamp',
+    name: 'add_date',
+  })
+  addDate: Date;
+
+  @Column({
+    type: 'timestamp',
+    name: 'update_date',
+  })
+  updateDate: Date;
+
   @Column({ name: 'op_level_cd' })
   opLevelCode: string;
 
@@ -147,6 +163,12 @@ export class QASuppData extends BaseEntity {
 
   @Column({ name: 'fuel_cd' })
   fuelCode: string;
+
+  @Column({
+    name: 'submission_id',
+    transformer: new NumericColumnTransformer(),
+  })
+  submissionId: number;
 
   @Column({ name: 'submission_availability_cd' })
   submissionAvailabilityCode: string;
