@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 
 import { QASuppDataWorkspaceRepository } from './qa-supp-data.repository';
 
@@ -6,13 +8,15 @@ import { QASuppDataWorkspaceRepository } from './qa-supp-data.repository';
 export class QASuppDataWorkspaceService {
   constructor(private readonly repository: QASuppDataWorkspaceRepository) {}
 
-  async setSubmissionAvailCodeToRequire(testSumId: string): Promise<void> {
-    const entity = await this.repository.findOneBy({
+  async setSubmissionAvailCodeToRequire(testSumId: string, trx?: EntityManager): Promise<void> {
+    const repository = withTransaction(this.repository, trx);
+
+    const entity = await repository.findOneBy({
       testSumId: testSumId,
     });
 
     entity.submissionAvailabilityCode = 'REQUIRE';
 
-    await this.repository.save(entity);
+    await repository.save(entity);
   }
 }

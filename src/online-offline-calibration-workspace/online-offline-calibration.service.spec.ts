@@ -3,9 +3,9 @@ import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { DataSource } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 
-import { OnlineOfflineCalibrationDTO } from '../dto/online-offline-calibration.dto';
+import { OnlineOfflineCalibrationDTO, OnlineOfflineCalibrationImportDTO } from '../dto/online-offline-calibration.dto';
 import { OnlineOfflineCalibration } from '../entities/workspace/online-offline-calibration.entity';
 import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.map';
 import { OnlineOfflineCalibrationRepository } from '../online-offline-calibration/online-offline-calibration.repository';
@@ -33,7 +33,13 @@ const mockRepository = () => ({
   delete: jest.fn().mockResolvedValue(null),
 });
 
-const mockOfficialRepo = () => ({});
+const mockOfficialRepo = () => ({
+  findOneBy: jest.fn().mockResolvedValue(new OnlineOfflineCalibration()),
+});
+
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
 
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(onlineOfflineCalibrationDTO),
@@ -69,6 +75,10 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
         {
           provide: OnlineOfflineCalibrationMap,
           useFactory: mockMap,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -177,6 +187,38 @@ describe('OnlineOfflineCalibrationWorkspaceService', () => {
         .mockResolvedValue([onlineOfflineCalibrationDTO]);
       const result = await service.export([testSumId]);
       expect(result).toEqual([onlineOfflineCalibrationDTO]);
+    });
+  });
+
+  describe('import', () => {
+    it('Should import Online Offline Calibration', async () => {
+      jest
+        .spyOn(service, 'createOnlineOfflineCalibration')
+        .mockResolvedValue(onlineOfflineCalibrationDTO);
+
+      const result = await service.import(
+        testSumId,
+        new OnlineOfflineCalibrationImportDTO(),
+        userId,
+        false,
+        mockEntityManager,
+      );
+      expect(result).toBeUndefined();
+    });
+
+    it('Should import Online Offline Calibration from Historical Record', async () => {
+      jest
+        .spyOn(service, 'createOnlineOfflineCalibration')
+        .mockResolvedValue(onlineOfflineCalibrationDTO);
+
+      const result = await service.import(
+        testSumId,
+        new OnlineOfflineCalibrationImportDTO(),
+        userId,
+        true,
+        mockEntityManager,
+      );
+      expect(result).toBeUndefined();
     });
   });
 });

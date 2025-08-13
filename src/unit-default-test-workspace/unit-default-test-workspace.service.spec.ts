@@ -1,6 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -65,6 +66,10 @@ const mockUnitDefaultTestRunService = () => ({
   import: jest.fn().mockResolvedValue(null),
 });
 
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
+
 describe('UnitDefaultTestWorkspaceService', () => {
   let service: UnitDefaultTestWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
@@ -95,6 +100,10 @@ describe('UnitDefaultTestWorkspaceService', () => {
         {
           provide: UnitDefaultTestRunWorkspaceService,
           useFactory: mockUnitDefaultTestRunService,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -241,7 +250,7 @@ describe('UnitDefaultTestWorkspaceService', () => {
     it('Should import Unit Default Test', async () => {
       jest.spyOn(service, 'createUnitDefaultTest').mockResolvedValue(dto);
 
-      const result = await service.import(testSumId, importPayload, userId);
+      const result = await service.import(testSumId, importPayload, userId, false, mockEntityManager);
 
       expect(result).toEqual(null);
     });
@@ -258,6 +267,7 @@ describe('UnitDefaultTestWorkspaceService', () => {
         importPayload,
         userId,
         true,
+        mockEntityManager,
       );
 
       expect(result).toEqual(null);

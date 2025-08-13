@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { QASuppDataWorkspaceRepository } from './qa-supp-data.repository';
@@ -11,6 +12,10 @@ const mockRepository = () => ({
   save: jest.fn().mockResolvedValue(qaSuppData),
 });
 
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
+
 describe('QASuppDataWorkspaceService', () => {
   let service: QASuppDataWorkspaceService;
   let repository: QASuppDataWorkspaceRepository;
@@ -22,6 +27,10 @@ describe('QASuppDataWorkspaceService', () => {
         {
           provide: QASuppDataWorkspaceRepository,
           useFactory: mockRepository,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -37,6 +46,12 @@ describe('QASuppDataWorkspaceService', () => {
   describe('setSubmissionAvailCodeToRequire', () => {
     it('calls the repository.findOneBy() and update submissionAvailCode QA-Supp-Data record', async () => {
       await service.setSubmissionAvailCodeToRequire(testSumId);
+      expect(repository.findOneBy).toHaveBeenCalled();
+      expect(repository.save).toHaveBeenCalled();
+    });
+
+    it('calls the repository.findOneBy() and update submissionAvailCode QA-Supp-Data record with transaction', async () => {
+      await service.setSubmissionAvailCodeToRequire(testSumId, mockEntityManager);
       expect(repository.findOneBy).toHaveBeenCalled();
       expect(repository.save).toHaveBeenCalled();
     });

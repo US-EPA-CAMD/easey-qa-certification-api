@@ -1,8 +1,8 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In, IsNull } from 'typeorm';
+import { currentDateTime, withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager, In, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -73,10 +73,13 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<TransmitterTransducerAccuracyRecordDTO> {
     const timestamp = currentDateTime().toISOString();
 
-    let entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    let entity = repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
@@ -85,12 +88,13 @@ export class TransmitterTransducerAccuracyWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repository.save(entity);
+    entity = await repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.map.one(entity);
@@ -102,8 +106,10 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     payload: TransmitterTransducerAccuracyBaseDTO,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<TransmitterTransducerAccuracyDTO> {
-    const entity = await this.repository.findOneBy({ id, testSumId });
+    const repository = withTransaction(this.repository, trx);
+    const entity = await repository.findOneBy({ id, testSumId });
 
     if (!entity) {
       throw new EaseyException(
@@ -125,12 +131,13 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     entity.userId = userId;
     entity.updateDate = timestamp;
 
-    await this.repository.save(entity);
+    await repository.save(entity);
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.map.one(entity);
@@ -141,9 +148,12 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     id: string,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
+    const repository = withTransaction(this.repository, trx);
+
     try {
-      await this.repository.delete({
+      await repository.delete({
         id,
         testSumId,
       });
@@ -161,6 +171,7 @@ export class TransmitterTransducerAccuracyWorkspaceService {
       testSumId,
       userId,
       isImport,
+      trx,
     );
   }
 
@@ -169,6 +180,7 @@ export class TransmitterTransducerAccuracyWorkspaceService {
     payload: TransmitterTransducerAccuracyImportDTO,
     userId: string,
     isHistoricalRecord?: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: TransmitterTransducerAccuracy;
@@ -192,6 +204,7 @@ export class TransmitterTransducerAccuracyWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(

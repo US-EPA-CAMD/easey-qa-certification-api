@@ -1,5 +1,6 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
@@ -65,6 +66,8 @@ const mockQACertRepository = () => ({
   delete: jest.fn().mockResolvedValue(null),
 });
 
+const mockEntityManager = () => ({});
+
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(qaCertEventDTO),
   many: jest.fn().mockResolvedValue([qaCertEventDTO]),
@@ -83,6 +86,10 @@ describe('QACertificationEventWorkspaceService', () => {
       imports: [LoggerModule],
       providers: [
         QACertificationEventWorkspaceService,
+        {
+          provide: EntityManager,
+          useFactory: mockEntityManager,
+        },
         {
           provide: QACertificationEventMap,
           useFactory: mockMap,

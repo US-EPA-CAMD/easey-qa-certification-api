@@ -5,8 +5,8 @@ import {
 } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { IsNull } from 'typeorm';
+import { currentDateTime, withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
@@ -38,6 +38,7 @@ export class QACertificationEventWorkspaceService {
     locationId: string,
     payload: QACertificationEventBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<QACertificationEventRecordDTO> {
     const timestamp = currentDateTime();
 
@@ -63,7 +64,9 @@ export class QACertificationEventWorkspaceService {
       );
     }
 
-    const entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    const entity = repository.create({
       ...payload,
       componentRecordId,
       monitoringSystemRecordId,
@@ -80,9 +83,9 @@ export class QACertificationEventWorkspaceService {
       submissionAvailabilityCode: 'REQUIRE',
     });
 
-    await this.repository.save(entity);
+    await repository.save(entity);
 
-    const result = await this.repository.getQACertificationEventById(entity.id);
+    const result = await repository.getQACertificationEventById(entity.id);
 
     return this.map.one(result);
   }
@@ -194,10 +197,12 @@ export class QACertificationEventWorkspaceService {
     id: string,
     payload: QACertificationEventBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<QACertificationEventDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOneBy({ id });
+    const repository = withTransaction(this.repository, trx);
+    const entity = await repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -231,7 +236,7 @@ export class QACertificationEventWorkspaceService {
     entity.evalStatusCode = 'EVAL';
     entity.submissionAvailabilityCode = 'REQUIRE';
 
-    await this.repository.save(entity);
+    await repository.save(entity);
 
     return this.getQACertEvent(entity.id);
   }
@@ -260,13 +265,16 @@ export class QACertificationEventWorkspaceService {
     locationId: string,
     payload: QACertificationEventImportDTO,
     userId: string,
+    trx?: EntityManager,
   ) {
     const {
       componentRecordId,
       monitoringSystemRecordId,
     } = await this.lookupValues(locationId, payload);
 
-    const record = await this.repository.findOneBy({
+    const repository = withTransaction(this.repository, trx);
+
+    const record = await repository.findOneBy({
       locationId,
       certificationEventHour: payload.certificationEventHour ?? IsNull(),
       certificationEventDate: payload.certificationEventDate,
@@ -282,12 +290,14 @@ export class QACertificationEventWorkspaceService {
         record.id,
         payload,
         userId,
+        trx,
       );
     } else {
       importedQACertEvent = await this.createQACertEvent(
         locationId,
         payload,
         userId,
+        trx,
       );
     }
 

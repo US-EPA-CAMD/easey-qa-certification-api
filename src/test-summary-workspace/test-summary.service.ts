@@ -7,8 +7,9 @@ import {
 } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { currentDateTime, withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
+import { EntityManager } from 'typeorm';
 
 import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
@@ -136,16 +137,16 @@ export class TestSummaryWorkspaceService {
 
     let testSummaries = await this.map.many(results);
     const testSummaryIds = testSummaries.map(ts => ts.id);
-    const testSummaryReviewAndSubmitRecords = await this.testSummaryReviewAndSubmitService.getTestSummaryRecordsByTestSumIds(testSummaryIds); 
+    const testSummaryReviewAndSubmitRecords = await this.testSummaryReviewAndSubmitService.getTestSummaryRecordsByTestSumIds(testSummaryIds);
 
     testSummaries = testSummaries.map(testSummary => {
       const matchingRecord = testSummaryReviewAndSubmitRecords.find(record => record.testSumId === testSummary.id);
-      
+
       if (matchingRecord) {
         testSummary.evalStatusCode = matchingRecord.evalStatusCode || '';
-        testSummary.evalStatusCodeDescription = matchingRecord.evalStatusCodeDescription || ''; 
-        testSummary.submissionAvailabilityCode = matchingRecord.submissionAvailabilityCode || ''; 
-        testSummary.submissionAvailabilityCodeDescription = matchingRecord.submissionCodeDescription || ''; 
+        testSummary.evalStatusCodeDescription = matchingRecord.evalStatusCodeDescription || '';
+        testSummary.submissionAvailabilityCode = matchingRecord.submissionAvailabilityCode || '';
+        testSummary.submissionAvailabilityCodeDescription = matchingRecord.submissionCodeDescription || '';
       }
 
       return testSummary;
@@ -345,17 +346,20 @@ export class TestSummaryWorkspaceService {
     payload: TestSummaryImportDTO,
     userId: string,
     historicalrecordId?: string,
+    trx?: EntityManager,
   ) {
     const promises = [];
 
-    const summary = await this.repository.getTestSummaryByLocationId(
+    const repository = withTransaction(this.repository, trx);
+
+    const summary = await repository.getTestSummaryByLocationId(
       locationId,
       payload.testTypeCode,
       payload.testNumber,
     );
 
     if (summary) {
-      await this.deleteTestSummary(summary.id);
+      await this.deleteTestSummary(summary.id, trx);
     }
 
     const createdTestSummary = await this.createTestSummary(
@@ -363,6 +367,7 @@ export class TestSummaryWorkspaceService {
       payload,
       userId,
       historicalrecordId,
+      trx,
     );
 
     this.logger.log(
@@ -380,6 +385,7 @@ export class TestSummaryWorkspaceService {
             linearitySummary,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -396,6 +402,7 @@ export class TestSummaryWorkspaceService {
             rata,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -416,6 +423,7 @@ export class TestSummaryWorkspaceService {
             createdTestSummary.id,
             protocolGas,
             userId,
+            trx,
           ),
         );
       }
@@ -432,6 +440,7 @@ export class TestSummaryWorkspaceService {
             fuelFlowToLoadTest,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -448,6 +457,7 @@ export class TestSummaryWorkspaceService {
             flowToLoadCheck,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -464,6 +474,7 @@ export class TestSummaryWorkspaceService {
             fuelFlowToLoadBaseline,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -480,6 +491,7 @@ export class TestSummaryWorkspaceService {
             fuelFlowmeterAccuracy,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -496,6 +508,7 @@ export class TestSummaryWorkspaceService {
             flowToLoadReference,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -513,6 +526,7 @@ export class TestSummaryWorkspaceService {
             appECorrelationTestSummary,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -529,6 +543,7 @@ export class TestSummaryWorkspaceService {
             calibrationInjection,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -545,6 +560,7 @@ export class TestSummaryWorkspaceService {
             cycleTimeSummary,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -561,6 +577,7 @@ export class TestSummaryWorkspaceService {
             onlineOfflineCalibration,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -577,6 +594,7 @@ export class TestSummaryWorkspaceService {
             transmitterTransducerAccuracy,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -593,6 +611,7 @@ export class TestSummaryWorkspaceService {
             unitDefaultTest,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -610,6 +629,7 @@ export class TestSummaryWorkspaceService {
             hgSummary,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -626,6 +646,7 @@ export class TestSummaryWorkspaceService {
             testQualification,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -646,12 +667,23 @@ export class TestSummaryWorkspaceService {
             airEmissionTesting,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
     }
 
-    await Promise.all(promises);
+    const results = await Promise.allSettled(promises);
+
+    // Check for any rejected promises
+    const errors = results
+      .filter(result => result.status === 'rejected')
+      .map(result => (result as PromiseRejectedResult).reason);
+
+    // If any errors occurred, throw the first one to trigger transaction rollback
+    if (errors.length > 0) {
+      throw errors[0];
+    }
 
     return null;
   }
@@ -661,6 +693,7 @@ export class TestSummaryWorkspaceService {
     payload: TestSummaryBaseDTO,
     userId: string,
     historicalrecordId?: string,
+    trx?: EntityManager,
   ): Promise<TestSummaryRecordDTO> {
     const timestamp = currentDateTime();
     const [
@@ -686,7 +719,9 @@ export class TestSummaryWorkspaceService {
       );
     }
 
-    const entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    const entity = repository.create({
       ...payload,
       id: historicalrecordId ? historicalrecordId : uuid(),
       locationId,
@@ -702,8 +737,8 @@ export class TestSummaryWorkspaceService {
       evalStatusCode: 'EVAL',
     });
 
-    await this.repository.save(entity);
-    const result = await this.repository.getTestSummaryById(entity.id);
+    await repository.save(entity);
+    const result = await repository.getTestSummaryById(entity.id);
 
     const dto = await this.map.one(result);
 
@@ -779,9 +814,10 @@ export class TestSummaryWorkspaceService {
     return this.getTestSummaryById(entity.id);
   }
 
-  async deleteTestSummary(id: string): Promise<void> {
+  async deleteTestSummary(id: string, trx?: EntityManager): Promise<void> {
     try {
-      await this.repository.delete(id);
+      const repository = withTransaction(this.repository, trx);
+      await repository.delete(id);
     } catch (e) {
       throw new InternalServerErrorException(
         `Error deleting Test Summary record Id [${id}]`,
@@ -791,13 +827,12 @@ export class TestSummaryWorkspaceService {
   }
 
   async resetToNeedsEvaluation(
-    testSumId: string,
-    userId: string,
-    isImport: boolean = false,
+    testSumId: string, userId: string, isImport: boolean = false, trx: EntityManager
   ): Promise<void> {
     if (!isImport) {
+      const repository = withTransaction(this.repository, trx);
       const timestamp = currentDateTime();
-      const entity = await this.repository.findOneBy({ id: testSumId });
+      const entity = await repository.findOneBy({ id: testSumId });
 
       entity.userId = userId;
       entity.updateDate = timestamp;
@@ -805,7 +840,7 @@ export class TestSummaryWorkspaceService {
       entity.needsEvalFlag = 'Y';
       entity.evalStatusCode = 'EVAL';
 
-      await this.repository.save(entity);
+      await repository.save(entity);
     }
   }
 
