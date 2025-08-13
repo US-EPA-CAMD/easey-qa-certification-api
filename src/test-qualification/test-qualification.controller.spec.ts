@@ -43,7 +43,7 @@ describe('TestQualificationController', () => {
   describe('getTestQualifications', () => {
     it('Calls service to get all Test Qualification records for a given Test Summary ID', async () => {
       const results = await controller.getTestQualifications(locId, testSumId);
-      expect(results).toEqual(testQualifications);
+      expect(results).toStrictEqual({ items: testQualifications });
       expect(service.getTestQualifications).toHaveBeenCalled();
     });
   });

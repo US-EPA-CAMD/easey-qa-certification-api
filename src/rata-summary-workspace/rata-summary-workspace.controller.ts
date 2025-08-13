@@ -10,23 +10,24 @@ import {
 import {
   ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
-  RataSummaryBaseDTO,
+  RataSummaryBaseDTO, RataSummaryDTO,
   RataSummaryRecordDTO,
 } from '../dto/rata-summary.dto';
 import { RataSummaryChecksService } from './rata-summary-checks.service';
 import { RataSummaryWorkspaceService } from './rata-summary-workspace.service';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Rata Summary')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(RataSummaryDTO)
 export class RataSummaryWorkspaceController {
   constructor(
     private readonly service: RataSummaryWorkspaceService,
@@ -35,9 +36,20 @@ export class RataSummaryWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: RataSummaryRecordDTO,
     description: 'Retrieves workspace Rata Summary records.',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(RataSummaryDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {
@@ -51,12 +63,14 @@ export class RataSummaryWorkspaceController {
     label: 'Retrieved RATA summary records for test summary',
     requestParamsOutFields: ['locId', 'testSumId', 'rataId']
   })
-  getRataSummaryes(
+  async getRataSummaryes(
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('rataId') rataId: string,
-  ) {
-    return this.service.getRataSummaries(rataId);
+  ) : Promise<ArrayResponse<RataSummaryDTO>> {
+    const rataSummaryDTOS = await this.service.getRataSummaries(rataId);
+
+    return { items: rataSummaryDTOS };
   }
 
   @Get(':id')

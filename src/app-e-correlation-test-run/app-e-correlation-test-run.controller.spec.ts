@@ -49,7 +49,7 @@ describe('AppECorrelationTestRunController', () => {
         testSumId,
         appECorrTestSumId,
       );
-      expect(results).toEqual(appECorrelationTestRuns);
+      expect(results).toEqual({ items: appECorrelationTestRuns });
       expect(service.getAppECorrelationTestRuns).toHaveBeenCalled();
     });
   });

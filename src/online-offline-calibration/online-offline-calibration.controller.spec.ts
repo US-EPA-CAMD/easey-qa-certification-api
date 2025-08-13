@@ -51,7 +51,7 @@ describe('Online Offline Calibration Controller', () => {
         locId,
         testSumId,
       );
-      expect(result).toEqual(onlineOfflineCalibrations);
+      expect(result).toStrictEqual( { items: onlineOfflineCalibrations } );
       expect(service.getOnlineOfflineCalibrations).toHaveBeenCalled();
     });
   });

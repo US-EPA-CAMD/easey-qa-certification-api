@@ -1,5 +1,5 @@
 import { Controller, Param, Get } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { FlowToLoadReferenceRecordDTO } from '../dto/flow-to-load-reference.dto';
 import { FlowToLoadReferenceService } from './flow-to-load-reference.service';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
@@ -7,14 +7,26 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Flow To Load Reference')
+@ApiExtraModels(FlowToLoadReferenceRecordDTO)
 export class FlowToLoadReferenceController {
   constructor(private readonly service: FlowToLoadReferenceService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: FlowToLoadReferenceRecordDTO,
     description: 'Retrieves Flow To Load Reference records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(FlowToLoadReferenceRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getFlowToLoadReferences(
     @Param('locId') _locationId: string,

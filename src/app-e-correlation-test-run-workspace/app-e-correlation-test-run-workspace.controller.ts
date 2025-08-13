@@ -10,8 +10,7 @@ import {
 import {
   ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -22,11 +21,13 @@ import { AppECorrelationTestRunWorkspaceService } from './app-e-correlation-test
 import { AppECorrelationTestRunChecksService } from './app-e-correlation-test-run-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Correlation Test Run')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(AppECorrelationTestRunBaseDTO)
 export class AppECorrelationTestRunWorkspaceController {
   constructor(
     private readonly service: AppECorrelationTestRunWorkspaceService,
@@ -35,10 +36,21 @@ export class AppECorrelationTestRunWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: AppECorrelationTestRunRecordDTO,
     description:
       'Retrieves aworkspace Appendix E Correlation Test Run records by Appendix E Correlation Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(AppECorrelationTestRunBaseDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {
@@ -56,8 +68,10 @@ export class AppECorrelationTestRunWorkspaceController {
     @Param('locId') _locationId: string,
     @Param('testSumId') _testSumId: string,
     @Param('appECorrTestSumId') appECorrTestSumId: string,
-  ) {
-    return this.service.getAppECorrelationTestRuns(appECorrTestSumId);
+  ) : Promise<ArrayResponse<AppECorrelationTestRunBaseDTO>> {
+    const appECorrelationTestRunBaseDTOS = await this.service.getAppECorrelationTestRuns(appECorrTestSumId);
+
+    return { items: appECorrelationTestRunBaseDTOS };
   }
 
   @Get(':id')

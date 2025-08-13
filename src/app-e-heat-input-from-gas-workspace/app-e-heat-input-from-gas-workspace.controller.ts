@@ -11,8 +11,7 @@ import {
   ApiCreatedResponse, ApiExcludeController,
   ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import {
@@ -23,11 +22,13 @@ import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-ga
 import { AppEHeatInputFromGasChecksService } from './app-e-heat-input-from-gas-checks.service';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Appendix E Heat Input From Gas')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(AppEHeatInputFromGasRecordDTO)
 export class AppEHeatInputFromGasWorkspaceController {
   constructor(
     private readonly service: AppEHeatInputFromGasWorkspaceService,
@@ -36,10 +37,21 @@ export class AppEHeatInputFromGasWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: AppEHeatInputFromGasRecordDTO,
     description:
       'Retrieves a workspace Appendix E Heat Input From Gas records by Appendix E Correlation Test Run Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(AppEHeatInputFromGasRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {
@@ -58,8 +70,10 @@ export class AppEHeatInputFromGasWorkspaceController {
     @Param('testSumId') _testSumId: string,
     @Param('appECorrTestSumId') _appECorrTestSumId: string,
     @Param('appECorrTestRunId') appECorrTestRunId: string,
-  ) {
-    return this.service.getAppEHeatInputFromGases(appECorrTestRunId);
+  ) : Promise<ArrayResponse<AppEHeatInputFromGasRecordDTO>> {
+    const appEHeatInputFromGasRecordDTOS = await this.service.getAppEHeatInputFromGases(appECorrTestRunId);
+
+    return { items: appEHeatInputFromGasRecordDTOS };
   }
 
   @Get(':id')

@@ -1,5 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiSecurity, ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { CycleTimeInjectionRecordDTO } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjectionService } from './cycle-time-injection.service';
 import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
@@ -7,15 +7,27 @@ import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.inter
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Cycle Time Injection')
+@ApiExtraModels(CycleTimeInjectionRecordDTO)
 export class CycleTimeInjectionController {
   constructor(private readonly service: CycleTimeInjectionService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: CycleTimeInjectionRecordDTO,
     description:
       'Retreives official Cycle Time Injection records by Cycle Time Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(CycleTimeInjectionRecordDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   async getCycleTimeInjections(
     @Param('locId') _locationId: string,

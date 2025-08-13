@@ -60,6 +60,28 @@ export class CertEventReviewAndSubmitService {
 
       const newResults = [];
 
+        if (data.length > 0 && isWorkspace) {
+        const qaCertEventIdentifiers = data.map(d => d.qaCertEventIdentifier);
+
+        const severities = await this.entityManager.query(
+             `select qce.qa_cert_event_id , sc.severity_cd_description, sc.severity_cd from camdecmpswks.qa_cert_event qce
+              JOIN camdecmpswks.check_session cs on cs.chk_session_id = qce.chk_session_id
+              JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
+              where qce.qa_cert_event_id = ANY($1);`,
+        [qaCertEventIdentifiers],
+        );
+        
+        const severityMap:Map<string, {description:string,severityCode:string}> = new Map(
+          severities.map((s: any) => [s.qa_cert_event_id, { description: s.severity_cd_description, severityCode: s.severity_cd }])
+        );
+
+        for (const d of data) {
+          let {description, severityCode} = severityMap.get(d.qaCertEventIdentifier) ?? {};
+          d.severityDescription = description
+          d.severityCode = severityCode
+        }
+      }
+
       for (const d of data) {
         let found = false;
 
@@ -85,6 +107,7 @@ export class CertEventReviewAndSubmitService {
         } else {
           newResults.push(d);
         }
+
       }
 
       return newResults;

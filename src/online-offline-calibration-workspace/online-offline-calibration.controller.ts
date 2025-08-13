@@ -10,23 +10,24 @@ import {
 import {
   ApiCreatedResponse, ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 
 import { AuditLog, RoleGuard, User } from '@us-epa-camd/easey-common/decorators';
 import { CurrentUser } from '@us-epa-camd/easey-common/interfaces';
 import { OnlineOfflineCalibrationWorkspaceService } from '../online-offline-calibration-workspace/online-offline-calibration.service';
 import {
-  OnlineOfflineCalibrationBaseDTO,
+  OnlineOfflineCalibrationBaseDTO, OnlineOfflineCalibrationDTO,
   OnlineOfflineCalibrationRecordDTO,
 } from '../dto/online-offline-calibration.dto';
 import { LookupType } from '@us-epa-camd/easey-common/enums';
 import { ApiExcludeControllerByEnv } from '../decorators/swagger-decorator';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Online Offline Calibration')
 @ApiExcludeControllerByEnv()
+@ApiExtraModels(OnlineOfflineCalibrationDTO)
 export class OnlineOfflineCalibrationWorkspaceController {
   constructor(
     private readonly service: OnlineOfflineCalibrationWorkspaceService,
@@ -34,10 +35,21 @@ export class OnlineOfflineCalibrationWorkspaceController {
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: OnlineOfflineCalibrationRecordDTO,
     description:
       'Retrieves workspace Online Offline Calibration records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(OnlineOfflineCalibrationDTO) },
+              },
+            },
+          },
+        },
+      }
   })
   @RoleGuard(
     {
@@ -51,11 +63,13 @@ export class OnlineOfflineCalibrationWorkspaceController {
     label: 'Retrieved online offline calibration records for test summary',
     requestParamsOutFields: ['locId', 'testSumId']
   })
-  getOnlineOfflineCalibrations(
+  async getOnlineOfflineCalibrations(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ) {
-    return this.service.getOnlineOfflineCalibrations(testSumId);
+  ) : Promise<ArrayResponse<OnlineOfflineCalibrationDTO>>  {
+    const onlineOfflineCalibrationDTOS = await  this.service.getOnlineOfflineCalibrations(testSumId);
+
+    return { items: onlineOfflineCalibrationDTOS };
   }
 
   @Get(':id')

@@ -4,33 +4,47 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger';
+  ApiTags, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { TransmitterTransducerAccuracyService } from '../transmitter-transducer-accuracy/transmitter-transducer-accuracy.service';
 import { ProtocolGasRecordDTO } from '../dto/protocol-gas.dto';
 import {
   TransmitterTransducerAccuracyDTO,
   TransmitterTransducerAccuracyRecordDTO,
 } from '../dto/transmitter-transducer-accuracy.dto';
+import { ArrayResponse } from '@us-epa-camd/easey-common/interfaces/common.interface';
 
 @Controller()
 @ApiSecurity('APIKey')
 @ApiTags('Transmitter Transducer Accuracy')
+@ApiExtraModels(TransmitterTransducerAccuracyDTO)
 export class TransmitterTransducerAccuracyController {
   constructor(private readonly service: TransmitterTransducerAccuracyService) {}
 
   @Get()
   @ApiOkResponse({
-    isArray: true,
-    type: TransmitterTransducerAccuracyRecordDTO,
     description:
       'Retrieves official Transmitter Transducer Accuracy records by Test Summary Id',
+    content: {
+        'application/json': {
+          schema: {
+            type: 'object',
+            properties: {
+              items: {
+                type: 'array',
+                items: { $ref: getSchemaPath(TransmitterTransducerAccuracyDTO) },
+              },
+            },
+          },
+        },
+      }
   })
-  getTransmitterTransducerAccuracies(
+  async getTransmitterTransducerAccuracies(
     @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
-  ) {
-    return this.service.getTransmitterTransducerAccuracies(testSumId);
+  ) : Promise<ArrayResponse<TransmitterTransducerAccuracyDTO>>  {
+    const transducerAccuracyDTOS = await this.service.getTransmitterTransducerAccuracies(testSumId);
+
+    return  { items: transducerAccuracyDTOS };
   }
 
   @Get(':id')

@@ -12,6 +12,9 @@ export class TeeReviewAndSubmitMap extends BaseMap<
   public async one(
     entity: TeeReviewAndSubmit | TeeReviewAndSubmitGlobal,
   ): Promise<TeeReviewAndSubmitDTO> {
+    let severityDescription = null;
+    let severityCode = null;
+
     return {
       orisCode: entity.orisCode,
       facilityName: entity.facilityName,
@@ -26,6 +29,8 @@ export class TeeReviewAndSubmitMap extends BaseMap<
       updateDate: entity.updateDate.toISOString(),
       evalStatusCode: entity.evalStatusCode,
       evalStatusCodeDescription: entity.evalStatusCodeDescription,
+      severityCode,
+      severityDescription,
       submissionAvailabilityCode: entity.submissionAvailabilityCode,
       submissionAvailabilityCodeDescription:
         entity.submissionAvailabilityCodeDescription,

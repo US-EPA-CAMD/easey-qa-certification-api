@@ -31,6 +31,10 @@ export class CertEventReviewAndSubmitDTO {
 
   evalStatusCodeDescription: string;
 
+  severityCode:string;
+
+  severityDescription: string;
+
   submissionAvailabilityCode: string;
 
   submissionAvailabilityDescription: string;
