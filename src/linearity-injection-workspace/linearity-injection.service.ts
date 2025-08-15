@@ -28,8 +28,9 @@ export class LinearityInjectionWorkspaceService {
     private readonly historicalRepository: LinearityInjectionRepository,
   ) {}
 
-  async getInjectionById(id: string): Promise<LinearityInjectionDTO> {
-    const result = await this.repository.findOneBy({ id });
+  async getInjectionById(id: string, trx?: EntityManager): Promise<LinearityInjectionDTO> {
+    const repository = withTransaction(this.repository, trx);
+    const result = await repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(

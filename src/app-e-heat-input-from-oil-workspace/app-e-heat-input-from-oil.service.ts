@@ -103,7 +103,7 @@ export class AppEHeatInputFromOilWorkspaceService {
     });
 
     await repository.save(entity);
-    entity = await this.repository.getAppEHeatInputFromOilById(entity.id);
+    entity = await repository.getAppEHeatInputFromOilById(entity.id);
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,

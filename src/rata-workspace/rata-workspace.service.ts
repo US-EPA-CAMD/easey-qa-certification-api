@@ -31,8 +31,9 @@ export class RataWorkspaceService {
     private readonly rataSummaryService: RataSummaryWorkspaceService,
   ) {}
 
-  async getRataById(id: string): Promise<RataDTO> {
-    const result = await this.repository.findOneBy({
+  async getRataById(id: string, trx?: EntityManager): Promise<RataDTO> {
+    const repository = withTransaction(this.repository, trx);
+    const result = await repository.findOneBy({
       id,
     });
 
@@ -46,7 +47,7 @@ export class RataWorkspaceService {
     return this.map.one(result);
   }
 
-  async getRatasByTestSumId(testSumId: string): Promise<RataDTO[]> {
+  async getRatasByTestSumId(testSumId: string, trx?:EntityManager): Promise<RataDTO[]> {
     const results = await this.repository.findBy({
       testSumId,
     });

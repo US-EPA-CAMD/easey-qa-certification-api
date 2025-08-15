@@ -90,8 +90,9 @@ export class QACertificationEventWorkspaceService {
     return this.map.one(result);
   }
 
-  async getQACertEvent(id: string): Promise<QACertificationEventRecordDTO> {
-    const result = await this.repository.getQACertificationEventById(id);
+  async getQACertEvent(id: string, trx?: EntityManager): Promise<QACertificationEventRecordDTO> {
+    const repository = withTransaction(this.repository, trx);
+    const result = await repository.getQACertificationEventById(id);
 
     if (!result) {
       throw new EaseyException(
@@ -238,7 +239,7 @@ export class QACertificationEventWorkspaceService {
 
     await repository.save(entity);
 
-    return this.getQACertEvent(entity.id);
+    return this.getQACertEvent(entity.id, trx);
   }
 
   async export(

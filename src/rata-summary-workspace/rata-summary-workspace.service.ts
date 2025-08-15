@@ -69,9 +69,9 @@ export class RataSummaryWorkspaceService {
     const timestamp = currentDateTime();
 
     // Checks if Test Summary is valid.
-    await this.testSummaryService.getTestSummaryById(testSumId);
+    await this.testSummaryService.getTestSummaryById(testSumId, trx);
     // Checks if RATA Test is valid.
-    await this.rataService.getRataById(rataId);
+    await this.rataService.getRataById(rataId, trx);
 
     const repository = withTransaction(this.repository, trx);
 

@@ -27,8 +27,9 @@ export class ProtocolGasWorkspaceService {
     private readonly historicalRepo: ProtocolGasRepository,
   ) {}
 
-  async getProtocolGas(id: string): Promise<ProtocolGasDTO> {
-    const entity = await this.repository.findOneBy({ id });
+  async getProtocolGas(id: string, trx?: EntityManager): Promise<ProtocolGasDTO> {
+    const repository = withTransaction(this.repository, trx);
+    const entity = await repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -116,7 +117,7 @@ export class ProtocolGasWorkspaceService {
       trx,
     );
 
-    return this.getProtocolGas(id);
+    return this.getProtocolGas(id, trx);
   }
 
   async deleteProtocolGas(

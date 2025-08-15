@@ -28,8 +28,7 @@ export class CycleTimeSummaryWorkspaceService {
     private readonly historicalRepository: CycleTimeSummaryRepository,
     @Inject(forwardRef(() => CycleTimeInjectionWorkspaceService))
     private readonly cycleTimeInjectionService: CycleTimeInjectionWorkspaceService,
-  ) {
-  }
+  ) {}
 
   async getCycleTimeSummaries(
     testSumId: string,
@@ -236,7 +235,17 @@ export class CycleTimeSummaryWorkspaceService {
       }
     }
 
-    await Promise.all(promises);
+    const results = await Promise.allSettled(promises);
+
+    // Check for any rejected promises
+    const errors = results
+      .filter(result => result.status === 'rejected')
+      .map(result => (result as PromiseRejectedResult).reason);
+
+    // If any errors occurred, throw the first one to trigger transaction rollback
+    if (errors.length > 0) {
+      throw errors[0];
+    }
 
     return null;
   }

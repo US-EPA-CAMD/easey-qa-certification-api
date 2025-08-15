@@ -38,8 +38,10 @@ export class TestExtensionExemptionsWorkspaceService {
 
   async getTestExtensionExemptionById(
     id: string,
+    trx?: EntityManager,
   ): Promise<TestExtensionExemptionRecordDTO> {
-    const result = await this.repository.getTestExtensionExemptionById(id);
+    const repository = withTransaction(this.repository, trx);
+    const result = await repository.getTestExtensionExemptionById(id);
 
     if (!result) {
       throw new EaseyException(
@@ -269,7 +271,7 @@ export class TestExtensionExemptionsWorkspaceService {
     record.submissionAvailabilityCode = 'REQUIRE';
 
     await repository.save(record);
-    return this.getTestExtensionExemptionById(record.id);
+    return this.getTestExtensionExemptionById(record.id, trx);
   }
 
   async deleteTestExtensionExemption(id: string): Promise<void> {

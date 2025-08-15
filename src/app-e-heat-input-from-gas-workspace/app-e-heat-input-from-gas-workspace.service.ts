@@ -99,7 +99,7 @@ export class AppEHeatInputFromGasWorkspaceService {
 
     await repository.save(entity);
 
-    entity = await this.repository.getAppEHeatInputFromGasById(entity.id);
+    entity = await repository.getAppEHeatInputFromGasById(entity.id);
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,

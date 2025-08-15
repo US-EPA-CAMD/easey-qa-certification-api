@@ -94,8 +94,9 @@ export class TestSummaryWorkspaceService {
     private readonly qaSuppDataService: QASuppDataWorkspaceService,
   ) {}
 
-  async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
-    const result = await this.repository.getTestSummaryById(testSumId);
+  async getTestSummaryById(testSumId: string, trx?: EntityManager): Promise<TestSummaryDTO> {
+    const repository = withTransaction(this.repository, trx);
+    const result = await repository.getTestSummaryById(testSumId);
 
     const dto = await this.map.one(result);
 
@@ -768,9 +769,11 @@ export class TestSummaryWorkspaceService {
     id: string,
     payload: TestSummaryBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<TestSummaryRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOneBy({ id });
+    const repository = withTransaction(this.repository, trx);
+    const entity = await repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -810,8 +813,8 @@ export class TestSummaryWorkspaceService {
     entity.updatedStatusFlag = 'Y';
     entity.evalStatusCode = 'EVAL';
 
-    await this.repository.save(entity);
-    return this.getTestSummaryById(entity.id);
+    await repository.save(entity);
+    return this.getTestSummaryById(entity.id, trx);
   }
 
   async deleteTestSummary(id: string, trx?: EntityManager): Promise<void> {
@@ -827,7 +830,10 @@ export class TestSummaryWorkspaceService {
   }
 
   async resetToNeedsEvaluation(
-    testSumId: string, userId: string, isImport: boolean = false, trx: EntityManager
+    testSumId: string,
+    userId: string,
+    isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
     if (!isImport) {
       const repository = withTransaction(this.repository, trx);
