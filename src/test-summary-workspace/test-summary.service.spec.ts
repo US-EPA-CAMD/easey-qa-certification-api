@@ -89,6 +89,14 @@ payload.unitId = '1';
 payload.stackPipeId = '1';
 payload.linearitySummaryData = [lineSumImportDto];
 
+jest.mock('typeorm', () => {
+  const actualTypeOrm = jest.requireActual('typeorm');
+  return {
+    ...actualTypeOrm,
+    In: jest.fn().mockImplementation(ids => `IN(${ids.join(',')})`), // Simple mock
+  };
+});
+
 const mockRepository = () => ({
   getTestSummaryById: jest.fn().mockResolvedValue(testSummary),
   getTestSummariesByLocationId: jest.fn().mockResolvedValue([testSummary]),
@@ -493,7 +501,7 @@ describe('TestSummaryWorkspaceService', () => {
   describe('deleteTestSummary', () => {
     it('should successfully delete a test summary and revert supplemental data', async () => {
       const officialQaSuppData = new QASuppData();
-      officialQaSuppData.id = '1';
+      officialQaSuppData.id = 'supp-data-id-1';
       const officialQaSuppAttribute = new QASuppAttribute();
 
       (manager.transaction as jest.Mock).mockImplementation(async (callback) => {
@@ -507,7 +515,7 @@ describe('TestSummaryWorkspaceService', () => {
             }
             if (entity === QASuppAttribute) {
               return {
-                findOneBy: jest.fn().mockResolvedValue(officialQaSuppAttribute),
+                findBy: jest.fn().mockResolvedValue([officialQaSuppAttribute]),
               };
             }
             return {};
@@ -521,7 +529,7 @@ describe('TestSummaryWorkspaceService', () => {
       expect(manager.transaction).toHaveBeenCalled();
     });
 
-    it('should throw an error if the transaction fails', async () => {
+    it('should throw an InternalServerErrorException if the transaction fails', async () => {
       (manager.transaction as jest.Mock).mockImplementation(async () => {
         throw new Error('Database Error');
       });

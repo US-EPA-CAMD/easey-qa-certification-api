@@ -42,7 +42,7 @@ import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-tr
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
-import { EntityManager } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { QASuppAttributeWorkspaceService } from '../qa-supp-attribute-workspace/qa-supp-attribute.service';
 import { QASuppData } from '../entities/qa-supp-data.entity';
@@ -792,39 +792,41 @@ export class TestSummaryWorkspaceService {
 
       await this.manager.transaction(async (transactionalEntityManager) => {
 
-      // Delete corresponding camdecmpswks.test_summary record
-      await transactionalEntityManager.delete(TestSummary, { id: testSumId });
+        // Delete corresponding camdecmpswks.test_summary record
+        await transactionalEntityManager.delete(TestSummary, { id: testSumId });
 
-      // Delete corresponding camdecmpswks.qa_supp_data record
-      await this.qaSuppDataWorkspaceService.deleteByTestSumId(
-        testSumId,
-        transactionalEntityManager,
-      );
+        // Delete corresponding camdecmpswks.qa_supp_data record
+        await this.qaSuppDataWorkspaceService.deleteByTestSumId(
+          testSumId,
+          transactionalEntityManager,
+        );
 
-      // Revert corresponding camdecmpswks.qa_supp_data and camdecmpswks.qa_supp_attribute records
-      const qaSuppDataRepoTransactional = transactionalEntityManager.getRepository(QASuppData);
-      const officialQaSuppData = await qaSuppDataRepoTransactional.findBy({ testSumId });
-      if (officialQaSuppData.length > 0) {
-        const qaSuppAttributeRepoTransactional = transactionalEntityManager.getRepository(QASuppAttribute);
+        // Revert corresponding camdecmpswks.qa_supp_data and camdecmpswks.qa_supp_attribute records
 
-        for (const officialRecord of officialQaSuppData) {
-          // Revert camdecmpswks.qa_supp_data record with camdecmsp.qa_supp_data
-          await this.qaSuppDataWorkspaceService.createFromOfficialRecord(
-            officialRecord,
-            transactionalEntityManager,
+        const qaSuppDataRepoTransactional = transactionalEntityManager.getRepository(QASuppData);
+        const officialQaSuppData = await qaSuppDataRepoTransactional.findBy({ testSumId });
+        if (officialQaSuppData.length > 0) {
+          // Revert camdecmpswks.qa_supp_data records with camdecmsp.qa_supp_data
+          const qaSuppDataPromises = officialQaSuppData.map(officialRecord =>
+            this.qaSuppDataWorkspaceService.createFromOfficialRecord(
+              officialRecord,
+              transactionalEntityManager,
+            )
           );
+          await Promise.all(qaSuppDataPromises);
 
-          // Revert camdecmpswks.qa_supp_attribute record with camdecmps.qa_supp_attribute
-          const qaSuppDataId = officialRecord.id;
-          const officialQaSuppAttribute = await qaSuppAttributeRepoTransactional.findOneBy({ qaSuppDataId });
-          if(officialQaSuppAttribute){
-            await this.qaSuppAttributeWorkspaceService.createFromOfficialRecord(
+          // Revert camdecmpswks.qa_supp_attribute records with camdecmps.qa_supp_attribute
+          const qaSuppAttributeRepoTransactional = transactionalEntityManager.getRepository(QASuppAttribute);
+          const qaSuppDataIds = officialQaSuppData.map(record => record.id);
+          const officialQaSuppAttributes = await qaSuppAttributeRepoTransactional.findBy({ qaSuppDataId: In(qaSuppDataIds) });
+          const qaSuppAttributePromises = officialQaSuppAttributes.map(officialQaSuppAttribute =>
+            this.qaSuppAttributeWorkspaceService.createFromOfficialRecord(
               officialQaSuppAttribute,
               transactionalEntityManager,
-            );
-          }
+            )
+          );
+          await Promise.all(qaSuppAttributePromises);
         }
-      }
       });
     } catch (e) {
       throw new InternalServerErrorException(
