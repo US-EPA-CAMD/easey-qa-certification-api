@@ -1,15 +1,29 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
+import { QASuppData as QASuppDataGlobal } from '../entities/qa-supp-data.entity';
 import { QASuppDataWorkspaceRepository } from './qa-supp-data.repository';
 import { QASuppDataWorkspaceService } from './qa-supp-data.service';
+import { EntityManager } from 'typeorm';
 
 const testSumId = '';
 const qaSuppData = new QASuppData();
+const officialRecord = new QASuppDataGlobal();
 const mockRepository = () => ({
   findOneBy: jest.fn().mockResolvedValue(qaSuppData),
   save: jest.fn().mockResolvedValue(qaSuppData),
+  delete: jest.fn().mockResolvedValue(undefined),
+  create: jest.fn().mockReturnValue(new QASuppData()),
+  find: jest.fn().mockResolvedValue([new QASuppData()]),
 });
+
+const mockManager = {
+  getRepository: jest.fn().mockReturnValue({
+    delete: jest.fn(),
+    create: jest.fn().mockReturnValue(new QASuppData()),
+    save: jest.fn().mockResolvedValue(new QASuppData()),
+  }),
+};
 
 describe('QASuppDataWorkspaceService', () => {
   let service: QASuppDataWorkspaceService;
@@ -41,4 +55,41 @@ describe('QASuppDataWorkspaceService', () => {
       expect(repository.save).toHaveBeenCalled();
     });
   });
+
+  describe('deleteByTestSumId', () => {
+    it('should delete a QA Supplemental Data record by testSumId using the default repository', async () => {
+      await service.deleteByTestSumId(testSumId);
+      expect(repository.delete).toHaveBeenCalledWith({ testSumId });
+    });
+
+    it('should delete a QA Supplemental Data record by testSumId using a transactional manager', async () => {
+      const transactionalRepo = mockManager.getRepository();
+      await service.deleteByTestSumId(
+        testSumId,
+        mockManager as unknown as EntityManager,
+      );
+      expect(mockManager.getRepository).toHaveBeenCalledWith(QASuppData);
+      expect(transactionalRepo.delete).toHaveBeenCalledWith({ testSumId });
+    });
+  });
+
+  describe('createFromOfficialRecord', () => {
+    it('should create a new QA Supplemental Data record from an official record using the default repository', async () => {
+      await service.createFromOfficialRecord(officialRecord);
+      expect(repository.create).toHaveBeenCalledWith(officialRecord);
+      expect(repository.save).toHaveBeenCalled();
+    });
+
+    it('should create a new QA Supplemental Data record from an official record using a transactional manager', async () => {
+      const transactionalRepo = mockManager.getRepository();
+      await service.createFromOfficialRecord(
+        officialRecord,
+        mockManager as unknown as EntityManager,
+      );
+      expect(mockManager.getRepository).toHaveBeenCalledWith(QASuppData);
+      expect(transactionalRepo.create).toHaveBeenCalledWith(officialRecord);
+      expect(transactionalRepo.save).toHaveBeenCalled();
+    });
+  });
+
 });

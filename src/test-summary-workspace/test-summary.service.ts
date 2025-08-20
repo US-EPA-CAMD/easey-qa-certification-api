@@ -42,12 +42,18 @@ import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-tr
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
+import { EntityManager, In } from 'typeorm';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { QASuppAttributeWorkspaceService } from '../qa-supp-attribute-workspace/qa-supp-attribute.service';
+import { QASuppData } from '../entities/qa-supp-data.entity';
+import { QASuppAttribute } from '../entities/qa-supp-attribute.entity';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
   constructor(
     private readonly logger: Logger,
     private readonly map: TestSummaryMap,
+    private readonly manager: EntityManager,
     @Inject(forwardRef(() => TestSummaryReviewAndSubmitService))
     private readonly testSummaryReviewAndSubmitService: TestSummaryReviewAndSubmitService,
     @Inject(forwardRef(() => LinearitySummaryWorkspaceService))
@@ -90,7 +96,9 @@ export class TestSummaryWorkspaceService {
     @Inject(forwardRef(() => TestQualificationWorkspaceService))
     private readonly testQualificationWorkspaceService: TestQualificationWorkspaceService,
     @Inject(forwardRef(() => QASuppDataWorkspaceService))
-    private readonly qaSuppDataService: QASuppDataWorkspaceService,
+    private readonly qaSuppDataWorkspaceService: QASuppDataWorkspaceService,
+    @Inject(forwardRef(() => QASuppAttributeWorkspaceService))
+    private readonly qaSuppAttributeWorkspaceService: QASuppAttributeWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -788,16 +796,50 @@ export class TestSummaryWorkspaceService {
     return this.getTestSummaryById(entity.id);
   }
 
-  async deleteTestSummary(id: string): Promise<void> {
+  async deleteTestSummary(testSumId: string): Promise<void> {
     try {
-      await this.repository.delete(id);
 
-      // Perform the updates (reset needs eval flag, etc) for those records
-      // that may have been collaterally affected by this change.
-      await this.updateCollaterallyAffectedRecords(id);
+      await this.manager.transaction(async (transactionalEntityManager) => {
+
+        // Delete corresponding camdecmpswks.test_summary record
+        await transactionalEntityManager.delete(TestSummary, { id: testSumId });
+
+        // Delete corresponding camdecmpswks.qa_supp_data record
+        await this.qaSuppDataWorkspaceService.deleteByTestSumId(
+          testSumId,
+          transactionalEntityManager,
+        );
+
+        // Revert corresponding camdecmpswks.qa_supp_data and camdecmpswks.qa_supp_attribute records
+
+        const qaSuppDataRepoTransactional = transactionalEntityManager.getRepository(QASuppData);
+        const officialQaSuppData = await qaSuppDataRepoTransactional.findBy({ testSumId });
+        if (officialQaSuppData.length > 0) {
+          // Revert camdecmpswks.qa_supp_data records with camdecmsp.qa_supp_data
+          const qaSuppDataPromises = officialQaSuppData.map(officialRecord =>
+            this.qaSuppDataWorkspaceService.createFromOfficialRecord(
+              officialRecord,
+              transactionalEntityManager,
+            )
+          );
+          await Promise.all(qaSuppDataPromises);
+
+          // Revert camdecmpswks.qa_supp_attribute records with camdecmps.qa_supp_attribute
+          const qaSuppAttributeRepoTransactional = transactionalEntityManager.getRepository(QASuppAttribute);
+          const qaSuppDataIds = officialQaSuppData.map(record => record.id);
+          const officialQaSuppAttributes = await qaSuppAttributeRepoTransactional.findBy({ qaSuppDataId: In(qaSuppDataIds) });
+          const qaSuppAttributePromises = officialQaSuppAttributes.map(officialQaSuppAttribute =>
+            this.qaSuppAttributeWorkspaceService.createFromOfficialRecord(
+              officialQaSuppAttribute,
+              transactionalEntityManager,
+            )
+          );
+          await Promise.all(qaSuppAttributePromises);
+        }
+      });
     } catch (e) {
       throw new InternalServerErrorException(
-        `Error deleting Test Summary record Id [${id}]`,
+        `Error deleting Test Summary record Id [${testSumId}]`,
         e.message,
       );
     }
