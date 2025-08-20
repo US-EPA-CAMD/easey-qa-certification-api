@@ -106,6 +106,7 @@ const mockRepository = () => ({
   findOneBy: jest.fn().mockResolvedValue(testSummary),
   create: jest.fn().mockResolvedValue(testSummary),
   save: jest.fn().mockResolvedValue(testSummary),
+  query: jest.fn().mockResolvedValue(['']),
 });
 
 const mockTestSummaryReviewAndSubmitService = () => ({

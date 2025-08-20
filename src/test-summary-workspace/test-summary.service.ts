@@ -711,8 +711,12 @@ export class TestSummaryWorkspaceService {
     });
 
     await this.repository.save(entity);
-    const result = await this.repository.getTestSummaryById(entity.id);
 
+    // Perform the updates (reset needs eval flag, etc) for those records
+    // that may have been collaterally affected by this change.
+    await this.updateCollaterallyAffectedRecords(entity.id);
+
+    const result = await this.repository.getTestSummaryById(entity.id);
     const dto = await this.map.one(result);
 
     delete dto.calibrationInjectionData;
@@ -784,6 +788,11 @@ export class TestSummaryWorkspaceService {
     entity.evalStatusCode = 'EVAL';
 
     await this.repository.save(entity);
+
+    // Perform the updates (reset needs eval flag, etc) for those records
+    // that may have been collaterally affected by this change.
+    await this.updateCollaterallyAffectedRecords(entity.id);
+
     return this.getTestSummaryById(entity.id);
   }
 
@@ -852,6 +861,31 @@ export class TestSummaryWorkspaceService {
       entity.evalStatusCode = 'EVAL';
 
       await this.repository.save(entity);
+
+      //Finally, perform the updates (reset needs eval flag, etc) for those records
+      // that may have been collaterally affected by this change.
+      await this.updateCollaterallyAffectedRecords(testSumId);
+    }
+  }
+
+  async updateCollaterallyAffectedRecords(testSumId: string): Promise<void> {
+    //1. Update affected QAT Records
+    const qaResult = await this.repository.query(
+      'SELECT * FROM camdecmpswks.update_collateral_qat_data_for_qat_changes($1)',
+      [testSumId],
+    );
+    if (qaResult[0].result === 'F') {
+      throw new Error(`QA Deletion Failed: ${qaResult[0].error_msg}`);
+    }
+
+    //2. Update affected EM Records
+    const emResult = await this.repository.query(
+      'SELECT * FROM camdecmpswks.update_collateral_em_data_for_qat_changes($1)',
+      [testSumId],
+    );
+
+    if (emResult[0].result === 'F') {
+      throw new Error(`EM Deletion Failed: ${emResult[0].error_msg}`);
     }
   }
 
