@@ -12,6 +12,9 @@ const moment = require('moment');
 
 @Injectable()
 export class CertEventReviewAndSubmitService {
+  // cache of monitor plan begin dates as tie breaker
+  private monPlanBeginMap: Map<string, Date> = new Map();
+
   constructor(
     private readonly entityManager: EntityManager,
     private readonly workspaceRepository: CertEventReviewAndSubmitRepository,
@@ -49,6 +52,38 @@ export class CertEventReviewAndSubmitService {
         );
       }
 
+// Build a map of monPlanId via monitor plan begin report period (Date)
+      this.monPlanBeginMap.clear();
+      const monPlanIdsInData = Array.from(
+        new Set(
+          (data ?? [])
+            .map(d => d?.monPlanId)
+            .filter((v): v is string => !!v),
+        ),
+      );
+
+      if (monPlanIdsInData.length > 0) {
+        // camdecmps.monitor_plan.begin_rpt_period_id -> camdecmpsmd.reporting_period.rpt_period_id
+        const rows = await this.entityManager.query(
+          `
+            SELECT mp.mon_plan_id, rp.begin_date
+            FROM camdecmps.monitor_plan mp
+            JOIN camdecmpsmd.reporting_period rp
+              ON rp.rpt_period_id = mp.begin_rpt_period_id
+            WHERE mp.mon_plan_id = ANY ($1)
+          `,
+          [monPlanIdsInData],
+        );
+
+        for (const r of rows) {
+          if (r?.mon_plan_id && r?.begin_date) {
+            this.monPlanBeginMap.set(r.mon_plan_id, new Date(r.begin_date));
+          }
+        }
+      }
+
+      // Deduplicate with no monPlanId in key --tie breaker by plan begin period, else by later eventDate
+      data = this.deduplicateCertEventRecords(data);
       let quarterList: ReportingPeriod[];
       if (quarters && quarters.length > 0) {
         quarterList = await this.returnManager().find(ReportingPeriod, {
@@ -70,7 +105,7 @@ export class CertEventReviewAndSubmitService {
               where qce.qa_cert_event_id = ANY($1);`,
         [qaCertEventIdentifiers],
         );
-        
+
         const severityMap:Map<string, {description:string,severityCode:string}> = new Map(
           severities.map((s: any) => [s.qa_cert_event_id, { description: s.severity_cd_description, severityCode: s.severity_cd }])
         );
@@ -114,5 +149,55 @@ export class CertEventReviewAndSubmitService {
     } catch (e) {
       throw new EaseyException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  // Business key via: oris_code + location_info + system_component_id + event_code + event_date
+  // Tie breaker via: latest plan begin period (if present) else later eventDate.
+  // Final sort via: oris, location, system/component id, event code, event date/time DESC.
+  private deduplicateCertEventRecords(
+    data: CertEventReviewAndSubmitDTO[],
+  ): CertEventReviewAndSubmitDTO[] {
+    const uniqueRecords = new Map<string, CertEventReviewAndSubmitDTO>();
+
+    for (const record of data) {
+      const businessKey = `${record.orisCode}_${record.locationInfo}_${record.systemComponentIdentifier}_${record.qaCertEventCode}_${record.eventDate}`;
+
+      if (!uniqueRecords.has(businessKey)) {
+        uniqueRecords.set(businessKey, record);
+      } else {
+        const existing = uniqueRecords.get(businessKey)!;
+
+        const aBegin = record?.monPlanId
+          ? this.monPlanBeginMap.get(record.monPlanId)
+          : undefined;
+        const bBegin = existing?.monPlanId
+          ? this.monPlanBeginMap.get(existing.monPlanId)
+          : undefined;
+
+        if (aBegin && bBegin) {
+          if (aBegin.getTime() > bBegin.getTime()) {
+            uniqueRecords.set(businessKey, record);
+          }
+        } else {
+          const aDate = record?.eventDate ? new Date(record.eventDate).getTime() : 0;
+          const bDate = existing?.eventDate ? new Date(existing.eventDate).getTime() : 0;
+          if (aDate > bDate) {
+            uniqueRecords.set(businessKey, record);
+          }
+        }
+      }
+    }
+
+    return Array.from(uniqueRecords.values()).sort((a, b) => {
+      return (
+        (a.orisCode ?? '').toString().localeCompare((b.orisCode ?? '').toString()) ||
+        (a.locationInfo ?? '').localeCompare(b.locationInfo ?? '') ||
+        (a.systemComponentIdentifier ?? '').localeCompare(
+          b.systemComponentIdentifier ?? '',
+        ) ||
+        (a.qaCertEventCode ?? '').localeCompare(b.qaCertEventCode ?? '') ||
+        (new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime())
+      );
+    });
   }
 }
