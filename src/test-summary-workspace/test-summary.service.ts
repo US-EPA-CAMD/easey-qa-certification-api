@@ -42,12 +42,18 @@ import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-tr
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
+import { EntityManager, In } from 'typeorm';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { QASuppAttributeWorkspaceService } from '../qa-supp-attribute-workspace/qa-supp-attribute.service';
+import { QASuppData } from '../entities/qa-supp-data.entity';
+import { QASuppAttribute } from '../entities/qa-supp-attribute.entity';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
   constructor(
     private readonly logger: Logger,
     private readonly map: TestSummaryMap,
+    private readonly manager: EntityManager,
     @Inject(forwardRef(() => TestSummaryReviewAndSubmitService))
     private readonly testSummaryReviewAndSubmitService: TestSummaryReviewAndSubmitService,
     @Inject(forwardRef(() => LinearitySummaryWorkspaceService))
@@ -90,7 +96,9 @@ export class TestSummaryWorkspaceService {
     @Inject(forwardRef(() => TestQualificationWorkspaceService))
     private readonly testQualificationWorkspaceService: TestQualificationWorkspaceService,
     @Inject(forwardRef(() => QASuppDataWorkspaceService))
-    private readonly qaSuppDataService: QASuppDataWorkspaceService,
+    private readonly qaSuppDataWorkspaceService: QASuppDataWorkspaceService,
+    @Inject(forwardRef(() => QASuppAttributeWorkspaceService))
+    private readonly qaSuppAttributeWorkspaceService: QASuppAttributeWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
@@ -703,8 +711,12 @@ export class TestSummaryWorkspaceService {
     });
 
     await this.repository.save(entity);
-    const result = await this.repository.getTestSummaryById(entity.id);
 
+    // Perform the updates (reset needs eval flag, etc) for those records
+    // that may have been collaterally affected by this change.
+    await this.updateCollaterallyAffectedRecords(entity.id);
+
+    const result = await this.repository.getTestSummaryById(entity.id);
     const dto = await this.map.one(result);
 
     delete dto.calibrationInjectionData;
@@ -776,15 +788,58 @@ export class TestSummaryWorkspaceService {
     entity.evalStatusCode = 'EVAL';
 
     await this.repository.save(entity);
+
+    // Perform the updates (reset needs eval flag, etc) for those records
+    // that may have been collaterally affected by this change.
+    await this.updateCollaterallyAffectedRecords(entity.id);
+
     return this.getTestSummaryById(entity.id);
   }
 
-  async deleteTestSummary(id: string): Promise<void> {
+  async deleteTestSummary(testSumId: string): Promise<void> {
     try {
-      await this.repository.delete(id);
+
+      await this.manager.transaction(async (transactionalEntityManager) => {
+
+        // Delete corresponding camdecmpswks.test_summary record
+        await transactionalEntityManager.delete(TestSummary, { id: testSumId });
+
+        // Delete corresponding camdecmpswks.qa_supp_data record
+        await this.qaSuppDataWorkspaceService.deleteByTestSumId(
+          testSumId,
+          transactionalEntityManager,
+        );
+
+        // Revert corresponding camdecmpswks.qa_supp_data and camdecmpswks.qa_supp_attribute records
+
+        const qaSuppDataRepoTransactional = transactionalEntityManager.getRepository(QASuppData);
+        const officialQaSuppData = await qaSuppDataRepoTransactional.findBy({ testSumId });
+        if (officialQaSuppData.length > 0) {
+          // Revert camdecmpswks.qa_supp_data records with camdecmsp.qa_supp_data
+          const qaSuppDataPromises = officialQaSuppData.map(officialRecord =>
+            this.qaSuppDataWorkspaceService.createFromOfficialRecord(
+              officialRecord,
+              transactionalEntityManager,
+            )
+          );
+          await Promise.all(qaSuppDataPromises);
+
+          // Revert camdecmpswks.qa_supp_attribute records with camdecmps.qa_supp_attribute
+          const qaSuppAttributeRepoTransactional = transactionalEntityManager.getRepository(QASuppAttribute);
+          const qaSuppDataIds = officialQaSuppData.map(record => record.id);
+          const officialQaSuppAttributes = await qaSuppAttributeRepoTransactional.findBy({ qaSuppDataId: In(qaSuppDataIds) });
+          const qaSuppAttributePromises = officialQaSuppAttributes.map(officialQaSuppAttribute =>
+            this.qaSuppAttributeWorkspaceService.createFromOfficialRecord(
+              officialQaSuppAttribute,
+              transactionalEntityManager,
+            )
+          );
+          await Promise.all(qaSuppAttributePromises);
+        }
+      });
     } catch (e) {
       throw new InternalServerErrorException(
-        `Error deleting Test Summary record Id [${id}]`,
+        `Error deleting Test Summary record Id [${testSumId}]`,
         e.message,
       );
     }
@@ -806,6 +861,31 @@ export class TestSummaryWorkspaceService {
       entity.evalStatusCode = 'EVAL';
 
       await this.repository.save(entity);
+
+      //Finally, perform the updates (reset needs eval flag, etc) for those records
+      // that may have been collaterally affected by this change.
+      await this.updateCollaterallyAffectedRecords(testSumId);
+    }
+  }
+
+  async updateCollaterallyAffectedRecords(testSumId: string): Promise<void> {
+    //1. Update affected QAT Records
+    const qaResult = await this.repository.query(
+      'SELECT * FROM camdecmpswks.update_collateral_qat_data_for_qat_changes($1)',
+      [testSumId],
+    );
+    if (qaResult[0].result === 'F') {
+      throw new Error(`QA Deletion Failed: ${qaResult[0].error_msg}`);
+    }
+
+    //2. Update affected EM Records
+    const emResult = await this.repository.query(
+      'SELECT * FROM camdecmpswks.update_collateral_em_data_for_qat_changes($1)',
+      [testSumId],
+    );
+
+    if (emResult[0].result === 'F') {
+      throw new Error(`EM Deletion Failed: ${emResult[0].error_msg}`);
     }
   }
 
