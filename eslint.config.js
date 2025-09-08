@@ -1,11 +1,11 @@
-const { defineConfig } = require('eslint/config');
+import defineConfig from 'eslint/config';
+import tsParser from '@typescript-eslint/parser';
 
-const tsParser = require('@typescript-eslint/parser');
-const typescriptEslintEslintPlugin = require('@typescript-eslint/eslint-plugin');
-const globals = require('globals');
-const js = require('@eslint/js');
+import typescriptEslintEslintPlugin from '@typescript-eslint/eslint-plugin';
+import globals from 'globals';
 
-const { FlatCompat } = require('@eslint/eslintrc');
+import js from '@eslint/js';
+import FlatCompat from '@eslint/eslintrc';
 
 const compat = new FlatCompat({
   baseDirectory: __dirname,
@@ -43,6 +43,7 @@ module.exports = defineConfig([
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
+      'prettier/prettier': ['error', { endOfLine: 'auto' }],
     },
   },
 ]);
