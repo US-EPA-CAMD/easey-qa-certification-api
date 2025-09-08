@@ -63,7 +63,7 @@ describe('MatsDataSubmissionController', () => {
   describe('deleteMatsDataSubmission', () => {
     it('should call the service to delete a submission', async () => {
       service.deleteMatsDataSubmission = jest.fn().mockResolvedValue(undefined);
-      await controller.deleteMatsDataSubmission('1');
+      await controller.deleteMatsDataSubmission('', '1');
       expect(service.deleteMatsDataSubmission).toHaveBeenCalledWith('1');
     });
   });
