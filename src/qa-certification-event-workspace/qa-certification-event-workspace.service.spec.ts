@@ -55,6 +55,7 @@ const mockRepository = () => ({
   create: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
   delete: jest.fn().mockResolvedValue(null),
+  query: jest.fn().mockResolvedValue(['']),
 });
 
 const mockQACertRepository = () => ({

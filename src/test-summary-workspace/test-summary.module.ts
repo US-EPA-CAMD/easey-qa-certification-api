@@ -46,6 +46,7 @@ import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace
 import { TestSummaryReviewAndSubmitRepository } from '../qa-certification-workspace/test-summary-review-and-submit.repository';
 import { TestSummaryReviewAndSubmitGlobalRepository } from '../qa-certification-workspace/test-summary-review-and-submit-global.repository';
 import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
+import { QASuppAttributeWorkspaceModule } from '../qa-supp-attribute-workspace/qa-supp-attribute.module';
 
 
 @Module({
@@ -85,6 +86,7 @@ import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-su
     forwardRef(() => HgSummaryWorkspaceModule),
     forwardRef(() => HgInjectionWorkspaceModule),
     forwardRef(() => QASuppDataWorkspaceModule),
+    forwardRef(() => QASuppAttributeWorkspaceModule),
     TestResultCodeModule,
     HttpModule,
   ],
