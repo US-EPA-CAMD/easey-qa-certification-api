@@ -153,7 +153,7 @@ export class AirEmissionTestingWorkspaceController {
     responseBodyOutFields: '*'
   })
   async updateAirEmissionTesting(
-    @Param('locid') _locationId: string,
+    @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
     @Body() payload: AirEmissionTestingBaseDTO,

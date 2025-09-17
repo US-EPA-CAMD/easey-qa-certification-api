@@ -180,7 +180,7 @@ export class OnlineOfflineCalibrationWorkspaceController {
     responseBodyOutFields: '*'
   })
   async updateOnlineOfflineCalibration(
-    @Param('locid') _locationId: string,
+    @Param('locId') _locationId: string,
     @Param('testSumId') testSumId: string,
     @Param('id') id: string,
     @Body() payload: OnlineOfflineCalibrationBaseDTO,

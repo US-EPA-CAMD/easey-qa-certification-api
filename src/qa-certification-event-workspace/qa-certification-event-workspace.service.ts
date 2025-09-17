@@ -85,8 +85,11 @@ export class QACertificationEventWorkspaceService {
 
     await repository.save(entity);
 
-    const result = await repository.getQACertificationEventById(entity.id);
+    //Finally, perform the updates (reset needs eval flag, etc) for those records
+    // that may have been collaterally affected by this change.
+    await this.updateCollaterallyAffectedRecords(entity.id, trx);
 
+    const result = await repository.getQACertificationEventById(entity.id);
     return this.map.one(result);
   }
 
@@ -165,6 +168,10 @@ export class QACertificationEventWorkspaceService {
   async deleteQACertEvent(id: string): Promise<void> {
     try {
       await this.repository.delete(id);
+
+      //Finally, perform the updates (reset needs eval flag, etc) for those records
+      // that may have been collaterally affected by this change.
+      await this.updateCollaterallyAffectedRecords(id);
     } catch (e) {
       throw new InternalServerErrorException(
         `Error deleting QA Certification Event record Id [${id}]`,
@@ -239,7 +246,25 @@ export class QACertificationEventWorkspaceService {
 
     await repository.save(entity);
 
+    //Finally, perform the updates (reset needs eval flag, etc) for those records
+    // that may have been collaterally affected by this change.
+    await this.updateCollaterallyAffectedRecords(entity.id, trx);
+
     return this.getQACertEvent(entity.id, trx);
+  }
+
+  async updateCollaterallyAffectedRecords(qceId: string, trx?: EntityManager): Promise<void> {
+    const repository = withTransaction(this.repository, trx);
+
+    //1. Update affected EM Records
+    const emResult = await repository.query(
+      'SELECT * FROM camdecmpswks.update_collateral_em_data_for_qce_changes($1)',
+      [qceId],
+    );
+
+    if (emResult[0].result === 'F') {
+      throw new Error(`EM Deletion Failed: ${emResult[0].error_msg}`);
+    }
   }
 
   async export(

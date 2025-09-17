@@ -66,6 +66,7 @@ const mockRepository = () => ({
   findOneBy: jest.fn().mockResolvedValue(entity),
   create: jest.fn().mockResolvedValue(entity),
   save: jest.fn().mockResolvedValue(entity),
+  query: jest.fn().mockResolvedValue(['']),
 });
 
 const mockTestExtensionExemptionsRepository = () => ({

@@ -9,7 +9,7 @@ import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { currentDateTime, withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
-import { EntityManager } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 
 import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
@@ -43,12 +43,17 @@ import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-tr
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
+import { TestSummary } from '../entities/workspace/test-summary.entity';
+import { QASuppAttributeWorkspaceService } from '../qa-supp-attribute-workspace/qa-supp-attribute.service';
+import { QASuppData } from '../entities/qa-supp-data.entity';
+import { QASuppAttribute } from '../entities/qa-supp-attribute.entity';
 
 @Injectable()
 export class TestSummaryWorkspaceService {
   constructor(
     private readonly logger: Logger,
     private readonly map: TestSummaryMap,
+    private readonly manager: EntityManager,
     @Inject(forwardRef(() => TestSummaryReviewAndSubmitService))
     private readonly testSummaryReviewAndSubmitService: TestSummaryReviewAndSubmitService,
     @Inject(forwardRef(() => LinearitySummaryWorkspaceService))
@@ -91,7 +96,9 @@ export class TestSummaryWorkspaceService {
     @Inject(forwardRef(() => TestQualificationWorkspaceService))
     private readonly testQualificationWorkspaceService: TestQualificationWorkspaceService,
     @Inject(forwardRef(() => QASuppDataWorkspaceService))
-    private readonly qaSuppDataService: QASuppDataWorkspaceService,
+    private readonly qaSuppDataWorkspaceService: QASuppDataWorkspaceService,
+    @Inject(forwardRef(() => QASuppAttributeWorkspaceService))
+    private readonly qaSuppAttributeWorkspaceService: QASuppAttributeWorkspaceService,
   ) {}
 
   async getTestSummaryById(testSumId: string, trx?: EntityManager): Promise<TestSummaryDTO> {
@@ -739,8 +746,12 @@ export class TestSummaryWorkspaceService {
     });
 
     await repository.save(entity);
-    const result = await repository.getTestSummaryById(entity.id);
 
+    // Perform the updates (reset needs eval flag, etc) for those records
+    // that may have been collaterally affected by this change.
+    await this.updateCollaterallyAffectedRecords(entity.id, trx);
+
+    const result = await repository.getTestSummaryById(entity.id);
     const dto = await this.map.one(result);
 
     delete dto.calibrationInjectionData;
@@ -814,18 +825,66 @@ export class TestSummaryWorkspaceService {
     entity.evalStatusCode = 'EVAL';
 
     await repository.save(entity);
+
+    // Perform the updates (reset needs eval flag, etc) for those records
+    // that may have been collaterally affected by this change.
+    await this.updateCollaterallyAffectedRecords(entity.id, trx);
+
     return this.getTestSummaryById(entity.id, trx);
   }
 
-  async deleteTestSummary(id: string, trx?: EntityManager): Promise<void> {
+  async deleteTestSummary(testSumId: string, trx?: EntityManager): Promise<void> {
+    let transactionalEntityManager = trx;
+    if (!transactionalEntityManager) {
+      const queryRunner = this.manager.connection.createQueryRunner();
+      await queryRunner.startTransaction();
+      transactionalEntityManager = queryRunner.manager;
+    }
+
     try {
-      const repository = withTransaction(this.repository, trx);
-      await repository.delete(id);
+      // Delete corresponding camdecmpswks.test_summary record
+      await transactionalEntityManager.delete(TestSummary, { id: testSumId });
+
+      // Delete corresponding camdecmpswks.qa_supp_data record
+      await this.qaSuppDataWorkspaceService.deleteByTestSumId(
+        testSumId,
+        transactionalEntityManager,
+      );
+
+      // Revert corresponding camdecmpswks.qa_supp_data and camdecmpswks.qa_supp_attribute records
+
+      const qaSuppDataRepoTransactional = transactionalEntityManager.getRepository(QASuppData);
+      const officialQaSuppData = await qaSuppDataRepoTransactional.findBy({ testSumId });
+      if (officialQaSuppData.length > 0) {
+        // Revert camdecmpswks.qa_supp_data records with camdecmsp.qa_supp_data
+        const qaSuppDataPromises = officialQaSuppData.map(officialRecord =>
+          this.qaSuppDataWorkspaceService.createFromOfficialRecord(
+            officialRecord,
+            transactionalEntityManager,
+          )
+        );
+        await Promise.all(qaSuppDataPromises);
+
+        // Revert camdecmpswks.qa_supp_attribute records with camdecmps.qa_supp_attribute
+        const qaSuppAttributeRepoTransactional = transactionalEntityManager.getRepository(QASuppAttribute);
+        const qaSuppDataIds = officialQaSuppData.map(record => record.id);
+        const officialQaSuppAttributes = await qaSuppAttributeRepoTransactional.findBy({ qaSuppDataId: In(qaSuppDataIds) });
+        const qaSuppAttributePromises = officialQaSuppAttributes.map(officialQaSuppAttribute =>
+          this.qaSuppAttributeWorkspaceService.createFromOfficialRecord(
+            officialQaSuppAttribute,
+            transactionalEntityManager,
+          )
+        );
+        await Promise.all(qaSuppAttributePromises);
+      }
     } catch (e) {
+      if (!trx) await transactionalEntityManager.queryRunner.rollbackTransaction(); // Rollback only if we started the transaction
       throw new InternalServerErrorException(
-        `Error deleting Test Summary record Id [${id}]`,
+        `Error deleting Test Summary record Id [${testSumId}]`,
         e.message,
       );
+    } finally {
+      if (!trx) await transactionalEntityManager.queryRunner.release(); // Release `queryRunner` only if we started the transaction
     }
   }
 
@@ -847,6 +906,33 @@ export class TestSummaryWorkspaceService {
       entity.evalStatusCode = 'EVAL';
 
       await repository.save(entity);
+
+      //Finally, perform the updates (reset needs eval flag, etc) for those records
+      // that may have been collaterally affected by this change.
+      await this.updateCollaterallyAffectedRecords(testSumId, trx);
+    }
+  }
+
+  async updateCollaterallyAffectedRecords(testSumId: string, trx?: EntityManager): Promise<void> {
+    const repository = withTransaction(this.repository, trx);
+
+    //1. Update affected QAT Records
+    const qaResult = await repository.query(
+      'SELECT * FROM camdecmpswks.update_collateral_qat_data_for_qat_changes($1)',
+      [testSumId],
+    );
+    if (qaResult[0].result === 'F') {
+      throw new Error(`QA Deletion Failed: ${qaResult[0].error_msg}`);
+    }
+
+    //2. Update affected EM Records
+    const emResult = await repository.query(
+      'SELECT * FROM camdecmpswks.update_collateral_em_data_for_qat_changes($1)',
+      [testSumId],
+    );
+
+    if (emResult[0].result === 'F') {
+      throw new Error(`EM Deletion Failed: ${emResult[0].error_msg}`);
     }
   }
 
