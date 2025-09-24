@@ -10,6 +10,7 @@ import {
 } from '../dto/app-e-heat-input-from-gas.dto';
 import { AppECorrelationTestRun } from '../entities/workspace/app-e-correlation-test-run.entity';
 import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 
 @Injectable()
 export class AppEHeatInputFromGasChecksService {
@@ -17,7 +18,8 @@ export class AppEHeatInputFromGasChecksService {
     private readonly logger: Logger,
     private readonly appETestRunRepo: AppECorrelationTestRunWorkspaceRepository,
     private readonly repo: AppEHeatInputFromGasWorkspaceRepository,
-  ) {}
+    private readonly monitorSystemRepository: MonitorSystemRepository,
+  ) { }
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
@@ -55,22 +57,50 @@ export class AppEHeatInputFromGasChecksService {
 
   async runImportChecks(
     importDTOs: AppEHeatInputFromGasImportDTO[] = [],
+    locationId: string,
+    testTypeCode: string,
+    testNumber: string
   ): Promise<string[]> {
     let errors: string[] = [];
     let monSysIDs = [];
 
     for (let dto of importDTOs) {
-      if (monSysIDs.includes(dto.monitoringSystemId)) {
-        errors = [
-          this.getMessage('APPE-51-A', {
-            recordtype: 'Appendix E Heat Input from Gas',
-            fieldnames: 'MonitoringSystemID',
-          }),
-        ];
-      } else monSysIDs.push(dto.monitoringSystemId);
+      const { monitoringSystemId } = dto;
+
+      if (monSysIDs.includes(monitoringSystemId)) {
+        errors.push(this.getMessage('APPE-51-A', {
+          recordtype: 'Appendix E Heat Input from Gas',
+          fieldnames: 'MonitoringSystemID',
+        }))
+      } else monSysIDs.push(monitoringSystemId);
+
+      if (testTypeCode === 'APPE') {
+        const systemError = await this.validateSystemType(locationId, monitoringSystemId, testNumber);
+        if (systemError) {
+          errors.push(systemError);
+        }
+      }
     }
 
     return errors;
+  }
+
+  private async validateSystemType(locationId: string, monitoringSystemId: string, testNumber: string): Promise<string | null> {
+    const system = await this.monitorSystemRepository.findOne({
+      where: { locationId, monitoringSystemID: monitoringSystemId }
+    });
+
+    const validTypes = ['OILV', 'OILM'];
+
+    if (system && !validTypes.includes(system.systemTypeCode)) {
+      return CheckCatalogService.formatResultMessage('IMPORT-35-B', {
+        locationId,
+        testTypeCode: 'APPE',
+        testNumber
+      });
+    }
+
+    return null;
   }
 
   async appE51Check(
