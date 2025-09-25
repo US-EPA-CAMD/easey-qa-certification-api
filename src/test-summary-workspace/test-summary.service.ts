@@ -836,6 +836,10 @@ export class TestSummaryWorkspaceService {
           );
           await Promise.all(qaSuppAttributePromises);
         }
+
+        //Finally, perform the updates (reset needs eval flag, etc) for those records
+        // that may have been collaterally affected by this change.
+        await this.updateCollaterallyAffectedRecords(testSumId);
       });
     } catch (e) {
       throw new InternalServerErrorException(
