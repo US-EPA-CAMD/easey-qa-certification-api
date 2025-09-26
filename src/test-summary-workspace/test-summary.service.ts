@@ -7,8 +7,9 @@ import {
 } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { currentDateTime, withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
+import { EntityManager, In } from 'typeorm';
 
 import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
@@ -42,7 +43,6 @@ import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-tr
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
-import { EntityManager, In } from 'typeorm';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { QASuppAttributeWorkspaceService } from '../qa-supp-attribute-workspace/qa-supp-attribute.service';
 import { QASuppData } from '../entities/qa-supp-data.entity';
@@ -804,7 +804,7 @@ export class TestSummaryWorkspaceService {
         // First, perform the updates (reset needs eval flag, etc) for those records
         // that may have been collaterally affected by this change.
         // This must be done BEFORE deletion so the procedures can access the test data.
-        await this.updateCollaterallyAffectedRecords(testSumId);
+        await this.updateCollaterallyAffectedRecords(testSumId, transactionalEntityManager);
 
         // Delete corresponding camdecmpswks.test_summary record
         await transactionalEntityManager.delete(TestSummary, { id: testSumId });
@@ -873,9 +873,11 @@ export class TestSummaryWorkspaceService {
     }
   }
 
-  async updateCollaterallyAffectedRecords(testSumId: string): Promise<void> {
+  async updateCollaterallyAffectedRecords(testSumId: string, trx?: EntityManager): Promise<void> {
+    const repository = withTransaction(this.repository, trx);
+
     //1. Update affected QAT Records
-    const qaResult = await this.repository.query(
+    const qaResult = await repository.query(
       'SELECT * FROM camdecmpswks.update_collateral_qat_data_for_qat_changes($1)',
       [testSumId],
     );
@@ -884,7 +886,7 @@ export class TestSummaryWorkspaceService {
     }
 
     //2. Update affected EM Records
-    const emResult = await this.repository.query(
+    const emResult = await repository.query(
       'SELECT * FROM camdecmpswks.update_collateral_em_data_for_qat_changes($1)',
       [testSumId],
     );
