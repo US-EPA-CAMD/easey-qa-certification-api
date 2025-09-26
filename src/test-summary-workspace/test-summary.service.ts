@@ -801,6 +801,11 @@ export class TestSummaryWorkspaceService {
 
       await this.manager.transaction(async (transactionalEntityManager) => {
 
+        // First, perform the updates (reset needs eval flag, etc) for those records
+        // that may have been collaterally affected by this change.
+        // This must be done BEFORE deletion so the procedures can access the test data.
+        await this.updateCollaterallyAffectedRecords(testSumId);
+
         // Delete corresponding camdecmpswks.test_summary record
         await transactionalEntityManager.delete(TestSummary, { id: testSumId });
 
@@ -836,10 +841,6 @@ export class TestSummaryWorkspaceService {
           );
           await Promise.all(qaSuppAttributePromises);
         }
-
-        //Finally, perform the updates (reset needs eval flag, etc) for those records
-        // that may have been collaterally affected by this change.
-        await this.updateCollaterallyAffectedRecords(testSumId);
       });
     } catch (e) {
       throw new InternalServerErrorException(
