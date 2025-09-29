@@ -22,6 +22,7 @@ import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/mo
 import { ReportingPeriodRepository } from '../reporting-period/reporting-period.repository';
 import { TestExtensionExemptionsWorkspaceRepository } from './test-extension-exemptions-workspace.repository';
 import { TestExtensionExemptionsRepository } from '../test-extension-exemptions/test-extension-exemptions.repository';
+import { deepEquals } from '../utilities/functions';
 
 @Injectable()
 export class TestExtensionExemptionsWorkspaceService {
@@ -245,29 +246,36 @@ export class TestExtensionExemptionsWorkspaceService {
       monitoringSystemRecordId,
     } = await this.lookupValues(locationId, payload);
 
-    record.userId = userId;
-    record.lastUpdated = timestamp;
-    record.updateDate = timestamp;
-    record.reportPeriodId = reportPeriodId;
-    record.monitoringSystemRecordId = monitoringSystemRecordId;
-    record.componentRecordId = componentRecordId;
-    record.hoursUsed = payload.hoursUsed;
-    record.spanScaleCode = payload.spanScaleCode;
-    record.fuelCode = payload.fuelCode;
-    record.extensionOrExemptionCode = payload.extensionOrExemptionCode;
-    record.needsEvalFlag = 'Y';
-    record.updatedStatusFlag = 'Y';
-    record.evalStatusCode = 'EVAL';
-    record.pendingStatusCode = 'PENDING';
-    record.submissionAvailabilityCode = 'REQUIRE';
+    const updatedRecord = { ...record };
 
-    await this.repository.save(record);
+    updatedRecord.hoursUsed = payload.hoursUsed;
+    updatedRecord.spanScaleCode = payload.spanScaleCode;
+    updatedRecord.fuelCode = payload.fuelCode;
+    updatedRecord.extensionOrExemptionCode = payload.extensionOrExemptionCode;
 
-    //Finally, perform the updates (reset needs eval flag, etc) for those records
+    updatedRecord.reportPeriodId = reportPeriodId;
+    updatedRecord.monitoringSystemRecordId = monitoringSystemRecordId;
+    updatedRecord.componentRecordId = componentRecordId;
+
+    if (!deepEquals(record, updatedRecord)) {
+      updatedRecord.updatedStatusFlag = 'Y';
+      updatedRecord.submissionAvailabilityCode = 'REQUIRE';
+    }
+
+    updatedRecord.userId = userId;
+    updatedRecord.lastUpdated = timestamp;
+    updatedRecord.updateDate = timestamp;
+    updatedRecord.evalStatusCode = 'EVAL';
+    updatedRecord.pendingStatusCode = 'PENDING';
+    updatedRecord.needsEvalFlag = 'Y';
+
+    await this.repository.save(updatedRecord);
+
+    // Finally, perform the updates (reset needs eval flag, etc) for those records
     // that may have been collaterally affected by this change.
-    await this.updateCollaterallyAffectedRecords(record.id);
+    await this.updateCollaterallyAffectedRecords(updatedRecord.id);
 
-    return this.getTestExtensionExemptionById(record.id);
+    return this.getTestExtensionExemptionById(updatedRecord.id);
   }
 
   async deleteTestExtensionExemption(id: string): Promise<void> {
