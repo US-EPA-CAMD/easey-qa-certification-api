@@ -227,7 +227,6 @@ export class QACertificationEventWorkspaceService {
     updatedEntity.certificationEventDate = payload.certificationEventDate;
     updatedEntity.certificationEventHour = payload.certificationEventHour;
     updatedEntity.requiredTestCode = payload.requiredTestCode;
-    updatedEntity.requiredTestCode = payload.requiredTestCode;
     updatedEntity.conditionalBeginDate = payload.conditionalBeginDate;
     updatedEntity.conditionalBeginHour = payload.conditionalBeginHour;
     updatedEntity.completionTestDate = payload.completionTestDate;
