@@ -315,7 +315,6 @@ describe('QACertificationEventWorkspaceService', () => {
   describe('updateQACertEvent', () => {
     it('should update a QA Certification Event record', async () => {
       const result = await service.updateQACertEvent(
-        locationId,
         qaCertEventId,
         payload,
         userId,
@@ -331,7 +330,6 @@ describe('QACertificationEventWorkspaceService', () => {
 
       try {
         await service.updateQACertEvent(
-          locationId,
           qaCertEventId,
           payload,
           userId,

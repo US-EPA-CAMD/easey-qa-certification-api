@@ -198,7 +198,6 @@ export class QACertificationEventWorkspaceService {
   }
 
   async updateQACertEvent(
-    locationId: string,
     id: string,
     payload: QACertificationEventBaseDTO,
     userId: string,
@@ -216,24 +215,11 @@ export class QACertificationEventWorkspaceService {
       );
     }
 
-    const {
-      componentRecordId,
-      monitoringSystemRecordId,
-    } = await this.lookupValues(locationId, payload);
-
     const updatedEntity = { ...entity };
 
-    updatedEntity.certificationEventCode = payload.certificationEventCode;
-    updatedEntity.certificationEventDate = payload.certificationEventDate;
-    updatedEntity.certificationEventHour = payload.certificationEventHour;
     updatedEntity.requiredTestCode = payload.requiredTestCode;
-    updatedEntity.conditionalBeginDate = payload.conditionalBeginDate;
-    updatedEntity.conditionalBeginHour = payload.conditionalBeginHour;
     updatedEntity.completionTestDate = payload.completionTestDate;
     updatedEntity.completionTestHour = payload.completionTestHour;
-
-    updatedEntity.componentRecordId = componentRecordId;
-    updatedEntity.monitoringSystemRecordId = monitoringSystemRecordId;
 
     if (!deepEquals(entity, updatedEntity)) {
       updatedEntity.updatedStatusFlag = 'Y';
@@ -309,7 +295,6 @@ export class QACertificationEventWorkspaceService {
     let importedQACertEvent;
     if (record) {
       importedQACertEvent = await this.updateQACertEvent(
-        locationId,
         record.id,
         payload,
         userId,

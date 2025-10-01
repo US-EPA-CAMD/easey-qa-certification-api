@@ -240,22 +240,13 @@ export class TestExtensionExemptionsWorkspaceService {
       );
     }
 
-    const {
-      reportPeriodId,
-      componentRecordId,
-      monitoringSystemRecordId,
-    } = await this.lookupValues(locationId, payload);
+    const { reportPeriodId } = await this.lookupValues(locationId, payload);
 
     const updatedRecord = { ...record };
 
     updatedRecord.hoursUsed = payload.hoursUsed;
     updatedRecord.spanScaleCode = payload.spanScaleCode;
-    updatedRecord.fuelCode = payload.fuelCode;
-    updatedRecord.extensionOrExemptionCode = payload.extensionOrExemptionCode;
-
     updatedRecord.reportPeriodId = reportPeriodId;
-    updatedRecord.monitoringSystemRecordId = monitoringSystemRecordId;
-    updatedRecord.componentRecordId = componentRecordId;
 
     if (!deepEquals(record, updatedRecord)) {
       updatedRecord.updatedStatusFlag = 'Y';
