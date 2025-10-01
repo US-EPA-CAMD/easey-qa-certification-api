@@ -176,7 +176,9 @@ export class FlowRataRunChecksService {
     if (testSumId) {
       const currentRataSummary = await this.rataSummaryRepository.findOne({
         where: { id: (rataSummary as RataSummary).id },
-        relations: ['RataRuns']
+        relations: {
+          RataRuns: true,
+        },
       });
 
       if (currentRataSummary) {
