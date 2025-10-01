@@ -90,10 +90,8 @@ export class AppEHeatInputFromGasChecksService {
       where: { locationId, monitoringSystemID: monitoringSystemId }
     });
 
-    const validTypes = ['OILV', 'OILM'];
-
-    if (system && !validTypes.includes(system.systemTypeCode)) {
-      return CheckCatalogService.formatResultMessage('IMPORT-35-B', {
+    if (system && system.systemTypeCode !== 'GAS') {
+      return CheckCatalogService.formatResultMessage('IMPORT-35-A', {
         locationId,
         testTypeCode: 'APPE',
         testNumber
