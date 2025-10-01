@@ -217,7 +217,6 @@ export class QACertificationEventWorkspaceService {
 
     const updatedEntity = { ...entity };
 
-    updatedEntity.requiredTestCode = payload.requiredTestCode;
     updatedEntity.completionTestDate = payload.completionTestDate;
     updatedEntity.completionTestHour = payload.completionTestHour;
 
