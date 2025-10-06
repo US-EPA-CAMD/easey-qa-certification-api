@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { AppEHeatInputFromGasRepository } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.repository';
@@ -59,6 +60,10 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue([mockAeHiFromGasDTO]),
 });
 
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
+
 describe('AppEHeatInputFromGasWorkspaceService', () => {
   let service: AppEHeatInputFromGasWorkspaceService;
   let repository: AppEHeatInputFromGasWorkspaceRepository;
@@ -94,6 +99,10 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
           provide: AppEHeatInputFromGasMap,
           useFactory: mockMap,
         },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
+        },
       ],
     }).compile();
 
@@ -124,6 +133,7 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
         importDTO,
         userId,
         false,
+        mockEntityManager,
       );
     });
 
@@ -139,6 +149,7 @@ describe('AppEHeatInputFromGasWorkspaceService', () => {
         importDTO,
         userId,
         true,
+        mockEntityManager,
       );
     });
   });

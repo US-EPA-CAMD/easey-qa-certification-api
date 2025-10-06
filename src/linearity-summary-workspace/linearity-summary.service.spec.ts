@@ -1,5 +1,6 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import {
@@ -65,6 +66,10 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue(linearitySummaryRecords),
 });
 
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
+
 describe('LinearitySummaryWorkspaceService', () => {
   let service: LinearitySummaryWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
@@ -96,10 +101,8 @@ describe('LinearitySummaryWorkspaceService', () => {
           useFactory: mockMap,
         },
         {
-          provide: TestSummaryWorkspaceService,
-          useFactory: () => ({
-            resetToNeedsEvaluation: jest.fn().mockResolvedValue(null),
-          }),
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -171,6 +174,8 @@ describe('LinearitySummaryWorkspaceService', () => {
         testSumId,
         new LinearitySummaryImportDTO(),
         userId,
+        false,
+        mockEntityManager,
       );
       expect(result).toEqual(null);
     });
@@ -188,6 +193,7 @@ describe('LinearitySummaryWorkspaceService', () => {
         importPayload,
         userId,
         true,
+        mockEntityManager,
       );
       expect(result).toEqual(null);
     });

@@ -1,6 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import {
@@ -23,6 +24,10 @@ const fuelFlowToLoadTestRecord = new FuelFlowToLoadTestDTO();
 const fuelFlowToLoadTests = [fuelFlowToLoadTestRecord];
 
 const payload = new FuelFlowToLoadTestBaseDTO();
+
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
@@ -73,6 +78,10 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
           provide: FuelFlowToLoadTestRepository,
           useFactory: mockOfficialRepository,
         },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
+        },
       ],
     }).compile();
 
@@ -101,6 +110,7 @@ describe('FuelFlowToLoadTestWorkspaceService', () => {
         new FuelFlowToLoadTestImportDTO(),
         userId,
         true,
+        mockEntityManager,
       );
     });
   });

@@ -1,6 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import {
@@ -44,6 +45,10 @@ const mockOfficialRepository = () => ({
   findOneBy: jest.fn(),
 });
 
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
+
 describe('FlowToLoadCheckWorkspaceService', () => {
   let service: FlowToLoadCheckWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
@@ -71,6 +76,10 @@ describe('FlowToLoadCheckWorkspaceService', () => {
         {
           provide: FlowToLoadCheckMap,
           useFactory: mockMap,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -212,6 +221,7 @@ describe('FlowToLoadCheckWorkspaceService', () => {
         new FlowToLoadCheckImportDTO(),
         userId,
         true,
+        mockEntityManager,
       );
     });
   });

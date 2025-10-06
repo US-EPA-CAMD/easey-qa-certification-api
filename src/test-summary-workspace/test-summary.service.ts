@@ -7,8 +7,9 @@ import {
 } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { currentDateTime, withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
 import { v4 as uuid } from 'uuid';
+import { EntityManager, In } from 'typeorm';
 
 import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
@@ -42,7 +43,6 @@ import { TransmitterTransducerAccuracyWorkspaceService } from '../transmitter-tr
 import { UnitDefaultTestWorkspaceService } from '../unit-default-test-workspace/unit-default-test-workspace.service';
 import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
-import { EntityManager, In } from 'typeorm';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { QASuppAttributeWorkspaceService } from '../qa-supp-attribute-workspace/qa-supp-attribute.service';
 import { QASuppData } from '../entities/qa-supp-data.entity';
@@ -101,8 +101,9 @@ export class TestSummaryWorkspaceService {
     private readonly qaSuppAttributeWorkspaceService: QASuppAttributeWorkspaceService,
   ) {}
 
-  async getTestSummaryById(testSumId: string): Promise<TestSummaryDTO> {
-    const result = await this.repository.getTestSummaryById(testSumId);
+  async getTestSummaryById(testSumId: string, trx?: EntityManager): Promise<TestSummaryDTO> {
+    const repository = withTransaction(this.repository, trx);
+    const result = await repository.getTestSummaryById(testSumId);
 
     const dto = await this.map.one(result);
 
@@ -144,16 +145,16 @@ export class TestSummaryWorkspaceService {
 
     let testSummaries = await this.map.many(results);
     const testSummaryIds = testSummaries.map(ts => ts.id);
-    const testSummaryReviewAndSubmitRecords = await this.testSummaryReviewAndSubmitService.getTestSummaryRecordsByTestSumIds(testSummaryIds); 
+    const testSummaryReviewAndSubmitRecords = await this.testSummaryReviewAndSubmitService.getTestSummaryRecordsByTestSumIds(testSummaryIds);
 
     testSummaries = testSummaries.map(testSummary => {
       const matchingRecord = testSummaryReviewAndSubmitRecords.find(record => record.testSumId === testSummary.id);
-      
+
       if (matchingRecord) {
         testSummary.evalStatusCode = matchingRecord.evalStatusCode || '';
-        testSummary.evalStatusCodeDescription = matchingRecord.evalStatusCodeDescription || ''; 
-        testSummary.submissionAvailabilityCode = matchingRecord.submissionAvailabilityCode || ''; 
-        testSummary.submissionAvailabilityCodeDescription = matchingRecord.submissionCodeDescription || ''; 
+        testSummary.evalStatusCodeDescription = matchingRecord.evalStatusCodeDescription || '';
+        testSummary.submissionAvailabilityCode = matchingRecord.submissionAvailabilityCode || '';
+        testSummary.submissionAvailabilityCodeDescription = matchingRecord.submissionCodeDescription || '';
       }
 
       return testSummary;
@@ -353,17 +354,20 @@ export class TestSummaryWorkspaceService {
     payload: TestSummaryImportDTO,
     userId: string,
     historicalrecordId?: string,
+    trx?: EntityManager,
   ) {
     const promises = [];
 
-    const summary = await this.repository.getTestSummaryByLocationId(
+    const repository = withTransaction(this.repository, trx);
+
+    const summary = await repository.getTestSummaryByLocationId(
       locationId,
       payload.testTypeCode,
       payload.testNumber,
     );
 
     if (summary) {
-      await this.deleteTestSummary(summary.id);
+      await this.deleteTestSummary(summary.id, trx);
     }
 
     const createdTestSummary = await this.createTestSummary(
@@ -371,6 +375,7 @@ export class TestSummaryWorkspaceService {
       payload,
       userId,
       historicalrecordId,
+      trx,
     );
 
     this.logger.log(
@@ -388,6 +393,7 @@ export class TestSummaryWorkspaceService {
             linearitySummary,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -404,6 +410,7 @@ export class TestSummaryWorkspaceService {
             rata,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -424,6 +431,7 @@ export class TestSummaryWorkspaceService {
             createdTestSummary.id,
             protocolGas,
             userId,
+            trx,
           ),
         );
       }
@@ -440,6 +448,7 @@ export class TestSummaryWorkspaceService {
             fuelFlowToLoadTest,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -456,6 +465,7 @@ export class TestSummaryWorkspaceService {
             flowToLoadCheck,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -472,6 +482,7 @@ export class TestSummaryWorkspaceService {
             fuelFlowToLoadBaseline,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -488,6 +499,7 @@ export class TestSummaryWorkspaceService {
             fuelFlowmeterAccuracy,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -504,6 +516,7 @@ export class TestSummaryWorkspaceService {
             flowToLoadReference,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -521,6 +534,7 @@ export class TestSummaryWorkspaceService {
             appECorrelationTestSummary,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -537,6 +551,7 @@ export class TestSummaryWorkspaceService {
             calibrationInjection,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -553,6 +568,7 @@ export class TestSummaryWorkspaceService {
             cycleTimeSummary,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -569,6 +585,7 @@ export class TestSummaryWorkspaceService {
             onlineOfflineCalibration,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -585,6 +602,7 @@ export class TestSummaryWorkspaceService {
             transmitterTransducerAccuracy,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -601,6 +619,7 @@ export class TestSummaryWorkspaceService {
             unitDefaultTest,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -618,6 +637,7 @@ export class TestSummaryWorkspaceService {
             hgSummary,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -634,6 +654,7 @@ export class TestSummaryWorkspaceService {
             testQualification,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
@@ -654,12 +675,23 @@ export class TestSummaryWorkspaceService {
             airEmissionTesting,
             userId,
             historicalrecordId !== null ? true : false,
+            trx,
           ),
         );
       }
     }
 
-    await Promise.all(promises);
+    const results = await Promise.allSettled(promises);
+
+    // Check for any rejected promises
+    const errors = results
+      .filter(result => result.status === 'rejected')
+      .map(result => (result as PromiseRejectedResult).reason);
+
+    // If any errors occurred, throw the first one to trigger transaction rollback
+    if (errors.length > 0) {
+      throw errors[0];
+    }
 
     return null;
   }
@@ -669,6 +701,7 @@ export class TestSummaryWorkspaceService {
     payload: TestSummaryBaseDTO,
     userId: string,
     historicalrecordId?: string,
+    trx?: EntityManager,
   ): Promise<TestSummaryRecordDTO> {
     const timestamp = currentDateTime();
     const [
@@ -694,7 +727,9 @@ export class TestSummaryWorkspaceService {
       );
     }
 
-    const entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    const entity = repository.create({
       ...payload,
       id: historicalrecordId ? historicalrecordId : uuid(),
       locationId,
@@ -710,13 +745,13 @@ export class TestSummaryWorkspaceService {
       evalStatusCode: 'EVAL',
     });
 
-    await this.repository.save(entity);
+    await repository.save(entity);
 
     // Perform the updates (reset needs eval flag, etc) for those records
     // that may have been collaterally affected by this change.
-    await this.updateCollaterallyAffectedRecords(entity.id);
+    await this.updateCollaterallyAffectedRecords(entity.id, trx);
 
-    const result = await this.repository.getTestSummaryById(entity.id);
+    const result = await repository.getTestSummaryById(entity.id);
     const dto = await this.map.one(result);
 
     delete dto.calibrationInjectionData;
@@ -745,9 +780,11 @@ export class TestSummaryWorkspaceService {
     id: string,
     payload: TestSummaryBaseDTO,
     userId: string,
+    trx?: EntityManager,
   ): Promise<TestSummaryRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOneBy({ id });
+    const repository = withTransaction(this.repository, trx);
+    const entity = await repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -787,61 +824,67 @@ export class TestSummaryWorkspaceService {
     entity.updatedStatusFlag = 'Y';
     entity.evalStatusCode = 'EVAL';
 
-    await this.repository.save(entity);
+    await repository.save(entity);
 
     // Perform the updates (reset needs eval flag, etc) for those records
     // that may have been collaterally affected by this change.
-    await this.updateCollaterallyAffectedRecords(entity.id);
+    await this.updateCollaterallyAffectedRecords(entity.id, trx);
 
-    return this.getTestSummaryById(entity.id);
+    return this.getTestSummaryById(entity.id, trx);
   }
 
-  async deleteTestSummary(testSumId: string): Promise<void> {
+  async deleteTestSummary(testSumId: string, trx?: EntityManager): Promise<void> {
+    let transactionalEntityManager = trx;
+    if (!transactionalEntityManager) {
+      const queryRunner = this.manager.connection.createQueryRunner();
+      await queryRunner.startTransaction();
+      transactionalEntityManager = queryRunner.manager;
+    }
+
     try {
+      // Delete corresponding camdecmpswks.test_summary record
+      await transactionalEntityManager.delete(TestSummary, { id: testSumId });
 
-      await this.manager.transaction(async (transactionalEntityManager) => {
+      // Delete corresponding camdecmpswks.qa_supp_data record
+      await this.qaSuppDataWorkspaceService.deleteByTestSumId(
+        testSumId,
+        transactionalEntityManager,
+      );
 
-        // Delete corresponding camdecmpswks.test_summary record
-        await transactionalEntityManager.delete(TestSummary, { id: testSumId });
+      // Revert corresponding camdecmpswks.qa_supp_data and camdecmpswks.qa_supp_attribute records
 
-        // Delete corresponding camdecmpswks.qa_supp_data record
-        await this.qaSuppDataWorkspaceService.deleteByTestSumId(
-          testSumId,
-          transactionalEntityManager,
+      const qaSuppDataRepoTransactional = transactionalEntityManager.getRepository(QASuppData);
+      const officialQaSuppData = await qaSuppDataRepoTransactional.findBy({ testSumId });
+      if (officialQaSuppData.length > 0) {
+        // Revert camdecmpswks.qa_supp_data records with camdecmsp.qa_supp_data
+        const qaSuppDataPromises = officialQaSuppData.map(officialRecord =>
+          this.qaSuppDataWorkspaceService.createFromOfficialRecord(
+            officialRecord,
+            transactionalEntityManager,
+          )
         );
+        await Promise.all(qaSuppDataPromises);
 
-        // Revert corresponding camdecmpswks.qa_supp_data and camdecmpswks.qa_supp_attribute records
-
-        const qaSuppDataRepoTransactional = transactionalEntityManager.getRepository(QASuppData);
-        const officialQaSuppData = await qaSuppDataRepoTransactional.findBy({ testSumId });
-        if (officialQaSuppData.length > 0) {
-          // Revert camdecmpswks.qa_supp_data records with camdecmsp.qa_supp_data
-          const qaSuppDataPromises = officialQaSuppData.map(officialRecord =>
-            this.qaSuppDataWorkspaceService.createFromOfficialRecord(
-              officialRecord,
-              transactionalEntityManager,
-            )
-          );
-          await Promise.all(qaSuppDataPromises);
-
-          // Revert camdecmpswks.qa_supp_attribute records with camdecmps.qa_supp_attribute
-          const qaSuppAttributeRepoTransactional = transactionalEntityManager.getRepository(QASuppAttribute);
-          const qaSuppDataIds = officialQaSuppData.map(record => record.id);
-          const officialQaSuppAttributes = await qaSuppAttributeRepoTransactional.findBy({ qaSuppDataId: In(qaSuppDataIds) });
-          const qaSuppAttributePromises = officialQaSuppAttributes.map(officialQaSuppAttribute =>
-            this.qaSuppAttributeWorkspaceService.createFromOfficialRecord(
-              officialQaSuppAttribute,
-              transactionalEntityManager,
-            )
-          );
-          await Promise.all(qaSuppAttributePromises);
-        }
-      });
+        // Revert camdecmpswks.qa_supp_attribute records with camdecmps.qa_supp_attribute
+        const qaSuppAttributeRepoTransactional = transactionalEntityManager.getRepository(QASuppAttribute);
+        const qaSuppDataIds = officialQaSuppData.map(record => record.id);
+        const officialQaSuppAttributes = await qaSuppAttributeRepoTransactional.findBy({ qaSuppDataId: In(qaSuppDataIds) });
+        const qaSuppAttributePromises = officialQaSuppAttributes.map(officialQaSuppAttribute =>
+          this.qaSuppAttributeWorkspaceService.createFromOfficialRecord(
+            officialQaSuppAttribute,
+            transactionalEntityManager,
+          )
+        );
+        await Promise.all(qaSuppAttributePromises);
+      }
     } catch (e) {
+      if (!trx) await transactionalEntityManager.queryRunner.rollbackTransaction(); // Rollback only if we started the transaction
       throw new InternalServerErrorException(
         `Error deleting Test Summary record Id [${testSumId}]`,
         e.message,
       );
+    } finally {
+      if (!trx) await transactionalEntityManager.queryRunner.release(); // Release `queryRunner` only if we started the transaction
     }
   }
 
@@ -849,10 +892,12 @@ export class TestSummaryWorkspaceService {
     testSumId: string,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
     if (!isImport) {
+      const repository = withTransaction(this.repository, trx);
       const timestamp = currentDateTime();
-      const entity = await this.repository.findOneBy({ id: testSumId });
+      const entity = await repository.findOneBy({ id: testSumId });
 
       entity.userId = userId;
       entity.updateDate = timestamp;
@@ -860,17 +905,19 @@ export class TestSummaryWorkspaceService {
       entity.needsEvalFlag = 'Y';
       entity.evalStatusCode = 'EVAL';
 
-      await this.repository.save(entity);
+      await repository.save(entity);
 
       //Finally, perform the updates (reset needs eval flag, etc) for those records
       // that may have been collaterally affected by this change.
-      await this.updateCollaterallyAffectedRecords(testSumId);
+      await this.updateCollaterallyAffectedRecords(testSumId, trx);
     }
   }
 
-  async updateCollaterallyAffectedRecords(testSumId: string): Promise<void> {
+  async updateCollaterallyAffectedRecords(testSumId: string, trx?: EntityManager): Promise<void> {
+    const repository = withTransaction(this.repository, trx);
+
     //1. Update affected QAT Records
-    const qaResult = await this.repository.query(
+    const qaResult = await repository.query(
       'SELECT * FROM camdecmpswks.update_collateral_qat_data_for_qat_changes($1)',
       [testSumId],
     );
@@ -879,7 +926,7 @@ export class TestSummaryWorkspaceService {
     }
 
     //2. Update affected EM Records
-    const emResult = await this.repository.query(
+    const emResult = await repository.query(
       'SELECT * FROM camdecmpswks.update_collateral_em_data_for_qat_changes($1)',
       [testSumId],
     );
