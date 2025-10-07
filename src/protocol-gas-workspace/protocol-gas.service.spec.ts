@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import {
@@ -48,6 +49,10 @@ const mockMap = () => ({
   many: jest.fn().mockResolvedValue([protocolGasDTO]),
 });
 
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
+
 describe('ProtocolGasWorkspaceService', () => {
   let service: ProtocolGasWorkspaceService;
   let repository: ProtocolGasWorkspaceRepository;
@@ -73,6 +78,10 @@ describe('ProtocolGasWorkspaceService', () => {
         {
           provide: ProtocolGasMap,
           useFactory: mockMap,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -143,7 +152,7 @@ describe('ProtocolGasWorkspaceService', () => {
         .spyOn(service, 'createProtocolGas')
         .mockResolvedValue(protocolGasDTO);
 
-      await service.import(testSumId, new ProtocolGasImportDTO(), userId);
+      await service.import(testSumId, new ProtocolGasImportDTO(), userId, mockEntityManager);
     });
   });
 });

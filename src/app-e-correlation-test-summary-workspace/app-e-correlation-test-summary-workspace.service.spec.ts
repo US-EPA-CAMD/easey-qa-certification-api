@@ -1,6 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -54,6 +55,10 @@ const mockOfficialRepository = () => ({
   findOneBy: jest.fn(),
 });
 
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
+
 describe('AppECorrelationTestSummaryWorkspaceService', () => {
   let service: AppECorrelationTestSummaryWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
@@ -89,6 +94,10 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
         {
           provide: AppendixETestSummaryRepository,
           useFactory: mockOfficialRepository,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -156,7 +165,7 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
     it('Should Import Appendix E Correlation Test Summary', async () => {
       jest.spyOn(service, 'createAppECorrelation').mockResolvedValue(recordDTO);
 
-      await service.import(locationId, testSumId, importDTO, userId, false);
+      await service.import(locationId, testSumId, importDTO, userId, false, mockEntityManager);
     });
 
     it('Should Import Appendix E Correlation Test Summary from Historical Record', async () => {
@@ -166,7 +175,7 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
 
       jest.spyOn(service, 'createAppECorrelation').mockResolvedValue(recordDTO);
 
-      await service.import(locationId, testSumId, importDTO, userId, true);
+      await service.import(locationId, testSumId, importDTO, userId, true, mockEntityManager);
     });
   });
 

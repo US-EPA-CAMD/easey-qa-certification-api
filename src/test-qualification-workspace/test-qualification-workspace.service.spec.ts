@@ -1,6 +1,7 @@
 import { HttpStatus } from '@nestjs/common/enums';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -55,6 +56,10 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
+
 describe('TestQualificationWorkspaceService', () => {
   let service: TestQualificationWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
@@ -81,6 +86,10 @@ describe('TestQualificationWorkspaceService', () => {
         {
           provide: TestQualificationMap,
           useFactory: mockMap,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -222,6 +231,7 @@ describe('TestQualificationWorkspaceService', () => {
         new TestQualificationImportDTO(),
         userId,
         true,
+        mockEntityManager,
       );
     });
   });

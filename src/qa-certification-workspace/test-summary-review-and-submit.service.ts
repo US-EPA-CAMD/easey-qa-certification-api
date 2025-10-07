@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager, In } from 'typeorm';
 
 import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
@@ -29,14 +30,15 @@ export class TestSummaryReviewAndSubmitService {
     monPlanIds: string[],
     quarters: string[],
     isWorkspace: boolean = true,
+    trx?: EntityManager,
   ): Promise<ReviewAndSubmitTestSummaryDTO[]> {
     const filteredDates = [];
 
     let repository;
     if (isWorkspace) {
-      repository = this.workspaceRepository;
+      repository = withTransaction(this.workspaceRepository, trx);
     } else {
-      repository = this.globalRepository;
+      repository = withTransaction(this.globalRepository, trx);
     }
 
     let data: ReviewAndSubmitTestSummaryDTO[];
@@ -51,13 +53,14 @@ export class TestSummaryReviewAndSubmitService {
         );
       }
 
+      const manager = trx || this.entityManager;
       let quarterList;
       if (quarters && quarters.length > 0) {
-        quarterList = await this.returnManager().find(ReportingPeriod, {
+        quarterList = await manager.find(ReportingPeriod, {
           where: { periodAbbreviation: In(quarters) },
         });
       } else {
-        quarterList = await this.returnManager().find(ReportingPeriod);
+        quarterList = await manager.find(ReportingPeriod);
       }
 
       const newResults = [];
@@ -65,14 +68,14 @@ export class TestSummaryReviewAndSubmitService {
         if (data.length > 0 && isWorkspace) {
         const testSumIds = data.map(d => d.testSumId);
 
-        const severities = await this.entityManager.query(
+        const severities = await manager.query(
              `select t.test_sum_id, sc.severity_cd_description, sc.severity_cd from camdecmpswks.test_summary t
               JOIN camdecmpswks.check_session cs on cs.chk_session_id = t.chk_session_id
               JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
               where t.test_sum_id = ANY($1);`,
         [testSumIds],
         );
-        
+
         const severityMap:Map<string, {description:string,severityCode:string}> = new Map(
           severities.map((s: any) => [s.test_sum_id, { description: s.severity_cd_description, severityCode: s.severity_cd }])
         );
@@ -123,14 +126,15 @@ export class TestSummaryReviewAndSubmitService {
   async getTestSummaryRecordsByTestSumIds(
     testSumIds: string[],
     isWorkspace: boolean = true,
+    trx?: EntityManager,
   ): Promise<ReviewAndSubmitTestSummaryDTO[]> {
 
     let repository;
 
     if (isWorkspace) {
-      repository = this.workspaceRepository;
+      repository = withTransaction(this.workspaceRepository, trx);
     } else {
-      repository = this.globalRepository;
+      repository = withTransaction(this.globalRepository, trx);
     }
 
     let data: ReviewAndSubmitTestSummaryDTO[];

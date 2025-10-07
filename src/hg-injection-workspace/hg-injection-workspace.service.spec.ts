@@ -1,5 +1,6 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import {
@@ -46,6 +47,10 @@ const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
 });
 
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
+
 describe('HgInjectionWorkspaceService', () => {
   let service: HgInjectionWorkspaceService;
   let repository: HgInjectionWorkspaceRepository;
@@ -70,6 +75,10 @@ describe('HgInjectionWorkspaceService', () => {
         {
           provide: HgInjectionMap,
           useFactory: mockMap,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -219,6 +228,7 @@ describe('HgInjectionWorkspaceService', () => {
         importPayload,
         userId,
         false,
+        mockEntityManager,
       );
       expect(result).toEqual(undefined);
     });
@@ -232,6 +242,7 @@ describe('HgInjectionWorkspaceService', () => {
         importPayload,
         userId,
         true,
+        mockEntityManager,
       );
       expect(result).toEqual(undefined);
     });

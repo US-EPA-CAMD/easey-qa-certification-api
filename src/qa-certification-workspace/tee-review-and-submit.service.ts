@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager, In } from 'typeorm';
 
 import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
@@ -26,14 +27,15 @@ export class TeeReviewAndSubmitService {
     monPlanIds: string[],
     quarters: string[],
     isWorkspace: boolean = true,
+    trx?: EntityManager,
   ): Promise<TeeReviewAndSubmitDTO[]> {
     const filteredDates = [];
 
     let repository;
     if (isWorkspace) {
-      repository = this.workspaceRepository;
+      repository = withTransaction(this.workspaceRepository, trx);
     } else {
-      repository = this.globalRepository;
+      repository = withTransaction(this.globalRepository, trx);
     }
 
     let data: TeeReviewAndSubmitDTO[];
@@ -55,7 +57,8 @@ export class TeeReviewAndSubmitService {
       if (data.length > 0 && isWorkspace) {
         const testExtensionExemptionIdentifiers = data.map(d => d.testExtensionExemptionIdentifier);
 
-        const severities = await this.entityManager.query(
+        const manager = trx || this.entityManager;
+        const severities = await manager.query(
              `select t.test_extension_exemption_id, sc.severity_cd_description, sc.severity_cd from camdecmpswks.test_extension_exemption t
               JOIN camdecmpswks.check_session cs on cs.chk_session_id = t.chk_session_id
               JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
