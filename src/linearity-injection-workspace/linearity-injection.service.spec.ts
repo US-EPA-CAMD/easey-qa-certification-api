@@ -1,5 +1,6 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import {
@@ -37,7 +38,13 @@ const mockOfficialRepository = () => ({
   findOneBy: jest.fn().mockResolvedValue(new LinearityInjection()),
 });
 
-const mockTestSummaryService = () => ({});
+const mockTestSummaryService = () => ({
+  resetToNeedsEvaluation: jest.fn(),
+});
+
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
 
 const mockMap = () => ({
   one: jest.fn().mockResolvedValue(lineInjectionDto),
@@ -70,10 +77,8 @@ describe('LinearityInjectionWorkspaceService', () => {
           useFactory: mockMap,
         },
         {
-          provide: TestSummaryWorkspaceService,
-          useFactory: () => ({
-            resetToNeedsEvaluation: jest.fn().mockResolvedValue(null),
-          }),
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -129,7 +134,7 @@ describe('LinearityInjectionWorkspaceService', () => {
       jest
         .spyOn(service, 'createInjection')
         .mockResolvedValue(lineInjectionRecordDto);
-      const result = await service.import(testSumId, linSumId, payload, userId);
+      const result = await service.import(testSumId, linSumId, payload, userId, false, mockEntityManager);
       expect(result).toEqual(null);
     });
   });

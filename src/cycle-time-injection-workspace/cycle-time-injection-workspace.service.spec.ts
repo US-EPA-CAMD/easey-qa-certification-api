@@ -1,5 +1,6 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { CycleTimeInjectionRepository } from '../cycle-time-injection/cycle-time-injection.repository';
@@ -23,6 +24,10 @@ const cycleTimeInjection = new CycleTimeInjection();
 const cycleTimeInjectionDTO = new CycleTimeInjectionDTO();
 
 const payload = new CycleTimeInjectionImportDTO();
+
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([cycleTimeInjection]),
@@ -73,6 +78,10 @@ describe('CycleTimeInjectionWorkspaceService', () => {
           useFactory: () => ({
             resetToNeedsEvaluation: jest.fn().mockResolvedValue(null),
           }),
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -175,6 +184,7 @@ describe('CycleTimeInjectionWorkspaceService', () => {
         importPayload,
         userId,
         false,
+        mockEntityManager,
       );
       expect(result).toEqual(null);
     });
@@ -190,6 +200,7 @@ describe('CycleTimeInjectionWorkspaceService', () => {
         importPayload,
         userId,
         true,
+        mockEntityManager,
       );
       expect(result).toEqual(null);
     });

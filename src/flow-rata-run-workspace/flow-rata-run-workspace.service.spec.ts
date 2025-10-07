@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import {
@@ -41,6 +42,10 @@ const payload: FlowRataRunBaseDTO = {
   calculatedWAF: 11,
   averageStackFlowRate: 12,
 };
+
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
 
 const mockTestSumService = () => ({
   resetToNeedsEvaluation: jest.fn(),
@@ -108,6 +113,10 @@ describe('FlowRataRunWorkspaceService', () => {
         {
           provide: FlowRataRunRepository,
           useFactory: mockOfficialRepository,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -203,6 +212,8 @@ describe('FlowRataRunWorkspaceService', () => {
         rataRunId,
         importPayload,
         userId,
+        false,
+        mockEntityManager,
       );
       expect(result).toEqual(null);
     });
@@ -221,6 +232,7 @@ describe('FlowRataRunWorkspaceService', () => {
         importPayload,
         userId,
         true,
+        mockEntityManager,
       );
       expect(result).toEqual(null);
     });

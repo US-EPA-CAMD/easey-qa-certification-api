@@ -1,5 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
+import { withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
 import { EntityManager, In } from 'typeorm';
 
 import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
@@ -31,14 +32,15 @@ export class CertEventReviewAndSubmitService {
     monPlanIds: string[],
     quarters: string[],
     isWorkspace: boolean = true,
+    trx?: EntityManager,
   ): Promise<CertEventReviewAndSubmitDTO[]> {
     let data: CertEventReviewAndSubmitDTO[];
 
     let repository;
     if (isWorkspace) {
-      repository = this.workspaceRepository;
+      repository = withTransaction(this.workspaceRepository, trx);
     } else {
-      repository = this.globalRepository;
+      repository = withTransaction(this.globalRepository, trx);
     }
 
     try {
@@ -84,13 +86,14 @@ export class CertEventReviewAndSubmitService {
 
       // Deduplicate with no monPlanId in key --tie breaker by plan begin period, else by later eventDate
       data = this.deduplicateCertEventRecords(data);
+      const manager = trx || this.entityManager;
       let quarterList: ReportingPeriod[];
       if (quarters && quarters.length > 0) {
-        quarterList = await this.returnManager().find(ReportingPeriod, {
+        quarterList = await manager.find(ReportingPeriod, {
           where: { periodAbbreviation: In(quarters) },
         });
       } else {
-        quarterList = await this.returnManager().find(ReportingPeriod);
+        quarterList = await manager.find(ReportingPeriod);
       }
 
       const newResults = [];
@@ -98,7 +101,7 @@ export class CertEventReviewAndSubmitService {
         if (data.length > 0 && isWorkspace) {
         const qaCertEventIdentifiers = data.map(d => d.qaCertEventIdentifier);
 
-        const severities = await this.entityManager.query(
+        const severities = await manager.query(
              `select qce.qa_cert_event_id , sc.severity_cd_description, sc.severity_cd from camdecmpswks.qa_cert_event qce
               JOIN camdecmpswks.check_session cs on cs.chk_session_id = qce.chk_session_id
               JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd

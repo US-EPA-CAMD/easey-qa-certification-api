@@ -1,10 +1,12 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import {
   TransmitterTransducerAccuracyBaseDTO,
+  TransmitterTransducerAccuracyImportDTO,
   TransmitterTransducerAccuracyRecordDTO,
 } from '../dto/transmitter-transducer-accuracy.dto';
 import { TransmitterTransducerAccuracy as TransmitterTransducerAccuracyOfficial } from '../entities/transmitter-transducer-accuracy.entity';
@@ -44,6 +46,10 @@ const mockHistoricalRepo = () => ({
     .mockResolvedValue(new TransmitterTransducerAccuracyOfficial()),
 });
 
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
+
 describe('TransmitterTransducerAccuracyWorkspaceService', () => {
   let service: TransmitterTransducerAccuracyWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
@@ -70,6 +76,10 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSummaryService,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -168,7 +178,7 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
         .spyOn(service, 'createTransmitterTransducerAccuracy')
         .mockResolvedValue(recordDTO);
 
-      await service.import(testSumID, baseDTO, userID, false);
+      await service.import(testSumID, new TransmitterTransducerAccuracyImportDTO(), userID, false, mockEntityManager);
     });
 
     it('Should Import Calibration Injection from Historical Record', async () => {
@@ -176,7 +186,7 @@ describe('TransmitterTransducerAccuracyWorkspaceService', () => {
         .spyOn(service, 'createTransmitterTransducerAccuracy')
         .mockResolvedValue(recordDTO);
 
-      await service.import(testSumID, baseDTO, userID, true);
+      await service.import(testSumID, new TransmitterTransducerAccuracyImportDTO(), userID, true, mockEntityManager);
     });
   });
 

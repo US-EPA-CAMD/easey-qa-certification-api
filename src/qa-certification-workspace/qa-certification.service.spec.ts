@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 import {
   QACertificationDTO,
@@ -117,6 +118,10 @@ const mockQATestExtensionExemptionService = () => ({
   import: jest.fn().mockResolvedValue(undefined),
 });
 
+const mockEntityManager = () => ({
+  transaction: jest.fn().mockImplementation((fn) => fn(mockEntityManager())),
+});
+
 describe('QA Certification Workspace Service Test', () => {
   let service: QACertificationWorkspaceService;
 
@@ -125,6 +130,10 @@ describe('QA Certification Workspace Service Test', () => {
       imports: [LoggerModule],
       providers: [
         QACertificationWorkspaceService,
+        {
+          provide: EntityManager,
+          useFactory: mockEntityManager,
+        },
         {
           provide: TestSummaryWorkspaceService,
           useFactory: mockTestSummaryWorkspaceService,

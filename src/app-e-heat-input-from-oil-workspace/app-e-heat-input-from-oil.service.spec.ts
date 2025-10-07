@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
@@ -58,6 +59,10 @@ const mockHistoricalRepo = () => ({
     .mockResolvedValue(new AppEHeatInputFromGasRecordDTO()),
 });
 
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
+
 describe('AppEHeatInputOilWorkspaceService', () => {
   let service: AppEHeatInputFromOilWorkspaceService;
   let repository: AppEHeatInputFromOilWorkspaceRepository;
@@ -88,6 +93,10 @@ describe('AppEHeatInputOilWorkspaceService', () => {
         {
           provide: AppEHeatInputFromOilRepository,
           useFactory: mockHistoricalRepo,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -223,6 +232,7 @@ describe('AppEHeatInputOilWorkspaceService', () => {
         importDTO,
         userId,
         false,
+        mockEntityManager,
       );
 
       expect(result).toBeUndefined();
@@ -240,6 +250,7 @@ describe('AppEHeatInputOilWorkspaceService', () => {
         importDTO,
         userId,
         true,
+        mockEntityManager,
       );
 
       expect(result).toBeUndefined();

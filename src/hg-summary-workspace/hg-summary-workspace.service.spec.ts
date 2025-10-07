@@ -1,6 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { HgInjectionDTO, HgInjectionImportDTO } from '../dto/hg-injection.dto';
@@ -54,6 +55,10 @@ const mockHgInjectionWorkspaceService = () => ({
   export: jest.fn().mockResolvedValue([hgInjDto]),
 });
 
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
+
 describe('HgSummaryWorkspaceService', () => {
   let service: HgSummaryWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
@@ -84,6 +89,10 @@ describe('HgSummaryWorkspaceService', () => {
         {
           provide: HgInjectionWorkspaceService,
           useFactory: mockHgInjectionWorkspaceService,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -217,14 +226,14 @@ describe('HgSummaryWorkspaceService', () => {
   describe('import', () => {
     it('should Import Hg Summary Data', async () => {
       jest.spyOn(service, 'createHgSummary').mockResolvedValue(dto);
-      await service.import(testSumId, new HgSummaryImportDTO(), userId, false);
+      await service.import(testSumId, new HgSummaryImportDTO(), userId, false, mockEntityManager);
     });
 
     it('Should Import Hg Summary Data from Historical Record', async () => {
       importPayload.hgInjectionData = [new HgInjectionImportDTO()];
       jest.spyOn(service, 'createHgSummary').mockResolvedValue(dto);
 
-      await service.import(testSumId, new HgSummaryImportDTO(), userId, true);
+      await service.import(testSumId, new HgSummaryImportDTO(), userId, true, mockEntityManager);
     });
   });
 });

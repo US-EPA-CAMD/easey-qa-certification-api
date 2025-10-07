@@ -1,8 +1,8 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In, IsNull } from 'typeorm';
+import { currentDateTime, withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager, In, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -59,10 +59,13 @@ export class TestQualificationWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<TestQualificationRecordDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    let entity = repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
@@ -71,16 +74,14 @@ export class TestQualificationWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-
-    await this.repository.save(entity);
-
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repository.save(entity);
+    entity = await repository.findOneBy({ id: entity.id });
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.map.one(entity);
@@ -91,9 +92,12 @@ export class TestQualificationWorkspaceService {
     id: string,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
+    const repository = withTransaction(this.repository, trx);
+
     try {
-      await this.repository.delete(id);
+      await repository.delete(id);
     } catch (e) {
       throw new EaseyException(
         new Error(`Error deleting Test Qualification with record Id [${id}]`),
@@ -105,6 +109,7 @@ export class TestQualificationWorkspaceService {
       testSumId,
       userId,
       isImport,
+      trx,
     );
   }
 
@@ -114,9 +119,12 @@ export class TestQualificationWorkspaceService {
     payload: TestQualificationBaseDTO,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<TestQualificationRecordDTO> {
     const timestamp = currentDateTime();
-    const record = await this.repository.findOneBy({ id });
+
+    const repository = withTransaction(this.repository, trx);
+    const record = await repository.findOneBy({ id });
 
     if (!record) {
       throw new EaseyException(
@@ -136,12 +144,13 @@ export class TestQualificationWorkspaceService {
     record.userId = userId;
     record.updateDate = timestamp;
 
-    await this.repository.save(record);
+    await repository.save(record);
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.map.one(record);
@@ -165,6 +174,7 @@ export class TestQualificationWorkspaceService {
     payload: TestQualificationImportDTO,
     userId: string,
     isHistoricalRecord: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: TestQualification;
@@ -183,6 +193,7 @@ export class TestQualificationWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(
