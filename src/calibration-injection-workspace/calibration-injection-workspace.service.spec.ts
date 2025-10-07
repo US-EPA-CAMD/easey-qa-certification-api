@@ -1,6 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common/exceptions';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import { CalibrationInjectionRepository } from '../calibration-injection/calibration-injection.repository';
@@ -44,6 +45,10 @@ const mockHistoricalRepo = () => ({
   findOneBy: jest.fn().mockResolvedValue(new CalibrationInjectionOfficial()),
 });
 
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
+
 describe('CalibrationInjectionWorkspaceService', () => {
   let service: CalibrationInjectionWorkspaceService;
   let testSummaryService: TestSummaryWorkspaceService;
@@ -70,6 +75,10 @@ describe('CalibrationInjectionWorkspaceService', () => {
         {
           provide: CalibrationInjectionMap,
           useFactory: mockMap,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -224,13 +233,13 @@ describe('CalibrationInjectionWorkspaceService', () => {
     it('Should Import Calibration Injection', async () => {
       jest.spyOn(service, 'createCalibrationInjection').mockResolvedValue(dto);
 
-      await service.import(testSumId, payload, userId, false);
+      await service.import(testSumId, payload, userId, false, mockEntityManager);
     });
 
     it('Should Import Calibration Injection from Historical Record', async () => {
       jest.spyOn(service, 'createCalibrationInjection').mockResolvedValue(dto);
 
-      await service.import(testSumId, payload, userId, true);
+      await service.import(testSumId, payload, userId, true, mockEntityManager);
     });
   });
 });

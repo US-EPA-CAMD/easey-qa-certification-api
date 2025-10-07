@@ -1,8 +1,8 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In, IsNull } from 'typeorm';
+import { currentDateTime, withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager, In, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -59,10 +59,13 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     payload: FuelFlowmeterAccuracyBaseDTO,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<FuelFlowmeterAccuracyDTO> {
     const timestamp = currentDateTime();
 
-    const entity = await this.repository.findOneBy({ id });
+    const repository = withTransaction(this.repository, trx);
+
+    const entity = await repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -82,12 +85,13 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     entity.userId = userId;
     entity.updateDate = timestamp;
 
-    await this.repository.save(entity);
+    await repository.save(entity);
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.getFuelFlowmeterAccuracy(id);
@@ -99,10 +103,13 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<FuelFlowmeterAccuracyDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    let entity = repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       testSumId,
@@ -111,12 +118,13 @@ export class FuelFlowmeterAccuracyWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repository.save(entity);
+    entity = await repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.map.one(entity);
@@ -127,9 +135,12 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     id: string,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
+    const repository = withTransaction(this.repository, trx);
+
     try {
-      await this.repository.delete({
+      await repository.delete({
         id,
         testSumId,
       });
@@ -145,6 +156,7 @@ export class FuelFlowmeterAccuracyWorkspaceService {
       testSumId,
       userId,
       isImport,
+      trx,
     );
   }
 
@@ -167,6 +179,7 @@ export class FuelFlowmeterAccuracyWorkspaceService {
     payload: FuelFlowmeterAccuracyImportDTO,
     userId: string,
     isHistoricalRecord: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: FuelFlowmeterAccuracy;
@@ -184,6 +197,7 @@ export class FuelFlowmeterAccuracyWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(

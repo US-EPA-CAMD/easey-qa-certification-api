@@ -1,6 +1,7 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { Logger, LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import {
@@ -21,6 +22,10 @@ const fuelFlowmeterAccuracyId = '';
 const entity = new FuelFlowmeterAccuracy();
 const fuelFlowmeterAccuracy = new FuelFlowmeterAccuracyDTO();
 const payload = new FuelFlowmeterAccuracyBaseDTO();
+
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
 
 const mockRepository = () => ({
   find: jest.fn().mockResolvedValue([entity]),
@@ -70,6 +75,10 @@ describe('FuelFlowmeterWorkspaceService', () => {
         {
           provide: FuelFlowmeterAccuracyMap,
           useFactory: mockMap,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -233,6 +242,7 @@ describe('FuelFlowmeterWorkspaceService', () => {
         new FuelFlowmeterAccuracyImportDTO(),
         userId,
         false,
+        mockEntityManager,
       );
     });
     it('Should Import Fuel Flowmeter Accuracy from Historical Record', async () => {
@@ -240,7 +250,7 @@ describe('FuelFlowmeterWorkspaceService', () => {
         .spyOn(service, 'createFuelFlowmeterAccuracy')
         .mockResolvedValue(fuelFlowmeterAccuracy);
 
-      await service.import(testSumId, payload, userId, true);
+      await service.import(testSumId, payload, userId, true, mockEntityManager);
     });
   });
 });

@@ -1,8 +1,8 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
-import { In, IsNull } from 'typeorm';
+import { currentDateTime, withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager, In, IsNull } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import {
@@ -28,8 +28,9 @@ export class LinearityInjectionWorkspaceService {
     private readonly historicalRepository: LinearityInjectionRepository,
   ) {}
 
-  async getInjectionById(id: string): Promise<LinearityInjectionDTO> {
-    const result = await this.repository.findOneBy({ id });
+  async getInjectionById(id: string, trx?: EntityManager): Promise<LinearityInjectionDTO> {
+    const repository = withTransaction(this.repository, trx);
+    const result = await repository.findOneBy({ id });
 
     if (!result) {
       throw new EaseyException(
@@ -71,6 +72,7 @@ export class LinearityInjectionWorkspaceService {
     payload: LinearityInjectionImportDTO,
     userId: string,
     isHistoricalRecord?: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: LinearityInjection;
@@ -91,6 +93,7 @@ export class LinearityInjectionWorkspaceService {
       userId,
       isImport,
       historicalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(
@@ -106,10 +109,13 @@ export class LinearityInjectionWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<LinearityInjectionRecordDTO> {
     const timestamp = currentDateTime();
 
-    let entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    let entity = repository.create({
       ...payload,
       id: historicalRecordId ? historicalRecordId : uuid(),
       linSumId,
@@ -118,12 +124,13 @@ export class LinearityInjectionWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.findOneBy({ id: entity.id });
+    await repository.save(entity);
+    entity = await repository.findOneBy({ id: entity.id });
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
     return this.map.one(entity);
   }
@@ -134,9 +141,11 @@ export class LinearityInjectionWorkspaceService {
     payload: LinearityInjectionBaseDTO,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<LinearityInjectionRecordDTO> {
     const timestamp = currentDateTime();
-    const entity = await this.repository.findOneBy({ id });
+    const repository = withTransaction(this.repository, trx);
+    const entity = await repository.findOneBy({ id });
 
     if (!entity) {
       throw new EaseyException(
@@ -155,11 +164,12 @@ export class LinearityInjectionWorkspaceService {
     entity.userId = userId;
     entity.updateDate = timestamp;
 
-    await this.repository.save(entity);
+    await repository.save(entity);
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
     return this.map.one(entity);
   }
@@ -169,9 +179,12 @@ export class LinearityInjectionWorkspaceService {
     id: string,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
+    const repository = withTransaction(this.repository, trx);
+
     try {
-      await this.repository.delete(id);
+      await repository.delete(id);
     } catch (e) {
       throw new EaseyException(
         new Error(`Error deleting Linearity Injection record Id [${id}]`),
@@ -183,6 +196,7 @@ export class LinearityInjectionWorkspaceService {
       testSumId,
       userId,
       isImport,
+      trx,
     );
   }
 }

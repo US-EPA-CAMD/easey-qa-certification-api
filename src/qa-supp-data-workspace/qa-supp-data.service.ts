@@ -1,22 +1,25 @@
 import { Injectable } from '@nestjs/common';
+import { withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 
 import { QASuppDataWorkspaceRepository } from './qa-supp-data.repository';
 import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { QASuppData as QASuppDataGlobal } from '../entities/qa-supp-data.entity';
-import { EntityManager } from 'typeorm';
 
 @Injectable()
 export class QASuppDataWorkspaceService {
   constructor(private readonly repository: QASuppDataWorkspaceRepository) {}
 
-  async setSubmissionAvailCodeToRequire(testSumId: string): Promise<void> {
-    const entity = await this.repository.findOneBy({
+  async setSubmissionAvailCodeToRequire(testSumId: string, trx?: EntityManager): Promise<void> {
+    const repository = withTransaction(this.repository, trx);
+
+    const entity = await repository.findOneBy({
       testSumId: testSumId,
     });
 
     entity.submissionAvailabilityCode = 'REQUIRE';
 
-    await this.repository.save(entity);
+    await repository.save(entity);
   }
 
   async deleteByTestSumId(

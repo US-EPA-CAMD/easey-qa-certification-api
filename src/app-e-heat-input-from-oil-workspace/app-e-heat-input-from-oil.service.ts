@@ -1,7 +1,8 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
+import { currentDateTime, withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
+import { EntityManager } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 
 import { AppEHeatInputFromOilRepository } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.repository';
@@ -64,6 +65,7 @@ export class AppEHeatInputFromOilWorkspaceService {
     userId: string,
     isImport: boolean = false,
     historicalRecordId?: string,
+    trx?: EntityManager,
   ): Promise<AppEHeatInputFromOilRecordDTO> {
     const timestamp = currentDateTime().toISOString();
 
@@ -81,7 +83,9 @@ export class AppEHeatInputFromOilWorkspaceService {
       );
     }
 
-    let entity = this.repository.create({
+    const repository = withTransaction(this.repository, trx);
+
+    let entity = repository.create({
       id: historicalRecordId ? historicalRecordId : uuid(),
       monitoringSystemId: system.id,
       oilMass: payload.oilMass,
@@ -98,12 +102,13 @@ export class AppEHeatInputFromOilWorkspaceService {
       updateDate: timestamp,
     });
 
-    await this.repository.save(entity);
-    entity = await this.repository.getAppEHeatInputFromOilById(entity.id);
+    await repository.save(entity);
+    entity = await repository.getAppEHeatInputFromOilById(entity.id);
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
     return this.map.one(entity);
   }
@@ -115,6 +120,7 @@ export class AppEHeatInputFromOilWorkspaceService {
     payload: AppEHeatInputFromOilBaseDTO,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<AppEHeatInputFromOilRecordDTO> {
     const timestamp = currentDateTime();
 
@@ -143,6 +149,8 @@ export class AppEHeatInputFromOilWorkspaceService {
       );
     }
 
+    const repository = withTransaction(this.repository, trx);
+
     entity.system = system;
     entity.oilMass = payload.oilMass;
     entity.oilHeatInput = payload.oilHeatInput;
@@ -156,12 +164,13 @@ export class AppEHeatInputFromOilWorkspaceService {
     entity.userId = userId;
     entity.updateDate = timestamp;
 
-    await this.repository.save(entity);
+    await repository.save(entity);
 
     await this.testSummaryService.resetToNeedsEvaluation(
       testSumId,
       userId,
       isImport,
+      trx,
     );
 
     return this.map.one(entity);
@@ -172,9 +181,12 @@ export class AppEHeatInputFromOilWorkspaceService {
     id: string,
     userId: string,
     isImport: boolean = false,
+    trx?: EntityManager,
   ): Promise<void> {
+    const repository = withTransaction(this.repository, trx);
+
     try {
-      await this.repository.delete({ id });
+      await repository.delete({ id });
     } catch (e) {
       throw new EaseyException(
         new Error(
@@ -188,6 +200,7 @@ export class AppEHeatInputFromOilWorkspaceService {
       testSumId,
       userId,
       isImport,
+      trx,
     );
   }
 
@@ -198,6 +211,7 @@ export class AppEHeatInputFromOilWorkspaceService {
     payload: AppEHeatInputFromOilImportDTO,
     userId: string,
     isHistoricalRecord: boolean,
+    trx?: EntityManager,
   ) {
     const isImport = true;
     let historicalRecord: AppEHeatInputFromOil;
@@ -217,6 +231,7 @@ export class AppEHeatInputFromOilWorkspaceService {
       userId,
       isImport,
       isHistoricalRecord ? historicalRecord.id : null,
+      trx,
     );
 
     this.logger.log(

@@ -23,6 +23,10 @@ const mockRepo = () => ({
   }),
 });
 
+const mockEntityManager = {
+  query: jest.fn().mockResolvedValue([{}]),
+} as any;
+
 const mockMap = () => ({
   many: jest.fn().mockImplementation(args => {
     return args;
@@ -30,9 +34,7 @@ const mockMap = () => ({
 });
 
 describe('TeeReviewAndSubmitService', () => {
-  let manager: jest.Mock;
   let service: TeeReviewAndSubmitService;
-  manager = jest.fn().mockResolvedValue([{}]);
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -41,9 +43,7 @@ describe('TeeReviewAndSubmitService', () => {
       providers: [
          {
           provide: EntityManager,
-          useValue: {
-            query: manager,
-          },
+          useValue: mockEntityManager,
         },
         TeeReviewAndSubmitService,
         { provide: TeeReviewAndSubmitMap, useFactory: mockMap },
@@ -69,6 +69,11 @@ describe('TeeReviewAndSubmitService', () => {
     it('should call the getTeeRecords function and filter based on Quarters', async () => {
       const result = await service.getTeeRecords([], [], ['2021 Q2']);
       expect(result.length).toBe(1);
+    });
+
+    it('should call the getTeeRecords function with transaction', async () => {
+      const result = await service.getTeeRecords([3], [], [], true, mockEntityManager);
+      expect(result.length).toBe(2);
     });
   });
 });
