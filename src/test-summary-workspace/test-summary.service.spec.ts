@@ -1,6 +1,12 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
+
+jest.mock('@us-epa-camd/easey-common/utilities/functions', () => ({
+  ...jest.requireActual('@us-epa-camd/easey-common/utilities/functions'),
+  withTransaction: jest.fn().mockImplementation((repo) => repo),
+}));
 
 import { AirEmissionTestingWorkspaceService } from '../air-emission-testing-workspace/air-emission-testing-workspace.service';
 import { AppECorrelationTestSummaryWorkspaceService } from '../app-e-correlation-test-summary-workspace/app-e-correlation-test-summary-workspace.service';
@@ -58,7 +64,6 @@ import { TestSummaryWorkspaceRepository } from './test-summary.repository';
 import { TestSummaryWorkspaceService } from './test-summary.service';
 import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
 import { TestSummaryReviewAndSubmitService } from '../qa-certification-workspace/test-summary-review-and-submit.service';
-import { EntityManager } from 'typeorm';
 import { QASuppAttributeWorkspaceService } from '../qa-supp-attribute-workspace/qa-supp-attribute.service';
 import { QASuppDataRepository } from '../qa-supp-data/qa-supp-data.repository';
 import { QASuppAttributeRepository } from '../qa-supp-attribute/qa-supp-attribute.repository';
@@ -80,7 +85,7 @@ lineSumDto.testSumId = testSumId;
 
 const reviewAndSubmitTestSummaryDTO = new ReviewAndSubmitTestSummaryDTO();
 reviewAndSubmitTestSummaryDTO.testSumId = testSumId;
-reviewAndSubmitTestSummaryDTO.evalStatusCode = 'PENDING'; 
+reviewAndSubmitTestSummaryDTO.evalStatusCode = 'PENDING';
 
 const payload = new TestSummaryImportDTO();
 payload.testTypeCode = 'code';
@@ -132,6 +137,25 @@ const mockMap = () => ({
   one: jest.fn().mockResolvedValue(testSummaryDto),
   many: jest.fn().mockResolvedValue([testSummaryDto]),
 });
+
+const entityManagerMock = {
+  connection: {
+    createQueryRunner: jest.fn().mockImplementation(() => queryRunnerMock),
+  },
+  delete: jest.fn(),
+  query: jest.fn().mockResolvedValue([]),
+  transaction: jest.fn(
+    async passedFunction => await passedFunction(entityManagerMock),
+  ),
+};
+const queryRunnerMock = {
+  manager: entityManagerMock,
+  commitTransaction: jest.fn(),
+  release: jest.fn(),
+  rollbackTransaction: jest.fn(),
+  startTransaction: jest.fn(),
+};
+entityManagerMock.queryRunner = queryRunnerMock;
 
 const mockAppECorrelationTestSummaryService = () => ({
   export: jest.fn().mockResolvedValue([new AppECorrelationTestSummary()]),
@@ -229,7 +253,6 @@ describe('TestSummaryWorkspaceService', () => {
   let service: TestSummaryWorkspaceService;
   let repository: TestSummaryWorkspaceRepository;
   let locationRepository: MonitorLocationRepository;
-  let monitorSystemRepository: MonitorSystemRepository;
   let monitorSystemWorkspaceRepository: MonitorSystemWorkspaceRepository;
   let manager: EntityManager;
 
@@ -238,6 +261,10 @@ describe('TestSummaryWorkspaceService', () => {
       imports: [LoggerModule],
       providers: [
         TestSummaryWorkspaceService,
+        {
+          provide: EntityManager,
+          useFactory: () => entityManagerMock,
+        },
         {
           provide: TestSummaryReviewAndSubmitService,
           useFactory: mockTestSummaryReviewAndSubmitService,
@@ -370,10 +397,6 @@ describe('TestSummaryWorkspaceService', () => {
             findOneBy: jest.fn(),
           }),
         },
-        {
-          provide: EntityManager,
-          useValue: { transaction: jest.fn() },
-        },
       ],
     }).compile();
 
@@ -428,7 +451,7 @@ describe('TestSummaryWorkspaceService', () => {
   });
 
   describe('createTestSummary', () => {
-    it('should call the createTestSummary and create test summariy', async () => {
+    it('should call the createTestSummary and create test summary', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
 
       jest
@@ -470,7 +493,7 @@ describe('TestSummaryWorkspaceService', () => {
   });
 
   describe('updateTestSummary', () => {
-    it('should call the updateTestSummary and update test summariy', async () => {
+    it('should call the updateTestSummary and update test summary', async () => {
       jest.spyOn(service, 'lookupValues').mockResolvedValue([]);
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(testSummary);
 
@@ -484,7 +507,7 @@ describe('TestSummaryWorkspaceService', () => {
       expect(result).toEqual(testSummaryDto);
     });
 
-    it('should call updateTestSummary and throw error while test summariy not found', async () => {
+    it('should call updateTestSummary and throw error while test summary not found', async () => {
       jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
 
       let errored = false;
@@ -505,45 +528,41 @@ describe('TestSummaryWorkspaceService', () => {
       officialQaSuppData.id = 'supp-data-id-1';
       const officialQaSuppAttribute = new QASuppAttribute();
 
-      (manager.transaction as jest.Mock).mockImplementation(async (callback) => {
-        const mockTransactionalManager = {
-          delete: jest.fn(),
-          getRepository: jest.fn().mockImplementation((entity) => {
-            if (entity === QASuppData) {
-              return {
-                findBy: jest.fn().mockResolvedValue([officialQaSuppData]),
-              };
-            }
-            if (entity === QASuppAttribute) {
-              return {
-                findBy: jest.fn().mockResolvedValue([officialQaSuppAttribute]),
-              };
-            }
-            return {};
-          }),
-        };
-        await callback(mockTransactionalManager);
+      manager.getRepository = jest.fn().mockImplementation((entity) => {
+        if (entity === QASuppData) {
+          return {
+            findBy: jest.fn().mockResolvedValue([officialQaSuppData]),
+          };
+        }
+        if (entity === QASuppAttribute) {
+          return {
+            findBy: jest.fn().mockResolvedValue([officialQaSuppAttribute]),
+          };
+        }
+        return {};
       });
 
       await service.deleteTestSummary(testSumId);
 
-      expect(manager.transaction).toHaveBeenCalled();
+      expect(queryRunnerMock.startTransaction).toHaveBeenCalled();
     });
 
     it('should throw an InternalServerErrorException if the transaction fails', async () => {
-      (manager.transaction as jest.Mock).mockImplementation(async () => {
+      const spy = jest.spyOn(manager, 'delete').mockImplementation(async () => {
         throw new Error('Database Error');
       });
 
       await expect(service.deleteTestSummary(testSumId)).rejects.toThrow(
         InternalServerErrorException,
       );
+
+      spy.mockRestore();
     });
   });
 
   describe('resetToNeedsEvaluation', () => {
     it('should update eval status', async () => {
-      const result = await service.resetToNeedsEvaluation(testSumId, userId);
+      const result = await service.resetToNeedsEvaluation(testSumId, userId, false, undefined);
 
       expect(result).toEqual(undefined);
       expect(repository.findOneBy).toHaveBeenCalled();
@@ -588,7 +607,7 @@ describe('TestSummaryWorkspaceService', () => {
       const returnedSummary = testSummaryDto;
       returnedSummary.id = testSumId;
 
-      const creste = jest
+      const create = jest
         .spyOn(service, 'createTestSummary')
         .mockResolvedValue(returnedSummary);
 
@@ -604,9 +623,9 @@ describe('TestSummaryWorkspaceService', () => {
         historicalrecordId,
       );
 
-      expect(creste).toHaveBeenCalled();
+      expect(create).toHaveBeenCalled();
       expect(result).toEqual(null);
-      expect(creste).toHaveBeenCalled();
+      expect(create).toHaveBeenCalled();
     });
   });
 });

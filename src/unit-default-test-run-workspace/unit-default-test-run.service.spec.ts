@@ -1,11 +1,13 @@
 import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
 import {
   UnitDefaultTestRunBaseDTO,
+  UnitDefaultTestRunImportDTO,
   UnitDefaultTestRunRecordDTO,
 } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRun as UnitDefaultTestRunOfficial } from '../entities//unit-default-test-run.entity';
@@ -47,6 +49,10 @@ const mockOfficialRepository = () => ({
   findOneBy: jest.fn().mockResolvedValue(new UnitDefaultTestRunOfficial()),
 });
 
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
+
 describe('UnitDefaultTestRunWorkspaceService', () => {
   let service: UnitDefaultTestRunWorkspaceService;
   let repository: UnitDefaultTestRunWorkspaceRepository;
@@ -72,6 +78,10 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
         {
           provide: UnitDefaultTestRunMap,
           useFactory: mockMap,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -212,6 +222,40 @@ describe('UnitDefaultTestRunWorkspaceService', () => {
 
       const result = await service.export([unitDefaultTestSumId]);
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('import', () => {
+    it('Should import Unit Default Test Run', async () => {
+      jest
+        .spyOn(service, 'createUnitDefaultTestRun')
+        .mockResolvedValue(dto);
+
+      const result = await service.import(
+        testSumId,
+        unitDefaultTestSumId,
+        new UnitDefaultTestRunImportDTO(),
+        userId,
+        false,
+        mockEntityManager,
+      );
+      expect(result).toEqual(null);
+    });
+
+    it('Should import Unit Default Test Run from Historical Record', async () => {
+      jest
+        .spyOn(service, 'createUnitDefaultTestRun')
+        .mockResolvedValue(dto);
+
+      const result = await service.import(
+        testSumId,
+        unitDefaultTestSumId,
+        new UnitDefaultTestRunImportDTO(),
+        userId,
+        true,
+        mockEntityManager,
+      );
+      expect(result).toEqual(null);
     });
   });
 });

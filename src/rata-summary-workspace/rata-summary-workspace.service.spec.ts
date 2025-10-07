@@ -1,6 +1,7 @@
 import { HttpStatus } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -87,6 +88,10 @@ const mockOfficialRepository = () => ({
   findOneBy: jest.fn(),
 });
 
+const mockEntityManager = {
+  transaction: jest.fn(),
+} as any;
+
 describe('RataSummaryWorkspaceService', () => {
   let service: RataSummaryWorkspaceService;
   let repository: RataSummaryWorkspaceRepository;
@@ -121,6 +126,10 @@ describe('RataSummaryWorkspaceService', () => {
         {
           provide: RataSummaryRepository,
           useFactory: mockOfficialRepository,
+        },
+        {
+          provide: EntityManager,
+          useValue: mockEntityManager,
         },
       ],
     }).compile();
@@ -235,6 +244,8 @@ describe('RataSummaryWorkspaceService', () => {
         rataId,
         importPayload,
         userId,
+        false,
+        mockEntityManager,
       );
       expect(result).toEqual(null);
     });
@@ -250,6 +261,7 @@ describe('RataSummaryWorkspaceService', () => {
         importPayload,
         userId,
         true,
+        mockEntityManager,
       );
       expect(result).toEqual(null);
     });
