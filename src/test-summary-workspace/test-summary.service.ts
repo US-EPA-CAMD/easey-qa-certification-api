@@ -842,13 +842,13 @@ export class TestSummaryWorkspaceService {
     }
 
     try {
-      // Delete corresponding camdecmpswks.test_summary record
-      await transactionalEntityManager.delete(TestSummary, { id: testSumId });
-
       // First, perform the updates (reset needs eval flag, etc) for those records
       // that may have been collaterally affected by this change.
       // This must be done BEFORE deletion so the procedures can access the test data.
       await this.updateCollaterallyAffectedRecords(testSumId, transactionalEntityManager);
+
+      // Delete corresponding camdecmpswks.test_summary record
+      await transactionalEntityManager.delete(TestSummary, { id: testSumId });
 
       // Delete corresponding camdecmpswks.qa_supp_data record
       await this.qaSuppDataWorkspaceService.deleteByTestSumId(
