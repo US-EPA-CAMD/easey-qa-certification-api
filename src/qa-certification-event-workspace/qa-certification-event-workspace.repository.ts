@@ -17,7 +17,7 @@ export class QACertificationEventWorkspaceRepository extends Repository<
   }
 
   private buildBaseQuery(): SelectQueryBuilder<QACertificationEvent> {
-    const query = this.createQueryBuilder('qce');
+    const query:SelectQueryBuilder<any> = this.createQueryBuilder('qce');
     return addJoins(query) as SelectQueryBuilder<QACertificationEvent>;
   }
 
@@ -67,7 +67,7 @@ export class QACertificationEventWorkspaceRepository extends Repository<
       stacksWhere = ` OR (${stacksWhere})`;
     }
 
-    let query = this.buildBaseQuery().where(`(${unitsWhere}${stacksWhere})`, {
+    let query:SelectQueryBuilder<any> = this.buildBaseQuery().where(`(${unitsWhere}${stacksWhere})`, {
       facilityId,
       unitIds,
       stackPipeIds,
