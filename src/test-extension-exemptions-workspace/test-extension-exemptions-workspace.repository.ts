@@ -17,7 +17,7 @@ export class TestExtensionExemptionsWorkspaceRepository extends Repository<
   }
 
   private buildBaseQuery(): SelectQueryBuilder<TestExtensionExemption> {
-    const query = this.createQueryBuilder('tee');
+    const query:SelectQueryBuilder<any> = this.createQueryBuilder('tee');
     return addJoins(query) as SelectQueryBuilder<TestExtensionExemption>;
   }
 
@@ -79,7 +79,7 @@ export class TestExtensionExemptionsWorkspaceRepository extends Repository<
       stacksWhere = ` OR (${stacksWhere})`;
     }
 
-    let query = this.buildBaseQuery().where(`(${unitsWhere}${stacksWhere})`, {
+    let query:SelectQueryBuilder<any> = this.buildBaseQuery().where(`(${unitsWhere}${stacksWhere})`, {
       facilityId,
       unitIds,
       stackPipeIds,
