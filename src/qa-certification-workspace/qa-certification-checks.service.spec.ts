@@ -184,12 +184,15 @@ describe('QA Certification Check Service Test', () => {
   describe('QA Certification Checks', () => {
     const payload = new QACertificationImportDTO();
     payload.orisCode = 1;
+    payload.version = '1.0';
 
     const testSumary = new TestSummaryImportDTO();
     testSumary.unitId = '51';
     testSumary.componentId = 'AA0';
     testSumary.stackPipeId = null;
     testSumary.testTypeCode = TestTypeCodes.LINE;
+    testSumary.monitoringSystemId = '1';
+    testSumary.testNumber = '1';
 
     const linSum = new LinearitySummaryImportDTO();
     const linInj = new LinearityInjectionImportDTO();
@@ -201,12 +204,16 @@ describe('QA Certification Check Service Test', () => {
     testExtExem.unitId = '51';
     testExtExem.componentId = 'AA0';
     testExtExem.stackPipeId = null;
+    testExtExem.year = 2022;
+    testExtExem.quarter = 1;
     payload.testExtensionExemptionData = [testExtExem];
 
     const qaCertEvent = new QACertificationEventImportDTO();
     qaCertEvent.unitId = '51';
     qaCertEvent.componentId = 'AA0';
     qaCertEvent.stackPipeId = null;
+    qaCertEvent.certificationEventCode = 'QAC';
+    qaCertEvent.certificationEventDate = new Date('2022-01-01');
     payload.certificationEventData = [qaCertEvent];
 
     const protocolGas = new ProtocolGasImportDTO();
@@ -229,9 +236,167 @@ describe('QA Certification Check Service Test', () => {
       } catch (err) {
         expect(err).toBeInstanceOf(BadRequestException);
         expect(err.response.message).toEqual([
-          'There are no test summary, certifications events, or extension/exmeption records present in the file to be imported',
+          'There are no test summary, certifications events, or extension/exception records present in the file to be imported',
         ]);
       }
+    });
+
+    // Location lookup with anyOf schema compliance
+    describe('Location Lookup - anyOf Schema Compliance', () => {
+      it('should find location with unitId only in testSummaryData', async () => {
+        const locations = [
+          {
+            unitId: '51',
+            locationId: '1873',
+            stackPipeId: null,
+            systemIDs: [],
+            componentIDs: ['A05'],
+          },
+        ];
+
+        const payloadWithUnitOnly = {
+          ...payload,
+          testSummaryData: [
+            {
+              ...payload.testSummaryData[0],
+              unitId: '51',
+              stackPipeId: null,
+            },
+          ],
+          certificationEventData: [],
+          testExtensionExemptionData: [],
+        };
+
+        const result = await service.runChecks(payloadWithUnitOnly);
+        expect(result).toEqual([locations, QASuppDatas]);
+      });
+
+      it('should find location with stackPipeId only in testSummaryData', async () => {
+        const locations = [
+          {
+            unitId: null,
+            locationId: '1874',
+            stackPipeId: 'CS1',
+            systemIDs: [],
+            componentIDs: ['A05'],
+          },
+        ];
+
+        // Mock the location check service to return the stack-only location
+        jest.spyOn(service['locationChecksService'], 'runChecks').mockResolvedValue([locations, []]);
+
+        const payloadWithStackOnly = {
+          ...payload,
+          testSummaryData: [
+            {
+              ...payload.testSummaryData[0],
+              unitId: null,
+              stackPipeId: 'CS1',
+            },
+          ],
+          certificationEventData: [],
+          testExtensionExemptionData: [],
+        };
+
+        const result = await service.runChecks(payloadWithStackOnly);
+        expect(result).toBeDefined();
+      });
+
+      it('should throw error when no location found for testSummaryData', async () => {
+        const payloadNoMatch = {
+          ...payload,
+          testSummaryData: [
+            {
+              ...payload.testSummaryData[0],
+              unitId: 'NOMATCH',
+              stackPipeId: null,
+            },
+          ],
+          certificationEventData: [],
+          testExtensionExemptionData: [],
+        };
+
+        try {
+          await service.runChecks(payloadNoMatch);
+        } catch (err) {
+          expect(err).toBeInstanceOf(BadRequestException);
+          expect(err.message).toContain('Location not found for unitId: NOMATCH');
+        }
+      });
+
+      it('should find location with unitId only in testExtensionExemptionData', async () => {
+        const payloadWithUnitOnly= {
+          ...payload,
+          testSummaryData: [],
+          certificationEventData: [],
+          testExtensionExemptionData: [],
+        } as QACertificationImportDTO;
+
+        const result = await service.runChecks(payloadWithUnitOnly);
+        expect(result).toEqual([returnLocationRunChecks, QASuppDatas]);
+      });
+
+      it('should throw error when no location found for testExtensionExemptionData', async () => {
+        const teeNoMatch = new TestExtensionExemptionImportDTO();
+        teeNoMatch.unitId = 'NOMATCH';
+        teeNoMatch.stackPipeId = null;
+        teeNoMatch.year = 2022;
+        teeNoMatch.quarter = 1;
+
+        const payloadNoMatch: QACertificationImportDTO  = {
+          ...payload,
+          testSummaryData: [],
+          certificationEventData: [],
+          testExtensionExemptionData: [teeNoMatch],
+          } as QACertificationImportDTO;
+
+        try {
+          await service.runChecks(payloadNoMatch);
+        } catch (err) {
+          expect(err).toBeInstanceOf(BadRequestException);
+          expect(err.message).toContain('Location not found for unitId: NOMATCH');
+        }
+      });
+
+      it('should find location with unitId only in certificationEventData', async () => {
+       const qaCertEventUnit = new QACertificationEventImportDTO();
+        qaCertEventUnit.unitId = '51';
+        qaCertEventUnit.stackPipeId = null;
+        qaCertEventUnit.certificationEventCode = 'QAC';
+        qaCertEventUnit.certificationEventDate = new Date('2022-01-01');
+
+        const payloadWithUnitOnly: QACertificationImportDTO = {
+          ...payload,
+          testSummaryData: [],
+          certificationEventData: [qaCertEventUnit],
+          testExtensionExemptionData: [],
+        } as QACertificationImportDTO;
+
+        const result = await service.runChecks(payloadWithUnitOnly);
+        expect(result).toEqual([returnLocationRunChecks, QASuppDatas]);
+      });
+
+      it('should throw error when no location found for certificationEventData', async () => {
+        const qaCertEventNoMatch = new QACertificationEventImportDTO();
+        qaCertEventNoMatch.unitId = 'NOMATCH';
+        qaCertEventNoMatch.stackPipeId = null;
+        qaCertEventNoMatch.certificationEventCode = 'QAC';
+        qaCertEventNoMatch.certificationEventDate = new Date('2022-01-01');
+
+        const payloadNoMatch: QACertificationImportDTO = {
+          ...payload,
+          testSummaryData: [],
+          certificationEventData: [qaCertEventNoMatch],
+          testExtensionExemptionData: [],
+        } as QACertificationImportDTO;
+
+        try {
+          await service.runChecks(payloadNoMatch);
+        } catch (err) {
+          expect(err).toBeInstanceOf(BadRequestException);
+          expect(err.message).toContain('Location not found for unitId: NOMATCH');
+        }
+      });
     });
   });
 });
