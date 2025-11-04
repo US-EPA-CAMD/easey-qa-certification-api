@@ -3,10 +3,8 @@ import { QACertificationEvent as WorkspaceQACertificationEvent } from '../entiti
 import { Brackets, SelectQueryBuilder } from 'typeorm';
 
 export const addJoins = (
-  query: SelectQueryBuilder<
-    QACertificationEvent | WorkspaceQACertificationEvent
-  >,
-): SelectQueryBuilder<QACertificationEvent | WorkspaceQACertificationEvent> => {
+  query: SelectQueryBuilder<QACertificationEvent> | SelectQueryBuilder<WorkspaceQACertificationEvent>
+): SelectQueryBuilder<QACertificationEvent> | SelectQueryBuilder<WorkspaceQACertificationEvent> => {
   return query
     .innerJoinAndSelect('qce.location', 'ml')
     .leftJoinAndSelect('qce.system', 'ms')
@@ -20,7 +18,7 @@ export const addJoins = (
 export const addQACertEventIdWhere = (
   query: any,
   qaCertificationEventIds: string[],
-): SelectQueryBuilder<QACertificationEvent | WorkspaceQACertificationEvent> => {
+): SelectQueryBuilder<QACertificationEvent> | SelectQueryBuilder<WorkspaceQACertificationEvent> => {
   if (qaCertificationEventIds) {
     query.andWhere('qce.id IN (:...qaCertificationEventIds)', {
       qaCertificationEventIds,
@@ -30,12 +28,10 @@ export const addQACertEventIdWhere = (
 };
 
 export const addBeginAndEndDateWhere = (
-  query: SelectQueryBuilder<
-    QACertificationEvent | WorkspaceQACertificationEvent
-  >,
+  query: SelectQueryBuilder<QACertificationEvent> | SelectQueryBuilder<WorkspaceQACertificationEvent>,
   beginDate: Date,
   endDate: Date,
-): SelectQueryBuilder<QACertificationEvent | WorkspaceQACertificationEvent> => {
+): SelectQueryBuilder<QACertificationEvent> | SelectQueryBuilder<WorkspaceQACertificationEvent> => {
   if (beginDate && endDate) {
     query.andWhere(
       new Brackets(qb1 => {
