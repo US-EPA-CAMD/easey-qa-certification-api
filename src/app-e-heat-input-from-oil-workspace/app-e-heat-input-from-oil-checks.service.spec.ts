@@ -11,6 +11,7 @@ import {
   AppEHeatInputFromOilImportDTO,
 } from '../dto/app-e-heat-input-from-oil.dto';
 import { AppEHeatInputFromOil } from '../entities/workspace/app-e-heat-input-from-oil.entity';
+import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 
 const MOCK_ERROR_MSG = 'ERROR MSG';
 const mockAppETestRun: AppECorrelationTestRun = new AppECorrelationTestRun();
@@ -31,6 +32,10 @@ const mockAppETestRunRepo = () => ({
   findOneWithAncestors: jest.fn().mockResolvedValue(mockAppETestRun),
 });
 
+const mockMonitorSystemRepository = () => ({
+  findOne: jest.fn(),
+});
+
 describe('Appendix E Heat Input From Oil Checks Service Test', () => {
   let service: AppEHeatInputFromOilChecksService;
   let appEHeatInputFromOilRepository;
@@ -48,6 +53,10 @@ describe('Appendix E Heat Input From Oil Checks Service Test', () => {
           provide: AppEHeatInputFromOilWorkspaceRepository,
           useFactory: mockRepo,
         },
+        {
+          provide: MonitorSystemRepository,
+          useFactory: mockMonitorSystemRepository,
+        }
       ],
     }).compile();
 
@@ -87,8 +96,12 @@ describe('Appendix E Heat Input From Oil Checks Service Test', () => {
     let importDTO2 = new AppEHeatInputFromOilImportDTO();
     importDTO2.monitoringSystemId = 'ID2';
 
+    const locationId = 'LOC1';
+    const testTypeCode = 'APPE';
+    const testNumber = '001';
+
     it('Should pass when no duplicates in import payload', async () => {
-      const result = await service.runImportChecks([importDTO1, importDTO2]);
+      const result = await service.runImportChecks([importDTO1, importDTO2], locationId, testTypeCode, testNumber);
       expect(result).toEqual([]); // No error messages
     });
 
@@ -96,7 +109,7 @@ describe('Appendix E Heat Input From Oil Checks Service Test', () => {
       importDTO2.monitoringSystemId = importDTO1.monitoringSystemId;
       let result;
       try {
-        result = await service.runImportChecks([importDTO1, importDTO2]);
+        result = await service.runImportChecks([importDTO1, importDTO2], locationId, testTypeCode, testNumber);
       } catch (err) {
         result = err.response.message;
       }
