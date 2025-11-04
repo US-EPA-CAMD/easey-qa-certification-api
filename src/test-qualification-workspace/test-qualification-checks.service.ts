@@ -13,6 +13,7 @@ import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { MonitorSystemRepository } from '../monitor-system/monitor-system.repository';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 import { TestQualificationWorkspaceRepository } from './test-qualification-workspace.repository';
+import { Not } from 'typeorm';
 
 const moment = require('moment');
 
@@ -25,7 +26,7 @@ export class TestQualificationChecksService {
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
     private readonly monitorSystemRepository: MonitorSystemRepository,
     private readonly testQualRepository: TestQualificationWorkspaceRepository,
-  ) {}
+  ) { }
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
@@ -46,6 +47,7 @@ export class TestQualificationChecksService {
     rata: RataImportDTO,
     isImport: boolean = false,
     isUpdate: boolean = false,
+    currentTestQualId?: string,
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
@@ -100,16 +102,16 @@ export class TestQualificationChecksService {
         errorList.push(...rata91011errors);
       }
 
-      if (!isUpdate) {
-        error = await this.rata121DuplicateCheck(
-          testQualification,
-          testQualifications,
-          testSumId,
-          isImport,
-        );
-        if (error) {
-          errorList.push(error);
-        }
+      error = await this.rata121DuplicateCheck(
+        testQualification,
+        testQualifications,
+        testSumId,
+        isImport,
+        isUpdate,
+        currentTestQualId,
+      );
+      if (error) {
+        errorList.push(error);
       }
     }
 
@@ -257,6 +259,8 @@ export class TestQualificationChecksService {
     testQualifications?: TestQualificationImportDTO[],
     testSumId?: string,
     isImport: boolean = false,
+    isUpdate: boolean = false,
+    currentTestQualId?: string
   ) {
     let error = null;
     let testQuals = [];
@@ -273,10 +277,21 @@ export class TestQualificationChecksService {
         });
       }
     } else {
-      testQuals = await this.testQualRepository.findBy({
-        testSumId: testSumId,
-        testClaimCode: testQualification.testClaimCode,
-      });
+
+      if (isUpdate && currentTestQualId) {
+        testQuals = await this.testQualRepository.find({
+          where: {
+            testSumId: testSumId,
+            testClaimCode: testQualification.testClaimCode,
+            id: Not(currentTestQualId),
+          },
+        });
+      } else {
+        testQuals = await this.testQualRepository.findBy({
+          testSumId: testSumId,
+          testClaimCode: testQualification.testClaimCode,
+        });
+      }
 
       if (testQuals.length > 0) {
         error = this.getErrorMessage('RATA-121-A', {
