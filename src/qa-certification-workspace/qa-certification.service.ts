@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EntityManager } from 'typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -19,6 +20,7 @@ import { EaseyContentService } from '../qa-certification-easey-content/easey-con
 @Injectable()
 export class QACertificationWorkspaceService {
   constructor(
+    private readonly entityManager: EntityManager,
     private readonly logger: Logger,
     private readonly testSummaryService: TestSummaryWorkspaceService,
     private readonly testExtensionExemptionService: TestExtensionExemptionsWorkspaceService,
@@ -108,6 +110,7 @@ export class QACertificationWorkspaceService {
     userId: string,
     qaSupprecords: QASuppData[],
   ): Promise<any> {
+    return await this.entityManager.transaction(async (trx: EntityManager) => {
     this.logger.log(
       `Importing QA Certification data for Facility Id/Oris Code [${payload.orisCode}]`,
     );
@@ -128,6 +131,7 @@ export class QACertificationWorkspaceService {
             summary,
             userId,
             qaSupprecords[idx] ? qaSupprecords[idx].testSumId : null,
+            trx,
           );
 
           resolve(results);
@@ -150,6 +154,7 @@ export class QACertificationWorkspaceService {
               locationId,
               qaTestExtensionExemptionId,
               userId,
+                trx,
             );
             resolve(results);
           }),
@@ -170,6 +175,7 @@ export class QACertificationWorkspaceService {
             locationId,
             qaCertEvent,
             userId,
+              trx,
           );
 
           resolve(results);
@@ -177,10 +183,21 @@ export class QACertificationWorkspaceService {
       );
     });
 
-    await Promise.all(promises);
+      const results = await Promise.allSettled(promises);
+
+      // Check for any rejected promises
+      const errors = results
+        .filter(result => result.status === 'rejected')
+        .map(result => (result as PromiseRejectedResult).reason);
+
+      // If any errors occurred, throw the first one to trigger transaction rollback
+      if (errors.length > 0) {
+        throw errors[0];
+      }
 
     return {
       message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${payload.orisCode}]`,
     };
+    });
   }
 }

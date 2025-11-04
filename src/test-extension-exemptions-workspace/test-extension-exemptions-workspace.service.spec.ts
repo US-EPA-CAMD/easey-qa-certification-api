@@ -1,5 +1,6 @@
 import { InternalServerErrorException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { EntityManager } from 'typeorm';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
 
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
@@ -55,6 +56,8 @@ const entity = new TestExtensionExemption();
 const dto = new TestExtensionExemptionRecordDTO();
 const testExtensionExemptionDTO = new TestExtensionExemptionDTO();
 
+const mockEntityManager = () => ({});
+
 const mockRepository = () => ({
   getTestExtensionExemptionById: jest.fn().mockResolvedValue(entity),
   getTestExtensionExemptionsByLocationId: jest.fn().mockResolvedValue([entity]),
@@ -95,6 +98,10 @@ describe('TestExtensionExemptionsWorkspaceService', () => {
       imports: [LoggerModule],
       providers: [
         TestExtensionExemptionsWorkspaceService,
+        {
+          provide: EntityManager,
+          useFactory: mockEntityManager,
+        },
         {
           provide: TestExtensionExemptionMap,
           useFactory: mockMap,
