@@ -50,7 +50,7 @@ export class QACertificationChecksService {
     private readonly unitDefaultTestRunChecksService: UnitDefaultTestRunChecksService,
     private readonly protocolGasChecksService: ProtocolGasChecksService,
     private readonly qaSuppDataRepository: QASuppDataWorkspaceRepository,
-  ) {}
+  ) { }
 
   private async extractErrors(
     promises: Promise<string[]>[],
@@ -284,6 +284,7 @@ export class QACertificationChecksService {
                 summary.rataData?.length > 0 ? summary.rataData[0] : null,
                 true,
                 false,
+                null,
               );
 
               resolve(results);
@@ -356,6 +357,9 @@ export class QACertificationChecksService {
                   new Promise((resolve, _reject) => {
                     const results = this.appEGasChecksService.runImportChecks(
                       appETestRun.appendixEHeatInputFromGasData,
+                      locationId,
+                      summary.testTypeCode,
+                      summary.testNumber
                     );
                     resolve(results);
                   }),
@@ -365,6 +369,9 @@ export class QACertificationChecksService {
                   new Promise((resolve, _reject) => {
                     const results = this.appEOilChecksService.runImportChecks(
                       appETestRun.appendixEHeatInputFromOilData,
+                      locationId,
+                      summary.testTypeCode,
+                      summary.testNumber
                     );
                     resolve(results);
                   }),
