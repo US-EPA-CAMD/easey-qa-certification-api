@@ -132,6 +132,7 @@ export class TestQualificationWorkspaceController {
       null,
       false,
       false,
+      null,
     );
     return this.service.createTestQualification(
       testSumId,
@@ -174,6 +175,7 @@ export class TestQualificationWorkspaceController {
       null,
       false,
       true,
+      id,
     );
     return this.service.updateTestQualification(
       testSumId,

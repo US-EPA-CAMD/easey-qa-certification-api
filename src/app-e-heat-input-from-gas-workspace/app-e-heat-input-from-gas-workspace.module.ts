@@ -12,6 +12,7 @@ import { AppEHeatInputFromGasChecksService } from './app-e-heat-input-from-gas-c
 import { AppEHeatInputFromGasWorkspaceController } from './app-e-heat-input-from-gas-workspace.controller';
 import { AppEHeatInputFromGasWorkspaceRepository } from './app-e-heat-input-from-gas-workspace.repository';
 import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-gas-workspace.service';
+import { MonitorSystemModule } from '../monitor-system/monitor-system.module';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-ga
     forwardRef(() => AppECorrelationTestSummaryWorkspaceModule),
     forwardRef(() => AppECorrelationTestRunWorkspaceModule),
     forwardRef(() => AppEHeatInputFromGasModule),
-
+    MonitorSystemModule,
     HttpModule,
   ],
   controllers: [AppEHeatInputFromGasWorkspaceController],
@@ -39,4 +40,4 @@ import { AppEHeatInputFromGasWorkspaceService } from './app-e-heat-input-from-ga
     AppEHeatInputFromGasChecksService,
   ],
 })
-export class AppEHeatInputFromGasWorkspaceModule {}
+export class AppEHeatInputFromGasWorkspaceModule { }
