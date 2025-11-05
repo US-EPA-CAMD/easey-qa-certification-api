@@ -1,22 +1,23 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
+import { In, DataSource } from 'typeorm';
 
 import { CalibrationInjectionDTO } from '../dto/calibration-injection.dto';
 import { CalibrationInjectionMap } from '../maps/calibration-injection.map';
 import { CalibrationInjectionRepository } from './calibration-injection.repository';
-
+import { useSlaveRepository } from '../utilities/use-slave-repository';
 @Injectable()
 export class CalibrationInjectionService {
   constructor(
     private readonly map: CalibrationInjectionMap,
     private readonly repository: CalibrationInjectionRepository,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getCalibrationInjections(
     testSumId: string,
   ): Promise<CalibrationInjectionDTO[]> {
-    const records = await this.repository.find({ where: { testSumId } });
+    const records = await useSlaveRepository(this.dataSource, CalibrationInjectionRepository, async (repository) => repository.find({ where: { testSumId } }));
 
     return this.map.many(records);
   }
@@ -25,10 +26,10 @@ export class CalibrationInjectionService {
     id: string,
     testSumId: string,
   ): Promise<CalibrationInjectionDTO> {
-    const result = await this.repository.findOneBy({
+    const result = await useSlaveRepository(this.dataSource, CalibrationInjectionRepository, async (repository) => repository.findOneBy({
       id,
       testSumId,
-    });
+    }));
 
     if (!result) {
       throw new EaseyException(

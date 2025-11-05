@@ -1,22 +1,23 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
+import { In, DataSource } from 'typeorm';
 
 import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
 import { FuelFlowToLoadBaselineMap } from '../maps/fuel-flow-to-load-baseline.map';
 import { FuelFlowToLoadBaselineRepository } from './fuel-flow-to-load-baseline.repository';
-
+import { useSlaveRepository } from '../utilities/use-slave-repository';
 @Injectable()
 export class FuelFlowToLoadBaselineService {
   constructor(
     private readonly repository: FuelFlowToLoadBaselineRepository,
     private readonly map: FuelFlowToLoadBaselineMap,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getFuelFlowToLoadBaselines(
     testSumId: string,
   ): Promise<FuelFlowToLoadBaselineDTO[]> {
-    const records = await this.repository.find({ where: { testSumId } });
+    const records = await useSlaveRepository(this.dataSource, FuelFlowToLoadBaselineRepository, async (repository) => repository.find({ where: { testSumId } }));
 
     return this.map.many(records);
   }
@@ -25,10 +26,10 @@ export class FuelFlowToLoadBaselineService {
     id: string,
     testSumId: string,
   ): Promise<FuelFlowToLoadBaselineDTO> {
-    const result = await this.repository.findOneBy({
+    const result = await useSlaveRepository(this.dataSource, FuelFlowToLoadBaselineRepository, async (repository) => repository.findOneBy({
       id,
       testSumId,
-    });
+    }));
 
     if (!result) {
       throw new EaseyException(

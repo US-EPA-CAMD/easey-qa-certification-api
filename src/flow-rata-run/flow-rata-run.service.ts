@@ -6,23 +6,25 @@ import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
 import { FlowRataRunMap } from '../maps/flow-rata-run.map';
 import { RataTraverseService } from '../rata-traverse/rata-traverse.service';
 import { FlowRataRunRepository } from './flow-rata-run.repository';
-
+import { useSlaveRepository } from 'src/utilities/use-slave-repository';
+import { DataSource } from 'typeorm';
 @Injectable()
 export class FlowRataRunService {
   constructor(
     private readonly repository: FlowRataRunRepository,
     private readonly map: FlowRataRunMap,
     private readonly rataTravarseService: RataTraverseService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getFlowRataRuns(rataRunId: string): Promise<FlowRataRunDTO[]> {
-    const records = await this.repository.find({ where: { rataRunId } });
+    const records = await useSlaveRepository(this.dataSource, FlowRataRunRepository, async (repository) => repository.find({ where: { rataRunId } }));
 
     return this.map.many(records);
   }
 
   async getFlowRataRun(id: string): Promise<FlowRataRunDTO> {
-    const result = await this.repository.findOneBy({ id });
+    const result = await useSlaveRepository(this.dataSource, FlowRataRunRepository, async (repository) => repository.findOneBy({ id }));
 
     if (!result) {
       throw new EaseyException(

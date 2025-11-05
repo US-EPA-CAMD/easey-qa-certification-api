@@ -1,6 +1,6 @@
 import { forwardRef, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
+import { In, DataSource } from 'typeorm';
 
 import { AppEHeatInputFromGasService } from '../app-e-heat-input-from-gas/app-e-heat-input-from-gas.service';
 import { AppEHeatInputFromOilService } from '../app-e-heat-input-from-oil/app-e-heat-input-from-oil.service';
@@ -10,10 +10,11 @@ import {
 } from '../dto/app-e-correlation-test-run.dto';
 import { AppECorrelationTestRunMap } from '../maps/app-e-correlation-test-run.map';
 import { AppECorrelationTestRunRepository } from './app-e-correlation-test-run.repository';
-
+import { useSlaveRepository } from 'src/utilities/use-slave-repository';
 @Injectable()
 export class AppECorrelationTestRunService {
   constructor(
+    private readonly dataSource: DataSource,
     private readonly map: AppECorrelationTestRunMap,
     private readonly repository: AppECorrelationTestRunRepository,
     @Inject(forwardRef(() => AppEHeatInputFromGasService))
@@ -25,9 +26,9 @@ export class AppECorrelationTestRunService {
   async getAppECorrelationTestRuns(
     appECorrTestSumId: string,
   ): Promise<AppECorrelationTestRunBaseDTO[]> {
-    const records = await this.repository.find({
+    const records = await useSlaveRepository(this.dataSource, AppECorrelationTestRunRepository, async (repository) => repository.find({
       where: { appECorrTestSumId },
-    });
+    }));
 
     return this.map.many(records);
   }
@@ -35,7 +36,7 @@ export class AppECorrelationTestRunService {
   async getAppECorrelationTestRun(
     id: string,
   ): Promise<AppECorrelationTestRunBaseDTO> {
-    const result = await this.repository.findOneBy({ id });
+    const result = await useSlaveRepository(this.dataSource, AppECorrelationTestRunRepository, async (repository) => repository.findOneBy({ id }));
 
     if (!result) {
       throw new EaseyException(

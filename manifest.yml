@@ -13,6 +13,7 @@ applications:
       OPTIMIZE_MEMORY: true
       EASEY_DB_SERVICE: ((dbSvc))
       EASEY_QA_CERTIFICATION_API_HOST: ((host))
+      EASEY_QA_CERTIFICATION_API_REPLICA_HOST: ((replicaHost))
       EASEY_QA_CERTIFICATION_API_PORT: ((port))
       EASEY_QA_CERTIFICATION_API_PATH: ((path))
       EASEY_QA_CERTIFICATION_API_TITLE: ((title))

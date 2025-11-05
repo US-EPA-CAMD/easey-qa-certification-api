@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In } from 'typeorm';
+import { EntityManager, In, DataSource } from 'typeorm';
 
 import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
 import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
@@ -16,6 +16,7 @@ export class TeeReviewAndSubmitService {
     private readonly globalRepository: TeeReviewAndSubmitGlobalRepository,
 
     private readonly map: TeeReviewAndSubmitMap,
+    private readonly dataSource: DataSource
   ) {}
 
   returnManager(): any {
@@ -32,10 +33,12 @@ export class TeeReviewAndSubmitService {
     const filteredDates = [];
 
     let repository;
+    const queryRunner = this.dataSource.createQueryRunner('slave');
+    queryRunner.connect();
     if (isWorkspace) {
-      repository = withTransaction(this.workspaceRepository, trx);
+      repository = queryRunner.manager.getRepository(TeeReviewAndSubmitRepository);
     } else {
-      repository = withTransaction(this.globalRepository, trx);
+      repository = queryRunner.manager.getRepository(TeeReviewAndSubmitGlobalRepository);
     }
 
     let data: TeeReviewAndSubmitDTO[];
@@ -57,8 +60,8 @@ export class TeeReviewAndSubmitService {
       if (data.length > 0 && isWorkspace) {
         const testExtensionExemptionIdentifiers = data.map(d => d.testExtensionExemptionIdentifier);
 
-        const manager = trx || this.entityManager;
-        const severities = await manager.query(
+        const slaveQueryRunner = this.entityManager.connection.createQueryRunner("slave");
+        const severities = await slaveQueryRunner.query(
              `select t.test_extension_exemption_id, sc.severity_cd_description, sc.severity_cd from camdecmpswks.test_extension_exemption t
               JOIN camdecmpswks.check_session cs on cs.chk_session_id = t.chk_session_id
               JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
@@ -80,6 +83,9 @@ export class TeeReviewAndSubmitService {
       return data;
     } catch (e) {
       throw new EaseyException(e, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    finally {
+      await queryRunner.release();
     }
   }
 }

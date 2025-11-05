@@ -1,24 +1,24 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager, Repository, DataSource } from 'typeorm';
 
 import { AppEHeatInputFromGas } from '../entities/app-e-heat-input-from-gas.entity';
+import { useSlaveQueryRunner } from '../utilities/user-slave-query';
 
 @Injectable()
 export class AppEHeatInputFromGasRepository extends Repository<
   AppEHeatInputFromGas
 > {
-  constructor(entityManager: EntityManager) {
+  constructor(private readonly dataSource: DataSource, entityManager: EntityManager) {
     super(AppEHeatInputFromGas, entityManager);
   }
 
   async getAppEHeatInputFromGasById(id: string): Promise<AppEHeatInputFromGas> {
-    const query = this.createQueryBuilder('aehig')
-      .leftJoinAndSelect('aehig.system', 'ms')
-      .where('aehig.id = :id', {
-        id,
-      });
-
-    return query.getOne();
+     return useSlaveQueryRunner(this.dataSource, async (qr) => {
+        return qr.createQueryBuilder(AppEHeatInputFromGas, 'aehig')
+        .leftJoinAndSelect('aehig.system', 'ms')
+        .where('aehig.id = :id', {
+          id,
+         }).getOne()});
   }
 
   async getAppEHeatInputFromGasByTestRunIdAndMonSysID(
@@ -40,13 +40,13 @@ export class AppEHeatInputFromGasRepository extends Repository<
   async getAppEHeatInputFromGasByTestRunId(
     appECorrTestRunId: string,
   ): Promise<AppEHeatInputFromGas[]> {
-    const query = this.createQueryBuilder('aehig')
-      .leftJoinAndSelect('aehig.system', 'ms')
-      .where('aehig.appECorrTestRunId = :appECorrTestRunId', {
-        appECorrTestRunId,
-      });
-
-    return query.getMany();
+       return useSlaveQueryRunner(this.dataSource, async (qr) => {
+        return qr.createQueryBuilder(AppEHeatInputFromGas, 'aehig')
+        .leftJoinAndSelect('aehig.system', 'ms')
+        .where('aehig.appECorrTestRunId = :appECorrTestRunId', {
+          appECorrTestRunId,
+        }).getMany()
+       })
   }
 
   async getAppEHeatInputFromGasesByTestRunIds(

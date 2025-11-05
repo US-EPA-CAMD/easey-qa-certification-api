@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In } from 'typeorm';
+import { EntityManager, In, DataSource } from 'typeorm';
 
 import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
 import { ReportingPeriod } from '../entities/reporting-period.entity';
@@ -19,6 +19,7 @@ export class TestSummaryReviewAndSubmitService {
     private readonly globalRepository: TestSummaryReviewAndSubmitGlobalRepository,
 
     private readonly map: ReviewAndSubmitTestSummaryMap,
+    private readonly dataSource:DataSource
   ) {}
 
   returnManager(): any {
@@ -35,10 +36,12 @@ export class TestSummaryReviewAndSubmitService {
     const filteredDates = [];
 
     let repository;
+    const queryRunner = this.dataSource.createQueryRunner('slave');
+    queryRunner.connect();
     if (isWorkspace) {
-      repository = withTransaction(this.workspaceRepository, trx);
+      repository = queryRunner.manager.getRepository(TestSummaryReviewAndSubmitRepository);
     } else {
-      repository = withTransaction(this.globalRepository, trx);
+      repository = queryRunner.manager.getRepository(TestSummaryReviewAndSubmitGlobalRepository);
     }
 
     let data: ReviewAndSubmitTestSummaryDTO[];
@@ -53,14 +56,13 @@ export class TestSummaryReviewAndSubmitService {
         );
       }
 
-      const manager = trx || this.entityManager;
       let quarterList;
       if (quarters && quarters.length > 0) {
-        quarterList = await manager.find(ReportingPeriod, {
+        quarterList = await queryRunner.manager.find(ReportingPeriod, {
           where: { periodAbbreviation: In(quarters) },
         });
       } else {
-        quarterList = await manager.find(ReportingPeriod);
+        quarterList = await queryRunner.manager.find(ReportingPeriod);
       }
 
       const newResults = [];
@@ -68,7 +70,7 @@ export class TestSummaryReviewAndSubmitService {
         if (data.length > 0 && isWorkspace) {
         const testSumIds = data.map(d => d.testSumId);
 
-        const severities = await manager.query(
+        const severities = await queryRunner.manager.query(
              `select t.test_sum_id, sc.severity_cd_description, sc.severity_cd from camdecmpswks.test_summary t
               JOIN camdecmpswks.check_session cs on cs.chk_session_id = t.chk_session_id
               JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd

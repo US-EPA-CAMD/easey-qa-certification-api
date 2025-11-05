@@ -1,30 +1,31 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
+import { In, DataSource } from 'typeorm';
 
 import { TestQualificationDTO } from '../dto/test-qualification.dto';
 import { TestQualificationMap } from '../maps/test-qualification.map';
 import { TestQualificationRepository } from './test-qualification.repository';
-
+import { useSlaveRepository } from '../utilities/use-slave-repository';
 @Injectable()
 export class TestQualificationService {
   constructor(
     private readonly repository: TestQualificationRepository,
     private readonly map: TestQualificationMap,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getTestQualifications(
     testSumId: string,
   ): Promise<TestQualificationDTO[]> {
-    const records = await this.repository.find({
+    const records = await useSlaveRepository(this.dataSource, TestQualificationRepository, async (repository) => repository.find({
       where: { testSumId },
-    });
+    }));
 
     return this.map.many(records);
   }
 
   async getTestQualification(id: string): Promise<TestQualificationDTO> {
-    const result = await this.repository.findOneBy({ id });
+    const result = await useSlaveRepository(this.dataSource, TestQualificationRepository, async (repository) => repository.findOneBy({ id }));
 
     if (!result) {
       throw new EaseyException(

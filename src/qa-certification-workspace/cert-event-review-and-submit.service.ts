@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In } from 'typeorm';
+import { EntityManager, In, DataSource } from 'typeorm';
 
 import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
 import { ReportingPeriod } from '../entities/reporting-period.entity';
@@ -18,6 +18,7 @@ export class CertEventReviewAndSubmitService {
     private readonly workspaceRepository: CertEventReviewAndSubmitRepository,
     private readonly globalRepository: CertEventReviewAndSubmitGlobalRepository,
     private readonly map: CertEventReviewAndSubmitMap,
+    private readonly dataSource: DataSource
   ) {}
 
   returnManager(): any {
@@ -34,11 +35,14 @@ export class CertEventReviewAndSubmitService {
     let data: CertEventReviewAndSubmitDTO[];
 
     let repository;
-    if (isWorkspace) {
-      repository = withTransaction(this.workspaceRepository, trx);
+    const queryRunner = this.dataSource.createQueryRunner('slave');
+    queryRunner.connect();
+   if (isWorkspace) {
+      repository = queryRunner.manager.getRepository(CertEventReviewAndSubmitRepository);
     } else {
-      repository = withTransaction(this.globalRepository, trx);
+      repository = queryRunner.manager.getRepository(CertEventReviewAndSubmitGlobalRepository);
     }
+
 
     try {
       if (monPlanIds && monPlanIds.length > 0) {
@@ -51,14 +55,13 @@ export class CertEventReviewAndSubmitService {
         );
       }
 
-      const manager = trx || this.entityManager;
       let quarterList: ReportingPeriod[];
       if (quarters && quarters.length > 0) {
-        quarterList = await manager.find(ReportingPeriod, {
+        quarterList = await queryRunner.manager.find(ReportingPeriod, {
           where: { periodAbbreviation: In(quarters) },
         });
       } else {
-        quarterList = await manager.find(ReportingPeriod);
+        quarterList = await queryRunner.manager.find(ReportingPeriod);
       }
 
       const newResults = [];
@@ -66,7 +69,7 @@ export class CertEventReviewAndSubmitService {
         if (data.length > 0 && isWorkspace) {
         const qaCertEventIdentifiers = data.map(d => d.qaCertEventIdentifier);
 
-        const severities = await manager.query(
+        const severities = await queryRunner.manager.query(
              `select qce.qa_cert_event_id , sc.severity_cd_description, sc.severity_cd from camdecmpswks.qa_cert_event qce
               JOIN camdecmpswks.check_session cs on cs.chk_session_id = qce.chk_session_id
               JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd

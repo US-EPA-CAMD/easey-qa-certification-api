@@ -1,22 +1,23 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
+import { In, DataSource } from 'typeorm';
 
 import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
 import { LinearityInjectionService } from '../linearity-injection/linearity-injection.service';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryRepository } from './linearity-summary.repository';
-
+import { useSlaveRepository } from '../utilities/use-slave-repository';
 @Injectable()
 export class LinearitySummaryService {
   constructor(
     private readonly map: LinearitySummaryMap,
     private readonly injectionService: LinearityInjectionService,
     private readonly repository: LinearitySummaryRepository,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getSummaryById(id: string): Promise<LinearitySummaryDTO> {
-    const result = await this.repository.findOneBy({ id });
+    const result = await useSlaveRepository(this.dataSource, LinearitySummaryRepository, async (repository) => repository.findOneBy({ id }));
 
     if (!result) {
       throw new EaseyException(
@@ -33,7 +34,7 @@ export class LinearitySummaryService {
   async getSummariesByTestSumId(
     testSumId: string,
   ): Promise<LinearitySummaryDTO[]> {
-    const results = await this.repository.findBy({ testSumId });
+    const results = await useSlaveRepository(this.dataSource, LinearitySummaryRepository, async (repository) => repository.findBy({ testSumId }));
     return this.map.many(results);
   }
 

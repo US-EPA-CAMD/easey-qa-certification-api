@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
+import { EntityManager, Repository, SelectQueryBuilder, DataSource } from 'typeorm';
 
 import { TestSummary } from '../entities/test-summary.entity';
 import {
@@ -13,12 +13,12 @@ import {
 
 @Injectable()
 export class TestSummaryRepository extends Repository<TestSummary> {
-  constructor(entityManager: EntityManager) {
+  constructor( private readonly dataSource: DataSource, entityManager: EntityManager) {
     super(TestSummary, entityManager);
   }
 
   private buildBaseQuery(): SelectQueryBuilder<TestSummary> {
-    const query = this.createQueryBuilder('ts');
+    const query = this.dataSource.createQueryRunner('slave').manager.createQueryBuilder(TestSummary,'ts');
     return addJoins(query) as SelectQueryBuilder<TestSummary>;
   }
 

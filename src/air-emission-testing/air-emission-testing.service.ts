@@ -1,28 +1,29 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
+import { In, DataSource } from 'typeorm';
 
 import { AirEmissionTestingDTO } from '../dto/air-emission-test.dto';
 import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
 import { AirEmissionTestingRepository } from './air-emission-testing.repository';
+import { useSlaveRepository } from '../utilities/use-slave-repository';
 
 @Injectable()
 export class AirEmissionTestingService {
   constructor(
     private readonly repository: AirEmissionTestingRepository,
     private readonly map: AirEmissionTestingMap,
+    private readonly dataSource: DataSource
   ) {}
 
   async getAirEmissionTestings(
     testSumId: string,
   ): Promise<AirEmissionTestingDTO[]> {
-    const records = await this.repository.find({ where: { testSumId } });
-
+    const records = await useSlaveRepository(this.dataSource, AirEmissionTestingRepository, async (repository) => repository.find({ where: { testSumId } }));
     return this.map.many(records);
   }
 
   async getAirEmissionTesting(id: string): Promise<AirEmissionTestingDTO> {
-    const result = await this.repository.findOneBy({ id });
+    const result = await useSlaveRepository(this.dataSource, AirEmissionTestingRepository, async (repository) => repository.findOneBy({ id }));
 
     if (!result) {
       throw new EaseyException(

@@ -1,27 +1,28 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
+import { In, DataSource } from 'typeorm';
 
 import { HgInjectionDTO } from '../dto/hg-injection.dto';
 import { HgInjectionMap } from '../maps/hg-injection.map';
 import { HgInjectionRepository } from './hg-injection.repository';
-
+import { useSlaveRepository } from '../utilities/use-slave-repository';
 @Injectable()
 export class HgInjectionService {
   constructor(
     private readonly map: HgInjectionMap,
     private readonly repository: HgInjectionRepository,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getHgInjectionsByHgTestSumId(hgTestSumId: string) {
-    const records = await this.repository.find({
+    const records = await useSlaveRepository(this.dataSource, HgInjectionRepository, async (repository) => repository.find({
       where: { hgTestSumId },
-    });
+    }));
     return this.map.many(records);
   }
 
   async getHgInjection(id: string) {
-    const result = await this.repository.findOneBy({ id });
+    const result = await useSlaveRepository(this.dataSource, HgInjectionRepository, async (repository) => repository.findOneBy({ id }));
 
     if (!result) {
       throw new EaseyException(

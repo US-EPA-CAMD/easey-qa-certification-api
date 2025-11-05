@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository, SelectQueryBuilder } from 'typeorm';
+import { EntityManager, Repository, SelectQueryBuilder, DataSource } from 'typeorm';
 
 import { QACertificationEvent } from '../entities/qa-certification-event.entity';
 import {
@@ -12,12 +12,12 @@ import {
 export class QACertificationEventRepository extends Repository<
   QACertificationEvent
 > {
-  constructor(entityManager: EntityManager) {
+  constructor(private readonly dataSource: DataSource, entityManager: EntityManager) {
     super(QACertificationEvent, entityManager);
   }
 
   private buildBaseQuery(): SelectQueryBuilder<QACertificationEvent> {
-    const query = this.createQueryBuilder('qce');
+    const query = this.dataSource.createQueryRunner('slave').manager.createQueryBuilder(QACertificationEvent, 'qce');
     return addJoins(query) as SelectQueryBuilder<QACertificationEvent>;
   }
 

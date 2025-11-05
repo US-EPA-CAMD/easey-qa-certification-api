@@ -8,6 +8,7 @@ import {
 require('dotenv').config();
 
 const host = getConfigValue('EASEY_QA_CERTIFICATION_API_HOST', 'localhost');
+const replicaHost = getConfigValue('EASEY_QA_CERTIFICATION_API_REPLICA_HOST', 'localhost');
 const port = getConfigValueNumber('EASEY_QA_CERTIFICATION_API_PORT', 8070);
 const path = getConfigValue(
   'EASEY_QA_CERTIFICATION_API_PATH',
@@ -28,6 +29,7 @@ const apiHost = getConfigValue(
 export default registerAs('app', () => ({
   name: 'qa-certification-api',
   host,
+  replicaHost,
   port,
   path,
   uri,

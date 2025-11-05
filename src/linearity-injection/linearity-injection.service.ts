@@ -1,18 +1,19 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
-import { In } from 'typeorm';
+import { In, DataSource } from 'typeorm';
 
 import { LinearityInjectionDTO } from '../dto/linearity-injection.dto';
 import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { LinearityInjectionRepository } from './linearity-injection.repository';
-
+import { useSlaveRepository } from 'src/utilities/use-slave-repository';
 @Injectable()
 export class LinearityInjectionService {
   constructor(
     private readonly logger: Logger,
     private readonly map: LinearityInjectionMap,
     private readonly repository: LinearityInjectionRepository,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getInjectionById(id: string): Promise<LinearityInjectionDTO> {
@@ -33,7 +34,7 @@ export class LinearityInjectionService {
   async getInjectionsByLinSumId(
     linSumId: string,
   ): Promise<LinearityInjectionDTO[]> {
-    const results = await this.repository.findBy({ linSumId });
+    const results = await useSlaveRepository(this.dataSource, LinearityInjectionRepository, async (repository) => repository.findBy({ linSumId }));
     return this.map.many(results);
   }
 
