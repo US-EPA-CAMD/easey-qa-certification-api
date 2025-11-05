@@ -151,7 +151,7 @@ export class QACertificationEventWorkspaceController {
     @User() user: CurrentUser,
   ): Promise<QACertificationEventDTO> {
     await this.checksService.runChecks(locationId, payload, null, false, true);
-    return this.service.updateQACertEvent(locationId, id, payload, user.userId);
+    return this.service.updateQACertEvent(id, payload, user.userId);
   }
 
   @Delete(':id')

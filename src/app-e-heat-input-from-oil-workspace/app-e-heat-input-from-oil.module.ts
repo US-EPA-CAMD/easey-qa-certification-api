@@ -11,6 +11,7 @@ import { AppEHeatInputFromOilChecksService } from './app-e-heat-input-from-oil-c
 import { AppEHeatInputFromOilWorkspaceController } from './app-e-heat-input-from-oil.controller';
 import { AppEHeatInputFromOilWorkspaceRepository } from './app-e-heat-input-from-oil.repository';
 import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oil.service';
+import { MonitorSystemModule } from '../monitor-system/monitor-system.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AppEHeatInputFromOilWorkspaceService } from './app-e-heat-input-from-oi
     forwardRef(() => MonitorSystemWorkspaceModule),
     forwardRef(() => AppECorrelationTestRunWorkspaceModule),
     forwardRef(() => AppEHeatInputFromOilModule),
+    MonitorSystemModule,
     HttpModule,
   ],
   controllers: [AppEHeatInputFromOilWorkspaceController],
