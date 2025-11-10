@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { In, DataSource } from 'typeorm';
-import { useSlaveRepository } from 'src/utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 import {
   FlowToLoadReferenceDTO,
   FlowToLoadReferenceRecordDTO,

@@ -6,7 +6,7 @@ import { HgSummaryDTO } from '../dto/hg-summary.dto';
 import { HgInjectionService } from '../hg-injection/hg-injection.service';
 import { HgSummaryMap } from '../maps/hg-summary.map';
 import { HgSummaryRepository } from './hg-summary.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class HgSummaryService {
   constructor(

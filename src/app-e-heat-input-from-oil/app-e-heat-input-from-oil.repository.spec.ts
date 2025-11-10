@@ -1,29 +1,36 @@
 import { Test } from '@nestjs/testing';
-import { EntityManager, SelectQueryBuilder } from 'typeorm';
+import { EntityManager, SelectQueryBuilder, DataSource } from 'typeorm';
 
 import { AppEHeatInputFromOil } from '../entities/app-e-heat-input-from-oil.entity';
 import { AppEHeatInputFromOilRepository } from './app-e-heat-input-from-oil.repository';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 const appEHeatInputFromOil = new AppEHeatInputFromOil();
+jest.mock('@us-epa-camd/easey-common/connection');
 
-const mockQueryBuilder = () => ({
+const mockQueryBuilder = {
   where: jest.fn(),
   andWhere: jest.fn(),
   getOne: jest.fn(),
   getMany: jest.fn(),
   leftJoinAndSelect: jest.fn(),
-});
+};
+const mockManager = {
+  createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+};
 
 describe('AppEHeatInputFromOilRepository', () => {
   let repository;
   let queryBuilder;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
         AppEHeatInputFromOilRepository,
         EntityManager,
-        { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
+        { provide: SelectQueryBuilder, useFactory: () => mockQueryBuilder },
+        {provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -37,6 +44,9 @@ describe('AppEHeatInputFromOilRepository', () => {
 
   describe('getAppEHeatInputFromOilById', () => {
     it('calls buildBaseQuery and get one Appendix E Heat Input From Oil from the repository with Id', async () => {
+      (withSlaveConnection as jest.Mock).mockImplementation(
+          async (_dataSource, callback) =>
+      callback(mockManager))
       queryBuilder.leftJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getOne.mockReturnValue(appEHeatInputFromOil);
@@ -49,6 +59,9 @@ describe('AppEHeatInputFromOilRepository', () => {
 
   describe('getAppEHeatInputFromOilsByTestRunId', () => {
     it('calls buildBaseQuery and get one Appendix E Heat Input From oils from the repository with appECorrTestRunId', async () => {
+       (withSlaveConnection as jest.Mock).mockImplementation(
+           async (_dataSource, callback) =>
+       callback(mockManager))     
       queryBuilder.leftJoinAndSelect.mockReturnValue(queryBuilder);
       queryBuilder.where.mockReturnValue(queryBuilder);
       queryBuilder.getMany.mockReturnValue([appEHeatInputFromOil]);

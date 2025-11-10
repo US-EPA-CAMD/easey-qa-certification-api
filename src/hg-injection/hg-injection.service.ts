@@ -5,7 +5,7 @@ import { In, DataSource } from 'typeorm';
 import { HgInjectionDTO } from '../dto/hg-injection.dto';
 import { HgInjectionMap } from '../maps/hg-injection.map';
 import { HgInjectionRepository } from './hg-injection.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class HgInjectionService {
   constructor(

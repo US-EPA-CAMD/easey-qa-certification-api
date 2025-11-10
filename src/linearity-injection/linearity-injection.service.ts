@@ -6,7 +6,7 @@ import { In, DataSource } from 'typeorm';
 import { LinearityInjectionDTO } from '../dto/linearity-injection.dto';
 import { LinearityInjectionMap } from '../maps/linearity-injection.map';
 import { LinearityInjectionRepository } from './linearity-injection.repository';
-import { useSlaveRepository } from 'src/utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class LinearityInjectionService {
   constructor(

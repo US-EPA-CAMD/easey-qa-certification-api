@@ -8,6 +8,10 @@ import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.
 import { TestSummaryService } from '../test-summary/test-summary.service';
 import { OnlineOfflineCalibrationRepository } from './online-offline-calibration.repository';
 import { OnlineOfflineCalibrationService } from './online-offline-calibration.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const testSumId = '1';
 const onlineOfflineCalibrationId = 'abc123';
@@ -27,6 +31,7 @@ const mockMap = () => ({
 describe('OnlineOfflineCalibrationService', () => {
   let service: OnlineOfflineCalibrationService;
   let repository: OnlineOfflineCalibrationRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -46,6 +51,7 @@ describe('OnlineOfflineCalibrationService', () => {
           provide: OnlineOfflineCalibrationMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -59,6 +65,11 @@ describe('OnlineOfflineCalibrationService', () => {
 
   describe('getOnlineOfflineCalibration', () => {
     it('Calls repository.findOneBy({id}) to get a single Online Offline Calibration record', async () => {
+      const repo = mockRepository();  
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+        );
       const result = await service.getOnlineOfflineCalibration(
         onlineOfflineCalibrationId,
       );
@@ -67,8 +78,11 @@ describe('OnlineOfflineCalibrationService', () => {
     });
 
     it('Should throw error when Online Offline Calibration record not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
-
+      
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(jest.spyOn(repository, 'findOneBy').mockResolvedValue(null)) 
+        );
       let errored = false;
 
       try {
@@ -83,6 +97,10 @@ describe('OnlineOfflineCalibrationService', () => {
 
   describe('getOnlineOfflineCalibrations', () => {
     it('Calls repository to get al Online Offline Calibrations matching a given Test Summary Id', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );
       const result = await service.getOnlineOfflineCalibrations(testSumId);
       expect(result).toEqual([onlineOfflineCalibrationDTO]);
     });

@@ -10,6 +10,10 @@ import { AppECorrelationTestRun } from '../entities/app-e-correlation-test-run.e
 import { AppECorrelationTestRunMap } from '../maps/app-e-correlation-test-run.map';
 import { AppECorrelationTestRunRepository } from './app-e-correlation-test-run.repository';
 import { AppECorrelationTestRunService } from './app-e-correlation-test-run.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const testSumId = '1';
 const appECorrTestSumId = 'g7h8i9';
@@ -37,6 +41,7 @@ const mockAppEHeatInputFromOilService = () => ({
 describe('AppECorrelationTestRunService', () => {
   let service: AppECorrelationTestRunService;
   let repository: AppECorrelationTestRunRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -59,6 +64,7 @@ describe('AppECorrelationTestRunService', () => {
           provide: AppEHeatInputFromOilService,
           useFactory: mockAppEHeatInputFromOilService,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -72,13 +78,21 @@ describe('AppECorrelationTestRunService', () => {
 
   describe('getAppECorrelationTestRun', () => {
     it('Calls repository.findOneBy({id}) to get a single Appendix E Correlation Test Run record', async () => {
+       const repo = mockRepository();  
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+        );
       const result = await service.getAppECorrelationTestRun(appECorrTestRunId);
       expect(result).toEqual(appECorrelationTestRunRecord);
-      expect(repository.findOneBy).toHaveBeenCalled();
+      expect(repo.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Appendix E Correlation Test Run record not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(jest.spyOn(repository, 'findOneBy').mockResolvedValue(null)) 
+        );
 
       let errored = false;
 
@@ -94,11 +108,16 @@ describe('AppECorrelationTestRunService', () => {
 
   describe('getAppECorrelationTestRuns', () => {
     it('Calls Repository to find all Appendix E Correlation Test Run records for a given Test Summary ID', async () => {
+      const repo = mockRepository();   
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+        );
       const results = await service.getAppECorrelationTestRuns(
         appECorrTestSumId,
       );
       expect(results).toEqual([appECorrelationTestRunRecord]);
-      expect(repository.find).toHaveBeenCalled();
+      expect(repo.find).toHaveBeenCalled();
     });
   });
 

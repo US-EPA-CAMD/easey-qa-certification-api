@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { EntityManager, Repository, DataSource } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { AppEHeatInputFromOil } from '../entities/app-e-heat-input-from-oil.entity';
-import { useSlaveQueryRunner } from '../utilities/user-slave-query';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class AppEHeatInputFromOilRepository extends Repository<
   AppEHeatInputFromOil
 > {
-  constructor(private readonly dataSource: DataSource, entityManager: EntityManager) {
+  constructor(entityManager: EntityManager) {
     super(AppEHeatInputFromOil, entityManager);
   }
 
   async getAppEHeatInputFromOilById(id: string): Promise<AppEHeatInputFromOil> {
-      return useSlaveQueryRunner(this.dataSource, async (qr) => {
+      return withSlaveConnection(this.manager.connection, async (qr) => {
         return qr.createQueryBuilder(AppEHeatInputFromOil, 'aehio')
         .leftJoinAndSelect('aehio.system', 'ms')
         .where('aehio.id = :id', {
@@ -39,7 +39,7 @@ export class AppEHeatInputFromOilRepository extends Repository<
   async getAppEHeatInputFromOilsByTestRunId(
     appECorrTestRunId: string,
   ): Promise<AppEHeatInputFromOil[]> {
-       return useSlaveQueryRunner(this.dataSource, async (qr) => {
+       return withSlaveConnection(this.manager.connection, async (qr) => {
         return qr.createQueryBuilder(AppEHeatInputFromOil, 'aehio')
         .leftJoinAndSelect('aehio.system', 'ms')
         .where('aehio.appECorrTestRunId = :appECorrTestRunId', {

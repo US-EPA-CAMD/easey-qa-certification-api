@@ -9,7 +9,7 @@ import {
 } from '../dto/app-e-correlation-test-summary.dto';
 import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary.map';
 import { AppendixETestSummaryRepository } from './app-e-correlation-test-summary.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class AppECorrelationTestSummaryService {
   constructor(

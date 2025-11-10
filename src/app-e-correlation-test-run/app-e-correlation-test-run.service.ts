@@ -10,7 +10,7 @@ import {
 } from '../dto/app-e-correlation-test-run.dto';
 import { AppECorrelationTestRunMap } from '../maps/app-e-correlation-test-run.map';
 import { AppECorrelationTestRunRepository } from './app-e-correlation-test-run.repository';
-import { useSlaveRepository } from 'src/utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class AppECorrelationTestRunService {
   constructor(

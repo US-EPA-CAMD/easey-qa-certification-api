@@ -5,6 +5,10 @@ import { RataTraverseMap } from '../maps/rata-traverse.map';
 import { RataTraverseRepository } from './rata-traverse.repository';
 import { RataTraverseService } from './rata-traverse.service';
 import { ConfigService } from '@nestjs/config';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const flowRataRunId = '';
 const rataTravarse = new RataTraverse();
@@ -22,6 +26,7 @@ const mockMap = () => ({
 
 describe('RataTraverseService', () => {
   let service: RataTraverseService;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,6 +41,7 @@ describe('RataTraverseService', () => {
           provide: RataTraverseMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 

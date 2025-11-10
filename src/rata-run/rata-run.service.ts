@@ -6,7 +6,7 @@ import { RataRunDTO } from '../dto/rata-run.dto';
 import { FlowRataRunService } from '../flow-rata-run/flow-rata-run.service';
 import { RataRunMap } from '../maps/rata-run.map';
 import { RataRunRepository } from './rata-run.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
 @Injectable()
 export class RataRunService {

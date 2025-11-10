@@ -5,7 +5,7 @@ import { In, DataSource } from 'typeorm';
 import { ProtocolGasDTO } from '../dto/protocol-gas.dto';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { ProtocolGasRepository } from './protocol-gas.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class ProtocolGasService {
   constructor(

@@ -5,7 +5,7 @@ import { In, DataSource } from 'typeorm';
 import { TestQualificationDTO } from '../dto/test-qualification.dto';
 import { TestQualificationMap } from '../maps/test-qualification.map';
 import { TestQualificationRepository } from './test-qualification.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class TestQualificationService {
   constructor(

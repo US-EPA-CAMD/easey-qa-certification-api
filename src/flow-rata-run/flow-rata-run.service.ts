@@ -6,7 +6,7 @@ import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
 import { FlowRataRunMap } from '../maps/flow-rata-run.map';
 import { RataTraverseService } from '../rata-traverse/rata-traverse.service';
 import { FlowRataRunRepository } from './flow-rata-run.repository';
-import { useSlaveRepository } from 'src/utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 import { DataSource } from 'typeorm';
 @Injectable()
 export class FlowRataRunService {

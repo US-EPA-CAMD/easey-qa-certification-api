@@ -4,7 +4,7 @@ import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
 import { FuelFlowToLoadTestDTO } from '../dto/fuel-flow-to-load-test.dto';
 import { FuelFlowToLoadTestRepository } from './fuel-flow-to-load-test.repository';
 import { In, DataSource } from 'typeorm';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class FuelFlowToLoadTestService {
   constructor(

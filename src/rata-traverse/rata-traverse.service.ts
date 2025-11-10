@@ -8,7 +8,7 @@ import {
 } from '../dto/rata-traverse.dto';
 import { RataTraverseMap } from '../maps/rata-traverse.map';
 import { RataTraverseRepository } from './rata-traverse.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class RataTraverseService {
   constructor(

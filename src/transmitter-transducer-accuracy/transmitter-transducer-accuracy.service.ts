@@ -5,7 +5,7 @@ import { In, DataSource } from 'typeorm';
 import { TransmitterTransducerAccuracyDTO } from '../dto/transmitter-transducer-accuracy.dto';
 import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
 import { TransmitterTransducerAccuracyRepository } from './transmitter-transducer-accuracy.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class TransmitterTransducerAccuracyService {
   constructor(

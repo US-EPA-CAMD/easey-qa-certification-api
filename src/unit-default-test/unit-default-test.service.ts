@@ -9,7 +9,7 @@ import {
 import { UnitDefaultTestMap } from '../maps/unit-default-test.map';
 import { UnitDefaultTestRunService } from '../unit-default-test-run/unit-default-test-run.service';
 import { UnitDefaultTestRepository } from './unit-default-test.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository'
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection'
 
 @Injectable()
 export class UnitDefaultTestService {

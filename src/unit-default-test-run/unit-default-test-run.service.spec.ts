@@ -6,6 +6,10 @@ import { UnitDefaultTestRun } from '../entities/unit-default-test-run.entity';
 import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
 import { UnitDefaultTestRunRepository } from './unit-default-test-run.repository';
 import { UnitDefaultTestRunService } from './unit-default-test-run.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const id = '';
 const unitDefaultTestSumId = '';
@@ -26,6 +30,7 @@ const mockMap = () => ({
 describe('UnitDefaultTestRunService', () => {
   let service: UnitDefaultTestRunService;
   let repository: UnitDefaultTestRunRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,6 +45,7 @@ describe('UnitDefaultTestRunService', () => {
           provide: UnitDefaultTestRunMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -51,7 +57,11 @@ describe('UnitDefaultTestRunService', () => {
 
   describe('getUnitDefaultTestRuns', () => {
     it('Should return UnitDefaultTestRun records by Unit Default Test Summary id', async () => {
-      const result = await service.getUnitDefaultTestRuns(unitDefaultTestSumId);
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );  
+    const result = await service.getUnitDefaultTestRuns(unitDefaultTestSumId);
 
       expect(result).toEqual([dto]);
     });
@@ -59,6 +69,10 @@ describe('UnitDefaultTestRunService', () => {
 
   describe('getUnitDefaultTestRun', () => {
     it('Should return a UnitDefaultTestRun record', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );
       const result = await service.getUnitDefaultTestRun(
         id,
         unitDefaultTestSumId,
@@ -68,7 +82,10 @@ describe('UnitDefaultTestRunService', () => {
     });
 
     it('Should throw error when a UnitDefaultTestRun record not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback( jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined)) 
+        );
       let errored = false;
 
       try {

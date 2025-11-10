@@ -5,6 +5,10 @@ import { FuelFlowToLoadTest } from '../entities/fuel-flow-to-load-test.entity';
 import { FuelFlowToLoadTestMap } from '../maps/fuel-flow-to-load-test.map';
 import { FuelFlowToLoadTestRepository } from './fuel-flow-to-load-test.repository';
 import { FuelFlowToLoadTestService } from './fuel-flow-to-load-test.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const id = '';
 const testSumId = '';
@@ -24,6 +28,7 @@ const mockMap = () => ({
 describe('FuelFlowToLoadTestService', () => {
   let service: FuelFlowToLoadTestService;
   let repository: FuelFlowToLoadTestRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -37,6 +42,7 @@ describe('FuelFlowToLoadTestService', () => {
           provide: FuelFlowToLoadTestMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -48,6 +54,10 @@ describe('FuelFlowToLoadTestService', () => {
 
   describe('getFuelFlowToLoadTests', () => {
     it('Should return Fuel Flow To Load Test records by Test Summary id', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );
       const result = await service.getFuelFlowToLoadTests(testSumId);
 
       expect(result).toEqual([dto]);
@@ -56,13 +66,21 @@ describe('FuelFlowToLoadTestService', () => {
 
   describe('getFuelFlowToLoadTest', () => {
     it('Should return a Fuel Flow To Load Test record', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );
       const result = await service.getFuelFlowToLoadTest(id, testSumId);
 
       expect(result).toEqual(dto);
     });
 
     it('Should throw error when a Fuel Flow To Load Test record not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
+      
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined)) 
+        );      
       let errored = false;
 
       try {

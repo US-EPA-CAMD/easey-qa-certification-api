@@ -6,7 +6,7 @@ import { CycleTimeInjectionService } from '../cycle-time-injection/cycle-time-in
 import { CycleTimeSummaryDTO } from '../dto/cycle-time-summary.dto';
 import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
 import { CycleTimeSummaryRepository } from './cycle-time-summary.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class CycleTimeSummaryService {
   constructor(

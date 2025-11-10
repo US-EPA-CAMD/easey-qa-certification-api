@@ -5,7 +5,7 @@ import { In, DataSource } from 'typeorm';
 import { AirEmissionTestingDTO } from '../dto/air-emission-test.dto';
 import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
 import { AirEmissionTestingRepository } from './air-emission-testing.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
 @Injectable()
 export class AirEmissionTestingService {

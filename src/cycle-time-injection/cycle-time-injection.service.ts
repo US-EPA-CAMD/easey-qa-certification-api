@@ -5,7 +5,7 @@ import { In, DataSource } from 'typeorm';
 import { CycleTimeInjectionDTO } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
 import { CycleTimeInjectionRepository } from './cycle-time-injection.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class CycleTimeInjectionService {
   constructor(

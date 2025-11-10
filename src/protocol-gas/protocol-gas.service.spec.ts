@@ -5,6 +5,10 @@ import { ProtocolGas } from '../entities/protocol-gas.entity';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { ProtocolGasRepository } from './protocol-gas.repository';
 import { ProtocolGasService } from './protocol-gas.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const protocolGasId = 'a1b2c3';
 const testSumId = 'd4e5f6';
@@ -26,6 +30,7 @@ const mockRepository = () => ({
 describe('ProtocolGasService', () => {
   let service: ProtocolGasService;
   let repository: ProtocolGasRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -40,6 +45,7 @@ describe('ProtocolGasService', () => {
           provide: ProtocolGasMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -53,14 +59,22 @@ describe('ProtocolGasService', () => {
 
   describe('getProtocolGas', () => {
     it('Calls repository.findOneBy({id}) to get a single Protocol Gas record', async () => {
+      const repo = mockRepository(); 
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+        );      
       const result = await service.getProtocolGas(protocolGasId);
       expect(result).toEqual(protocolGasDTO);
       expect(repository.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Protocol Gas record not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
-
+     
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback( jest.spyOn(repository, 'findOneBy').mockResolvedValue(null)) 
+        );
       let errored = false;
 
       try {

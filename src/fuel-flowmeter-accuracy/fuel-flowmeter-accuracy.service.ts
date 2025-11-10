@@ -8,7 +8,7 @@ import {
 } from '../dto/fuel-flowmeter-accuracy.dto';
 import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
 import { FuelFlowmeterAccuracyRepository } from './fuel-flowmeter-accuracy.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class FuelFlowmeterAccuracyService {
   constructor(

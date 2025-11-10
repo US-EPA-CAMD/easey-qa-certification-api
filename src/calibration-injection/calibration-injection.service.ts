@@ -5,7 +5,7 @@ import { In, DataSource } from 'typeorm';
 import { CalibrationInjectionDTO } from '../dto/calibration-injection.dto';
 import { CalibrationInjectionMap } from '../maps/calibration-injection.map';
 import { CalibrationInjectionRepository } from './calibration-injection.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class CalibrationInjectionService {
   constructor(

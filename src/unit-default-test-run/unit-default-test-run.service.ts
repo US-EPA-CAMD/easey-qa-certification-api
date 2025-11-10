@@ -8,7 +8,7 @@ import {
 } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
 import { UnitDefaultTestRunRepository } from './unit-default-test-run.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
 @Injectable()
 export class UnitDefaultTestRunService {

@@ -5,7 +5,7 @@ import { In, DataSource } from 'typeorm';
 import { FuelFlowToLoadBaselineDTO } from '../dto/fuel-flow-to-load-baseline.dto';
 import { FuelFlowToLoadBaselineMap } from '../maps/fuel-flow-to-load-baseline.map';
 import { FuelFlowToLoadBaselineRepository } from './fuel-flow-to-load-baseline.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class FuelFlowToLoadBaselineService {
   constructor(

@@ -8,7 +8,7 @@ import {
 } from '../dto/flow-to-load-check.dto';
 import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
 import { FlowToLoadCheckRepository } from './flow-to-load-check.repository';
-import { useSlaveRepository } from 'src/utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class FlowToLoadCheckService {
   constructor(

@@ -10,7 +10,7 @@ import {
 import { OnlineOfflineCalibrationMap } from '../maps/online-offline-calibration.map';
 import { TestSummaryService } from '../test-summary/test-summary.service';
 import { OnlineOfflineCalibrationRepository } from './online-offline-calibration.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class OnlineOfflineCalibrationService {
   constructor(

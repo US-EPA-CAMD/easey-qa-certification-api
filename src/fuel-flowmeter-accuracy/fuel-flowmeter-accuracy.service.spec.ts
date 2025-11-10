@@ -5,6 +5,10 @@ import { FuelFlowmeterAccuracy } from '../entities/fuel-flowmeter-accuracy.entit
 import { FuelFlowmeterAccuracyMap } from '../maps/fuel-flowmeter-accuracy.map';
 import { FuelFlowmeterAccuracyRepository } from './fuel-flowmeter-accuracy.repository';
 import { FuelFlowmeterAccuracyService } from './fuel-flowmeter-accuracy.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const id = '';
 const testSumId = '';
@@ -24,6 +28,7 @@ const mockMap = () => ({
 describe('FuelFlowmeterAccuracyService', () => {
   let service: FuelFlowmeterAccuracyService;
   let repository: FuelFlowmeterAccuracyRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -37,6 +42,7 @@ describe('FuelFlowmeterAccuracyService', () => {
           provide: FuelFlowmeterAccuracyMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -50,6 +56,10 @@ describe('FuelFlowmeterAccuracyService', () => {
 
   describe('getFuelFlowToLoadTests', () => {
     it('Should return Fuel Flowmeter Accuracy records by Test Summary id', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        ); 
       const result = await service.getFuelFlowmeterAccuracies(testSumId);
 
       expect(result).toEqual([fuelFlowmeterAccuracy]);
@@ -58,13 +68,21 @@ describe('FuelFlowmeterAccuracyService', () => {
 
   describe('getFuelFlowToLoadTest', () => {
     it('Should return a Fuel Flowmeter Accuracy record', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );
       const result = await service.getFuelFlowmeterAccuracy(id);
 
       expect(result).toEqual(fuelFlowmeterAccuracy);
     });
 
     it('Should throw error when a Fuel Flowmeter Accuracy record not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
+      
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined)) 
+        );
       let errored = false;
 
       try {

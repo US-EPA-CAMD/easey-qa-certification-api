@@ -6,7 +6,7 @@ import { RataDTO } from '../dto/rata.dto';
 import { RataMap } from '../maps/rata.map';
 import { RataSummaryService } from '../rata-summary/rata-summary.service';
 import { RataRepository } from './rata.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
 @Injectable()
 export class RataService {

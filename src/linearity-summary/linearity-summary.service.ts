@@ -6,7 +6,7 @@ import { LinearitySummaryDTO } from '../dto/linearity-summary.dto';
 import { LinearityInjectionService } from '../linearity-injection/linearity-injection.service';
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryRepository } from './linearity-summary.repository';
-import { useSlaveRepository } from '../utilities/use-slave-repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class LinearitySummaryService {
   constructor(
