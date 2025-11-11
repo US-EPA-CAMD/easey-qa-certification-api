@@ -78,15 +78,12 @@ export class AppEHeatInputFromGas extends BaseEntity {
 
   @ManyToOne(
     () => AppECorrelationTestRun,
-    aectr => aectr.appEHeatInputFromGases,
+    (aectr) => aectr.appEHeatInputFromGases,
   )
   @JoinColumn({ name: 'ae_corr_test_run_id' })
   appECorrelationTestRun: AppECorrelationTestRun;
 
-  @ManyToOne(
-    () => MonitorSystem,
-    ms => ms.appEHeatInputFromGases,
-  )
+  @ManyToOne(() => MonitorSystem, (ms) => ms.appEHeatInputFromGases)
   @JoinColumn({ name: 'mon_sys_id' })
   system: MonitorSystem;
 }
