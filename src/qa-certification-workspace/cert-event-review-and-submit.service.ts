@@ -51,14 +51,14 @@ export class CertEventReviewAndSubmitService {
           data = await this.map.many(
             await repository.find({ where: { orisCode: In(orisCodes) } }),
           );
+        }
       }
-      }
-      else{
+      else
+      {
         if (monPlanIds && monPlanIds.length > 0) {
           data = await this.map.many(
             await useSlaveRepository(this.dataSource, CertEventReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { monPlanId: In(monPlanIds) } })))
-        } 
-        else {
+        } else {
           data = await this.map.many(
             await useSlaveRepository(this.dataSource, CertEventReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { orisCode: In(orisCodes) } })))
         }
@@ -66,37 +66,40 @@ export class CertEventReviewAndSubmitService {
 
       const manager = trx || this.entityManager;
       let quarterList: ReportingPeriod[];
-      if(isWorkspace){
-      if (quarters && quarters.length > 0) {
-        quarterList = await manager.find(ReportingPeriod, {
-          where: { periodAbbreviation: In(quarters) },
-        });
-      } else {
-        quarterList = await manager.find(ReportingPeriod);
-      }
-      }
-      else{
-      if (quarters && quarters.length > 0) {
-          const queryRunner = this.dataSource.createQueryRunner('slave');
-        try{
-          quarterList = await queryRunner.manager.find(ReportingPeriod, {
-          where: { periodAbbreviation: In(quarters) },
-        });
-      }finally
+      if(isWorkspace)
       {
-        await queryRunner.release()
-      }
-    }
-    else {
-      const queryRunner = this.dataSource.createQueryRunner('slave');
-        try{
-          quarterList = await queryRunner.manager.find(ReportingPeriod);
+        if (quarters && quarters.length > 0) {
+          quarterList = await manager.find(ReportingPeriod, {
+            where: { periodAbbreviation: In(quarters) },
+          });
+        } else {
+          quarterList = await manager.find(ReportingPeriod);
         }
-        finally
+      }
+      else
+      {
+        if (quarters && quarters.length > 0) 
         {
-          await queryRunner.release()
+            const queryRunner = this.dataSource.createQueryRunner('slave');
+            try{
+                quarterList = await queryRunner.manager.find(ReportingPeriod, {
+                where: { periodAbbreviation: In(quarters) },
+              });
+            }finally
+            {
+              await queryRunner.release()
+            }
         }
-      }
+        else {
+          const queryRunner = this.dataSource.createQueryRunner('slave');
+          try{
+            quarterList = await queryRunner.manager.find(ReportingPeriod);
+          }
+          finally
+          {
+            await queryRunner.release()
+          }
+        }
     }
 
       const newResults = [];

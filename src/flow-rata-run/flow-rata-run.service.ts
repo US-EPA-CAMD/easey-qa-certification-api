@@ -1,13 +1,12 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
+import { In, DataSource } from 'typeorm';
 
 import { FlowRataRunDTO } from '../dto/flow-rata-run.dto';
 import { FlowRataRunMap } from '../maps/flow-rata-run.map';
 import { RataTraverseService } from '../rata-traverse/rata-traverse.service';
 import { FlowRataRunRepository } from './flow-rata-run.repository';
 import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
-import { DataSource } from 'typeorm';
 @Injectable()
 export class FlowRataRunService {
   constructor(

@@ -42,24 +42,25 @@ export class TeeReviewAndSubmitService {
     try {
       if(isWorkspace)
       {
-              if (monPlanIds && monPlanIds.length > 0) {
+        if (monPlanIds && monPlanIds.length > 0) {
         data = await this.map.many(
           await repository.find({ where: { monPlanId: In(monPlanIds) } }),
         );
-      } else {
-        data = await this.map.many(
-          await repository.find({ where: { orisCode: In(orisCodes) } }),
-        );
-      }
+        } 
+        else {
+          data = await this.map.many(
+            await repository.find({ where: { orisCode: In(orisCodes) } }),
+          );
+        }
       }
       else{
-      if (monPlanIds && monPlanIds.length > 0) {
-        data = await this.map.many(
-          await useSlaveRepository(this.dataSource, TeeReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { monPlanId: In(monPlanIds) } })))
-      } else {
-        data = await this.map.many(
-          await useSlaveRepository(this.dataSource, TeeReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { orisCode: In(orisCodes) } })))
-      }
+        if (monPlanIds && monPlanIds.length > 0) {
+          data = await this.map.many(
+            await useSlaveRepository(this.dataSource, TeeReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { monPlanId: In(monPlanIds) } })))
+        } else {
+          data = await this.map.many(
+            await useSlaveRepository(this.dataSource, TeeReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { orisCode: In(orisCodes) } })))
+        }
       }
 
 
