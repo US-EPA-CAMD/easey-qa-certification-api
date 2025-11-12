@@ -42,7 +42,7 @@ export class TeeReviewAndSubmitService {
     try {
       if(isWorkspace)
       {
-        if (monPlanIds && monPlanIds.length > 0) {
+        if (monPlanIds?.length > 0) {
         data = await this.map.many(
           await repository.find({ where: { monPlanId: In(monPlanIds) } }),
         );
@@ -54,7 +54,7 @@ export class TeeReviewAndSubmitService {
         }
       }
       else if (!isWorkspace){
-        if (monPlanIds && monPlanIds.length > 0) {
+        if (monPlanIds?.length > 0) {
           data = await this.map.many(
             await useSlaveRepository(this.dataSource, TeeReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { monPlanId: In(monPlanIds) } })))
         } else {
@@ -64,7 +64,7 @@ export class TeeReviewAndSubmitService {
       }
 
 
-      if (quarters && quarters.length > 0) {
+      if (quarters?.length > 0) {
         data = data.filter(f => quarters.includes(f.periodAbbreviation));
       }
 
