@@ -53,7 +53,7 @@ export class CertEventReviewAndSubmitService {
           );
         }
       }
-      else
+      else if(!isWorkspace)
       {
         if (monPlanIds && monPlanIds.length > 0) {
           data = await this.map.many(
@@ -76,7 +76,7 @@ export class CertEventReviewAndSubmitService {
           quarterList = await manager.find(ReportingPeriod);
         }
       }
-      else
+      else if(!isWorkspace)
       {
         if (quarters && quarters.length > 0) 
         {
