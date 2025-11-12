@@ -56,8 +56,7 @@ export class TestSummaryReviewAndSubmitService {
           );
         }
       }
-      else
-      {
+      else if (!isWorkspace){
         if (monPlanIds && monPlanIds.length > 0) {
           data = await this.map.many(
             await useSlaveRepository(this.dataSource, TestSummaryReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { monPlanId: In(monPlanIds) } })))
@@ -79,7 +78,7 @@ export class TestSummaryReviewAndSubmitService {
           quarterList = await manager.find(ReportingPeriod);
         }
       }
-      else
+      else if (!isWorkspace)
       {
         if (quarters && quarters.length > 0) {
           const queryRunner = this.dataSource.createQueryRunner('slave');

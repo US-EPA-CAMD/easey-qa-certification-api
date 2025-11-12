@@ -53,7 +53,7 @@ export class TeeReviewAndSubmitService {
           );
         }
       }
-      else{
+      else if (!isWorkspace){
         if (monPlanIds && monPlanIds.length > 0) {
           data = await this.map.many(
             await useSlaveRepository(this.dataSource, TeeReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { monPlanId: In(monPlanIds) } })))
