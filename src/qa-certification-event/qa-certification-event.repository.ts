@@ -12,12 +12,14 @@ import {
 export class QACertificationEventRepository extends Repository<
   QACertificationEvent
 > {
-  constructor(private readonly dataSource: DataSource, entityManager: EntityManager) {
+  constructor( entityManager: EntityManager) {
     super(QACertificationEvent, entityManager);
   }
 
   private buildBaseQuery(): SelectQueryBuilder<QACertificationEvent> {
-    const query = this.dataSource.createQueryRunner('slave').manager.createQueryBuilder(QACertificationEvent, 'qce');
+    const queryRunner = this.manager.connection.createQueryRunner('slave');
+    const slaveManager = queryRunner.manager;
+    const query = slaveManager.createQueryBuilder(QACertificationEvent, 'qce');
     return addJoins(query) as SelectQueryBuilder<QACertificationEvent>;
   }
 

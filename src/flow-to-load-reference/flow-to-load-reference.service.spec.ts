@@ -56,15 +56,16 @@ describe('FlowToLoadCheckService', () => {
 
   describe('getFlowToLoadReference', () => {
     it('Calls repository.findOneBy({id}) to get a single Flow To Load Reference record', async () => {
+      const repo = mockRepository();
         (useSlaveRepository as jest.Mock).mockImplementation(
           async (_dataSource, _repo, callback) =>
-            callback(mockRepository()) 
+            callback(repo) 
         );
       const result = await service.getFlowToLoadReference(
         flowToLoadReferenceId,
       );
       expect(result).toEqual(flowToLoadReference);
-      expect(repository.findOneBy).toHaveBeenCalled();
+      expect(repo.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when a Flow To Load Reference record not found', async () => {
@@ -90,7 +91,7 @@ describe('FlowToLoadCheckService', () => {
       const repo = mockRepository();
       (useSlaveRepository as jest.Mock).mockImplementation(
           async (_dataSource, _repo, callback) =>
-            callback(mockRepository()) 
+            callback(repo) 
         );
       const results = await service.getFlowToLoadReferences(
         flowToLoadReferenceId,

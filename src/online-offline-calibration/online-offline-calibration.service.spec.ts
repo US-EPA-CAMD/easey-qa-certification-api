@@ -74,7 +74,7 @@ describe('OnlineOfflineCalibrationService', () => {
         onlineOfflineCalibrationId,
       );
       expect(result).toEqual(onlineOfflineCalibrationDTO);
-      expect(repository.findOneBy).toHaveBeenCalled();
+      expect(repo.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Online Offline Calibration record not found', async () => {

@@ -99,7 +99,7 @@ describe('RataRunService', () => {
         );
       const result = await service.getRataRuns(rataSumId);
       expect(result).toEqual([rataRun]);
-      expect(repository.find).toHaveBeenCalled();
+      expect(repo.find).toHaveBeenCalled();
     });
   });
 

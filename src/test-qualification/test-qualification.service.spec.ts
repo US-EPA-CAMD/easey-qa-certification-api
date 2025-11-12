@@ -64,7 +64,7 @@ describe('TestQualificationService', () => {
         );
       const result = await service.getTestQualification(testQualificationId);
       expect(result).toEqual(testQualificationRecord);
-      expect(repository.findOneBy).toHaveBeenCalled();
+      expect(repo.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Test Qualification record not found', async () => {

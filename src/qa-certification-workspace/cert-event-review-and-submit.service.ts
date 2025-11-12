@@ -8,7 +8,7 @@ import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { CertEventReviewAndSubmitMap } from '../maps/cert-event-review-and-submit.map';
 import { CertEventReviewAndSubmitGlobalRepository } from './cert-event-review-and-submit-global.repository';
 import { CertEventReviewAndSubmitRepository } from './cert-event-review-and-submit.repository';
-
+import { useSlaveRepository } from '@us-epa-camd/easey-common';
 const moment = require('moment');
 
 @Injectable()
@@ -34,42 +34,76 @@ export class CertEventReviewAndSubmitService {
   ): Promise<CertEventReviewAndSubmitDTO[]> {
     let data: CertEventReviewAndSubmitDTO[];
 
-    let repository;
-    const queryRunner = this.dataSource.createQueryRunner('slave');
-    queryRunner.connect();
+  let repository;
    if (isWorkspace) {
-      repository = queryRunner.manager.getRepository(CertEventReviewAndSubmitRepository);
-    } else {
-      repository = queryRunner.manager.getRepository(CertEventReviewAndSubmitGlobalRepository);
+      repository = withTransaction(this.workspaceRepository, trx);
     }
 
 
     try {
-      if (monPlanIds && monPlanIds.length > 0) {
-        data = await this.map.many(
-          await repository.find({ where: { monPlanId: In(monPlanIds) } }),
-        );
-      } else {
-        data = await this.map.many(
-          await repository.find({ where: { orisCode: In(orisCodes) } }),
-        );
+      if(isWorkspace)
+      {
+        if (monPlanIds && monPlanIds.length > 0) {
+          data = await this.map.many(
+            await repository.find({ where: { monPlanId: In(monPlanIds) } }),
+          );
+        } else {
+          data = await this.map.many(
+            await repository.find({ where: { orisCode: In(orisCodes) } }),
+          );
+      }
+      }
+      else{
+        if (monPlanIds && monPlanIds.length > 0) {
+          data = await this.map.many(
+            await useSlaveRepository(this.dataSource, CertEventReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { monPlanId: In(monPlanIds) } })))
+        } 
+        else {
+          data = await this.map.many(
+            await useSlaveRepository(this.dataSource, CertEventReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { orisCode: In(orisCodes) } })))
+        }
       }
 
+      const manager = trx || this.entityManager;
       let quarterList: ReportingPeriod[];
+      if(isWorkspace){
       if (quarters && quarters.length > 0) {
-        quarterList = await queryRunner.manager.find(ReportingPeriod, {
+        quarterList = await manager.find(ReportingPeriod, {
           where: { periodAbbreviation: In(quarters) },
         });
       } else {
-        quarterList = await queryRunner.manager.find(ReportingPeriod);
+        quarterList = await manager.find(ReportingPeriod);
       }
+      }
+      else{
+      if (quarters && quarters.length > 0) {
+          const queryRunner = this.dataSource.createQueryRunner('slave');
+        try{
+          quarterList = await queryRunner.manager.find(ReportingPeriod, {
+          where: { periodAbbreviation: In(quarters) },
+        });
+      }finally
+      {
+        await queryRunner.release()
+      }
+    }
+    else {
+      const queryRunner = this.dataSource.createQueryRunner('slave');
+        try{
+          quarterList = await queryRunner.manager.find(ReportingPeriod);
+        }
+        finally
+        {
+          await queryRunner.release()
+        }
+      }
+    }
 
       const newResults = [];
 
         if (data.length > 0 && isWorkspace) {
         const qaCertEventIdentifiers = data.map(d => d.qaCertEventIdentifier);
-
-        const severities = await queryRunner.manager.query(
+        const severities = await manager.query(
              `select qce.qa_cert_event_id , sc.severity_cd_description, sc.severity_cd from camdecmpswks.qa_cert_event qce
               JOIN camdecmpswks.check_session cs on cs.chk_session_id = qce.chk_session_id
               JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd

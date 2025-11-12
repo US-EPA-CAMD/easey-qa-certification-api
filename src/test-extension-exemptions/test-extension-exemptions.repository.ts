@@ -12,12 +12,14 @@ import {
 export class TestExtensionExemptionsRepository extends Repository<
   TestExtensionExemption
 > {
-  constructor(private readonly dataSource: DataSource, entityManager: EntityManager) {
+  constructor( entityManager: EntityManager) {
     super(TestExtensionExemption, entityManager);
   }
 
   private buildBaseQuery(): SelectQueryBuilder<TestExtensionExemption> {
-    const query = this.dataSource.createQueryRunner('slave').manager.createQueryBuilder(TestExtensionExemption,'tee');
+    const queryRunner = this.manager.connection.createQueryRunner('slave');
+    const slaveManager = queryRunner.manager;
+    const query = slaveManager.createQueryBuilder(TestExtensionExemption,'tee');
     return addJoins(query) as SelectQueryBuilder<TestExtensionExemption>;
   }
 

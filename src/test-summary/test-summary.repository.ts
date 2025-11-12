@@ -13,12 +13,14 @@ import {
 
 @Injectable()
 export class TestSummaryRepository extends Repository<TestSummary> {
-  constructor( private readonly dataSource: DataSource, entityManager: EntityManager) {
+  constructor(entityManager: EntityManager) {
     super(TestSummary, entityManager);
   }
 
   private buildBaseQuery(): SelectQueryBuilder<TestSummary> {
-    const query = this.dataSource.createQueryRunner('slave').manager.createQueryBuilder(TestSummary,'ts');
+    const queryRunner = this.manager.connection.createQueryRunner('slave');
+    const slaveManager = queryRunner.manager;
+    const query = slaveManager.createQueryBuilder(TestSummary,'ts');
     return addJoins(query) as SelectQueryBuilder<TestSummary>;
   }
 

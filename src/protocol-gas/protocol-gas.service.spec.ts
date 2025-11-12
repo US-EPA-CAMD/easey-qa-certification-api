@@ -66,7 +66,7 @@ describe('ProtocolGasService', () => {
         );      
       const result = await service.getProtocolGas(protocolGasId);
       expect(result).toEqual(protocolGasDTO);
-      expect(repository.findOneBy).toHaveBeenCalled();
+      expect(repo.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Protocol Gas record not found', async () => {

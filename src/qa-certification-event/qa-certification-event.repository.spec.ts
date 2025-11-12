@@ -7,33 +7,45 @@ import { QACertificationEventRepository } from './qa-certification-event.reposit
 
 const qaCertEvent = new QACertificationEvent();
 
-const mockQueryBuilder = () => ({
+const mockQueryBuilder : jest.Mocked<SelectQueryBuilder<QACertificationEvent>> = {
   where: jest.fn(),
   andWhere: jest.fn(),
   getOne: jest.fn(),
   getMany: jest.fn(),
   leftJoinAndSelect: jest.fn(),
   leftJoin: jest.fn(),
-});
+} as any;
 
 describe('QACertificationEventWorkspaceRepository', () => {
   let repository: QACertificationEventRepository;
-  let queryBuilder;
+  let queryBuilder = mockQueryBuilder;
+  let mockEntityManager;
+  let mockSlaveManager;
+  let mockQueryRunner;
 
   beforeEach(async () => {
+    mockSlaveManager = {
+      createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+    };
+
+    mockQueryRunner = {
+      manager: mockSlaveManager,
+    };
+
+    mockEntityManager = {
+      connection: {
+        createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner),
+      },
+    };
     const module = await Test.createTestingModule({
       providers: [
-        EntityManager,
+        { provide: EntityManager, useValue: mockEntityManager },
         QACertificationEventRepository,
-        { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
       ],
     }).compile();
 
     repository = module.get<QACertificationEventRepository>(
       QACertificationEventRepository,
-    );
-    queryBuilder = module.get<SelectQueryBuilder<QACertificationEvent>>(
-      SelectQueryBuilder,
     );
 
     repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
@@ -44,7 +56,7 @@ describe('QACertificationEventWorkspaceRepository', () => {
   describe('getQACertificationEventById', () => {
     it('calls buildBaseQuery and get one QA Certification Event from the repository with Id', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getOne.mockReturnValue(qaCertEvent);
+      queryBuilder.getOne.mockReturnValue(Promise.resolve(qaCertEvent));
 
       const result = await repository.getQACertificationEventById('1');
 
@@ -55,7 +67,7 @@ describe('QACertificationEventWorkspaceRepository', () => {
   describe('getQACertificationEventsByLocationId', () => {
     it('get many QA Certification Event from the repository with locationId, testTypeCode, beginDate and endDate', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getMany.mockReturnValue([qaCertEvent]);
+      queryBuilder.getMany.mockReturnValue(Promise.resolve([qaCertEvent]));
 
       const result = await repository.getQACertificationEventsByLocationId('1');
 
@@ -66,7 +78,7 @@ describe('QACertificationEventWorkspaceRepository', () => {
   describe('getQaCertEventsByUnitStack', () => {
     it('get QA Certification Event from the repository with facilityId', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getMany.mockReturnValue([qaCertEvent]);
+      queryBuilder.getMany.mockReturnValue(Promise.resolve([qaCertEvent]));
 
       const result = await repository.getQaCertEventsByUnitStack(1);
 
@@ -75,7 +87,7 @@ describe('QACertificationEventWorkspaceRepository', () => {
 
     it('get QA Certification Event from the repository with facilityId, unitids, stackPipeIds', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getMany.mockReturnValue([qaCertEvent]);
+      queryBuilder.getMany.mockReturnValue(Promise.resolve([qaCertEvent]));
 
       const result = await repository.getQaCertEventsByUnitStack(
         1,

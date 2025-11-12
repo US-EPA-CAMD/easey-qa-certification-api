@@ -7,6 +7,7 @@ import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
 import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
 import { TeeReviewAndSubmitGlobalRepository } from './tee-review-and-submit-global.repository';
 import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common';
 
 @Injectable()
 export class TeeReviewAndSubmitService {
@@ -33,17 +34,15 @@ export class TeeReviewAndSubmitService {
     const filteredDates = [];
 
     let repository;
-    const queryRunner = this.dataSource.createQueryRunner('slave');
-    queryRunner.connect();
     if (isWorkspace) {
-      repository = queryRunner.manager.getRepository(TeeReviewAndSubmitRepository);
-    } else {
-      repository = queryRunner.manager.getRepository(TeeReviewAndSubmitGlobalRepository);
+      repository = withTransaction(this.workspaceRepository, trx);
     }
 
     let data: TeeReviewAndSubmitDTO[];
     try {
-      if (monPlanIds && monPlanIds.length > 0) {
+      if(isWorkspace)
+      {
+              if (monPlanIds && monPlanIds.length > 0) {
         data = await this.map.many(
           await repository.find({ where: { monPlanId: In(monPlanIds) } }),
         );
@@ -52,6 +51,17 @@ export class TeeReviewAndSubmitService {
           await repository.find({ where: { orisCode: In(orisCodes) } }),
         );
       }
+      }
+      else{
+      if (monPlanIds && monPlanIds.length > 0) {
+        data = await this.map.many(
+          await useSlaveRepository(this.dataSource, TeeReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { monPlanId: In(monPlanIds) } })))
+      } else {
+        data = await this.map.many(
+          await useSlaveRepository(this.dataSource, TeeReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { orisCode: In(orisCodes) } })))
+      }
+      }
+
 
       if (quarters && quarters.length > 0) {
         data = data.filter(f => quarters.includes(f.periodAbbreviation));
@@ -60,8 +70,9 @@ export class TeeReviewAndSubmitService {
       if (data.length > 0 && isWorkspace) {
         const testExtensionExemptionIdentifiers = data.map(d => d.testExtensionExemptionIdentifier);
 
-        const slaveQueryRunner = this.entityManager.connection.createQueryRunner("slave");
-        const severities = await slaveQueryRunner.query(
+        const manager = trx || this.entityManager;
+        const severities = await manager.query(
+
              `select t.test_extension_exemption_id, sc.severity_cd_description, sc.severity_cd from camdecmpswks.test_extension_exemption t
               JOIN camdecmpswks.check_session cs on cs.chk_session_id = t.chk_session_id
               JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd
@@ -83,9 +94,6 @@ export class TeeReviewAndSubmitService {
       return data;
     } catch (e) {
       throw new EaseyException(e, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-    finally {
-      await queryRunner.release();
     }
   }
 }
