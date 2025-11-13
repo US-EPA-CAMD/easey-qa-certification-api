@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
+import { EntityManager, DataSource } from 'typeorm';
 
 import { MatsDataSubmissionBaseDTO } from '../dto/mats-data-submission.dto';
 import { MatsReportTypeCode } from '../entities/mats-report-type-code.entity';
@@ -15,6 +15,11 @@ jest.mock('class-validator', () => ({
   validate: jest.fn().mockResolvedValue([]),
 }));
 
+jest.mock('@us-epa-camd/easey-common', () => ({
+  useSlaveRepository: jest.fn().mockReturnValue({
+    find: jest.fn().mockResolvedValue([]),
+  }),
+}));
 const mockPayload: MatsDataSubmissionBaseDTO = {
   locationId: 'CBS-6ac708a8-0127-4ef4-806e-9388b544e4ab',
   reportTypeCode: 'NOTIFY',
@@ -44,7 +49,7 @@ const mockReportTypeCode = (() => {
 describe('MatsDataSubmissionChecksService', () => {
   let manager: EntityManager;
   let service: MatsDataSubmissionChecksService;
-
+  let dataSource : {}
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggerModule],
@@ -55,6 +60,7 @@ describe('MatsDataSubmissionChecksService', () => {
         MatsDataSubmissionRepository,
         MatsDataSubmissionService,
         MatsDataSubmissionChecksService,
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
