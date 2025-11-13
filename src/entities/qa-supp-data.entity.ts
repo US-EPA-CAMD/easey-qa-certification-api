@@ -70,12 +70,14 @@ export class QASuppData extends BaseEntity {
   @Column({
     name: 'begin_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   beginHour: number;
 
   @Column({
     name: 'begin_min',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   beginMinute: number;
 
@@ -88,18 +90,21 @@ export class QASuppData extends BaseEntity {
   @Column({
     name: 'end_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   endHour: number;
 
   @Column({
     name: 'end_min',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   endMinute: number;
 
   @Column({
     name: 'rpt_period_id',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   reportPeriodId: number;
 
@@ -111,6 +116,7 @@ export class QASuppData extends BaseEntity {
   @Column({
     name: 'gp_ind',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   gracePeriodIndicator: number;
 
@@ -123,6 +129,7 @@ export class QASuppData extends BaseEntity {
   @Column({
     name: 'reinstallation_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   reinstallationHour: number;
 
@@ -135,6 +142,7 @@ export class QASuppData extends BaseEntity {
   @Column({
     name: 'test_expire_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   testExpireHour: number;
 
@@ -167,6 +175,7 @@ export class QASuppData extends BaseEntity {
   @Column({
     name: 'submission_id',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   submissionId: number;
 

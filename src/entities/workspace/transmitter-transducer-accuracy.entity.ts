@@ -28,6 +28,7 @@ export class TransmitterTransducerAccuracy extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'low_level_accuracy',
   })
   lowLevelAccuracy: number;
@@ -40,6 +41,7 @@ export class TransmitterTransducerAccuracy extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'mid_level_accuracy',
   })
   midLevelAccuracy: number;
@@ -52,6 +54,7 @@ export class TransmitterTransducerAccuracy extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'high_level_accuracy',
   })
   highLevelAccuracy: number;

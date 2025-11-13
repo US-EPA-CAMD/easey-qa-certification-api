@@ -156,24 +156,15 @@ export class QACertificationEvent extends BaseEntity {
   })
   updateDate: Date;
 
-  @ManyToOne(
-    () => MonitorLocation,
-    o => o.qaCertEvents,
-  )
+  @ManyToOne(() => MonitorLocation, (o) => o.qaCertEvents)
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;
 
-  @ManyToOne(
-    () => Component,
-    o => o.qaCertEvents,
-  )
+  @ManyToOne(() => Component, (o) => o.qaCertEvents)
   @JoinColumn({ name: 'component_id' })
   component: Component;
 
-  @ManyToOne(
-    () => MonitorSystem,
-    o => o.qaCertEvents,
-  )
+  @ManyToOne(() => MonitorSystem, (o) => o.qaCertEvents)
   @JoinColumn({ name: 'mon_sys_id' })
   system: MonitorSystem;
 }

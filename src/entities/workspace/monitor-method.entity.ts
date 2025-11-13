@@ -41,13 +41,18 @@ export class MonitorMethod extends BaseEntity {
     nullable: false,
     name: 'begin_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   beginHour: number;
 
   @Column({ type: 'date', name: 'end_date' })
   endDate: Date;
 
-  @Column({ name: 'end_hour', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'end_hour',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   endHour: number;
 
   @Column({ type: 'varchar', nullable: true, length: 8, name: 'userid' })
@@ -59,10 +64,7 @@ export class MonitorMethod extends BaseEntity {
   @Column({ type: 'timestamp', nullable: true, name: 'update_date' })
   updateDate: Date;
 
-  @ManyToOne(
-    () => MonitorLocation,
-    location => location.methods,
-  )
+  @ManyToOne(() => MonitorLocation, (location) => location.methods)
   @JoinColumn({ name: 'mon_loc_id' })
   location: MonitorLocation;
 }

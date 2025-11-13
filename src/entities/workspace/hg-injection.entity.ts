@@ -33,24 +33,28 @@ export class HgInjection extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'injection_hour',
   })
   injectionHour: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'injection_min',
   })
   injectionMinute: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'measured_value',
   })
   measuredValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'ref_value',
   })
   referenceValue: number;

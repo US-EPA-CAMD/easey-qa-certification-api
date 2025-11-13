@@ -83,17 +83,11 @@ export class TestQualification extends BaseEntity {
   })
   updateDate: Date;
 
-  @ManyToOne(
-    () => TestSummary,
-    o => o.testQualifications,
-  )
+  @ManyToOne(() => TestSummary, (o) => o.testQualifications)
   @JoinColumn({ name: 'test_sum_id' })
   testSummary: TestSummary;
 
-  @ManyToOne(
-    () => TestClaimCode,
-    tcc => tcc.TestQualifications,
-  )
+  @ManyToOne(() => TestClaimCode, (tcc) => tcc.TestQualifications)
   @JoinColumn({ name: 'test_claim_cd' })
   TestClaimCode: TestClaimCode;
 }

@@ -36,36 +36,42 @@ export class AppECorrelationTestSummary extends BaseEntity {
     name: 'op_level_num',
     nullable: false,
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   operatingLevelForRun: number;
 
   @Column({
     name: 'mean_ref_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   meanReferenceValue: number;
 
   @Column({
     name: 'calc_mean_ref_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedMeanReferenceValue: number;
 
   @Column({
     name: 'avg_hrly_hi_rate',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   averageHourlyHeatInputRate: number;
 
   @Column({
     name: 'calc_avg_hrly_hi_rate',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedAverageHourlyHeatInputRate: number;
 
   @Column({
     name: 'f_factor',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   fFactor: number;
 
