@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { EntityManager, DataSource } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 jest.mock('@us-epa-camd/easey-common/utilities/functions', () => ({
     ...jest.requireActual('@us-epa-camd/easey-common/utilities/functions'),
@@ -11,8 +11,6 @@ import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-su
 import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
 import { TestSummaryReviewAndSubmitRepository } from './test-summary-review-and-submit.repository';
 import { TestSummaryReviewAndSubmitService } from './test-summary-review-and-submit.service';
-
-jest.mock('@us-epa-camd/easey-common/connection');
 
 const dto = new ReviewAndSubmitTestSummaryDTO();
 dto.beginDate = '2021-04-04';
@@ -57,7 +55,6 @@ const mockEntityManager = {
 
 describe('TestSummaryReviewAndSubmitService', () => {
   let service: TestSummaryReviewAndSubmitService;
-  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -75,7 +72,6 @@ describe('TestSummaryReviewAndSubmitService', () => {
           provide: TestSummaryReviewAndSubmitGlobalRepository,
           useFactory: mockRepo,
         },
-        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 

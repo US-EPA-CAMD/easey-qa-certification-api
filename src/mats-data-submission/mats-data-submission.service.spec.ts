@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
+import { EntityManager, DataSource } from 'typeorm';
 
 import { MatsDataSubmissionBaseDTO } from '../dto/mats-data-submission.dto';
 import { MatsDataSubmission } from '../entities/mats-data-submission.entity';
@@ -80,6 +80,7 @@ const mockSubmissionXml = `
 
 describe('MatsDataSubmissionService', () => {
   let service: MatsDataSubmissionService;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -96,6 +97,7 @@ describe('MatsDataSubmissionService', () => {
           useFactory: mockRepository,
         },
         MatsDataSubmissionService,
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 

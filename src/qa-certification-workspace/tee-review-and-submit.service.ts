@@ -1,13 +1,12 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In, DataSource } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 
 import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
 import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
 import { TeeReviewAndSubmitGlobalRepository } from './tee-review-and-submit-global.repository';
 import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository';
-import { useSlaveRepository } from '@us-epa-camd/easey-common';
 
 @Injectable()
 export class TeeReviewAndSubmitService {
@@ -17,7 +16,6 @@ export class TeeReviewAndSubmitService {
     private readonly globalRepository: TeeReviewAndSubmitGlobalRepository,
 
     private readonly map: TeeReviewAndSubmitMap,
-    private readonly dataSource: DataSource
   ) {}
 
   returnManager(): any {
@@ -36,35 +34,23 @@ export class TeeReviewAndSubmitService {
     let repository;
     if (isWorkspace) {
       repository = withTransaction(this.workspaceRepository, trx);
+    } else {
+      repository = withTransaction(this.globalRepository, trx);
     }
 
     let data: TeeReviewAndSubmitDTO[];
     try {
-      if(isWorkspace)
-      {
-        if (monPlanIds?.length > 0) {
+      if (monPlanIds && monPlanIds.length > 0) {
         data = await this.map.many(
           await repository.find({ where: { monPlanId: In(monPlanIds) } }),
         );
-        } 
-        else {
-          data = await this.map.many(
-            await repository.find({ where: { orisCode: In(orisCodes) } }),
-          );
-        }
-      }
-      else if (!isWorkspace){
-        if (monPlanIds?.length > 0) {
-          data = await this.map.many(
-            await useSlaveRepository(this.dataSource, TeeReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { monPlanId: In(monPlanIds) } })))
-        } else {
-          data = await this.map.many(
-            await useSlaveRepository(this.dataSource, TeeReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { orisCode: In(orisCodes) } })))
-        }
+      } else {
+        data = await this.map.many(
+          await repository.find({ where: { orisCode: In(orisCodes) } }),
+        );
       }
 
-
-      if (quarters?.length > 0) {
+      if (quarters && quarters.length > 0) {
         data = data.filter(f => quarters.includes(f.periodAbbreviation));
       }
 
@@ -73,7 +59,6 @@ export class TeeReviewAndSubmitService {
 
         const manager = trx || this.entityManager;
         const severities = await manager.query(
-
              `select t.test_extension_exemption_id, sc.severity_cd_description, sc.severity_cd from camdecmpswks.test_extension_exemption t
               JOIN camdecmpswks.check_session cs on cs.chk_session_id = t.chk_session_id
               JOIN camdecmpsmd.severity_code sc on sc.severity_cd = cs.severity_cd

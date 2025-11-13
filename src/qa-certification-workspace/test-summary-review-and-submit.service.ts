@@ -1,14 +1,13 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In, DataSource } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 
 import { ReviewAndSubmitTestSummaryDTO } from '../dto/review-and-submit-test-summary.dto';
 import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { ReviewAndSubmitTestSummaryMap } from '../maps/review-and-submit-test-summary.map';
 import { TestSummaryReviewAndSubmitGlobalRepository } from './test-summary-review-and-submit-global.repository';
 import { TestSummaryReviewAndSubmitRepository } from './test-summary-review-and-submit.repository';
-import { useSlaveRepository } from '@us-epa-camd/easey-common';
 
 const moment = require('moment');
 
@@ -20,7 +19,6 @@ export class TestSummaryReviewAndSubmitService {
     private readonly globalRepository: TestSummaryReviewAndSubmitGlobalRepository,
 
     private readonly map: ReviewAndSubmitTestSummaryMap,
-    private readonly dataSource:DataSource
   ) {}
 
   returnManager(): any {
@@ -37,71 +35,32 @@ export class TestSummaryReviewAndSubmitService {
     const filteredDates = [];
 
     let repository;
-
     if (isWorkspace) {
       repository = withTransaction(this.workspaceRepository, trx);
+    } else {
+      repository = withTransaction(this.globalRepository, trx);
     }
 
     let data: ReviewAndSubmitTestSummaryDTO[];
     try {
-      if(isWorkspace)
-      {
-        if (monPlanIds && monPlanIds.length > 0) {
-          data = await this.map.many(
-            await repository.find({ where: { monPlanId: In(monPlanIds) } }),
-          );
-        } else {
-          data = await this.map.many(
-            await repository.find({ where: { orisCode: In(orisCodes) } }),
-          );
-        }
-      }
-      else if (!isWorkspace){
-        if (monPlanIds && monPlanIds.length > 0) {
-          data = await this.map.many(
-            await useSlaveRepository(this.dataSource, TestSummaryReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { monPlanId: In(monPlanIds) } })))
-        } else {
-          data = await this.map.many(
-            await useSlaveRepository(this.dataSource, TestSummaryReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { orisCode: In(orisCodes) } })))
-        }
+      if (monPlanIds && monPlanIds.length > 0) {
+        data = await this.map.many(
+          await repository.find({ where: { monPlanId: In(monPlanIds) } }),
+        );
+      } else {
+        data = await this.map.many(
+          await repository.find({ where: { orisCode: In(orisCodes) } }),
+        );
       }
 
       const manager = trx || this.entityManager;
       let quarterList;
-      if(isWorkspace)
-      {
-        if (quarters && quarters.length > 0) {
-          quarterList = await manager.find(ReportingPeriod, {
-            where: { periodAbbreviation: In(quarters) },
-          });
-        } else {
-          quarterList = await manager.find(ReportingPeriod);
-        }
-      }
-      else if (!isWorkspace)
-      {
-        if (quarters && quarters.length > 0) {
-          const queryRunner = this.dataSource.createQueryRunner('slave');
-          try{
-              quarterList = await queryRunner.manager.find(ReportingPeriod, {
-              where: { periodAbbreviation: In(quarters) },
-            });
-          }finally
-          {
-            await queryRunner.release()
-          }
-        }
-        else 
-        {
-          const queryRunner = this.dataSource.createQueryRunner('slave');
-          try{
-            quarterList = await queryRunner.manager.find(ReportingPeriod);
-          }
-          finally
-          {
-            await queryRunner.release()
-          }
-        }
+      if (quarters && quarters.length > 0) {
+        quarterList = await manager.find(ReportingPeriod, {
+          where: { periodAbbreviation: In(quarters) },
+        });
+      } else {
+        quarterList = await manager.find(ReportingPeriod);
       }
 
       const newResults = [];

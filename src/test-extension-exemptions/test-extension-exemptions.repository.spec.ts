@@ -1,53 +1,52 @@
 import { Test } from '@nestjs/testing';
-import { EntityManager, SelectQueryBuilder } from 'typeorm';
+import { EntityManager, SelectQueryBuilder, DataSource } from 'typeorm';
 
 import { TestExtensionExemption } from '../entities/test-extension-exemption.entity';
 import * as testExtExpQueryBuilder from '../utilities/test-extension-exemption.querybuilder';
 import { TestExtensionExemptionsRepository } from './test-extension-exemptions.repository';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 const testExtExp = new TestExtensionExemption();
+jest.mock('@us-epa-camd/easey-common/connection');
 
-const mockQueryBuilder: jest.Mocked<SelectQueryBuilder<TestExtensionExemption>> = {
+const mockQueryBuilder = {
   where: jest.fn(),
   andWhere: jest.fn(),
   getOne: jest.fn(),
   getMany: jest.fn(),
   leftJoinAndSelect: jest.fn(),
   leftJoin: jest.fn(),
-} as any;
+};
+
+const mockManager = {
+  createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+};
 
 describe('TestExtensionExemptionsRepository', () => {
   let repository: TestExtensionExemptionsRepository;
-  let queryBuilder = mockQueryBuilder;
-  let mockEntityManager;
-  let mockSlaveManager;
-  let mockQueryRunner;
+  let queryBuilder;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
-        mockSlaveManager = {
-      createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
-    };
-
-    mockQueryRunner = {
-      manager: mockSlaveManager,
-    };
-
-    mockEntityManager = {
-      connection: {
-        createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner),
-      },
-    };
     const module = await Test.createTestingModule({
       providers: [
-        { provide: EntityManager, useValue: mockEntityManager },
+        EntityManager,
         TestExtensionExemptionsRepository,
+        { provide: SelectQueryBuilder, useFactory: () => mockQueryBuilder },
+        {provide: DataSource, useValue: dataSource },      
       ],
     }).compile();
 
     repository = module.get<TestExtensionExemptionsRepository>(
       TestExtensionExemptionsRepository,
     );
-
+    queryBuilder = module.get<SelectQueryBuilder<TestExtensionExemption>>(
+      SelectQueryBuilder,
+    );
+      
+  (withSlaveConnection as jest.Mock).mockImplementation(
+          async (_dataSource, callback) =>
+      callback(mockManager))
     repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
     jest
       .spyOn(testExtExpQueryBuilder, 'addJoins')
@@ -57,7 +56,7 @@ describe('TestExtensionExemptionsRepository', () => {
   describe('getTestExtensionExemptionById', () => {
     it('calls buildBaseQuery and get one Test Extension Exemption from the repository with Id', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getOne.mockReturnValue(Promise.resolve(testExtExp));
+      queryBuilder.getOne.mockReturnValue(testExtExp);
 
       const result = await repository.getTestExtensionExemptionById('1');
 
@@ -68,7 +67,7 @@ describe('TestExtensionExemptionsRepository', () => {
   describe('getTestExtensionExemptionsByLocationId', () => {
     it('get many test Extension Exemption from the repository with locationId, testTypeCode, beginDate and endDate', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getMany.mockReturnValue(Promise.resolve([testExtExp]));
+      queryBuilder.getMany.mockReturnValue([testExtExp]);
 
       const result = await repository.getTestExtensionExemptionsByLocationId(
         '1',
@@ -81,7 +80,7 @@ describe('TestExtensionExemptionsRepository', () => {
   describe('getTestExtensionExemptionsByUnitStack', () => {
     it('get one test extension exemption record from the repository with facilityId', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getMany.mockReturnValue(Promise.resolve([testExtExp]));
+      queryBuilder.getMany.mockReturnValue([testExtExp]);
 
       const result = await repository.getTestExtensionsByUnitStack(1);
 
@@ -90,7 +89,7 @@ describe('TestExtensionExemptionsRepository', () => {
 
     it('get one test extension exemption from the repository with facilityId, unitids, stackPipeIds', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getMany.mockReturnValue(Promise.resolve([testExtExp]));
+      queryBuilder.getMany.mockReturnValue([testExtExp]);
 
       const result = await repository.getTestExtensionsByUnitStack(
         1,

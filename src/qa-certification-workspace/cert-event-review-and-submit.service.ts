@@ -1,14 +1,14 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { withTransaction } from '@us-epa-camd/easey-common/utilities/functions';
-import { EntityManager, In, DataSource } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 
 import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
 import { ReportingPeriod } from '../entities/reporting-period.entity';
 import { CertEventReviewAndSubmitMap } from '../maps/cert-event-review-and-submit.map';
 import { CertEventReviewAndSubmitGlobalRepository } from './cert-event-review-and-submit-global.repository';
 import { CertEventReviewAndSubmitRepository } from './cert-event-review-and-submit.repository';
-import { useSlaveRepository } from '@us-epa-camd/easey-common';
+
 const moment = require('moment');
 
 @Injectable()
@@ -18,7 +18,6 @@ export class CertEventReviewAndSubmitService {
     private readonly workspaceRepository: CertEventReviewAndSubmitRepository,
     private readonly globalRepository: CertEventReviewAndSubmitGlobalRepository,
     private readonly map: CertEventReviewAndSubmitMap,
-    private readonly dataSource: DataSource
   ) {}
 
   returnManager(): any {
@@ -34,78 +33,39 @@ export class CertEventReviewAndSubmitService {
   ): Promise<CertEventReviewAndSubmitDTO[]> {
     let data: CertEventReviewAndSubmitDTO[];
 
-  let repository;
-   if (isWorkspace) {
+    let repository;
+    if (isWorkspace) {
       repository = withTransaction(this.workspaceRepository, trx);
+    } else {
+      repository = withTransaction(this.globalRepository, trx);
     }
 
-
     try {
-      if(isWorkspace)
-      {
-        if (monPlanIds && monPlanIds.length > 0) {
-          data = await this.map.many(
-            await repository.find({ where: { monPlanId: In(monPlanIds) } }),
-          );
-        } else {
-          data = await this.map.many(
-            await repository.find({ where: { orisCode: In(orisCodes) } }),
-          );
-        }
-      }
-      else if(!isWorkspace)
-      {
-        if (monPlanIds && monPlanIds.length > 0) {
-          data = await this.map.many(
-            await useSlaveRepository(this.dataSource, CertEventReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { monPlanId: In(monPlanIds) } })))
-        } else {
-          data = await this.map.many(
-            await useSlaveRepository(this.dataSource, CertEventReviewAndSubmitGlobalRepository, async (repository) => repository.find({ where: { orisCode: In(orisCodes) } })))
-        }
+      if (monPlanIds && monPlanIds.length > 0) {
+        data = await this.map.many(
+          await repository.find({ where: { monPlanId: In(monPlanIds) } }),
+        );
+      } else {
+        data = await this.map.many(
+          await repository.find({ where: { orisCode: In(orisCodes) } }),
+        );
       }
 
       const manager = trx || this.entityManager;
       let quarterList: ReportingPeriod[];
-      if(isWorkspace)
-      {
-        if (quarters && quarters.length > 0) {
-          quarterList = await manager.find(ReportingPeriod, {
-            where: { periodAbbreviation: In(quarters) },
-          });
-        } else {
-          quarterList = await manager.find(ReportingPeriod);
-        }
+      if (quarters && quarters.length > 0) {
+        quarterList = await manager.find(ReportingPeriod, {
+          where: { periodAbbreviation: In(quarters) },
+        });
+      } else {
+        quarterList = await manager.find(ReportingPeriod);
       }
-      else if(!isWorkspace)
-      {
-        if (quarters && quarters.length > 0) 
-        {
-            const queryRunner = this.dataSource.createQueryRunner('slave');
-            try{
-                quarterList = await queryRunner.manager.find(ReportingPeriod, {
-                where: { periodAbbreviation: In(quarters) },
-              });
-            }finally
-            {
-              await queryRunner.release()
-            }
-        }
-        else {
-          const queryRunner = this.dataSource.createQueryRunner('slave');
-          try{
-            quarterList = await queryRunner.manager.find(ReportingPeriod);
-          }
-          finally
-          {
-            await queryRunner.release()
-          }
-        }
-    }
 
       const newResults = [];
 
         if (data.length > 0 && isWorkspace) {
         const qaCertEventIdentifiers = data.map(d => d.qaCertEventIdentifier);
+
         const severities = await manager.query(
              `select qce.qa_cert_event_id , sc.severity_cd_description, sc.severity_cd from camdecmpswks.qa_cert_event qce
               JOIN camdecmpswks.check_session cs on cs.chk_session_id = qce.chk_session_id

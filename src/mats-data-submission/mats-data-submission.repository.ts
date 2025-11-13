@@ -35,9 +35,7 @@ export class MatsDataSubmissionRepository extends Repository<
   }
 
   getMatsDataSubmissions(monPlanIds: string[]): Promise<MatsDataSubmission[]> {
-    const queryRunner = this.manager.connection.createQueryRunner('slave');
-    const repo = queryRunner.manager.getRepository(MatsDataSubmission);
-    return repo.find({
+    return this.find({
       where: {
         plan: {
           id: In(monPlanIds),

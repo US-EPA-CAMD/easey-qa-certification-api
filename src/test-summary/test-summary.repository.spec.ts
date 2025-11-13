@@ -1,50 +1,48 @@
 import { Test } from '@nestjs/testing';
-import { EntityManager, SelectQueryBuilder } from 'typeorm';
+import { EntityManager, SelectQueryBuilder, DataSource } from 'typeorm';
 
 import { TestSummary } from '../entities/test-summary.entity';
 import { TestSummaryRepository } from './test-summary.repository';
 
 import * as testSummaryQueryBuilder from '../utilities/test-summary.querybuilder';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
+jest.mock('@us-epa-camd/easey-common/connection');
 const testSummary = new TestSummary();
 
-const queryBuilder: jest.Mocked<SelectQueryBuilder<TestSummary>> = {
-  where: jest.fn().mockReturnThis(),
-  andWhere: jest.fn().mockReturnThis(),
+const mockQueryBuilder = {
+  where: jest.fn(),
+  andWhere: jest.fn(),
   getOne: jest.fn(),
   getMany: jest.fn(),
-  leftJoinAndSelect: jest.fn().mockReturnThis(),
-  leftJoin: jest.fn().mockReturnThis(),
-} as any;
+  leftJoinAndSelect: jest.fn(),
+  leftJoin: jest.fn(),
+};
+
+const mockManager = {
+  createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+};
 
 describe('TestSummaryRepository', () => {
   let repository;
-  let mockEntityManager;
-  let mockSlaveManager;
-  let mockQueryRunner;
+  let queryBuilder;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
-    mockSlaveManager = {
-      createQueryBuilder: jest.fn().mockReturnValue(queryBuilder),
-    };
-
-    mockQueryRunner = {
-      manager: mockSlaveManager,
-    };
-
-    mockEntityManager = {
-      connection: {
-        createQueryRunner: jest.fn().mockReturnValue(mockQueryRunner),
-      },
-    };
+    
     const module = await Test.createTestingModule({
       providers: [
-        { provide: EntityManager, useValue: mockEntityManager },
+        EntityManager,
         TestSummaryRepository,
+        { provide: SelectQueryBuilder, useFactory: () => mockQueryBuilder },
+        {provide: DataSource, useValue: dataSource },      
       ],
     }).compile();
 
     repository = module.get(TestSummaryRepository);
+    queryBuilder = module.get<SelectQueryBuilder<TestSummary>>(
+      SelectQueryBuilder,
+    );
 
     repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
     jest
@@ -59,12 +57,16 @@ describe('TestSummaryRepository', () => {
     jest
       .spyOn(testSummaryQueryBuilder, 'addBeginAndEndDateWhere')
       .mockReturnValue(queryBuilder);
+
+      (withSlaveConnection as jest.Mock).mockImplementation(
+          async (_dataSource, callback) =>
+      callback(mockManager))
   });
 
   describe('getTestSummaryById', () => {
     it('calls buildBaseQuery and get one test summary from the repository with Id', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getOne.mockReturnValue(Promise.resolve(testSummary));
+      queryBuilder.getOne.mockReturnValue(testSummary);
 
       const result = await repository.getTestSummaryById('1');
 
@@ -76,7 +78,7 @@ describe('TestSummaryRepository', () => {
     it('get one test summary from the repository with locationId, testTypeCode, testNumber', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
 
-      queryBuilder.getOne.mockReturnValue(Promise.resolve(testSummary));
+      queryBuilder.getOne.mockReturnValue(testSummary);
 
       const result = await repository.getTestSummaryByLocationId('1');
 
@@ -87,7 +89,7 @@ describe('TestSummaryRepository', () => {
   describe('getTestSummariesByLocationId', () => {
     it('get many test summary from the repository with locationId, testTypeCode, beginDate and endDate', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getMany.mockReturnValue(Promise.resolve([testSummary]));
+      queryBuilder.getMany.mockReturnValue([testSummary]);
 
       const result = await repository.getTestSummariesByLocationId('1');
 
@@ -98,7 +100,7 @@ describe('TestSummaryRepository', () => {
   describe('getTestSummariesByUnitStack', () => {
     it('get one test summary from the repository with facilityId', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getMany.mockReturnValue(Promise.resolve([testSummary]));
+      queryBuilder.getMany.mockReturnValue([testSummary]);
 
       const result = await repository.getTestSummariesByUnitStack('1');
 
@@ -107,7 +109,7 @@ describe('TestSummaryRepository', () => {
 
     it('get one test summary from the repository with facilityId, unitids, stackPipeIds', async () => {
       queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.getMany.mockReturnValue(Promise.resolve([testSummary]));
+      queryBuilder.getMany.mockReturnValue([testSummary]);
 
       const result = await repository.getTestSummariesByUnitStack(
         '1',

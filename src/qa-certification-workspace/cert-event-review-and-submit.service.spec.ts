@@ -1,14 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { EntityManager, DataSource } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
 import { CertEventReviewAndSubmitMap } from '../maps/cert-event-review-and-submit.map';
 import { CertEventReviewAndSubmitGlobalRepository } from './cert-event-review-and-submit-global.repository';
 import { CertEventReviewAndSubmitRepository } from './cert-event-review-and-submit.repository';
 import { CertEventReviewAndSubmitService } from './cert-event-review-and-submit.service';
-import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
-
-jest.mock('@us-epa-camd/easey-common/connection');
 
 const dto = new CertEventReviewAndSubmitDTO();
 dto.periodAbbreviation = '2022 Q1';
@@ -47,7 +44,6 @@ const mockEntityManager = {
 
 describe('CertEventReviewAndSubmitService', () => {
   let service: CertEventReviewAndSubmitService;
-  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -65,7 +61,6 @@ describe('CertEventReviewAndSubmitService', () => {
           provide: CertEventReviewAndSubmitGlobalRepository,
           useFactory: mockRepo,
         },
-        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 

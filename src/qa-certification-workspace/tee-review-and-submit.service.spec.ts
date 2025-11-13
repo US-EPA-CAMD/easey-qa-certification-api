@@ -1,13 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { EntityManager, DataSource } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { TeeReviewAndSubmitDTO } from '../dto/tee-review-and-submit.dto';
 import { TeeReviewAndSubmitMap } from '../maps/tee-review-and-submit.map';
 import { TeeReviewAndSubmitGlobalRepository } from './tee-review-and-submit-global.repository';
 import { TeeReviewAndSubmitRepository } from './tee-review-and-submit.repository';
 import { TeeReviewAndSubmitService } from './tee-review-and-submit.service';
-
-jest.mock('@us-epa-camd/easey-common/connection');
 
 const dto = new TeeReviewAndSubmitDTO();
 dto.periodAbbreviation = '2022 Q1';
@@ -37,7 +35,6 @@ const mockMap = () => ({
 
 describe('TeeReviewAndSubmitService', () => {
   let service: TeeReviewAndSubmitService;
-  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -52,7 +49,6 @@ describe('TeeReviewAndSubmitService', () => {
         { provide: TeeReviewAndSubmitMap, useFactory: mockMap },
         { provide: TeeReviewAndSubmitRepository, useFactory: mockRepo },
         { provide: TeeReviewAndSubmitGlobalRepository, useFactory: mockRepo },
-        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
