@@ -28,48 +28,56 @@ export class LinearitySummary extends BaseEntity {
   @Column({
     name: 'mean_ref_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   meanReferenceValue: number;
 
   @Column({
     name: 'calc_mean_ref_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedMeanReferenceValue: number;
 
   @Column({
     name: 'mean_measured_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   meanMeasuredValue: number;
 
   @Column({
     name: 'calc_mean_measured_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedMeanMeasuredValue: number;
 
   @Column({
     name: 'percent_error',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   percentError: number;
 
   @Column({
     name: 'calc_percent_error',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedPercentError: number;
 
   @Column({
     name: 'aps_ind',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   apsIndicator: number;
 
   @Column({
     name: 'calc_aps_ind',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedAPSIndicator: number;
 

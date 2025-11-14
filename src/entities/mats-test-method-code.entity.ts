@@ -21,6 +21,7 @@ export class MatsTestMethodCode extends BaseEntity {
   @Column({
     name: 'display_order',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   displayOrder: number;
 

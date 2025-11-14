@@ -30,12 +30,14 @@ export class UnitDefaultTestRun extends BaseEntity {
   @Column({
     name: 'op_level_num',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   operatingLevelForRun: number;
 
   @Column({
     name: 'run_num',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   runNumber: number;
 
@@ -48,12 +50,14 @@ export class UnitDefaultTestRun extends BaseEntity {
   @Column({
     name: 'begin_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   beginHour: number;
 
   @Column({
     name: 'begin_min',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   beginMinute: number;
 
@@ -66,30 +70,35 @@ export class UnitDefaultTestRun extends BaseEntity {
   @Column({
     name: 'end_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   endHour: number;
 
   @Column({
     name: 'end_min',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   endMinute: number;
 
   @Column({
     name: 'response_time',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   responseTime: number;
 
   @Column({
     name: 'ref_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   referenceValue: number;
 
   @Column({
     name: 'run_used_ind',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   runUsedIndicator: number;
 
