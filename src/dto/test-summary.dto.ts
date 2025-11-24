@@ -734,71 +734,71 @@ export class TestSummaryRecordDTO extends TestSummaryBaseDTO {
 export class TestSummaryImportDTO extends TestSummaryBaseDTO {
   @ValidateNested({ each: true })
   @Type(() => CalibrationInjectionImportDTO)
-  calibrationInjectionData: CalibrationInjectionImportDTO[];
+  calibrationInjectionData?: CalibrationInjectionImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => LinearitySummaryImportDTO)
-  linearitySummaryData: LinearitySummaryImportDTO[];
+  linearitySummaryData?: LinearitySummaryImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => RataImportDTO)
-  rataData: RataImportDTO[];
+  rataData?: RataImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => FlowToLoadReferenceImportDTO)
-  flowToLoadReferenceData: FlowToLoadReferenceImportDTO[];
+  flowToLoadReferenceData?: FlowToLoadReferenceImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => FlowToLoadCheckImportDTO)
-  flowToLoadCheckData: FlowToLoadCheckImportDTO[];
+  flowToLoadCheckData?: FlowToLoadCheckImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => CycleTimeSummaryImportDTO)
-  cycleTimeSummaryData: CycleTimeSummaryImportDTO[];
+  cycleTimeSummaryData?: CycleTimeSummaryImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => OnlineOfflineCalibrationImportDTO)
-  onlineOfflineCalibrationData: OnlineOfflineCalibrationImportDTO[];
+  onlineOfflineCalibrationData?: OnlineOfflineCalibrationImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => FuelFlowmeterAccuracyImportDTO)
-  fuelFlowmeterAccuracyData: FuelFlowmeterAccuracyImportDTO[];
+  fuelFlowmeterAccuracyData?: FuelFlowmeterAccuracyImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => TransmitterTransducerAccuracyImportDTO)
-  transmitterTransducerData: TransmitterTransducerAccuracyImportDTO[];
+  transmitterTransducerData?: TransmitterTransducerAccuracyImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => FuelFlowToLoadTestImportDTO)
-  fuelFlowToLoadBaselineData: FuelFlowToLoadBaselineImportDTO[];
+  fuelFlowToLoadBaselineData?: FuelFlowToLoadBaselineImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => FuelFlowToLoadTestImportDTO)
-  fuelFlowToLoadTestData: FuelFlowToLoadTestImportDTO[];
+  fuelFlowToLoadTestData?: FuelFlowToLoadTestImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => AppECorrelationTestSummaryImportDTO)
-  appendixECorrelationTestSummaryData: AppECorrelationTestSummaryImportDTO[];
+  appendixECorrelationTestSummaryData?: AppECorrelationTestSummaryImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => UnitDefaultTestImportDTO)
-  unitDefaultTestData: UnitDefaultTestImportDTO[];
+  unitDefaultTestData?: UnitDefaultTestImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => HgSummaryImportDTO)
-  hgSummaryData: HgSummaryImportDTO[];
+  hgSummaryData?: HgSummaryImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => TestQualificationImportDTO)
-  testQualificationData: TestQualificationImportDTO[];
+  testQualificationData?: TestQualificationImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => ProtocolGasImportDTO)
-  protocolGasData: ProtocolGasImportDTO[];
+  protocolGasData?: ProtocolGasImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => AirEmissionTestingImportDTO)
-  airEmissionTestingData: AirEmissionTestingImportDTO[];
+  airEmissionTestingData?: AirEmissionTestingImportDTO[];
 }
 
 export class TestSummaryDTO extends TestSummaryRecordDTO {

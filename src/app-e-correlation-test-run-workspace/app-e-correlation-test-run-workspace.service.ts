@@ -211,7 +211,10 @@ export class AppECorrelationTestRunWorkspaceService {
       `Appendix E Correlation Test Run Successfully Imported. Record Id: ${createdTestRun.id}`,
     );
 
-    if (payload.appendixEHeatInputFromGasData?.length > 0) {
+    if (
+      payload.appendixEHeatInputFromGasData &&
+      payload.appendixEHeatInputFromGasData.length > 0
+    ) {
       for (const appEHeatInputFromGas of payload.appendixEHeatInputFromGasData) {
         promises.push(
           this.appEHeatInputFromGasService.import(
@@ -227,7 +230,10 @@ export class AppECorrelationTestRunWorkspaceService {
       }
     }
 
-    if (payload.appendixEHeatInputFromOilData?.length > 0) {
+    if (
+      payload.appendixEHeatInputFromOilData &&
+      payload.appendixEHeatInputFromOilData.length > 0
+    ) {
       for (const appEHeatInputFromOil of payload.appendixEHeatInputFromOilData) {
         promises.push(
           this.appEHeatInputFromOilService.import(
