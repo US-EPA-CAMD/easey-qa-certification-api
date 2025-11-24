@@ -882,6 +882,10 @@ export class TestSummaryWorkspaceService {
         );
         await Promise.all(qaSuppAttributePromises);
       }
+
+      if (!trx) {
+        await transactionalEntityManager.queryRunner.commitTransaction();
+      }
     } catch (e) {
       if (!trx) await transactionalEntityManager.queryRunner.rollbackTransaction(); // Rollback only if we started the transaction
       throw new InternalServerErrorException(
