@@ -45,7 +45,9 @@ export class LocationWorkspaceRepository extends Repository<MonitorLocation> {
       stackPipeIds,
     });
 
-    return query.getMany();
+    const results = await query.getMany();
+
+    return results;
   }
 
   async getLocationById(
