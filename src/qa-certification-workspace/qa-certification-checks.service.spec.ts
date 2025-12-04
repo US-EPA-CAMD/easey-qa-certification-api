@@ -398,5 +398,125 @@ describe('QA Certification Check Service Test', () => {
         }
       });
     });
+
+    // Priority-Based Location Lookup Tests
+    describe('Priority-Based Location Lookup (stackPipeId preferred)', () => {
+      it('should prefer stackPipeId over unitId when both provided in testSummaryData', async () => {
+        const stackPipeLocation = {
+          unitId: null,
+          locationId: '2000',
+          stackPipeId: 'STACK1',
+          systemIDs: [],
+          componentIDs: ['A05'],
+        };
+
+        // Mock the location check service to return stack pipe location
+        jest.spyOn(service['locationChecksService'], 'runChecks')
+          .mockResolvedValue([[stackPipeLocation], []]);
+
+        const payloadWithBoth = {
+          ...payload,
+          testSummaryData: [{
+            ...payload.testSummaryData[0],
+            unitId: 'DIFFERENT_UNIT',  // This should be ignored
+            stackPipeId: 'STACK1',     // This should be used
+          }],
+          certificationEventData: [],
+          testExtensionExemptionData: [],
+        };
+
+        const result = await service.runChecks(payloadWithBoth);
+        expect(result).toBeDefined();
+        expect(result[0]).toEqual([stackPipeLocation]);
+      });
+
+      it('should prefer stackPipeId over unitId when both provided in testExtensionExemptionData', async () => {
+        const stackPipeLocation = {
+          unitId: null,
+          locationId: '2001',
+          stackPipeId: 'STACK2',
+          systemIDs: [],
+          componentIDs: [],
+        };
+
+        jest.spyOn(service['locationChecksService'], 'runChecks')
+          .mockResolvedValue([[stackPipeLocation], []]);
+
+        const testExtExemBoth = new TestExtensionExemptionImportDTO();
+        testExtExemBoth.unitId = 'DIFFERENT_UNIT';  // Should be ignored
+        testExtExemBoth.stackPipeId = 'STACK2';     // Should be used
+        testExtExemBoth.year = 2022;
+        testExtExemBoth.quarter = 1;
+
+        const payloadWithBoth = {
+          ...payload,
+          testSummaryData: [],
+          certificationEventData: [],
+          testExtensionExemptionData: [testExtExemBoth],
+        } as QACertificationImportDTO;
+
+        const result = await service.runChecks(payloadWithBoth);
+        expect(result).toBeDefined();
+        expect(result[0]).toEqual([stackPipeLocation]);
+      });
+
+      it('should prefer stackPipeId over unitId when both provided in certificationEventData', async () => {
+        const stackPipeLocation = {
+          unitId: null,
+          locationId: '2002',
+          stackPipeId: 'STACK3',
+          systemIDs: [],
+          componentIDs: [],
+        };
+
+        jest.spyOn(service['locationChecksService'], 'runChecks')
+          .mockResolvedValue([[stackPipeLocation], []]);
+
+        const qaCertEventBoth = new QACertificationEventImportDTO();
+        qaCertEventBoth.unitId = 'DIFFERENT_UNIT';  // Should be ignored
+        qaCertEventBoth.stackPipeId = 'STACK3';     // Should be used
+        qaCertEventBoth.certificationEventCode = 'QAC';
+        qaCertEventBoth.certificationEventDate = new Date('2022-01-01');
+
+        const payloadWithBoth = {
+          ...payload,
+          testSummaryData: [],
+          certificationEventData: [qaCertEventBoth],
+          testExtensionExemptionData: [],
+        } as QACertificationImportDTO;
+
+        const result = await service.runChecks(payloadWithBoth);
+        expect(result).toBeDefined();
+        expect(result[0]).toEqual([stackPipeLocation]);
+      });
+
+      it('should use unitId when only unitId provided (no stackPipeId)', async () => {
+        const unitLocation = {
+          unitId: '99',
+          locationId: '2003',
+          stackPipeId: null,
+          systemIDs: [],
+          componentIDs: ['A05'],
+        };
+
+        jest.spyOn(service['locationChecksService'], 'runChecks')
+          .mockResolvedValue([[unitLocation], []]);
+
+        const payloadUnitOnly = {
+          ...payload,
+          testSummaryData: [{
+            ...payload.testSummaryData[0],
+            unitId: '99',
+            stackPipeId: null,
+          }],
+          certificationEventData: [],
+          testExtensionExemptionData: [],
+        };
+
+        const result = await service.runChecks(payloadUnitOnly);
+        expect(result).toBeDefined();
+        expect(result[0]).toEqual([unitLocation]);
+      });
+    });
   });
 });
