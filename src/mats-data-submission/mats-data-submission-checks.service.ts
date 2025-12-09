@@ -249,7 +249,7 @@ export class MatsDataSubmissionChecksService {
     const xsdUri = this.configService.get('app.matsErtXsdUri');
     const cedriSupportEmail = this.configService.get('app.cedriSupportEmail');
 
-    const errorMessage = `The xml file is not compatible with the ERT XML Schema found at ${xsdUri}. This incompatibility does not prevent the submission of the file. For additional questions about the incompatibility or use of ERT, contact ${cedriSupportEmail}. If your submission has failed, contact ECMPS helpdesk.`;
+    const errorMessage = `The XML file is not compatible with the ERT XML Schema found at ${xsdUri}. This incompatibility does not prevent the submission of the file. For additional questions about the incompatibility or use of ERT, contact ${cedriSupportEmail}. If your submission has failed, contact ECMPS helpdesk.`;
 
     const fetchXsd = () =>
       firstValueFrom(
