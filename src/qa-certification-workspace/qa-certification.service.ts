@@ -28,6 +28,23 @@ export class QACertificationWorkspaceService {
     private readonly easeyContentService: EaseyContentService,
   ) {}
 
+  // Shared location lookup with priority-based matching (stackPipeId preferred)
+  private findLocationByIdentifiers(
+    locations: LocationIdentifiers[],
+    identifiers: { unitId?: string; stackPipeId?: string }
+  ): LocationIdentifiers | undefined {
+    return locations.find(i => {
+      if (identifiers.stackPipeId) {
+        // Always prefer stackPipeId when present (matches checks.service.ts logic)
+        return i.stackPipeId === identifiers.stackPipeId;
+      } else if (identifiers.unitId) {
+        // Only use unitId if no stackPipeId provided
+        return i.unitId === identifiers.unitId;
+      }
+      return false;
+    });
+  }
+
   async export(
     params: QACertificationParamsDTO,
     rptValuesOnly: boolean = false,
@@ -119,17 +136,8 @@ export class QACertificationWorkspaceService {
     payload.testSummaryData?.forEach((summary, idx) => {
       promises.push(
         new Promise((resolve, _reject) => {
-          // Handle anyOf schema - either unitId OR stackPipeId (or both)
-          const location = locations.find(i => {
-            if (summary.unitId && summary.stackPipeId) {
-              return i.unitId === summary.unitId && i.stackPipeId === summary.stackPipeId;
-            } else if (summary.stackPipeId) {
-              return i.stackPipeId === summary.stackPipeId;
-            } else if (summary.unitId) {
-              return i.unitId === summary.unitId;
-            }
-            return false;
-          });
+          //Use shared location lookup with priority-based matching
+          const location = this.findLocationByIdentifiers(locations, summary);
 
           if (!location) {
             throw new BadRequestException(
@@ -155,17 +163,8 @@ export class QACertificationWorkspaceService {
       (qaTestExtensionExemptionId, idx) => {
         promises.push(
           new Promise((resolve, _reject) => {
-            // Handle anyOf schema - either unitId OR stackPipeId (or both)
-            const location = locations.find(i => {
-              if (qaTestExtensionExemptionId.unitId && qaTestExtensionExemptionId.stackPipeId) {
-                return i.unitId === qaTestExtensionExemptionId.unitId && i.stackPipeId === qaTestExtensionExemptionId.stackPipeId;
-              } else if (qaTestExtensionExemptionId.stackPipeId) {
-                return i.stackPipeId === qaTestExtensionExemptionId.stackPipeId;
-              } else if (qaTestExtensionExemptionId.unitId) {
-                return i.unitId === qaTestExtensionExemptionId.unitId;
-              }
-              return false;
-            });
+            // Use shared location lookup with priority-based matching
+            const location = this.findLocationByIdentifiers(locations, qaTestExtensionExemptionId);
 
             if (!location) {
               throw new BadRequestException(
@@ -188,17 +187,8 @@ export class QACertificationWorkspaceService {
     payload.certificationEventData?.forEach((qaCertEvent, idx) => {
       promises.push(
         new Promise((resolve, _reject) => {
-          // Handle anyOf schema - either unitId OR stackPipeId (or both)
-          const location = locations.find(i => {
-            if (qaCertEvent.unitId && qaCertEvent.stackPipeId) {
-              return i.unitId === qaCertEvent.unitId && i.stackPipeId === qaCertEvent.stackPipeId;
-            } else if (qaCertEvent.stackPipeId) {
-              return i.stackPipeId === qaCertEvent.stackPipeId;
-            } else if (qaCertEvent.unitId) {
-              return i.unitId === qaCertEvent.unitId;
-            }
-            return false;
-          });
+          // Use shared location lookup with priority-based matching
+          const location = this.findLocationByIdentifiers(locations, qaCertEvent);
 
           if (!location) {
             throw new BadRequestException(
