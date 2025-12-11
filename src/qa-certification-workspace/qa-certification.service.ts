@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -119,12 +119,24 @@ export class QACertificationWorkspaceService {
     payload.testSummaryData?.forEach((summary, idx) => {
       promises.push(
         new Promise((resolve, _reject) => {
-          const locationId = locations.find(i => {
-            return (
-              i.unitId === summary.unitId &&
-              i.stackPipeId === summary.stackPipeId
+          // Handle anyOf schema - either unitId OR stackPipeId (or both)
+          const location = locations.find(i => {
+            if (summary.unitId && summary.stackPipeId) {
+              return i.unitId === summary.unitId && i.stackPipeId === summary.stackPipeId;
+            } else if (summary.stackPipeId) {
+              return i.stackPipeId === summary.stackPipeId;
+            } else if (summary.unitId) {
+              return i.unitId === summary.unitId;
+            }
+            return false;
+          });
+
+          if (!location) {
+            throw new BadRequestException(
+              `Location not found for unitId: ${summary.unitId}, stackPipeId: ${summary.stackPipeId}`
             );
-          }).locationId;
+          }
+          const locationId = location.locationId;
 
           const results = this.testSummaryService.import(
             locationId,
@@ -143,12 +155,24 @@ export class QACertificationWorkspaceService {
       (qaTestExtensionExemptionId, idx) => {
         promises.push(
           new Promise((resolve, _reject) => {
-            const locationId = locations.find(i => {
-              return (
-                i.unitId === qaTestExtensionExemptionId.unitId &&
-                i.stackPipeId === qaTestExtensionExemptionId.stackPipeId
+            // Handle anyOf schema - either unitId OR stackPipeId (or both)
+            const location = locations.find(i => {
+              if (qaTestExtensionExemptionId.unitId && qaTestExtensionExemptionId.stackPipeId) {
+                return i.unitId === qaTestExtensionExemptionId.unitId && i.stackPipeId === qaTestExtensionExemptionId.stackPipeId;
+              } else if (qaTestExtensionExemptionId.stackPipeId) {
+                return i.stackPipeId === qaTestExtensionExemptionId.stackPipeId;
+              } else if (qaTestExtensionExemptionId.unitId) {
+                return i.unitId === qaTestExtensionExemptionId.unitId;
+              }
+              return false;
+            });
+
+            if (!location) {
+              throw new BadRequestException(
+                `Location not found for unitId: ${qaTestExtensionExemptionId.unitId}, stackPipeId: ${qaTestExtensionExemptionId.stackPipeId}`
               );
-            }).locationId;
+            }
+            const locationId = location.locationId;
 
             const results = this.testExtensionExemptionService.import(
               locationId,
@@ -164,12 +188,24 @@ export class QACertificationWorkspaceService {
     payload.certificationEventData?.forEach((qaCertEvent, idx) => {
       promises.push(
         new Promise((resolve, _reject) => {
-          const locationId = locations.find(i => {
-            return (
-              i.unitId === qaCertEvent.unitId &&
-              i.stackPipeId === qaCertEvent.stackPipeId
+          // Handle anyOf schema - either unitId OR stackPipeId (or both)
+          const location = locations.find(i => {
+            if (qaCertEvent.unitId && qaCertEvent.stackPipeId) {
+              return i.unitId === qaCertEvent.unitId && i.stackPipeId === qaCertEvent.stackPipeId;
+            } else if (qaCertEvent.stackPipeId) {
+              return i.stackPipeId === qaCertEvent.stackPipeId;
+            } else if (qaCertEvent.unitId) {
+              return i.unitId === qaCertEvent.unitId;
+            }
+            return false;
+          });
+
+          if (!location) {
+            throw new BadRequestException(
+              `Location not found for unitId: ${qaCertEvent.unitId}, stackPipeId: ${qaCertEvent.stackPipeId}`
             );
-          }).locationId;
+          }
+          const locationId = location.locationId;
 
           const results = this.qaCertEventService.import(
             locationId,
