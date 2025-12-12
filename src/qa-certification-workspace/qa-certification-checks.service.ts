@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 
@@ -91,11 +91,24 @@ export class QACertificationChecksService {
 
     if (payload.testSummaryData) {
       for (const summary of payload.testSummaryData) {
-        const locationId = locations.find(i => {
-          return (
-            i.unitId === summary.unitId && i.stackPipeId === summary.stackPipeId
+        // Handle anyOf schema with priority-based matching (stackPipeId preferred)
+        const location = locations.find(i => {
+          if (summary.stackPipeId) {
+            // Always prefer stackPipeId when present (fixes mixed data patterns)
+            return i.stackPipeId === summary.stackPipeId;
+          } else if (summary.unitId) {
+            // Only use unitId if no stackPipeId provided
+            return i.unitId === summary.unitId;
+          }
+          return false;
+        });
+
+        if (!location) {
+          throw new BadRequestException(
+            `Location not found for unitId: ${summary.unitId}, stackPipeId: ${summary.stackPipeId}`
           );
-        }).locationId;
+        }
+        const locationId = location.locationId;
 
         const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
           locationId,
@@ -256,16 +269,17 @@ export class QACertificationChecksService {
           });
         });
 
-        summary.testQualificationData?.forEach(testQualification => {
+        const testQualificationData = summary.testQualificationData;
+        testQualificationData?.forEach(testQualification => {
           promises.push(
             new Promise((resolve, _reject) => {
               const results = this.testQualificationChecksService.runChecks(
                 locationId,
                 testQualification,
-                summary.testQualificationData,
+                testQualificationData,
                 duplicateQaSupp ? duplicateQaSupp.testSumId : null,
                 summary,
-                summary.rataData?.length > 0 ? summary.rataData[0] : null,
+                summary.rataData && summary.rataData.length > 0 ? summary.rataData[0] : null,
                 true,
                 false,
                 null,
@@ -315,17 +329,18 @@ export class QACertificationChecksService {
           );
         });
 
-        if (summary.appendixECorrelationTestSummaryData) {
+        const appendixECorrelationTestSummaryData = summary.appendixECorrelationTestSummaryData;
+        if (appendixECorrelationTestSummaryData) {
           promises.push(
             new Promise((resolve, _reject) => {
               const results = this.appETestSummaryChecksService.runImportChecks(
-                summary.appendixECorrelationTestSummaryData,
+                appendixECorrelationTestSummaryData,
               );
               resolve(results);
             }),
           );
 
-          summary.appendixECorrelationTestSummaryData.forEach(appESummary => {
+          appendixECorrelationTestSummaryData.forEach(appESummary => {
             promises.push(
               new Promise((resolve, _reject) => {
                 const results = this.appETestRunChecksService.runImportChecks(
@@ -389,21 +404,35 @@ export class QACertificationChecksService {
       }
     }
 
-    if (payload.testExtensionExemptionData) {
-      for (const testExtExem of payload.testExtensionExemptionData) {
-        const locationId = locations.find(i => {
-          return (
-            i.unitId === testExtExem.unitId &&
-            i.stackPipeId === testExtExem.stackPipeId
+    const testExtensionExemptionData = payload.testExtensionExemptionData;
+
+    if (testExtensionExemptionData) {
+      for (const testExtExem of testExtensionExemptionData) {
+        // Handle anyOf schema with priority-based matching (stackPipeId preferred)
+        const location = locations.find(i => {
+          if (testExtExem.stackPipeId) {
+            // Always prefer stackPipeId when present
+            return i.stackPipeId === testExtExem.stackPipeId;
+          } else if (testExtExem.unitId) {
+            // Only use unitId if no stackPipeId provided
+            return i.unitId === testExtExem.unitId;
+          }
+          return false;
+        });
+
+        if (!location) {
+          throw new BadRequestException(
+            `Location not found for unitId: ${testExtExem.unitId}, stackPipeId: ${testExtExem.stackPipeId}`
           );
-        }).locationId;
+        }
+        const locationId = location.locationId;
 
         promises.push(
           new Promise((resolve, _reject) => {
             const results = this.testExtensionExemptionsChecksService.runChecks(
               locationId,
               testExtExem,
-              payload.testExtensionExemptionData,
+              testExtensionExemptionData,
               true,
               false,
             );
@@ -413,21 +442,37 @@ export class QACertificationChecksService {
       }
     }
 
-    if (payload.certificationEventData) {
-      for (const qaCertEvent of payload.certificationEventData) {
-        const locationId = locations.find(i => {
-          return (
-            i.unitId === qaCertEvent.unitId &&
-            i.stackPipeId === qaCertEvent.stackPipeId
+    const certificationEventData = payload.certificationEventData;
+
+    if (certificationEventData) {
+      for (const qaCertEvent of certificationEventData) {
+        // Handle anyOf schema with priority-based matching (stackPipeId preferred)
+        const location = locations.find(i => {
+          if (qaCertEvent.stackPipeId) {
+            // Always prefer stackPipeId when present
+            const match = i.stackPipeId === qaCertEvent.stackPipeId;
+            return match;
+          } else if (qaCertEvent.unitId) {
+            // Only use unitId if no stackPipeId provided
+            const match = i.unitId === qaCertEvent.unitId;
+            return match;
+          }
+          return false;
+        });
+
+        if (!location) {
+          throw new BadRequestException(
+            `Location not found for unitId: ${qaCertEvent.unitId}, stackPipeId: ${qaCertEvent.stackPipeId}`
           );
-        }).locationId;
+        }
+        const locationId = location.locationId;
 
         promises.push(
           new Promise((resolve, _reject) => {
             const results = this.qaCertificationEventChecksService.runChecks(
               locationId,
               qaCertEvent,
-              payload.certificationEventData,
+              certificationEventData,
               true,
               false,
             );

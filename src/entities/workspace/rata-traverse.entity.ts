@@ -148,10 +148,7 @@ export class RataTraverse extends BaseEntity {
   })
   updateDate: Date;
 
-  @ManyToOne(
-    () => FlowRataRun,
-    fr => fr.RataTraverses,
-  )
+  @ManyToOne(() => FlowRataRun, (fr) => fr.RataTraverses)
   @JoinColumn({ name: 'flow_rata_run_id' })
   FlowRataRun: FlowRataRun;
 }

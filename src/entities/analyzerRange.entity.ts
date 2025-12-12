@@ -33,6 +33,7 @@ export class AnalyzerRange extends BaseEntity {
   @Column({
     name: 'dual_range_ind',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   dualRangeIndicator: number;
 
@@ -42,10 +43,18 @@ export class AnalyzerRange extends BaseEntity {
   @Column({ type: 'date', nullable: true, name: 'end_date' })
   endDate: Date;
 
-  @Column({ name: 'begin_hour', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'begin_hour',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   beginHour: number;
 
-  @Column({ name: 'end_hour', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'end_hour',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   endHour: number;
 
   @Column({
@@ -61,10 +70,7 @@ export class AnalyzerRange extends BaseEntity {
   @Column({ type: 'timestamp', name: 'update_date' })
   updateDate: Date;
 
-  @ManyToOne(
-    () => Component,
-    c => c.analyzerRanges,
-  )
+  @ManyToOne(() => Component, (c) => c.analyzerRanges)
   @JoinColumn({ name: 'component_id' })
   component: Component;
 }

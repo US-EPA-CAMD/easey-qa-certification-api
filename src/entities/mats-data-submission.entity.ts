@@ -55,16 +55,28 @@ export class MatsDataSubmission extends BaseEntity {
   @Column({ name: 'original_sub_id' })
   originalSubmissionId: string;
 
-  @Column({ name: 'fac_id', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'fac_id',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   facilityId: number;
 
   @Column({ name: 'mats_status_cd' })
   statusCode: string;
 
-  @Column({ name: 'year', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'year',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   year: number;
 
-  @Column({ name: 'quarter', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'quarter',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   quarter: number;
 
   @Column({ name: 'user_id' })
@@ -125,9 +137,6 @@ export class MatsDataSubmission extends BaseEntity {
   })
   testMethods: MatsTestMethodCode[];
 
-  @OneToMany(
-    () => MatsDataSubmissionPayloadFile,
-    file => file.submission,
-  )
+  @OneToMany(() => MatsDataSubmissionPayloadFile, (file) => file.submission)
   payloadFiles: MatsDataSubmissionPayloadFile[];
 }

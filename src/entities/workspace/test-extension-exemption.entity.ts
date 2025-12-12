@@ -29,6 +29,7 @@ export class TestExtensionExemption extends BaseEntity {
   @Column({
     name: 'rpt_period_id',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   reportPeriodId: number;
 
@@ -70,6 +71,7 @@ export class TestExtensionExemption extends BaseEntity {
   @Column({
     name: 'hours_used',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   hoursUsed: number;
 
@@ -96,6 +98,7 @@ export class TestExtensionExemption extends BaseEntity {
   @Column({
     name: 'submission_id',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   submissionId: string;
 

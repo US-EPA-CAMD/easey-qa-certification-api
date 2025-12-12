@@ -103,7 +103,7 @@ export class HgSummaryRecordDTO extends HgSummaryBaseDTO {
 export class HgSummaryImportDTO extends HgSummaryBaseDTO {
   @ValidateNested({ each: true })
   @Type(() => HgInjectionImportDTO)
-  hgInjectionData: HgInjectionImportDTO[];
+  hgInjectionData?: HgInjectionImportDTO[];
 }
 
 export class HgSummaryDTO extends HgSummaryRecordDTO {

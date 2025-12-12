@@ -164,7 +164,7 @@ export class LinearitySummaryRecordDTO extends LinearitySummaryBaseDTO {
 export class LinearitySummaryImportDTO extends LinearitySummaryBaseDTO {
   @ValidateNested({ each: true })
   @Type(() => LinearityInjectionImportDTO)
-  linearityInjectionData: LinearityInjectionImportDTO[];
+  linearityInjectionData?: LinearityInjectionImportDTO[];
 }
 
 export class LinearitySummaryDTO extends LinearitySummaryRecordDTO {

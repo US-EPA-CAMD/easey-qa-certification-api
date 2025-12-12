@@ -31,12 +31,14 @@ export class CycleTimeSummary extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'total_time',
   })
   totalTime: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'calc_total_time',
   })
   calculatedTotalTime: number;

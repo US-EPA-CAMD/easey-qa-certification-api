@@ -48,7 +48,7 @@ export class CycleTimeSummaryRecordDTO extends CycleTimeSummaryBaseDTO {
 export class CycleTimeSummaryImportDTO extends CycleTimeSummaryBaseDTO {
   @ValidateNested({ each: true })
   @Type(() => CycleTimeInjectionImportDTO)
-  cycleTimeInjectionData: CycleTimeInjectionImportDTO[];
+  cycleTimeInjectionData?: CycleTimeInjectionImportDTO[];
 }
 
 export class CycleTimeSummaryDTO extends CycleTimeSummaryRecordDTO {

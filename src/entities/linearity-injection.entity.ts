@@ -32,24 +32,28 @@ export class LinearityInjection extends BaseEntity {
   @Column({
     name: 'injection_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   injectionHour: number;
 
   @Column({
     name: 'injection_min',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   injectionMinute: number;
 
   @Column({
     name: 'measured_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   measuredValue: number;
 
   @Column({
     name: 'ref_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   referenceValue: number;
 

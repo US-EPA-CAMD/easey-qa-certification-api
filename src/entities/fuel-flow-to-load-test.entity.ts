@@ -31,30 +31,35 @@ export class FuelFlowToLoadTest extends BaseEntity {
   @Column({
     name: 'avg_diff',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   averageDifference: number;
 
   @Column({
     name: 'num_hrs',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfHoursUsed: number;
 
   @Column({
     name: 'nhe_cofiring',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfHoursExcludedCofiring: number;
 
   @Column({
     name: 'nhe_ramping',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfHoursExcludedRamping: number;
 
   @Column({
     name: 'nhe_low_range',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfHoursExcludedLowRange: number;
 

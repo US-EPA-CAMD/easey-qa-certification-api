@@ -133,7 +133,7 @@ export class LinearityInjectionChecksService {
   // LINEAR-34 Too Many Gas Injections (Result A)
   private async linear34Check(
     linSumId: string,
-    linearityInjections: LinearityInjectionImportDTO[],
+    linearityInjections: LinearityInjectionImportDTO[] = [],
     isImport: boolean = false,
   ): Promise<string> {
     let error: string = null;

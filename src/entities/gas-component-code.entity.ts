@@ -16,12 +16,14 @@ export class GasComponentCode {
   @Column({
     name: 'can_combine_ind',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   canCombineIndicator: number;
 
   @Column({
     name: 'balance_component_ind',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   balanceComponentIndicator: number;
 
