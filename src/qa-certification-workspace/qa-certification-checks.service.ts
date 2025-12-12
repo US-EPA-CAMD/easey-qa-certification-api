@@ -450,10 +450,12 @@ export class QACertificationChecksService {
         const location = locations.find(i => {
           if (qaCertEvent.stackPipeId) {
             // Always prefer stackPipeId when present
-            return i.stackPipeId === qaCertEvent.stackPipeId;
+            const match = i.stackPipeId === qaCertEvent.stackPipeId;
+            return match;
           } else if (qaCertEvent.unitId) {
             // Only use unitId if no stackPipeId provided
-            return i.unitId === qaCertEvent.unitId;
+            const match = i.unitId === qaCertEvent.unitId;
+            return match;
           }
           return false;
         });
