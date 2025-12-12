@@ -25,7 +25,7 @@ export class ProtocolGasChecksService {
     private readonly monitorSystemWorkspaceRepository: MonitorSystemWorkspaceRepository,
     private readonly componentWorkspaceRepository: ComponentWorkspaceRepository,
     private readonly gasComponentCodeRepository: GasComponentCodeRepository,
-  ) {}
+  ) { }
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
@@ -281,8 +281,7 @@ export class ProtocolGasChecksService {
               ) {
                 errorCodes.push({ code: 'PGVP-13-B' });
               } else if (
-                testSumRecord.testTypeCode === 'LINE' &&
-                ['NOX', 'NOXC'].includes(protocolGasParameter)
+                (testSumRecord.testTypeCode === 'LINE' && protocolGasParameter === 'NOX') || protocolGasParameter === 'NOXC'
               ) {
                 if (
                   !gasTypeCodes.some(cd => ['NO', 'NO2', 'NOX'].includes(cd))

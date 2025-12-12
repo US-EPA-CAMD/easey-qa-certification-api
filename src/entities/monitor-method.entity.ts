@@ -41,13 +41,18 @@ export class MonitorMethod extends BaseEntity {
     nullable: false,
     name: 'begin_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   beginHour: number;
 
   @Column({ type: 'date', name: 'end_date' })
   endDate: Date;
 
-  @Column({ name: 'end_hour', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'end_hour',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   endHour: number;
 
   @Column({ type: 'varchar', nullable: true, length: 8, name: 'userid' })

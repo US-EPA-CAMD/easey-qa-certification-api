@@ -26,7 +26,7 @@ export class FlowRataRunChecksService {
     private readonly rataSummaryRepository: RataSummaryWorkspaceRepository,
     private readonly rataRunRepository: RataRunWorkspaceRepository,
     private readonly testSummaryRepository: TestSummaryWorkspaceRepository,
-  ) {}
+  ) { }
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
     if (!isImport && errorList.length > 0) {
@@ -70,6 +70,28 @@ export class FlowRataRunChecksService {
     }
 
     if (testSumRecord.testTypeCode === TestTypeCodes.RATA) {
+      // RATA-116: Reported WAF for the Run Valid (SCREEN CHECK ONLY)
+      // RATA-109: Duplicate Flow RATA Run Check (SCREEN CHECK ONLY)
+      if (!isImport) {
+        error = await this.rata116Check(
+          flowRataRun,
+          rataSummaryRecord?.referenceMethodCode,
+        );
+        if (error) {
+          errorList.push(error);
+        }
+
+        error = await this.rata109Check(
+          rataRunRecord,
+          rataSummaryRecord,
+          testSumId
+        );
+        if (error) {
+          errorList.push(error);
+        }
+      }
+
+
       error = this.rata114Check(
         rataSummaryRecord,
         flowRataRun
@@ -100,6 +122,73 @@ export class FlowRataRunChecksService {
     this.throwIfErrors(errorList, isImport);
     this.logger.log('Completed Flow Rata Run Checks');
     return errorList;
+  }
+
+  private async rata116Check(
+    flowRataRun: FlowRataRunBaseDTO | FlowRataRunImportDTO,
+    referenceMethodCode: string,
+  ): Promise<string> {
+    let error: string = null;
+
+    // RATA-116-A: If CalculatedWAF is not null and ReferenceMethodCode is 2F, 2G, 2FJ, or 2GJ
+    if (flowRataRun.calculatedWAF !== null && flowRataRun.calculatedWAF !== undefined) {
+      if (['2F', '2G', '2FJ', '2GJ'].includes(referenceMethodCode)) {
+        error = CheckCatalogService.formatResultMessage('RATA-116-A', {
+          fieldname: 'calculatedWAF',
+          key: KEY
+        });
+      }
+
+      // RATA-116-B: If CalculatedWAF is less than 0 or greater than 1
+      if (flowRataRun.calculatedWAF < 0 || flowRataRun.calculatedWAF > 1) {
+        error = CheckCatalogService.formatResultMessage('RATA-116-B', {
+          fieldname: 'calculatedWAF',
+          key: KEY
+        });
+      }
+    } else {
+      // RATA-116-C: If CalculatedWAF is null and (ReferenceMethodCode is M2H or AverageVelocityWithWallEffects is not null)
+      if (referenceMethodCode === 'M2H' ||
+        flowRataRun.averageVelocityWithWallEffects !== null) {
+        error = CheckCatalogService.formatResultMessage('RATA-116-C', {
+          fieldname: 'calculatedWAF',
+          key: KEY
+        });
+      }
+    }
+
+    return error;
+  }
+
+  private async rata109Check(
+    rataRun: RataRun | RataRunImportDTO,
+    rataSummary: RataSummary | RataSummaryImportDTO,
+    testSumId?: string,
+  ): Promise<string> {
+    let error: string = null;
+
+    if (!rataSummary?.operatingLevelCode || rataRun.runNumber === null || rataRun.runNumber === undefined) {
+      return null;
+    }
+
+    if (testSumId) {
+      const currentRataRun = await this.rataRunRepository.findOne({
+        where: { id: (rataRun as RataRun).id },
+        relations: {
+          FlowRataRuns: true,
+        },
+      });
+
+      if (currentRataRun && currentRataRun.FlowRataRuns.length > 0) {
+        error = CheckCatalogService.formatResultMessage('RATA-109-A', {
+          recordtype: 'Flow RATA Run',
+          fieldnames: 'OperatingLevelCode and RunNumber',
+          operatingLevelCode: rataSummary.operatingLevelCode,
+          runNumber: rataRun.runNumber,
+        });
+      }
+    }
+    return error;
   }
 
   private rata94Check(

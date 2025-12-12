@@ -28,42 +28,49 @@ export class AppECorrelationTestRun extends BaseEntity {
   @Column({
     name: 'run_num',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   runNumber: number;
 
   @Column({
     name: 'ref_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   referenceValue: number;
 
   @Column({
     name: 'hourly_hi_rate',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   hourlyHeatInputRate: number;
 
   @Column({
     name: 'calc_hourly_hi_rate',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedHourlyHeatInputRate: number;
 
   @Column({
     name: 'total_hi',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   totalHeatInput: number;
 
   @Column({
     name: 'calc_total_hi',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedTotalHeatInput: number;
 
   @Column({
     name: 'response_time',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   responseTime: number;
 
@@ -76,12 +83,14 @@ export class AppECorrelationTestRun extends BaseEntity {
   @Column({
     name: 'begin_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   beginHour: number;
 
   @Column({
     name: 'begin_min',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   beginMinute: number;
 
@@ -94,12 +103,14 @@ export class AppECorrelationTestRun extends BaseEntity {
   @Column({
     name: 'end_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   endHour: number;
 
   @Column({
     name: 'end_min',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   endMinute: number;
 

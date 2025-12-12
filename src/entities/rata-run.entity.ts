@@ -19,45 +19,72 @@ export class RataRun extends BaseEntity {
   @Column({ name: 'rata_sum_id' })
   rataSumId: string;
 
-  @Column({ name: 'run_num', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'run_num',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   runNumber: number;
 
   @Column({ type: 'date', name: 'begin_date' })
   beginDate: Date;
 
-  @Column({ name: 'begin_hour', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'begin_hour',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   beginHour: number;
 
-  @Column({ name: 'begin_min', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'begin_min',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   beginMinute: number;
 
   @Column({ type: 'date', name: 'end_date' })
   endDate: Date;
 
-  @Column({ name: 'end_hour', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'end_hour',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   endHour: number;
 
-  @Column({ name: 'end_min', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'end_min',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   endMinute: number;
 
-  @Column({ name: 'cem_value', transformer: new NumericColumnTransformer() })
+  @Column({
+    name: 'cem_value',
+    transformer: new NumericColumnTransformer(),
+    type: 'numeric',
+  })
   cemValue: number;
 
   @Column({
     name: 'rata_ref_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   rataReferenceValue: number;
 
   @Column({
     name: 'calc_rata_ref_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedRataReferenceValue: number;
 
   @Column({
     name: 'gross_unit_load',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   grossUnitLoad: number;
 
@@ -77,17 +104,11 @@ export class RataRun extends BaseEntity {
   })
   updateDate: Date;
 
-  @ManyToOne(
-    () => RataSummary,
-    r => r.RataRuns,
-  )
+  @ManyToOne(() => RataSummary, (r) => r.RataRuns)
   @JoinColumn({ name: 'rata_sum_id' })
   RataSummary: RataSummary;
 
-  @OneToMany(
-    () => FlowRataRun,
-    r => r.RataRun,
-  )
+  @OneToMany(() => FlowRataRun, (r) => r.RataRun)
   @JoinColumn({ name: 'rata_run_id' })
   FlowRataRuns: FlowRataRun[];
 }

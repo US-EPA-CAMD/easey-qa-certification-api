@@ -40,42 +40,49 @@ export class OnlineOfflineCalibration extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'online_zero_injection_hour',
   })
   onlineZeroInjectionHour: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'online_zero_cal_error',
   })
   onlineZeroCalibrationError: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'online_zero_aps_ind',
   })
   onlineZeroAPSIndicator: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'online_zero_measured_value',
   })
   onlineZeroMeasuredValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'online_zero_ref_value',
   })
   onlineZeroReferenceValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'online_upscale_cal_error',
   })
   onlineUpscaleCalibrationError: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'online_upscale_aps_ind',
   })
   onlineUpscaleAPSIndicator: number;
@@ -88,18 +95,21 @@ export class OnlineOfflineCalibration extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'online_upscale_injection_hour',
   })
   onlineUpscaleInjectionHour: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'online_upscale_measured_value',
   })
   onlineUpscaleMeasuredValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'online_upscale_ref_value',
   })
   onlineUpscaleReferenceValue: number;
@@ -112,42 +122,49 @@ export class OnlineOfflineCalibration extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'offline_zero_injection_hour',
   })
   offlineZeroInjectionHour: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'offline_zero_cal_error',
   })
   offlineZeroCalibrationError: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'offline_zero_aps_ind',
   })
   offlineZeroAPSIndicator: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'offline_zero_measured_value',
   })
   offlineZeroMeasuredValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'offline_zero_ref_value',
   })
   offlineZeroReferenceValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'offline_upscale_cal_error',
   })
   offlineUpscaleCalibrationError: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'offline_upscale_aps_ind',
   })
   offlineUpscaleAPSIndicator: number;
@@ -160,18 +177,21 @@ export class OnlineOfflineCalibration extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'offline_upscale_injection_hour',
   })
   offlineUpscaleInjectionHour: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'offline_upscale_measured_value',
   })
   offlineUpscaleMeasuredValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'offline_upscale_ref_value',
   })
   offlineUpscaleReferenceValue: number;

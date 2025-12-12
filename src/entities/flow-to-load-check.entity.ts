@@ -44,54 +44,63 @@ export class FlowToLoadCheck extends BaseEntity {
   @Column({
     name: 'bias_adjusted_ind',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   biasAdjustedIndicator: number;
 
   @Column({
     name: 'avg_abs_pct_diff',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   averageAbsolutePercentDifference: number;
 
   @Column({
     name: 'num_hrs',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfHours: number;
 
   @Column({
     name: 'nhe_fuel',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfHoursExcludedForFuel: number;
 
   @Column({
     name: 'nhe_ramping',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfHoursExcludedRamping: number;
 
   @Column({
     name: 'nhe_bypass',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfHoursExcludedBypass: number;
 
   @Column({
     name: 'nhe_pre_rata',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfHoursExcludedPreRATA: number;
 
   @Column({
     name: 'nhe_test',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfHoursExcludedTest: number;
 
   @Column({
     name: 'nhe_main_bypass',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfHoursExcMainBypass: number;
 

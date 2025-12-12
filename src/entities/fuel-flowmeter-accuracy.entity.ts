@@ -38,24 +38,28 @@ export class FuelFlowmeterAccuracy extends BaseEntity {
   @Column({
     name: 'reinstall_hour',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   reinstallationHour: number;
 
   @Column({
     name: 'low_fuel_accuracy',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   lowFuelAccuracy: number;
 
   @Column({
     name: 'mid_fuel_accuracy',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   midFuelAccuracy: number;
 
   @Column({
     name: 'high_fuel_accuracy',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   highFuelAccuracy: number;
 

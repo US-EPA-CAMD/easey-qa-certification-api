@@ -31,18 +31,21 @@ export class TestQualification extends BaseEntity {
   @Column({
     name: 'hi_load_pct',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   highLoadPercentage: number;
 
   @Column({
     name: 'mid_load_pct',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   midLoadPercentage: number;
 
   @Column({
     name: 'low_load_pct',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   lowLoadPercentage: number;
 

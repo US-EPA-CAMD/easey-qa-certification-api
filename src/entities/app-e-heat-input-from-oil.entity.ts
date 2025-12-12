@@ -35,30 +35,35 @@ export class AppEHeatInputFromOil extends BaseEntity {
   @Column({
     name: 'oil_mass',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   oilMass: number;
 
   @Column({
     name: 'calc_oil_mass',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedOilMass: number;
 
   @Column({
     name: 'oil_hi',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   oilHeatInput: number;
 
   @Column({
     name: 'calc_oil_hi',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedOilHeatInput: number;
 
   @Column({
     name: 'oil_gcv',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   oilGCV: number;
 
@@ -70,6 +75,7 @@ export class AppEHeatInputFromOil extends BaseEntity {
   @Column({
     name: 'oil_volume',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   oilVolume: number;
 
@@ -81,6 +87,7 @@ export class AppEHeatInputFromOil extends BaseEntity {
   @Column({
     name: 'oil_density',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   oilDensity: number;
 

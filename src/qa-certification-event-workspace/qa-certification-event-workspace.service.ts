@@ -21,6 +21,7 @@ import { MonitorLocationRepository } from '../monitor-location/monitor-location.
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import { QACertificationEventWorkspaceRepository } from './qa-certification-event-workspace.repository';
 import { QACertificationEventRepository } from '../qa-certification-event/qa-certification-event.repository';
+import { deepEquals } from '../utilities/functions';
 
 @Injectable()
 export class QACertificationEventWorkspaceService {
@@ -201,7 +202,6 @@ export class QACertificationEventWorkspaceService {
   }
 
   async updateQACertEvent(
-    locationId: string,
     id: string,
     payload: QACertificationEventBaseDTO,
     userId: string,
@@ -221,36 +221,28 @@ export class QACertificationEventWorkspaceService {
       );
     }
 
-    const {
-      componentRecordId,
-      monitoringSystemRecordId,
-    } = await this.lookupValues(locationId, payload);
+    const updatedEntity = { ...entity };
 
-    entity.componentRecordId = componentRecordId;
-    entity.monitoringSystemRecordId = monitoringSystemRecordId;
-    entity.certificationEventCode = payload.certificationEventCode;
-    entity.certificationEventDate = payload.certificationEventDate;
-    entity.certificationEventHour = payload.certificationEventHour;
-    entity.requiredTestCode = payload.requiredTestCode;
-    entity.requiredTestCode = payload.requiredTestCode;
-    entity.conditionalBeginDate = payload.conditionalBeginDate;
-    entity.conditionalBeginHour = payload.conditionalBeginHour;
-    entity.completionTestDate = payload.completionTestDate;
-    entity.completionTestHour = payload.completionTestHour;
-    entity.userId = userId;
-    entity.updateDate = timestamp;
-    entity.needsEvalFlag = 'Y';
-    entity.updatedStatusFlag = 'Y';
-    entity.evalStatusCode = 'EVAL';
-    entity.submissionAvailabilityCode = 'REQUIRE';
+    updatedEntity.completionTestDate = payload.completionTestDate;
+    updatedEntity.completionTestHour = payload.completionTestHour;
 
-    await repository.save(entity);
+    if (!deepEquals(entity, updatedEntity)) {
+      updatedEntity.updatedStatusFlag = 'Y';
+      updatedEntity.submissionAvailabilityCode = 'REQUIRE';
+    }
 
-    //Finally, perform the updates (reset needs eval flag, etc) for those records
+    updatedEntity.userId = userId;
+    updatedEntity.updateDate = timestamp;
+    updatedEntity.needsEvalFlag = 'Y';
+    updatedEntity.evalStatusCode = 'EVAL';
+
+    await repository.save(updatedEntity);
+
+    // Finally, perform the updates (reset needs eval flag, etc) for those records
     // that may have been collaterally affected by this change.
-    await this.updateCollaterallyAffectedRecords(entity.id, trx);
+    await this.updateCollaterallyAffectedRecords(updatedEntity.id, trx);
 
-    return this.getQACertEvent(entity.id, trx);
+    return this.getQACertEvent(updatedEntity.id, trx);
   }
 
   async updateCollaterallyAffectedRecords(qceId: string, trx?: EntityManager): Promise<void> {
@@ -312,7 +304,6 @@ export class QACertificationEventWorkspaceService {
     let importedQACertEvent;
     if (record) {
       importedQACertEvent = await this.updateQACertEvent(
-        locationId,
         record.id,
         payload,
         userId,

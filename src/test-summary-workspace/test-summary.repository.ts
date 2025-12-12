@@ -19,7 +19,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
   }
 
   private buildBaseQuery(): SelectQueryBuilder<TestSummary> {
-    const query = this.createQueryBuilder('ts');
+    const query:SelectQueryBuilder<any> = this.createQueryBuilder('ts');
     return addJoins(query) as SelectQueryBuilder<TestSummary>;
   }
 
@@ -46,7 +46,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
     testTypeCode?: string,
     testNumber?: string,
   ): Promise<TestSummary> {
-    let query = this.buildBaseQuery().where('ts.locationId = :locationId', {
+    let query:SelectQueryBuilder<any> = this.buildBaseQuery().where('ts.locationId = :locationId', {
       locationId,
     });
 
@@ -67,7 +67,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummary[]> {
-    let query = this.buildBaseQuery().where('ts.locationId = :locationId', {
+    let query:SelectQueryBuilder<any> = this.buildBaseQuery().where('ts.locationId = :locationId', {
       locationId,
     });
 
@@ -115,7 +115,7 @@ export class TestSummaryWorkspaceRepository extends Repository<TestSummary> {
       stacksWhere = ` OR (${stacksWhere})`;
     }
 
-    let query = this.buildBaseQuery().where(`(${unitsWhere}${stacksWhere})`, {
+    let query:SelectQueryBuilder<any> = this.buildBaseQuery().where(`(${unitsWhere}${stacksWhere})`, {
       facilityId,
       unitIds,
       stackPipeIds,

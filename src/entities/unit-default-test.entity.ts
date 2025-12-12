@@ -38,12 +38,14 @@ export class UnitDefaultTest extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'nox_default_rate',
   })
   noxDefaultRate: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'calc_nox_default_rate',
   })
   calculatedNoxDefaultRate: number;
@@ -62,12 +64,14 @@ export class UnitDefaultTest extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'num_units_in_group',
   })
   numberOfUnitsInGroup: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'num_tests_for_group',
   })
   numberOfTestsForGroup: number;

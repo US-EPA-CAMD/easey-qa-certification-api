@@ -37,48 +37,56 @@ export class HgSummary extends BaseEntity {
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'mean_measured_value',
   })
   meanMeasuredValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'calc_mean_measured_value',
   })
   calculatedMeanMeasuredValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'mean_ref_value',
   })
   meanReferenceValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'calc_mean_ref_value',
   })
   calculatedMeanReferenceValue: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'percent_error',
   })
   percentError: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'calc_percent_error',
   })
   calculatedPercentError: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'aps_ind',
   })
   apsIndicator: number;
 
   @Column({
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
     name: 'calc_aps_ind',
   })
   calculatedAPSIndicator: number;

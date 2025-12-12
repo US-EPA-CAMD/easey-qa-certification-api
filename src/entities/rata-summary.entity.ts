@@ -33,12 +33,14 @@ export class RataSummary extends BaseEntity {
   @Column({
     name: 'avg_gross_unit_load',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   averageGrossUnitLoad: number;
 
   @Column({
     name: 'calc_avg_gross_unit_load',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedAverageGrossUnitLoad: number;
 
@@ -50,84 +52,98 @@ export class RataSummary extends BaseEntity {
   @Column({
     name: 'mean_cem_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   meanCEMValue: number;
 
   @Column({
     name: 'calc_mean_cem_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedMeanCEMValue: number;
 
   @Column({
     name: 'mean_rata_ref_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   meanRATAReferenceValue: number;
 
   @Column({
     name: 'calc_mean_rata_ref_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedMeanRATAReferenceValue: number;
 
   @Column({
     name: 'mean_diff',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   meanDifference: number;
 
   @Column({
     name: 'calc_mean_diff',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedMeanDifference: number;
 
   @Column({
     name: 'stnd_dev_diff',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   standardDeviationDifference: number;
 
   @Column({
     name: 'calc_stnd_dev_diff',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedStandardDeviationDifference: number;
 
   @Column({
     name: 'confidence_coef',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   confidenceCoefficient: number;
 
   @Column({
     name: 'calc_confidence_coef',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedConfidenceCoefficient: number;
 
   @Column({
     name: 't_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   tValue: number;
 
   @Column({
     name: 'calc_t_value',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedTValue: number;
 
   @Column({
     name: 'aps_ind',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   apsIndicator: number;
 
   @Column({
     name: 'calc_aps_ind',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedApsIndicator: number;
 
@@ -139,24 +155,28 @@ export class RataSummary extends BaseEntity {
   @Column({
     name: 'relative_accuracy',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   relativeAccuracy: number;
 
   @Column({
     name: 'calc_relative_accuracy',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedRelativeAccuracy: number;
 
   @Column({
     name: 'bias_adj_factor',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   biasAdjustmentFactor: number;
 
   @Column({
     name: 'calc_bias_adj_factor',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedBiasAdjustmentFactor: number;
 
@@ -168,42 +188,49 @@ export class RataSummary extends BaseEntity {
   @Column({
     name: 'stack_diameter',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   stackDiameter: number;
 
   @Column({
     name: 'stack_area',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   stackArea: number;
 
   @Column({
     name: 'calc_stack_area',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedStackArea: number;
 
   @Column({
     name: 'num_traverse_point',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfTraversePoints: number;
 
   @Column({
     name: 'calc_waf',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedWAF: number;
 
   @Column({
     name: 'calc_calc_waf',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedCalculatedWAF: number;
 
   @Column({
     name: 'default_waf',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   defaultWAF: number;
 

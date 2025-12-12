@@ -842,6 +842,11 @@ export class TestSummaryWorkspaceService {
     }
 
     try {
+      // First, perform the updates (reset needs eval flag, etc) for those records
+      // that may have been collaterally affected by this change.
+      // This must be done BEFORE deletion so the procedures can access the test data.
+      await this.updateCollaterallyAffectedRecords(testSumId, transactionalEntityManager);
+
       // Delete corresponding camdecmpswks.test_summary record
       await transactionalEntityManager.delete(TestSummary, { id: testSumId });
 
@@ -876,6 +881,10 @@ export class TestSummaryWorkspaceService {
           )
         );
         await Promise.all(qaSuppAttributePromises);
+      }
+
+      if (!trx) {
+        await transactionalEntityManager.queryRunner.commitTransaction();
       }
     } catch (e) {
       if (!trx) await transactionalEntityManager.queryRunner.rollbackTransaction(); // Rollback only if we started the transaction
