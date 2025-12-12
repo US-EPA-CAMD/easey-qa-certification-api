@@ -1,6 +1,10 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Logger } from '@us-epa-camd/easey-common/logger';
 import { validate } from 'class-validator';
+import { parseXmlAsync } from 'libxmljs';
+import { firstValueFrom, map, retry } from 'rxjs';
 import { EntityManager, In } from 'typeorm';
 
 import { MatsDataSubmissionFileNamesDTO } from '../dto/mats-data-submission-create-payload.dto';
@@ -18,7 +22,9 @@ import {
 @Injectable()
 export class MatsDataSubmissionChecksService {
   constructor(
+    private readonly configService: ConfigService,
     private readonly entityManager: EntityManager,
+    private readonly httpService: HttpService,
     private readonly logger: Logger,
     private readonly matsDataSubmissionService: MatsDataSubmissionService,
   ) {
@@ -234,6 +240,46 @@ export class MatsDataSubmissionChecksService {
     return warnings;
   }
 
+  private async validateErtFileSchema(
+    ertFileName: string,
+    locationId: string,
+  ): Promise<string[]> {
+    const errors: string[] = [];
+
+    const xsdUri = this.configService.get('app.matsErtXsdUri');
+    const cedriSupportEmail = this.configService.get('app.cedriSupportEmail');
+
+    const errorMessage = `The XML file is not compatible with the ERT XML Schema found at ${xsdUri}. This incompatibility does not prevent the submission of the file. For additional questions about the incompatibility or use of ERT, contact ${cedriSupportEmail}. If your submission has failed, contact ECMPS helpdesk.`;
+
+    const fetchXsd = () =>
+      firstValueFrom(
+        this.httpService.get(xsdUri).pipe(
+          retry(3),
+          map((res) => res.data),
+        ),
+      );
+
+    const fetchXml = () =>
+      this.matsDataSubmissionService.readTempFile(ertFileName, locationId);
+
+    try {
+      const [xml, xsd] = await Promise.all([
+        fetchXml().then(parseXmlAsync),
+        fetchXsd().then(parseXmlAsync),
+      ]);
+
+      const isValidErt = xml.validate(xsd);
+      if (!isValidErt) {
+        errors.push(errorMessage);
+      }
+    } catch (e) {
+      this.logger.error(`Error validating ERT XML schema: ${e.message}`);
+      errors.push(errorMessage);
+    }
+
+    return errors;
+  }
+
   private async validateFiles(
     reportType: MatsReportTypeCode,
     fileNames: MatsDataSubmissionFileNamesDTO,
@@ -242,17 +288,20 @@ export class MatsDataSubmissionChecksService {
     const errors: string[] = [];
     const warnings: string[] = [];
 
+    // Validate file names.
     const fileNameErrors = this.validateFileNames(fileNames);
     if (fileNameErrors.length) {
       errors.push(...fileNameErrors);
     }
 
+    // Validate file mimetypes.
     const mimetypeErrors = await this.validateFileMimetypes(
       fileNames,
       locationId,
     );
     if (mimetypeErrors.length) errors.push(...mimetypeErrors);
 
+    // Validate required file attachments based on report type.
     const attachmentErrors = await this.validateFileAttachments(
       fileNames,
       reportType,
@@ -267,6 +316,14 @@ export class MatsDataSubmissionChecksService {
     }
 
     throwIfErrors(errors, { asArray: true });
+
+    // Validate ERT file schema.
+    const ertSchemaErrors =
+      fileNames.ertFile &&
+      this.configService.get('app.enableErtSchemaValidation')
+        ? await this.validateErtFileSchema(fileNames.ertFile, locationId)
+        : [];
+    if (ertSchemaErrors.length) warnings.push(...ertSchemaErrors); // ERT schema issues are presented as warnings
 
     return warnings;
   }

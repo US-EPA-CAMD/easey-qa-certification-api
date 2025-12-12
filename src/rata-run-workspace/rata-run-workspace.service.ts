@@ -188,7 +188,10 @@ export class RataRunWorkspaceService {
       `Rata Run Successfully Imported. Record Id: ${createdRataRun.id}`,
     );
 
-    if (payload.flowRataRunData?.length > 0) {
+    if (
+      payload.flowRataRunData &&
+      payload.flowRataRunData.length > 0
+    ) {
       for (const flowRataRun of payload.flowRataRunData) {
         promises.push(
           this.flowRataRunService.import(
