@@ -213,7 +213,10 @@ export class UnitDefaultTestWorkspaceService {
       `Unit Default Successfully Imported.  Record Id: ${createdUnitDefaultTest.id}`,
     );
 
-    if (payload.unitDefaultTestRunData?.length > 0) {
+    if (
+      payload.unitDefaultTestRunData &&
+      payload.unitDefaultTestRunData.length > 0
+    ) {
       for (const unitDefaultTestRun of payload.unitDefaultTestRunData) {
         promises.push(
           this.unitDefaultTestRunService.import(

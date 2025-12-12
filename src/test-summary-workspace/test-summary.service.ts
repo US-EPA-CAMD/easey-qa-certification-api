@@ -383,7 +383,8 @@ export class TestSummaryWorkspaceService {
     );
 
     if (
-      payload.linearitySummaryData?.length > 0 &&
+      payload.linearitySummaryData &&
+      payload.linearitySummaryData.length > 0 &&
       payload.testTypeCode === TestTypeCodes.LINE
     ) {
       for (const linearitySummary of payload.linearitySummaryData) {
@@ -400,7 +401,8 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.rataData?.length > 0 &&
+      payload.rataData &&
+      payload.rataData.length > 0 &&
       payload.testTypeCode === TestTypeCodes.RATA
     ) {
       for (const rata of payload.rataData) {
@@ -417,7 +419,8 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.protocolGasData?.length > 0 &&
+      payload.protocolGasData &&
+      payload.protocolGasData.length > 0 &&
       [
         TestTypeCodes.RATA.toString(),
         TestTypeCodes.LINE.toString(),
@@ -438,7 +441,8 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.fuelFlowToLoadTestData?.length > 0 &&
+      payload.fuelFlowToLoadTestData &&
+      payload.fuelFlowToLoadTestData.length > 0 &&
       payload.testTypeCode === TestTypeCodes.FF2LTST
     ) {
       for (const fuelFlowToLoadTest of payload.fuelFlowToLoadTestData) {
@@ -455,7 +459,8 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.flowToLoadCheckData?.length > 0 &&
+      payload.flowToLoadCheckData &&
+      payload.flowToLoadCheckData.length > 0 &&
       payload.testTypeCode === TestTypeCodes.F2LCHK
     ) {
       for (const flowToLoadCheck of payload.flowToLoadCheckData) {
@@ -472,7 +477,8 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.fuelFlowToLoadBaselineData?.length > 0 &&
+      payload.fuelFlowToLoadBaselineData &&
+      payload.fuelFlowToLoadBaselineData.length > 0 &&
       payload.testTypeCode === TestTypeCodes.FF2LBAS
     ) {
       for (const fuelFlowToLoadBaseline of payload.fuelFlowToLoadBaselineData) {
@@ -489,7 +495,8 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.fuelFlowmeterAccuracyData?.length > 0 &&
+      payload.fuelFlowmeterAccuracyData &&
+      payload.fuelFlowmeterAccuracyData.length > 0 &&
       payload.testTypeCode === TestTypeCodes.FFACC
     ) {
       for (const fuelFlowmeterAccuracy of payload.fuelFlowmeterAccuracyData) {
@@ -506,7 +513,8 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.flowToLoadReferenceData?.length > 0 &&
+      payload.flowToLoadReferenceData &&
+      payload.flowToLoadReferenceData.length > 0 &&
       payload.testTypeCode === TestTypeCodes.F2LREF
     ) {
       for (const flowToLoadReference of payload.flowToLoadReferenceData) {
@@ -523,7 +531,8 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.appendixECorrelationTestSummaryData?.length > 0 &&
+      payload.appendixECorrelationTestSummaryData &&
+      payload.appendixECorrelationTestSummaryData.length > 0 &&
       payload.testTypeCode === TestTypeCodes.APPE
     ) {
       for (const appECorrelationTestSummary of payload.appendixECorrelationTestSummaryData) {
@@ -541,7 +550,8 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.calibrationInjectionData?.length > 0 &&
+      payload.calibrationInjectionData &&
+      payload.calibrationInjectionData.length > 0 &&
       payload.testTypeCode === TestTypeCodes.SEVENDAY
     ) {
       for (const calibrationInjection of payload.calibrationInjectionData) {
@@ -558,7 +568,8 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.cycleTimeSummaryData?.length > 0 &&
+      payload.cycleTimeSummaryData &&
+      payload.cycleTimeSummaryData.length > 0 &&
       payload.testTypeCode === TestTypeCodes.CYCLE
     ) {
       for (const cycleTimeSummary of payload.cycleTimeSummaryData) {
@@ -575,7 +586,8 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.onlineOfflineCalibrationData?.length > 0 &&
+      payload.onlineOfflineCalibrationData &&
+      payload.onlineOfflineCalibrationData.length > 0 &&
       payload.testTypeCode === TestTypeCodes.ONOFF
     ) {
       for (const onlineOfflineCalibration of payload.onlineOfflineCalibrationData) {
@@ -592,7 +604,8 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.transmitterTransducerData?.length > 0 &&
+      payload.transmitterTransducerData &&
+      payload.transmitterTransducerData.length > 0 &&
       payload.testTypeCode === TestTypeCodes.FFACCTT
     ) {
       for (const transmitterTransducerAccuracy of payload.transmitterTransducerData) {
@@ -609,7 +622,8 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.unitDefaultTestData?.length > 0 &&
+      payload.unitDefaultTestData &&
+      payload.unitDefaultTestData.length > 0 &&
       payload.testTypeCode === TestTypeCodes.UNITDEF
     ) {
       for (const unitDefaultTest of payload.unitDefaultTestData) {
@@ -626,9 +640,9 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      (payload.hgSummaryData?.length > 0 &&
-        payload.testTypeCode === TestTypeCodes.HGLINE) ||
-      payload.testTypeCode === TestTypeCodes.HGSI3
+      payload.hgSummaryData &&
+      payload.hgSummaryData.length > 0 &&
+      (payload.testTypeCode === TestTypeCodes.HGLINE || payload.testTypeCode === TestTypeCodes.HGSI3)
     ) {
       for (const hgSummary of payload.hgSummaryData) {
         promises.push(
@@ -644,7 +658,8 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.testQualificationData?.length > 0 &&
+      payload.testQualificationData &&
+      payload.testQualificationData.length > 0 &&
       [TestTypeCodes.RATA.toString()].includes(payload.testTypeCode)
     ) {
       for (const testQualification of payload.testQualificationData) {
@@ -661,7 +676,8 @@ export class TestSummaryWorkspaceService {
     }
 
     if (
-      payload.airEmissionTestingData?.length > 0 &&
+      payload.airEmissionTestingData &&
+      payload.airEmissionTestingData.length > 0 &&
       [
         TestTypeCodes.RATA.toString(),
         TestTypeCodes.UNITDEF.toString(),

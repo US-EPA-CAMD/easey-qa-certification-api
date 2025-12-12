@@ -269,16 +269,17 @@ export class QACertificationChecksService {
           });
         });
 
-        summary.testQualificationData?.forEach(testQualification => {
+        const testQualificationData = summary.testQualificationData;
+        testQualificationData?.forEach(testQualification => {
           promises.push(
             new Promise((resolve, _reject) => {
               const results = this.testQualificationChecksService.runChecks(
                 locationId,
                 testQualification,
-                summary.testQualificationData,
+                testQualificationData,
                 duplicateQaSupp ? duplicateQaSupp.testSumId : null,
                 summary,
-                summary.rataData?.length > 0 ? summary.rataData[0] : null,
+                summary.rataData && summary.rataData.length > 0 ? summary.rataData[0] : null,
                 true,
                 false,
                 null,
@@ -328,17 +329,18 @@ export class QACertificationChecksService {
           );
         });
 
-        if (summary.appendixECorrelationTestSummaryData) {
+        const appendixECorrelationTestSummaryData = summary.appendixECorrelationTestSummaryData;
+        if (appendixECorrelationTestSummaryData) {
           promises.push(
             new Promise((resolve, _reject) => {
               const results = this.appETestSummaryChecksService.runImportChecks(
-                summary.appendixECorrelationTestSummaryData,
+                appendixECorrelationTestSummaryData,
               );
               resolve(results);
             }),
           );
 
-          summary.appendixECorrelationTestSummaryData.forEach(appESummary => {
+          appendixECorrelationTestSummaryData.forEach(appESummary => {
             promises.push(
               new Promise((resolve, _reject) => {
                 const results = this.appETestRunChecksService.runImportChecks(
@@ -402,8 +404,10 @@ export class QACertificationChecksService {
       }
     }
 
-    if (payload.testExtensionExemptionData) {
-      for (const testExtExem of payload.testExtensionExemptionData) {
+    const testExtensionExemptionData = payload.testExtensionExemptionData;
+
+    if (testExtensionExemptionData) {
+      for (const testExtExem of testExtensionExemptionData) {
         // Handle anyOf schema with priority-based matching (stackPipeId preferred)
         const location = locations.find(i => {
           if (testExtExem.stackPipeId) {
@@ -428,7 +432,7 @@ export class QACertificationChecksService {
             const results = this.testExtensionExemptionsChecksService.runChecks(
               locationId,
               testExtExem,
-              payload.testExtensionExemptionData,
+              testExtensionExemptionData,
               true,
               false,
             );
@@ -438,16 +442,20 @@ export class QACertificationChecksService {
       }
     }
 
-    if (payload.certificationEventData) {
-      for (const qaCertEvent of payload.certificationEventData) {
+    const certificationEventData = payload.certificationEventData;
+
+    if (certificationEventData) {
+      for (const qaCertEvent of certificationEventData) {
         // Handle anyOf schema with priority-based matching (stackPipeId preferred)
         const location = locations.find(i => {
           if (qaCertEvent.stackPipeId) {
             // Always prefer stackPipeId when present
-            return i.stackPipeId === qaCertEvent.stackPipeId;
+            const match = i.stackPipeId === qaCertEvent.stackPipeId;
+            return match;
           } else if (qaCertEvent.unitId) {
             // Only use unitId if no stackPipeId provided
-            return i.unitId === qaCertEvent.unitId;
+            const match = i.unitId === qaCertEvent.unitId;
+            return match;
           }
           return false;
         });
@@ -464,7 +472,7 @@ export class QACertificationChecksService {
             const results = this.qaCertificationEventChecksService.runChecks(
               locationId,
               qaCertEvent,
-              payload.certificationEventData,
+              certificationEventData,
               true,
               false,
             );

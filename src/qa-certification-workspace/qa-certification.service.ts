@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { Logger } from '@us-epa-camd/easey-common/logger';
@@ -27,6 +27,23 @@ export class QACertificationWorkspaceService {
     private readonly qaCertEventService: QACertificationEventWorkspaceService,
     private readonly easeyContentService: EaseyContentService,
   ) {}
+
+  // Shared location lookup with priority-based matching (stackPipeId preferred)
+  private findLocationByIdentifiers(
+    locations: LocationIdentifiers[],
+    identifiers: { unitId?: string; stackPipeId?: string }
+  ): LocationIdentifiers | undefined {
+    return locations.find(i => {
+      if (identifiers.stackPipeId) {
+        // Always prefer stackPipeId when present (matches checks.service.ts logic)
+        return i.stackPipeId === identifiers.stackPipeId;
+      } else if (identifiers.unitId) {
+        // Only use unitId if no stackPipeId provided
+        return i.unitId === identifiers.unitId;
+      }
+      return false;
+    });
+  }
 
   async export(
     params: QACertificationParamsDTO,
@@ -119,12 +136,15 @@ export class QACertificationWorkspaceService {
     payload.testSummaryData?.forEach((summary, idx) => {
       promises.push(
         new Promise((resolve, _reject) => {
-          const locationId = locations.find(i => {
-            return (
-              i.unitId === summary.unitId &&
-              i.stackPipeId === summary.stackPipeId
+          //Use shared location lookup with priority-based matching
+          const location = this.findLocationByIdentifiers(locations, summary);
+
+          if (!location) {
+            throw new BadRequestException(
+              `Location not found for unitId: ${summary.unitId}, stackPipeId: ${summary.stackPipeId}`
             );
-          }).locationId;
+          }
+          const locationId = location.locationId;
 
           const results = this.testSummaryService.import(
             locationId,
@@ -143,12 +163,15 @@ export class QACertificationWorkspaceService {
       (qaTestExtensionExemptionId, idx) => {
         promises.push(
           new Promise((resolve, _reject) => {
-            const locationId = locations.find(i => {
-              return (
-                i.unitId === qaTestExtensionExemptionId.unitId &&
-                i.stackPipeId === qaTestExtensionExemptionId.stackPipeId
+            // Use shared location lookup with priority-based matching
+            const location = this.findLocationByIdentifiers(locations, qaTestExtensionExemptionId);
+
+            if (!location) {
+              throw new BadRequestException(
+                `Location not found for unitId: ${qaTestExtensionExemptionId.unitId}, stackPipeId: ${qaTestExtensionExemptionId.stackPipeId}`
               );
-            }).locationId;
+            }
+            const locationId = location.locationId;
 
             const results = this.testExtensionExemptionService.import(
               locationId,
@@ -164,12 +187,15 @@ export class QACertificationWorkspaceService {
     payload.certificationEventData?.forEach((qaCertEvent, idx) => {
       promises.push(
         new Promise((resolve, _reject) => {
-          const locationId = locations.find(i => {
-            return (
-              i.unitId === qaCertEvent.unitId &&
-              i.stackPipeId === qaCertEvent.stackPipeId
+          // Use shared location lookup with priority-based matching
+          const location = this.findLocationByIdentifiers(locations, qaCertEvent);
+
+          if (!location) {
+            throw new BadRequestException(
+              `Location not found for unitId: ${qaCertEvent.unitId}, stackPipeId: ${qaCertEvent.stackPipeId}`
             );
-          }).locationId;
+          }
+          const locationId = location.locationId;
 
           const results = this.qaCertEventService.import(
             locationId,
