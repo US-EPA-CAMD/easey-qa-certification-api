@@ -2,10 +2,8 @@ import {
   CopyObjectCommand,
   DeleteObjectCommand,
   DeleteObjectsCommand,
-  GetObjectCommand,
   HeadObjectCommand,
   ListObjectsV2Command,
-  NoSuchKey,
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3';
@@ -486,38 +484,6 @@ export class MatsDataSubmissionService {
     }
 
     return submissionId;
-  }
-
-  async readTempFile(
-    fileName: string,
-    locationId: string,
-  ): Promise<string> {
-    try {
-      const filePath = this.createStagingFilePath(
-        locationId,
-        fileName,
-      );
-      const data = await this.getS3Client().send(
-        new GetObjectCommand({
-          Bucket: this.getS3Bucket(),
-          Key: filePath,
-        }),
-      );
-      return await data.Body?.transformToString() ?? '';
-    } catch (err) {
-      this.logger.error(`Error reading file from S3: ${err.message}`);
-      if (err instanceof NoSuchKey) {
-        throw new EaseyException(
-          new Error('File not found'),
-          HttpStatus.NOT_FOUND,
-        );
-      } else {
-        throw new EaseyException(
-          new Error('An error occurred while reading the file'),
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
-      }
-    }
   }
 
   private async uploadFile(
