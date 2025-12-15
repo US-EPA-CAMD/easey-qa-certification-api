@@ -103,9 +103,6 @@ export default registerAs('app', () => ({
     ),
   },
   awsRegion: getConfigValue('EASEY_AWS_S3_REGION'),
-  matsErtXsdUri: getConfigValue('EASEY_QA_CERTIFICATION_API_MATS_ERT_XSD_URI', 'https://gaftp.epa.gov/AP42/ERT/ertfulldata.xsd'),
-  cedriSupportEmail: getConfigValue('EASEY_QA_CERTIFICATION_API_CEDRI_SUPPORT_EMAIL', 'CEDRI@epa.gov'),
-  enableErtSchemaValidation: getConfigValueBoolean('EASEY_QA_CERTIFICATION_API_ENABLE_ERT_SCHEMA_VALIDATION', true),
   matsImportBucket: getConfigValue('EASEY_MATS_BULK_FILES_IMPORT_BUCKET'),
   matsImportBucketAccessKey: getConfigValue(
     'EASEY_MATS_BULK_FILES_IMPORT_AWS_ACCESS_KEY_ID',
