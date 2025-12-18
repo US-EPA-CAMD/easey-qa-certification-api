@@ -108,7 +108,7 @@ export class UnitDefaultTestRecordDTO extends UnitDefaultTestBaseDTO {
 export class UnitDefaultTestImportDTO extends UnitDefaultTestBaseDTO {
   @ValidateNested({ each: true })
   @Type(() => UnitDefaultTestRunImportDTO)
-  unitDefaultTestRunData: UnitDefaultTestRunImportDTO[];
+  unitDefaultTestRunData?: UnitDefaultTestRunImportDTO[];
 }
 
 export class UnitDefaultTestDTO extends UnitDefaultTestRecordDTO {

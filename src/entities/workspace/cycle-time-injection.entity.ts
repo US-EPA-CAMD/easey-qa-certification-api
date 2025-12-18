@@ -122,10 +122,7 @@ export class CycleTimeInjection extends BaseEntity {
   })
   updateDate: Date;
 
-  @ManyToOne(
-    () => CycleTimeSummary,
-    o => o.cycleTimeInjections,
-  )
+  @ManyToOne(() => CycleTimeSummary, (o) => o.cycleTimeInjections)
   @JoinColumn({ name: 'cycle_time_sum_id' })
   cycleTimeSummary: CycleTimeSummary;
 }

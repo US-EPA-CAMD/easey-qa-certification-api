@@ -35,18 +35,21 @@ export class FuelFlowToLoadBaseline extends BaseEntity {
   @Column({
     name: 'avg_fuel_flow_rate',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   averageFuelFlowRate: number;
 
   @Column({
     name: 'avg_load',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   averageLoad: number;
 
   @Column({
     name: 'baseline_fuel_flow_load_ratio',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   baselineFuelFlowToLoadRatio: number;
 
@@ -58,12 +61,14 @@ export class FuelFlowToLoadBaseline extends BaseEntity {
   @Column({
     name: 'avg_hrly_hi_rate',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   averageHourlyHeatInputRate: number;
 
   @Column({
     name: 'baseline_ghr',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   baselineGHR: number;
 
@@ -75,18 +80,21 @@ export class FuelFlowToLoadBaseline extends BaseEntity {
   @Column({
     name: 'nhe_cofiring',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfHoursExcludedCofiring: number;
 
   @Column({
     name: 'nhe_ramping',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfHoursExcludedRamping: number;
 
   @Column({
     name: 'nhe_low_range',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfHoursExcludedLowRange: number;
 

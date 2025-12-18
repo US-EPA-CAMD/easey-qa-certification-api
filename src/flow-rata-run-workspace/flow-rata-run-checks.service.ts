@@ -171,26 +171,15 @@ export class FlowRataRunChecksService {
       return null;
     }
 
-    let duplicateFound = false;
-
     if (testSumId) {
-      const currentRataSummary = await this.rataSummaryRepository.findOne({
-        where: { id: (rataSummary as RataSummary).id },
+      const currentRataRun = await this.rataRunRepository.findOne({
+        where: { id: (rataRun as RataRun).id },
         relations: {
-          RataRuns: true,
+          FlowRataRuns: true,
         },
       });
 
-      if (currentRataSummary) {
-        const duplicates = currentRataSummary.RataRuns.filter(rr =>
-          rr.id !== (rataRun as RataRun).id &&
-          rr.runNumber === rataRun.runNumber
-        );
-
-        duplicateFound = duplicates.length > 0;
-      }
-
-      if (duplicateFound) {
+      if (currentRataRun && currentRataRun.FlowRataRuns.length > 0) {
         error = CheckCatalogService.formatResultMessage('RATA-109-A', {
           recordtype: 'Flow RATA Run',
           fieldnames: 'OperatingLevelCode and RunNumber',

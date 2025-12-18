@@ -39,36 +39,42 @@ export class Rata extends BaseEntity {
   @Column({
     name: 'relative_accuracy',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   relativeAccuracy: number;
 
   @Column({
     name: 'calc_relative_accuracy',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedRelativeAccuracy: number;
 
   @Column({
     name: 'overall_bias_adj_factor',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   overallBiasAdjustmentFactor: number;
 
   @Column({
     name: 'calc_overall_bias_adj_factor',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedOverallBiasAdjustmentFactor: number;
 
   @Column({
     name: 'num_load_level',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   numberOfLoadLevels: number;
 
   @Column({
     name: 'calc_num_load_level',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedNumberOfLoadLevels: number;
 

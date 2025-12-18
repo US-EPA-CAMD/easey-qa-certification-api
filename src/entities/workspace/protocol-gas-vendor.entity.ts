@@ -18,6 +18,7 @@ export class ProtocolGasVendor extends BaseEntity {
   @Column({
     name: 'active_ind',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   activeIndicator: number;
 

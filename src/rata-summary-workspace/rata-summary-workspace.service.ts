@@ -218,7 +218,10 @@ export class RataSummaryWorkspaceService {
       `Rata Summary Successfully Imported. Record Id: ${createdRataSummary.id}`,
     );
 
-    if (payload.rataRunData?.length > 0) {
+    if (
+      payload.rataRunData &&
+      payload.rataRunData.length > 0
+    ) {
       for (const rataRun of payload.rataRunData) {
         promises.push(
           this.rataRunService.import(

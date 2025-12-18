@@ -43,7 +43,7 @@ export class RataRunChecksService {
     isUpdate: boolean = false,
     testSummary?: TestSummaryImportDTO,
     rataSumId?: string,
-    rataRuns?: RataRunImportDTO[],
+    rataRuns: RataRunImportDTO[] = [],
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];

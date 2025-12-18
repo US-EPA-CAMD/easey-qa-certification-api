@@ -212,7 +212,10 @@ export class HgSummaryWorkspaceService {
       `Hg Summary Successfully Imported. Record Id: ${createdHgSummary.id}`,
     );
 
-    if (payload.hgInjectionData?.length > 0) {
+    if (
+      payload.hgInjectionData &&
+      payload.hgInjectionData.length > 0
+    ) {
       for (const hgInjection of payload.hgInjectionData) {
         promises.push(
           this.hgInjectionService.import(

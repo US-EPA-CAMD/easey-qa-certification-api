@@ -165,7 +165,10 @@ export class AppECorrelationTestSummaryWorkspaceService {
       `Appendix E Correlation Test Summary Successfully Imported.  Record Id: ${createdAppECorrelation.id}`,
     );
 
-    if (payload.appendixECorrelationTestRunData?.length > 0) {
+    if (
+      payload.appendixECorrelationTestRunData &&
+      payload.appendixECorrelationTestRunData.length > 0
+    ) {
       for (const testRun of payload.appendixECorrelationTestRunData) {
         promises.push(
           this.appECorrTestRunService.import(

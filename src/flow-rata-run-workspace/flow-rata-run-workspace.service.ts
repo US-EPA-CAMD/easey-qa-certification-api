@@ -203,7 +203,10 @@ export class FlowRataRunWorkspaceService {
       `Flow Rata Run Successfully Imported. Record Id: ${createdFlowRataRun.id}`,
     );
 
-    if (payload.rataTraverseData?.length > 0) {
+    if (
+      payload.rataTraverseData &&
+      payload.rataTraverseData.length > 0
+    ) {
       for (const rataTraverse of payload.rataTraverseData) {
         promises.push(
           this.rataTravarseService.import(

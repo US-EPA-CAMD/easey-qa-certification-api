@@ -50,7 +50,7 @@ export class RataSummaryChecksService {
     isUpdate: boolean = false,
     rataId?: string,
     testSumId?: string,
-    rataSummaries?: RataSummaryImportDTO[],
+    rataSummaries: RataSummaryImportDTO[] = [],
     testSummary?: TestSummaryImportDTO,
   ): Promise<string[]> {
     let error: string = null;
@@ -243,7 +243,7 @@ export class RataSummaryChecksService {
       }
     }
 
-    if (rataSummaries?.length > 1 && isImport) {
+    if (rataSummaries.length > 1 && isImport) {
       duplicates = rataSummaries.filter(
         rs => rs.operatingLevelCode === rataSummary.operatingLevelCode,
       );

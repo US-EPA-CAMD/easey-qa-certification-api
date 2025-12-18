@@ -38,60 +38,70 @@ export class FlowToLoadReference extends BaseEntity {
   @Column({
     name: 'avg_gross_unit_load',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   averageGrossUnitLoad: number;
 
   @Column({
     name: 'calc_avg_gross_unit_load',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedAverageGrossUnitLoad: number;
 
   @Column({
     name: 'avg_ref_method_flow',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   averageReferenceMethodFlow: number;
 
   @Column({
     name: 'calc_avg_ref_method_flow',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedAverageReferenceMethodFlow: number;
 
   @Column({
     name: 'ref_flow_load_ratio',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   referenceFlowLoadRatio: number;
 
   @Column({
     name: 'calc_ref_flow_load_ratio',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedReferenceFlowToLoadRatio: number;
 
   @Column({
     name: 'avg_hrly_hi_rate',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   averageHourlyHeatInputRate: number;
 
   @Column({
     name: 'ref_ghr',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   referenceGrossHeatRate: number;
 
   @Column({
     name: 'calc_ref_ghr',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedReferenceGrossHeatRate: number;
 
   @Column({
     name: 'calc_sep_ref_ind',
     transformer: new NumericColumnTransformer(),
+    type: 'numeric',
   })
   calculatedSeparateReferenceIndicator: number;
 

@@ -57,7 +57,7 @@ export class RataTraverseChecksService {
     flowRataRunId?: string,
     isImport: boolean = false,
     isUpdate: boolean = false,
-    rataTraverses?: RataTraverseImportDTO[],
+    rataTraverses: RataTraverseImportDTO[] = [],
   ): Promise<string[]> {
     let error: string = null;
     const errorList: string[] = [];
@@ -481,7 +481,7 @@ export class RataTraverseChecksService {
       }
     }
 
-    if (rataTraverses?.length > 1 && isImport) {
+    if (rataTraverses.length > 1 && isImport) {
       duplicates = rataTraverses.filter(
         rs => rs.methodTraversePointId === rataTraverse.methodTraversePointId,
       );

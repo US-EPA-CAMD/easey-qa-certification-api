@@ -215,24 +215,26 @@ export class TestSummaryChecksService {
     const invalidChildRecords: string[] = [];
 
     if (summary.testTypeCode !== TestTypeCodes.RATA) {
-      if (summary.rataData?.length > 0) {
+      if (summary.rataData && summary.rataData.length > 0) {
         invalidChildRecords.push('RATA');
       }
-      if (summary.testQualificationData?.length > 0) {
+      if (summary.testQualificationData && summary.testQualificationData.length > 0) {
         invalidChildRecords.push('Test Qualification');
       }
     }
 
     if (
       summary.testTypeCode !== TestTypeCodes.SEVENDAY &&
-      summary.calibrationInjectionData?.length > 0
+      summary.calibrationInjectionData &&
+      summary.calibrationInjectionData.length > 0
     ) {
       invalidChildRecords.push('Calibration Injection');
     }
 
     if (
       summary.testTypeCode !== TestTypeCodes.LINE &&
-      summary.linearitySummaryData?.length > 0
+      summary.linearitySummaryData &&
+      summary.linearitySummaryData.length > 0
     ) {
       invalidChildRecords.push('Linearity Summary');
     }
@@ -240,77 +242,88 @@ export class TestSummaryChecksService {
     if (
       summary.testTypeCode !== TestTypeCodes.HGLINE &&
       summary.testTypeCode !== TestTypeCodes.HGSI3 &&
-      summary.hgSummaryData?.length > 0
+      summary.hgSummaryData &&
+      summary.hgSummaryData.length > 0
     ) {
       invalidChildRecords.push('Hg Linearity or System Integrity Summary');
     }
 
     if (
       summary.testTypeCode !== TestTypeCodes.F2LREF &&
-      summary.flowToLoadReferenceData?.length > 0
+      summary.flowToLoadReferenceData &&
+      summary.flowToLoadReferenceData.length > 0
     ) {
       invalidChildRecords.push('Flow to Load Reference');
     }
 
     if (
       summary.testTypeCode !== TestTypeCodes.F2LCHK &&
-      summary.flowToLoadCheckData?.length > 0
+      summary.flowToLoadCheckData &&
+      summary.flowToLoadCheckData.length > 0
     ) {
       invalidChildRecords.push('Flow to Load Check');
     }
 
     if (
       summary.testTypeCode !== TestTypeCodes.CYCLE &&
-      summary.cycleTimeSummaryData?.length > 0
+      summary.cycleTimeSummaryData &&
+      summary.cycleTimeSummaryData.length > 0
     ) {
       invalidChildRecords.push('Cycle Time Summary');
     }
 
     if (
       summary.testTypeCode !== TestTypeCodes.ONOFF &&
-      summary.onlineOfflineCalibrationData?.length > 0
+      summary.onlineOfflineCalibrationData &&
+      summary.onlineOfflineCalibrationData.length > 0
     ) {
       invalidChildRecords.push('Online Offline Calibration');
     }
 
     if (
       summary.testTypeCode !== TestTypeCodes.FFACC &&
-      summary.fuelFlowmeterAccuracyData?.length > 0
+      summary.fuelFlowmeterAccuracyData &&
+      summary.fuelFlowmeterAccuracyData.length > 0
     ) {
       invalidChildRecords.push('Fuel Flowmeter Accuracy');
     }
 
     if (
       summary.testTypeCode !== TestTypeCodes.FFACCTT &&
-      summary.transmitterTransducerData?.length > 0
+      summary.transmitterTransducerData &&
+      summary.transmitterTransducerData.length > 0
     ) {
       invalidChildRecords.push('Transmitter Transducer');
     }
 
     if (
       summary.testTypeCode !== TestTypeCodes.FF2LBAS &&
-      summary.fuelFlowToLoadBaselineData?.length > 0
+      summary.fuelFlowToLoadBaselineData &&
+      summary.fuelFlowToLoadBaselineData.length > 0
     ) {
       invalidChildRecords.push('Fuel Flow to Load Baseline');
     }
 
     if (
       summary.testTypeCode !== TestTypeCodes.FF2LTST &&
-      summary.fuelFlowToLoadTestData?.length > 0
+      summary.fuelFlowToLoadTestData &&
+      summary.fuelFlowToLoadTestData.length > 0
     ) {
       invalidChildRecords.push('Fuel Flow to Load Test');
     }
 
     if (
       summary.testTypeCode !== TestTypeCodes.APPE &&
-      summary.appendixECorrelationTestSummaryData?.length > 0
+      summary.appendixECorrelationTestSummaryData &&
+      summary.appendixECorrelationTestSummaryData.length > 0
     ) {
       invalidChildRecords.push('Appendix E Correlation Test Summary');
     }
 
     if (
       summary.testTypeCode !== TestTypeCodes.UNITDEF &&
-      summary.unitDefaultTestData?.length > 0
+      summary.unitDefaultTestData &&
+      summary.unitDefaultTestData.length > 0
     ) {
       invalidChildRecords.push('Unit Default Test');
     }
@@ -322,7 +335,8 @@ export class TestSummaryChecksService {
         TestTypeCodes.APPE.toString(),
         TestTypeCodes.UNITDEF.toString(),
       ].includes(summary.testTypeCode) &&
-      summary.protocolGasData?.length > 0
+      summary.protocolGasData &&
+      summary.protocolGasData.length > 0
     ) {
       invalidChildRecords.push('Protocol Gas');
     }
@@ -333,7 +347,8 @@ export class TestSummaryChecksService {
         TestTypeCodes.APPE.toString(),
         TestTypeCodes.UNITDEF.toString(),
       ].includes(summary.testTypeCode) &&
-      summary.airEmissionTestingData?.length > 0
+      summary.airEmissionTestingData &&
+      summary.airEmissionTestingData.length > 0
     ) {
       invalidChildRecords.push('Air Emission Test');
     }
@@ -681,14 +696,24 @@ export class TestSummaryChecksService {
   ): Promise<string> {
     if (
       summary.testTypeCode === TestTypeCodes.RATA &&
-      summary.rataData?.length > 0
+      summary.rataData &&
+      summary.rataData.length > 0
     ) {
       for (const rata of summary.rataData) {
-        if (rata.rataSummaryData?.length > 0) {
+        if (
+          rata.rataSummaryData &&
+          rata.rataSummaryData.length > 0
+        ) {
           for (const rataSummary of rata.rataSummaryData) {
-            if (rataSummary.rataRunData?.length > 0) {
+            if (
+              rataSummary.rataRunData &&
+              rataSummary.rataRunData.length > 0
+            ) {
               for (const rataRun of rataSummary.rataRunData) {
-                if (rataRun.flowRataRunData?.length > 0) {
+                if (
+                  rataRun.flowRataRunData &&
+                  rataRun.flowRataRunData.length > 0
+                ) {
                   const monitorSystem = await this.monitorSystemRepository.findOneBy(
                     {
                       locationId,

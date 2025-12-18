@@ -91,17 +91,14 @@ export class QACertificationChecksService {
 
     if (payload.testSummaryData) {
       for (const summary of payload.testSummaryData) {
-        //Handle anyOf schema - either unitId OR stackPipeId (or both)
+        // Handle anyOf schema with priority-based matching (stackPipeId preferred)
         const location = locations.find(i => {
-          if (summary.unitId && summary.stackPipeId) {
-            // Both provided - exact match required
-            return i.unitId === summary.unitId && i.stackPipeId === summary.stackPipeId;
-          } else if (summary.unitId) {
-            // Only unitId provided - match unit only
-            return i.unitId === summary.unitId;
-          } else if (summary.stackPipeId) {
-            // Only stackPipeId provided - match stack only
+          if (summary.stackPipeId) {
+            // Always prefer stackPipeId when present (fixes mixed data patterns)
             return i.stackPipeId === summary.stackPipeId;
+          } else if (summary.unitId) {
+            // Only use unitId if no stackPipeId provided
+            return i.unitId === summary.unitId;
           }
           return false;
         });
@@ -272,16 +269,17 @@ export class QACertificationChecksService {
           });
         });
 
-        summary.testQualificationData?.forEach(testQualification => {
+        const testQualificationData = summary.testQualificationData;
+        testQualificationData?.forEach(testQualification => {
           promises.push(
             new Promise((resolve, _reject) => {
               const results = this.testQualificationChecksService.runChecks(
                 locationId,
                 testQualification,
-                summary.testQualificationData,
+                testQualificationData,
                 duplicateQaSupp ? duplicateQaSupp.testSumId : null,
                 summary,
-                summary.rataData?.length > 0 ? summary.rataData[0] : null,
+                summary.rataData && summary.rataData.length > 0 ? summary.rataData[0] : null,
                 true,
                 false,
                 null,
@@ -331,17 +329,18 @@ export class QACertificationChecksService {
           );
         });
 
-        if (summary.appendixECorrelationTestSummaryData) {
+        const appendixECorrelationTestSummaryData = summary.appendixECorrelationTestSummaryData;
+        if (appendixECorrelationTestSummaryData) {
           promises.push(
             new Promise((resolve, _reject) => {
               const results = this.appETestSummaryChecksService.runImportChecks(
-                summary.appendixECorrelationTestSummaryData,
+                appendixECorrelationTestSummaryData,
               );
               resolve(results);
             }),
           );
 
-          summary.appendixECorrelationTestSummaryData.forEach(appESummary => {
+          appendixECorrelationTestSummaryData.forEach(appESummary => {
             promises.push(
               new Promise((resolve, _reject) => {
                 const results = this.appETestRunChecksService.runImportChecks(
@@ -405,19 +404,18 @@ export class QACertificationChecksService {
       }
     }
 
-    if (payload.testExtensionExemptionData) {
-      for (const testExtExem of payload.testExtensionExemptionData) {
-        //Handle anyOf schema - either unitId OR stackPipeId (or both)
+    const testExtensionExemptionData = payload.testExtensionExemptionData;
+
+    if (testExtensionExemptionData) {
+      for (const testExtExem of testExtensionExemptionData) {
+        // Handle anyOf schema with priority-based matching (stackPipeId preferred)
         const location = locations.find(i => {
-          if (testExtExem.unitId && testExtExem.stackPipeId) {
-            // Both provided - exact match required
-            return i.unitId === testExtExem.unitId && i.stackPipeId === testExtExem.stackPipeId;
-          } else if (testExtExem.unitId) {
-            // Only unitId provided - match unit only
-            return i.unitId === testExtExem.unitId;
-          } else if (testExtExem.stackPipeId) {
-            // Only stackPipeId provided - match stack only
+          if (testExtExem.stackPipeId) {
+            // Always prefer stackPipeId when present
             return i.stackPipeId === testExtExem.stackPipeId;
+          } else if (testExtExem.unitId) {
+            // Only use unitId if no stackPipeId provided
+            return i.unitId === testExtExem.unitId;
           }
           return false;
         });
@@ -434,7 +432,7 @@ export class QACertificationChecksService {
             const results = this.testExtensionExemptionsChecksService.runChecks(
               locationId,
               testExtExem,
-              payload.testExtensionExemptionData,
+              testExtensionExemptionData,
               true,
               false,
             );
@@ -444,19 +442,20 @@ export class QACertificationChecksService {
       }
     }
 
-    if (payload.certificationEventData) {
-      for (const qaCertEvent of payload.certificationEventData) {
-        //Handle anyOf schema - either unitId OR stackPipeId (or both)
+    const certificationEventData = payload.certificationEventData;
+
+    if (certificationEventData) {
+      for (const qaCertEvent of certificationEventData) {
+        // Handle anyOf schema with priority-based matching (stackPipeId preferred)
         const location = locations.find(i => {
-          if (qaCertEvent.unitId && qaCertEvent.stackPipeId) {
-            // Both provided - exact match required
-            return i.unitId === qaCertEvent.unitId && i.stackPipeId === qaCertEvent.stackPipeId;
+          if (qaCertEvent.stackPipeId) {
+            // Always prefer stackPipeId when present
+            const match = i.stackPipeId === qaCertEvent.stackPipeId;
+            return match;
           } else if (qaCertEvent.unitId) {
-            // Only unitId provided - match unit only
-            return i.unitId === qaCertEvent.unitId;
-          } else if (qaCertEvent.stackPipeId) {
-            // Only stackPipeId provided - match stack only
-            return i.stackPipeId === qaCertEvent.stackPipeId;
+            // Only use unitId if no stackPipeId provided
+            const match = i.unitId === qaCertEvent.unitId;
+            return match;
           }
           return false;
         });
@@ -473,7 +472,7 @@ export class QACertificationChecksService {
             const results = this.qaCertificationEventChecksService.runChecks(
               locationId,
               qaCertEvent,
-              payload.certificationEventData,
+              certificationEventData,
               true,
               false,
             );

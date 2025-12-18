@@ -47,6 +47,52 @@ export class MatsDataSubmissionService {
     this.logger.setContext(MatsDataSubmissionService.name);
   }
 
+  private async copyFile(sourcePath: string, destinationPath: string) {
+    await this.getS3Client().send(
+      new CopyObjectCommand({
+        Bucket: this.getS3Bucket(),
+        CopySource: `${this.getS3Bucket()}/${sourcePath}`,
+        Key: destinationPath,
+      }),
+    );
+  }
+
+  private async copyFilesAndCreateRecords(
+    fileNames: MatsDataSubmissionFileNamesDTO,
+    submissionId: string,
+    locationId: string,
+    trx?: EntityManager,
+  ) {
+    await settlePromises(
+      Object.entries(fileNames)
+        // Map the array of entries to a single array of tuples.
+        .reduce((acc, [key, fileName]: [string, string | string[]]) => {
+          if (Array.isArray(fileName)) {
+            acc.push(...fileName.map((f) => [key, f]));
+          } else {
+            acc.push([key, fileName]);
+          }
+          return acc;
+        }, [])
+        .map(async ([key, fileName]: [string, string]) => {
+          if (!fileName) return;
+
+          // Copy the file from the staging directory to the `submissionId` directory in S3.
+          await this.copyFile(
+            this.createStagingFilePath(locationId, fileName),
+            this.createSubmissionFilePath(submissionId, fileName),
+          );
+          // Add the MATS payload file record.
+          await this.createMatsDataSubmissionPayloadFile(
+            fileName,
+            submissionId,
+            trx,
+            key === 'ertFile',
+          );
+        }),
+    );
+  }
+
   createStagingFilePath(locationId: string, fileName: string) {
     return `tmp/${locationId}/${fileName}`;
   }
@@ -439,52 +485,6 @@ export class MatsDataSubmissionService {
     }
 
     return submissionId;
-  }
-
-  private async copyFile(sourcePath: string, destinationPath: string) {
-    await this.getS3Client().send(
-      new CopyObjectCommand({
-        Bucket: this.getS3Bucket(),
-        CopySource: `${this.getS3Bucket()}/${sourcePath}`,
-        Key: destinationPath,
-      }),
-    );
-  }
-
-  private async copyFilesAndCreateRecords(
-    fileNames: MatsDataSubmissionFileNamesDTO,
-    submissionId: string,
-    locationId: string,
-    trx?: EntityManager,
-  ) {
-    await settlePromises(
-      Object.entries(fileNames)
-        // Map the array of entries to a single array of tuples.
-        .reduce((acc, [key, fileName]: [string, string | string[]]) => {
-          if (Array.isArray(fileName)) {
-            acc.push(...fileName.map((f) => [key, f]));
-          } else {
-            acc.push([key, fileName]);
-          }
-          return acc;
-        }, [])
-        .map(async ([key, fileName]: [string, string]) => {
-          if (!fileName) return;
-
-          // Copy the file from the staging directory to the `submissionId` directory in S3.
-          await this.copyFile(
-            this.createStagingFilePath(locationId, fileName),
-            this.createSubmissionFilePath(submissionId, fileName),
-          );
-          // Add the MATS payload file record.
-          await this.createMatsDataSubmissionPayloadFile(
-            fileName,
-            submissionId,
-            trx,
-            key === 'ertFile',
-          );
-        }),
-    );
   }
 
   private async uploadFile(

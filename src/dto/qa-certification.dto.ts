@@ -42,15 +42,15 @@ export class QACertificationBaseDTO {
 export class QACertificationImportDTO extends QACertificationBaseDTO {
   @ValidateNested({ each: true })
   @Type(() => TestSummaryImportDTO)
-  testSummaryData: TestSummaryImportDTO[];
+  testSummaryData?: TestSummaryImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => QACertificationEventImportDTO)
-  certificationEventData: QACertificationEventImportDTO[];
+  certificationEventData?: QACertificationEventImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => TestExtensionExemptionImportDTO)
-  testExtensionExemptionData: TestExtensionExemptionImportDTO[];
+  testExtensionExemptionData?: TestExtensionExemptionImportDTO[];
 
   @IsString()
   @IsNotEmpty()
