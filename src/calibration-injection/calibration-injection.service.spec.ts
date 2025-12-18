@@ -4,6 +4,10 @@ import { CalibrationInjectionDTO } from '../dto/calibration-injection.dto';
 import { CalibrationInjection } from '../entities/calibration-injection.entity';
 import { CalibrationInjectionRepository } from './calibration-injection.repository';
 import { CalibrationInjectionService } from './calibration-injection.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const id = '';
 const testSumId = '';
@@ -23,6 +27,7 @@ const mockMap = () => ({
 describe('CalibrationInjectionService', () => {
   let service: CalibrationInjectionService;
   let repository: CalibrationInjectionRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,6 +41,7 @@ describe('CalibrationInjectionService', () => {
           provide: CalibrationInjectionMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -49,6 +55,10 @@ describe('CalibrationInjectionService', () => {
 
   describe('getCalibrationInjections', () => {
     it('Should return Calibration Injection records by Test Summary id', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );      
       const result = await service.getCalibrationInjections(testSumId);
 
       expect(result).toEqual([dto]);
@@ -57,13 +67,21 @@ describe('CalibrationInjectionService', () => {
 
   describe('getCalibrationInjection', () => {
     it('Should return a Calibration Injection record', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );
       const result = await service.getCalibrationInjection(id, testSumId);
 
       expect(result).toEqual(dto);
     });
 
     it('Should throw error when a Calibration Injection record not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
+      
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined)) 
+        );
       let errored = false;
 
       try {

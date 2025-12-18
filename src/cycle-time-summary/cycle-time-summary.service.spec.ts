@@ -8,6 +8,10 @@ import { CycleTimeSummary } from '../entities/workspace/cycle-time-summary.entit
 import { CycleTimeSummaryMap } from '../maps/cycle-time-summary.map';
 import { CycleTimeSummaryRepository } from './cycle-time-summary.repository';
 import { CycleTimeSummaryService } from './cycle-time-summary.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const id = '';
 const testSumId = '';
@@ -35,6 +39,7 @@ const mockCycleTimeInjectionService = () => ({
 describe('CycleTimeSummaryService', () => {
   let service: CycleTimeSummaryService;
   let repository: CycleTimeSummaryRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -53,6 +58,7 @@ describe('CycleTimeSummaryService', () => {
           provide: CycleTimeSummaryMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -64,6 +70,10 @@ describe('CycleTimeSummaryService', () => {
 
   describe('getCycleTimeSummaries', () => {
     it('Should return Cycle Time Summary records by Test Summary id', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );      
       const result = await service.getCycleTimeSummaries(testSumId);
 
       expect(result).toEqual([dto]);
@@ -72,13 +82,20 @@ describe('CycleTimeSummaryService', () => {
 
   describe('getCycleTimeSummary', () => {
     it('Should return a Cycle Time Summary record', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );
       const result = await service.getCycleTimeSummary(id, testSumId);
 
       expect(result).toEqual(dto);
     });
 
     it('Should throw error when a Cycle Time Summary record not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined)) 
+        );
       let errored = false;
 
       try {

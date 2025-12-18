@@ -6,6 +6,10 @@ import { RataSummaryRepository } from './rata-summary.repository';
 import { RataSummaryService } from './rata-summary.service';
 import { RataRunService } from '../rata-run/rata-run.service';
 import { RataRunDTO } from '../dto/rata-run.dto';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const rataId = '';
 const entity = new RataSummary();
@@ -30,7 +34,8 @@ const mockRataRunService = () => ({
 
 describe('RataSummaryService', () => {
   let service: RataSummaryService;
-
+  let dataSource: DataSource;
+  let repo: {}
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -47,10 +52,16 @@ describe('RataSummaryService', () => {
           provide: RataRunService,
           useFactory: mockRataRunService,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
     service = module.get<RataSummaryService>(RataSummaryService);
+    
+    (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+    );
   });
 
   describe('getRataSummariesByRataIds', () => {

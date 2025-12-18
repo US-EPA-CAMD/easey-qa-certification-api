@@ -1,22 +1,23 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
+import { In, DataSource } from 'typeorm';
 
 import { TransmitterTransducerAccuracyDTO } from '../dto/transmitter-transducer-accuracy.dto';
 import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
 import { TransmitterTransducerAccuracyRepository } from './transmitter-transducer-accuracy.repository';
-
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class TransmitterTransducerAccuracyService {
   constructor(
     private readonly repository: TransmitterTransducerAccuracyRepository,
     private readonly map: TransmitterTransducerAccuracyMap,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getTransmitterTransducerAccuracy(
     id: string,
   ): Promise<TransmitterTransducerAccuracyDTO> {
-    const entity = await this.repository.findOneBy({ id });
+    const entity = await useSlaveRepository(this.dataSource, TransmitterTransducerAccuracyRepository, async (repository) => repository.findOneBy({ id }));
 
     if (!entity) {
       throw new EaseyException(
@@ -33,9 +34,9 @@ export class TransmitterTransducerAccuracyService {
   async getTransmitterTransducerAccuracies(
     testSumId: string,
   ): Promise<TransmitterTransducerAccuracyDTO[]> {
-    const records = await this.repository.find({
+    const records = await useSlaveRepository(this.dataSource, TransmitterTransducerAccuracyRepository, async (repository) => repository.find({
       where: { testSumId },
-    });
+    }));
 
     return this.map.many(records);
   }

@@ -8,6 +8,10 @@ import { AirEmissionTesting } from '../entities/air-emission-test.entity';
 import { AirEmissionTestingMap } from '../maps/air-emission-testing.map';
 import { AirEmissionTestingRepository } from './air-emission-testing.repository';
 import { AirEmissionTestingService } from './air-emission-testing.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const id = '';
 const testSumId = '';
@@ -31,6 +35,7 @@ const mockMap = () => ({
 describe('AirEmissionTestingService', () => {
   let service: AirEmissionTestingService;
   let repository: AirEmissionTestingRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -44,6 +49,7 @@ describe('AirEmissionTestingService', () => {
           provide: AirEmissionTestingMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -55,6 +61,10 @@ describe('AirEmissionTestingService', () => {
 
   describe('getAirEmissionTestings', () => {
     it('Should return Air Emission Testing records by Test Summary id', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );
       const result = await service.getAirEmissionTestings(testSumId);
 
       expect(result).toEqual([airEmissionTestingRecord]);
@@ -63,13 +73,20 @@ describe('AirEmissionTestingService', () => {
 
   describe('getAirEmissionTesting', () => {
     it('Should return a Air Emission Testing record', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );
       const result = await service.getAirEmissionTesting(id);
 
       expect(result).toEqual(airEmissionTestingRecord);
     });
 
     it('Should throw error when a Air Emission Testing record not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined)) 
+        );      
       let errored = false;
 
       try {

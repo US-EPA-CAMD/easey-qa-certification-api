@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
+import { In, DataSource } from 'typeorm';
 
 import {
   UnitDefaultTestRunDTO,
@@ -8,20 +8,22 @@ import {
 } from '../dto/unit-default-test-run.dto';
 import { UnitDefaultTestRunMap } from '../maps/unit-default-test-run.map';
 import { UnitDefaultTestRunRepository } from './unit-default-test-run.repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
 @Injectable()
 export class UnitDefaultTestRunService {
   constructor(
     private readonly map: UnitDefaultTestRunMap,
     private readonly repository: UnitDefaultTestRunRepository,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getUnitDefaultTestRuns(
     unitDefaultTestSumId: string,
   ): Promise<UnitDefaultTestRunRecordDTO[]> {
-    const records = await this.repository.find({
+    const records = await useSlaveRepository(this.dataSource, UnitDefaultTestRunRepository, async (repository) => repository.find({
       where: { unitDefaultTestSumId },
-    });
+    }));
 
     return this.map.many(records);
   }
@@ -30,10 +32,10 @@ export class UnitDefaultTestRunService {
     id: string,
     unitDefaultTestSumId: string,
   ): Promise<UnitDefaultTestRunRecordDTO> {
-    const result = await this.repository.findOneBy({
+    const result = await useSlaveRepository(this.dataSource, UnitDefaultTestRunRepository, async (repository) => repository.findOneBy({
       id,
       unitDefaultTestSumId,
-    });
+    }));
 
     if (!result) {
       throw new EaseyException(

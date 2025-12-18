@@ -7,6 +7,10 @@ import { LinearityInjectionService } from '../linearity-injection/linearity-inje
 import { LinearitySummaryMap } from '../maps/linearity-summary.map';
 import { LinearitySummaryRepository } from './linearity-summary.repository';
 import { LinearitySummaryService } from './linearity-summary.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const linSumId = 'a1b2c3';
 const testSumId = 'd4e5f6';
@@ -31,6 +35,7 @@ const mockLinearityInjectionService = () => ({
 describe('linearitySummaryService', () => {
   let service: LinearitySummaryService;
   let repository: LinearitySummaryRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -49,6 +54,7 @@ describe('linearitySummaryService', () => {
           provide: LinearityInjectionService,
           useFactory: mockLinearityInjectionService,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -60,14 +66,22 @@ describe('linearitySummaryService', () => {
 
   describe('getlinearitySummary', () => {
     it('Calls repository.findOneBy({id}) to get a single Flow Rata Run record', async () => {
+      const repo = mockRepository();  
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+        );
       const result = await service.getSummaryById(linSumId);
       expect(result).toEqual(linearitySummaryDTO);
-      expect(repository.findOneBy).toHaveBeenCalled();
+      expect(repo.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Flow Rata Run record not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
-
+      
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(jest.spyOn(repository, 'findOneBy').mockResolvedValue(null)) 
+        );
       let errored = false;
 
       try {
@@ -82,9 +96,14 @@ describe('linearitySummaryService', () => {
 
   describe('getlinearitySummarys', () => {
     it('Should return an array of Flow Rata Run records', async () => {
+      const repo = mockRepository(); 
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+        );
       const result = await service.getSummariesByTestSumId(testSumId);
       expect(result).toEqual([linearitySummary]);
-      expect(repository.findBy).toHaveBeenCalled();
+      expect(repo.findBy).toHaveBeenCalled();
     });
   });
 

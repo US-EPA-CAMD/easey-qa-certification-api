@@ -17,7 +17,7 @@ import {
   withTransaction,
 } from '@us-epa-camd/easey-common/utilities/functions';
 import { XMLBuilder } from 'fast-xml-parser';
-import { EntityManager } from 'typeorm';
+import { EntityManager, DataSource } from 'typeorm';
 
 import { MatsDataSubmissionFileNamesDTO } from '../dto/mats-data-submission-create-payload.dto';
 import {
@@ -29,7 +29,7 @@ import { MatsDataSubmissionPollutant } from '../entities/mats-data-submission-po
 import { MatsDataSubmissionTestMethod } from '../entities/mats-data-submission-test-method.entity';
 import { MatsDataSubmissionMap } from '../maps/mats-data-submission.map';
 import { MatsDataSubmissionRepository } from './mats-data-submission.repository';
-
+import { useSlaveRepository } from '@us-epa-camd/easey-common';
 export const METADATA_XML_FILE_NAME = 'Metadata.xml';
 
 @Injectable()
@@ -42,6 +42,7 @@ export class MatsDataSubmissionService {
     private readonly logger: Logger,
     private readonly map: MatsDataSubmissionMap,
     private readonly repository: MatsDataSubmissionRepository,
+    private readonly dataSource: DataSource
   ) {
     this.logger.setContext(MatsDataSubmissionService.name);
   }
@@ -371,8 +372,8 @@ export class MatsDataSubmissionService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const result = await this.repository.getMatsDataSubmissions(monPlanIds);
 
+    const result = await useSlaveRepository(this.dataSource, MatsDataSubmissionRepository, async (repository) => repository.getMatsDataSubmissions(monPlanIds));
     return this.map.many(result);
   }
 

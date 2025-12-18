@@ -7,6 +7,10 @@ import { RataMap } from '../maps/rata.map';
 import { RataSummaryService } from '../rata-summary/rata-summary.service';
 import { RataRepository } from './rata.repository';
 import { RataService } from './rata.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const rataId = '';
 const testSumId = '';
@@ -31,6 +35,7 @@ const mockRataSummaryService = () => ({
 describe('RataService', () => {
   let service: RataService;
   let repository: RataRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -48,6 +53,7 @@ describe('RataService', () => {
           provide: RataMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -57,14 +63,22 @@ describe('RataService', () => {
 
   describe('getRataById', () => {
     it('calls the repository.findOneBy() and get one rata record', async () => {
+      const repo = mockRepository();  
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+        );      
       const result = await service.getRataById(rataId);
       expect(result).toEqual(rataRecord);
-      expect(repository.findOneBy).toHaveBeenCalled();
+      expect(repo.findOneBy).toHaveBeenCalled();
     });
 
     it('Should through error while not finding a Rata record', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
-
+      
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined)) 
+        );
       let errored = false;
       try {
         await service.getRataById(rataId);
@@ -77,9 +91,14 @@ describe('RataService', () => {
 
   describe('getRatasByTestSumId', () => {
     it('calls the repository.findBy() and get many rata record', async () => {
+      const repo = mockRepository();  
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+        ); 
       const result = await service.getRatasByTestSumId(rataId);
       expect(result).toEqual([rataRecord]);
-      expect(repository.findBy).toHaveBeenCalled();
+      expect(repo.findBy).toHaveBeenCalled();
     });
   });
 

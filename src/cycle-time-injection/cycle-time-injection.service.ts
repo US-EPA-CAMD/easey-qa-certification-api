@@ -1,24 +1,26 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
+import { In, DataSource } from 'typeorm';
 
 import { CycleTimeInjectionDTO } from '../dto/cycle-time-injection.dto';
 import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
 import { CycleTimeInjectionRepository } from './cycle-time-injection.repository';
-
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class CycleTimeInjectionService {
   constructor(
     private readonly map: CycleTimeInjectionMap,
     private readonly repository: CycleTimeInjectionRepository,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getCycleTimeInjectionsByCycleTimeSumId(cycleTimeSumId: string) {
-    const results = await this.repository.find({
+
+    const results = await useSlaveRepository(this.dataSource, CycleTimeInjectionRepository, async (repository) => repository.find({
       where: {
         cycleTimeSumId,
       },
-    });
+    }));
 
     return this.map.many(results);
   }
@@ -33,7 +35,7 @@ export class CycleTimeInjectionService {
   }
 
   async getCycleTimeInjection(id: string) {
-    const result = await this.repository.findOneBy({ id });
+    const result = await useSlaveRepository(this.dataSource, CycleTimeInjectionRepository, async (repository) => repository.findOneBy({ id }));
 
     if (!result) {
       throw new EaseyException(
