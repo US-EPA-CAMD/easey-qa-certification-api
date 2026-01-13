@@ -324,7 +324,7 @@ export class MatsDataSubmissionService {
           OriginalSubmissionId: record.originalSubmissionId,
         },
         CdxUser: record.userId,
-        ReportTypeCode: record.reportType?.metadataReportTypeCode || record.reportTypeCode,
+        ReportTypeCode: record.reportType.metadataReportTypeCode,
         OrisCode: record.facility.orisCode,
         FrsId: record.facility.frsId ?? '',
         LocationName:
