@@ -305,6 +305,7 @@ export class MatsDataSubmissionService {
         },
         pollutants: true,
         testMethods: true,
+        reportType: true
       },
     });
     if (!record) {
@@ -323,7 +324,7 @@ export class MatsDataSubmissionService {
           OriginalSubmissionId: record.originalSubmissionId,
         },
         CdxUser: record.userId,
-        ReportTypeCode: record.reportTypeCode,
+        ReportTypeCode: record.reportType.metadataReportTypeCode,
         OrisCode: record.facility.orisCode,
         FrsId: record.facility.frsId ?? '',
         LocationName:
