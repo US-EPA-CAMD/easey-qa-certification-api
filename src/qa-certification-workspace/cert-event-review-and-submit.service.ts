@@ -119,7 +119,7 @@ export class CertEventReviewAndSubmitService {
           (a.orisCode - b.orisCode) ||
           ((a.locationInfo ?? '').localeCompare((b.locationInfo ?? ''))) ||
           ((a.systemComponentIdentifier ?? '').localeCompare((b.systemComponentIdentifier ?? ''))) ||
-          (a.qaCertEventCode.localeCompare(b.qaCertEventCode)) ||
+          ((a.qaCertEventCode ?? '').localeCompare((b.qaCertEventCode ?? ''))) ||
           (new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime())
         );
       });
