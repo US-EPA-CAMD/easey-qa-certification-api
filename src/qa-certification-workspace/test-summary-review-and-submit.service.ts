@@ -124,7 +124,7 @@ export class TestSummaryReviewAndSubmitService {
           ((a.locationInfo ?? '').localeCompare((b.locationInfo ?? ''))) ||
           ((a.systemComponentId ?? '').localeCompare((b.systemComponentId ?? ''))) ||
           ((a.testTypeCode ?? '').localeCompare((b.testTypeCode ?? ''))) ||
-          (a.testNum.localeCompare(b.testNum)) ||
+          ((a.testNum ?? '').localeCompare((b.testNum ?? ''))) ||
           ((a.periodAbbreviation ?? '').localeCompare((b.periodAbbreviation ?? ''))) ||
           ((a.endDate ? new Date(a.endDate).getTime() : 0 ) - (b.endDate ? new Date(b.endDate).getTime() : 0))
         );
@@ -165,7 +165,7 @@ export class TestSummaryReviewAndSubmitService {
           ((a.locationInfo ?? '').localeCompare((b.locationInfo ?? ''))) ||
           ((a.systemComponentId ?? '').localeCompare((b.systemComponentId ?? ''))) ||
           ((a.testTypeCode ?? '').localeCompare((b.testTypeCode ?? ''))) ||
-          (a.testNum.localeCompare(b.testNum)) ||
+          ((a.testNum ?? '').localeCompare((b.testNum ?? ''))) ||
           ((a.periodAbbreviation ?? '').localeCompare((b.periodAbbreviation ?? ''))) ||
           ((a.endDate ? new Date(a.endDate).getTime() : 0 ) - (b.endDate ? new Date(b.endDate).getTime() : 0))
         );
