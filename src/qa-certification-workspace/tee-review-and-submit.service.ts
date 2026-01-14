@@ -77,7 +77,15 @@ export class TeeReviewAndSubmitService {
         }
       }
 
-      return data;
+      // Final sort via: oris, location (unit/stack), system/component id, year/qtr
+      return Array.from(data.values()).sort((a, b) => {
+        return (
+          (a.orisCode - b.orisCode) ||
+          ((a.locationInfo ?? '').localeCompare((b.locationInfo ?? ''))) ||
+          ((a.systemComponentIdentifier ?? '').localeCompare((b.systemComponentIdentifier ?? ''))) ||
+          (a.periodAbbreviation.localeCompare(b.periodAbbreviation))
+        );
+      });
     } catch (e) {
       throw new EaseyException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
