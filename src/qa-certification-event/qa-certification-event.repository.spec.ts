@@ -1,31 +1,39 @@
 import { Test } from '@nestjs/testing';
-import { EntityManager, SelectQueryBuilder } from 'typeorm';
+import { EntityManager, SelectQueryBuilder, DataSource } from 'typeorm';
 
 import { QACertificationEvent } from '../entities/qa-certification-event.entity';
 import * as qaCertQueryBuilder from '../utilities/qa-cert-events.querybuilder';
 import { QACertificationEventRepository } from './qa-certification-event.repository';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
+jest.mock('@us-epa-camd/easey-common/connection');
 const qaCertEvent = new QACertificationEvent();
 
-const mockQueryBuilder = () => ({
+const mockQueryBuilder = {
   where: jest.fn(),
   andWhere: jest.fn(),
   getOne: jest.fn(),
   getMany: jest.fn(),
   leftJoinAndSelect: jest.fn(),
   leftJoin: jest.fn(),
-});
+};
+
+const mockManager = {
+  createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+};
 
 describe('QACertificationEventWorkspaceRepository', () => {
   let repository: QACertificationEventRepository;
   let queryBuilder;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
         EntityManager,
         QACertificationEventRepository,
-        { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
+        { provide: SelectQueryBuilder, useFactory: () =>  mockQueryBuilder },
+        {provide: DataSource, useValue: dataSource },      
       ],
     }).compile();
 
@@ -39,6 +47,10 @@ describe('QACertificationEventWorkspaceRepository', () => {
     repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
 
     jest.spyOn(qaCertQueryBuilder, 'addJoins').mockReturnValue(queryBuilder);
+    
+    (withSlaveConnection as jest.Mock).mockImplementation(
+          async (_dataSource, callback) =>
+      callback(mockManager))
   });
 
   describe('getQACertificationEventById', () => {

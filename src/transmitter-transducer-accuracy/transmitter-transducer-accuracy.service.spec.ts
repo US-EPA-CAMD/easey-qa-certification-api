@@ -8,6 +8,10 @@ import { TransmitterTransducerAccuracy } from '../entities/transmitter-transduce
 import { TransmitterTransducerAccuracyMap } from '../maps/transmitter-transducer-accuracy.map';
 import { TransmitterTransducerAccuracyRepository } from './transmitter-transducer-accuracy.repository';
 import { TransmitterTransducerAccuracyService } from './transmitter-transducer-accuracy.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const entityId = 'a1b2c3';
 const testSumId = 'd4e5f6';
@@ -36,6 +40,7 @@ const mockRepository = () => ({
 describe('TransmitterTransducerAccuracyService', () => {
   let service: TransmitterTransducerAccuracyService;
   let repository: TransmitterTransducerAccuracyRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -50,6 +55,7 @@ describe('TransmitterTransducerAccuracyService', () => {
           provide: TransmitterTransducerAccuracyMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -63,14 +69,21 @@ describe('TransmitterTransducerAccuracyService', () => {
 
   describe('getProtocolGas', () => {
     it('Calls repository.findOneBy({id}) to get a single Transmitter Transducer Accuracy record', async () => {
+      const repo = mockRepository();  
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+        );
       const result = await service.getTransmitterTransducerAccuracy(entityId);
       expect(result).toEqual(dto);
-      expect(repository.findOneBy).toHaveBeenCalled();
+      expect(repo.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Gas record not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
-
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(jest.spyOn(repository, 'findOneBy').mockResolvedValue(null)) 
+        );
       let errored = false;
 
       try {

@@ -9,7 +9,10 @@ import { AppECorrelationTestSummaryMap } from '../maps/app-e-correlation-summary
 import { TestSummaryWorkspaceService } from '../test-summary-workspace/test-summary.service';
 import { AppendixETestSummaryRepository } from './app-e-correlation-test-summary.repository';
 import { AppECorrelationTestSummaryService } from './app-e-correlation-test-summary.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
+jest.mock('@us-epa-camd/easey-common/connection');
 const testSumId = '';
 const entity = new AppECorrelationTestSummary();
 const appECorrelationTest = new AppECorrelationTestSummaryDTO();
@@ -39,8 +42,11 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
   let service: AppECorrelationTestSummaryService;
   let testSummaryService: TestSummaryWorkspaceService;
   let repository: AppendixETestSummaryRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
+    dataSource = {} as DataSource;
+    
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AppECorrelationTestSummaryService,
@@ -61,6 +67,7 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
           provide: AppECorrelationTestSummaryMap,
           useFactory: mockMap,
         },
+       { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -77,6 +84,10 @@ describe('AppECorrelationTestSummaryWorkspaceService', () => {
 
   describe('createAppECorrelation', () => {
     it('Calls the service to create a new Appendix E Correlation Test Summary record', async () => {
+     (useSlaveRepository as jest.Mock).mockImplementation(
+       async (_dataSource, _repo, callback) =>
+         callback(mockRepository()) 
+     );
       const result = await service.getAppECorrelation(testSumId);
       expect(result).toEqual(appECorrelationTest);
     });
