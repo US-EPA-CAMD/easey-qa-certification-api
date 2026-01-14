@@ -121,7 +121,7 @@ export class TestSummaryReviewAndSubmitService {
       return Array.from(data.values()).sort((a, b) => {
         return (
           (a.orisCode - b.orisCode) ||
-          (a.locationInfo.localeCompare(b.locationInfo)) ||
+          ((a.locationInfo ?? '').localeCompare((b.locationInfo ?? ''))) ||
           ((a.systemComponentId ?? '').localeCompare((b.systemComponentId ?? ''))) ||
           (a.testTypeCode.localeCompare(b.testTypeCode)) ||
           (a.testNum.localeCompare(b.testNum)) ||
@@ -162,7 +162,7 @@ export class TestSummaryReviewAndSubmitService {
       return Array.from(data.values()).sort((a, b) => {
         return (
           (a.orisCode - b.orisCode) ||
-          (a.locationInfo.localeCompare(b.locationInfo)) ||
+          ((a.locationInfo ?? '').localeCompare((b.locationInfo ?? ''))) ||
           ((a.systemComponentId ?? '').localeCompare((b.systemComponentId ?? ''))) ||
           (a.testTypeCode.localeCompare(b.testTypeCode)) ||
           (a.testNum.localeCompare(b.testNum)) ||

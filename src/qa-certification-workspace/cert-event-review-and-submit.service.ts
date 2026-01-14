@@ -117,7 +117,7 @@ export class CertEventReviewAndSubmitService {
       return Array.from(newResults.values()).sort((a, b) => {
         return (
           (a.orisCode - b.orisCode) ||
-          (a.locationInfo.localeCompare(b.locationInfo)) ||
+          ((a.locationInfo ?? '').localeCompare((b.locationInfo ?? ''))) ||
           ((a.systemComponentIdentifier ?? '').localeCompare((b.systemComponentIdentifier ?? ''))) ||
           (a.qaCertEventCode.localeCompare(b.qaCertEventCode)) ||
           (new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime())

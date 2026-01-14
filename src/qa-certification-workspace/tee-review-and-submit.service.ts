@@ -81,7 +81,7 @@ export class TeeReviewAndSubmitService {
       return Array.from(data.values()).sort((a, b) => {
         return (
           (a.orisCode - b.orisCode) ||
-          (a.locationInfo.localeCompare(b.locationInfo)) ||
+          ((a.locationInfo ?? '').localeCompare((b.locationInfo ?? ''))) ||
           ((a.systemComponentIdentifier ?? '').localeCompare((b.systemComponentIdentifier ?? ''))) ||
           (a.periodAbbreviation.localeCompare(b.periodAbbreviation))
         );
