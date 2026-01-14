@@ -13,9 +13,6 @@ const moment = require('moment');
 
 @Injectable()
 export class TestSummaryReviewAndSubmitService {
-  // cache of monitor plan begin dates as tie breaker (monPlanId -> begin_date)
-  private monPlanBeginMap: Map<string, Date> = new Map();
-
   constructor(
     private readonly entityManager: EntityManager,
     private readonly workspaceRepository: TestSummaryReviewAndSubmitRepository,
@@ -55,37 +52,6 @@ export class TestSummaryReviewAndSubmitService {
           await repository.find({ where: { orisCode: In(orisCodes) } }),
         );
       }
-
-      //Build a map of monPlanId via monitor plan begin report period (Date)
-      this.monPlanBeginMap.clear();
-      const monPlanIdsInData = Array.from(
-        new Set(
-          (data ?? [])
-            .map(d => d?.monPlanId)
-            .filter((v): v is string => !!v),
-        ),
-      );
-      if (monPlanIdsInData.length > 0) {
-        // camdecmps.monitor_plan.begin_rpt_period_id -> camdecmpsmd.reporting_period.rpt_period_id
-        const rows = await this.entityManager.query(
-          `
-            SELECT mp.mon_plan_id, rp.begin_date
-            FROM camdecmps.monitor_plan mp
-            JOIN camdecmpsmd.reporting_period rp
-              ON rp.rpt_period_id = mp.begin_rpt_period_id
-            WHERE mp.mon_plan_id = ANY ($1)
-          `,
-          [monPlanIdsInData],
-        );
-        for (const r of rows) {
-          if (r?.mon_plan_id && r?.begin_date) {
-            this.monPlanBeginMap.set(r.mon_plan_id, new Date(r.begin_date));
-          }
-        }
-      }
-
-      // Deduplicate with no monPlanId in key --tie breaker by plan begin period, else by date/period
-      data = this.deduplicateTestSummaryRecords(data);
 
       const manager = trx || this.entityManager;
       let quarterList;
@@ -151,7 +117,18 @@ export class TestSummaryReviewAndSubmitService {
 
       data = newResults;
 
-      return data;
+      // Final sort via: oris, location (unit,stack), system/component id, test type, test number, year/qtr, end date/time
+      return Array.from(data.values()).sort((a, b) => {
+        return (
+          (a.orisCode - b.orisCode) ||
+          (a.locationInfo.localeCompare(b.locationInfo)) ||
+          ((a.systemComponentId ?? '').localeCompare((b.systemComponentId ?? ''))) ||
+          (a.testTypeCode.localeCompare(b.testTypeCode)) ||
+          (a.testNum.localeCompare(b.testNum)) ||
+          ((a.periodAbbreviation ?? '').localeCompare((b.periodAbbreviation ?? ''))) ||
+          ((a.endDate ? new Date(a.endDate).getTime() : 0 ) - (b.endDate ? new Date(b.endDate).getTime() : 0))
+        );
+      });
     } catch (e) {
       throw new EaseyException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -179,102 +156,23 @@ export class TestSummaryReviewAndSubmitService {
         data = await this.map.many(
           await repository.find({ where: { testSumId: In(testSumIds) } }),
         );
-      }
-      return data;
+      } 
+
+      // Final sort via: oris, location (unit,stack), system/component id, test type, test number, year/qtr, end date/time
+      return Array.from(data.values()).sort((a, b) => {
+        return (
+          (a.orisCode - b.orisCode) ||
+          (a.locationInfo.localeCompare(b.locationInfo)) ||
+          ((a.systemComponentId ?? '').localeCompare((b.systemComponentId ?? ''))) ||
+          (a.testTypeCode.localeCompare(b.testTypeCode)) ||
+          (a.testNum.localeCompare(b.testNum)) ||
+          ((a.periodAbbreviation ?? '').localeCompare((b.periodAbbreviation ?? ''))) ||
+          ((a.endDate ? new Date(a.endDate).getTime() : 0 ) - (b.endDate ? new Date(b.endDate).getTime() : 0))
+        );
+      });
     } catch (e) {
       throw new EaseyException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
-
-  // Helpers kept private to avoid public API changes
-  private parsePeriodAbbrev(p?: string): [number, number] {
-    if (!p) return [0, 0];
-    const m = p.match(/(\d{4})\s*Q?(\d)/i);
-    return m ? [Number(m[1]), Number(m[2])] : [0, 0];
-  }
-
-  private compareStr(a?: string, b?: string) {
-    return (a ?? '').localeCompare(b ?? '');
-  }
-
-  private compareDateAsc(a?: string | Date, b?: string | Date) {
-    const da = a ? new Date(a).getTime() : 0;
-    const db = b ? new Date(b).getTime() : 0;
-    return da - db;
-  }
-
-  private compareDateDesc(a?: string | Date, b?: string | Date) {
-    return -this.compareDateAsc(a, b);
-  }
-
-  private comparePeriodAsc(a?: string, b?: string) {
-    const [ya, qa] = this.parsePeriodAbbrev(a);
-    const [yb, qb] = this.parsePeriodAbbrev(b);
-    if (ya !== yb) return ya - yb;
-    return qa - qb;
-  }
-
-  private comparePeriodDesc(a?: string, b?: string) {
-    return -this.comparePeriodAsc(a, b);
-  }
-
-  private deduplicateTestSummaryRecords(
-    data: ReviewAndSubmitTestSummaryDTO[],
-  ): ReviewAndSubmitTestSummaryDTO[] {
-    const uniqueRecords = new Map<string, ReviewAndSubmitTestSummaryDTO>();
-
-    for (const record of data) {
-      // Business key via: oris + location + system/component id + test type + test number + year/qtr + end date
-      const businessKey = `${record.orisCode}_${record.locationInfo}_${record.systemComponentId}_${record.testTypeCode}_${record.testNum}_${record.periodAbbreviation}_${record.endDate}`;
-
-      if (!uniqueRecords.has(businessKey)) {
-        uniqueRecords.set(businessKey, record);
-      } else {
-        const existing = uniqueRecords.get(businessKey)!;
-
-        // Tie breaker without monPlanId:
-        // Use monitor plan begin period when both exist
-        const aBegin = record?.monPlanId
-          ? this.monPlanBeginMap.get(record.monPlanId)
-          : undefined;
-        const bBegin = existing?.monPlanId
-          ? this.monPlanBeginMap.get(existing.monPlanId)
-          : undefined;
-
-        if (aBegin && bBegin) {
-          if (aBegin.getTime() > bBegin.getTime()) {
-            uniqueRecords.set(businessKey, record);
-          }
-        } else {
-          // Backup via: use endDate; if equal, later periodAbbreviation
-          const td = this.compareDateDesc(record.endDate, existing.endDate);
-          if (td > 0) {
-            uniqueRecords.set(businessKey, record);
-          } else if (td === 0) {
-            if (
-              this.comparePeriodDesc(
-                record.periodAbbreviation,
-                existing.periodAbbreviation,
-              ) > 0
-            ) {
-              uniqueRecords.set(businessKey, record);
-            }
-          }
-        }
-      }
-    }
-
-    // Final sort via: location (unit/stack), system/component id, test type, test number, year/qtr, end date/time
-    return Array.from(uniqueRecords.values()).sort((a, b) => {
-      return (
-        this.compareStr((a.orisCode ?? '').toString(), (b.orisCode ?? '').toString()) ||
-        this.compareStr(a.locationInfo, b.locationInfo) ||
-        this.compareStr(a.systemComponentId, b.systemComponentId) ||
-        this.compareStr(a.testTypeCode, b.testTypeCode) ||
-        this.compareStr(a.testNum, b.testNum) ||
-        this.comparePeriodAsc(a.periodAbbreviation, b.periodAbbreviation) ||
-        this.compareDateAsc(a.endDate, b.endDate)
-      );
-    });
+    
   }
 }
