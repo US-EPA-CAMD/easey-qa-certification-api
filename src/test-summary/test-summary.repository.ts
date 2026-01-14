@@ -10,6 +10,7 @@ import {
   addTestSummaryIdWhere,
   addSystemTypeWhere,
 } from '../utilities/test-summary.querybuilder';
+import { withSlaveConnection } from '@us-epa-camd/easey-common';
 
 @Injectable()
 export class TestSummaryRepository extends Repository<TestSummary> {
@@ -17,16 +18,18 @@ export class TestSummaryRepository extends Repository<TestSummary> {
     super(TestSummary, entityManager);
   }
 
-  private buildBaseQuery(): SelectQueryBuilder<TestSummary> {
-    const query = this.createQueryBuilder('ts');
+  private buildBaseQuery(qr:EntityManager): SelectQueryBuilder<TestSummary> {
+    const query = qr.createQueryBuilder(TestSummary,'ts');
     return addJoins(query) as SelectQueryBuilder<TestSummary>;
   }
 
   async getTestSummaryById(testSumId: string): Promise<TestSummary> {
-    const query = this.buildBaseQuery().where('ts.id = :testSumId', {
+    return withSlaveConnection(this.manager.connection, async (qr) => {
+      const query = this.buildBaseQuery(qr).where('ts.id = :testSumId', {
       testSumId,
     });
     return query.getOne();
+   });
   }
 
   async getTestSummaryByLocationId(
@@ -34,7 +37,8 @@ export class TestSummaryRepository extends Repository<TestSummary> {
     testTypeCode?: string[],
     testNumber?: string,
   ): Promise<TestSummary> {
-    let query = this.buildBaseQuery().where('ts.locationId = :locationId', {
+    return withSlaveConnection(this.manager.connection, async (qr) => {
+      let query = this.buildBaseQuery(qr).where('ts.locationId = :locationId', {
       locationId,
     });
 
@@ -46,6 +50,7 @@ export class TestSummaryRepository extends Repository<TestSummary> {
     >;
 
     return query.getOne();
+    });
   }
 
   async getTestSummariesByLocationId(
@@ -55,7 +60,8 @@ export class TestSummaryRepository extends Repository<TestSummary> {
     beginDate?: Date,
     endDate?: Date,
   ): Promise<TestSummary[]> {
-    let query = this.buildBaseQuery().where('ts.locationId = :locationId', {
+    return withSlaveConnection(this.manager.connection, async (qr) => {
+      let query = this.buildBaseQuery(qr).where('ts.locationId = :locationId', {
       locationId,
     });
 
@@ -72,6 +78,7 @@ export class TestSummaryRepository extends Repository<TestSummary> {
     ) as SelectQueryBuilder<TestSummary>;
 
     return query.getMany();
+    });
   }
 
   async getTestSummariesByUnitStack(
@@ -103,7 +110,8 @@ export class TestSummaryRepository extends Repository<TestSummary> {
       stacksWhere = ` OR (${stacksWhere})`;
     }
 
-    let query = this.buildBaseQuery().where(`(${unitsWhere}${stacksWhere})`, {
+    return withSlaveConnection(this.manager.connection, async (qr) => {
+      let query = this.buildBaseQuery(qr).where(`(${unitsWhere}${stacksWhere})`, {
       facilityId,
       unitIds,
       stackPipeIds,
@@ -123,5 +131,6 @@ export class TestSummaryRepository extends Repository<TestSummary> {
     ) as SelectQueryBuilder<TestSummary>;
 
     return query.getMany();
+    });
   }
 }

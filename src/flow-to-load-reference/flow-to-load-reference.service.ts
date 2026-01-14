@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
-
+import { In, DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 import {
   FlowToLoadReferenceDTO,
   FlowToLoadReferenceRecordDTO,
@@ -14,12 +14,13 @@ export class FlowToLoadReferenceService {
   constructor(
     private readonly map: FlowToLoadReferenceMap,
     private readonly repository: FlowToLoadReferenceRepository,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getFlowToLoadReferences(
     testSumId: string,
   ): Promise<FlowToLoadReferenceRecordDTO[]> {
-    const records = await this.repository.find({ where: { testSumId } });
+    const records = await useSlaveRepository(this.dataSource, FlowToLoadReferenceRepository, async (repository) => repository.find({ where: { testSumId } }));
 
     return this.map.many(records);
   }
@@ -27,7 +28,7 @@ export class FlowToLoadReferenceService {
   async getFlowToLoadReference(
     id: string,
   ): Promise<FlowToLoadReferenceRecordDTO> {
-    const result = await this.repository.findOneBy({ id });
+   const result = await useSlaveRepository(this.dataSource, FlowToLoadReferenceRepository, async (repository) => repository.findOneBy({ id }));
 
     if (!result) {
       throw new EaseyException(

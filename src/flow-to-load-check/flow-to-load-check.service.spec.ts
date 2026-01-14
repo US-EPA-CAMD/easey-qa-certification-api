@@ -5,6 +5,10 @@ import { FlowToLoadCheck } from '../entities/flow-to-load-check.entity';
 import { FlowToLoadCheckMap } from '../maps/flow-to-load-check.map';
 import { FlowToLoadCheckRepository } from './flow-to-load-check.repository';
 import { FlowToLoadCheckService } from './flow-to-load-check.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const testSumId = 'j5ft68';
 const flowToLoadCheckId = '';
@@ -28,6 +32,7 @@ const mockTestSumService = () => ({
 describe('FlowToLoadCheckService', () => {
   let service: FlowToLoadCheckService;
   let repository: FlowToLoadCheckRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -41,6 +46,7 @@ describe('FlowToLoadCheckService', () => {
           provide: FlowToLoadCheckMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -53,14 +59,21 @@ describe('FlowToLoadCheckService', () => {
 
   describe('getFlowToLoadCheck', () => {
     it('Calls repository.findOneBy({id}) to get a single Flow To Load Check record', async () => {
+      const repo = mockRepository();  
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+        );
       const result = await service.getFlowToLoadCheck(flowToLoadCheckId);
       expect(result).toEqual(flowToLoadCheck);
-      expect(repository.findOneBy).toHaveBeenCalled();
+      expect(repo.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when a Flow To Load Check record not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
-
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(jest.spyOn(repository, 'findOneBy').mockResolvedValue(null))
+        );
       let errored = false;
 
       try {
@@ -75,9 +88,14 @@ describe('FlowToLoadCheckService', () => {
 
   describe('getFlowToLoadChecks', () => {
     it('Calls Repository to find all Flow To Load Check records for a given Test Summary ID', async () => {
+      const repo = mockRepository();  
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+        );
       const results = await service.getFlowToLoadChecks(flowToLoadCheckId);
       expect(results).toEqual([flowToLoadCheck]);
-      expect(repository.find).toHaveBeenCalled();
+      expect(repo.find).toHaveBeenCalled();
     });
   });
   describe('Export', () => {

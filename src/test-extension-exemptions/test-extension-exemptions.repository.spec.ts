@@ -1,31 +1,39 @@
 import { Test } from '@nestjs/testing';
-import { EntityManager, SelectQueryBuilder } from 'typeorm';
+import { EntityManager, SelectQueryBuilder, DataSource } from 'typeorm';
 
 import { TestExtensionExemption } from '../entities/test-extension-exemption.entity';
 import * as testExtExpQueryBuilder from '../utilities/test-extension-exemption.querybuilder';
 import { TestExtensionExemptionsRepository } from './test-extension-exemptions.repository';
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 
 const testExtExp = new TestExtensionExemption();
+jest.mock('@us-epa-camd/easey-common/connection');
 
-const mockQueryBuilder = () => ({
+const mockQueryBuilder = {
   where: jest.fn(),
   andWhere: jest.fn(),
   getOne: jest.fn(),
   getMany: jest.fn(),
   leftJoinAndSelect: jest.fn(),
   leftJoin: jest.fn(),
-});
+};
+
+const mockManager = {
+  createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
+};
 
 describe('TestExtensionExemptionsRepository', () => {
   let repository: TestExtensionExemptionsRepository;
   let queryBuilder;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       providers: [
         EntityManager,
         TestExtensionExemptionsRepository,
-        { provide: SelectQueryBuilder, useFactory: mockQueryBuilder },
+        { provide: SelectQueryBuilder, useFactory: () => mockQueryBuilder },
+        {provide: DataSource, useValue: dataSource },      
       ],
     }).compile();
 
@@ -35,7 +43,10 @@ describe('TestExtensionExemptionsRepository', () => {
     queryBuilder = module.get<SelectQueryBuilder<TestExtensionExemption>>(
       SelectQueryBuilder,
     );
-
+      
+  (withSlaveConnection as jest.Mock).mockImplementation(
+          async (_dataSource, callback) =>
+      callback(mockManager))
     repository.createQueryBuilder = jest.fn().mockReturnValue(queryBuilder);
     jest
       .spyOn(testExtExpQueryBuilder, 'addJoins')

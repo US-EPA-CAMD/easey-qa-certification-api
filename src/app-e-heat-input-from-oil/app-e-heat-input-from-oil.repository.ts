@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager, Repository } from 'typeorm';
 
 import { AppEHeatInputFromOil } from '../entities/app-e-heat-input-from-oil.entity';
-
+import { withSlaveConnection } from '@us-epa-camd/easey-common/connection';
 @Injectable()
 export class AppEHeatInputFromOilRepository extends Repository<
   AppEHeatInputFromOil
@@ -12,13 +12,12 @@ export class AppEHeatInputFromOilRepository extends Repository<
   }
 
   async getAppEHeatInputFromOilById(id: string): Promise<AppEHeatInputFromOil> {
-    const query = this.createQueryBuilder('aehio')
-      .leftJoinAndSelect('aehio.system', 'ms')
-      .where('aehio.id = :id', {
-        id,
-      });
-
-    return query.getOne();
+      return withSlaveConnection(this.manager.connection, async (qr) => {
+        return qr.createQueryBuilder(AppEHeatInputFromOil, 'aehio')
+        .leftJoinAndSelect('aehio.system', 'ms')
+        .where('aehio.id = :id', {
+        id,}).getOne()}
+        );
   }
 
   async getAppEHeatInputFromOilByTestRunIdAndMonSysID(
@@ -40,13 +39,13 @@ export class AppEHeatInputFromOilRepository extends Repository<
   async getAppEHeatInputFromOilsByTestRunId(
     appECorrTestRunId: string,
   ): Promise<AppEHeatInputFromOil[]> {
-    const query = this.createQueryBuilder('aehio')
-      .leftJoinAndSelect('aehio.system', 'ms')
-      .where('aehio.appECorrTestRunId = :appECorrTestRunId', {
-        appECorrTestRunId,
-      });
-
-    return query.getMany();
+       return withSlaveConnection(this.manager.connection, async (qr) => {
+        return qr.createQueryBuilder(AppEHeatInputFromOil, 'aehio')
+        .leftJoinAndSelect('aehio.system', 'ms')
+        .where('aehio.appECorrTestRunId = :appECorrTestRunId', {
+          appECorrTestRunId,
+        }).getMany()}
+      );
   }
 
   async getAppEHeatInputFromOilsByTestRunIds(

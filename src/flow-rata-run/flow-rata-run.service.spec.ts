@@ -8,6 +8,10 @@ import { FlowRataRunMap } from '../maps/flow-rata-run.map';
 import { RataTraverseService } from '../rata-traverse/rata-traverse.service';
 import { FlowRataRunRepository } from './flow-rata-run.repository';
 import { FlowRataRunService } from './flow-rata-run.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const flowRataRunId = 'a1b2c3';
 const rataRunId = 'd4e5f6';
@@ -31,6 +35,7 @@ const mockRataTraverseService = () => ({
 describe('FlowRataRunService', () => {
   let service: FlowRataRunService;
   let repository: FlowRataRunRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -50,6 +55,7 @@ describe('FlowRataRunService', () => {
           provide: RataTraverseService,
           useFactory: mockRataTraverseService,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -59,14 +65,21 @@ describe('FlowRataRunService', () => {
 
   describe('getFlowRataRun', () => {
     it('Calls repository.findOneBy({id}) to get a single Flow Rata Run record', async () => {
+        const repo = mockRepository();
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+        );
       const result = await service.getFlowRataRun(flowRataRunId);
       expect(result).toEqual(flowRataRunDTO);
-      expect(repository.findOneBy).toHaveBeenCalled();
+      expect(repo.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Flow Rata Run record not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
-
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(jest.spyOn(repository, 'findOneBy').mockResolvedValue(null)) 
+        );
       let errored = false;
 
       try {
@@ -81,9 +94,14 @@ describe('FlowRataRunService', () => {
 
   describe('getFlowRataRuns', () => {
     it('Should return an array of Flow Rata Run records', async () => {
+      const repo = mockRepository();  
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+        );
       const result = await service.getFlowRataRuns(rataRunId);
       expect(result).toEqual([flowRataRun]);
-      expect(repository.find).toHaveBeenCalled();
+      expect(repo.find).toHaveBeenCalled();
     });
   });
 

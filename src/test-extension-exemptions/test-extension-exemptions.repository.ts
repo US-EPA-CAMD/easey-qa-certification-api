@@ -7,39 +7,44 @@ import {
   addJoins,
   addTestExtExemIdWhere,
 } from '../utilities/test-extension-exemption.querybuilder';
+import { withSlaveConnection } from '@us-epa-camd/easey-common';
 
 @Injectable()
 export class TestExtensionExemptionsRepository extends Repository<
   TestExtensionExemption
 > {
-  constructor(entityManager: EntityManager) {
+  constructor( entityManager: EntityManager) {
     super(TestExtensionExemption, entityManager);
   }
 
-  private buildBaseQuery(): SelectQueryBuilder<TestExtensionExemption> {
-    const query = this.createQueryBuilder('tee');
+  private buildBaseQuery(qr:EntityManager): SelectQueryBuilder<TestExtensionExemption> {
+    const query = qr.createQueryBuilder(TestExtensionExemption,'tee');
     return addJoins(query) as SelectQueryBuilder<TestExtensionExemption>;
   }
 
   async getTestExtensionExemptionById(
     qaTestExtensionExemptionId: string,
   ): Promise<TestExtensionExemption> {
-    const query = this.buildBaseQuery().where(
+    return withSlaveConnection(this.manager.connection, async (qr) => {
+      const query = this.buildBaseQuery(qr).where(
       'tee.id = :qaTestExtensionExemptionId',
       {
         qaTestExtensionExemptionId,
       },
     );
     return query.getOne();
+    })
   }
 
   async getTestExtensionExemptionsByLocationId(
     locationId: string,
   ): Promise<TestExtensionExemption[]> {
-    const query = this.buildBaseQuery().where('tee.locationId = :locationId', {
+    return withSlaveConnection(this.manager.connection, async (qr) => {
+      const query = this.buildBaseQuery(qr).where('tee.locationId = :locationId', {
       locationId,
     });
     return query.getMany();
+    });
   }
 
   async getTestExtensionsByUnitStack(
@@ -70,7 +75,8 @@ export class TestExtensionExemptionsRepository extends Repository<
       stacksWhere = ` OR (${stacksWhere})`;
     }
 
-    let query = this.buildBaseQuery().where(`(${unitsWhere}${stacksWhere})`, {
+    return withSlaveConnection(this.manager.connection, async (qr) => {
+    let query = this.buildBaseQuery(qr).where(`(${unitsWhere}${stacksWhere})`, {
       facilityId,
       unitIds,
       stackPipeIds,
@@ -87,5 +93,6 @@ export class TestExtensionExemptionsRepository extends Repository<
     ) as SelectQueryBuilder<TestExtensionExemption>;
 
     return query.getMany();
+  });
   }
 }

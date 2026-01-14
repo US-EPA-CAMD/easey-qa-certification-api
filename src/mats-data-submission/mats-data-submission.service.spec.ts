@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoggerModule } from '@us-epa-camd/easey-common/logger';
-import { EntityManager } from 'typeorm';
+import { EntityManager, DataSource } from 'typeorm';
 
 import { MatsDataSubmissionBaseDTO } from '../dto/mats-data-submission.dto';
 import { MatsDataSubmission } from '../entities/mats-data-submission.entity';
@@ -12,6 +12,7 @@ import { Plant } from '../entities/plant.entity';
 import { MatsDataSubmissionMap } from '../maps/mats-data-submission.map';
 import { MatsDataSubmissionRepository } from './mats-data-submission.repository';
 import { MatsDataSubmissionService } from './mats-data-submission.service';
+import { MatsReportTypeCode } from '../entities/mats-report-type-code.entity';
 
 const mockDate = new Date();
 function createMockSubmission() {
@@ -20,6 +21,9 @@ function createMockSubmission() {
   pollutant.metadataPollutantCode = 'ANY';
   const testMethod = new MatsTestMethodCode();
   testMethod.code = 'MTH';
+
+  const reportType = new MatsReportTypeCode();
+  reportType.metadataReportTypeCode = 'RPT'; 
 
   entity.addTime = mockDate;
   entity.averagingGroupCode = 'AGC';
@@ -34,6 +38,7 @@ function createMockSubmission() {
   entity.pollutants = [pollutant];
   entity.quarter = 1;
   entity.reportTypeCode = 'RPT';
+  entity.reportType = reportType;
   entity.testComment = 'Test Comment';
   entity.testDate = mockDate;
   entity.testMethods = [testMethod];
@@ -80,6 +85,7 @@ const mockSubmissionXml = `
 
 describe('MatsDataSubmissionService', () => {
   let service: MatsDataSubmissionService;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -96,6 +102,7 @@ describe('MatsDataSubmissionService', () => {
           useFactory: mockRepository,
         },
         MatsDataSubmissionService,
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
