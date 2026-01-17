@@ -4,6 +4,10 @@ import { TestQualificationDTO } from '../dto/test-qualification.dto';
 import { TestQualificationMap } from '../maps/test-qualification.map';
 import { TestQualificationRepository } from './test-qualification.repository';
 import { TestQualificationService } from './test-qualification.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const testSumId = 'd4e5f6';
 const testQualificationId = 'a1b2c3';
@@ -23,6 +27,7 @@ const mockRepository = () => ({
 describe('TestQualificationService', () => {
   let service: TestQualificationService;
   let repository: TestQualificationRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,6 +41,7 @@ describe('TestQualificationService', () => {
           provide: TestQualificationMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -51,14 +57,21 @@ describe('TestQualificationService', () => {
 
   describe('getTestQualification', () => {
     it('Calls repository.findOneBy({id}) to get a single Test Qualification record', async () => {
+      const repo = mockRepository();  
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+        );
       const result = await service.getTestQualification(testQualificationId);
       expect(result).toEqual(testQualificationRecord);
-      expect(repository.findOneBy).toHaveBeenCalled();
+      expect(repo.findOneBy).toHaveBeenCalled();
     });
 
     it('Should throw error when Test Qualification record not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(null);
-
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(jest.spyOn(repository, 'findOneBy').mockResolvedValue(null)) 
+        );
       let errored = false;
 
       try {
@@ -73,9 +86,14 @@ describe('TestQualificationService', () => {
 
   describe('getTestQualifications', () => {
     it('Calls Repository to find all Test Qualification records for a given Test Summary ID', async () => {
+      const repo = mockRepository();  
+      (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(repo) 
+        );
       const results = await service.getTestQualifications(testSumId);
       expect(results).toEqual(testQualifications);
-      expect(repository.find).toHaveBeenCalled();
+      expect(repo.find).toHaveBeenCalled();
     });
   });
 

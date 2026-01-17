@@ -117,7 +117,18 @@ export class TestSummaryReviewAndSubmitService {
 
       data = newResults;
 
-      return data;
+      // Final sort via: oris, location (unit,stack), system/component id, test type, test number, year/qtr, end date/time
+      return Array.from(data.values()).sort((a, b) => {
+        return (
+          (a.orisCode - b.orisCode) ||
+          ((a.locationInfo ?? '').localeCompare((b.locationInfo ?? ''))) ||
+          ((a.systemComponentId ?? '').localeCompare((b.systemComponentId ?? ''))) ||
+          ((a.testTypeCode ?? '').localeCompare((b.testTypeCode ?? ''))) ||
+          ((a.testNum ?? '').localeCompare((b.testNum ?? ''))) ||
+          ((a.periodAbbreviation ?? '').localeCompare((b.periodAbbreviation ?? ''))) ||
+          ((a.endDate ? new Date(a.endDate).getTime() : 0 ) - (b.endDate ? new Date(b.endDate).getTime() : 0))
+        );
+      });
     } catch (e) {
       throw new EaseyException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -146,7 +157,19 @@ export class TestSummaryReviewAndSubmitService {
           await repository.find({ where: { testSumId: In(testSumIds) } }),
         );
       } 
-      return data;
+
+      // Final sort via: oris, location (unit,stack), system/component id, test type, test number, year/qtr, end date/time
+      return Array.from(data.values()).sort((a, b) => {
+        return (
+          (a.orisCode - b.orisCode) ||
+          ((a.locationInfo ?? '').localeCompare((b.locationInfo ?? ''))) ||
+          ((a.systemComponentId ?? '').localeCompare((b.systemComponentId ?? ''))) ||
+          ((a.testTypeCode ?? '').localeCompare((b.testTypeCode ?? ''))) ||
+          ((a.testNum ?? '').localeCompare((b.testNum ?? ''))) ||
+          ((a.periodAbbreviation ?? '').localeCompare((b.periodAbbreviation ?? ''))) ||
+          ((a.endDate ? new Date(a.endDate).getTime() : 0 ) - (b.endDate ? new Date(b.endDate).getTime() : 0))
+        );
+      });
     } catch (e) {
       throw new EaseyException(e, HttpStatus.INTERNAL_SERVER_ERROR);
     }

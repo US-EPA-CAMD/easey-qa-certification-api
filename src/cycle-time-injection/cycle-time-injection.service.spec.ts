@@ -5,6 +5,10 @@ import { CycleTimeInjection } from '../entities/cycle-time-injection.entity';
 import { CycleTimeInjectionMap } from '../maps/cycle-time-injection.map';
 import { CycleTimeInjectionRepository } from './cycle-time-injection.repository';
 import { CycleTimeInjectionService } from './cycle-time-injection.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const cycleTimeSumId = '1';
 const cycleTimeInjId = '1';
@@ -25,6 +29,7 @@ const mockMap = () => ({
 describe('CycleTimeInjectionService', () => {
   let service: CycleTimeInjectionService;
   let repository: CycleTimeInjectionRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -38,6 +43,7 @@ describe('CycleTimeInjectionService', () => {
           provide: CycleTimeInjectionMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -49,6 +55,10 @@ describe('CycleTimeInjectionService', () => {
 
   describe('getCycleTimeInjections', () => {
     it('should return Cycle Time Injection records by Cycle Time Summary Id', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );
       const result = await service.getCycleTimeInjectionsByCycleTimeSumId(
         cycleTimeSumId,
       );
@@ -59,14 +69,20 @@ describe('CycleTimeInjectionService', () => {
 
   describe('getCycleTimeInjection', () => {
     it('should return a Cycle Time Summary record', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );      
       const result = await service.getCycleTimeInjection(cycleTimeInjId);
 
       expect(result).toEqual(cycleTimeInjectionDTO);
     });
 
     it('should throw an error when a Cycle Time Injection record is not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
-
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined)) 
+        );
       let errored = false;
 
       try {

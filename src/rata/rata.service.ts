@@ -1,11 +1,12 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { EaseyException } from '@us-epa-camd/easey-common/exceptions';
-import { In } from 'typeorm';
+import { In, DataSource } from 'typeorm';
 
 import { RataDTO } from '../dto/rata.dto';
 import { RataMap } from '../maps/rata.map';
 import { RataSummaryService } from '../rata-summary/rata-summary.service';
 import { RataRepository } from './rata.repository';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
 
 @Injectable()
 export class RataService {
@@ -13,12 +14,13 @@ export class RataService {
     private readonly map: RataMap,
     private readonly repository: RataRepository,
     private readonly rataSummaryService: RataSummaryService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async getRataById(id: string): Promise<RataDTO> {
-    const result = await this.repository.findOneBy({
+    const result = await useSlaveRepository(this.dataSource, RataRepository, async (repository) => repository.findOneBy({
       id,
-    });
+    }));
 
     if (!result) {
       throw new EaseyException(
@@ -31,9 +33,9 @@ export class RataService {
   }
 
   async getRatasByTestSumId(testSumId: string): Promise<RataDTO[]> {
-    const results = await this.repository.findBy({
+    const results = await useSlaveRepository(this.dataSource, RataRepository, async (repository) => repository.findBy({
       testSumId,
-    });
+    }));
     return this.map.many(results);
   }
 

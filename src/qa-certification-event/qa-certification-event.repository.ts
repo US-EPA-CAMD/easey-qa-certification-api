@@ -7,36 +7,41 @@ import {
   addJoins,
   addQACertEventIdWhere,
 } from '../utilities/qa-cert-events.querybuilder';
+import { withSlaveConnection } from '@us-epa-camd/easey-common';
 
 @Injectable()
 export class QACertificationEventRepository extends Repository<
   QACertificationEvent
 > {
-  constructor(entityManager: EntityManager) {
+  constructor( entityManager: EntityManager) {
     super(QACertificationEvent, entityManager);
   }
 
-  private buildBaseQuery(): SelectQueryBuilder<QACertificationEvent> {
-    const query = this.createQueryBuilder('qce');
+  private buildBaseQuery(qr:EntityManager): SelectQueryBuilder<QACertificationEvent> {
+    const query = qr.createQueryBuilder(QACertificationEvent, 'qce');
     return addJoins(query) as SelectQueryBuilder<QACertificationEvent>;
   }
 
   async getQACertificationEventById(
     qaCertEventId: string,
   ): Promise<QACertificationEvent> {
-    const query = this.buildBaseQuery().where('qce.id = :qaCertEventId', {
-      qaCertEventId,
+     return withSlaveConnection(this.manager.connection, async (qr) => {
+      const query = this.buildBaseQuery(qr).where('qce.id = :qaCertEventId', {
+       qaCertEventId,
     });
-    return query.getOne();
+    return query.getOne()
+  });
   }
 
   async getQACertificationEventsByLocationId(
     locationId: string,
   ): Promise<QACertificationEvent[]> {
-    const query = this.buildBaseQuery().where('qce.locationId = :locationId', {
+    return withSlaveConnection(this.manager.connection, async (qr) => {
+     const query = this.buildBaseQuery(qr).where('qce.locationId = :locationId', {
       locationId,
     });
     return query.getMany();
+  });
   }
 
   async getQaCertEventsByUnitStack(
@@ -67,7 +72,10 @@ export class QACertificationEventRepository extends Repository<
       stacksWhere = ` OR (${stacksWhere})`;
     }
 
-    let query = this.buildBaseQuery().where(`(${unitsWhere}${stacksWhere})`, {
+
+    return withSlaveConnection(this.manager.connection, async (qr) => {
+       
+    let query = this.buildBaseQuery(qr).where(`(${unitsWhere}${stacksWhere})`, {
       facilityId,
       unitIds,
       stackPipeIds,
@@ -84,6 +92,7 @@ export class QACertificationEventRepository extends Repository<
       endDate,
     ) as SelectQueryBuilder<QACertificationEvent>;
 
-    return query.getMany();
+    return query.getMany()
+    });
   }
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { QACertificationDataTypes } from '../enums/qa-certification-data-types.enum';
 import { MonitorLocationRepository } from '../monitor-location/monitor-location.repository';
+import { EntityManager } from 'typeorm';
 
 const commonSQL = (schema: string) => {
   return `
@@ -24,7 +25,7 @@ const commonSQL = (schema: string) => {
 
 @Injectable()
 export class WhatHasDataService {
-  constructor(private readonly repository: MonitorLocationRepository) {}
+  constructor(private readonly repository: MonitorLocationRepository, private readonly entityManager: EntityManager,) {}
 
   async whatHasData(
     dataType: QACertificationDataTypes,
@@ -126,6 +127,14 @@ export class WhatHasDataService {
         break;
     }
 
-    return this.repository.query(sql);
+    const slaveQueryRunner = this.entityManager.connection.createQueryRunner("slave");
+    try {
+      const result = await slaveQueryRunner.query(
+        sql
+      );
+      return result;
+    } finally {
+      await slaveQueryRunner.release();
+    }
   }
 }

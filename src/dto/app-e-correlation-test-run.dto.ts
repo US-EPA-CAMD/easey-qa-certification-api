@@ -250,11 +250,11 @@ export class AppECorrelationTestRunRecordDTO extends AppECorrelationTestRunBaseD
 export class AppECorrelationTestRunImportDTO extends AppECorrelationTestRunBaseDTO {
   @ValidateNested({ each: true })
   @Type(() => AppEHeatInputFromOilImportDTO)
-  appendixEHeatInputFromOilData: AppEHeatInputFromOilImportDTO[];
+  appendixEHeatInputFromOilData?: AppEHeatInputFromOilImportDTO[];
 
   @ValidateNested({ each: true })
   @Type(() => AppEHeatInputFromGasImportDTO)
-  appendixEHeatInputFromGasData: AppEHeatInputFromGasImportDTO[];
+  appendixEHeatInputFromGasData?: AppEHeatInputFromGasImportDTO[];
 }
 
 export class AppECorrelationTestRunDTO extends AppECorrelationTestRunRecordDTO {

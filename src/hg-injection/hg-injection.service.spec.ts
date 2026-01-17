@@ -5,6 +5,10 @@ import { HgInjection } from '../entities/hg-injection.entity';
 import { HgInjectionMap } from '../maps/hg-injection.map';
 import { HgInjectionRepository } from './hg-injection.repository';
 import { HgInjectionService } from './hg-injection.service';
+import { DataSource } from 'typeorm';
+import { useSlaveRepository } from '@us-epa-camd/easey-common/connection';
+
+jest.mock('@us-epa-camd/easey-common/connection');
 
 const hgTestSumId = '';
 const entity = new HgInjection();
@@ -23,6 +27,7 @@ const mockMap = () => ({
 describe('HgInjectionService', () => {
   let service: HgInjectionService;
   let repository: HgInjectionRepository;
+  let dataSource: DataSource;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -36,6 +41,7 @@ describe('HgInjectionService', () => {
           provide: HgInjectionMap,
           useFactory: mockMap,
         },
+        { provide: DataSource, useValue: dataSource },
       ],
     }).compile();
 
@@ -45,6 +51,10 @@ describe('HgInjectionService', () => {
 
   describe('getHgInjections', () => {
     it('Should return Hg Injection records by Test Injection id', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );
       const result = await service.getHgInjectionsByHgTestSumId(hgTestSumId);
 
       expect(result).toEqual([dto]);
@@ -53,13 +63,20 @@ describe('HgInjectionService', () => {
 
   describe('getHgInjection', () => {
     it('Should return a Hg Injection record', async () => {
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(mockRepository()) 
+        );
       const result = await service.getHgInjection(hgTestSumId);
 
       expect(result).toEqual(dto);
     });
 
     it('Should throw error when a Hg Injection record not found', async () => {
-      jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined);
+        (useSlaveRepository as jest.Mock).mockImplementation(
+          async (_dataSource, _repo, callback) =>
+            callback(jest.spyOn(repository, 'findOneBy').mockResolvedValue(undefined)) 
+        );
       let errored = false;
 
       try {

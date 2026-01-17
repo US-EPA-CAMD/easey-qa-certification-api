@@ -220,7 +220,10 @@ export class CycleTimeSummaryWorkspaceService {
       `Cycle Time Summary Successfully Imported. Record Id: ${createdCycleTimeSummary.id}`,
     );
 
-    if (payload.cycleTimeInjectionData?.length > 0) {
+    if (
+      payload.cycleTimeInjectionData &&
+      payload.cycleTimeInjectionData.length > 0
+    ) {
       for (const cycleTimeInjection of payload.cycleTimeInjectionData) {
         promises.push(
           this.cycleTimeInjectionService.import(

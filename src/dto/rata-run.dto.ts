@@ -246,7 +246,7 @@ export class RataRunRecordDTO extends RataRunBaseDTO {
 export class RataRunImportDTO extends RataRunBaseDTO {
   @ValidateNested({ each: true })
   @Type(() => FlowRataRunImportDTO)
-  flowRataRunData: FlowRataRunImportDTO[];
+  flowRataRunData?: FlowRataRunImportDTO[];
 }
 
 export class RataRunDTO extends RataRunRecordDTO {

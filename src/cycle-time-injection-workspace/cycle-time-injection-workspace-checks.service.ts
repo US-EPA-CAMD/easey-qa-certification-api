@@ -39,7 +39,7 @@ export class CycleTimeInjectionChecksService {
     cycleTimeSumId: string,
     testSumId: string,
     isImport: boolean = false,
-    cycleTimeInjections?: CycleTimeInjectionImportDTO[],
+    cycleTimeInjections: CycleTimeInjectionImportDTO[] = [],
     testSummary?: TestSummaryImportDTO,
   ): Promise<string[]> {
     let error: string = null;

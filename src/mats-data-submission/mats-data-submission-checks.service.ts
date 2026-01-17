@@ -242,17 +242,20 @@ export class MatsDataSubmissionChecksService {
     const errors: string[] = [];
     const warnings: string[] = [];
 
+    // Validate file names.
     const fileNameErrors = this.validateFileNames(fileNames);
     if (fileNameErrors.length) {
       errors.push(...fileNameErrors);
     }
 
+    // Validate file mimetypes.
     const mimetypeErrors = await this.validateFileMimetypes(
       fileNames,
       locationId,
     );
     if (mimetypeErrors.length) errors.push(...mimetypeErrors);
 
+    // Validate required file attachments based on report type.
     const attachmentErrors = await this.validateFileAttachments(
       fileNames,
       reportType,
