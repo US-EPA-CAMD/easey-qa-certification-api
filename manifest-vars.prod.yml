@@ -2,7 +2,7 @@ instances: 2
 environment: production
 host: api-easey.app.cloud.gov
 apiHost: api.epa.gov/easey
-matsImportBucket:
+matsImportBucket: cg-b64b23b9-6019-45e2-85b7-a22409c274e7
 maxConnectionPool: 15
 idleTimeout: 30000
 connectionTimeout: 10000
