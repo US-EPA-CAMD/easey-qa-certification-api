@@ -234,6 +234,7 @@ export class TestSummaryBaseDTO {
   @ApiProperty({
     description: propertyMetadata.componentDTOComponentId.description,
   })
+  @IsOptional()
   @IsNotEmpty({
     message: (args: ValidationArguments) => {
       let resultCode;
@@ -274,7 +275,6 @@ export class TestSummaryBaseDTO {
   @ValidateIf(o =>
     VALID_CODES_FOR_COMPONENT_ID_VALIDATION.includes(o.testTypeCode),
   )
-  @IsString()
   @MatchesRegEx('^[A-Z0-9]{1,3}$', {
     message: (args: ValidationArguments) => {
       return `The value of [${args.value}] for [${args.property}] must be 1 to 3 characters and only consist of upper case letters, numbers for [${KEY}].`;
