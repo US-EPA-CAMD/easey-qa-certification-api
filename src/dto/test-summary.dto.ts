@@ -12,6 +12,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import {
   IsInRange,
+  IsInYearRange,
   IsValidCode,
   IsIsoFormat,
   MatchesRegEx,
@@ -103,7 +104,6 @@ import {
 import { dataDictionary, getMetadata, MetadataKeys } from '../data-dictionary';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { Type } from 'class-transformer';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 
 const KEY = 'Test Summary';
 const DATE_FORMAT = 'YYYY-MM-DD';
@@ -488,7 +488,7 @@ export class TestSummaryBaseDTO {
       );
     },
   })
-  @IsInDateRange(MIN_DATE, currentDateTime().toISOString(), {
+  @IsInDateRange(MIN_DATE, null, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-1-B`, {
         date: args.value,
@@ -563,7 +563,7 @@ export class TestSummaryBaseDTO {
       );
     },
   })
-  @IsInDateRange(MIN_DATE, currentDateTime().toISOString(), {
+  @IsInDateRange(MIN_DATE, null, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage(`TEST-4-B`, {
         date: args.value,
@@ -642,7 +642,7 @@ export class TestSummaryBaseDTO {
     description: propertyMetadata.year.description,
   })
   @IsOptional()
-  @IsInRange(1993, currentDateTime().getFullYear(), {
+  @IsInYearRange(1993, null, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatResultMessage('IMPORT-34-A', {
         locationID: args.object['unitId']
