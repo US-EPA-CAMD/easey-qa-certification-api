@@ -3,6 +3,7 @@ import { RequireOne } from '../pipes/require-one.pipe';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
   IsInRange,
+  IsInYearRange,
   IsValidCode,
   MatchesRegEx,
 } from '@us-epa-camd/easey-common/pipes';
@@ -15,7 +16,6 @@ import {
   ValidationArguments,
 } from 'class-validator';
 import { SpanScaleCode } from '../entities/span-scale-code.entity';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import { FuelCode } from '../entities/fuel-code.entity';
 import { FindOneOptions } from 'typeorm';
 import { ExtensionExemptionCode } from '../entities/extension-exemption-code.entity';
@@ -54,9 +54,9 @@ export class TestExtensionExemptionBaseDTO {
   @ApiProperty({
     description: propertyMetadata.year.description,
   })
-  @IsInRange(1993, currentDateTime().getFullYear(), {
+  @IsInYearRange(1993, null, {
     message: (args: ValidationArguments) => {
-      return `Year must be greater than or equal to 1993 and less than or equal to ${currentDateTime().getFullYear()}. You reported an invalid year of [${
+      return `Year must be greater than or equal to 1993 and less than or equal to ${new Date().getFullYear()}. You reported an invalid year of [${
         args.value
       }] in Test Extension & Exemption record for Unit/Stack [${
         args.object['unitId']

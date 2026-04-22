@@ -3,10 +3,10 @@ import { CheckCatalogService } from '@us-epa-camd/easey-common/check-catalog';
 import { propertyMetadata } from '@us-epa-camd/easey-common/constants';
 import {
   IsInRange,
+  IsInYearRange,
   IsValidCode,
   IsValidDate,
 } from '@us-epa-camd/easey-common/pipes';
-import { currentDateTime } from '@us-epa-camd/easey-common/utilities/functions';
 import {
   ArrayMaxSize,
   ArrayMinSize,
@@ -316,10 +316,10 @@ export class MatsDataSubmissionBaseDTO {
     example: propertyMetadata.year.example,
     name: propertyMetadata.year.fieldLabels.value,
   })
-  @IsInRange(1993, currentDateTime().getFullYear(), {
+  @IsInYearRange(1993, null, {
     groups: ['CR', 'EMPM'],
     message: (args: ValidationArguments) => {
-      return `Year must be greater than or equal to 1993 and less than or equal to ${currentDateTime().getFullYear()}. You reported an invalid year of [${
+      return `Year must be greater than or equal to 1993 and less than or equal to ${new Date().getFullYear()}. You reported an invalid year of [${
         args.value
       }] in [${KEY}] for [${args.property}].`;
     },
