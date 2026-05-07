@@ -26,6 +26,12 @@ import { TestQualificationChecksService } from '../test-qualification-workspace/
 import { TestSummaryChecksService } from '../test-summary-workspace/test-summary-checks.service';
 import { UnitDefaultTestRunChecksService } from '../unit-default-test-run-workspace/unit-default-test-run-checks.service';
 
+export const buildQaSuppKey = (
+  locationId: string,
+  testTypeCode: string,
+  testNumber: string,
+): string => `${locationId}::${testTypeCode}::${testNumber}`;
+
 @Injectable()
 export class QACertificationChecksService {
   constructor(
@@ -75,7 +81,7 @@ export class QACertificationChecksService {
 
   async runChecks(
     payload: QACertificationImportDTO,
-  ): Promise<[LocationIdentifiers[], QASuppData[]]> {
+  ): Promise<[LocationIdentifiers[], Map<string, QASuppData>]> {
     this.logger.log('Running QA Certification Checks');
 
     const errorList: string[] = [];
@@ -83,7 +89,8 @@ export class QACertificationChecksService {
 
     let errors: string[] = [];
     let locations: LocationIdentifiers[] = [];
-    let duplicateQaSuppRecords: QASuppData[] = [];
+    // Keyed by (locationId, testTypeCode, testNumber) so the import step can look up the historical testSumId by each summary's natural identity. Issue #7182.
+    const duplicateQaSuppByKey: Map<string, QASuppData> = new Map();
 
     [locations, errors] = await this.locationChecksService.runChecks(payload);
     errorList.push(...errors);
@@ -123,7 +130,14 @@ export class QACertificationChecksService {
         );
 
         if (duplicateQaSupp) {
-          duplicateQaSuppRecords.push(duplicateQaSupp);
+          duplicateQaSuppByKey.set(
+            buildQaSuppKey(
+              locationId,
+              summary.testTypeCode,
+              summary.testNumber,
+            ),
+            duplicateQaSupp,
+          );
         }
 
         const results = await this.testSummaryChecksService?.runChecks(
@@ -484,6 +498,6 @@ export class QACertificationChecksService {
 
     this.throwIfErrors(await this.extractErrors(promises));
     this.logger.log('Completed QA Certification Checks');
-    return [locations, duplicateQaSuppRecords];
+    return [locations, duplicateQaSuppByKey];
   }
 }

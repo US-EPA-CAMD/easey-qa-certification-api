@@ -16,6 +16,7 @@ import { TestExtensionExemptionsWorkspaceService } from '../test-extension-exemp
 import { QACertificationEventWorkspaceService } from '../qa-certification-event-workspace/qa-certification-event-workspace.service';
 import { removeNonReportedValues } from '../utilities/remove-non-reported-values';
 import { EaseyContentService } from '../qa-certification-easey-content/easey-content.service';
+import { buildQaSuppKey } from './qa-certification-checks.service';
 
 @Injectable()
 export class QACertificationWorkspaceService {
@@ -125,7 +126,7 @@ export class QACertificationWorkspaceService {
     locations: LocationIdentifiers[],
     payload: QACertificationImportDTO,
     userId: string,
-    qaSupprecords: QASuppData[],
+    qaSuppByKey: Map<string, QASuppData>,
   ): Promise<any> {
     return await this.entityManager.transaction(async (trx: EntityManager) => {
     this.logger.log(
@@ -133,7 +134,7 @@ export class QACertificationWorkspaceService {
     );
 
     const promises = [];
-    payload.testSummaryData?.forEach((summary, idx) => {
+    payload.testSummaryData?.forEach((summary) => {
       promises.push(
         new Promise((resolve, _reject) => {
           //Use shared location lookup with priority-based matching
@@ -146,11 +147,21 @@ export class QACertificationWorkspaceService {
           }
           const locationId = location.locationId;
 
+          // Look up the historical testSumId by this summary's natural identity
+          // (locationId + testTypeCode + testNumber). Issue #7182.
+          const historicalRecord = qaSuppByKey.get(
+            buildQaSuppKey(
+              locationId,
+              summary.testTypeCode,
+              summary.testNumber,
+            ),
+          );
+
           const results = this.testSummaryService.import(
             locationId,
             summary,
             userId,
-            qaSupprecords[idx] ? qaSupprecords[idx].testSumId : null,
+            historicalRecord ? historicalRecord.testSumId : null,
             trx,
           );
 

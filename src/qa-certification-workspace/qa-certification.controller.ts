@@ -128,11 +128,11 @@ export class QACertificationWorkspaceController {
     @Body() payload: QACertificationImportDTO,
     @User() user: CurrentUser,
   ) {
-    let qaSuppRecords: QASuppData[] = [];
+    let qaSuppByKey: Map<string, QASuppData> = new Map();
     let locations: LocationIdentifiers[] = [];
 
-    [locations, qaSuppRecords] = await this.checksService.runChecks(payload);
-    return this.service.import(locations, payload, user.userId, qaSuppRecords);
+    [locations, qaSuppByKey] = await this.checksService.runChecks(payload);
+    return this.service.import(locations, payload, user.userId, qaSuppByKey);
   }
 
   @Get('cert-events')

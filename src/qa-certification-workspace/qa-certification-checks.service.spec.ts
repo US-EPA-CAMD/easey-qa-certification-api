@@ -41,7 +41,7 @@ const returnLocationRunChecks = [
   },
 ];
 
-const QASuppDatas = [];
+const QASuppDatas = new Map();
 
 describe('QA Certification Check Service Test', () => {
   let service: QACertificationChecksService;
