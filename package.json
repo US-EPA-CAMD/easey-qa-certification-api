@@ -31,7 +31,7 @@
     "xml2js": "^0.5.0"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1057.0",
+    "@aws-sdk/client-s3": "^3.1060.0",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.1.24",
     "@nestjs/config": "^4.0.4",
@@ -67,8 +67,8 @@
     "@types/node": "22",
     "@types/supertest": "^7.2.0",
     "@types/uuid": "^8.3.1",
-    "@typescript-eslint/eslint-plugin": "8.60.0",
-    "@typescript-eslint/parser": "8.60.0",
+    "@typescript-eslint/eslint-plugin": "8.60.1",
+    "@typescript-eslint/parser": "8.60.1",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
@@ -84,7 +84,7 @@
     "ts-node": "^8.6.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.60.0"
+    "typescript-eslint": "^8.60.1"
   },
   "jest": {
     "moduleFileExtensions": [
