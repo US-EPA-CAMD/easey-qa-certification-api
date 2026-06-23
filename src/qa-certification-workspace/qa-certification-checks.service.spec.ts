@@ -54,7 +54,7 @@ describe('QA Certification Check Service Test', () => {
         {
           provide: QASuppDataWorkspaceRepository,
           useFactory: () => ({
-            getQASuppDataByTestTypeCodeComponentIdEndDateEndTime: jest
+            getQASuppDataByLocationIdTestTypeAndTestNumber: jest
               .fn()
               .mockResolvedValue(null),
           }),

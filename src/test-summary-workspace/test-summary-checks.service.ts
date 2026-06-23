@@ -71,16 +71,10 @@ export class TestSummaryChecksService {
     this.logger.log('Running Test Summary Checks');
 
     if (!isImport) {
-      const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
+      const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByLocationIdTestTypeAndTestNumber(
         locationId,
-        summary.monitoringSystemId,
-        summary.componentId,
         summary.testTypeCode,
         summary.testNumber,
-        summary.spanScaleCode,
-        summary.endDate,
-        summary.endHour,
-        summary.endMinute,
       );
       historicalTestSumId = duplicateQaSupp?.testSumId;
     }

@@ -117,16 +117,10 @@ export class QACertificationChecksService {
         }
         const locationId = location.locationId;
 
-        const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByTestTypeCodeComponentIdEndDateEndTime(
+        const duplicateQaSupp = await this.qaSuppDataRepository.getQASuppDataByLocationIdTestTypeAndTestNumber(
           locationId,
-          summary.monitoringSystemId,
-          summary.componentId,
           summary.testTypeCode,
           summary.testNumber,
-          summary.spanScaleCode,
-          summary.endDate,
-          summary.endHour,
-          summary.endMinute,
         );
 
         if (duplicateQaSupp) {
