@@ -87,7 +87,7 @@ describe('QASuppDataWorkspaceRepository', () => {
   });
 
   describe('getQASuppDataByLocationIdTestTypeAndTestNumber', () => {
-    it('calls buildBaseQuery and get a QA Support Data from the repository using LocationId, componentID, testTypeCode, TestNumber, spanScaleCode, endDate and endTime', async () => {
+    it('calls buildBaseQuery and get a QA Support Data from the repository using LocationId, testTypeCode, TestNumber', async () => {
       const result = await repository.getQASuppDataByLocationIdTestTypeAndTestNumber(
         locationId,
         testTypeCode,
