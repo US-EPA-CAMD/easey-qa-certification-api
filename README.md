@@ -10,7 +10,7 @@
 [![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/US-EPA-CAMD/easey-qa-certification-api)
 
 ## Description
-Manages qa certification data for the EPA CAMD Business Systems.
+Manages qa-certification data for the EPA CAMD Business Systems.
 
 ## Getting Started
 Follow these [instructions](https://github.com/US-EPA-CAMD/devops/blob/master/GETTING-STARTED.md) to get the project up and running correctly.

@@ -182,16 +182,22 @@ describe('QA Certification Workspace Service Test', () => {
 
   describe('import', () => {
     it('successfully calls import() service function', async () => {
-      const result = await service.import([location], payload, userId, []);
+      const result = await service.import(
+        [location],
+        payload,
+        userId,
+        new Map(),
+      );
       expect(result).toEqual({
         message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${payload.orisCode}]`,
       });
     });
 
     it('successfully calls import() service function when qaSuppData found ', async () => {
-      const result = await service.import([location], payload, userId, [
-        qaSuppData,
-      ]);
+      // Key matches payload.testSummaryData[0]: locationId '1', testTypeCode/testNumber undefined
+      const map = new Map<string, QASuppData>();
+      map.set(`${location.locationId}::undefined::undefined`, qaSuppData);
+      const result = await service.import([location], payload, userId, map);
       expect(result).toEqual({
         message: `Successfully Imported QA Certification Data for Facility Id/Oris Code [${payload.orisCode}]`,
       });

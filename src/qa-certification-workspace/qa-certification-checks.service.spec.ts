@@ -41,7 +41,7 @@ const returnLocationRunChecks = [
   },
 ];
 
-const QASuppDatas = [];
+const QASuppDatas = new Map();
 
 describe('QA Certification Check Service Test', () => {
   let service: QACertificationChecksService;
@@ -54,7 +54,7 @@ describe('QA Certification Check Service Test', () => {
         {
           provide: QASuppDataWorkspaceRepository,
           useFactory: () => ({
-            getQASuppDataByTestTypeCodeComponentIdEndDateEndTime: jest
+            getQASuppDataByLocationIdTestTypeAndTestNumber: jest
               .fn()
               .mockResolvedValue(null),
           }),

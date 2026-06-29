@@ -132,7 +132,7 @@ describe('QA Certification Workspace Controller Test', () => {
     it('should import QA & Cert Data', async () => {
       jest
         .spyOn(checkService, 'runChecks')
-        .mockResolvedValue([[location], [qaSuppData]]);
+        .mockResolvedValue([[location], new Map([['string::undefined::undefined', qaSuppData]])]);
       jest.spyOn(service, 'import').mockResolvedValue(undefined);
       expect(await controller.import(payload, user)).toBe(undefined);
     });
