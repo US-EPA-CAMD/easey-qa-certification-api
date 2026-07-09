@@ -25,8 +25,6 @@ let monSysRec = new MonitorSystem();
 let component = new Component();
 let crossCheckCatalogValue = new CrossCheckCatalogValue();
 let protocolGasVendor = new ProtocolGasVendor();
-let pgParameterGasTypeCodes: CrossCheckCatalogValue = crossCheckCatalogValue;
-let protocolGasParameter: string = null;
 
 const mockTestSumRepository = () => ({
   getTestSummaryById: jest.fn().mockResolvedValue(testSumRecord),

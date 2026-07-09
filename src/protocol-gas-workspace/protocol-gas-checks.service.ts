@@ -166,7 +166,6 @@ export class ProtocolGasChecksService {
       // PGVP-12
       if (!gasTypeCode) {
         pgApprovalRequested = false;
-        pgComponentListValid = false;
 
         error = this.getMessage('PGVP-12-A', {
           fieldname: 'gasTypeCode',
