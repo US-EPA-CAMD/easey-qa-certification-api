@@ -141,6 +141,10 @@ export class QACertificationWorkspaceController {
     description:
       'Imports QA Certification data on behalf of a user for the bulk import job',
   })
+  @AuditLog({
+    label: 'Imported workspace QA Certification records on behalf of a user for the bulk import job',
+    requestBodyOutFields: ['orisCode', 'testSummaryData.testNumber'],
+  })
   async importBulk(
     @Body() payload: QACertificationImportDTO,
     @Query('userId') userId: string,
