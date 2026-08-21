@@ -1,8 +1,8 @@
-instances: 2
+instances: 1
 environment: staging
 host: api-easey-stg.app.cloud.gov
 apiHost: api.epa.gov/easey/staging
-matsImportBucket:
+matsImportBucket: cg-b71b234c-d8d8-4ba4-9cb0-babda918478e
 maxConnectionPool: 5
 idleTimeout: 5000
 connectionTimeout: 5000

@@ -22,8 +22,6 @@ import {
 import { QACertificationParamsDTO } from '../dto/qa-certification-params.dto';
 import { QACertificationWorkspaceService } from './qa-certification.service';
 import { QACertificationChecksService } from './qa-certification-checks.service';
-import { LocationIdentifiers } from '../interfaces/location-identifiers.interface';
-import { QASuppData } from '../entities/workspace/qa-supp-data.entity';
 import { CertEventReviewAndSubmitDTO } from '../dto/cert-event-review-and-submit.dto';
 import { ReviewAndSubmitMultipleParamsDTO } from '../dto/review-and-submit-multiple-params.dto';
 import { CertEventReviewAndSubmitService } from './cert-event-review-and-submit.service';
@@ -128,11 +126,8 @@ export class QACertificationWorkspaceController {
     @Body() payload: QACertificationImportDTO,
     @User() user: CurrentUser,
   ) {
-    let qaSuppRecords: QASuppData[] = [];
-    let locations: LocationIdentifiers[] = [];
-
-    [locations, qaSuppRecords] = await this.checksService.runChecks(payload);
-    return this.service.import(locations, payload, user.userId, qaSuppRecords);
+    const [locations, qaSuppByKey] = await this.checksService.runChecks(payload);
+    return this.service.import(locations, payload, user.userId, qaSuppByKey);
   }
 
   @Get('cert-events')

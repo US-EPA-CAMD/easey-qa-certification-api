@@ -84,7 +84,7 @@ const mockQARepository = () => ({
   getUnassociatedQASuppDataByLocationIdAndTestSum: jest
     .fn()
     .mockResolvedValue(null),
-  getQASuppDataByTestTypeCodeComponentIdEndDateEndTime: jest
+  getQASuppDataByLocationIdTestTypeAndTestNumber: jest
     .fn()
     .mockResolvedValue(null),
 });
@@ -557,7 +557,7 @@ describe('Test Summary Check Service Test', () => {
       jest
         .spyOn(
           qaRepository,
-          'getQASuppDataByTestTypeCodeComponentIdEndDateEndTime',
+          'getQASuppDataByLocationIdTestTypeAndTestNumber',
         )
         .mockResolvedValue(new QASuppData());
 
@@ -573,7 +573,7 @@ describe('Test Summary Check Service Test', () => {
       jest
         .spyOn(
           qaRepository,
-          'getQASuppDataByTestTypeCodeComponentIdEndDateEndTime',
+          'getQASuppDataByLocationIdTestTypeAndTestNumber',
         )
         .mockResolvedValue(null);
 
@@ -621,7 +621,7 @@ describe('Test Summary Check Service Test', () => {
       jest
         .spyOn(
           qaRepository,
-          'getQASuppDataByTestTypeCodeComponentIdEndDateEndTime',
+          'getQASuppDataByLocationIdTestTypeAndTestNumber',
         )
         .mockResolvedValue(null);
 
