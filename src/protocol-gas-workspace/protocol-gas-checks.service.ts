@@ -12,6 +12,7 @@ import { TestSummaryImportDTO } from '../dto/test-summary.dto';
 import { TestSummary } from '../entities/workspace/test-summary.entity';
 import { GasComponentCodeRepository } from '../gas-component-code/gas-component-code.repository';
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
+import { ProtocolGasVendorRepository } from '../protocol-gas-vendor/protocol-gas-vendor.repository';
 import { TestSummaryWorkspaceRepository } from '../test-summary-workspace/test-summary.repository';
 
 const KEY = 'Protocol Gas';
@@ -25,6 +26,7 @@ export class ProtocolGasChecksService {
     private readonly monitorSystemWorkspaceRepository: MonitorSystemWorkspaceRepository,
     private readonly componentWorkspaceRepository: ComponentWorkspaceRepository,
     private readonly gasComponentCodeRepository: GasComponentCodeRepository,
+    private readonly protocolGasVendorRepository: ProtocolGasVendorRepository,
   ) { }
 
   private throwIfErrors(errorList: string[], isImport: boolean = false) {
@@ -78,7 +80,9 @@ export class ProtocolGasChecksService {
       );
     }
 
-    // PGVP-8, PGVP-12 and PGVP-13
+    // PGVP-3, PGVP-8, PGVP-12 and PGVP-13
+    errorList.push(...(await this.pgvp3Checks(protocolGas)));
+
     const errors = await this.pgvp8andpgvp12and13Checks(
       protocolGas.gasTypeCode,
       testSumRecord,
@@ -91,6 +95,32 @@ export class ProtocolGasChecksService {
     this.throwIfErrors(errorList, isImport);
     this.logger.log('Completed Protocol Gas Checks');
     return errorList;
+  }
+
+  private async pgvp3Checks(
+    protocolGas: ProtocolGasBaseDTO | ProtocolGasImportDTO,
+  ): Promise<string[]> {
+    const vendorIdentifier = protocolGas.vendorIdentifier?.trim();
+
+    if (!vendorIdentifier) {
+      return [];
+    }
+
+    const vendor = await this.protocolGasVendorRepository.findOne({
+      where: { id: vendorIdentifier },
+    });
+
+    if (!vendor) {
+      return [
+        this.getMessage('PGVP-3-B', {
+          fieldname: 'vendorIdentifier',
+          key: KEY,
+          value: vendorIdentifier,
+        }),
+      ];
+    }
+
+    return [];
   }
 
   private async pgvp8andpgvp12and13Checks(
@@ -136,7 +166,6 @@ export class ProtocolGasChecksService {
       // PGVP-12
       if (!gasTypeCode) {
         pgApprovalRequested = false;
-        pgComponentListValid = false;
 
         error = this.getMessage('PGVP-12-A', {
           fieldname: 'gasTypeCode',
