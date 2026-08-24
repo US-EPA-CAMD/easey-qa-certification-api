@@ -2945,6 +2945,11 @@ dayjs@^1.11.21:
   resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.23.tgz#b0a363506dde5f36cf5075e42ebe8115165a8c79"
   integrity sha512-QDTCU0M0MxR3hQfnlDJfwekQiaanm1ubOD231u73WBckQ/fsamwRLiE2GBz6D3a/xF1NgfiDLJjXBa1hYOYTtQ==
 
+dayjs@^1.11.21:
+  version "1.11.23"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.23.tgz#b0a363506dde5f36cf5075e42ebe8115165a8c79"
+  integrity sha512-QDTCU0M0MxR3hQfnlDJfwekQiaanm1ubOD231u73WBckQ/fsamwRLiE2GBz6D3a/xF1NgfiDLJjXBa1hYOYTtQ==
+
 debug@4, debug@^4.1.0, debug@^4.1.1, debug@^4.3.1, debug@^4.3.2, debug@^4.3.7, debug@^4.4.0, debug@^4.4.3:
   version "4.4.3"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.4.3.tgz#c6ae432d9bd9662582fce08709b038c58e9e3d6a"
@@ -6605,6 +6610,27 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
   integrity sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==
+
+typeorm@0.3.31:
+  version "0.3.31"
+  resolved "https://registry.yarnpkg.com/typeorm/-/typeorm-0.3.31.tgz#942c60762192546137608a703650a5a5725f8fe2"
+  integrity sha512-6u9EFtdLBgHjnPm78NStVeM+I/1MolTzKykDDcydzKUkh6E++YS6XViU/fePJbvDvEGU4Xq34KOM/CLeer9I2A==
+  dependencies:
+    "@sqltools/formatter" "^1.2.5"
+    ansis "^4.3.1"
+    app-root-path "^3.1.0"
+    buffer "^6.0.3"
+    dayjs "^1.11.21"
+    debug "^4.4.3"
+    dedent "^1.7.2"
+    dotenv "^16.6.1"
+    glob "^10.5.0"
+    reflect-metadata "^0.2.2"
+    sha.js "^2.4.12"
+    sql-highlight "^6.1.0"
+    tslib "^2.8.1"
+    uuid "^11.1.1"
+    yargs "^17.7.3"
 
 typeorm@0.3.31:
   version "0.3.31"
