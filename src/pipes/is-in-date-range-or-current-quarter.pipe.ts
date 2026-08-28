@@ -56,7 +56,7 @@ export function IsInDateRangeOrCurrentQuarter(
           const currentQuarterEndDate = getCurrentQuarterEndDate(new Date());
 
           return (
-            normalizedDate >= minDate && normalizedDate <= currentQuarterEndDate
+            normalizedDate >= minDate && normalizedDate < currentQuarterEndDate
           );
         },
       },
