@@ -14,6 +14,7 @@ import {
 
 import { OneOrMore } from '../pipes/one-or-more.pipe';
 import { IsInDateRange } from '../pipes/is-in-date-range.pipe';
+import { IsInDateRangeOrCurrentQuarter } from '../pipes/is-in-date-range-or-current-quarter.pipe';
 import { TestTypeCodes } from '../enums/test-type-code.enum';
 import { TestTypeCode } from './../entities/test-type-code.entity';
 import { IsOptional, ValidationArguments } from 'class-validator';
@@ -129,10 +130,10 @@ export class QACertificationParamsDTO {
       );
     },
   })
-  @IsInDateRange(MIN_DATE, null, {
+  @IsInDateRangeOrCurrentQuarter(MIN_DATE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `End Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,
+        `End Date must be greater than or equal to ${MIN_DATE} and less than or equal to the end of the current quarter.`,
       );
     },
   })
