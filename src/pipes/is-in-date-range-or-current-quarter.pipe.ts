@@ -1,8 +1,4 @@
-import {
-  registerDecorator,
-  ValidationArguments,
-  ValidationOptions,
-} from 'class-validator';
+import { registerDecorator, ValidationOptions } from 'class-validator';
 
 const formatDate = (value: Date) => {
   const year = value.getFullYear();
@@ -33,20 +29,15 @@ const normalizeDate = (value: unknown) => {
   return formatDate(parsedDate);
 };
 
-const getCurrentQuarterRange = (today: Date) => {
+const getCurrentQuarterEndDate = (today: Date) => {
   const quarterStartMonth = Math.floor(today.getMonth() / 3) * 3;
-  const startDate = new Date(today.getFullYear(), quarterStartMonth, 1);
-  const endDate = new Date(today.getFullYear(), quarterStartMonth + 3, 0);
 
-  return {
-    beginDate: formatDate(startDate),
-    endDate: formatDate(endDate),
-  };
+  return formatDate(new Date(today.getFullYear(), quarterStartMonth + 3, 0));
 };
 
 export function IsInDateRangeOrCurrentQuarter(
   minDate: string,
-  validationOptions?: ValidationOptions & { beginDateField?: string },
+  validationOptions?: ValidationOptions,
 ) {
   return function (object: object, propertyName: string) {
     registerDecorator({
@@ -54,40 +45,18 @@ export function IsInDateRangeOrCurrentQuarter(
       target: object.constructor,
       propertyName,
       options: validationOptions,
-      constraints: [minDate, validationOptions?.beginDateField ?? 'beginDate'],
       validator: {
-        validate(value: unknown, args: ValidationArguments) {
-          const [minimumDate, beginDateField] = args.constraints;
-          const normalizedEndDate = normalizeDate(value);
+        validate(value: unknown) {
+          const normalizedDate = normalizeDate(value);
 
-          if (!normalizedEndDate) {
+          if (!normalizedDate) {
             return true;
           }
 
-          const today = new Date();
-          const normalizedToday = formatDate(today);
-
-          if (
-            normalizedEndDate >= minimumDate &&
-            normalizedEndDate <= normalizedToday
-          ) {
-            return true;
-          }
-
-          const normalizedBeginDate = normalizeDate(
-            (args.object as Record<string, unknown>)[beginDateField],
-          );
-
-          if (!normalizedBeginDate) {
-            return false;
-          }
-
-          const currentQuarter = getCurrentQuarterRange(today);
+          const currentQuarterEndDate = getCurrentQuarterEndDate(new Date());
 
           return (
-            normalizedBeginDate === currentQuarter.beginDate &&
-            normalizedEndDate === currentQuarter.endDate &&
-            normalizedBeginDate <= normalizedToday
+            normalizedDate >= minDate && normalizedDate <= currentQuarterEndDate
           );
         },
       },

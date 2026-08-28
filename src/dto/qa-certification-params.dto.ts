@@ -133,7 +133,7 @@ export class QACertificationParamsDTO {
   @IsInDateRangeOrCurrentQuarter(MIN_DATE, {
     message: (args: ValidationArguments) => {
       return CheckCatalogService.formatMessage(
-        `End Date must be greater than or equal to ${MIN_DATE} and less than or equal to the current date.`,
+        `End Date must be greater than or equal to ${MIN_DATE} and less than or equal to the end of the current quarter.`,
       );
     },
   })
