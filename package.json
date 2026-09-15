@@ -28,10 +28,11 @@
     "up": "yarn && yarn start:dev"
   },
   "resolutions": {
-    "xml2js": "^0.5.0"
+    "xml2js": "^0.5.0",
+	"multer": "^2.3.0"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1127.0",
+    "@aws-sdk/client-s3": "^3.1131.0",
     "@nestjs/axios": "^4.0.1",
     "@nestjs/common": "^11.2.3",
     "@nestjs/config": "^4.0.4",
@@ -67,8 +68,8 @@
     "@types/node": "24",
     "@types/supertest": "^7.2.1",
     "@types/uuid": "^11.0.0",
-    "@typescript-eslint/eslint-plugin": "8.69.0",
-    "@typescript-eslint/parser": "8.69.0",
+    "@typescript-eslint/eslint-plugin": "8.70.0",
+    "@typescript-eslint/parser": "8.70.0",
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-import": "^2.32.0",
@@ -84,7 +85,7 @@
     "ts-node": "^8.6.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.69.0"
+    "typescript-eslint": "^8.70.0"
   },
   "jest": {
     "moduleFileExtensions": [
