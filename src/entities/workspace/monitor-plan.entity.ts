@@ -18,7 +18,7 @@ export class MonitorPlan extends BaseEntity {
   })
   id: string;
 
-  @Column({ name: 'fac_id', type: 'numeric' })
+  @Column({ name: 'fac_id', type: 'bigint' })
   facilityId: number;
 
   @Column({ name: 'last_updated', type: 'date' })
@@ -42,7 +42,7 @@ export class MonitorPlan extends BaseEntity {
   @Column({ name: 'update_date', type: 'timestamp' })
   updateDate: Date;
 
-  @Column({ name: 'submission_id', type: 'numeric' })
+  @Column({ name: 'submission_id', type: 'bigint' })
   submissionId: number;
 
   @Column({ name: 'submission_availability_cd', type: 'varchar' })
