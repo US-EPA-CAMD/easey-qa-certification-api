@@ -115,7 +115,7 @@ export class QACertificationEvent extends BaseEntity {
 
   @Column({
     name: 'submission_id',
-    type: 'numeric',
+    type: 'bigint',
     transformer: new NumericColumnTransformer(),
   })
   submissionId: number;
