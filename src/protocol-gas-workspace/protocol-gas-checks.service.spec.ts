@@ -12,6 +12,8 @@ import { CrossCheckCatalogValue } from '../entities/cross-check-catalog-value.en
 import { MonitorSystemWorkspaceRepository } from '../monitor-system-workspace/monitor-system-workspace.repository';
 import { ComponentWorkspaceRepository } from '../component-workspace/component.repository';
 import { Component } from '../entities/workspace/component.entity';
+import { ProtocolGasVendor } from '../entities/protocol-gas-vendor.entity';
+import { ProtocolGasVendorRepository } from '../protocol-gas-vendor/protocol-gas-vendor.repository';
 
 const locationId = '';
 const testSumId = '';
@@ -22,8 +24,7 @@ let testSumRecord = new TestSummary();
 let monSysRec = new MonitorSystem();
 let component = new Component();
 let crossCheckCatalogValue = new CrossCheckCatalogValue();
-let pgParameterGasTypeCodes: CrossCheckCatalogValue = crossCheckCatalogValue;
-let protocolGasParameter: string = null;
+let protocolGasVendor = new ProtocolGasVendor();
 
 const mockTestSumRepository = () => ({
   getTestSummaryById: jest.fn().mockResolvedValue(testSumRecord),
@@ -46,6 +47,10 @@ const mockCrossCheckCatalogValueRepository = () => ({
   getParameterAndTypes: jest.fn().mockResolvedValue([crossCheckCatalogValue]),
 });
 
+const mockProtocolGasVendorRepository = () => ({
+  findOne: jest.fn().mockResolvedValue(protocolGasVendor),
+});
+
 describe('Protocol Gas Checks Service', () => {
   let service: ProtocolGasChecksService;
   let testSummaryRepository: TestSummaryWorkspaceRepository;
@@ -53,6 +58,7 @@ describe('Protocol Gas Checks Service', () => {
   let componentWorkspaceRepository: ComponentWorkspaceRepository;
   let gasComponentCodeRepository: GasComponentCodeRepository;
   let crossCheckCatalogValueRepository: CrossCheckCatalogValueRepository;
+  let protocolGasVendorRepository: ProtocolGasVendorRepository;
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -79,6 +85,10 @@ describe('Protocol Gas Checks Service', () => {
           provide: CrossCheckCatalogValueRepository,
           useFactory: mockCrossCheckCatalogValueRepository,
         },
+        {
+          provide: ProtocolGasVendorRepository,
+          useFactory: mockProtocolGasVendorRepository,
+        },
       ],
     }).compile();
 
@@ -98,8 +108,67 @@ describe('Protocol Gas Checks Service', () => {
     crossCheckCatalogValueRepository = module.get<
       CrossCheckCatalogValueRepository
     >(CrossCheckCatalogValueRepository);
+    protocolGasVendorRepository = module.get<ProtocolGasVendorRepository>(
+      ProtocolGasVendorRepository,
+    );
 
     jest.spyOn(service, 'getMessage').mockReturnValue(MOCK_ERROR_MSG);
+    protolGas.vendorIdentifier = undefined;
+  });
+
+  describe('PGVP-3 Vendor ID Valid', () => {
+    it('Should get [PGVP-3-B] error when VendorIdentifier is not in the Protocol Gas Vendor lookup table', async () => {
+      protolGas.vendorIdentifier = 'A20124';
+      jest.spyOn(protocolGasVendorRepository, 'findOne').mockResolvedValue(null);
+
+      const result = await service.runChecks(
+        protolGas,
+        locationId,
+        testSumId,
+        true,
+        false,
+        {} as any,
+      );
+
+      expect(result).toEqual([MOCK_ERROR_MSG]);
+      expect(protocolGasVendorRepository.findOne).toHaveBeenCalledWith({
+        where: { id: 'A20124' },
+      });
+    });
+
+    it('Should not return an error when VendorIdentifier is in the Protocol Gas Vendor lookup table', async () => {
+      protolGas.vendorIdentifier = 'A12016';
+
+      const result = await service.runChecks(
+        protolGas,
+        locationId,
+        testSumId,
+        true,
+        false,
+        {} as any,
+      );
+
+      expect(result).toEqual([]);
+      expect(protocolGasVendorRepository.findOne).toHaveBeenCalledWith({
+        where: { id: 'A12016' },
+      });
+    });
+
+    it('Should not validate VendorIdentifier when it is not reported', async () => {
+      protolGas.vendorIdentifier = '';
+
+      const result = await service.runChecks(
+        protolGas,
+        locationId,
+        testSumId,
+        true,
+        false,
+        {} as any,
+      );
+
+      expect(result).toEqual([]);
+      expect(protocolGasVendorRepository.findOne).not.toHaveBeenCalled();
+    });
   });
 
   describe('PGVP-8 Protocol Gas Record Consistent with Test', () => {

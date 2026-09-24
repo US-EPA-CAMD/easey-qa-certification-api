@@ -6,6 +6,7 @@ import { ComponentModule } from '../component-workspace/component.module';
 import { GasComponentCodeModule } from '../gas-component-code/gas-component-code.module';
 import { ProtocolGasMap } from '../maps/protocol-gas.map';
 import { MonitorSystemWorkspaceModule } from '../monitor-system-workspace/monitor-system-workspace.module';
+import { ProtocolGasVendorRepository } from '../protocol-gas-vendor/protocol-gas-vendor.repository';
 import { ProtocolGasModule } from '../protocol-gas/protocol-gas.module';
 import { TestSummaryWorkspaceModule } from '../test-summary-workspace/test-summary.module';
 import { ProtocolGasChecksService } from './protocol-gas-checks.service';
@@ -15,7 +16,10 @@ import { ProtocolGasWorkspaceService } from './protocol-gas.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ProtocolGasWorkspaceRepository]),
+    TypeOrmModule.forFeature([
+      ProtocolGasVendorRepository,
+      ProtocolGasWorkspaceRepository,
+    ]),
     forwardRef(() => TestSummaryWorkspaceModule),
     forwardRef(() => ProtocolGasModule),
     HttpModule,
@@ -27,6 +31,7 @@ import { ProtocolGasWorkspaceService } from './protocol-gas.service';
   providers: [
     ProtocolGasMap,
     ProtocolGasChecksService,
+    ProtocolGasVendorRepository,
     ProtocolGasWorkspaceRepository,
     ProtocolGasWorkspaceService,
   ],

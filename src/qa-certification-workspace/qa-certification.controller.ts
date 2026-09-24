@@ -1,11 +1,13 @@
-import { Get, Body, Post, Query, Controller } from '@nestjs/common';
+import { Get, Body, Post, Query, Controller, UseGuards } from '@nestjs/common';
 
 import {
   ApiTags,
   ApiOkResponse,
   ApiSecurity,
   ApiQuery,
+  ApiBearerAuth,
   ApiOperation, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
+import { ClientTokenGuard } from '@us-epa-camd/easey-common/guards';
 
 import {
   AuditLog,
@@ -128,6 +130,27 @@ export class QACertificationWorkspaceController {
   ) {
     const [locations, qaSuppByKey] = await this.checksService.runChecks(payload);
     return this.service.import(locations, payload, user.userId, qaSuppByKey);
+  }
+
+  @Post('import/bulk')
+  @ApiSecurity('ClientId')
+  @ApiBearerAuth('ClientToken')
+  @UseGuards(ClientTokenGuard)
+  @ApiOkResponse({
+    type: QACertificationDTO,
+    description:
+      'Imports QA Certification data on behalf of a user for the bulk import job',
+  })
+  @AuditLog({
+    label: 'Imported workspace QA Certification records on behalf of a user for the bulk import job',
+    requestBodyOutFields: ['orisCode', 'testSummaryData.testNumber'],
+  })
+  async importBulk(
+    @Body() payload: QACertificationImportDTO,
+    @Query('userId') userId: string,
+  ) {
+    const [locations, qaSuppByKey] = await this.checksService.runChecks(payload);
+    return this.service.import(locations, payload, userId, qaSuppByKey);
   }
 
   @Get('cert-events')
