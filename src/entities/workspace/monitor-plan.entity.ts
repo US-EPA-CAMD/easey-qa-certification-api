@@ -18,7 +18,7 @@ export class MonitorPlan extends BaseEntity {
   })
   id: string;
 
-  @Column({ name: 'fac_id', type: 'numeric' })
+  @Column({ name: 'fac_id', type: 'integer' })
   facilityId: number;
 
   @Column({ name: 'last_updated', type: 'date' })
