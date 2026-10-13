@@ -27,7 +27,7 @@ export class MonitorLocation extends BaseEntity {
 
   @Column({
     name: 'unit_id',
-    type: 'varchar',
+    type: 'integer',
   })
   unitId: number;
 
