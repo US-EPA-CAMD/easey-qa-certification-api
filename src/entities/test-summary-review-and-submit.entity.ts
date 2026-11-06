@@ -1,7 +1,5 @@
 import { ViewColumn, ViewEntity } from 'typeorm';
 
-import { NumericColumnTransformer } from '@us-epa-camd/easey-common/transforms';
-
 @ViewEntity({
   name: 'camdecmps.vw_test_summary_eval_and_submit',
 })
@@ -45,12 +43,6 @@ export class TestSummaryReviewAndSubmitGlobal {
     name: 'test_num',
   })
   testNum: string;
-
-  @ViewColumn({
-    name: 'rpt_period_id',
-    transformer: new NumericColumnTransformer(),
-  })
-  rptPeriodIdentifier: number;
 
   @ViewColumn({
     name: 'begin_date',
